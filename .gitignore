@@ -53,15 +53,6 @@ gradle-app.setting
 
 
 ## own ignores
-
+# avoid ignoring gitignore and markdown files.
 !.gitignore
-.classpath
-/testout/
-/instances/
-**/out/
-SEDE.iml
-
-## python ignores
-
-*.pyc
-
+!.md

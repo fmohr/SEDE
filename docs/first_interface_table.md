@@ -1,7 +1,7 @@
 ## Gateway
 
-Interfaces | JASE | PASE | ServiceNode
------------- | ------------- | ------------- | ------------
+Interfaces | JASE | PASE | ServiceNode | SEDE
+------------ | ------------- | ------------- | ------------ | ------------
 Service Manager | ~ | ~ | ~
 Service Information Provider | | | x
 Resource Monitor | | | x
@@ -9,10 +9,10 @@ Composition Parser/Analyzer/Rewriter | x | x | x
 Request Distribution / Load Balancing | | | 
 Collaboration Server | | | 
 
-## Exectutionor
+## Executioner
 
-Interfaces | JASE | PASE | ServiceNode
------------- | ------------- | ------------- | ------------
+Interfaces | JASE | PASE | ServiceNode | SEDE
+------------ | ------------- | ------------- | ------------ | ------------
 Resource Allocator | | | x
 Resource Information Provider | | |
 Composition Parser | x | x | x

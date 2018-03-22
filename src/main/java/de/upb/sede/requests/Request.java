@@ -21,6 +21,9 @@ public class Request {
 	private final static String UNDEFINED_COMPOSITIONGRAPH = "NO_COMPOSITIONGRAPH";
 	private final String compositionGraph;
 
+	private final static String UNDEFINED_POLICY = "NO_POLICY";
+	private final String policy;
+
 	private final static Map<String, Object> UNDEFINED_VARIABLES = new HashMap<>();
 	private final Map<String, Object> variables;
 
@@ -29,15 +32,18 @@ public class Request {
 		this.clientHost = UNDEFINED_CLIENTHOST;
 		this.composition = UNDEFINED_COMPOSITION;
 		this.compositionGraph = UNDEFINED_COMPOSITIONGRAPH;
+		this.policy = UNDEFINED_POLICY;
 		this.variables = UNDEFINED_VARIABLES;
+
 	}
 
-	private Request(String requestId, String clientHost, String composition, String compositionGraph,
+	private Request(String requestId, String clientHost, String composition, String compositionGraph, String policy,
 			Map<String, Object> variables) {
 		this.requestId = requestId;
 		this.clientHost = clientHost;
-		this.compositionGraph = compositionGraph;
 		this.composition = composition;
+		this.compositionGraph = compositionGraph;
+		this.policy = policy;
 		this.variables = variables;
 	}
 
@@ -45,23 +51,33 @@ public class Request {
 	 * With methods
 	 */
 	public Request withRequestId(String requestId) {
-		return new Request(Objects.requireNonNull(requestId), clientHost, composition, compositionGraph, variables);
+		return new Request(Objects.requireNonNull(requestId), clientHost, composition, compositionGraph, policy,
+				variables);
 	}
 
 	public Request withClientHost(String clientHost) {
-		return new Request(requestId, Objects.requireNonNull(clientHost), composition, compositionGraph, variables);
+		return new Request(requestId, Objects.requireNonNull(clientHost), composition, compositionGraph, policy,
+				variables);
 	}
 
 	public Request withComposition(String composition) {
-		return new Request(requestId, clientHost, Objects.requireNonNull(composition), compositionGraph, variables);
+		return new Request(requestId, clientHost, Objects.requireNonNull(composition), compositionGraph, policy,
+				variables);
 	}
 
 	public Request withCompositionGraph(String compositionGraph) {
-		return new Request(requestId, clientHost, composition, Objects.requireNonNull(compositionGraph), variables);
+		return new Request(requestId, clientHost, composition, Objects.requireNonNull(compositionGraph), policy,
+				variables);
+	}
+
+	public Request withPolicy(String policy) {
+		return new Request(requestId, clientHost, composition, compositionGraph, Objects.requireNonNull(policy),
+				variables);
 	}
 
 	public Request withVariables(Map<String, Object> variables) {
-		return new Request(requestId, clientHost, composition, compositionGraph, Objects.requireNonNull(variables));
+		return new Request(requestId, clientHost, composition, compositionGraph, policy,
+				Objects.requireNonNull(variables));
 	}
 
 	/*
@@ -84,6 +100,10 @@ public class Request {
 		return this.compositionGraph != UNDEFINED_COMPOSITIONGRAPH;
 	}
 
+	public boolean hasPolicy() {
+		return this.policy != UNDEFINED_POLICY;
+	}
+	
 	public boolean hasVariables() {
 		return this.variables != UNDEFINED_VARIABLES;
 	}
@@ -110,6 +130,11 @@ public class Request {
 	public String getCompositionGraph() {
 		assert hasCompositionGraph();
 		return compositionGraph;
+	}
+	
+	public String getPolicy() {
+		assert hasPolicy();
+		return policy;
 	}
 
 	public Map<String, Object> getVariables() {

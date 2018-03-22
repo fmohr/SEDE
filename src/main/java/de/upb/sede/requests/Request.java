@@ -2,136 +2,118 @@ package de.upb.sede.requests;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * All instances of request should be immutable.
  */
 public class Request {
-    
 
-    private final static String UNDEFINED_REQUESTID = "NO_RID";
-    private final String requestId;
+	private final static String UNDEFINED_REQUESTID = "NO_RID";
+	private final String requestId;
 
-    private final static String UNDEFINED_CLIENTHOST = "NO_CLIENTHOST";
-    private final String clientHost;
+	private final static String UNDEFINED_CLIENTHOST = "NO_CLIENTHOST";
+	private final String clientHost;
 
-    private final static String UNDEFINED_COMPOSITION = "NO_COMPOSITION";
-    private final String composition;
+	private final static String UNDEFINED_COMPOSITION = "NO_COMPOSITION";
+	private final String composition;
 
-    private final static String UNDEFINED_COMPOSITIONGRAPH = "NO_COMPOSITIONGRAPH";
-    private final String compositionGraph;
-    
-    private final static Map<String,Object> UNDEFINED_VARIABLES = new HashMap<>();
-    private final Map<String, Object> variables;
+	private final static String UNDEFINED_COMPOSITIONGRAPH = "NO_COMPOSITIONGRAPH";
+	private final String compositionGraph;
 
-   
+	private final static Map<String, Object> UNDEFINED_VARIABLES = new HashMap<>();
+	private final Map<String, Object> variables;
 
-    public String getComposition(){
-        return composition;
-    }
-    
-    public Map<String, Object> getVariables(){
-        return variables;
-    }
+	public Request() {
+		this.requestId = UNDEFINED_REQUESTID;
+		this.clientHost = UNDEFINED_CLIENTHOST;
+		this.composition = UNDEFINED_COMPOSITION;
+		this.compositionGraph = UNDEFINED_COMPOSITIONGRAPH;
+		this.variables = UNDEFINED_VARIABLES;
+	}
 
-    public Request() {
-        this.requestId = UNDEFINED_REQUESTID;
-        this.clientHost = UNDEFINED_CLIENTHOST;
-        this.composition = UNDEFINED_COMPOSITION;
-        this.compositionGraph = UNDEFINED_COMPOSITIONGRAPH;
-        this.variables = UNDEFINED_VARIABLES;
-    }
+	private Request(String requestId, String clientHost, String composition, String compositionGraph,
+			Map<String, Object> variables) {
+		this.requestId = requestId;
+		this.clientHost = clientHost;
+		this.compositionGraph = compositionGraph;
+		this.composition = composition;
+		this.variables = variables;
+	}
 
-    private Request(String requestId, String clientHost, String composition, String compositionGraph,  Map<String, Object> variables){
-        this.requestId = requestId;
-        this.clientHost = clientHost;
-        this.compositionGraph = compositionGraph;
-        this.composition = composition;
-        this.variables = variables;
-    }
+	/*
+	 * With methods
+	 */
+	public Request withRequestId(String requestId) {
+		return new Request(Objects.requireNonNull(requestId), clientHost, composition, compositionGraph, variables);
+	}
 
-    /*
-        With methods
-    */
+	public Request withClientHost(String clientHost) {
+		return new Request(requestId, Objects.requireNonNull(clientHost), composition, compositionGraph, variables);
+	}
 
-    public ExecRequest withExecEnvironment(ExecEnvironment environment) {
-        return new ExecRequest(Objects.requireNonNull(environment), 
-            requestId, clientId, clientHostSet);
-    }
+	public Request withComposition(String composition) {
+		return new Request(requestId, clientHost, Objects.requireNonNull(composition), compositionGraph, variables);
+	}
 
-    public ExecRequest withRequestId(String requestId) {
-        return new ExecRequest(environment, 
-            Objects.requireNonNull(requestId),
-            clientId, clientHostSet);
-    }
+	public Request withCompositionGraph(String compositionGraph) {
+		return new Request(requestId, clientHost, composition, Objects.requireNonNull(compositionGraph), variables);
+	}
 
-    public ExecRequest withClientId(String clientId) {
-        return new ExecRequest(environment, requestId, 
-            Objects.requireNonNull(clientId), 
-            clientHostSet);
-    }
+	public Request withVariables(Map<String, Object> variables) {
+		return new Request(requestId, clientHost, composition, compositionGraph, Objects.requireNonNull(variables));
+	}
 
-    public ExecRequest withClientHostSet(String[] clientHostSet){
-        Objects.requireNonNull(clientHostSet);
+	/*
+	 * has methods
+	 */
 
-        // create a new set and fill it with the given hosts
-        TreeSet<String> newSet = new TreeSet<>();
-        for(String host : clientHostSet){
-            newSet.add(host);
-        }
-        return new ExecRequest(environment, 
-            requestId, clientId, 
-            newSet);
-    }
+	public boolean hasRequestId() {
+		return this.requestId != UNDEFINED_REQUESTID;
+	}
 
-    public ExecRequest withAddedClientHost(String clientHost) {
-        // add host to the present set
-        Set<String> newSet = new TreeSet<>(this.clientHostSet);
-        newSet.add(Objects.requireNonNull(clientHost));
-        
-        return new ExecRequest(environment, 
-            requestId, clientId, 
-            newSet);
-    }
+	public boolean hasclientHost() {
+		return this.clientHost != UNDEFINED_CLIENTHOST;
+	}
 
-    /*
-        has methods
-    */
+	public boolean hasComposition() {
+		return this.composition != UNDEFINED_COMPOSITION;
+	}
 
-    public boolean hasExecEnvironment(){
-        return true; // is always set.
-    }
+	public boolean hasCompositionGraph() {
+		return this.compositionGraph != UNDEFINED_COMPOSITIONGRAPH;
+	}
 
-    public boolean hasRequestId(){
-        return this.requestId != Undefined_RequestId;
-    }
+	public boolean hasVariables() {
+		return this.variables != UNDEFINED_VARIABLES;
+	}
 
-    public boolean hasClientId(){
-        return this.clientId != Undefined_ClientId;
-    }
+	/*
+	 * get methods
+	 */
 
-    public boolean containsClinetHosts(){
-        return ! this.clientHostSet.isEmpty();
-    }
-
-    /*
-        get methods
-    */
-
-    public ExecEnvironment getExecEnvironment() {
-        assert hasExecEnvironment();
-        return environment;
-    }
-
-	@Override
-	public String getRequestId() {
-        assert hasRequestId();
+	public String getRequestID() {
+		assert hasRequestId();
 		return requestId;
 	}
 
-	@Override
-	public String[] getClientHostSet() {
-        assert containsClinetHosts(); // TODO this assertion might be superfluous and cause bugs.
-		return clientHostSet.toArray(new String[clientHostSet.size()]);
+	public String getClientHost() {
+		assert hasclientHost();
+		return clientHost;
+	}
+
+	public String getComposition() {
+		assert hasComposition();
+		return composition;
+	}
+
+	public String getCompositionGraph() {
+		assert hasCompositionGraph();
+		return compositionGraph;
+	}
+
+	public Map<String, Object> getVariables() {
+		assert hasVariables();
+		return variables;
 	}
 }

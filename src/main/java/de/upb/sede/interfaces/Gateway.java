@@ -1,7 +1,7 @@
 package de.upb.sede.interfaces;
 
-import de.upb.sede.requests.GatewayResolution;
 import de.upb.sede.requests.GSMRegistration;
+import de.upb.sede.requests.GatewayResolution;
 import de.upb.sede.requests.Request;
 
 public interface Gateway {

@@ -2,7 +2,7 @@ package de.upb.sede.requests;
 
 import java.util.Objects;
 
-public class ResolveRequest extends Request{
+public class ResolveRequest extends Request {
 	private final String composition;
 	private final String policy;
 
@@ -13,19 +13,17 @@ public class ResolveRequest extends Request{
 	}
 
 	private ResolveRequest(String requestId, String clientHost, String composition, String policy) {
-		this.requestId = requestId;
-		this.clientHost = clientHost;
+		super(requestId, clientHost);
 		this.composition = composition;
 		this.policy = policy;
 	}
 
-	/*
-	 * With methods
-	 */
+	@Override
 	public ResolveRequest withRequestId(String requestId) {
 		return new ResolveRequest(Objects.requireNonNull(requestId), clientHost, composition, policy);
 	}
 
+	@Override
 	public ResolveRequest withClientHost(String clientHost) {
 		return new ResolveRequest(requestId, Objects.requireNonNull(clientHost), composition, policy);
 	}
@@ -38,10 +36,6 @@ public class ResolveRequest extends Request{
 		return new ResolveRequest(requestId, clientHost, composition, Objects.requireNonNull(policy));
 	}
 
-	/*
-	 * has methods
-	 */
-
 	public boolean hasComposition() {
 		return this.composition != UNDEFINED_COMPOSITION;
 	}
@@ -49,10 +43,6 @@ public class ResolveRequest extends Request{
 	public boolean hasPolicy() {
 		return this.policy != UNDEFINED_POLICY;
 	}
-
-	/*
-	 * get methods
-	 */
 
 	public String getComposition() {
 		assert hasComposition();

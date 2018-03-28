@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class RunRequest extends Request{
+public class RunRequest extends Request {
 	private final String composition;
 	private final String policy;
 
@@ -20,49 +20,38 @@ public class RunRequest extends Request{
 
 	private RunRequest(String requestId, String clientHost, String composition, String policy,
 			Map<String, Object> variables) {
-		this.requestId = requestId;
-		this.clientHost = clientHost;
+		super(requestId, clientHost);
 		this.composition = composition;
 		this.policy = policy;
 		this.variables = variables;
 	}
 
-	/*
-	 * With methods
-	 */
+	@Override
 	public RunRequest withRequestId(String requestId) {
-		return new RunRequest(Objects.requireNonNull(requestId), clientHost, composition, policy,
-				variables);
+		return new RunRequest(Objects.requireNonNull(requestId), clientHost, composition, policy, variables);
 	}
 
+	@Override
 	public RunRequest withClientHost(String clientHost) {
-		return new RunRequest(requestId, Objects.requireNonNull(clientHost), composition, policy,
-				variables);
+		return new RunRequest(requestId, Objects.requireNonNull(clientHost), composition, policy, variables);
 	}
 
 	public RunRequest withComposition(String composition) {
-		return new RunRequest(requestId, clientHost, Objects.requireNonNull(composition), policy,
-				variables);
+		return new RunRequest(requestId, clientHost, Objects.requireNonNull(composition), policy, variables);
 	}
 
 	public RunRequest withPolicy(String policy) {
-		return new RunRequest(requestId, clientHost, composition, Objects.requireNonNull(policy),
-				variables);
+		return new RunRequest(requestId, clientHost, composition, Objects.requireNonNull(policy), variables);
 	}
 
 	public RunRequest withVariables(Map<String, Object> variables) {
-		return new RunRequest(requestId, clientHost, composition, policy,
-				Objects.requireNonNull(variables));
+		return new RunRequest(requestId, clientHost, composition, policy, Objects.requireNonNull(variables));
 	}
-
-	/*
-	 * has methods
-	 */
 
 	public boolean hasComposition() {
 		return this.composition != UNDEFINED_COMPOSITION;
 	}
-	
+
 	public boolean hasPolicy() {
 		return this.policy != UNDEFINED_POLICY;
 	}
@@ -70,10 +59,6 @@ public class RunRequest extends Request{
 	public boolean hasVariables() {
 		return this.variables != UNDEFINED_VARIABLES;
 	}
-
-	/*
-	 * get methods
-	 */
 
 	public String getComposition() {
 		assert hasComposition();

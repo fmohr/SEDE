@@ -1,9 +1,10 @@
 package de.up.sede;
+import static org.junit.Assert.assertTrue;
+
 /*
  * A rudimentary test case.
  */
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 
 public class Rudimentary {

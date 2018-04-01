@@ -1,4 +1,4 @@
-package de.upb.sede.composition;
+package de.upb.sede.composition.graphs;
 
 import java.util.HashSet;
 import java.util.Iterator;

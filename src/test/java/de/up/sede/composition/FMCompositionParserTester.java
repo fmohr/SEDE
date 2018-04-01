@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -23,7 +24,12 @@ import de.upb.sede.composition.FMComposition;
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.graphs.GraphComposition;
 
-
+/**
+ * 
+ * @author aminfaez
+ *
+ * Tests regex patterns in FMCompositionParser.
+ */
 public class FMCompositionParserTester {
     
     private static String compositionString;
@@ -47,8 +53,81 @@ public class FMCompositionParserTester {
     }
 
     @Test public void testRegexFieldname() {
-    		
+    		Pattern p = FMCompositionParser.PATTERN_fieldname;
+    		assertMatches("a", p, true);
+    		assertMatches("abc", p, true);
+    		assertMatches("a10", p, true);
+    		assertMatches("a1a", p, true);
+    		assertMatches("_", p, true);
+    		assertMatches("_a", p, true);
+    		assertMatches("_1", p, true);
+
+
+    		assertMatches("1", p, false);
+    		assertMatches("1a", p, false);
+    		assertMatches("1_", p, false);
+
+    		assertMatches("a.", p, false);
+    		assertMatches("_;", p, false);
+    		assertMatches("", p, false);
     }
+    
+    @Test public void testRegexIpaddress() {
+		Pattern p = FMCompositionParser.PATTERN_ipaddress_port;
+		assertMatches("1.1.1.1:1", p, true);
+		assertMatches("255.255.255.255:" + (1 << 16), p, true); // port has 16 bit.
+		assertMatches("0.0.0.0:0013", p, true);
+
+		assertMatches("1.1.1:1", p, false);
+		assertMatches("1.1.1.1:", p, false);
+		assertMatches("a.b.c.d:1", p, false);
+		assertMatches("abcd:1", p, false);
+		assertMatches("1.1.1.1:a", p, false);
+		assertMatches("example.com:1", p, false);
+		assertMatches("", p, false);
+		assertMatches("1.1,1.1:10", p, false);
+		assertMatches("1.1.1.1:100000", p, false);
+    }
+    
+    @Test public void testRegexDomainname() {
+		Pattern p = FMCompositionParser.PATTERN_domainname_port;
+		assertMatches("example.com:1", p, true);
+		assertMatches("abc.de:" + (1 << 16), p, true); // port has 16 bit.
+		assertMatches("aa:1", p, true);
+		assertMatches("a-a.com:1", p, true);
+		assertMatches("a.a.com:1", p, true);
+		assertMatches("a1.com:1", p, true);
+		assertMatches("localhost:5000", p, true);
+
+		assertMatches("-a.com:1", p, false);
+		assertMatches("1a.com:1", p, false);
+
+		assertMatches("", p, false);
+		assertMatches("a:", p, false);
+		assertMatches("a:1", p, false);
+		assertMatches(":1", p, false);
+		assertMatches("a,com:1", p, false);
+		assertMatches("l:a", p, false);
+    }
+    
+    @Test public void testRegexClasspath() {
+    		Pattern p = FMCompositionParser.PATTERN_classpath;
+    		assertMatches("java.util.Map", p, true);
+    		assertMatches("a.b", p, true);
+    		assertMatches("a.b1._c.d20.e_12._f.g1.a1h.a13i.Abc", p, true);
+    		assertMatches("ABC.ED.ae._1", p, true);
+    		assertMatches("_._._", p, true);
+    		
+
+    		assertMatches("ABC", p, false);
+    		assertMatches("abc.1", p, false);
+    		assertMatches("abcdef:g", p, false);
+    		assertMatches("abcdefg:", p, false);
+    		assertMatches(":abc.defg", p, false);
+    		assertMatches("abc.defg-", p, false);
+    		assertMatches("abc:a1", p, false);
+    }
+    
     
     @Test public void testRegexInstruction() {
     		String instruction = "sa/s1::ApplyInPlace({i1=i1})";
@@ -56,6 +135,11 @@ public class FMCompositionParserTester {
         	assertMatchEquals("sa/s1::ApplyInPlace({i1=i1})", false, null, null, null, null, null);
 
     }
+    
+    private void assertMatches(String text, Pattern pattern, boolean expectedToMatch) {
+    		Assert.assertEquals(expectedToMatch, pattern.matcher(text).matches());
+    }
+    
     
     private void assertMatchEquals(String instruction, 
 	    		boolean exptectedToMatch, String expectedLeftside, 
@@ -86,4 +170,6 @@ public class FMCompositionParserTester {
 			System.out.println("No match " + instruction);
 		}
     }
+    
+    
 }

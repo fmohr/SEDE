@@ -45,7 +45,7 @@ public final class FMCompositionParser {
     public final static Pattern 	PATTERN_ipaddress_port = Pattern.compile(REGEX_ipaddress_port);
 
     /** Regex for domain names concatenated with port. e.g.: isys.db.upb.de:8000 */
-    public final static String 	REGEX_domainname_port = "(?:(?:[a-zA-Z](?:\\.|\\w)++):\\d{1,5})";
+    public final static String 	REGEX_domainname_port = "(?:(?:[a-zA-Z](?:\\.|\\w|-)++):\\d{1,5})";
     public final static Pattern 	PATTERN_domainname_port = Pattern.compile(REGEX_domainname_port);
 
     /** 

@@ -66,7 +66,7 @@ public class GraphComposition {
         if(nodeToRemove == null) {
             return;
         }
-        /* remove all edges which contain the node that is to be removed. */
+        /* remove all edges which contain the nodeToRemove. */
         edges.removeIf(edge -> edge.contains(nodeToRemove));
         /* remove the node itself. */
         nodes.remove(nodeToRemove);

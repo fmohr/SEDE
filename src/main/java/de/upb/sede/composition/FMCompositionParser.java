@@ -1,11 +1,16 @@
 package de.upb.sede.composition;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 import de.upb.sede.composition.graphs.InstructionNode;
+import de.upb.sede.composition.graphs.ServiceCreationNode;
+import de.upb.sede.composition.graphs.ServiceInvocationNode;
 import de.upb.sede.exceptions.FMCompositionSyntaxException;
 
 
@@ -25,9 +30,12 @@ public final class FMCompositionParser {
 	/*
 	 * All regex patterns are applied to fmCompositions. 
 	 */
-	
+
 	/** Regex used to separate instructions */
     public final static String 	REGEX_lineSeperator = "[\\s]*;[\\s]*";
+    
+	/** Regex used to separate instructions */
+    public final static String 	REGEX_inputSeperator = "[\\s]*,[\\s]*";
 
     /** Regex for a field name. */
     public final static String 	REGEX_fieldname = "(?:[_a-zA-Z]\\w*+)";
@@ -64,24 +72,76 @@ public final class FMCompositionParser {
      *  		inputs = "i1=0,i2=0,i3=10,i4=10"
     	 */
     public final static String 	REGEX_instruction = "^"
-    													+ "(?:(?<leftside>" + REGEX_fieldname + ")=){0,1}" 
-    													+ "(?:(?<host>" + REGEX_ipaddress_port + "|" + REGEX_domainname_port + ")/){0,1}"
-    													+ "(?<context>" + REGEX_classpath + "|" + REGEX_fieldname + ")::"
-    													+ "(?<method>" + REGEX_fieldname + ")"
-    													+ "\\((?:\\{(?<inputs>(?:\\w|,|=)++)\\}){0,1}\\)"
+    													+ "(?:(?<leftside>" 	+ REGEX_fieldname + ")=){0,1}" 
+    													+ "(?:(?<host>" 		+ REGEX_ipaddress_port + "|" + REGEX_domainname_port + ")/){0,1}"
+    													+    "(?<context>" 	+ REGEX_classpath + "|" + REGEX_fieldname + ")::"
+    													+    "(?<method>" 	+ REGEX_fieldname + ")"
+    											  + "\\((?:\\{(?<inputs>(?:\\w|,|=)++)\\}){0,1}\\)"
     													+ "$";
     public final static Pattern 	PATTERN_instruction = Pattern.compile(REGEX_instruction);
+    
+    /**
+     * Regex for parameters.
+     * e.g.: "i1=10"
+     * Uses anchors!!
+     */
+    public final static String REGEX_parameter = "^(?:[iI](?<position>[1-9][0-9]*?)=){0,1}(?<parametervalue>[\\w\\.\"]++)$";
+    public final static Pattern PATTERN_parameter = Pattern.compile(REGEX_parameter);
+     
+    
+    /**
+     * Regex for numbers. Can be floats and can have exponents.
+     * e.g.: 10, 10.1, 10.1E10 are all valid.
+     * Uses anchors!!
+     */
+    public final static String REGEX_constNumber = "^[-+]?[0-9]*\\.?[0-9]+([eE][-+]?[0-9]+)?$";
+    public final static Pattern 	PATTERN_constNumber = Pattern.compile(REGEX_constNumber);
+    
+    /**
+     * Regex for strings. String ought to be in literal quotation marks:
+     * e.g.: String s = "\"abc\"" is a valid string.
+     * Uses anchors!!
+     */
+    public final static String REGEX_constString = "^\"[\\S\\s]*\"$";
+    public final static Pattern 	PATTERN_constString = Pattern.compile(REGEX_constString);
+    
+    /**
+     * Regex for boolean. Is case insensitive:
+     * e.g.: "true", "True", "TRUE", "TrUe" all match. Same with false.
+     * Uses anchors!!
+     */
+    public final static String REGEX_constBool = "^(?:true)|(?:false)$";
+    public final static Pattern 	PATTERN_constBool = Pattern.compile(REGEX_constBool, Pattern.CASE_INSENSITIVE);
 
+    /**
+     * Regex for null constant. Is case-insensitive:
+     * e.g.: "null", "NULL", "NuLL"all match. 
+     * Uses anchors!!
+     */
+    public final static String REGEX_constNull = "^(?:null)$";
+    public final static Pattern PATTERN_constNull = Pattern.compile(REGEX_constNull, Pattern.CASE_INSENSITIVE);
+    
+    /**
+     * Regex that matches any constant value.
+     * 
+     */
+    public final static String REGEX_const = "(?:" + REGEX_constNumber + ")|(?:" +  REGEX_constString +")|(?:" + REGEX_constBool + ")|(?:" + REGEX_constNull + ")";
+    public final static Pattern PATTERN_const = Pattern.compile(REGEX_const);
+    
+    
     /**
      * Returns list of instruction from the given fmComposition.
      * In fmCompositions instructions are separated by ';'.  
      * Each instruction is trimmed and its whitespaces are removed.
      * Empty instructions are ignored. 
      * 
+     * The list returned by this method is immutable.
+     * 
      * Example:
      * 		separateInstructions("a;b;;c;d") -> ["a", "b", "c", "d"]
      */
     public static List<String> separateInstructions(final String fmComposition){
+    		Objects.requireNonNull(fmComposition);
     		List<String> compositionLines = new ArrayList<>();
         /* split by ';' into multiple lines */
         String[] lines = fmComposition.split(REGEX_lineSeperator);
@@ -98,7 +158,83 @@ public final class FMCompositionParser {
         	 		compositionLines.add(line);
         	 	}
         }
-        return compositionLines;
+        return Collections.unmodifiableList(compositionLines);
+    }
+    
+    /**
+     * Returns list of inputs split by ','.
+     * 
+     * The list returned by this method is immutable.
+     * 
+     * Returns an empty list if inputString is null.
+     * 
+     * Example:
+     * 		separateInstructions("a,b,,cd") -> ["a", "b", "cd"]
+     */
+    public static List<String> separateInputs(final String inputString){
+    		if(inputString == null) {
+    			return Collections.EMPTY_LIST;
+    		}
+        /* split by ';' into multiple lines */
+        String[] inputArray = inputString.split(REGEX_inputSeperator);
+        /* can't create a graph from a empty composition. */
+        if(inputArray.length == 0) {
+        		return Collections.EMPTY_LIST;
+        }
+		List<String> inputs = new ArrayList<>();
+        /* add every non empty line to the compositionLines list. */
+        for(String input : inputArray) {
+        		/* remove whitespaces */
+        		input = input.trim();
+        		input = input.replaceAll("\\s", "");
+        		
+        	 	if(!input.isEmpty()) {
+        	 		inputs.add(input);
+        	 	}
+        }
+        /*
+         * Now the inputs contains values like "i1=2", "i2=someVar", ..
+         * Remove the the positional indicators and the equal sign:
+         */
+        List<String> parameters = new ArrayList<>();
+        /** 
+         * flag indicates that positional indicators were used before.
+         */
+        boolean positionalIndicatorUsed = false; 
+        for(String input : inputs) {
+        		Matcher inputMatcher =  PATTERN_parameter.matcher(input);
+        		if(inputMatcher.matches()) {
+        			String positionIndicator = inputMatcher.group("position");
+        			String parameter = inputMatcher.group("parametervalue");
+        			if(positionIndicator != null) {
+        				/* positional indicator included: */
+        				positionalIndicatorUsed = true;
+        				int position = Integer.parseInt(positionIndicator);
+        				/* fill list with null value until it large enough to fit in the parameter at the given position */
+        				
+        				if(parameters.size() >=  position) {
+        					/* position is indicating to overwrite a value from before. e.g. "i1=0,i1=1,.." */
+        					throw new FMCompositionSyntaxException("A single Position is assigned twice: " + inputString);
+        				}
+        				while(parameters.size() < position ) {
+        					parameters.add("null");
+        				}
+        				/* positions start with 1. */
+        				parameters.set(position-1, parameter);
+        			} else {
+        				if(positionalIndicatorUsed) {
+        					/* 
+        					 * positional indicator used in the last iteration. 
+        					 */
+        					throw new FMCompositionSyntaxException("Once positonal indicator was used, positional indicator stops being optional: \n\t" +  inputString);
+        				}
+        				parameters.add(parameter);
+        			}
+        		}else {
+        			throw new FMCompositionSyntaxException(input, REGEX_parameter);
+        		}
+        }
+        return Collections.unmodifiableList(parameters);
     }
     
     /**
@@ -107,10 +243,52 @@ public final class FMCompositionParser {
     public static InstructionNode parseInstruction(final String instruction) {
     		Matcher instructionMatcher = PATTERN_instruction.matcher(instruction);
     		if(instructionMatcher.matches()) {
-        		InstructionNode iNode = new InstructionNode(instruction);
-        		String leftsideFieldname = instructionMatcher.group("leftsidefield");
-        		iNode.setLeftSideFieldname(leftsideFieldname);
-        		return iNode;
+    			
+    			/*
+    			 * Extract values from instruction.
+    			 * 
+    			 * e.g.: instruction : s1=127.0.0.1:8000/Catalano.Imaging.Filters.Crop::__construct({i1=0,i2=0,i3=10,i4=10})
+    			 */
+        		String leftside = instructionMatcher.group("leftside");
+        		String host = instructionMatcher.group("host");
+        		String context = instructionMatcher.group("context");
+        		String method = instructionMatcher.group("method");
+        		String inputs = instructionMatcher.group("inputs");
+        		/*
+        		 * 	Values would be:
+        		 * 
+        		 * 	leftside = "s1" (might be null)
+		     *  	host = "127.0.0.1:8000" (might be null)
+		     *  	context = "Catalano.Imaging.Filters.Crop"
+		     *  	method = "__construct"
+		     *  	inputs = "i1=0,i2=0,i3=10,i4=10" (might be null)
+        		 */
+        		
+        		/*
+        		 * Distinguish between service creation and service invocation;
+        		 */
+        		InstructionNode instNode;
+        		if(PATTERN_classpath.matcher(context).matches()) {
+        			instNode = new ServiceCreationNode(instruction, context, method);
+        		} else {
+        			instNode = new ServiceInvocationNode(instruction, context, method);
+        			
+        		}
+        		/* populate fields */
+        		if(leftside!=null) {
+        			instNode.setLeftSideFieldname(leftside);
+        		}
+        		if(host!=null) {
+        			instNode.setHost(host);
+        		}
+        		
+        		/* parse input parameters */
+        		// inputs may be null, but the method returns an empty list in that case.
+        		List<String> inputList = separateInputs(inputs); 
+        		instNode.setParameterFields(inputList);
+        		
+        		
+        		return instNode;
     		}
     		else {
     			throw new FMCompositionSyntaxException(instruction, REGEX_instruction);

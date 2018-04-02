@@ -11,9 +11,10 @@ import de.upb.sede.exceptions.UnassignedFieldException;
  * 
  * @author aminfaez
  *
- *         This node represents an instruction in a graphComposition.
+ *  This node represents an instruction in a graphComposition which was parsed from a fmInstruction.
+ *  This can either be a method invocation (ServiceInvocationNode) or a Service creation (ServiceCreationNode).
  */
-public final class InstructionNode extends BaseNode {
+public abstract class InstructionNode extends BaseNode {
 
 	private static final String unassignedValue = "UNDEFINED";
 
@@ -22,16 +23,27 @@ public final class InstructionNode extends BaseNode {
 	private String host;
 	private String context;
 	private String method;
-	private List<String> inputFieldnames;
+	
+	/**
+	 * Parameters for method or constructor invocation.
+	 * The order of the parameters has to be kept.
+	 * May contain field-names referencing to data or constants like numbers or strings.
+	 * e.g.: ["a1", "b1", "10", "\"a\""]
+	 * The first two are fieldnames. The third is a constant number. The fourth is a constant string.
+	 * 
+	 * 
+	 *  The list itself is read-only.
+	 */
+	private List<String> parameterFields;
 
 	@SuppressWarnings("unchecked")
-	public InstructionNode(String basedOnInstruction) {
+	public InstructionNode(String basedOnInstruction, String context, String method) {
 		this.fmInstruction = Objects.requireNonNull(basedOnInstruction);
 		leftsideFieldname = unassignedValue;
 		host = unassignedValue;
-		context = unassignedValue;
-		method = unassignedValue;
-		inputFieldnames = Collections.EMPTY_LIST;
+		parameterFields = Collections.EMPTY_LIST;
+		this.context = Objects.requireNonNull(context);
+		this.method = Objects.requireNonNull(method);
 	}
 
 	public String getFmInstruction() {
@@ -79,9 +91,6 @@ public final class InstructionNode extends BaseNode {
 		return context;
 	}
 
-	public void setContext(String context) {
-		this.context = Objects.requireNonNull(context);
-	}
 
 	public boolean isAssignedContext() {
 		return context != unassignedValue;
@@ -94,20 +103,32 @@ public final class InstructionNode extends BaseNode {
 		return method;
 	}
 
-	public void setMethod(String method) {
-		this.method = Objects.requireNonNull(method);
-	}
-
 	public boolean isAssignedMethod() {
 		return method != unassignedValue;
 	}
 
-	public List<String> getInputFieldnames() {
-		return inputFieldnames;
+	public List<String> getParameterFields() {
+		return parameterFields;
 	}
 
-	public void setInputFieldnames(List<String> inputFieldNames) {
-		inputFieldnames = Collections.unmodifiableList(inputFieldNames);
+	public void setParameterFields(List<String> parameterFields) {
+		parameterFields = Collections.unmodifiableList(parameterFields);
+	}
+	
+	@Override
+	boolean produces(String fieldname) {
+		if(isAssignedLeftSideFieldname()) {
+			return getLeftSideFieldname().equals(fieldname);
+		}
+		else {
+			return false;
+		}
+	}
+	
+
+	@Override
+	void expand(GraphComposition graph) {
+		
 	}
 
 }

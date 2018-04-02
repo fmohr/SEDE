@@ -23,6 +23,7 @@ import org.junit.Test;
 import de.upb.sede.composition.FMComposition;
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.graphs.GraphComposition;
+import de.upb.sede.exceptions.FMCompositionSyntaxException;
 
 /**
  * 
@@ -51,6 +52,50 @@ public class FMCompositionParserTester {
     				+ "__construct({i1=0,i2=0,i3=10,i4=10})";
     		Assert.assertEquals(firstLine, lines.get(0));
     }
+    
+    @Test public void test_separateInputs() {
+		String inputs = "i1=1,i2=\"a\",i3=true,i4=field1";
+		assertSeparatParamsEqual(inputs, false, "1", "\"a\"", "true", "field1");
+		
+
+		inputs = "1,\"a\",true,field1";
+		assertSeparatParamsEqual(inputs, false, "1", "\"a\"", "true", "field1");
+
+		inputs = "1,\"a\",i3=true,i4=field1";
+		assertSeparatParamsEqual(inputs, false, "1", "\"a\"", "true", "field1");
+
+		inputs = "i1=true,i1=field1";
+		assertSeparatParamsEqual(inputs, true);
+
+		inputs = "i1=a,b";
+		assertSeparatParamsEqual(inputs, true);
+
+		inputs = "i1=a,b";
+		assertSeparatParamsEqual(inputs, true);
+
+		inputs = "";
+		assertSeparatParamsEqual(inputs, false);
+		
+		inputs = null;
+		assertSeparatParamsEqual(inputs, false);
+		
+    }
+    private void assertSeparatParamsEqual(String inputString, boolean expectedException, String... expectedParam) {
+    		List<String> params;
+    		try {
+    			params = FMCompositionParser.separateInputs(inputString);
+    		} catch (FMCompositionSyntaxException e){
+    			Assert.assertEquals(true, expectedException);
+    			return;
+    		}
+		Assert.assertEquals(false, expectedException);
+		Assert.assertEquals(expectedParam.length, params.size());
+		for(int i =0; i < expectedParam.length; i ++) {
+			Assert.assertEquals(expectedParam[i], params.get(i));
+		}
+		
+    }
+
 
     @Test public void testRegexFieldname() {
     		Pattern p = FMCompositionParser.PATTERN_fieldname;
@@ -128,6 +173,111 @@ public class FMCompositionParserTester {
     		assertMatches("abc:a1", p, false);
     }
     
+    @Test public void testRegexConstsBool() {
+		Pattern p = FMCompositionParser.PATTERN_constBool;
+		assertMatches("true", 	p, true);
+		assertMatches("True", 	p, true);
+		assertMatches("TRUE", 	p, true);
+		assertMatches("TrUe", 	p, true);
+		assertMatches("false", 	p, true);
+		assertMatches("False",	p, true);
+		assertMatches("FALSE", 	p, true);
+		assertMatches("FaLsE", 	p, true);
+		
+
+		assertMatches("", 		p, false);
+		assertMatches("0", 		p, false);
+		assertMatches("abc", 		p, false);
+		assertMatches("tru", 		p, false);
+		assertMatches("fals", 		p, false);
+		assertMatches("ABCD", 		p, false);
+		assertMatches("truefalse", 		p, false);
+		assertMatches("_true", 		p, false);
+		assertMatches("false_", 		p, false);
+    }
+
+    @Test public void testRegexConstsNumber() {
+		Pattern p = FMCompositionParser.PATTERN_constNumber;
+		assertMatches("+1", 				p, true);
+		assertMatches("-1", 				p, true);
+		assertMatches("1", 				p, true);
+		assertMatches("01", 				p, true);
+		assertMatches("1234567890", 		p, true);
+		assertMatches("1.11", 			p, true);
+		assertMatches("1.0", 			p, true);
+		assertMatches(".2", 				p, true);
+		assertMatches("0.0123456789",	p, true);
+		assertMatches("1.1e01", 		p, true);
+		assertMatches("1.51e10", 		p, true);
+		assertMatches("1.01E3", 			p, true);
+		assertMatches("+1.01E-3", 			p, true);
+		
+
+		assertMatches("", 		p, false);
+		assertMatches("+", 		p, false);
+		assertMatches("_", 		p, false);
+		assertMatches(",", 		p, false);
+		assertMatches("1.", 		p, false);
+		assertMatches("1,0", 		p, false);
+		assertMatches("1.0.", 		p, false);
+		assertMatches(".1.", 		p, false);
+		assertMatches("abc1def", 		p, false);
+		assertMatches("1e", 		p, false);
+		assertMatches("1e1e", 		p, false);
+    }
+    
+
+    @Test public void testRegexConstsString() {
+		Pattern p = FMCompositionParser.PATTERN_constString;
+		assertMatches("\"hallo\"", p, true);
+		assertMatches("\"one space\"", p, true);
+		assertMatches("\" spacestarting\"", p, true);
+		assertMatches("\"spaceending \"", p, true);
+		assertMatches("\"\"", p, true);
+		assertMatches("\"123\"", p, true);
+		assertMatches("\".;'[#£!({>-_,\"\"", p, true);
+		assertMatches("\"quote \"in\" quote\"", p, true);
+		assertMatches("\"\"\"", p, true);
+		
+
+		assertMatches("", 		p, false);
+		assertMatches("\"", 		p, false);
+		assertMatches("\"abc", 		p, false);
+		assertMatches("\"abc\"a", 		p, false);
+    }
+
+
+    @Test public void testRegexConstsNull() {
+		Pattern p = FMCompositionParser.PATTERN_constNull;
+		assertMatches("null", p, true);
+		assertMatches("NULL", p, true);
+		assertMatches("NuLL", p, true);
+		
+
+		assertMatches("", 		p, false);
+		assertMatches("_", 		p, false);
+		assertMatches("nul", 		p, false);
+		assertMatches("nulll", 		p, false);
+		assertMatches("0", 		p, false);
+		assertMatches("1", 		p, false);
+    }
+
+    @Test public void testRegexConsts() {
+		Pattern p = FMCompositionParser.PATTERN_const;
+		assertMatches("null", p, true);
+		assertMatches("1", p, true);
+		assertMatches("\"a\"", p, true);
+		assertMatches("true", p, true);
+		
+
+		assertMatches("", 		p, false);
+		assertMatches("_", 		p, false);
+		assertMatches("1a", 		p, false);
+		assertMatches("\"1", 		p, false);
+		assertMatches("null1", 		p, false);
+		assertMatches("truenull", 		p, false);
+    }
+    
     
     @Test public void testRegexInstruction() {
 //    		System.out.println(FMCompositionParser.REGEX_instruction);
@@ -172,6 +322,9 @@ public class FMCompositionParserTester {
     		assertMatchEquals("s1::method(})", false, null, null, null, null, null);
     		assertMatchEquals("s1::method({i1=1;w=1})", false, null, null, null, null, null);
     }
+    
+
+    
     
     private void assertMatches(String text, Pattern pattern, boolean expectedToMatch) {
     		Assert.assertEquals(expectedToMatch, pattern.matcher(text).matches());

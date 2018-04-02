@@ -3,7 +3,7 @@ package de.upb.sede.composition.graphs;
 import java.util.Objects;
 
 /**
- * 2-Tupel of BaseNode. 
+ * 2-Tuple of BaseNode. 
  * Represents a directed edge in GraphComposition.
  * 
  * Immutable
@@ -13,7 +13,7 @@ public final class Edge{
     private final BaseNode to;
 
     /**
-     * Standard constructor creating an 2-tupel edge. 
+     * Standard constructor creating an 2-tuple edge. 
      * Null values will throw an exception.
      */
     public Edge(BaseNode fromNode, BaseNode toNode){
@@ -29,7 +29,7 @@ public final class Edge{
     }
 
     /**
-     * Returns the tage node.
+     * Returns the target node.
      */
     public BaseNode getTo(){
         return to;

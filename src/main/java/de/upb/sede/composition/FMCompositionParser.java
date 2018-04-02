@@ -123,7 +123,7 @@ public final class FMCompositionParser {
     
     /**
      * Regex that matches any constant value.
-     * 
+     * Uses anchors!!
      */
     public final static String REGEX_const = "(?:" + REGEX_constNumber + ")|(?:" +  REGEX_constString +")|(?:" + REGEX_constBool + ")|(?:" + REGEX_constNull + ")";
     public final static Pattern PATTERN_const = Pattern.compile(REGEX_const);
@@ -294,4 +294,15 @@ public final class FMCompositionParser {
     			throw new FMCompositionSyntaxException(instruction, REGEX_instruction);
     		}
     }
+    
+    /**
+     * Returns true if the given text is a constant. That means its either boolean number or string or 'null'
+     */
+    public static boolean isConstant(String text) {
+    		if(text == null) {
+    			return false;
+    		}
+    		return PATTERN_const.matcher(text).matches();
+    }
+    
 }

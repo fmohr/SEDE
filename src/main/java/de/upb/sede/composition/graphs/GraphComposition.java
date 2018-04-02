@@ -1,21 +1,35 @@
 package de.upb.sede.composition.graphs;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+
+import de.upb.sede.config.ClassesConfig;
 
 /**
  * Composition in graph notation.
  */
 public class GraphComposition {
-    private final Set<BaseNode> nodes;
+	/**
+	 * The order of the nodes matters!
+	 * The first n nodes represent the n instructions from fmcomposition in the defined chronological order.
+	 */
+    private final List<BaseNode> nodes;
     private final Set<Edge> edges;
 
     public GraphComposition(){
-        this.nodes = new HashSet<>();
+        this.nodes = new ArrayList<>();
         this.edges = new HashSet<>();
     }
 
+
+	public List<BaseNode> getNodes() {
+		return Collections.unmodifiableList(nodes);
+	}
+    
     /**
      * Alters this graph by adding the given node.
      */
@@ -72,6 +86,8 @@ public class GraphComposition {
         nodes.remove(nodeToRemove);
     }
 
+    
+    
 
 
 }

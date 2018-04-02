@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import de.upb.sede.composition.FMCompositionParser;
+import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.config.ResolvePolicy;
 import de.upb.sede.exceptions.UnassignedFieldException;
 
 /**
@@ -116,7 +119,7 @@ public abstract class InstructionNode extends BaseNode {
 	}
 	
 	@Override
-	boolean produces(String fieldname) {
+	boolean changesState(String fieldname, ClassesConfig configuration) {
 		if(isAssignedLeftSideFieldname()) {
 			return getLeftSideFieldname().equals(fieldname);
 		}
@@ -127,7 +130,22 @@ public abstract class InstructionNode extends BaseNode {
 	
 
 	@Override
-	void expand(GraphComposition graph) {
+	void expand(GraphComposition graph, ClassesConfig configuration, ResolvePolicy policy) {
+		/*
+		 * Add param dependencies.
+		 */
+		for(String parameter : parameterFields) {
+			/*
+			 * Look for a node that produces the parameterfield
+			 */
+			BaseNode baseNode = getLastChanger(graph, parameter, configuration);
+			
+			if(FMCompositionParser.isConstant(parameter)) {
+				
+			} else {
+				
+			}
+		}
 		
 	}
 

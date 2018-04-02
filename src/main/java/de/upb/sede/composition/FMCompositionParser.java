@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.upb.sede.composition.graphs.InstructionNode;
+import de.upb.sede.exceptions.FMCompositionSyntaxException;
 
 
 /**
@@ -86,7 +87,7 @@ public final class FMCompositionParser {
         String[] lines = fmComposition.split(REGEX_lineSeperator);
         /* can't create a graph from a empty composition. */
         if(lines.length == 0) {
-        		throw new FMCompositionParseException("Empty composition: " + fmComposition + ".");
+        		throw new FMCompositionSyntaxException("Empty composition: " + fmComposition + ".");
         }
         /* add every non empty line to the compositionLines list. */
         for(String line : lines) {
@@ -100,6 +101,9 @@ public final class FMCompositionParser {
         return compositionLines;
     }
     
+    /**
+     * Parse a fmComposition instruction and transforms it into an InstructionNode.
+     */
     public static InstructionNode parseInstruction(final String instruction) {
     		Matcher instructionMatcher = PATTERN_instruction.matcher(instruction);
     		if(instructionMatcher.matches()) {
@@ -109,20 +113,7 @@ public final class FMCompositionParser {
         		return iNode;
     		}
     		else {
-    			throw new FMCompositionParseException(instruction, REGEX_instruction);
+    			throw new FMCompositionSyntaxException(instruction, REGEX_instruction);
     		}
     }
-}
-class FMCompositionParseException extends RuntimeException {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-	
-	FMCompositionParseException(String text, String regex){
-		super(String.format("Parse error in {} with regex={}.", text, regex));	
-	}
-	FMCompositionParseException(String message){
-		super(String.format("Error while parsing fm composition string: ", message));
-	}
 }

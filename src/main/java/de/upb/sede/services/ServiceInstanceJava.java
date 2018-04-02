@@ -5,17 +5,17 @@ import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 public class ServiceInstanceJava extends ServiceInstance {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID = 4273811435753528453L;
+	private static final Logger logger = Logger.getLogger(ServiceInstanceJava.class);
 	volatile ServiceJava service;
 	Object instance;
 
@@ -36,53 +36,49 @@ public class ServiceInstanceJava extends ServiceInstance {
 		try {
 			invokeMethod = instance.getClass().getMethod(opName, inputClasses);
 		} catch (NoSuchMethodException | SecurityException e) {
-			System.err.println("The method: \"" + opName + "\" could not be found for the parameters: " + params + ".");
-			e.printStackTrace();
+			logger.error("The method: \"" + opName + "\" could not be found for the parameters: " + params + ".");
+			logger.debug("Logging Exception", e);
 			return null;
 		}
 		try {
 			List<Object> result = new ArrayList<>();
 			result.add(invokeMethod.invoke(instance, sortedParams));
 			return result;
-		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-			System.err.println("The invocation of the method: \"" + invokeMethod.getName() + "\" failed.");
-			e.printStackTrace();
+		} catch (Exception e) {
+			logger.error("The invocation of the method: \"" + invokeMethod.getName() + "\" failed.");
+			logger.debug("Logging Exception", e);
 			return null;
 		}
 	}
 
 	@Override
 	public String getState() throws NotSerializableException {
-		if (!(instance instanceof Serializable)) {
-			System.err.print("Instances of the Service \"");
-			for (String id : service.getServiceIDs())
-				System.err.print(id + " | ");
-			System.err.println("\" do not imeplement the interface \"Serializable\"!");
+		if (instance instanceof Serializable) {
+			ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
+			ObjectOutputStream out = null;
+			try {
+				out = new ObjectOutputStream(byteOut);
+				out.writeObject(instance);
+				out.close();
+				byteOut.close();
+			} catch (IOException e) {
+				logger.error("Something went wrong while the object was serialized.");
+				logger.debug("Logging Exception", e);
+				return null;
+			}
+			return byteOut.toString();
+		} else {
+			logger.error("Instances of the Service" + service.getServiceIDs().get(0) + " are not Serializable.");
 			throw new NotSerializableException();
 		}
-		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-		ObjectOutputStream out = null;
-		try {
-			out = new ObjectOutputStream(byteOut);
-			out.writeObject(instance);
-			out.close();
-			byteOut.close();
-		} catch (IOException e) {
-			System.err.println("Something went wrong while the object was serialized.");
-			e.printStackTrace();
-			return null;
-		}
-		return byteOut.toString();
 	}
 
 	public Serializable getInstance() throws NotSerializableException {
-		if (!(instance instanceof Serializable)) {
-			System.err.print("Instances of the Service \"");
-			for (String id : service.getServiceIDs())
-				System.err.print(id + " | ");
-			System.err.println("\" do not implement the interface \"Serializable\"!");
+		if (instance instanceof Serializable) {
+			return (Serializable) instance;
+		} else {
+			logger.error("Instances of the Service " + service.getServiceIDs().get(0) + " are not Serialiazable.");
 			throw new NotSerializableException();
 		}
-		return (Serializable) instance;
 	}
 }

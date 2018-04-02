@@ -1,11 +1,11 @@
 package de.upb.sede.services;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
 
 /**
  * Core class to deal as the java sided representation of a plug-in which is
@@ -201,7 +201,7 @@ public class ServiceC extends Service {
 	@Override
 	public String newInstance(String name, Map<String, Object> params) {
 		ServiceInstanceC pluginInstance = new ServiceInstanceC(this);
-		String instanceName = ServiceManager.getNameSpace() + ":" + name;
+		String instanceName = name;
 		pluginInstance.setName(instanceName);
 		pluginInstance.setParams(params);
 		instances.put(instanceName, pluginInstance);

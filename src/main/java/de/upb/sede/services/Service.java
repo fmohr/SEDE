@@ -11,6 +11,10 @@ public abstract class Service implements Serializable {
 	 * 
 	 */
 	private static final long serialVersionUID = -6016176195313769529L;
+	
+	public static final String SERILALIZATION_DIR = "../../serializations/";
+	public static final String SERILALIZATION_SUFFIX = ".ser";
+	
 	List<File> linkedFiles;
 	File serviceFile;
 	ServiceMetaInformation metaInfos = new ServiceMetaInformation();

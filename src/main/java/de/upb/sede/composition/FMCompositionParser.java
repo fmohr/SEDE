@@ -67,7 +67,7 @@ public final class FMCompositionParser {
     													+ "(?:(?<host>" + REGEX_ipaddress_port + "|" + REGEX_domainname_port + ")/){0,1}"
     													+ "(?<context>" + REGEX_classpath + "|" + REGEX_fieldname + ")::"
     													+ "(?<method>" + REGEX_fieldname + ")"
-    													+ "\\(\\{(?<inputs>.*?)\\}\\)"
+    													+ "\\((?:\\{(?<inputs>(?:\\w|,|=)++)\\}){0,1}\\)"
     													+ "$";
     public final static Pattern 	PATTERN_instruction = Pattern.compile(REGEX_instruction);
 

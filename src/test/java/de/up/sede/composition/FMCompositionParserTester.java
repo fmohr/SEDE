@@ -130,10 +130,47 @@ public class FMCompositionParserTester {
     
     
     @Test public void testRegexInstruction() {
-    		String instruction = "sa/s1::ApplyInPlace({i1=i1})";
+//    		System.out.println(FMCompositionParser.REGEX_instruction);
+    		/* positive tests */
+    		assertMatchEquals("a=localhost:10/s1::method1({i1=i1})", true, "a", "localhost:10", "s1", "method1", "i1=i1");
+		assertMatchEquals("localhost:10/s1::method1({i1=i1})", true, null, "localhost:10", "s1", "method1", "i1=i1");
+		
+    		assertMatchEquals("a=s1::method1({i1=i1})", true, "a", null, "s1", "method1", "i1=i1");
+    		assertMatchEquals("s1::method1({i1=i1})", true, null, null, "s1", "method1", "i1=i1");
+    	
+		assertMatchEquals("localhost:10/s1::method1()", true, null, "localhost:10", "s1", "method1", null);
+    		assertMatchEquals("a=s1::method1()", true, "a", null, "s1", "method1", null);
+    		assertMatchEquals("s1::method1()", true, null, null, "s1", "method1", null);
+    	
+    		assertMatchEquals("a=localhost:10/package1.Class42::method1({i1=i1})", true, "a", "localhost:10", "package1.Class42", "method1", "i1=i1");
+    		assertMatchEquals("localhost:10/package1.Class42::method1({i1=i1})", true, null, "localhost:10", "package1.Class42", "method1", "i1=i1");
     		
-        	assertMatchEquals("sa/s1::ApplyInPlace({i1=i1})", false, null, null, null, null, null);
+        	assertMatchEquals("a=package1.Class42::method1({i1=i1})", true, "a", null, "package1.Class42", "method1", "i1=i1");
+        	assertMatchEquals("package1.Class42::method1({i1=i1})", true, null, null, "package1.Class42", "method1", "i1=i1");
+        	
+    		assertMatchEquals("localhost:10/package1.Class42::method1()", true, null, "localhost:10", "package1.Class42", "method1", null);
+        	assertMatchEquals("a=package1.Class42::method1()", true, "a", null, "package1.Class42", "method1", null);
+        	assertMatchEquals("package1.Class42::method1()", true, null, null, "package1.Class42", "method1", null);
+        	
+        	
+        	/* negative tests */
+    		assertMatchEquals("", false, null, null, null, null, null);
+    		assertMatchEquals("abcdefg", false, null, null, null, null, null);
+    		assertMatchEquals("01234", false, null, null, null, null, null);
+    		
+    		assertMatchEquals("01234", false, null, null, null, null, null);
 
+    		assertMatchEquals("a=localhost:10/s1:method1({i1=i1})", false, null, null, null, null, null);
+    		assertMatchEquals("a=localhost:10/method1({i1=i1})", false, null, null, null, null, null);
+    		assertMatchEquals("=localhost:10/s1::method1({i1=i1})", false, null, null, null, null, null);
+    		assertMatchEquals("a=localhost/s1::method1({i1=i1})", false, null, null, null, null, null);
+    		assertMatchEquals("a=localhost:10s1::method1({i1=i1})", false, null, null, null, null, null);
+    		assertMatchEquals("method1({i1=i1})", false, null, null, null, null, null);
+    		assertMatchEquals("s1::({i1=i1})", false, null, null, null, null, null);
+    		assertMatchEquals("s1::method({)", false, null, null, null, null, null);
+    		assertMatchEquals("s1::method({})", false, null, null, null, null, null);
+    		assertMatchEquals("s1::method(})", false, null, null, null, null, null);
+    		assertMatchEquals("s1::method({i1=1;w=1})", false, null, null, null, null, null);
     }
     
     private void assertMatches(String text, Pattern pattern, boolean expectedToMatch) {
@@ -157,6 +194,9 @@ public class FMCompositionParserTester {
 			assertEquals(expectedInputs, iMatcher.group("inputs"));
 		}
     }	
+    /**
+     * For debugging.
+     */
     private void printMatch(String instruction) {
     	Matcher iMatcher = FMCompositionParser.PATTERN_instruction.matcher(instruction);
 		if(iMatcher.matches()) {

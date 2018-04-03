@@ -8,6 +8,7 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ServiceProcessor {
+	RequestPool requestPool = new RequestPool();
 	ServiceManager serviceManager;
 	ResourceAllocator resourceAllocator;
 	ExecutorService threadPool;
@@ -40,11 +41,11 @@ public class ServiceProcessor {
 	
 	public void process() {
 		for(Node node :compositionCall.getExecutionGraph()) {
-//			ServiceThread serviceThread = new ServiceThread(node, resourceAllocator, serviceManager);
+			ServiceThread serviceThread = new ServiceThread(node, resourceAllocator, serviceManager);
 			ReentrantLock lock = new ReentrantLock();
 			Condition threadExitCondition = lock.newCondition();
-//			serviceThread.setExitCondition(lock, threadExitCondition);
-//			serviceThread.start(threadPool);
+			serviceThread.setExitCondition(lock, threadExitCondition);
+			serviceThread.start(threadPool);
 		}			
 	}
 }

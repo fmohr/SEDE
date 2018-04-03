@@ -18,14 +18,14 @@ import java.nio.charset.StandardCharsets;
 public interface BasicClientRequest {
 	
 	/**
-	 * Send returns an outputsteam.
+	 * Send returns an outputstream.
 	 * Writing into it should send the data.
 	 * 
 	 */
 	public OutputStream send();
 	
 	/**
-	 *  Returns an inputstream which contains the answer of the transaktion.
+	 *  Returns an inputstream which contains the answer of the transaction.
 	 *  Might block.
 	 *  
 	 */

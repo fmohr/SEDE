@@ -1,4 +1,4 @@
-package de.upb.sede.services;
+package de.upb.sede.exec;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -6,13 +6,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class FileManager {
+import de.upb.sede.services.Language;
+
+public class ServiceFileManager extends FileManager{
 	private static final String JAVA_DIR = "java_services";
 	private static final String C_DIR = "c_services";
 	private static final String PYTHON_DIR = "python_services";
 	private File serviceLocation, cLocation, javaLocation, pythonLocation;
 
-	public FileManager(File serviceLocation) {
+	public ServiceFileManager(File serviceLocation) {
 		this.serviceLocation = serviceLocation;
 		cLocation = new File(serviceLocation + File.pathSeparator + C_DIR);
 		javaLocation = new File(serviceLocation + File.pathSeparator + JAVA_DIR);
@@ -22,14 +24,7 @@ public class FileManager {
 		mkDir(javaLocation);
 		mkDir(pythonLocation);
 	}
-
-	private void mkDir(File file) {
-		if (!file.exists()) {
-			System.out.println("Creating directory: \"" + file.getAbsolutePath() + "\"");
-			file.mkdir();
-		}
-	}
-
+	
 	/**
 	 * Stores the transmitted service in the specific service directory.
 	 * 
@@ -123,14 +118,6 @@ public class FileManager {
 			return Language.PYTHON;
 		default:
 			throw new IOException("Unknown file extension (" + serviceFile.getName() + ").");
-		}
-	}
-
-	private String getFileExtension(String filename) throws IOException {
-		try {
-			return filename.substring(filename.lastIndexOf("."));
-		} catch (IndexOutOfBoundsException e) {
-			throw new IOException("File: \"" + filename + "\" does not have a file extension.");
 		}
 	}
 }

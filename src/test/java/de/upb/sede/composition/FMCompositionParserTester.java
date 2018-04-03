@@ -246,7 +246,7 @@ assertMatches("abc:a1", p, false);
 		assertMatches("\"abc", 		p, false);
 		assertMatches("\"abc\"a", 		p, false);
     }
-
+    
 
     @Test public void testRegexConstsNull() {
 		Pattern p = FMCompositionParser.PATTERN_constNull;

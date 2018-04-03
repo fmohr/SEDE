@@ -100,13 +100,13 @@ public class GraphComposition {
      * Returns an empty list if there is no node in this graph that produces the given fieldname.
      */
     final List<BaseNode> getChangers(String fieldname, ClassesConfig configuration) {
-    		List<BaseNode> changers = new ArrayList<>();
-    		for(BaseNode node : nodes) {
-    			if(node.changesState(fieldname, configuration)) {
-    				changers.add(node);
-    			}
-    		}
-    		return changers;
+		List<BaseNode> changers = new ArrayList<>();
+		for(BaseNode node : nodes) {
+			if(node.changesState(fieldname, configuration)) {
+				changers.add(node);
+			}
+		}
+		return changers;
     }
 
 

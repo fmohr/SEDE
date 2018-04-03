@@ -1,5 +1,9 @@
 package de.upb.sede.composition.graphs;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.ResolvePolicy;
 
@@ -10,9 +14,14 @@ import de.upb.sede.config.ResolvePolicy;
  *
  */
 public class GraphConstructor {
+	
 	private final GraphComposition constructingGraph;
+	
 	private final ResolvePolicy resolvePolicy;
+	
 	private final ClassesConfig classConfig;
+	
+	private final List<InstructionNode> unresolvedInstructionNodes = new ArrayList<>();
 	
 	/**
 	 * Constructor for a brand new graph.
@@ -23,6 +32,22 @@ public class GraphConstructor {
 		this.classConfig = classConfig;
 	}
 	
-	public void addInstruction(InstructionNode instNode) {
+	/**
+	 *  Adds node to the graph.
+	 */
+	public void addInstructionNode(InstructionNode instNode) {
+		Objects.requireNonNull(instNode);
+		unresolvedInstructionNodesv.add((InstructionNode) instNode);
+		constructingGraph.addNode(instNode);
 	}
+	
+	/**
+	 * 
+	 */
+	public void resolveDataFlowDependency() {
+		for(InstructionNode instruction : instructionNodes) {
+			
+		}
+	}
+	
 }

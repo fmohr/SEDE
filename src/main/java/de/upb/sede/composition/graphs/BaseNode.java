@@ -15,11 +15,12 @@ public abstract class BaseNode {
      */
     abstract boolean changesState(String fieldname, ClassesConfig configuration);
 
-    /**
-     * Expands itself by adding nodes and edges to the graph to resolve its pre and post actions.
-     */
-    abstract void expand(GraphComposition graph, ClassesConfig configuration, ResolvePolicy policy);
+//    /**
+//     * Expands itself by adding nodes and edges to the graph to resolve its pre and post actions.
+//     */
+//    abstract void expand(GraphComposition graph, ClassesConfig configuration, ResolvePolicy policy);
     
+    abstract List<String> dependsOn();
     
 
 }

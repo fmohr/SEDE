@@ -14,10 +14,11 @@ import de.upb.sede.exceptions.UnassignedFieldException;
  * 
  * @author aminfaez
  *
- *  This node represents an instruction in a graphComposition which was parsed from a fmInstruction.
- *  This can either be a method invocation (ServiceInvocationNode) or a Service creation (ServiceCreationNode).
+ *         This node represents an instruction in a graphComposition which was
+ *         parsed from a fmInstruction. This can either be a method invocation
+ *         or a Service creation.
  */
-public abstract class InstructionNode extends BaseNode {
+public class InstructionNode extends BaseNode {
 
 	private static final String unassignedValue = "UNDEFINED";
 
@@ -27,16 +28,16 @@ public abstract class InstructionNode extends BaseNode {
 	private String host;
 	private String context;
 	private String method;
-	
+
 	/**
-	 * Parameters for method or constructor invocation.
-	 * The order of the parameters has to be kept unchanged.
-	 * May either contain field-names referencing to data or else constants like numbers or strings.
-	 * e.g.: ["a1", "b1", "10", "\"a\""]
-	 * The first two are fieldnames. The third is a constant number. The fourth is a constant string.
+	 * Parameters for method or constructor invocation. The order of the parameters
+	 * has to be kept unchanged. May either contain field-names referencing to data
+	 * or else constants like numbers or strings. e.g.: ["a1", "b1", "10", "\"a\""]
+	 * The first two are fieldnames. The third is a constant number. The fourth is a
+	 * constant string.
 	 * 
 	 * 
-	 *  The list itself is read-only.
+	 * The list itself is read-only.
 	 */
 	private List<String> parameterFields;
 
@@ -58,7 +59,7 @@ public abstract class InstructionNode extends BaseNode {
 	/*
 	 * standard get, set, isAssigned methods.
 	 */
-	
+
 	public int getInstructionIndex() {
 		return instructionIndex;
 	}
@@ -100,7 +101,6 @@ public abstract class InstructionNode extends BaseNode {
 		return context;
 	}
 
-
 	public boolean isAssignedContext() {
 		return context != unassignedValue;
 	}
@@ -119,21 +119,22 @@ public abstract class InstructionNode extends BaseNode {
 	public List<String> getParameterFields() {
 		return parameterFields;
 	}
-	
+
 	/**
 	 * Sets the parameter field
 	 */
 	public void setParameterFields(List<String> parameterFields) {
-		if(parameterFields.getClass().getName().equals("java.util.Collections$UnmodifiableRandomAccessList") || 
-				parameterFields.getClass().getName().equals("java.util.Collections$EmptyList")	) {
+		if (parameterFields.getClass().getName().equals("java.util.Collections$UnmodifiableRandomAccessList")
+				|| parameterFields.getClass().getName().equals("java.util.Collections$EmptyList")) {
 			this.parameterFields = parameterFields;
-		}
-		else {
+		} else {
 			this.parameterFields = Collections.unmodifiableList(parameterFields);
 		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -150,7 +151,9 @@ public abstract class InstructionNode extends BaseNode {
 		return result;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -215,62 +218,64 @@ public abstract class InstructionNode extends BaseNode {
 
 	@Override
 	boolean changesState(String fieldname, ClassesConfig configuration) {
-		if(isAssignedLeftSideFieldname()) {
+		if (isAssignedLeftSideFieldname()) {
 			return getLeftSideFieldname().equals(fieldname);
-		}
-		else {
+		} else {
 			return false;
 		}
 	}
-	
+
 	void resolveDependency(String field, GraphComposition graph, ClassesConfig configuration) {
 		/*
 		 * Get all the node that produces/changes the field this node is depending on.
 		 */
 		List<BaseNode> dependingFromNodes = graph.getChangers(field, configuration);
-		
-		if(dependingFromNodes.size() > 0) {
+
+		if (dependingFromNodes.size() > 0) {
 			/*
-			 * If there is at least one node that changes the state of the field, it means that the data is already available.
+			 * If there is at least one node that changes the state of the field, it means
+			 * that the data is already available.
 			 */
-			
+
 		} else {
-			
+
 		}
 	}
 
-	@Override
 	void expand(GraphComposition graph, ClassesConfig configuration, ResolvePolicy policy) {
 		/*
 		 * Add param dependencies.
 		 */
-		for(String parameter : parameterFields) {
+		for (String parameter : parameterFields) {
 			/*
-			 * Get all the node that produces/changes the parameter this node is depended on.
+			 * Get all the node that produces/changes the parameter this node is depended
+			 * on.
 			 */
 			List<BaseNode> dependingFromNodes = graph.getChangers(parameter, configuration);
-			
-			if(dependingFromNodes.size() > 0) {
+
+			if (dependingFromNodes.size() > 0) {
 				/*
-				 * If there is at least one node  
+				 * If there is at least one node
 				 */
-				
+
 			}
 			/*
-			 * Connect every node this node is depending on to this one. 
+			 * Connect every node this node is depending on to this one.
 			 */
 			dependingFromNodes.forEach(dependsOn -> graph.connectNodes(dependsOn, this));
-			
-			if(FMCompositionParser.isConstant(parameter)) {
-				
+
+			if (FMCompositionParser.isConstant(parameter)) {
+
 			} else {
-				
+
 			}
 		}
-		
+
 	}
 
-	
-	
-
+	@Override
+	List<String> dependsOn() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

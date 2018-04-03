@@ -17,17 +17,3 @@ public class Rudimentary {
         assertTrue("abc".equalsIgnoreCase("ABC"));
     }
 }
-
-
-/** 
- * x_x
- */
-class __ {
-	
-    interface _{
-		__ _(_ __);
-    }
-    _ _(__ _) {
-	    return (___ -> _);
-    }
-}

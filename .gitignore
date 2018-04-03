@@ -41,4 +41,6 @@ gradle-app.setting
 
 
 ## own ignores
+
 !.gitignore
+/.classpath

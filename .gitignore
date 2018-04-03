@@ -26,6 +26,8 @@ hs_err_pid*
 ## eclipse ignores 
 
 .project
+.settings/org.eclipse.jdt.core.prefs
+.settings/org.eclipse.buildship.core.prefs
 
 
 ## gradle ignores

@@ -20,24 +20,6 @@ public abstract class BaseNode {
      */
     abstract void expand(GraphComposition graph, ClassesConfig configuration, ResolvePolicy policy);
     
-    /**
-     * Iterates all nodes to find a producer for the given fieldname.
-     * Always takes the last node from the nodes list which produces the fieldname.
-     * Returns null if there is no node in this graph that produces the given fieldname.
-     */
-    final BaseNode getLastChanger(GraphComposition graph, String fieldname, ClassesConfig configuration) {
-    		// TODO data flow dependency !!!
-    		BaseNode lastNode = null;
-    		List<BaseNode> nodes = graph.getNodes();
-    		for(BaseNode node : nodes) {
-    			if(node.changesState(fieldname, configuration)) {
-    				lastNode = node;
-    			}
-    			if(node == this) {
-    				break; /* dont go over this method */ 
-    			}
-    		}
-    		return lastNode;
-    }
+    
 
 }

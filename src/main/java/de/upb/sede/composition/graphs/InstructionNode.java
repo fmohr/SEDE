@@ -128,6 +128,21 @@ public abstract class InstructionNode extends BaseNode {
 		}
 	}
 	
+	void resolveDependency(String field, GraphComposition graph, ClassesConfig configuration) {
+		/*
+		 * Get all the node that produces/changes the field this node is depending on.
+		 */
+		List<BaseNode> dependingFromNodes = graph.getChangers(field, configuration);
+		
+		if(dependingFromNodes.size() > 0) {
+			/*
+			 * If there is at least one node that changes the state of the field, it means that the data is already available.
+			 */
+			
+		} else {
+			
+		}
+	}
 
 	@Override
 	void expand(GraphComposition graph, ClassesConfig configuration, ResolvePolicy policy) {
@@ -136,9 +151,20 @@ public abstract class InstructionNode extends BaseNode {
 		 */
 		for(String parameter : parameterFields) {
 			/*
-			 * Look for a node that produces the parameterfield
+			 * Get all the node that produces/changes the parameter this node is depended on.
 			 */
-			BaseNode baseNode = getLastChanger(graph, parameter, configuration);
+			List<BaseNode> dependingFromNodes = graph.getChangers(parameter, configuration);
+			
+			if(dependingFromNodes.size() > 0) {
+				/*
+				 * If there is at least one node  
+				 */
+				
+			}
+			/*
+			 * Connect every node this node is depending on to this one. 
+			 */
+			dependingFromNodes.forEach(dependsOn -> graph.connectNodes(dependsOn, this));
 			
 			if(FMCompositionParser.isConstant(parameter)) {
 				

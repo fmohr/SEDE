@@ -39,8 +39,12 @@ public class GraphComposition {
 
     /**
      * Alters this graph by adding the given edge.
+     * 
      */
     private void addEdge(Edge newEdge) {
+    		if(newEdge.getFrom().equals(newEdge.getTo())) {
+    			return;
+    		}
         edges.add(newEdge);
     }
 
@@ -48,6 +52,9 @@ public class GraphComposition {
      * Alters this graph by adding an edge from to to.
      */
     public void connectNodes(BaseNode from, BaseNode to) {
+    		if(from.equals(to)) {
+    			return;
+    		}
         Edge newEdge = new Edge(from, to);
         addEdge(newEdge);
     }
@@ -87,7 +94,19 @@ public class GraphComposition {
     }
 
     
-    
+    /**
+     * Iterates all nodes and returns every node that changes the state for the given fieldname.
+     * Returns an empty list if there is no node in this graph that produces the given fieldname.
+     */
+    final List<BaseNode> getChangers(String fieldname, ClassesConfig configuration) {
+    		List<BaseNode> changers = new ArrayList<>();
+    		for(BaseNode node : nodes) {
+    			if(node.changesState(fieldname, configuration)) {
+    				changers.add(node);
+    			}
+    		}
+    		return changers;
+    }
 
 
 }

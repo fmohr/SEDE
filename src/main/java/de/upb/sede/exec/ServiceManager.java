@@ -1,13 +1,20 @@
-package de.upb.sede.services;
+package de.upb.sede.exec;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.upb.sede.services.FileManager;
+import de.upb.sede.services.Language;
+import de.upb.sede.services.Service;
+import de.upb.sede.services.ServiceC;
+import de.upb.sede.services.ServiceJava;
+import de.upb.sede.services.ServiceMetaInformation;
+import de.upb.sede.services.ServicePython;
+
 public class ServiceManager {
 	private FileManager fileManager;
-	private static String namespace = "test";
 	private List<ServiceC> serviceCList = new ArrayList<ServiceC>();
 	private List<ServiceJava> serviceJavaList = new ArrayList<ServiceJava>();
 	private List<ServicePython> servicePythonList = new ArrayList<ServicePython>();
@@ -165,16 +172,6 @@ public class ServiceManager {
 	 */
 	public List<ServicePython> getServicePythonList() {
 		return servicePythonList;
-	}
-
-	/**
-	 * Returns the currently configured namespace in which service instances are
-	 * being created.
-	 * 
-	 * @return
-	 */
-	public static String getNameSpace() {
-		return namespace;
 	}
 
 	public List<ServiceMetaInformation> getServicesMeta() {

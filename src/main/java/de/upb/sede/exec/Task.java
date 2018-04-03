@@ -1,10 +1,9 @@
 package de.upb.sede.exec;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Task {
 	String requestID;
-	String serviceName = "reflectInvoke";
+	String serviceName;
 	List<String> parameters;
 }

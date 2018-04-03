@@ -23,6 +23,7 @@ import org.junit.Test;
 import de.upb.sede.composition.FMComposition;
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.graphs.GraphComposition;
+import de.upb.sede.composition.graphs.InstructionNode;
 import de.upb.sede.exceptions.FMCompositionSyntaxException;
 
 /**
@@ -156,21 +157,21 @@ public class FMCompositionParserTester {
     }
     
     @Test public void testRegexClasspath() {
-    		Pattern p = FMCompositionParser.PATTERN_classpath;
-    		assertMatches("java.util.Map", p, true);
-    		assertMatches("a.b", p, true);
-    		assertMatches("a.b1._c.d20.e_12._f.g1.a1h.a13i.Abc", p, true);
-    		assertMatches("ABC.ED.ae._1", p, true);
-    		assertMatches("_._._", p, true);
-    		
-
-    		assertMatches("ABC", p, false);
-    		assertMatches("abc.1", p, false);
-    		assertMatches("abcdef:g", p, false);
-    		assertMatches("abcdefg:", p, false);
-    		assertMatches(":abc.defg", p, false);
-    		assertMatches("abc.defg-", p, false);
-    		assertMatches("abc:a1", p, false);
+		Pattern p = FMCompositionParser.PATTERN_classpath;
+		assertMatches("java.util.Map", p, true);
+		assertMatches("a.b", p, true);
+		assertMatches("a.b1._c.d20.e_12._f.g1.a1h.a13i.Abc", p, true);
+		assertMatches("ABC.ED.ae._1", p, true);
+		assertMatches("_._._", p, true);
+		
+		
+		assertMatches("ABC", p, false);
+		assertMatches("abc.1", p, false);
+		assertMatches("abcdef:g", p, false);
+		assertMatches("abcdefg:", p, false);
+		assertMatches(":abc.defg", p, false);
+		assertMatches("abc.defg-", p, false);
+assertMatches("abc:a1", p, false);
     }
     
     @Test public void testRegexConstsBool() {
@@ -198,30 +199,30 @@ public class FMCompositionParserTester {
 
     @Test public void testRegexConstsNumber() {
 		Pattern p = FMCompositionParser.PATTERN_constNumber;
-		assertMatches("+1", 				p, true);
-		assertMatches("-1", 				p, true);
+		assertMatches("+1", 			p, true);
+		assertMatches("-1", 			p, true);
 		assertMatches("1", 				p, true);
-		assertMatches("01", 				p, true);
-		assertMatches("1234567890", 		p, true);
+		assertMatches("01", 			p, true);
+		assertMatches("1234567890", 	p, true);
 		assertMatches("1.11", 			p, true);
 		assertMatches("1.0", 			p, true);
-		assertMatches(".2", 				p, true);
+		assertMatches(".2", 			p, true);
 		assertMatches("0.0123456789",	p, true);
 		assertMatches("1.1e01", 		p, true);
 		assertMatches("1.51e10", 		p, true);
-		assertMatches("1.01E3", 			p, true);
-		assertMatches("+1.01E-3", 			p, true);
+		assertMatches("1.01E3", 		p, true);
+		assertMatches("+1.01E-3", 		p, true);
 		
 
-		assertMatches("", 		p, false);
-		assertMatches("+", 		p, false);
-		assertMatches("_", 		p, false);
-		assertMatches(",", 		p, false);
+		assertMatches("", 			p, false);
+		assertMatches("+", 			p, false);
+		assertMatches("_", 			p, false);
+		assertMatches(",", 			p, false);
 		assertMatches("1.", 		p, false);
 		assertMatches("1,0", 		p, false);
 		assertMatches("1.0.", 		p, false);
 		assertMatches(".1.", 		p, false);
-		assertMatches("abc1def", 		p, false);
+		assertMatches("abc1def", 	p, false);
 		assertMatches("1e", 		p, false);
 		assertMatches("1e1e", 		p, false);
     }
@@ -281,46 +282,121 @@ public class FMCompositionParserTester {
     
     @Test public void testRegexInstruction() {
 //    		System.out.println(FMCompositionParser.REGEX_instruction);
-    		/* positive tests */
-    		assertMatchEquals("a=localhost:10/s1::method1({i1=i1})", true, "a", "localhost:10", "s1", "method1", "i1=i1");
+		/* positive tests */
+    	assertMatchEquals("a=localhost:10/s1::method1({i1=i1})", true, "a", "localhost:10", "s1", "method1", "i1=i1");
+    	assertMatchEquals("a=localhost:10/s1::method1({i1=i1,i2=somefield,i3=\"abc\",i4=1,i5=true})", true, "a", "localhost:10", "s1", "method1", "i1=i1,i2=somefield,i3=\"abc\",i4=1,i5=true");
 		assertMatchEquals("localhost:10/s1::method1({i1=i1})", true, null, "localhost:10", "s1", "method1", "i1=i1");
 		
-    		assertMatchEquals("a=s1::method1({i1=i1})", true, "a", null, "s1", "method1", "i1=i1");
-    		assertMatchEquals("s1::method1({i1=i1})", true, null, null, "s1", "method1", "i1=i1");
-    	
+		assertMatchEquals("a=s1::method1({i1=i1})", true, "a", null, "s1", "method1", "i1=i1");
+		assertMatchEquals("s1::method1({i1=i1})", true, null, null, "s1", "method1", "i1=i1");
+	
 		assertMatchEquals("localhost:10/s1::method1()", true, null, "localhost:10", "s1", "method1", null);
-    		assertMatchEquals("a=s1::method1()", true, "a", null, "s1", "method1", null);
-    		assertMatchEquals("s1::method1()", true, null, null, "s1", "method1", null);
+		assertMatchEquals("a=s1::method1()", true, "a", null, "s1", "method1", null);
+		assertMatchEquals("s1::method1()", true, null, null, "s1", "method1", null);
+	
+		assertMatchEquals("a=localhost:10/package1.Class42::method1({i1=i1})", true, "a", "localhost:10", "package1.Class42", "method1", "i1=i1");
+		assertMatchEquals("localhost:10/package1.Class42::method1({i1=i1})", true, null, "localhost:10", "package1.Class42", "method1", "i1=i1");
+		
+    	assertMatchEquals("a=package1.Class42::method1({i1=i1})", true, "a", null, "package1.Class42", "method1", "i1=i1");
+    	assertMatchEquals("package1.Class42::method1({i1=i1})", true, null, null, "package1.Class42", "method1", "i1=i1");
     	
-    		assertMatchEquals("a=localhost:10/package1.Class42::method1({i1=i1})", true, "a", "localhost:10", "package1.Class42", "method1", "i1=i1");
-    		assertMatchEquals("localhost:10/package1.Class42::method1({i1=i1})", true, null, "localhost:10", "package1.Class42", "method1", "i1=i1");
-    		
-        	assertMatchEquals("a=package1.Class42::method1({i1=i1})", true, "a", null, "package1.Class42", "method1", "i1=i1");
-        	assertMatchEquals("package1.Class42::method1({i1=i1})", true, null, null, "package1.Class42", "method1", "i1=i1");
-        	
-    		assertMatchEquals("localhost:10/package1.Class42::method1()", true, null, "localhost:10", "package1.Class42", "method1", null);
-        	assertMatchEquals("a=package1.Class42::method1()", true, "a", null, "package1.Class42", "method1", null);
-        	assertMatchEquals("package1.Class42::method1()", true, null, null, "package1.Class42", "method1", null);
-        	
-        	
-        	/* negative tests */
-    		assertMatchEquals("", false, null, null, null, null, null);
-    		assertMatchEquals("abcdefg", false, null, null, null, null, null);
-    		assertMatchEquals("01234", false, null, null, null, null, null);
-    		
-    		assertMatchEquals("01234", false, null, null, null, null, null);
+		assertMatchEquals("localhost:10/package1.Class42::method1()", true, null, "localhost:10", "package1.Class42", "method1", null);
+    	assertMatchEquals("a=package1.Class42::method1()", true, "a", null, "package1.Class42", "method1", null);
+    	assertMatchEquals("package1.Class42::method1()", true, null, null, "package1.Class42", "method1", null);
+    	
+    	
+    	/* negative tests */
+		assertMatchEquals("", false, null, null, null, null, null);
+		assertMatchEquals("abcdefg", false, null, null, null, null, null);
+		assertMatchEquals("01234", false, null, null, null, null, null);
+		
+		assertMatchEquals("01234", false, null, null, null, null, null);
 
-    		assertMatchEquals("a=localhost:10/s1:method1({i1=i1})", false, null, null, null, null, null);
-    		assertMatchEquals("a=localhost:10/method1({i1=i1})", false, null, null, null, null, null);
-    		assertMatchEquals("=localhost:10/s1::method1({i1=i1})", false, null, null, null, null, null);
-    		assertMatchEquals("a=localhost/s1::method1({i1=i1})", false, null, null, null, null, null);
-    		assertMatchEquals("a=localhost:10s1::method1({i1=i1})", false, null, null, null, null, null);
-    		assertMatchEquals("method1({i1=i1})", false, null, null, null, null, null);
-    		assertMatchEquals("s1::({i1=i1})", false, null, null, null, null, null);
-    		assertMatchEquals("s1::method({)", false, null, null, null, null, null);
-    		assertMatchEquals("s1::method({})", false, null, null, null, null, null);
-    		assertMatchEquals("s1::method(})", false, null, null, null, null, null);
-    		assertMatchEquals("s1::method({i1=1;w=1})", false, null, null, null, null, null);
+		assertMatchEquals("a=localhost:10/s1:method1({i1=i1})", false, null, null, null, null, null);
+		assertMatchEquals("a=localhost:10/method1({i1=i1})", false, null, null, null, null, null);
+		assertMatchEquals("=localhost:10/s1::method1({i1=i1})", false, null, null, null, null, null);
+		assertMatchEquals("a=localhost/s1::method1({i1=i1})", false, null, null, null, null, null);
+		assertMatchEquals("a=localhost:10s1::method1({i1=i1})", false, null, null, null, null, null);
+		assertMatchEquals("method1({i1=i1})", false, null, null, null, null, null);
+		assertMatchEquals("s1::({i1=i1})", false, null, null, null, null, null);
+		assertMatchEquals("s1::method({)", false, null, null, null, null, null);
+		assertMatchEquals("s1::method({})", false, null, null, null, null, null);
+		assertMatchEquals("s1::method(})", false, null, null, null, null, null);
+    }
+    
+
+    @Test public void testInstructionNodeCreation() {
+    	assertCreationMatches("a=localhost:10/s1::method1({i1=i1,i2=somefield,i3=\"abc\",i4=1,i5=true})", true, 0,"a", "localhost:10", "s1", "method1", "i1", "somefield", "\"abc\"", "1", "true");
+    	assertCreationMatches("localhost:10/s1::method1({i2=i1})", true, 10, null, "localhost:10", "s1", "method1", "null", "i1");
+	
+    	assertCreationMatches("a=s1::method1({i1=i1})", true, 0, "a", null, "s1", "method1", "i1");
+    	assertCreationMatches("s1::method1({i1=i1})", true, 0, null, null, "s1", "method1", "i1");
+	
+    	assertCreationMatches("localhost:10/s1::method1()", true, 0, null, "localhost:10", "s1", "method1");
+    	assertCreationMatches("a=s1::method1()", true, 0, "a", null, "s1", "method1");
+    	assertCreationMatches("s1::method1()", true, 0, null, null, "s1", "method1");
+
+    	assertCreationMatches("a=localhost:10/package1.Class42::method1({i1,somefield,\"abc\",1,true})", true, 0, "a", "localhost:10", "package1.Class42", "method1", "i1", "somefield", "\"abc\"", "1", "true");
+    	assertCreationMatches("a=localhost:10/package1.Class42::method1({i1,i3=somefield})", true, 0, "a", "localhost:10", "package1.Class42", "method1", "i1", "null", "somefield");
+    	assertCreationMatches("localhost:10/package1.Class42::method1({i1=i1})", true, 0, null, "localhost:10", "package1.Class42", "method1", "i1");
+		
+    	assertCreationMatches("a=package1.Class42::method1({i1=i1})", true, 0, "a", null, "package1.Class42", "method1", "i1");
+    	assertCreationMatches("package1.Class42::method1({i1=i1})", true, 0, null, null, "package1.Class42", "method1", "i1");
+    	
+    	assertCreationMatches("localhost:10/package1.Class42::method1()", true, 0, null, "localhost:10", "package1.Class42", "method1");
+    	assertCreationMatches("a=package1.Class42::method1()", true, 0, "a", null, "package1.Class42", "method1");
+    	assertCreationMatches("package1.Class42::method1()", true, 0, null, null, "package1.Class42", "method1");
+    	
+    	
+    	/* negative tests */
+    	assertCreationMatches("", false, 0, null, null, null, null, null);
+    	assertCreationMatches("abcdefg", false, 0, null, null, null, null, null);
+    	assertCreationMatches("01234", false, 0, null, null, null, null, null);
+		
+    	assertCreationMatches("01234", false, 0, null, null, null, null, null);
+
+    	assertCreationMatches("a=localhost:10/s1:method1({i1=i1})", false, 0, null, null, null, null, null);
+    	assertCreationMatches("a=localhost:10/method1({i1=i1})", false, 0, null, null, null, null, null);
+    	assertCreationMatches("=localhost:10/s1::method1({i1=i1})", false, 0, null, null, null, null, null);
+    	assertCreationMatches("a=localhost/s1::method1({i1=i1})", false, 0, null, null, null, null, null);
+    	assertCreationMatches("a=localhost:10s1::method1({i1=i1})", false, 0, null, null, null, null, null);
+    	assertCreationMatches("method1({i1=i1})", false, 0, null, null, null, null, null);
+    	assertCreationMatches("s1::({i1=i1})", false, 0, null, null, null, null, null);
+    	assertCreationMatches("s1::method({)", false, 0, null, null, null, null, null);
+    	assertCreationMatches("s1::method({})", false, 0, null, null, null, null, null);
+    	assertCreationMatches("s1::method(})", false, 0, null, null, null, null, null);
+    }
+    
+    private void assertCreationMatches(String instruction, boolean expectedNoException, int index, String expectedLeftside, 
+    		String expectedHost, String expectedContext,
+    		String expectedMethod, String... expectedInputs) {
+    	InstructionNode node;
+    	try {
+    		node = FMCompositionParser.parseInstruction(instruction, index);
+    	} catch (FMCompositionSyntaxException ex) {
+//    		ex.printStackTrace();
+    		Assert.assertEquals(expectedNoException, false);
+    		return;
+    	}
+		Assert.assertEquals(expectedNoException, true);
+    	if(expectedLeftside == null) {
+    		Assert.assertEquals(false, node.isAssignedLeftSideFieldname());
+    	} else {
+    		Assert.assertEquals(expectedLeftside, node.getLeftSideFieldname());
+    	}
+    	if(expectedHost == null) {
+    		Assert.assertEquals(false, node.isAssignedHost());
+    	} else {
+    		Assert.assertEquals(expectedHost, node.getHost());
+    	}
+    	Assert.assertEquals(expectedContext, node.getContext());
+    	Assert.assertEquals(expectedMethod, node.getMethod());
+		Assert.assertEquals(index, node.getInstructionIndex());
+    	Assert.assertEquals(expectedInputs.length, node.getParameterFields().size());
+    	for(int i = 0, size = expectedInputs.length; i < size ; i++) {
+        	Assert.assertEquals(expectedInputs[i], node.getParameterFields().get(i));
+    	}
+    	
     }
     
 

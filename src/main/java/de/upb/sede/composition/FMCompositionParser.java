@@ -76,7 +76,7 @@ public final class FMCompositionParser {
     													+ "(?:(?<host>" 		+ REGEX_ipaddress_port + "|" + REGEX_domainname_port + ")/){0,1}"
     													+    "(?<context>" 	+ REGEX_classpath + "|" + REGEX_fieldname + ")::"
     													+    "(?<method>" 	+ REGEX_fieldname + ")"
-    											  + "\\((?:\\{(?<inputs>(?:\\w|,|=)++)\\}){0,1}\\)"
+    											  + "\\((?:\\{(?<inputs>[\\S\\s]+)\\}){0,1}\\)"
     													+ "$";
     public final static Pattern 	PATTERN_instruction = Pattern.compile(REGEX_instruction);
     
@@ -85,7 +85,7 @@ public final class FMCompositionParser {
      * e.g.: "i1=10"
      * Uses anchors!!
      */
-    public final static String REGEX_parameter = "^(?:[iI](?<position>[1-9][0-9]*?)=){0,1}(?<parametervalue>[\\w\\.\"]++)$";
+    public final static String REGEX_parameter = "^(?:[iI](?<position>[1-9][0-9]*?)=){0,1}(?<parametervalue>[\\S\\s]++)$";
     public final static Pattern PATTERN_parameter = Pattern.compile(REGEX_parameter);
      
     
@@ -240,7 +240,7 @@ public final class FMCompositionParser {
     /**
      * Parse a fmComposition instruction and transforms it into an InstructionNode.
      */
-    public static InstructionNode parseInstruction(final String instruction) {
+    public static InstructionNode parseInstruction(final String instruction, final int instructionIndex) {
     		Matcher instructionMatcher = PATTERN_instruction.matcher(instruction);
     		if(instructionMatcher.matches()) {
     			
@@ -258,10 +258,10 @@ public final class FMCompositionParser {
         		 * 	Values would be:
         		 * 
         		 * 	leftside = "s1" (might be null)
-		     *  	host = "127.0.0.1:8000" (might be null)
-		     *  	context = "Catalano.Imaging.Filters.Crop"
-		     *  	method = "__construct"
-		     *  	inputs = "i1=0,i2=0,i3=10,i4=10" (might be null)
+        		 *  host = "127.0.0.1:8000" (might be null)
+        		 *  context = "Catalano.Imaging.Filters.Crop"
+        		 *	method = "__construct"
+        		 *  inputs = "i1=0,i2=0,i3=10,i4=10" (might be null)
         		 */
         		
         		/*
@@ -269,9 +269,9 @@ public final class FMCompositionParser {
         		 */
         		InstructionNode instNode;
         		if(PATTERN_classpath.matcher(context).matches()) {
-        			instNode = new ServiceCreationNode(instruction, context, method);
+        			instNode = new ServiceCreationNode(instructionIndex, instruction, context, method);
         		} else {
-        			instNode = new ServiceInvocationNode(instruction, context, method);
+        			instNode = new ServiceInvocationNode(instructionIndex, instruction, context, method);
         			
         		}
         		/* populate fields */

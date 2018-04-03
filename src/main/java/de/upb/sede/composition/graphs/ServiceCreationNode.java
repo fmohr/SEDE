@@ -8,8 +8,8 @@ public class ServiceCreationNode extends InstructionNode {
 
 	
 
-	public ServiceCreationNode(String basedOnInstruction, String context, String method) {
-		super(basedOnInstruction, context, method);
+	public ServiceCreationNode(int instructionIndex, String basedOnInstruction, String context, String method) {
+		super(instructionIndex, basedOnInstruction, context, method);
 	}
 
 	

@@ -36,6 +36,7 @@ public class GraphComposition {
     public void addNode(BaseNode newNode){
         nodes.add(newNode);
     }
+    
 
     /**
      * Alters this graph by adding the given edge.
@@ -107,6 +108,9 @@ public class GraphComposition {
     		}
     		return changers;
     }
+
+
+	
 
 
 }

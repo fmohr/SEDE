@@ -6,8 +6,8 @@ import de.upb.sede.config.ResolvePolicy;
 public class ServiceInvocationNode extends InstructionNode {
 
 
-	public ServiceInvocationNode(String basedOnInstruction, String context, String method) {
-		super(basedOnInstruction, context, method);
+	public ServiceInvocationNode(int instructionIndex, String basedOnInstruction, String context, String method) {
+		super(instructionIndex, basedOnInstruction, context, method);
 	}
 
 

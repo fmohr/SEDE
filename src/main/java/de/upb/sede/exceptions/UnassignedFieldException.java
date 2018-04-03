@@ -17,7 +17,7 @@ public class UnassignedFieldException extends RuntimeException {
      * The message is created using dataobject.getClass().getSimpleName() and fieldname.
      */
     public UnassignedFieldException(Object dataobject, String fieldname) {
-        super(String.format("Accessed unassigned field:{} of an instance of class{}.", fieldname, dataobject.getClass().getSimpleName()));
+        super(String.format("Accessed unassigned field:%s of an instance of class%s.", fieldname, dataobject.getClass().getSimpleName()));
     }
 
 

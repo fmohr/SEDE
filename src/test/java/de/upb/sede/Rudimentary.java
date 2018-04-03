@@ -1,4 +1,4 @@
-package de.up.sede;
+package de.upb.sede;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;

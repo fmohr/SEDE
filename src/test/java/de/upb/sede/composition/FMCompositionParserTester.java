@@ -1,4 +1,4 @@
-package de.up.sede.composition;
+package de.upb.sede.composition;
 
 import java.io.IOException;
 import java.nio.file.Files;

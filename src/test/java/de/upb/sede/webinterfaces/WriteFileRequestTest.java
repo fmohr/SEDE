@@ -1,4 +1,4 @@
-package de.up.sede.webinterfaces;
+package de.upb.sede.webinterfaces;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package de.up.sede.exec;
+package de.upb.sede.exec;
 
 import static org.junit.Assert.assertEquals;
 

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.config.InputsFieldTypes;
 import de.upb.sede.config.ResolvePolicy;
 
 /**
@@ -17,30 +18,46 @@ public class GraphConstructor {
 	
 	private final Graph constructingGraph;
 	
-	private final Graph orderOfExectuion;
+	private final Graph orderOfInstructionGraph;
 	
 	private final ResolvePolicy resolvePolicy;
 	
 	private final ClassesConfig classConfig;
 	
+	private final InputsFieldTypes inputFieldTypes;
+	
+	private InstructionNode lastInstruction;
+	
+	
+	
 	
 	/**
 	 * Constructor for a brand new graph.
 	 */
-	public GraphConstructor(ResolvePolicy resolvePolicy, ClassesConfig classConfig) {
+	public GraphConstructor(ResolvePolicy resolvePolicy, ClassesConfig classConfig, InputsFieldTypes inputFieldTypes) {
 		this.constructingGraph = new Graph();
-		this.orderOfExectuion = new Graph();
+		this.orderOfInstructionGraph = new Graph();
 		this.resolvePolicy = resolvePolicy;
 		this.classConfig = classConfig;
+		this.inputFieldTypes = inputFieldTypes;
 	}
 	
 	/**
 	 *  Adds node to the graph.
+	 *  The order in which instruction nodes are added to the graph matters!!
 	 */
 	public void addInstructionNode(InstructionNode instNode) {
 		Objects.requireNonNull(instNode);
-//		unresolvedInstructionNodesv.add((InstructionNode) instNode);
 		constructingGraph.addNode(instNode);
+		orderOfInstructionGraph.addNode(instNode);
+		if(lastInstruction != null) {
+			/*
+			 * this isn't the first instruction node added.
+			 */
+			orderOfInstructionGraph.connectNodes(lastInstruction, instNode);
+		}
+		
+		lastInstruction = instNode;
 	}
 	
 	/**

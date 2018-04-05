@@ -15,19 +15,21 @@ import de.upb.sede.config.ResolvePolicy;
  */
 public class GraphConstructor {
 	
-	private final GraphComposition constructingGraph;
+	private final Graph constructingGraph;
+	
+	private final Graph orderOfExectuion;
 	
 	private final ResolvePolicy resolvePolicy;
 	
 	private final ClassesConfig classConfig;
 	
-	private final List<InstructionNode> unresolvedInstructionNodes = new ArrayList<>();
 	
 	/**
 	 * Constructor for a brand new graph.
 	 */
 	public GraphConstructor(ResolvePolicy resolvePolicy, ClassesConfig classConfig) {
-		this.constructingGraph = new GraphComposition();
+		this.constructingGraph = new Graph();
+		this.orderOfExectuion = new Graph();
 		this.resolvePolicy = resolvePolicy;
 		this.classConfig = classConfig;
 	}
@@ -45,9 +47,6 @@ public class GraphConstructor {
 	 * 
 	 */
 	public void resolveDataFlowDependency() {
-		for(InstructionNode instruction : instructionNodes) {
-			
-		}
 	}
 	
 }

@@ -12,14 +12,18 @@ import de.upb.sede.config.ClassesConfig;
  * A directed, acyclic graph to represent a composition.
  * Each node contains the invocation information of one global procedure.
  * A edge between two nodes A -> B  denotes that B is dependent on A. This means that in order to execute A, B needs to be executed first.
+ * 
+ * This class is only a data-structure that holds nodes and edges. It shall not change any contained node and edge.
+ * This way nodes can be in multiple graphs.
+ * 
  */
-public class GraphComposition {
+public class Graph {
 	/* node set */
 	private final Collection<BaseNode> nodes;
 	/* edge set */
 	private final Collection<Edge> edges;
 
-	public GraphComposition() {
+	public Graph() {
 		this.nodes = new ArrayList<>();
 		this.edges = new HashSet<>();
 	}

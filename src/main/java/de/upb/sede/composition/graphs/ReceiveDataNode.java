@@ -1,5 +1,6 @@
 package de.upb.sede.composition.graphs;
 
+import java.util.Collection;
 import java.util.Objects;
 
 import de.upb.sede.config.ClassesConfig;
@@ -14,13 +15,14 @@ class ReceiveDataNode extends BaseNode{
 	}
 	
 	@Override
-	boolean changesState(String fieldname, ClassesConfig configuration) {
+	boolean producesField(String fieldname, ClassesConfig configuration) {
 		return fieldname.equals(this.fieldname);
 	}
 
 	@Override
-	void expand(GraphComposition graph, ClassesConfig configuration, ResolvePolicy policy) {
-		/* does no expanding */
+	Collection<String> consumingFields() {
+		return null;
 	}
+
 
 }

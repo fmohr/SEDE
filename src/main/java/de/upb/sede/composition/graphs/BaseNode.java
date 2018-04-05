@@ -1,10 +1,8 @@
 package de.upb.sede.composition.graphs;
 
 import java.util.Collection;
-import java.util.List;
 
 import de.upb.sede.config.ClassesConfig;
-import de.upb.sede.config.ResolvePolicy;
 
 public abstract class BaseNode {
 
@@ -15,14 +13,13 @@ public abstract class BaseNode {
     /**
      * Returns true if this node makes the given fieldname available after it's done on the executor or changes its state.
      */
-    abstract boolean changesState(String fieldname, ClassesConfig configuration);
+    abstract boolean producesField(String fieldname, ClassesConfig configuration);
 
     
     /**
-     * 
-     * @return List of fieldnames this node is depending on being resolved before its execution.
+     * Returns Collection of fieldnames which this node is depending on being resolved before its execution starts.
      */
-    abstract Collection<String> dependsOnFields();
+    abstract Collection<String> consumingFields();
     
 
 }

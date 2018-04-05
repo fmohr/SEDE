@@ -129,7 +129,7 @@ public class InstructionNode extends BaseNode {
 
 
 	@Override
-	boolean changesState(String fieldname, ClassesConfig configuration) {
+	boolean producesField(String fieldname, ClassesConfig configuration) {
 		if (isAssignedLeftSideFieldname()) {
 			return getLeftSideFieldname().equals(fieldname);
 		} else {
@@ -137,57 +137,11 @@ public class InstructionNode extends BaseNode {
 		}
 	}
 
-	void resolveDependency(String field, GraphComposition graph, ClassesConfig configuration) {
-		/*
-		 * Get all the node that produces/changes the field this node is depending on.
-		 */
-		List<BaseNode> dependingFromNodes = graph.getChangers(field, configuration);
 
-		if (dependingFromNodes.size() > 0) {
-			/*
-			 * If there is at least one node that changes the state of the field, it means
-			 * that the data is already available.
-			 */
-
-		} else {
-
-		}
-	}
-
-	void expand(GraphComposition graph, ClassesConfig configuration, ResolvePolicy policy) {
-		/*
-		 * Add param dependencies.
-		 */
-		for (String parameter : parameterFields) {
-			/*
-			 * Get all the node that produces/changes the parameter this node is depended
-			 * on.
-			 */
-			List<BaseNode> dependingFromNodes = graph.getChangers(parameter, configuration);
-
-			if (dependingFromNodes.size() > 0) {
-				/*
-				 * If there is at least one node
-				 */
-
-			}
-			/*
-			 * Connect every node this node is depending on to this one.
-			 */
-			dependingFromNodes.forEach(dependsOn -> graph.connectNodes(dependsOn, this));
-
-			if (FMCompositionParser.isConstant(parameter)) {
-
-			} else {
-
-			}
-		}
-
-	}
 
 
 	@Override
-	Collection<String> dependsOnFields() {
+	Collection<String> consumingFields() {
 		// TODO Auto-generated method stub
 		return null;
 	}

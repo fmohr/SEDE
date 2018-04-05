@@ -25,7 +25,7 @@ public final class GraphTraversal {
 	/**
 	 * Returns an iterable which traverses the tree in BFS order from the given source.
 	 */
-	public static Iterable<BaseNode> BFS(final GraphComposition graph, final BaseNode source) {
+	public static Iterable<BaseNode> BFS(final Graph graph, final BaseNode source) {
 
 		if (!graph.contains(source)) {
 			throw new RuntimeException("Source " + source + " isn't contained by the graph.");
@@ -81,7 +81,7 @@ public final class GraphTraversal {
 	/**
 	 * returns a collections of all the neighbors from the given node.
 	 */
-	public static Iterable<BaseNode> neighbors(final GraphComposition graph, final BaseNode node) {
+	public static Iterable<BaseNode> neighbors(final Graph graph, final BaseNode node) {
 		return () -> new FilteredIterator<BaseNode>(graph.getNodes().iterator(),
 				otherNode -> (node != otherNode && graph.containsEdge(node, otherNode)));
 	}
@@ -89,7 +89,7 @@ public final class GraphTraversal {
 	/**
 	 * Returns an iterable of all edges that contain the given node.
 	 */
-	public Iterable<Edge> allEdgesWith(final GraphComposition graph, final BaseNode node) {
+	public Iterable<Edge> allEdgesWith(final Graph graph, final BaseNode node) {
 		return () -> new FilteredIterator<Edge>(graph.getEdges().iterator(), edge -> edge.contains(node));
 	}
 	
@@ -98,7 +98,7 @@ public final class GraphTraversal {
 	 * Returns true if the given nodes are in the given graph and there is a path from
 	 * source to target.
 	 */
-	public boolean isTherePathFromTo(final GraphComposition graph, final BaseNode source, final BaseNode target) {
+	public boolean isTherePathFromTo(final Graph graph, final BaseNode source, final BaseNode target) {
 		if(graph.contains(source) && graph.contains(target)) {
 			/*
 			 * Do breath first search over the graph and find the target node.
@@ -125,7 +125,7 @@ public final class GraphTraversal {
 	 * 
 	 * ClassesConfig is needed because based on the configuration of the classes some methods do change the state of a service and some dont.  
 	 */
-	public static Iterable<BaseNode> fieldnameProducingNodes(final GraphComposition graph, final String fieldname, final ClassesConfig configuration) {
-		return () -> new FilteredIterator<>(graph.getNodes().iterator(), node -> node.changesState(fieldname, configuration));
+	public static Iterable<BaseNode> fieldnameProducingNodes(final Graph graph, final String fieldname, final ClassesConfig configuration) {
+		return () -> new FilteredIterator<>(graph.getNodes().iterator(), node -> node.producesField(fieldname, configuration));
 	}
 }

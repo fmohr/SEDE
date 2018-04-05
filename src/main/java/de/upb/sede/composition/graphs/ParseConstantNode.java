@@ -1,5 +1,6 @@
 package de.upb.sede.composition.graphs;
 
+import java.util.Collection;
 import java.util.Objects;
 
 import de.upb.sede.config.ClassesConfig;
@@ -13,12 +14,15 @@ public class ParseConstantNode extends BaseNode {
 	}
 	
 	@Override
-	boolean changesState(String fieldname, ClassesConfig configuration) {
+	boolean producesField(String fieldname, ClassesConfig configuration) {
 		return constantValue.equals(fieldname);
 	}
 
 	@Override
-	void expand(GraphComposition graph, ClassesConfig configuration, ResolvePolicy policy) {
+	Collection<String> consumingFields() {
+		// TODO Auto-generated method stub
+		return null;
 	}
+
 
 }

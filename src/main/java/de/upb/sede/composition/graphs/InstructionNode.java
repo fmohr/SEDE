@@ -1,5 +1,6 @@
 package de.upb.sede.composition.graphs;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +23,6 @@ public class InstructionNode extends BaseNode {
 
 	private static final String unassignedValue = "UNDEFINED";
 
-	private final int instructionIndex;
 	private String fmInstruction;
 	private String leftsideFieldname;
 	private String host;
@@ -42,14 +42,13 @@ public class InstructionNode extends BaseNode {
 	private List<String> parameterFields;
 
 	@SuppressWarnings("unchecked")
-	public InstructionNode(int instructionIndex, String basedOnInstruction, String context, String method) {
+	public InstructionNode(String basedOnInstruction, String context, String method) {
 		this.fmInstruction = Objects.requireNonNull(basedOnInstruction);
 		leftsideFieldname = unassignedValue;
 		host = unassignedValue;
 		parameterFields = Collections.EMPTY_LIST;
 		this.context = Objects.requireNonNull(context);
 		this.method = Objects.requireNonNull(method);
-		this.instructionIndex = instructionIndex;
 	}
 
 	public String getFmInstruction() {
@@ -59,10 +58,6 @@ public class InstructionNode extends BaseNode {
 	/*
 	 * standard get, set, isAssigned methods.
 	 */
-
-	public int getInstructionIndex() {
-		return instructionIndex;
-	}
 
 	public String getLeftSideFieldname() {
 		if (!isAssignedLeftSideFieldname()) {
@@ -132,89 +127,6 @@ public class InstructionNode extends BaseNode {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((context == null) ? 0 : context.hashCode());
-		result = prime * result + ((fmInstruction == null) ? 0 : fmInstruction.hashCode());
-		result = prime * result + ((host == null) ? 0 : host.hashCode());
-		result = prime * result + instructionIndex;
-		result = prime * result + ((leftsideFieldname == null) ? 0 : leftsideFieldname.hashCode());
-		result = prime * result + ((method == null) ? 0 : method.hashCode());
-		result = prime * result + ((parameterFields == null) ? 0 : parameterFields.hashCode());
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(obj instanceof InstructionNode)) {
-			return false;
-		}
-		InstructionNode other = (InstructionNode) obj;
-		if (context == null) {
-			if (other.context != null) {
-				return false;
-			}
-		} else if (!context.equals(other.context)) {
-			return false;
-		}
-		if (fmInstruction == null) {
-			if (other.fmInstruction != null) {
-				return false;
-			}
-		} else if (!fmInstruction.equals(other.fmInstruction)) {
-			return false;
-		}
-		if (host == null) {
-			if (other.host != null) {
-				return false;
-			}
-		} else if (!host.equals(other.host)) {
-			return false;
-		}
-		if (instructionIndex != other.instructionIndex) {
-			return false;
-		}
-		if (leftsideFieldname == null) {
-			if (other.leftsideFieldname != null) {
-				return false;
-			}
-		} else if (!leftsideFieldname.equals(other.leftsideFieldname)) {
-			return false;
-		}
-		if (method == null) {
-			if (other.method != null) {
-				return false;
-			}
-		} else if (!method.equals(other.method)) {
-			return false;
-		}
-		if (parameterFields == null) {
-			if (other.parameterFields != null) {
-				return false;
-			}
-		} else if (!parameterFields.equals(other.parameterFields)) {
-			return false;
-		}
-		return true;
-	}
 
 	@Override
 	boolean changesState(String fieldname, ClassesConfig configuration) {
@@ -273,8 +185,9 @@ public class InstructionNode extends BaseNode {
 
 	}
 
+
 	@Override
-	List<String> dependsOn() {
+	Collection<String> dependsOnFields() {
 		// TODO Auto-generated method stub
 		return null;
 	}

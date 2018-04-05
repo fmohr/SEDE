@@ -8,15 +8,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.upb.sede.composition.graphs.InstructionNode;
-import de.upb.sede.composition.graphs.ServiceCreationNode;
-import de.upb.sede.composition.graphs.ServiceInvocationNode;
 import de.upb.sede.exceptions.FMCompositionSyntaxException;
 
 /**
+ * 
+ * Defines a set of regex-patterns that parse fmCompositions.
+ * Tested
+ *
  * @author aminfaez
  * 
- *         Defines a set of regex-patterns that parse fmCompositions.
- *
  */
 public final class FMCompositionParser {
 
@@ -152,6 +152,7 @@ public final class FMCompositionParser {
 	 * 
 	 * Example: separateInstructions("a,b,,cd") -> ["a", "b", "cd"]
 	 */
+	@SuppressWarnings("unchecked")
 	public static List<String> separateInputs(final String inputString) {
 		if (inputString == null) {
 			return Collections.EMPTY_LIST;
@@ -228,7 +229,7 @@ public final class FMCompositionParser {
 	/**
 	 * Parse a fmComposition instruction and transforms it into an InstructionNode.
 	 */
-	public static InstructionNode parseInstruction(final String instruction, final int instructionIndex) {
+	public static InstructionNode parseInstruction(final String instruction) {
 		Matcher instructionMatcher = PATTERN_instruction.matcher(instruction);
 		if (instructionMatcher.matches()) {
 
@@ -255,12 +256,9 @@ public final class FMCompositionParser {
 			/*
 			 * Distinguish between service creation and service invocation;
 			 */
-			InstructionNode instNode;
+			InstructionNode instNode = new InstructionNode(instruction, context, method);
 			if (PATTERN_classpath.matcher(context).matches()) {
-				instNode = new ServiceCreationNode(instructionIndex, instruction, context, method);
 			} else {
-				instNode = new ServiceInvocationNode(instructionIndex, instruction, context, method);
-
 			}
 			/* populate fields */
 			if (leftside != null) {

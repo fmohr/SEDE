@@ -37,7 +37,7 @@ public class GraphConstructor {
 	 */
 	public void addInstructionNode(InstructionNode instNode) {
 		Objects.requireNonNull(instNode);
-		unresolvedInstructionNodesv.add((InstructionNode) instNode);
+//		unresolvedInstructionNodesv.add((InstructionNode) instNode);
 		constructingGraph.addNode(instNode);
 	}
 	

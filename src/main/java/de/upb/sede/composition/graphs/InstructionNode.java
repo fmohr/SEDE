@@ -3,12 +3,9 @@ package de.upb.sede.composition.graphs;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-import de.upb.sede.composition.FMCompositionParser;
-import de.upb.sede.config.ClassesConfig;
-import de.upb.sede.config.ResolvePolicy;
+import de.upb.sede.composition.graphconstructioninformation.ClassesConfig;
 import de.upb.sede.exceptions.UnassignedFieldException;
 
 /**
@@ -142,7 +139,6 @@ public class InstructionNode extends BaseNode {
 
 	@Override
 	Collection<String> consumingFields() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

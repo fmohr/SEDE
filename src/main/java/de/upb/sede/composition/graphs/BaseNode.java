@@ -2,7 +2,7 @@ package de.upb.sede.composition.graphs;
 
 import java.util.Collection;
 
-import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.composition.graphconstructioninformation.ClassesConfig;
 
 public abstract class BaseNode {
 

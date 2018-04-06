@@ -3,8 +3,7 @@ package de.upb.sede.composition.graphs;
 import java.util.Collection;
 import java.util.Objects;
 
-import de.upb.sede.config.ClassesConfig;
-import de.upb.sede.config.ResolvePolicy;
+import de.upb.sede.composition.graphconstructioninformation.ClassesConfig;
 
 class ReceiveDataNode extends BaseNode{
 	
@@ -12,7 +11,7 @@ class ReceiveDataNode extends BaseNode{
 	
 	ReceiveDataNode(String fieldname){
 		this.fieldname = Objects.requireNonNull(fieldname);
-	}
+	} 
 	
 	@Override
 	boolean producesField(String fieldname, ClassesConfig configuration) {
@@ -23,6 +22,5 @@ class ReceiveDataNode extends BaseNode{
 	Collection<String> consumingFields() {
 		return null;
 	}
-
 
 }

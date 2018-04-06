@@ -1,4 +1,4 @@
-package de.upb.sede.config;
+package de.upb.sede.composition.graphconstructioninformation;
 
 import java.util.Collections;
 import java.util.Map;

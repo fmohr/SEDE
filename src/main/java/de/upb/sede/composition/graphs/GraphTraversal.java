@@ -8,7 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.composition.graphconstructioninformation.ClassesConfig;
 import de.upb.sede.util.FilteredIterator;
 
 /**

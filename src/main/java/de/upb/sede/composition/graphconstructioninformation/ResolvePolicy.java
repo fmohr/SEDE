@@ -1,4 +1,4 @@
-package de.upb.sede.config;
+package de.upb.sede.composition.graphconstructioninformation;
 
 /**
  * TODO move this class to a better location later on.

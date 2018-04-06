@@ -1,12 +1,10 @@
 package de.upb.sede.composition.graphs;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-import de.upb.sede.config.ClassesConfig;
-import de.upb.sede.config.InputsFieldTypes;
-import de.upb.sede.config.ResolvePolicy;
+import de.upb.sede.composition.graphconstructioninformation.ClassesConfig;
+import de.upb.sede.composition.graphconstructioninformation.InputsFieldTypes;
+import de.upb.sede.composition.graphconstructioninformation.ResolvePolicy;
 
 /**
  * This class contains all the logic to construct a graph.
@@ -56,8 +54,12 @@ public class GraphConstructor {
 			 */
 			orderOfInstructionGraph.connectNodes(lastInstruction, instNode);
 		}
-		
 		lastInstruction = instNode;
+	}
+	
+	
+	private void resolveContext(InstructionNode instNode) {
+		Objects.requireNonNull(instNode);
 	}
 	
 	/**

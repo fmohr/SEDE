@@ -27,7 +27,7 @@ import de.upb.sede.exceptions.FMCompositionSyntaxException;
  *
  *         Tests regex patterns in FMCompositionParser.
  */
-public class FMCompositionParserTester {
+public class FMCompositionParserTest {
 
 	private static String compositionString;
 

@@ -1,26 +1,32 @@
 package de.upb.sede.composition.graphs;
 
 import java.util.Collection;
-import java.util.Objects;
 
 import de.upb.sede.composition.graphconstructioninformation.ClassesConfig;
 
-public class ParseConstantNode extends BaseNode {
+class DummyNode extends BaseNode {
 	
-	private final String constantValue;
-	public ParseConstantNode(String constantValue) {
-		this.constantValue = Objects.requireNonNull(constantValue);
+	String name = "noname";
+	DummyNode(){
+		super();
 	}
 	
+	DummyNode(String name){
+		this.name = name;
+	}
+
 	@Override
 	boolean producesField(String fieldname, ClassesConfig configuration) {
-		return constantValue.equals(fieldname);
+		return false;
 	}
 
 	@Override
 	Collection<String> consumingFields() {
 		return null;
 	}
-
+	
+	public String toString() {
+		return name;
+	}
 
 }

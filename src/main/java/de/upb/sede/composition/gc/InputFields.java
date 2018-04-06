@@ -1,18 +1,18 @@
-package de.upb.sede.composition.graphconstructioninformation;
+package de.upb.sede.composition.gc;
 
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
 /**
- * Send by the user.
+ * Sent by the user.
  * @author aminfaez
  *
  */
-public class InputsFieldTypes {
+public class InputFields {
 	private Map<String, String> fieldTypes;
 	
-	public InputsFieldTypes(Map<String, String> fieldTypes) {
+	public InputFields(Map<String, String> fieldTypes) {
 		this.fieldTypes = Collections.unmodifiableMap(fieldTypes);
 	}
 	
@@ -21,5 +21,9 @@ public class InputsFieldTypes {
 	}
 	public String getInputFieldType(String fieldname) {
 		return fieldTypes.get(Objects.requireNonNull(fieldname));
+	}
+
+	public ServiceInstanceHandle getServiceInstanceHandle(String context) {
+		return null;
 	}
 }

@@ -1,11 +1,13 @@
-package de.upb.sede.composition.graphs;
+package de.upb.sede.composition.graphs.nodes;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import de.upb.sede.composition.graphconstructioninformation.ClassesConfig;
+import de.upb.sede.composition.gc.ResolveInformation;
+import de.upb.sede.composition.gc.ServiceInstanceHandle;
 import de.upb.sede.exceptions.UnassignedFieldException;
 
 /**
@@ -24,6 +26,7 @@ public class InstructionNode extends BaseNode {
 	private String leftsideFieldname;
 	private String host;
 	private String context;
+	private boolean contextIsField;
 	private String method;
 
 	/**
@@ -46,6 +49,7 @@ public class InstructionNode extends BaseNode {
 		parameterFields = Collections.EMPTY_LIST;
 		this.context = Objects.requireNonNull(context);
 		this.method = Objects.requireNonNull(method);
+		this.contextIsField = false;
 	}
 
 	public String getFmInstruction() {
@@ -97,6 +101,14 @@ public class InstructionNode extends BaseNode {
 		return context != unassignedValue;
 	}
 
+	public void setContextIsField(boolean isField) {
+		this.contextIsField = isField;
+	}
+
+	public boolean isFieldContext() {
+		return this.contextIsField;
+	}
+
 	public String getMethod() {
 		if (!isAssignedMethod()) {
 			throw new UnassignedFieldException(this, "method");
@@ -124,21 +136,67 @@ public class InstructionNode extends BaseNode {
 		}
 	}
 
-
 	@Override
-	boolean producesField(String fieldname, ClassesConfig configuration) {
-		if (isAssignedLeftSideFieldname()) {
-			return getLeftSideFieldname().equals(fieldname);
+	public
+	boolean producesField(String fieldname, ResolveInformation resolveInfo) {
+		if (isAssignedLeftSideFieldname() && getLeftSideFieldname().equals(fieldname)) {
+			return true;
+		} else if (isFieldContext() && getContext().equals(fieldname)) {
+			/*
+			 * Lookup if the method changes the state of the service:
+			 */
+			if (resolveInfo.getClassesConfig().stateMutational(getServiceClass(resolveInfo), getMethod())) {
+				/*
+				 * The method changes the state of the service:
+				 */
+				return true;
+			} else {
+				return false;
+			}
 		} else {
 			return false;
 		}
 	}
-
-
-
+	
+	private String getServiceClass(ResolveInformation resolveInfo) {
+		String serviceClasspath;
+		if(isFieldContext()) {
+			/*
+			 * the context is a fieldname. Get its class path information from the serviceInstancehandle:
+			 */
+			serviceClasspath = resolveInfo.getInputInformation().getServiceInstanceHandle(getContext()).getClasspath();
+		} else {
+			/*
+			 * if the context is class path:
+			 */
+			serviceClasspath = getContext();
+		}
+		return serviceClasspath;
+	}
 
 	@Override
-	Collection<String> consumingFields() {
-		return null;
+	public
+	Collection<String> consumingFields(ResolveInformation resolveInfo) {
+		List<String> consumingFields = new ArrayList<>();
+		if (isFieldContext()) {
+			consumingFields.add(getContext());
+		}
+		consumingFields.addAll(getParameterFields());
+		return consumingFields;
+
+	}
+
+	@Override
+	public
+	Collection<String> producingFields(ResolveInformation resolveInfo) {
+		ArrayList<String> producingFields = new ArrayList<>();
+		if(isAssignedLeftSideFieldname()) {
+			producingFields.add(getLeftSideFieldname());
+		}
+		if(isFieldContext()) {
+			String serviceClass = getServiceClass(resolveInfo);
+			resolveInfo.getClassesConfig().stateMutational(serviceClass, getMethod());
+		}
+		return producingFields;
 	}
 }

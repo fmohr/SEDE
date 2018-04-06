@@ -18,7 +18,7 @@ import org.junit.BeforeClass;
  */
 import org.junit.Test;
 
-import de.upb.sede.composition.graphs.InstructionNode;
+import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.exceptions.FMCompositionSyntaxException;
 
 /**
@@ -328,16 +328,16 @@ public class FMCompositionParserTest {
 	@Test
 	public void testInstructionNodeCreation() {
 		assertCreationMatches("a=localhost:10/s1::method1({i1=i1,i2=somefield,i3=\"abc\",i4=1,i5=true})", true, "a",
-				"localhost:10", "s1", "method1", "i1", "somefield", "\"abc\"", "1", "true");
-		assertCreationMatches("localhost:10/s1::method1({i2=i1})", true, null, "localhost:10", "s1", "method1", "null",
-				"i1");
+				"localhost:10", "s1", "method1", true, "i1", "somefield", "\"abc\"", "1", "true");
+		assertCreationMatches("localhost:10/s1::method1({i2=i1})", true, null, "localhost:10", "s1", "method1", true,
+				"null", "i1");
 
-		assertCreationMatches("a=s1::method1({i1=i1})", true, "a", null, "s1", "method1", "i1");
-		assertCreationMatches("s1::method1({i1=i1})", true, null, null, "s1", "method1", "i1");
+		assertCreationMatches("a=s1::method1({i1=i1})", true, "a", null, "s1", "method1", true, "i1");
+		assertCreationMatches("s1::method1({i1=i1})", true, null, null, "s1", "method1", true, "i1");
 
-		assertCreationMatches("localhost:10/s1::method1()", true, null, "localhost:10", "s1", "method1");
-		assertCreationMatches("a=s1::method1()", true, "a", null, "s1", "method1");
-		assertCreationMatches("s1::method1()", true, null, null, "s1", "method1");
+		assertCreationMatches("localhost:10/s1::method1()", true, null, "localhost:10", "s1", "method1", true);
+		assertCreationMatches("a=s1::method1()", true, "a", null, "s1", "method1", true);
+		assertCreationMatches("s1::method1()", true, null, null, "s1", "method1", true);
 
 		assertCreationMatches("a=localhost:10/package1.Class42::method1({i1,somefield,\"abc\",1,true})", true, "a",
 				"localhost:10", "package1.Class42", "method1", "i1", "somefield", "\"abc\"", "1", "true");
@@ -377,6 +377,13 @@ public class FMCompositionParserTest {
 
 	private void assertCreationMatches(String instruction, boolean expectedNoException, String expectedLeftside,
 			String expectedHost, String expectedContext, String expectedMethod, String... expectedInputs) {
+		assertCreationMatches(instruction, expectedNoException, expectedLeftside, expectedHost, expectedContext,
+				expectedMethod, false, expectedInputs);
+	}
+
+	private void assertCreationMatches(String instruction, boolean expectedNoException, String expectedLeftside,
+			String expectedHost, String expectedContext, String expectedMethod, boolean contextIsField,
+			String... expectedInputs) {
 		InstructionNode node;
 		try {
 			node = FMCompositionParser.parseInstruction(instruction);
@@ -399,6 +406,7 @@ public class FMCompositionParserTest {
 		Assert.assertEquals(expectedContext, node.getContext());
 		Assert.assertEquals(expectedMethod, node.getMethod());
 		Assert.assertEquals(expectedInputs.length, node.getParameterFields().size());
+		Assert.assertEquals(contextIsField, node.isFieldContext());
 		for (int i = 0, size = expectedInputs.length; i < size; i++) {
 			Assert.assertEquals(expectedInputs[i], node.getParameterFields().get(i));
 		}

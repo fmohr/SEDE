@@ -6,7 +6,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-import de.upb.sede.composition.graphconstructioninformation.ClassesConfig;
+import de.upb.sede.composition.graphs.nodes.BaseNode;
+import de.upb.sede.config.ClassesConfig;
 
 /**
  * A directed, acyclic graph to represent a composition.

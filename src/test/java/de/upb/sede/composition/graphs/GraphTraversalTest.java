@@ -7,6 +7,8 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.Test;
 
+import de.upb.sede.composition.graphs.nodes.BaseNode;
+
 public class GraphTraversalTest {
 	
 	@Test public void testBFS() {

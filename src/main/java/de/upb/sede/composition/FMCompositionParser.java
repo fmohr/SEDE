@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.upb.sede.composition.graphs.InstructionNode;
+import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.exceptions.FMCompositionSyntaxException;
 
 /**
@@ -258,7 +258,9 @@ public final class FMCompositionParser {
 			 */
 			InstructionNode instNode = new InstructionNode(instruction, context, method);
 			if (PATTERN_classpath.matcher(context).matches()) {
+				instNode.setContextIsField(false);
 			} else {
+				instNode.setContextIsField(true);
 			}
 			/* populate fields */
 			if (leftside != null) {

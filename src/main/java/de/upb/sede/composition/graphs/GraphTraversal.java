@@ -8,7 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import de.upb.sede.composition.graphconstructioninformation.ClassesConfig;
+import de.upb.sede.composition.gc.ResolveInformation;
+import de.upb.sede.composition.graphs.nodes.BaseNode;
+import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.util.FilteredIterator;
 
 /**
@@ -125,7 +127,7 @@ public final class GraphTraversal {
 	 * 
 	 * ClassesConfig is needed because based on the configuration of the classes some methods do change the state of a service and some dont.  
 	 */
-	public static Iterable<BaseNode> fieldnameProducingNodes(final Graph graph, final String fieldname, final ClassesConfig configuration) {
-		return () -> new FilteredIterator<>(graph.getNodes().iterator(), node -> node.producesField(fieldname, configuration));
+	public static Iterable<BaseNode> fieldnameProducingNodes(final Graph graph, final String fieldname, final ResolveInformation resolveInfo) {
+		return () -> new FilteredIterator<>(graph.getNodes().iterator(), node -> node.producesField(fieldname, resolveInfo));
 	}
 }

@@ -2,6 +2,8 @@ package de.upb.sede.composition.graphs;
 
 import java.util.Objects;
 
+import de.upb.sede.composition.graphs.nodes.BaseNode;
+
 /**
  * 2-Tuple of BaseNode. 
  * Represents a directed edge in GraphComposition.

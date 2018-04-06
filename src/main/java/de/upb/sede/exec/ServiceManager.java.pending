@@ -30,7 +30,7 @@ public class ServiceManager {
 	}
 
 	public void storeService(byte[] data, String filename) {
-		fileManager.storeService(data, filename);
+		fileManager.save(data, filename);
 	}
 
 	/**

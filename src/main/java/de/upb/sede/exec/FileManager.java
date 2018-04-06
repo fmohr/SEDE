@@ -24,7 +24,7 @@ public abstract class FileManager {
 		}
 	}
 
-	public abstract void save(char[] dataStream, String fileName);
+	public abstract void save(byte[] dataStream, String fileName);
 
-	public abstract String load();
+	public abstract byte[] load(String fileName);
 }

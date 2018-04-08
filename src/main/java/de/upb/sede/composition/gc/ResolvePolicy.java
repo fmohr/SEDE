@@ -6,5 +6,11 @@ package de.upb.sede.composition.gc;
  *
  */
 public class ResolvePolicy {
+	public boolean isToReturn(ResolveInfo resolveInfo, String fieldName) {
+		return true; // TODO
+	}
 	
+	public boolean isPersistentService(String fieldName) {
+		return true;
+	}
 }

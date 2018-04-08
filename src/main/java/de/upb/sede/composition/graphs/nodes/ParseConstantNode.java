@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-import de.upb.sede.composition.gc.ResolveInformation;
+import de.upb.sede.composition.gc.ResolveInfo;
 
 public class ParseConstantNode extends BaseNode {
 	
@@ -16,19 +16,19 @@ public class ParseConstantNode extends BaseNode {
 	
 	@Override
 	public
-	boolean producesField(String fieldname, ResolveInformation resolveInfo) {
+	boolean producesField(String fieldname, ResolveInfo resolveInfo) {
 		return constantValue.equals(fieldname);
 	}
 
 	@Override
 	public
-	Collection<String> consumingFields(ResolveInformation resolveInfo) {
+	Collection<String> consumingFields(ResolveInfo resolveInfo) {
 		return Collections.EMPTY_LIST;
 	}
 
 	@Override
 	public
-	Collection<String> producingFields(ResolveInformation resolveInfo) {
+	Collection<String> producingFields(ResolveInfo resolveInfo) {
 		return new ArrayList<String>(1) {{add(constantValue);}};
 	}
 

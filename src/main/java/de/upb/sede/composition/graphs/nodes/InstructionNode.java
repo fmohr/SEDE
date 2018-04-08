@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import de.upb.sede.composition.gc.ResolveInformation;
+import de.upb.sede.composition.gc.ResolveInfo;
 import de.upb.sede.composition.gc.ServiceInstanceHandle;
 import de.upb.sede.exceptions.UnassignedFieldException;
 
@@ -138,7 +138,7 @@ public class InstructionNode extends BaseNode {
 
 	@Override
 	public
-	boolean producesField(String fieldname, ResolveInformation resolveInfo) {
+	boolean producesField(String fieldname, ResolveInfo resolveInfo) {
 		if (isAssignedLeftSideFieldname() && getLeftSideFieldname().equals(fieldname)) {
 			return true;
 		} else if (isFieldContext() && getContext().equals(fieldname)) {
@@ -158,7 +158,7 @@ public class InstructionNode extends BaseNode {
 		}
 	}
 	
-	private String getServiceClass(ResolveInformation resolveInfo) {
+	public String getServiceClass(ResolveInfo resolveInfo) {
 		String serviceClasspath;
 		if(isFieldContext()) {
 			/*
@@ -176,7 +176,7 @@ public class InstructionNode extends BaseNode {
 
 	@Override
 	public
-	Collection<String> consumingFields(ResolveInformation resolveInfo) {
+	Collection<String> consumingFields(ResolveInfo resolveInfo) {
 		List<String> consumingFields = new ArrayList<>();
 		if (isFieldContext()) {
 			consumingFields.add(getContext());
@@ -188,7 +188,7 @@ public class InstructionNode extends BaseNode {
 
 	@Override
 	public
-	Collection<String> producingFields(ResolveInformation resolveInfo) {
+	Collection<String> producingFields(ResolveInfo resolveInfo) {
 		ArrayList<String> producingFields = new ArrayList<>();
 		if(isAssignedLeftSideFieldname()) {
 			producingFields.add(getLeftSideFieldname());

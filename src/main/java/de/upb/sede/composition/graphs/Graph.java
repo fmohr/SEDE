@@ -87,7 +87,7 @@ public class Graph {
 	}
 
 	/**
-	 * Returns true the edge is present in this graph.
+	 * Returns true if the given edge is present in this graph.
 	 */
 	private boolean containsEdge(Edge edge) {
 		return edges.contains(edge);
@@ -96,7 +96,7 @@ public class Graph {
 	/**
 	 * Removes the given node and its the edges from the graph.
 	 */
-	private void removeNode(BaseNode nodeToRemove) {
+	public void removeNode(BaseNode nodeToRemove) {
 		if (nodeToRemove == null) {
 			return;
 		}
@@ -105,12 +105,24 @@ public class Graph {
 		/* remove the node itself. */
 		nodes.remove(nodeToRemove);
 	}
-
-
 	
+	/**
+	 * Clones this graph by copying edge and node set to a new Graph Object.
+	 * O(m+n) time complexity and O(1) space efficiency. 
+	 * (Doesn't clone the nodes so changing the state of nodes of the cloned graph will have effects on the original graph. 
+	 * This behavior is intentional so don't change it.)
+	 */
+	@Override
+	public Graph clone() {
+		Graph clonedGraph = new Graph();
+		clonedGraph.edges.addAll(getEdges());
+		clonedGraph.nodes.addAll(getNodes());
+		return clonedGraph;
+	}
 
-
-
+	public boolean isEmpty() {
+		return getNodes().isEmpty();
+	}
 	
 
 }

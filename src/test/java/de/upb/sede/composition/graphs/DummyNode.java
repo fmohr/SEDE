@@ -2,30 +2,34 @@ package de.upb.sede.composition.graphs;
 
 import java.util.Collection;
 
-import de.upb.sede.composition.gc.ResolveInformation;
+import de.upb.sede.composition.gc.ResolveInfo;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 
-class DummyNode extends BaseNode {
+public class DummyNode extends BaseNode {
 	
 	String name = "noname";
+
+	private Collection<String> producingFields;
+	private Collection<String> consumingFields;
 	DummyNode(){
 		super();
 	}
-	
+
 	DummyNode(String name){
 		this.name = name;
 	}
+	
 
 	@Override
 	public
-	boolean producesField(String fieldname, ResolveInformation resolveInfo) {
-		return false;
+	boolean producesField(String fieldname, ResolveInfo resolveInfo) {
+		return producingFields!=null && producingFields.contains(fieldname);
 	}
 
 	@Override
 	public
-	Collection<String> consumingFields(ResolveInformation resolveInfo) {
-		return null;
+	Collection<String> consumingFields(ResolveInfo resolveInfo) {
+		return consumingFields;
 	}
 	
 	public String toString() {
@@ -34,8 +38,8 @@ class DummyNode extends BaseNode {
 
 	@Override
 	public
-	Collection<String> producingFields(ResolveInformation resolveInfo) {
-		return null;
+	Collection<String> producingFields(ResolveInfo resolveInfo) {
+		return producingFields;
 	}
 
 }

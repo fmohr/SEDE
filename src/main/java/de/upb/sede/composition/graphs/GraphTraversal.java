@@ -2,16 +2,20 @@ package de.upb.sede.composition.graphs;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import de.upb.sede.composition.gc.ResolveInformation;
+import de.upb.sede.composition.FMCompositionParser;
+import de.upb.sede.composition.gc.ResolveInfo;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.exceptions.GraphFormException;
 import de.upb.sede.util.FilteredIterator;
+import de.upb.sede.util.Iterators;
 
 /**
  * Defines algorithms to traverse a given graph.
@@ -127,7 +131,67 @@ public final class GraphTraversal {
 	 * 
 	 * ClassesConfig is needed because based on the configuration of the classes some methods do change the state of a service and some dont.  
 	 */
-	public static Iterable<BaseNode> fieldnameProducingNodes(final Graph graph, final String fieldname, final ResolveInformation resolveInfo) {
+	public static Iterable<BaseNode> fieldnameProducingNodes(final Graph graph, final String fieldname, final ResolveInfo resolveInfo) {
 		return () -> new FilteredIterator<>(graph.getNodes().iterator(), node -> node.producesField(fieldname, resolveInfo));
+	}
+	
+	/**
+	 * Returns a set of all producing field names of a graph.
+	 * The set doesn't contain constant values.
+	 */
+	public static Set<String> producedFields(final Graph graph, final ResolveInfo resolveInfo){
+		Set<String> producedFields = new HashSet<>();
+		/* collect all fields */
+		for(BaseNode bn : graph.getNodes()) {
+			producedFields.addAll(bn.producingFields(resolveInfo));
+		}
+		/*
+		 * Remove all constatns.
+		 */
+		producedFields.removeIf(FMCompositionParser::isConstant);
+		return producedFields;
+	}
+	
+	/**
+	 * Returns true if there is no edge in the given graph that targets the given node.
+	 */
+	public static boolean isIndependent(Graph graph, BaseNode baseNode) {
+		return graph.getEdges().stream().allMatch(e -> !e.getTo().equals(baseNode));
+	}
+	
+	/**
+	 * Returns an iterable of all independent nodes (nodes which aren't dependent on other nodes)
+	 */
+	public static Iterable<BaseNode> independentNodes(Graph graph){
+		return () -> new FilteredIterator<>(graph.getNodes().iterator(), node -> isIndependent(graph, node));
+	}
+	
+	/**
+	 * Flattens the given graph to a list with Topological sorting of its nodes.
+	 * (The order of the list matters because nodes are independent of the nodes with higher indices.)
+	 * By flattening the graph information about concrete dependency is lost thus one cannot go back from the list representation to the graph one.
+	 */
+	public static List<BaseNode> topologicalSort(final Graph graph){
+		List<BaseNode> topologicalSortedList = new ArrayList<>();
+		Graph clonedGraph = graph.clone();
+		/*
+		 *  While the graph isn't empty add independent nodes to the topologicalSort list.
+		 */
+		while(!clonedGraph.isEmpty()) {
+			List<BaseNode> independentNodes = Iterators.TO_LIST(independentNodes(clonedGraph).iterator());
+			if(independentNodes.isEmpty()) {
+				/*
+				 * There are no independent nodes but the graph is not empty yet.
+				 * That means the graph is not acyclic:
+				 */
+				throw new GraphFormException("Graph is not acyclic");
+			}
+			/*
+			 * Add the nodes to the topological sorted list
+			 */
+			topologicalSortedList.addAll(independentNodes);
+			independentNodes.forEach(clonedGraph::removeNode);
+		}
+		return Collections.unmodifiableList(topologicalSortedList);
 	}
 }

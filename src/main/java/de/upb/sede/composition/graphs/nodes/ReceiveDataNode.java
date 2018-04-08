@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import de.upb.sede.composition.gc.ResolveInformation;
+import de.upb.sede.composition.gc.ResolveInfo;
 
 class ReceiveDataNode extends BaseNode{
 	
@@ -18,19 +18,19 @@ class ReceiveDataNode extends BaseNode{
 	
 	@Override
 	public
-	boolean producesField(String fieldname, ResolveInformation resolveInfo) {
+	boolean producesField(String fieldname, ResolveInfo resolveInfo) {
 		return fieldname.equals(this.fieldname);
 	}
 
 	@Override
 	public
-	Collection<String> consumingFields(ResolveInformation resolveInfo) {
+	Collection<String> consumingFields(ResolveInfo resolveInfo) {
 		return Collections.EMPTY_LIST;
 	}
 
 	@Override
 	public
-	Collection<String> producingFields(ResolveInformation resolveInfo) {
+	Collection<String> producingFields(ResolveInfo resolveInfo) {
 		return new ArrayList<String>(1) {{add(fieldname);}};
 	}
 	

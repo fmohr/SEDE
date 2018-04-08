@@ -2,7 +2,7 @@ package de.upb.sede.composition.gc;
 
 import de.upb.sede.config.ClassesConfig;
 
-public class ResolveInformation {
+public class ResolveInfo {
 
 	public ClassesConfig getClassesConfig() {
 		return null;
@@ -11,6 +11,12 @@ public class ResolveInformation {
 		return null;
 	}
 	public ResolvePolicy getResolvePolicy() {
+		return null;
+	}
+	public ExecutorCoordinator getExecutorCoordinator() {
+		return null;
+	}
+	public ClientInfo getClientInfo() {
 		return null;
 	}
 	

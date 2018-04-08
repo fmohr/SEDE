@@ -9,9 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Stack;
 import java.util.function.Function;
-
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -55,18 +53,14 @@ public class ClassesConfig extends HashMap<String, JsonNode> {
 	/**
 	 * Appends class configurations from files to the existing ones.
 	 */
-	public void appendConfigFromFiles(String... configFiles) throws IOException  {
+	public void appendConfigFromFiles(String... configFiles)  {
 		if(configFiles.length == 0) {
 			return;
 		}
 		List<String> jsonStringList = new ArrayList<>(configFiles.length);
 		for(String filePath : configFiles) {
-			try {
-				String jsonString = FileUtil.readFileAsString(filePath);
-				jsonStringList.add(jsonString);
-			} catch( IOException e) {
-				throw new UncheckedIOException(e);
-			}
+			String jsonString = FileUtil.readFileAsString(filePath);
+			jsonStringList.add(jsonString);
 		}
 		String[]  jsonStringArr = jsonStringList.toArray(new String[jsonStringList.size()]);
 		this.appendConfigFromJsonStrings(jsonStringArr);
@@ -75,7 +69,7 @@ public class ClassesConfig extends HashMap<String, JsonNode> {
 	/**
 	 * Appends class configurations from json-strings to the existing ones.
 	 */
-	public void appendConfigFromJsonStrings(String... jsonStrings) throws IOException {
+	public void appendConfigFromJsonStrings(String... jsonStrings) {
 		if(jsonStrings.length == 0) {
 			return;
 		}
@@ -83,8 +77,13 @@ public class ClassesConfig extends HashMap<String, JsonNode> {
         ObjectMapper mapper = new ObjectMapper(); 
         for(String jsonString : jsonStrings) {
         		// iterate over configs and append them to the existing configuration
-            HashMap<String,JsonNode> loadedConfig = mapper.readValue(jsonString, typeRef);
-            rawConfiguration.putAll(loadedConfig);
+            HashMap<String, JsonNode> loadedConfig;
+			try {
+				loadedConfig = mapper.readValue(jsonString, typeRef);
+	            rawConfiguration.putAll(loadedConfig);
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
         }
         // reset this configuration, in order to call resolveInheritances on a un extended configurations
 		this.clear(); // clear all configurations.

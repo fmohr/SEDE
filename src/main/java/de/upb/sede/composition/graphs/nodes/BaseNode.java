@@ -2,7 +2,7 @@ package de.upb.sede.composition.graphs.nodes;
 
 import java.util.Collection;
 
-import de.upb.sede.composition.gc.ResolveInformation;
+import de.upb.sede.composition.gc.ResolveInfo;
 
 public abstract class BaseNode {
 
@@ -13,19 +13,19 @@ public abstract class BaseNode {
     /**
      * Returns true if this node makes the given fieldname available after it's done on the executor or changes its state.
      */
-    public abstract boolean producesField(String fieldname, ResolveInformation resolveInfo);
+    public abstract boolean producesField(String fieldname, ResolveInfo resolveInfo);
 
     
     /**
      * Returns Collection of fieldnames which this node is depending on being resolved before its execution starts.
      * @param resolveInfo TODO
      */
-    public abstract Collection<String> consumingFields(ResolveInformation resolveInfo);
+    public abstract Collection<String> consumingFields(ResolveInfo resolveInfo);
     
     /**
      * Returns Collection of fieldnames which this node is depending on being resolved before its execution starts.
      */
-    public abstract Collection<String> producingFields(ResolveInformation resolveInfo);
+    public abstract Collection<String> producingFields(ResolveInfo resolveInfo);
 
     /**
      * Returns true if the object has the same pointer.

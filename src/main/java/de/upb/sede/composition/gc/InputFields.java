@@ -23,7 +23,11 @@ public class InputFields {
 		return fieldTypes.get(Objects.requireNonNull(fieldname));
 	}
 
-	public ServiceInstanceHandle getServiceInstanceHandle(String context) {
+
+	public boolean isServiceInstanceHandle(String fieldname) {
+		return false;
+	}
+	public ServiceInstanceHandle getServiceInstanceHandle(String fieldname) {
 		return null;
 	}
 }

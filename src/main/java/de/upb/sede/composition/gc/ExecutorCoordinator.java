@@ -19,5 +19,14 @@ public class ExecutorCoordinator {
 	public boolean hasExecutor(String execHostAddress) {
 		return executors.stream().anyMatch(handle -> handle.equalsHostAddress(execHostAddress));
 	}
+
+	public ExecutorHandle getExecutorFor(String host) {
+		for(ExecutorHandle executor : executors) {
+			if(executor.getHostAddress().equals(host)) {
+				return executor;
+			}
+		}
+		throw new RuntimeException("No executor found for host. First query hasExecutor before retrieving it.");
+	}
 	
 }

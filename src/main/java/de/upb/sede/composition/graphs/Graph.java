@@ -51,6 +51,15 @@ public class Graph {
 	}
 
 	/**
+	 * Alters this graph. 
+	 * From the given graph adds all edges whose source and target nodes are also contained in this graph. 
+	 */
+	public void addEdges(Graph graph) {
+		graph.edges.stream().filter(e -> this.contains(e.getFrom()) && this.contains(e.getTo())).
+							forEach(this::addEdge);
+	}
+
+	/**
 	 * Alters this graph by adding the given edge.
 	 * 
 	 */
@@ -75,7 +84,7 @@ public class Graph {
 	/**
 	 * Returns true if this graph contains the given node.
 	 */
-	boolean contains(BaseNode node) {
+	public boolean contains(BaseNode node) {
 		return nodes.contains(node);
 	}
 
@@ -91,6 +100,14 @@ public class Graph {
 	 */
 	private boolean containsEdge(Edge edge) {
 		return edges.contains(edge);
+	}
+
+	public boolean containsEdges() {
+		return !edges.isEmpty();
+	}
+
+	public boolean isEmpty() {
+		return getNodes().isEmpty();
 	}
 
 	/**
@@ -119,10 +136,5 @@ public class Graph {
 		clonedGraph.nodes.addAll(getNodes());
 		return clonedGraph;
 	}
-
-	public boolean isEmpty() {
-		return getNodes().isEmpty();
-	}
-	
 
 }

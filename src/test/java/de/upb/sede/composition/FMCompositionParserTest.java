@@ -406,7 +406,7 @@ public class FMCompositionParserTest {
 		Assert.assertEquals(expectedContext, node.getContext());
 		Assert.assertEquals(expectedMethod, node.getMethod());
 		Assert.assertEquals(expectedInputs.length, node.getParameterFields().size());
-		Assert.assertEquals(contextIsField, node.isFieldContext());
+		Assert.assertEquals(contextIsField, node.isContextAFieldname());
 		for (int i = 0, size = expectedInputs.length; i < size; i++) {
 			Assert.assertEquals(expectedInputs[i], node.getParameterFields().get(i));
 		}

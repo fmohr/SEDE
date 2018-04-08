@@ -30,6 +30,7 @@ public final class GraphTraversal {
 
 	/**
 	 * Returns an iterable which traverses the tree in BFS order from the given source.
+	 * Doesn't include source in the iteration.
 	 */
 	public static Iterable<BaseNode> BFS(final Graph graph, final BaseNode source) {
 
@@ -43,6 +44,7 @@ public final class GraphTraversal {
 			/**
 			 * Create iterator:
 			 */
+			Graph clonedGraph = graph.clone(); // clone graph to be able to remove edges thus improved time efficiency
 			Deque<BaseNode> fifoQueue = new ArrayDeque<>();
 			Set<BaseNode> visitedSet = new HashSet<>();
 
@@ -71,12 +73,13 @@ public final class GraphTraversal {
 				private void findNext() {
 					next = fifoQueue.poll();
 					if (next != null) {
-						for (BaseNode neighbor : GraphTraversal.neighbors(graph, next)) {
+						for (BaseNode neighbor : GraphTraversal.neighbors(clonedGraph, next)) {
 							if (!visitedSet.contains(neighbor)) {
 								visitedSet.add(neighbor);
 								fifoQueue.addLast(neighbor);
 							}
 						}
+						clonedGraph.removeNode(next);
 					}
 				}
 			};
@@ -95,7 +98,7 @@ public final class GraphTraversal {
 	/**
 	 * Returns an iterable of all edges that contain the given node.
 	 */
-	public Iterable<Edge> allEdgesWith(final Graph graph, final BaseNode node) {
+	public static Iterable<Edge> allEdgesWith(final Graph graph, final BaseNode node) {
 		return () -> new FilteredIterator<Edge>(graph.getEdges().iterator(), edge -> edge.contains(node));
 	}
 	
@@ -104,7 +107,7 @@ public final class GraphTraversal {
 	 * Returns true if the given nodes are in the given graph and there is a path from
 	 * source to target.
 	 */
-	public boolean isTherePathFromTo(final Graph graph, final BaseNode source, final BaseNode target) {
+	public static boolean isTherePathFromTo(final Graph graph, final BaseNode source, final BaseNode target) {
 		if(graph.contains(source) && graph.contains(target)) {
 			/*
 			 * Do breath first search over the graph and find the target node.
@@ -115,7 +118,7 @@ public final class GraphTraversal {
 				}
 			}
 			/*
-			 * target node was not found. return false
+			 * target node was not found.
 			 */
 			return false;
 		} else {

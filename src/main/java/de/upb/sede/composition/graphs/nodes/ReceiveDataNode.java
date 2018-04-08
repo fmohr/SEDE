@@ -8,11 +8,11 @@ import java.util.Objects;
 
 import de.upb.sede.composition.gc.ResolveInfo;
 
-class ReceiveDataNode extends BaseNode{
+public class ReceiveDataNode extends BaseNode{
 	
 	private final String fieldname;
 	
-	ReceiveDataNode(String fieldname){
+	public ReceiveDataNode(String fieldname){
 		this.fieldname = Objects.requireNonNull(fieldname);
 	} 
 	

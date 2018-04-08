@@ -105,7 +105,7 @@ public class InstructionNode extends BaseNode {
 		this.contextIsField = isField;
 	}
 
-	public boolean isFieldContext() {
+	public boolean isContextAFieldname() {
 		return this.contextIsField;
 	}
 
@@ -141,7 +141,7 @@ public class InstructionNode extends BaseNode {
 	boolean producesField(String fieldname, ResolveInfo resolveInfo) {
 		if (isAssignedLeftSideFieldname() && getLeftSideFieldname().equals(fieldname)) {
 			return true;
-		} else if (isFieldContext() && getContext().equals(fieldname)) {
+		} else if (isContextAFieldname() && getContext().equals(fieldname)) {
 			/*
 			 * Lookup if the method changes the state of the service:
 			 */
@@ -160,7 +160,7 @@ public class InstructionNode extends BaseNode {
 	
 	public String getServiceClass(ResolveInfo resolveInfo) {
 		String serviceClasspath;
-		if(isFieldContext()) {
+		if(isContextAFieldname()) {
 			/*
 			 * the context is a fieldname. Get its class path information from the serviceInstancehandle:
 			 */
@@ -178,7 +178,7 @@ public class InstructionNode extends BaseNode {
 	public
 	Collection<String> consumingFields(ResolveInfo resolveInfo) {
 		List<String> consumingFields = new ArrayList<>();
-		if (isFieldContext()) {
+		if (isContextAFieldname()) {
 			consumingFields.add(getContext());
 		}
 		consumingFields.addAll(getParameterFields());
@@ -193,10 +193,27 @@ public class InstructionNode extends BaseNode {
 		if(isAssignedLeftSideFieldname()) {
 			producingFields.add(getLeftSideFieldname());
 		}
-		if(isFieldContext()) {
+		if(isContextAFieldname()) {
 			String serviceClass = getServiceClass(resolveInfo);
 			resolveInfo.getClassesConfig().stateMutational(serviceClass, getMethod());
 		}
 		return producingFields;
+	}
+	
+	/**
+	 * Returns the fm composition representation  of the instruction.
+	 */
+	public String toString() {
+		String s = "";
+		if(isAssignedLeftSideFieldname()) {
+			s +=  getLeftSideFieldname() + " = ";
+		}
+		if(isAssignedHost()) {
+			s += getHost() + "/";
+		}
+		s += getContext() + "::";
+		s += getMethod() + "(";
+		s += getParameterFields().toString() + ")";
+		return s;
 	}
 }

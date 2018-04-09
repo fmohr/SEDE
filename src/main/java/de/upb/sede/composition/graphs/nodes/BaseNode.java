@@ -23,7 +23,7 @@ public abstract class BaseNode {
     public abstract Collection<String> consumingFields(ResolveInfo resolveInfo);
     
     /**
-     * Returns Collection of fieldnames which this node is depending on being resolved before its execution starts.
+     * Returns Collection of fieldnames which this node is producing.
      */
     public abstract Collection<String> producingFields(ResolveInfo resolveInfo);
 

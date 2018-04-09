@@ -56,7 +56,10 @@ public class GraphConstruction {
 		this(resolveInfo);
 		createOrderedInstructionGraph(instNodes);
 	}
-
+	
+	/**
+	 * 
+	 */
 	public void createOrderedInstructionGraph(List<InstructionNode> instNodes) {
 		BaseNode lastNode = null;
 		for (Iterator<InstructionNode> it = instNodes.iterator(); it.hasNext();) {
@@ -90,7 +93,7 @@ public class GraphConstruction {
 			 */
 			if (instNode.isAssignedHost()) {
 				/*
-				 * Explicit host is defined.
+				 * Explicit host is defined by the instruction.
 				 */
 				if (resolveInfo.getExecutorCoordinator().hasExecutor(instNode.getHost())) {
 					/*
@@ -233,7 +236,7 @@ public class GraphConstruction {
 		}
 		
 	}
-	/*
+	/**
 	 * constructs a path from producer to consumer in the given graph to indicate the dependency.
 	 * For now it simply adds an edge to the graph.
 	 * TODO check if the method signature and provided data type match. Add marshal nodes.
@@ -242,9 +245,17 @@ public class GraphConstruction {
 		graph.connectNodes(producer, consumer);
 	}
 	
+	/**
+	 * 
+	 */
+	public void resolveDataFlowProducer(final Graph graph) {
+		
+	}
+	
+	
 	public void forwardUnresolvedGraph() {
 		if(!unresolvedInstructionNodes.isEmpty()) {
-			throw new GraphFormException("Unsupported composition. Currenctly the forwarding of the graph is not ");
+			throw new GraphFormException("Unsupported composition. Currenctly the forwarding to another gateway is not supported.");
 		}
 	}
 	

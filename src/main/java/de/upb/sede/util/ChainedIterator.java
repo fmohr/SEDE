@@ -10,7 +10,7 @@ public class ChainedIterator<I, T> implements Iterator<T> {
 	private final Function<I, Iterator<T>> supplier;
 	
 	private Iterator<T> currentIterator;
-	ChainedIterator(Iterator<I> basedOnIterator, Function<I, Iterator<T>> supplier){
+	public ChainedIterator(Iterator<I> basedOnIterator, Function<I, Iterator<T>> supplier){
 		this.basedOnIterator = Objects.requireNonNull(basedOnIterator);
 		this.supplier = Objects.requireNonNull(supplier);
 		findNext();

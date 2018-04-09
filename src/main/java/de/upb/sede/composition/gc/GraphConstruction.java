@@ -14,6 +14,7 @@ import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.graphs.nodes.ParseConstantNode;
 import de.upb.sede.composition.graphs.nodes.ReceiveDataNode;
+import de.upb.sede.composition.graphs.nodes.SendDataNode;
 import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.exceptions.CompositionSemanticException;
@@ -51,6 +52,7 @@ public class GraphConstruction {
 	}
 
 	/**
+	 * 
 	 */
 	public GraphConstruction(ResolveInfo resolveInfo, List<InstructionNode> instNodes) {
 		this(resolveInfo);
@@ -61,17 +63,28 @@ public class GraphConstruction {
 	 * 
 	 */
 	public void createOrderedInstructionGraph(List<InstructionNode> instNodes) {
-		BaseNode lastNode = null;
 		for (Iterator<InstructionNode> it = instNodes.iterator(); it.hasNext();) {
 			BaseNode currentNode = it.next();
 			orderOfExecutionGraph.addNode(currentNode);
-			if (lastNode != null) {
-				/*
-				 * this isn't the first instruction node added.
-				 */
-				orderOfExecutionGraph.connectNodes(lastNode, currentNode);
+			/*
+			 * Connect each preceding node to the current node:
+			 */
+			for(BaseNode bn : GraphTraversal.iterateNodes(orderOfExecutionGraph)) {
+				
+				orderOfExecutionGraph.connectNodes(bn, currentNode);
 			}
-			lastNode = currentNode;
+		}
+	}
+	
+	/**
+	 * 
+	 */
+	public void createInputNodesOnClientGraph() {
+		ExecutorHandle clientExecutor = resolveInfo.getClientInfo().getClientExecutor();
+		Graph clientGraph = graphs.get(clientExecutor);
+		for(String inputFieldname : resolveInfo.getInputInformation().getInputFields()) {
+			ReceiveDataNode receiveDataNode = new ReceiveDataNode(inputFieldname);
+			clientGraph.addNode(receiveDataNode);
 		}
 	}
 
@@ -246,10 +259,43 @@ public class GraphConstruction {
 	}
 	
 	/**
-	 * 
+	 * Only call this function once per graph
 	 */
-	public void resolveDataFlowProducer(final Graph graph) {
+	public void resolveReceivingNodes(ExecutorHandle receivingExecutor) {
+		if(!graphs.containsKey(receivingExecutor)) {
+			/*
+			 * this executor doesn't have a graph.
+			 */
+			return;
+		}
 		
+		List<BaseNode> orderedInstructionList = GraphTraversal.topologicalSort(orderOfExecutionGraph);
+		
+		
+		
+		Graph graph = graphs.get(receivingExecutor);
+		for(BaseNode baseNode : GraphTraversal.iterateNodesWithClassname(graph, ReceiveDataNode.class.getSimpleName())) {
+			ReceiveDataNode receiver = (ReceiveDataNode) baseNode;
+			String receivingField = receiver.getReceivingFieldname();
+			/*
+			 * Find the graph to put this send data note into
+			 */
+			SendDataNode sendData = new SendDataNode(receivingField, receivingExecutor.getHostAddress());
+			for(ExecutorHandle otherExecutors : graphs.keySet()) {
+				if(otherExecutors == receivingExecutor) {
+					continue; // only consider other graphs
+				}
+				
+			}
+			
+			if(resolveInfo.getInputInformation().isInputField(receivingField)) {
+				/*
+				 * The fieldname is an input field from the client. Add send data node to the client graph:
+				 */
+				this.graphs.get(resolveInfo.getClientInfo().getClientExecutor()).addNode(sendData);
+			}
+			
+		}
 	}
 	
 	

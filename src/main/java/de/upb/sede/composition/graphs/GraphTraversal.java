@@ -14,6 +14,8 @@ import de.upb.sede.composition.gc.ResolveInfo;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.exceptions.GraphFormException;
+import de.upb.sede.util.ChainedIterator;
+import de.upb.sede.util.ChainedIteratorTest;
 import de.upb.sede.util.FilteredIterator;
 import de.upb.sede.util.Iterators;
 
@@ -196,5 +198,12 @@ public final class GraphTraversal {
 			independentNodes.forEach(clonedGraph::removeNode);
 		}
 		return Collections.unmodifiableList(topologicalSortedList);
+	}
+
+	public static Iterable<BaseNode> iterateNodes(final Graph graph){
+		return graph.getNodes();
+	}
+	public static Iterable<BaseNode> iterateNodesWithClassname(final Graph graph, final String simpleNodeClassName){
+		return () -> new FilteredIterator<>(iterateNodes(graph).iterator(), n -> (n.getClass().getSimpleName().equals(simpleNodeClassName)));
 	}
 }

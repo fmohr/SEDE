@@ -34,6 +34,10 @@ public class ReceiveDataNode extends BaseNode{
 		return new ArrayList<String>(1) {{add(fieldname);}};
 	}
 	
+	public String getReceivingFieldname() {
+		return fieldname;
+	}
+	
 	
 
 }

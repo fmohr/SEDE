@@ -1,5 +1,6 @@
 package de.upb.sede.composition.gc;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
@@ -29,5 +30,9 @@ public class InputFields {
 	}
 	public ServiceInstanceHandle getServiceInstanceHandle(String fieldname) {
 		return null;
+	}
+
+	public Collection<String> getInputFields() {
+		return fieldTypes.keySet();
 	}
 }

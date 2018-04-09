@@ -1,6 +1,8 @@
 package de.upb.sede.exec;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.apache.log4j.Logger;
@@ -24,7 +26,19 @@ public abstract class FileManager {
 		}
 	}
 
-	public abstract void save(byte[] dataStream, String fileName);
+	public void save(byte[] data, String filePath) {
+		try {
+			File destination = new File(filePath);
+			if (destination.exists())
+				System.out.println("Overwriting file: " + destination.getName());
+			BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(destination));
+			output.write(data, 0, data.length);
+			output.close();
+			System.out.println(">>> recv file " + filePath + " (" + (data.length >> 10) + " kiB)");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public abstract byte[] load(String fileName);
 }

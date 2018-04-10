@@ -25,7 +25,7 @@ public class Graph {
 	private final Collection<Edge> edges;
 
 	public Graph() {
-		this.nodes = new ArrayList<>();
+		this.nodes = new HashSet<>();
 		this.edges = new HashSet<>();
 	}
 
@@ -132,9 +132,16 @@ public class Graph {
 	@Override
 	public Graph clone() {
 		Graph clonedGraph = new Graph();
-		clonedGraph.edges.addAll(getEdges());
-		clonedGraph.nodes.addAll(getNodes());
+		clonedGraph.copyFrom(this);
 		return clonedGraph;
+	}
+
+	/**
+	 * Copies the content (edges and nodes) of the given graph into this instance:
+	 */
+	public void copyFrom(Graph otherGraph) {
+		this.edges.addAll(otherGraph.getEdges());
+		this.nodes.addAll(otherGraph.getNodes());
 	}
 
 }

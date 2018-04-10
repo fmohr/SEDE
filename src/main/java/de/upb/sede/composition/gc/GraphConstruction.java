@@ -19,6 +19,7 @@ import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.exceptions.CompositionSemanticException;
 import de.upb.sede.exceptions.GraphFormException;
+import de.upb.sede.util.DefaultMap;
 
 /**
  * This class contains all the logic to construct a graph.
@@ -80,8 +81,7 @@ public class GraphConstruction {
 	 * 
 	 */
 	public void createInputNodesOnClientGraph() {
-		ExecutorHandle clientExecutor = resolveInfo.getClientInfo().getClientExecutor();
-		Graph clientGraph = graphs.get(clientExecutor);
+		Graph clientGraph = getClientGraph();
 		for(String inputFieldname : resolveInfo.getInputInformation().getInputFields()) {
 			ReceiveDataNode receiveDataNode = new ReceiveDataNode(inputFieldname);
 			clientGraph.addNode(receiveDataNode);
@@ -269,11 +269,10 @@ public class GraphConstruction {
 			return;
 		}
 		
-		List<BaseNode> orderedInstructionList = GraphTraversal.topologicalSort(orderOfExecutionGraph);
 		
 		
 		
-		Graph graph = graphs.get(receivingExecutor);
+		Graph graph = getGraphFor(receivingExecutor);
 		for(BaseNode baseNode : GraphTraversal.iterateNodesWithClassname(graph, ReceiveDataNode.class.getSimpleName())) {
 			ReceiveDataNode receiver = (ReceiveDataNode) baseNode;
 			String receivingField = receiver.getReceivingFieldname();
@@ -292,13 +291,79 @@ public class GraphConstruction {
 				/*
 				 * The fieldname is an input field from the client. Add send data node to the client graph:
 				 */
-				this.graphs.get(resolveInfo.getClientInfo().getClientExecutor()).addNode(sendData);
+				getClientGraph().addNode(sendData);
 			}
 			
 		}
 	}
+
+	private Graph getGraphFor(ExecutorHandle executor) {
+		if(!graphs.containsKey(executor)) {
+			throw new RuntimeException("No graph for the given executorhandle defined.");
+		}
+		return graphs.get(executor);
+	}
+	private Graph getClientGraph() {
+		return this.graphs.get(resolveInfo.getClientInfo().getClientExecutor());
+	}
 	
+	/**
+	 * Returns a map which maps each node to its priority of exeuction.
+	 * -2 has no priority at all.
+	 * -1 has client side priority.
+	 *  0 <= i  has the same priority as the i'th instruction.  
+	 *  
+	 *  Priority here means that 
+	 * @return
+	 */
+	private DefaultMap<BaseNode, Integer> getNodePriorityMap(){
+
+		List<BaseNode> orderedInstructionList = GraphTraversal.topologicalSort(orderOfExecutionGraph);
+		DefaultMap<BaseNode, Integer> nodePriority = new DefaultMap<>(() -> -2);
+		for(BaseNode bn : GraphTraversal.iterateNodes(getClientGraph())) {
+			nodePriority.put(bn, -1);
+		}
+		
+		/*
+		 * Calculate the priority based on the complete graph:
+		 */
+		Graph completeGraph = getCompleteGraph(true);
+		
+		/*
+		 * Mark the subtree of the i'th instruction to be of at least the priority i.
+		 * (priority is the index of the instruction)
+		 */
+		for(int priority = 0, instuctionCount = orderedInstructionList.size(); priority < instuctionCount; priority++) {
+			
+			BaseNode instructionSource = orderedInstructionList.get(priority);
+			nodePriority.put(instructionSource, priority);
+			
+			for(BaseNode instructionChild : GraphTraversal.BFS(completeGraph, instructionSource)) {
+				nodePriority.put(instructionChild, priority);
+			}
+		}
+		
+		return nodePriority;
+	}
 	
+	/**
+	 * Returns a new graph which merges all the graphs from the 'graphs' map. 
+	 * If withSequentialInstructions is true the orderOfExecutionGraph is also merged.
+	 */
+	private Graph getCompleteGraph(boolean withSequentialInstructions) {
+		Graph completedGraph = new Graph();
+		for(ExecutorHandle eh : graphs.keySet()) {
+			completedGraph.copyFrom(getGraphFor(eh));
+		}
+		if(withSequentialInstructions) {
+			completedGraph.copyFrom(orderOfExecutionGraph);
+		}
+		return completedGraph;
+	}
+	
+	/**
+	 * Forwards the unresolved list of instructions to other gateways to be resolved.
+	 */
 	public void forwardUnresolvedGraph() {
 		if(!unresolvedInstructionNodes.isEmpty()) {
 			throw new GraphFormException("Unsupported composition. Currenctly the forwarding to another gateway is not supported.");

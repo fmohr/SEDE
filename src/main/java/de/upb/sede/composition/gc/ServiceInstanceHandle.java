@@ -80,14 +80,6 @@ public class ServiceInstanceHandle implements Serializable {
 		return !OWN_HOST.equals(this.getHost());
 	}
 
-	/**
-	 *
-	 * @return The address under which the service is accessible.
-	 */
-	public String getServiceAddress() {
-		assert (this.isRemote()); // No need to access address if you are the host.
-		return this.getHost() + "/" + this.getClasspath() + "/" + this.getId();
-	}
 
 	public boolean isSerialized() {
 		return !this.id.equals(not_serialized_id);

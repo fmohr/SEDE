@@ -1,20 +1,20 @@
 package de.upb.sede.composition.gc;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
 /**
  * Sent by the user.
- * @author aminfaez
  *
  */
 public class InputFields {
-	private Map<String, String> fieldTypes;
+	private final Map<String, String> fieldTypes;
+	private final Map<String, ServiceInstanceHandle> serviceInstanceMap;
 	
-	public InputFields(Map<String, String> fieldTypes) {
-		this.fieldTypes = Collections.unmodifiableMap(fieldTypes);
+	public InputFields(Map<String, String> fieldTypes, Map<String, ServiceInstanceHandle> serviceInstanceMap) {
+		this.fieldTypes = fieldTypes;
+		this.serviceInstanceMap = serviceInstanceMap;
 	}
 	
 	public boolean isInputField(String fieldname) {
@@ -26,10 +26,10 @@ public class InputFields {
 
 
 	public boolean isServiceInstanceHandle(String fieldname) {
-		return false;
+		return serviceInstanceMap.containsKey(fieldname);
 	}
 	public ServiceInstanceHandle getServiceInstanceHandle(String fieldname) {
-		return null;
+		return serviceInstanceMap.get(fieldname);
 	}
 
 	public Collection<String> getInputFields() {

@@ -28,6 +28,7 @@ public class InstructionNode extends BaseNode {
 	private String context;
 	private boolean contextIsField;
 	private String method;
+	
 
 	/**
 	 * Parameters for method or constructor invocation. The order of the parameters
@@ -215,5 +216,9 @@ public class InstructionNode extends BaseNode {
 		s += getMethod() + "(";
 		s += getParameterFields().toString() + ")";
 		return s;
+	}
+
+	public boolean isServiceConstruct() {
+		return getMethod().equals("__construct");
 	}
 }

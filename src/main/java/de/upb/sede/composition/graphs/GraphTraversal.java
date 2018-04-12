@@ -131,14 +131,6 @@ public final class GraphTraversal {
 		}
 	}
 	
-	/**
-	 * Iterator of all nodes  that changes the state of the given fieldname.
-	 * 
-	 * ClassesConfig is needed because based on the configuration of the classes some methods do change the state of a service and some dont.  
-	 */
-	public static Iterable<BaseNode> fieldnameProducingNodes(final Graph graph, final String fieldname, final ResolveInfo resolveInfo) {
-		return () -> new FilteredIterator<>(graph.getNodes().iterator(), node -> node.producesField(fieldname, resolveInfo));
-	}
 	
 	/**
 	 * Returns a set of all producing field names of a graph.
@@ -205,5 +197,16 @@ public final class GraphTraversal {
 	}
 	public static Iterable<BaseNode> iterateNodesWithClassname(final Graph graph, final String simpleNodeClassName){
 		return () -> new FilteredIterator<>(iterateNodes(graph).iterator(), n -> (n.getClass().getSimpleName().equals(simpleNodeClassName)));
+	}
+
+	/**
+	 * Iterator of all nodes  that changes the state of the given fieldname.
+	 */
+	public static Iterable<BaseNode> iterateNodesProducingFieldname(final Graph graph, final String producedFieldname, final ResolveInfo resolveInfo){
+		return () -> new FilteredIterator<>(iterateNodes(graph).iterator(), n -> n.producesField(producedFieldname, resolveInfo));
+	}
+	
+	public static Iterable<String> iterateProducedFieldnames(final Graph graph, final ResolveInfo resolveInfo){
+		return () -> new ChainedIterator<>(iterateNodes(graph).iterator(), n -> n.producingFields(resolveInfo).iterator());
 	}
 }

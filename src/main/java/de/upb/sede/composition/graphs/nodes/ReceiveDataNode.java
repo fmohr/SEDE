@@ -31,7 +31,9 @@ public class ReceiveDataNode extends BaseNode{
 	@Override
 	public
 	Collection<String> producingFields(ResolveInfo resolveInfo) {
-		return new ArrayList<String>(1) {{add(fieldname);}};
+		Collection<String> producingField = new ArrayList<>(1);
+		producingField.add(getReceivingFieldname());
+		return producingField;
 	}
 	
 	public String getReceivingFieldname() {

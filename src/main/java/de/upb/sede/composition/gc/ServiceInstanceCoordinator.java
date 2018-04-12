@@ -1,5 +1,10 @@
 package de.upb.sede.composition.gc;
 
-public class ServiceInstanceCoordinator {
+import java.util.ArrayList;
+import java.util.List;
 
+public class ServiceInstanceCoordinator {
+	private List<ServiceInstanceHandle> serviceInstances = new ArrayList<>();
+	
+	
 }

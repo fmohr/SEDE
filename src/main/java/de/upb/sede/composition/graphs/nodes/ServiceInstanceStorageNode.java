@@ -21,7 +21,31 @@ public class ServiceInstanceStorageNode extends BaseNode{
 	private Collection<String> consumerProducerField;
 	
 	
-	private ServiceInstanceStorageNode(boolean isLoadInstruction, boolean hasId, String fieldname, String serviceclasspath, String id) {
+	public static final String getNoId() {
+		return NO_ID;
+	}
+
+	public final boolean isLoadInstruction() {
+		return isLoadInstruction;
+	}
+
+	public final String getServiceInstanceFieldname() {
+		return serviceInstanceFieldname;
+	}
+
+	public final String getServiceClasspath() {
+		return serviceClasspath;
+	}
+
+	public final String getId() {
+		return id;
+	}
+
+	public final boolean hasId() {
+		return hasId;
+	}
+
+	ServiceInstanceStorageNode(boolean isLoadInstruction, boolean hasId, String fieldname, String serviceclasspath, String id) {
 		super();
 		this.isLoadInstruction = isLoadInstruction;
 		this.serviceInstanceFieldname = Objects.requireNonNull(fieldname);

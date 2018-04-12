@@ -82,7 +82,7 @@ public class GraphConstruction {
 	 */
 	public void createInputNodesOnClientGraph() {
 		Graph clientGraph = getClientGraph();
-		for (String inputFieldname : resolveInfo.getInputInformation().getInputFields()) {
+		for (String inputFieldname : resolveInfo.getInputFields().getInputFields()) {
 			ReceiveDataNode receiveDataNode = new ReceiveDataNode(inputFieldname);
 			clientGraph.addNode(receiveDataNode);
 		}
@@ -100,7 +100,7 @@ public class GraphConstruction {
 											 * flag that indicates that the node has been added to the graphs map and
 											 * therefore resolved
 											 */
-		if (resolveInfo.getClassesConfig().classknown(serviceClass)) {
+		if (resolveInfo.getClassesConfiguration().classknown(serviceClass)) {
 			/*
 			 * class is known.
 			 */
@@ -237,7 +237,7 @@ public class GraphConstruction {
 							/*
 							 * fieldname is a service here. Load service before its execution:
 							 */
-							ServiceInstanceHandle sh = resolveInfo.getInputInformation()
+							ServiceInstanceHandle sh = resolveInfo.getInputFields()
 									.getServiceInstanceHandle(fieldname);
 							ServiceInstanceStorageNode storageNode = new ServiceInstanceStorageNode(true, fieldname,
 									sh.getClasspath(), sh.getId());
@@ -337,7 +337,7 @@ public class GraphConstruction {
 			/* service instance construction */
 			if (instructionNode.isServiceConstruct() && instructionNode.isAssignedLeftSideFieldname()) {
 				String serviceInstanceFieldname = instructionNode.getLeftSideFieldname();
-				if (resolveInfo.getInputInformation().isServiceInstanceHandle(serviceInstanceFieldname)) {
+				if (resolveInfo.getInputFields().isServiceInstanceHandle(serviceInstanceFieldname)) {
 					throw new CompositionSemanticException(
 							"An instruction creates a service instance and tries to rebind a fieldname of a service-instance-handle which is already defined in the input list. Fieldname: "
 									+ serviceInstanceFieldname);
@@ -358,8 +358,8 @@ public class GraphConstruction {
 				String serviceInstanceFieldname = instructionNode.getContext();
 				if ((!serviceInstanceFieldnameMap.containsKey(serviceInstanceFieldname))
 						&& resolveInfo.getResolvePolicy().isPersistentService(serviceInstanceFieldname)) {
-					if (resolveInfo.getInputInformation().isServiceInstanceHandle(serviceInstanceFieldname)) {
-						ServiceInstanceHandle sih = resolveInfo.getInputInformation()
+					if (resolveInfo.getInputFields().isServiceInstanceHandle(serviceInstanceFieldname)) {
+						ServiceInstanceHandle sih = resolveInfo.getInputFields()
 								.getServiceInstanceHandle(serviceInstanceFieldname);
 						ServiceInstanceStorageNode saveServiceInstaceNode = new ServiceInstanceStorageNode(false,
 								serviceInstanceFieldname, sih.getClasspath(), sih.getId());
@@ -393,7 +393,7 @@ public class GraphConstruction {
 		 * Collect all fieldnames that are produced by this graph:
 		 */
 		for (String producedFieldname : GraphTraversal.iterateProducedFieldnames(graph, resolveInfo)) {
-			if (!resolveInfo.getInputInformation().isInputField(producedFieldname)) {
+			if (!resolveInfo.getInputFields().isInputField(producedFieldname)) {
 				if (resolveInfo.getResolvePolicy().isToReturn(producedFieldname)) {
 					producedFieldnames.add(producedFieldname);
 				}

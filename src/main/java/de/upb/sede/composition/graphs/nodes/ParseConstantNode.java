@@ -20,6 +20,10 @@ public class ParseConstantNode extends BaseNode {
 		return constantValue.equals(fieldname);
 	}
 
+	public String getConstant() {
+		return constantValue;
+	}
+	
 	@Override
 	public
 	Collection<String> consumingFields(ResolveInfo resolveInfo) {
@@ -29,7 +33,9 @@ public class ParseConstantNode extends BaseNode {
 	@Override
 	public
 	Collection<String> producingFields(ResolveInfo resolveInfo) {
-		return new ArrayList<String>(1) {{add(constantValue);}};
+		Collection<String> producingField = new ArrayList<>(1);
+		producingField.add(getConstant());
+		return producingField;
 	}
 
 

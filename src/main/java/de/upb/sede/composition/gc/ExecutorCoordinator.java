@@ -2,6 +2,7 @@ package de.upb.sede.composition.gc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ExecutorCoordinator {
 	private List<ExecutorHandle> executors;
@@ -28,5 +29,7 @@ public class ExecutorCoordinator {
 		}
 		throw new RuntimeException("No executor found for host. First query hasExecutor before retrieving it.");
 	}
-	
+	public void addExecutor(ExecutorHandle eh) {
+		this.executors.add(Objects.requireNonNull(eh));
+	}
 }

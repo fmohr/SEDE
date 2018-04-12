@@ -3,8 +3,13 @@ package de.upb.sede.composition.graphs.nodes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import de.upb.sede.composition.gc.ResolveInfo;
 import de.upb.sede.composition.gc.ServiceInstanceHandle;
@@ -146,7 +151,7 @@ public class InstructionNode extends BaseNode {
 			/*
 			 * Lookup if the method changes the state of the service:
 			 */
-			if (resolveInfo.getClassesConfig().stateMutational(getServiceClass(resolveInfo), getMethod())) {
+			if (resolveInfo.getClassesConfiguration().stateMutational(getServiceClass(resolveInfo), getMethod())) {
 				/*
 				 * The method changes the state of the service:
 				 */
@@ -165,7 +170,7 @@ public class InstructionNode extends BaseNode {
 			/*
 			 * the context is a fieldname. Get its class path information from the serviceInstancehandle:
 			 */
-			serviceClasspath = resolveInfo.getInputInformation().getServiceInstanceHandle(getContext()).getClasspath();
+			serviceClasspath = resolveInfo.getInputFields().getServiceInstanceHandle(getContext()).getClasspath();
 		} else {
 			/*
 			 * if the context is class path:
@@ -196,7 +201,7 @@ public class InstructionNode extends BaseNode {
 		}
 		if(isContextAFieldname()) {
 			String serviceClass = getServiceClass(resolveInfo);
-			resolveInfo.getClassesConfig().stateMutational(serviceClass, getMethod());
+			resolveInfo.getClassesConfiguration().stateMutational(serviceClass, getMethod());
 		}
 		return producingFields;
 	}
@@ -221,4 +226,5 @@ public class InstructionNode extends BaseNode {
 	public boolean isServiceConstruct() {
 		return getMethod().equals("__construct");
 	}
+
 }

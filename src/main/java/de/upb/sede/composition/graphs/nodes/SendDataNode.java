@@ -18,6 +18,12 @@ public class SendDataNode extends BaseNode{
 		this.targetAddress = targetAddress;
 	}
 	
+	public String getTargetAddress() {
+		return targetAddress;
+	}
+	public String getSendingFieldName() {
+		return fieldname;
+	}
 	
 	@Override
 	public boolean producesField(String fieldname, ResolveInfo resolveInfo) {
@@ -26,7 +32,9 @@ public class SendDataNode extends BaseNode{
 
 	@Override
 	public Collection<String> consumingFields(ResolveInfo resolveInfo) {
-		return new ArrayList<String>() {{add(fieldname);}};
+		Collection<String> consumingFields = new ArrayList<>(1);
+		consumingFields.add(getSendingFieldName());
+		return consumingFields;
 	}
 
 	@Override

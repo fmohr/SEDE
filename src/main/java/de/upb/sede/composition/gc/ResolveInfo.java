@@ -2,22 +2,47 @@ package de.upb.sede.composition.gc;
 
 import de.upb.sede.config.ClassesConfig;
 
+/**
+ * This class bundles all classes whose pointer is needed for resolving a composition graph.
+ */
 public class ResolveInfo {
-
-	public ClassesConfig getClassesConfig() {
-		return null;
+	
+	private ClassesConfig classesConfiguration;
+	private InputFields inputFields;
+	private ResolvePolicy resolvePolicy;
+	private ExecutorCoordinator executorCoordinator;
+	private ClientInfo clientInfo;
+	
+	
+	public ClassesConfig getClassesConfiguration() {
+		return classesConfiguration;
 	}
-	public InputFields getInputInformation() {
-		return null;
+	public void setClassesConfiguration(ClassesConfig classConfiguration) {
+		this.classesConfiguration = classConfiguration;
+	}
+	public InputFields getInputFields() {
+		return inputFields;
+	}
+	public void setInputFields(InputFields inputFields) {
+		this.inputFields = inputFields;
 	}
 	public ResolvePolicy getResolvePolicy() {
-		return null;
+		return resolvePolicy;
+	}
+	public void setResolvePolicy(ResolvePolicy resolvePolicy) {
+		this.resolvePolicy = resolvePolicy;
 	}
 	public ExecutorCoordinator getExecutorCoordinator() {
-		return null;
+		return executorCoordinator;
+	}
+	public void setExecutorCoordinator(ExecutorCoordinator executorCoordinator) {
+		this.executorCoordinator = executorCoordinator;
 	}
 	public ClientInfo getClientInfo() {
-		return null;
+		return clientInfo;
+	}
+	public void setClientInfo(ClientInfo clientInfo) {
+		this.clientInfo = clientInfo;
 	}
 	
 }

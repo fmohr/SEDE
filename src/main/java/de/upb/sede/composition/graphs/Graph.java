@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.config.ClassesConfig;
@@ -20,9 +21,9 @@ import de.upb.sede.config.ClassesConfig;
  */
 public class Graph {
 	/* node set */
-	private final Collection<BaseNode> nodes;
+	private final Set<BaseNode> nodes;
 	/* edge set */
-	private final Collection<Edge> edges;
+	private final Set<Edge> edges;
 
 	public Graph() {
 		this.nodes = new HashSet<>();

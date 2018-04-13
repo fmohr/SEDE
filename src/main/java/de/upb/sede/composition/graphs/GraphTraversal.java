@@ -191,6 +191,10 @@ public final class GraphTraversal {
 		}
 		return Collections.unmodifiableList(topologicalSortedList);
 	}
+	
+	public static Iterable<Edge> iterateEdges(final Graph graph){
+		return graph.getEdges();
+	}
 
 	public static Iterable<BaseNode> iterateNodes(final Graph graph){
 		return graph.getNodes();

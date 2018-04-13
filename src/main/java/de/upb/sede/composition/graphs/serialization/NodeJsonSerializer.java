@@ -1,19 +1,22 @@
 package de.upb.sede.composition.graphs.serialization;
 
-import java.util.HashMap;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.graphs.nodes.ParseConstantNode;
 import de.upb.sede.composition.graphs.nodes.ReceiveDataNode;
 import de.upb.sede.composition.graphs.nodes.SendDataNode;
 import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
+import de.upb.sede.exceptions.NodeSerializationException;
 
-public class NodeSerializer {
+public final class NodeJsonSerializer {
 
 
     public static final String NODETYPE = "nodetype";
@@ -24,6 +27,58 @@ public class NodeSerializer {
     public static final String NODETYPE_SERVICE_INSTANCE_STORAGE = "ServiceInstanceStorage";
     
 
+
+    public final BaseNode fromJSON(Map<Object, Object> jsonObject) {
+    	if(!jsonObject.containsKey(NODETYPE)) {
+    		throw new NodeSerializationException("The given json object doens't contain the " + NODETYPE + " field.");
+    	}
+    	/*
+    	 * Get the right method name.
+    	 * The deserialization method name is equal to the nodetype field plus 'NodeFromJson'
+    	 */
+    	String nodeType = (String) jsonObject.get(NODETYPE);
+    	String deserializeMethodName = nodeType + "NodeFromJSON";
+    	Method deserializeMethod;
+    	BaseNode deserializedNode;
+    	/*
+    	 * Deserialize from json using reflection
+    	 */
+    	try {
+    		deserializeMethod = NodeJsonSerializer.class.getMethod(deserializeMethodName, Map.class);
+    		deserializedNode = (BaseNode) deserializeMethod.invoke(this, jsonObject);
+		} catch (NoSuchMethodException e) {
+			// Deserialization method not found.
+			throw new NodeSerializationException("No deserializer " + deserializeMethodName + " defined in NodeJsonSerializer.");
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
+			throw new RuntimeException(e); // cant access reflection api
+		}
+    	return deserializedNode;
+    }
+
+    public final JSONObject toJSON(BaseNode baseNode) {
+    	/*
+    	 * Get the right method name.
+    	 * The serialization method name is equal to the simpleclassname field plus 'ToJson'
+    	 */
+    	String nodeSimpleClassname = baseNode.getClass().getSimpleName();
+    	String serializeMethodName = nodeSimpleClassname + "ToJSON";
+    	Method serializeMethod;
+    	JSONObject serializedJsonObject;
+    	/*
+    	 * serialize to json using reflection
+    	 */
+    	try {
+    		serializeMethod = NodeJsonSerializer.class.getMethod(serializeMethodName, baseNode.getClass());
+    		serializedJsonObject = (JSONObject) serializeMethod.invoke(this, baseNode);
+		} catch (NoSuchMethodException e) {
+			// Deserialization method not found.
+			throw new NodeSerializationException("No serializer " + serializeMethodName + " defined in NodeJsonSerializer.");
+		} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException e) {
+			throw new RuntimeException(e); // cant access reflection api
+		}
+    	return serializedJsonObject;
+    }
+    
 	@SuppressWarnings("unchecked")
 	JSONObject InstructionNodeToJSON(InstructionNode instructionNode) {
 		JSONObject jsonObject = new JSONObject();
@@ -101,24 +156,21 @@ public class NodeSerializer {
 		return instructionNode;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	ParseConstantNode ParseConstantFromJson(Map<Object, Object> node) {
+	ParseConstantNode ParseConstantNodeFromJSON(Map<Object, Object> node) {
 		assert node.get(NODETYPE).equals(NODETYPE_INSTRUCTION);
 		String constant = (String) node.get("constant");
 		ParseConstantNode n = new ParseConstantNode(constant);
 		return n;
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	ReceiveDataNode ReceiveDataFromJSON(Map<Object, Object> node) {
+	ReceiveDataNode ReceiveDataNodeFromJSON(Map<Object, Object> node) {
 		assert node.get(NODETYPE).equals(NODETYPE_INSTRUCTION);
 		String fieldname = (String) node.get("fieldname");
 		ReceiveDataNode n = new ReceiveDataNode(fieldname);
 		return n;
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	SendDataNode SendDataFromJSON(Map<Object, Object> node) {
+	SendDataNode SendDataNodeFromJSON(Map<Object, Object> node) {
 		assert node.get(NODETYPE).equals(NODETYPE_INSTRUCTION);
 		String targetaddress = (String) node.get("targetaddress");
 		String fieldname = (String) node.get("fieldname");
@@ -126,8 +178,7 @@ public class NodeSerializer {
 		return n;
 	}
 	
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	ServiceInstanceStorageNode ServiceInstanceStorageFromJSON(Map<Object, Object> node) {
+	ServiceInstanceStorageNode ServiceInstanceStorageNodeFromJSON(Map<Object, Object> node) {
 		assert node.get(NODETYPE).equals(NODETYPE_INSTRUCTION);
 		String id = (String) node.get("id");
 		Boolean hasId = (Boolean) node.get("hasId");

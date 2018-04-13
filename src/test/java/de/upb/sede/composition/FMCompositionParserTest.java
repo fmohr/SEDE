@@ -44,7 +44,7 @@ public class FMCompositionParserTest {
 	@Test
 	public void test_separateInstructions() {
 		List<String> lines = FMCompositionParser.separateInstructions(compositionString);
-		Assert.assertEquals(4, lines.size());
+		Assert.assertEquals(3, lines.size());
 		String firstLine = "s1=127.0.0.1:8000/" + "Catalano.Imaging.Filters.Crop::"
 				+ "__construct({i1=0,i2=0,i3=10,i4=10})";
 		Assert.assertEquals(firstLine, lines.get(0));

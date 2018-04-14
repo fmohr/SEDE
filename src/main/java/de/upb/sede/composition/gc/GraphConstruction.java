@@ -229,7 +229,8 @@ public class GraphConstruction {
 						/*
 						 * A constant needs a parser node:
 						 */
-						ParseConstantNode parser = new ParseConstantNode(fieldname);
+						String constant = fieldname; // rename to express the new role of the fieldname.
+						ParseConstantNode parser = new ParseConstantNode(constant);
 						graph.addNode(parser);
 						graph.connectNodes(parser, instructionNode);
 					} else {

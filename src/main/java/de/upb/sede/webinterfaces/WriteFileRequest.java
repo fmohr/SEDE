@@ -17,11 +17,11 @@ import java.io.UncheckedIOException;
 public class WriteFileRequest implements BasicClientRequest {
 
 	private final String filepath;
-	private final String answer;
+	private final byte[] answer;
 	
 	public WriteFileRequest(String filepath, String answer){
 		this.filepath = filepath;
-		this.answer = answer;
+		this.answer = answer.getBytes();
 	}
 
 	@Override
@@ -44,7 +44,7 @@ public class WriteFileRequest implements BasicClientRequest {
 
 	@Override
 	public InputStream receive() {
-		return new ByteArrayInputStream(answer.getBytes()); 
+		return new ByteArrayInputStream(answer); 
 	}
 
 }

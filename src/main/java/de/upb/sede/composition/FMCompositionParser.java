@@ -96,15 +96,15 @@ public final class FMCompositionParser {
 	 * Regex for boolean. Is case insensitive: e.g.: "true", "True", "TRUE", "TrUe"
 	 * all match. Same with false. Uses anchors!!
 	 */
-	final static String REGEX_constBool = "^(?:true)|(?:false)$";
-	final static Pattern PATTERN_constBool = Pattern.compile(REGEX_constBool, Pattern.CASE_INSENSITIVE);
+	final static String REGEX_constBool = "^(?i)(?:true)|(?:false)(?-i)$";
+	final static Pattern PATTERN_constBool = Pattern.compile(REGEX_constBool);
 
 	/**
 	 * Regex for null constant. Is case-insensitive: e.g.: "null", "NULL", "NuLL"all
 	 * match. Uses anchors!!
 	 */
-	final static String REGEX_constNull = "^(?:null)$";
-	final static Pattern PATTERN_constNull = Pattern.compile(REGEX_constNull, Pattern.CASE_INSENSITIVE);
+	final static String REGEX_constNull = "^(?i)(?:null)(?-i)$";
+	final static Pattern PATTERN_constNull = Pattern.compile(REGEX_constNull);
 
 	/**
 	 * Regex that matches any constant value. Uses anchors!!
@@ -290,6 +290,30 @@ public final class FMCompositionParser {
 			return false;
 		}
 		return PATTERN_const.matcher(text).matches();
+	}
+	public static boolean isConstantString(String text) {
+		if (text == null) {
+			return false;
+		}
+		return PATTERN_constString.matcher(text).matches();
+	}
+	public static boolean isConstantBool(String text) {
+		if (text == null) {
+			return false;
+		}
+		return PATTERN_constBool.matcher(text).matches();
+	}
+	public static boolean isConstantNumber(String text) {
+		if (text == null) {
+			return false;
+		}
+		return PATTERN_constNumber.matcher(text).matches();
+	}
+	public static boolean isConstantNull(String text) {
+		if (text == null) {
+			return false;
+		}
+		return PATTERN_constNull.matcher(text).matches();
 	}
 
 }

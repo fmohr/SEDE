@@ -16,11 +16,21 @@ import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.exceptions.CompositionGraphSerializationException;
 import de.upb.sede.util.Iterators;
 
+/**
+ * Contains methods to serialize a graph into and from its JSON representation.
+ * @author aminfaez
+ *
+ */
 public class GraphJsonSerializer {
 
 	private static final String JSON_FIELDNAME_NODES = "nodes";
 	private static final String JSON_FIELDNAME_EDGES = "edges";
 
+	/**
+	 * Serializes the given graph to JSON.
+	 * @param graph an arbitrary graph
+	 * @return JSON representation of the graph.
+	 */
 	@SuppressWarnings("unchecked")
 	public JSONObject toJson(Graph graph) {
 		/*

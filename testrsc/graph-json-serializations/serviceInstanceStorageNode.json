@@ -1,0 +1,8 @@
+{
+    "serviceinstanceFieldname": "a",
+    "hasId": false,
+    "nodetype": "ServiceInstanceStorage",
+    "isLoadInstruction": false,
+    "serviceClasspath": "10.10.10.10:100",
+    "id": "UNDEFINED ID"
+}

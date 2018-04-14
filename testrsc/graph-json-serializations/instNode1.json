@@ -1,0 +1,11 @@
+{
+    "nodetype": "Instruction",
+    "method": "method1",
+    "is-service-construction": false,
+    "leftsidefieldname": null,
+    "host": null,
+    "context": "some.service.Library",
+    "is-context-a-fieldname": false,
+    "params": [],
+    "fmInstruction": "some.service.Library::method1()"
+}

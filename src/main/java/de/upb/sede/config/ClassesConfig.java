@@ -20,7 +20,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.FilteredIterator;
 
-/***
+/**
  * Encapsulated configuration about classes, like wrappers names.
  * @author aminfaez
  *

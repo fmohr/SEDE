@@ -14,7 +14,7 @@ import de.upb.sede.composition.graphs.nodes.BaseNode;
 
 public class GraphTraversalTest {
 
-	Graph graph1 = new Graph();
+	CompositionGraph graph1 = new CompositionGraph();
 
 	DummyNode a = new DummyNode("a");
 	DummyNode b = new DummyNode("b");
@@ -26,7 +26,7 @@ public class GraphTraversalTest {
 
 	@Before
 	public void createGraph() {
-		graph1 = new Graph();
+		graph1 = new CompositionGraph();
 
 		{
 			// Adding nodes:

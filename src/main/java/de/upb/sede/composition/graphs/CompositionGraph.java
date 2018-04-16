@@ -21,13 +21,13 @@ import de.upb.sede.config.ClassesConfig;
  * change any contained node and edge. This way nodes can be in multiple graphs.
  * 
  */
-public class Graph {
+public class CompositionGraph {
 	/* node set */
 	private final Set<BaseNode> nodes;
 	/* edge set */
 	private final Set<Edge> edges;
 
-	public Graph() {
+	public CompositionGraph() {
 		this.nodes = new HashSet<>();
 		this.edges = new HashSet<>();
 	}
@@ -57,7 +57,7 @@ public class Graph {
 	 * Alters this graph. From the given graph adds all edges whose source and
 	 * target nodes are also contained in this graph.
 	 */
-	public void addEdges(Graph graph) {
+	public void addEdges(CompositionGraph graph) {
 		graph.edges.stream().filter(e -> this.contains(e.getFrom()) && this.contains(e.getTo())).forEach(this::addEdge);
 	}
 
@@ -136,8 +136,8 @@ public class Graph {
 	 * original graph. This behavior is intentional so don't change it.)
 	 */
 	@Override
-	public Graph clone() {
-		Graph clonedGraph = new Graph();
+	public CompositionGraph clone() {
+		CompositionGraph clonedGraph = new CompositionGraph();
 		clonedGraph.copyFrom(this);
 		return clonedGraph;
 	}
@@ -145,7 +145,7 @@ public class Graph {
 	/**
 	 * Copies the content (edges and nodes) of the given graph into this instance:
 	 */
-	public void copyFrom(Graph otherGraph) {
+	public void copyFrom(CompositionGraph otherGraph) {
 		this.edges.addAll(otherGraph.getEdges());
 		this.nodes.addAll(otherGraph.getNodes());
 	}

@@ -17,7 +17,7 @@ public class GraphTest {
 
 	@Test
 	public void testNodeSet() {
-		Graph graph1 = new Graph();
+		CompositionGraph graph1 = new CompositionGraph();
 		Assert.assertEquals(0, graph1.getNodes().size());
 		
 		graph1.addNode(a);
@@ -47,7 +47,7 @@ public class GraphTest {
 		Assert.assertTrue(graph1.getNodes().contains(b));
 		Assert.assertFalse(graph1.getNodes().contains(c));
 		
-		Graph graph2 = graph1.clone();
+		CompositionGraph graph2 = graph1.clone();
 		Assert.assertEquals(1, graph2.getNodes().size());
 		Assert.assertFalse(graph2.getNodes().contains(a));
 		Assert.assertTrue(graph2.getNodes().contains(b));
@@ -80,7 +80,7 @@ public class GraphTest {
 
 	@Test
 	public void testEdgeSet() {
-		Graph graph1 = new Graph();
+		CompositionGraph graph1 = new CompositionGraph();
 		graph1.connectNodes(a, b);
 		Assert.assertEquals(1, graph1.getEdges().size());
 		Assert.assertTrue(graph1.getEdges().contains(new Edge(a,b)));

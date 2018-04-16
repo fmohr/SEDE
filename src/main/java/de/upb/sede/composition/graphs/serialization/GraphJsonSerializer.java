@@ -9,7 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import de.upb.sede.composition.graphs.Edge;
-import de.upb.sede.composition.graphs.Graph;
+import de.upb.sede.composition.graphs.CompositionGraph;
 import de.upb.sede.composition.graphs.GraphTraversal;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
@@ -32,7 +32,7 @@ public class GraphJsonSerializer {
 	 * @return JSON representation of the graph.
 	 */
 	@SuppressWarnings("unchecked")
-	public JSONObject toJson(Graph graph) {
+	public JSONObject toJson(CompositionGraph graph) {
 		/*
 		 * create a json array of nodes.
 		 * 
@@ -60,8 +60,14 @@ public class GraphJsonSerializer {
 			 * mapping: "m" : n
 			 */
 			int m = orderOfNodes.indexOf(edge.getFrom());
+			String edgeKey = String.valueOf(m);
+			if(!edges.containsKey(edgeKey)) {
+				JSONArray targetNodes = new JSONArray();
+				edges.put(edgeKey, targetNodes);
+			} 
+			
 			int n = orderOfNodes.indexOf(edge.getTo());
-			edges.put(String.valueOf(m), n);
+			((JSONArray)edges.get(edgeKey)).add(n);
 		}
 		JSONObject jsonGraphObject = new JSONObject();
 		jsonGraphObject.put(JSON_FIELDNAME_NODES, nodearray);
@@ -76,13 +82,13 @@ public class GraphJsonSerializer {
 	 * @return The deserialized graph
 	 */
 	@SuppressWarnings("unchecked")
-	public Graph fromJson(Map<Object, Object> jsonGraphObject) {
+	public CompositionGraph fromJson(Map<Object, Object> jsonGraphObject) {
 		if (!jsonGraphObject.containsKey(JSON_FIELDNAME_EDGES) || !jsonGraphObject.containsKey(JSON_FIELDNAME_NODES)) {
 			throw new CompositionGraphSerializationException(
 					"Cannot create a graph from a json object that doesn't contain fields: " + JSON_FIELDNAME_EDGES
 							+ " and " + JSON_FIELDNAME_NODES);
 		}
-		Graph deserializedGraph = new Graph();
+		CompositionGraph deserializedGraph = new CompositionGraph();
 		List<Object> serializedNodes = (List<Object>) jsonGraphObject.get(JSON_FIELDNAME_NODES);
 		Map<Object, Object> edgeMap = (Map<Object, Object>) jsonGraphObject.get(JSON_FIELDNAME_NODES);
 		
@@ -105,8 +111,12 @@ public class GraphJsonSerializer {
 		 */
 		for(Object edge : edgeMap.keySet()) {
 			int sourceNodeIndex = Integer.parseInt(edge.toString()); // edge itself is the string representation of the source index
-			int targetNodeIndex = (Integer) edgeMap.get(edge);
-			deserializedGraph.connectNodes(orderOfNodes.get(sourceNodeIndex), orderOfNodes.get(targetNodeIndex));
+			
+			List<Object> targetNodeIndices = (List<Object>) edgeMap.get(edge);
+			for(Object targetNodeObject : targetNodeIndices) {
+				Integer targetNodeIndex = (Integer) targetNodeObject;
+				deserializedGraph.connectNodes(orderOfNodes.get(sourceNodeIndex), orderOfNodes.get(targetNodeIndex));
+			}
 		}
 
 		return deserializedGraph;

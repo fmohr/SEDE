@@ -34,7 +34,7 @@ public final class GraphTraversal {
 	 * Returns an iterable which traverses the tree in BFS order from the given source.
 	 * Doesn't include source in the iteration.
 	 */
-	public static Iterable<BaseNode> BFS(final Graph graph, final BaseNode source) {
+	public static Iterable<BaseNode> BFS(final CompositionGraph graph, final BaseNode source) {
 
 		if (!graph.contains(source)) {
 			throw new RuntimeException("Source " + source + " isn't contained by the graph.");
@@ -46,7 +46,7 @@ public final class GraphTraversal {
 			/**
 			 * Create iterator:
 			 */
-			Graph clonedGraph = graph.clone(); // clone graph to be able to remove edges thus improved time efficiency
+			CompositionGraph clonedGraph = graph.clone(); // clone graph to be able to remove edges thus improved time efficiency
 			Deque<BaseNode> fifoQueue = new ArrayDeque<>();
 			Set<BaseNode> visitedSet = new HashSet<>();
 
@@ -92,7 +92,7 @@ public final class GraphTraversal {
 	/**
 	 * returns a collections of all the neighbors from the given node.
 	 */
-	public static Iterable<BaseNode> neighbors(final Graph graph, final BaseNode node) {
+	public static Iterable<BaseNode> neighbors(final CompositionGraph graph, final BaseNode node) {
 		return () -> new FilteredIterator<BaseNode>(graph.getNodes().iterator(),
 				otherNode -> (node != otherNode && graph.containsEdge(node, otherNode)));
 	}
@@ -100,7 +100,7 @@ public final class GraphTraversal {
 	/**
 	 * Returns an iterable of all edges that contain the given node.
 	 */
-	public static Iterable<Edge> allEdgesWith(final Graph graph, final BaseNode node) {
+	public static Iterable<Edge> allEdgesWith(final CompositionGraph graph, final BaseNode node) {
 		return () -> new FilteredIterator<Edge>(graph.getEdges().iterator(), edge -> edge.contains(node));
 	}
 	
@@ -109,7 +109,7 @@ public final class GraphTraversal {
 	 * Returns true if the given nodes are in the given graph and there is a path from
 	 * source to target.
 	 */
-	public static boolean isTherePathFromTo(final Graph graph, final BaseNode source, final BaseNode target) {
+	public static boolean isTherePathFromTo(final CompositionGraph graph, final BaseNode source, final BaseNode target) {
 		if(graph.contains(source) && graph.contains(target)) {
 			/*
 			 * Do breath first search over the graph and find the target node.
@@ -136,7 +136,7 @@ public final class GraphTraversal {
 	 * Returns a set of all producing field names of a graph.
 	 * The set doesn't contain constant values.
 	 */
-	public static Set<String> producedFields(final Graph graph, final ResolveInfo resolveInfo){
+	public static Set<String> producedFields(final CompositionGraph graph, final ResolveInfo resolveInfo){
 		Set<String> producedFields = new HashSet<>();
 		/* collect all fields */
 		for(BaseNode bn : graph.getNodes()) {
@@ -152,14 +152,14 @@ public final class GraphTraversal {
 	/**
 	 * Returns true if there is no edge in the given graph that targets the given node.
 	 */
-	public static boolean isIndependent(Graph graph, BaseNode baseNode) {
+	public static boolean isIndependent(CompositionGraph graph, BaseNode baseNode) {
 		return graph.getEdges().stream().allMatch(e -> !e.getTo().equals(baseNode));
 	}
 	
 	/**
 	 * Returns an iterable of all independent nodes (nodes which aren't dependent on other nodes)
 	 */
-	public static Iterable<BaseNode> independentNodes(Graph graph){
+	public static Iterable<BaseNode> independentNodes(CompositionGraph graph){
 		return () -> new FilteredIterator<>(graph.getNodes().iterator(), node -> isIndependent(graph, node));
 	}
 	
@@ -168,9 +168,9 @@ public final class GraphTraversal {
 	 * (The order of the list matters because nodes are independent of the nodes with higher indices.)
 	 * By flattening the graph information about concrete dependency is lost thus one cannot go back from the list representation to the graph one.
 	 */
-	public static List<BaseNode> topologicalSort(final Graph graph){
+	public static List<BaseNode> topologicalSort(final CompositionGraph graph){
 		List<BaseNode> topologicalSortedList = new ArrayList<>();
-		Graph clonedGraph = graph.clone();
+		CompositionGraph clonedGraph = graph.clone();
 		/*
 		 *  While the graph isn't empty add independent nodes to the topologicalSort list.
 		 */
@@ -192,25 +192,25 @@ public final class GraphTraversal {
 		return Collections.unmodifiableList(topologicalSortedList);
 	}
 	
-	public static Iterable<Edge> iterateEdges(final Graph graph){
+	public static Iterable<Edge> iterateEdges(final CompositionGraph graph){
 		return graph.getEdges();
 	}
 
-	public static Iterable<BaseNode> iterateNodes(final Graph graph){
+	public static Iterable<BaseNode> iterateNodes(final CompositionGraph graph){
 		return graph.getNodes();
 	}
-	public static Iterable<BaseNode> iterateNodesWithClassname(final Graph graph, final String simpleNodeClassName){
+	public static Iterable<BaseNode> iterateNodesWithClassname(final CompositionGraph graph, final String simpleNodeClassName){
 		return () -> new FilteredIterator<>(iterateNodes(graph).iterator(), n -> (n.getClass().getSimpleName().equals(simpleNodeClassName)));
 	}
 
 	/**
 	 * Iterator of all nodes  that changes the state of the given fieldname.
 	 */
-	public static Iterable<BaseNode> iterateNodesProducingFieldname(final Graph graph, final String producedFieldname, final ResolveInfo resolveInfo){
+	public static Iterable<BaseNode> iterateNodesProducingFieldname(final CompositionGraph graph, final String producedFieldname, final ResolveInfo resolveInfo){
 		return () -> new FilteredIterator<>(iterateNodes(graph).iterator(), n -> n.producesField(producedFieldname, resolveInfo));
 	}
 	
-	public static Iterable<String> iterateProducedFieldnames(final Graph graph, final ResolveInfo resolveInfo){
+	public static Iterable<String> iterateProducedFieldnames(final CompositionGraph graph, final ResolveInfo resolveInfo){
 		return () -> new ChainedIterator<>(iterateNodes(graph).iterator(), n -> n.producingFields(resolveInfo).iterator());
 	}
 }

@@ -12,7 +12,6 @@ import java.util.Map;
 import java.util.jar.Attributes;
 
 import org.apache.log4j.Logger;
-import org.json.simple.JSONArray;
 
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.SEDEObject;

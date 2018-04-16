@@ -1,10 +1,14 @@
 package de.upb.sede.exec;
 
+import java.io.Serializable;
+
+import org.json.simple.JSONObject;
+
 public class SEDEObject {
 	private final String type;
-	private final Object object;
+	private final Serializable object;
 
-	public SEDEObject(String type, Object object) {
+	public SEDEObject(String type, Serializable object) {
 		this.type = type;
 		this.object = object;
 	}
@@ -15,5 +19,12 @@ public class SEDEObject {
 
 	public String getType() {
 		return type;
+	}
+	
+	public String toJSON() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("type", type);
+		jsonObject.put("object", object);
+		return jsonObject.toJSONString();
 	}
 }

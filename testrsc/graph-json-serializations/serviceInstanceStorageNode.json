@@ -3,6 +3,6 @@
     "hasId": false,
     "nodetype": "ServiceInstanceStorage",
     "isLoadInstruction": false,
-    "serviceClasspath": "10.10.10.10:100",
+    "serviceClasspath": "serviceClasspath.someLib.SomeServiceClass",
     "id": "UNDEFINED ID"
 }

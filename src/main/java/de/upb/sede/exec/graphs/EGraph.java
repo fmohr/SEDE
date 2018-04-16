@@ -19,11 +19,11 @@ public class EGraph implements ExecutionGraph{
 		return null;
 	}
 	
-	public void addTask(de.upb.sede.exec.graphs.Task task) {
+	public void addTask(Task task) {
 		
 	}
 	
-	public void connectTasks(de.upb.sede.exec.graphs.Task taskA, de.upb.sede.exec.graphs.Task taskB) {
+	public void connectTasks(Task taskA, Task taskB) {
 		
 	}
 

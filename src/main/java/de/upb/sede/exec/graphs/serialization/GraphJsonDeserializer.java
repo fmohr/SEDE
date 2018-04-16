@@ -14,9 +14,10 @@ import de.upb.sede.composition.graphs.GraphTraversal;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.exceptions.CompositionGraphSerializationException;
+import de.upb.sede.exec.Execution;
 import de.upb.sede.exec.ExecutionGraph;
 import de.upb.sede.exec.graphs.EGraph;
-import de.upb.sede.exec.graphs.Task;
+import de.upb.sede.exec.Task;
 import de.upb.sede.util.Iterators;
 
 /**
@@ -46,7 +47,7 @@ public class GraphJsonDeserializer {
 	 * @return The deserialized execution graph
 	 */
 	@SuppressWarnings("unchecked")
-	public ExecutionGraph fromJson(String requestId, Map<Object, Object> jsonGraphObject) {
+	public ExecutionGraph fromJson(Execution execution, Map<Object, Object> jsonGraphObject) {
 		if (!jsonGraphObject.containsKey(JSON_FIELDNAME_EDGES) || !jsonGraphObject.containsKey(JSON_FIELDNAME_NODES)) {
 			throw new CompositionGraphSerializationException(
 					"Cannot create a graph from a json object that doesn't contain fields: " + JSON_FIELDNAME_EDGES
@@ -63,7 +64,7 @@ public class GraphJsonDeserializer {
 		List<Task> orderOfTasks = new ArrayList<>(serializedNodes.size()); // fill a map to hold indices of nodes. 
 		for(Object jsonNode : serializedNodes) {
 			Map<String, Object> serializedNode = (Map<String, Object>) jsonNode;
-			Task task = tjs.fromJSON(requestId, serializedNode);
+			Task task = tjs.fromJSON(execution, serializedNode);
 			orderOfTasks.add(task);
 			deserializedGraph.addTask(task);
 		}

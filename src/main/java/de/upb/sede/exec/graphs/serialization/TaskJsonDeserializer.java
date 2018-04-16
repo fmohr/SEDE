@@ -2,7 +2,8 @@ package de.upb.sede.exec.graphs.serialization;
 
 import java.util.Map;
 
-import de.upb.sede.exec.graphs.Task;
+import de.upb.sede.exec.Execution;
+import de.upb.sede.exec.Task;
 
 
 /**
@@ -17,8 +18,8 @@ public class TaskJsonDeserializer {
 	 * @param jsonData
 	 * @return
 	 */
-	public Task fromJSON(String requestId, Map<String, Object> jsonData) {
-		Task task = new Task(requestId, (String) jsonData.get("nodetype"), jsonData);
+	public Task fromJSON(Execution execution, Map<String, Object> jsonData) {
+		Task task = new Task(execution, (String) jsonData.get("nodetype"), jsonData);
 		return task;
 	}
 }

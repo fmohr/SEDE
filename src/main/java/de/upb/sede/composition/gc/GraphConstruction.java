@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Set;
 
 import de.upb.sede.composition.FMCompositionParser;
-import de.upb.sede.composition.graphs.Graph;
+import de.upb.sede.composition.graphs.CompositionGraph;
 import de.upb.sede.composition.graphs.GraphTraversal;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
@@ -31,9 +31,9 @@ public class GraphConstruction {
 
 	private final List<InstructionNode> unresolvedInstructionNodes;
 
-	private final Map<ExecutorHandle, Graph> graphs;
+	private final Map<ExecutorHandle, CompositionGraph> graphs;
 
-	private final Graph orderOfExecutionGraph;
+	private final CompositionGraph orderOfExecutionGraph;
 
 	private final ResolveInfo resolveInfo;
 
@@ -43,13 +43,13 @@ public class GraphConstruction {
 		this.resolveInfo = resolveInfo;
 
 		this.graphs = new HashMap<>();
-		this.orderOfExecutionGraph = new Graph();
+		this.orderOfExecutionGraph = new CompositionGraph();
 		this.unresolvedInstructionNodes = new ArrayList<>();
 
 		/*
 		 * Create empty graph for client.
 		 */
-		this.graphs.put(resolveInfo.getClientInfo().getClientExecutor(), new Graph());
+		this.graphs.put(resolveInfo.getClientInfo().getClientExecutor(), new CompositionGraph());
 	}
 
 	/**
@@ -81,7 +81,7 @@ public class GraphConstruction {
 	 * 
 	 */
 	public void createInputNodesOnClientGraph() {
-		Graph clientGraph = getClientGraph();
+		CompositionGraph clientGraph = getClientGraph();
 		for (String inputFieldname : resolveInfo.getInputFields().getInputFields()) {
 			ReceiveDataNode receiveDataNode = new ReceiveDataNode(inputFieldname);
 			clientGraph.addNode(receiveDataNode);
@@ -119,7 +119,7 @@ public class GraphConstruction {
 								+ ", explicitly addresses an executor which doesn't support the given service.");
 					}
 					if (!graphs.containsKey(execHandle)) {
-						graphs.put(execHandle, new Graph());
+						graphs.put(execHandle, new CompositionGraph());
 					}
 					graphs.get(execHandle).addNode(instNode);
 					resolvedContext = true;
@@ -155,7 +155,7 @@ public class GraphConstruction {
 						 */
 						int randomIndex = (int) (supportingExecutor.size() * Math.random());
 						ExecutorHandle randomExecutor = supportingExecutor.get(randomIndex);
-						Graph newExecutorGraph = new Graph();
+						CompositionGraph newExecutorGraph = new CompositionGraph();
 						newExecutorGraph.addNode(instNode);
 						graphs.put(randomExecutor, newExecutorGraph);
 					}
@@ -177,7 +177,7 @@ public class GraphConstruction {
 	 * 
 	 */
 	public void resolveDataFlowConsumerDependency(ExecutorHandle executor) {
-		Graph graph = getGraphFor(executor);
+		CompositionGraph graph = getGraphFor(executor);
 		if (graph.containsEdges()) {
 			throw new GraphFormException("data flow resolve method was called on a graph with edges.");
 		}
@@ -273,7 +273,7 @@ public class GraphConstruction {
 
 		DefaultMap<BaseNode, Integer> priorityMap = createNodePriorityMap();
 
-		Graph receivingGraph = getGraphFor(receivingExecutor);
+		CompositionGraph receivingGraph = getGraphFor(receivingExecutor);
 
 		for (BaseNode baseNode : GraphTraversal.iterateNodesWithClassname(receivingGraph,
 				ReceiveDataNode.class.getSimpleName())) {
@@ -290,13 +290,13 @@ public class GraphConstruction {
 			 * currentPriority is the maximum priority of all node that produces the
 			 * fieldname in iterated graphs.
 			 */
-			Graph producingGraph = null;
+			CompositionGraph producingGraph = null;
 			int currentPriority = -2;
 			for (ExecutorHandle otherExecutors : graphs.keySet()) {
 				if (otherExecutors == receivingExecutor) {
 					continue; // only consider other graphs
 				}
-				Graph otherGraph = getGraphFor(otherExecutors);
+				CompositionGraph otherGraph = getGraphFor(otherExecutors);
 				/*
 				 * iterate over all nodes that create or change the state of the receivingField
 				 */
@@ -328,7 +328,7 @@ public class GraphConstruction {
 	}
 
 	public void storeServiceInstances(ExecutorHandle executor) {
-		Graph graph = getGraphFor(executor);
+		CompositionGraph graph = getGraphFor(executor);
 		Map<String, ServiceInstanceStorageNode> serviceInstanceFieldnameMap = new HashMap<>();
 		/*
 		 * calculate the set of all service instance fieldnames which are persistent.
@@ -388,7 +388,7 @@ public class GraphConstruction {
 	 * of service handles.
 	 */
 	public void addSendToClientNodes(ExecutorHandle executor) {
-		Graph graph = getGraphFor(executor);
+		CompositionGraph graph = getGraphFor(executor);
 		Set<String> producedFieldnames = new HashSet<>();
 		/*
 		 * Collect all fieldnames that are produced by this graph:
@@ -405,7 +405,7 @@ public class GraphConstruction {
 		 * added node. Add receiving node to the client graph.
 		 */
 		String clientAddress = resolveInfo.getClientInfo().getClientHostAddress();
-		Graph clientGraph = getClientGraph();
+		CompositionGraph clientGraph = getClientGraph();
 		for (String producedFieldname : producedFieldnames) {
 			SendDataNode executorSend = new SendDataNode(producedFieldname, clientAddress);
 			ReceiveDataNode clientReceive = new ReceiveDataNode(producedFieldname);
@@ -433,18 +433,18 @@ public class GraphConstruction {
 	 * the dependency. For now it simply adds an edge to the graph. TODO check if
 	 * the method signature and provided data type match. Add marshal nodes.
 	 */
-	private void connectDataReceiver(Graph graph, BaseNode producer, BaseNode consumer) {
+	private void connectDataReceiver(CompositionGraph graph, BaseNode producer, BaseNode consumer) {
 		graph.connectNodes(producer, consumer);
 	}
 
-	private Graph getGraphFor(ExecutorHandle executor) {
+	private CompositionGraph getGraphFor(ExecutorHandle executor) {
 		if (!graphs.containsKey(executor)) {
 			throw new RuntimeException("No graph for the given executorhandle defined.");
 		}
 		return graphs.get(executor);
 	}
 
-	private Graph getClientGraph() {
+	private CompositionGraph getClientGraph() {
 		return this.graphs.get(resolveInfo.getClientInfo().getClientExecutor());
 	}
 
@@ -468,7 +468,7 @@ public class GraphConstruction {
 		/*
 		 * Calculate the priority based on the complete graph:
 		 */
-		Graph completeGraph = createCompleteGraph(true);
+		CompositionGraph completeGraph = createCompleteGraph(true);
 
 		/*
 		 * Mark the subtree of the i'th instruction to be of at least the priority i.
@@ -492,8 +492,8 @@ public class GraphConstruction {
 	 * Returns a new graph which merges every graph from the 'graphs' map. If
 	 * withSequentialInstructions is true the orderOfExecutionGraph is also merged.
 	 */
-	private Graph createCompleteGraph(boolean withSequentialInstructions) {
-		Graph completedGraph = new Graph();
+	private CompositionGraph createCompleteGraph(boolean withSequentialInstructions) {
+		CompositionGraph completedGraph = new CompositionGraph();
 		for (ExecutorHandle eh : graphs.keySet()) {
 			completedGraph.copyFrom(getGraphFor(eh));
 		}

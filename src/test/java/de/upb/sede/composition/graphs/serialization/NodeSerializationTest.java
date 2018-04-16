@@ -183,7 +183,7 @@ public class NodeSerializationTest {
 	 * Helper functions:
 	 */
 
-	private void assertEquals(InstructionNode expected, InstructionNode actual) {
+	public void assertEquals(InstructionNode expected, InstructionNode actual) {
 		Assert.assertEquals(expected.getContext(), actual.getContext());
 		Assert.assertEquals(expected.getFmInstruction(), actual.getFmInstruction());
 		Assert.assertEquals(expected.getMethod(), actual.getMethod());
@@ -203,21 +203,21 @@ public class NodeSerializationTest {
 		Assert.assertEquals(expected.isServiceConstruct(), actual.isServiceConstruct());
 	}
 
-	private void assertEquals(ParseConstantNode expected, ParseConstantNode actual) {
+	public void assertEquals(ParseConstantNode expected, ParseConstantNode actual) {
 		Assert.assertEquals(expected.getConstant(), actual.getConstant());
 		Assert.assertEquals(expected.getType(), actual.getType());
 	}
 	
-	private void assertEquals(ReceiveDataNode expected, ReceiveDataNode actual) {
+	public void assertEquals(ReceiveDataNode expected, ReceiveDataNode actual) {
 		Assert.assertEquals(expected.getReceivingFieldname(), actual.getReceivingFieldname());
 	}
 	
-	private void assertEquals(SendDataNode expected, SendDataNode actual) {
+	public void assertEquals(SendDataNode expected, SendDataNode actual) {
 		Assert.assertEquals(expected.getSendingFieldName(), actual.getSendingFieldName());
 		Assert.assertEquals(expected.getTargetAddress(), actual.getTargetAddress());
 	}
 	
-	private void assertEquals(ServiceInstanceStorageNode expected, ServiceInstanceStorageNode actual) {
+	public void assertEquals(ServiceInstanceStorageNode expected, ServiceInstanceStorageNode actual) {
 		Assert.assertEquals(expected.getId(), actual.getId());
 		Assert.assertEquals(expected.getServiceClasspath(), actual.getServiceClasspath());
 		Assert.assertEquals(expected.getServiceInstanceFieldname(), actual.getServiceInstanceFieldname());

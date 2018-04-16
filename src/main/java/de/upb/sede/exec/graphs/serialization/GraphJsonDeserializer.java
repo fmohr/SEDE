@@ -80,7 +80,6 @@ public class GraphJsonDeserializer {
 				deserializedGraph.connectTasks(orderOfTasks.get(sourceNodeIndex), orderOfTasks.get(targetNodeIndex));
 			}
 		}
-
 		return deserializedGraph;
 	}
 

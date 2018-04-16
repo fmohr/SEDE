@@ -1,0 +1,76 @@
+{
+    "nodes": [
+        {
+            "nodetype": "Instruction",
+            "method": "__construct",
+            "is-service-construction": true,
+            "leftsidefieldname": "c",
+            "host": null,
+            "context": "de.upb.SEDE.testlib.A",
+            "is-context-a-fieldname": false,
+            "params": [
+                "a",
+                "b"
+            ],
+            "fmInstruction": "c=de.upb.SEDE.testlib.A::__construct({100})"
+        },
+        {
+            "fieldname": "d",
+            "targetaddress": "clientdomain.com",
+            "nodetype": "SendData"
+        },
+        {
+            "fieldname": "a",
+            "nodetype": "ReceiveData"
+        },
+        {
+            "serviceinstanceFieldname": "c",
+            "hasId": false,
+            "nodetype": "ServiceInstanceStorage",
+            "isLoadInstruction": false,
+            "serviceClasspath": "de.upb.SEDE.testlib.A",
+            "id": "UNDEFINED ID"
+        },
+        {
+            "nodetype": "ParseConstant",
+            "constant": "100",
+            "isBool": false,
+            "isNumber": true,
+            "isNULL": false,
+            "isString": false
+        },
+        {
+            "fieldname": "b",
+            "nodetype": "ReceiveData"
+        },
+        {
+            "nodetype": "Instruction",
+            "method": "b",
+            "is-service-construction": false,
+            "leftsidefieldname": "d",
+            "host": null,
+            "context": "a",
+            "is-context-a-fieldname": false,
+            "params": [],
+            "fmInstruction": "d=c::add({a,b})"
+        }
+    ],
+    "edges": {
+        "0": [
+            6
+        ],
+        "2": [
+            6
+        ],
+        "4": [
+            0
+        ],
+        "5": [
+            6
+        ],
+        "6": [
+            3,
+            1
+        ]
+    }
+}

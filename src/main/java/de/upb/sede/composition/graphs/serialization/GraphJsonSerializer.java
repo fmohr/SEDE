@@ -60,8 +60,14 @@ public class GraphJsonSerializer {
 			 * mapping: "m" : n
 			 */
 			int m = orderOfNodes.indexOf(edge.getFrom());
+			String edgeKey = String.valueOf(m);
+			if(!edges.containsKey(edgeKey)) {
+				JSONArray targetNodes = new JSONArray();
+				edges.put(edgeKey, targetNodes);
+			} 
+			
 			int n = orderOfNodes.indexOf(edge.getTo());
-			edges.put(String.valueOf(m), n);
+			((JSONArray)edges.get(edgeKey)).add(n);
 		}
 		JSONObject jsonGraphObject = new JSONObject();
 		jsonGraphObject.put(JSON_FIELDNAME_NODES, nodearray);
@@ -105,8 +111,12 @@ public class GraphJsonSerializer {
 		 */
 		for(Object edge : edgeMap.keySet()) {
 			int sourceNodeIndex = Integer.parseInt(edge.toString()); // edge itself is the string representation of the source index
-			int targetNodeIndex = (Integer) edgeMap.get(edge);
-			deserializedGraph.connectNodes(orderOfNodes.get(sourceNodeIndex), orderOfNodes.get(targetNodeIndex));
+			
+			List<Object> targetNodeIndices = (List<Object>) edgeMap.get(edge);
+			for(Object targetNodeObject : targetNodeIndices) {
+				Integer targetNodeIndex = (Integer) targetNodeObject;
+				deserializedGraph.connectNodes(orderOfNodes.get(sourceNodeIndex), orderOfNodes.get(targetNodeIndex));
+			}
 		}
 
 		return deserializedGraph;

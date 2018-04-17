@@ -28,7 +28,7 @@ public class ClassesConfig extends Configuration {
 	/**
 	 * Reads the configuration files from configPaths and appends them into itself..
 	 */
-	public ClassesConfig(String... configPaths) throws IOException {
+	public ClassesConfig(String... configPaths) {
 		this();
 		appendConfigFromFiles(configPaths);
 	}

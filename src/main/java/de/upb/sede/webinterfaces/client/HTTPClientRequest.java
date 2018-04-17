@@ -3,6 +3,7 @@ package de.upb.sede.webinterfaces.client;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -10,8 +11,12 @@ import java.net.URL;
 public class HTTPClientRequest implements BasicClientRequest {
 	URL url;
 
-	public HTTPClientRequest(String urlAddress) throws MalformedURLException {
-		url = new URL(urlAddress);
+	public HTTPClientRequest(String urlAddress) {
+		try {
+			url = new URL(urlAddress);
+		} catch (MalformedURLException e) {
+			throw new UncheckedIOException(e);
+		}
 	}
 
 	@Override
@@ -20,10 +25,8 @@ public class HTTPClientRequest implements BasicClientRequest {
 			HttpURLConnection httpConnection = establishHTTPConnection(url);
 			return httpConnection.getOutputStream();
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new UncheckedIOException(e);
 		}
-		return null;
-
 	}
 
 	@Override
@@ -32,9 +35,8 @@ public class HTTPClientRequest implements BasicClientRequest {
 			HttpURLConnection httpConnection = establishHTTPConnection(url);
 			return httpConnection.getInputStream();
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new UncheckedIOException(e);
 		}
-		return null;
 	}
 
 	private HttpURLConnection establishHTTPConnection(URL url) throws IOException {

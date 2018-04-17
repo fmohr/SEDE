@@ -21,7 +21,7 @@ public class InstructionNodeProcedure implements Procedure {
 	static Logger logger = Logger.getLogger(InstructionNodeProcedure.class);
 
 	@Override
-	public Object process(Task task) {
+	public void process(Task task) {
 		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
 		InstructionNodeAttributes attributes = new InstructionNodeAttributes(task);
 		try {
@@ -40,8 +40,6 @@ public class InstructionNodeProcedure implements Procedure {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return null;
-
 	}
 
 	private Map<String, SEDEObject> getParameterObjects(List<String> parameters, ExecutionEnvironment environment) {

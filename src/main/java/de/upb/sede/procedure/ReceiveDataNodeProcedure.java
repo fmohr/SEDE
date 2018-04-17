@@ -6,9 +6,8 @@ import de.upb.sede.exec.Task;
 public class ReceiveDataNodeProcedure implements Procedure {
 
 	@Override
-	public Object process(Task task) {
+	public void process(Task task) {
 		String fieldname = (String) task.getAttributes().get("fieldname");
 		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
-		return (environment.containsKey(fieldname));
 	}
 }

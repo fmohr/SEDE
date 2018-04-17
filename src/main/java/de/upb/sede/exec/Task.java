@@ -1,18 +1,17 @@
 package de.upb.sede.exec;
 
-import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
 public final class Task {
 	private final Execution execution;
 	private final String taskName;
-	private final Map<String, Object> parameters;
+	private final Map<String, Object> attributes;
 
 	public Task(Execution execution, String taskName, Map<String, Object> parameters) {
 		this.execution = Objects.requireNonNull(execution);
 		this.taskName = Objects.requireNonNull(taskName);
-		this.parameters = Objects.requireNonNull(parameters);
+		this.attributes = Objects.requireNonNull(parameters);
 	}
 
 
@@ -24,8 +23,8 @@ public final class Task {
 		return taskName;
 	}
 
-	public Map<String, Object> getParameters() {
-		return parameters;
+	public Map<String, Object> getAttributes() {
+		return attributes;
 	}
 	
 	/*

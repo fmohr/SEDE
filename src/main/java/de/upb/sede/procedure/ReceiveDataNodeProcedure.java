@@ -7,7 +7,7 @@ public class ReceiveDataNodeProcedure implements Procedure {
 
 	@Override
 	public Object process(Task task) {
-		String fieldname = (String) task.getParameters().get("fieldname");
+		String fieldname = (String) task.getAttributes().get("fieldname");
 		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
 		return (environment.containsKey(fieldname));
 	}

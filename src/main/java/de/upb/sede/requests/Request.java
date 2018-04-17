@@ -3,6 +3,8 @@ package de.upb.sede.requests;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.upb.sede.composition.gc.ResolvePolicy;
+
 /**
  * All instances of request should be immutable.
  */
@@ -11,7 +13,7 @@ public abstract class Request {
 	protected final static String UNDEFINED_CLIENTHOST = "NO_CLIENTHOST";
 	protected final static String UNDEFINED_COMPOSITION = "NO_COMPOSITION";
 	protected final static String UNDEFINED_COMPOSITIONGRAPH = "NO_COMPOSITIONGRAPH";
-	protected final static String UNDEFINED_POLICY = "NO_POLICY";
+	protected final static ResolvePolicy UNDEFINED_POLICY = new ResolvePolicy();
 	protected final static Map<String, Object> UNDEFINED_VARIABLES = new HashMap<>();
 
 	protected String requestId;

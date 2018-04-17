@@ -13,7 +13,7 @@ public class RunRequest extends Request {
 
 	public RunRequest() {
 		this.composition = UNDEFINED_COMPOSITION;
-		this.policy = UNDEFINED_POLICY;
+		this.policy = "UNDEFINED_POLICY";
 		this.variables = UNDEFINED_VARIABLES;
 
 	}
@@ -53,7 +53,7 @@ public class RunRequest extends Request {
 	}
 
 	public boolean hasPolicy() {
-		return this.policy != UNDEFINED_POLICY;
+		return !this.policy.equals("UNDEFINED_POLICY");
 	}
 
 	public boolean hasVariables() {

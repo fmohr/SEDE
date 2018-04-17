@@ -63,6 +63,7 @@ public class ExecutorRegistrationHandler extends StringServerResponse {
 		supportedServices.removeIf(classesConfig::classknown);
 		execHandle.getExecutionerCapabilities().addAllServiceClasses(supportedServices.toArray(new String[0]));
 		coordinator.addExecutor(execHandle);
+		logger.info("Executor registered successfully: " + execRegister.getHost());
 	}
 
 }

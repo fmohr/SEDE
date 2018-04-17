@@ -44,7 +44,7 @@ public class GatewayServer implements Gateway{
 	}
 
 	public BasicServerResponse getResolveCompositionHandle() {
-		return new ResolveCompositionHandler();
+		return new ResolveCompositionHandler(execCoordinator, classesConfig);
 	}
 	
 	public GraphConstruction buildGraph(String fmComposition, ResolveInfo resolveInfo) {

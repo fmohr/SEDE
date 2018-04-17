@@ -102,4 +102,9 @@ public class ResolvePolicy {
 			throw new BadResolveRequest("Not recognizable return policy: " + servicePolicy);
 		}
 	}
+
+	public static ResolvePolicy fromJson(Object object) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

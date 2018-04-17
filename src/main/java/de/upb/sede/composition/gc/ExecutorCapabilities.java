@@ -10,7 +10,7 @@ public class ExecutorCapabilities {
 	public static final String pythonlibs = "PYTHON-LIB";
 	
 
-	private final List<String> gatewayCapabilities;
+	private final List<String> executorCapabilities;
 	private final List<String> supportedServiceClasses;
 	
 	public ExecutorCapabilities(String...capabilities) {
@@ -19,7 +19,7 @@ public class ExecutorCapabilities {
 		for(String capability : capabilities) {
 			capabilityList.add(capability);
 		}
-		gatewayCapabilities = Collections.unmodifiableList(capabilityList);
+		executorCapabilities = Collections.unmodifiableList(capabilityList);
 	}
 	
 	public void addAllServiceClasses(String... newServiceClasses) {
@@ -34,7 +34,7 @@ public class ExecutorCapabilities {
 	}
 	
 	public boolean isCapableOf(String capability) {
-		return gatewayCapabilities.contains(capability);
+		return executorCapabilities.contains(capability);
 	}
 	
 }

@@ -115,7 +115,7 @@ public class InstructionNodeProcedure implements Procedure {
 		private final List<String> parameters;
 
 		public InstructionNodeAttributes(Task task) {
-			Map<String, Object> parameters = task.getParameters();
+			Map<String, Object> parameters = task.getAttributes();
 			this.isConstructor = (boolean) parameters.get("is-service-construction");
 			this.isContextAFieldname = (boolean) parameters.get("is-context-a-fieldname");
 			this.method = (String) parameters.get("method");

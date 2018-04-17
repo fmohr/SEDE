@@ -7,15 +7,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import de.upb.sede.util.FileUtil;
 
-public class Configuration extends HashMap<String, JsonNode> {
+public class Configuration extends HashMap<String, Object> {
 	private static final long serialVersionUID = 22870752590407834L;
-	private Map<String, JsonNode> rawConfiguration = new HashMap<>();
+	private Map<String, Object> rawConfiguration = new HashMap<>();
 	
 	/**
 	 * Appends class configurations from files to the existing ones.
@@ -40,16 +43,15 @@ public class Configuration extends HashMap<String, JsonNode> {
 		if(jsonStrings.length == 0) {
 			return;
 		}
-		TypeReference<HashMap<String,JsonNode>> typeRef = new TypeReference<HashMap<String,JsonNode>>() {};
-        ObjectMapper mapper = new ObjectMapper(); 
+		JSONParser parser = new JSONParser();
         for(String jsonString : jsonStrings) {
         		// iterate over configs and append them to the existing configuration
-            HashMap<String, JsonNode> loadedConfig;
+            HashMap<String, Object> loadedConfig;
 			try {
-				loadedConfig = mapper.readValue(jsonString, typeRef);
+				loadedConfig = (HashMap<String, Object>) parser.parse(jsonString);
 	            rawConfiguration.putAll(loadedConfig);
-			} catch (IOException e) {
-				throw new UncheckedIOException(e);
+			} catch (ParseException e) {
+				throw new RuntimeException(e);
 			}
         }
         // reset this configuration, in order to call resolveInheritances on a unextended configurations

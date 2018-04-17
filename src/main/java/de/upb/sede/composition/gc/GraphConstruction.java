@@ -63,7 +63,7 @@ public class GraphConstruction {
 	/**
 	 * 
 	 */
-	public void createOrderedInstructionGraph(List<InstructionNode> instNodes) {
+	private void createOrderedInstructionGraph(List<InstructionNode> instNodes) {
 		for (Iterator<InstructionNode> it = instNodes.iterator(); it.hasNext();) {
 			BaseNode currentNode = it.next();
 			orderOfExecutionGraph.addNode(currentNode);

@@ -4,15 +4,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import de.upb.sede.util.FilteredIterator;
 
@@ -59,7 +56,7 @@ public class ClassesConfig extends Configuration {
 				continue;
 			} else {
 				// Resolve the one class.
-				JsonNode classconfig = getClassConfiguration(classpath);
+				Map<String, Object> classconfig = getClassConfiguration(classpath);
 				unresolvedClasses.add(classpath);
 				resolveInheritance(classconfig, unresolvedClasses, resolvedClasses);
 				unresolvedClasses.remove(classpath);
@@ -93,18 +90,19 @@ public class ClassesConfig extends Configuration {
 	 *             classes in this set a RuntimeException will be thrown to indicate
 	 *             that a circled dependency has occurred.
 	 */
-	private void resolveInheritance(JsonNode classconfig, Set<String> unresolved, Set<String> resolved) {
-		if (classconfig.has("extends")) {
+	@SuppressWarnings("unchecked")
+	private void resolveInheritance(Map<String, Object> classconfig, Set<String> unresolved, Set<String> resolved) {
+		if (classconfig.containsKey("extends")) {
 			// Go once through the array to check for circled dependency.
-			for (JsonNode superConfig : classconfig.get("extends")) {
-				if (unresolved.contains(superConfig.asText())) {
+			List<String> extensions = (List<String>) classconfig.get("extends");
+			for (String  superConfig : extensions) {
+				if (unresolved.contains(superConfig)) {
 					throw new RuntimeException("Circled dependency in Inheritance in ClassesConfig:"
-							+ " The given class and class: " + superConfig.asText() + " extend from each other.");
+							+ " The given class and class: " + superConfig + " extend from each other.");
 				}
 			}
-			for (JsonNode superConfigArrayEntry : classconfig.get("extends")) {
-				String superClasspath = superConfigArrayEntry.asText();
-				JsonNode superConfig = getClassConfiguration(superClasspath);
+			for (String superClasspath : extensions) {
+				Map<String, Object> superConfig = getClassConfiguration(superClasspath);
 				if (!resolved.contains(superClasspath)) {
 					// first resolve the base config:
 					unresolved.add(superClasspath);
@@ -113,7 +111,7 @@ public class ClassesConfig extends Configuration {
 					unresolved.remove(superClasspath);
 				}
 				// now add everything from superConfig to classconfig
-				Iterator<String> fieldNames = superConfig.fieldNames();
+				Iterator<String> fieldNames = superConfig.keySet().iterator();
 				while (fieldNames.hasNext()) {
 					String attributeName = fieldNames.next();
 					if (attributeName.equals("extends")) {
@@ -121,15 +119,17 @@ public class ClassesConfig extends Configuration {
 						// resolveInheritances twice.
 						continue;
 					}
-					JsonNode superAttribute = superConfig.get(attributeName);
+					Object superAttribute = superConfig.get(attributeName);
 					boolean extended = false; // flag that indicates that attribute has been extended.
-					if (classconfig.has(attributeName)) {
+					if (classconfig.containsKey(attributeName)) {
 						// first try to add the value to the array or dictionary
-						JsonNode baseAttribute = classconfig.get(attributeName);
-						if (baseAttribute.isArray() && superAttribute.isArray()) {
+						Object baseAttribute = classconfig.get(attributeName);
+						if (baseAttribute instanceof List && superAttribute instanceof List ) {
 							((ArrayNode) baseAttribute).addAll((ArrayNode) superAttribute);
-						} else if (baseAttribute.isObject() && baseAttribute.isObject()) {
-							((ObjectNode) baseAttribute).setAll((ObjectNode) superAttribute);
+							extended = true;
+						} else if (baseAttribute instanceof Map  && baseAttribute instanceof Map) {
+							((Map) baseAttribute).putAll((Map) superAttribute);
+							extended = true;
 						} else {
 							System.err.println("CONFIG: Attribute " + attributeName
 									+ " is being replaced by an incompatible type from: " + superClasspath);
@@ -137,7 +137,7 @@ public class ClassesConfig extends Configuration {
 					}
 					if (!extended) {
 						// couldnt add attribute, so just replace it
-						((ObjectNode) classconfig).set(attributeName, superAttribute);
+						((Map) classconfig).put(attributeName, superAttribute);
 					}
 				}
 			}
@@ -149,16 +149,17 @@ public class ClassesConfig extends Configuration {
 	 * Deep first search in the inheritance tree.
 	 */
 	public boolean extendsClassConfig(String classpath, String baseClasspath) {
-		JsonNode classconfig = getClassConfiguration(classpath);
-		if (classconfig.has("extends")) {
-			for (JsonNode extension : classconfig.get("extends")) {
-				if (baseClasspath.equals(extension.asText())) {
+		Map<String, Object> classconfig = getClassConfiguration(classpath);
+		if (classconfig.containsKey("extends")) {
+			List<String> extensions = (List<String>) classconfig.get("extends");
+			for (Object extension : extensions) {
+				if (baseClasspath.equals(extension.toString())) {
 					// add this class to the bases so all sub classes of this will return true
 					// aswell.
 					return true;
 				}
 				// if the extended classpath extends the base classpath also return true:
-				else if (extendsClassConfig(extension.asText(), baseClasspath)) {
+				else if (extendsClassConfig(extension.toString(), baseClasspath)) {
 					return true;
 				}
 			}
@@ -178,8 +179,8 @@ public class ClassesConfig extends Configuration {
 	 * Returns the JsonNode for the classpath in as it is defined in the
 	 * configuration.
 	 */
-	private JsonNode getClassConfiguration(String classpath) {
-		return this.get(classpath);
+	private Map<String, Object> getClassConfiguration(String classpath) {
+		return (Map<String, Object>) this.get(classpath);
 	}
 
 	/**
@@ -187,14 +188,14 @@ public class ClassesConfig extends Configuration {
 	 * entry.
 	 */
 	public boolean isWrapped(String classpath) {
-		return classknown(classpath) && getClassConfiguration(classpath).has("wrapper");
+		return classknown(classpath) && getClassConfiguration(classpath).containsKey("wrapper");
 	}
 
 	/**
 	 * Returns the classpath of wrapper which the given classpath was assigned onto.
 	 */
 	public String getWrapperClasspath(String classpath) {
-		return this.get(classpath).get("wrapper").asText();
+		return this.getClassConfiguration(classpath).get("wrapper").toString();
 	}
 
 	/**
@@ -207,6 +208,7 @@ public class ClassesConfig extends Configuration {
 	 *            method name to check
 	 * @return true if the configuration defines the method unter the classpath.
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean methodKnown(String classpath, String methodName) {
 		if (!classknown(classpath)) {
 			return false;
@@ -223,26 +225,24 @@ public class ClassesConfig extends Configuration {
 				return true;
 			}
 		}
-		JsonNode classConfig = getClassConfiguration(classpath);
-		if (classConfig.has("methods")) {
+		Map<String, Object> classConfig = getClassConfiguration(classpath);
+		if (classConfig.containsKey("methods")) {
 			// if the 'methods' fields is defined:
-			JsonNode methods = classConfig.get("methods");
-			if (methods.isArray()) {
+			Object methods = classConfig.get("methods");
+			if (methods instanceof List) {
+				List<Object> methodList = (List<Object>) methods;
 				// traverse array
-				for (JsonNode method : methods) {
-					// array of methods
-					if (method.isTextual()) {
-						// simple string entry for method
-						if (method.asText().equals(methodName)) {
-							return true;
-						}
+				for (Object method : methodList) {
+					// simple string entry for method
+					if (method.toString().equals(methodName)) {
+						return true;
 					}
 				}
 				// method definition not found
 				return false;
 			} else {
 				// object node. use the has method
-				return methods.has(methodName);
+				return ((Map<String, Object>)methods).containsKey(methodName);
 			}
 		} else {
 			// the 'methods' fields is not defined.
@@ -280,20 +280,17 @@ public class ClassesConfig extends Configuration {
 				return getMethodResultMap(wrapperClasspath, methodName);
 			}
 		}
-		JsonNode classConfig = getClassConfiguration(classpath);
-		if (classConfig.has("methods")) {
-			JsonNode methods = classConfig.get("methods");
-			if (!methods.isArray()) { // if its not an array it's method may define mapping
-				JsonNode method = classConfig.get("methods").get(methodName);
-				if (method == null) {
+		Map<String, Object> classConfig = getClassConfiguration(classpath);
+		if (classConfig.containsKey("methods")) {
+			Object methods = classConfig.get("methods");
+			if (!(methods instanceof List)) { // if its not an array it's method may define mapping
+				Map<String, Object> methodMap = (Map<String, Object>) ((Map<String, Object>)(classConfig.get("methods"))).get(methodName);
+				if (methodMap == null) {
 					return null;
 				}
-				if (!method.isTextual() && method.has("resultmap")) {
+				if (methodMap.containsKey("resultmap")) {
 					// result map was defined
-					TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
-					};
-					ObjectMapper mapper = new ObjectMapper();
-					Map<String, String> resultMap = mapper.convertValue(method.get("resultmap"), typeRef);
+					Map<String, String> resultMap = (Map<String, String>) methodMap.get("resultmap");
 					return resultMap;
 				}
 			}

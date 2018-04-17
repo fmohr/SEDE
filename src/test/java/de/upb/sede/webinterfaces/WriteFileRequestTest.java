@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.upb.sede.webinterfaces.WriteFileRequest;
+import de.upb.sede.webinterfaces.client.WriteFileRequest;
 
 public class WriteFileRequestTest {
 	@Test public void writeBasicFile() throws IOException {

@@ -6,7 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import de.upb.sede.webinterfaces.WriteFileRequest;
+import de.upb.sede.webinterfaces.client.WriteFileRequest;
 
 /**
  * Defines methods to access files reading and writing their content.

@@ -1,4 +1,4 @@
-package de.upb.sede.webinterfaces;
+package de.upb.sede.webinterfaces.client;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;

@@ -9,9 +9,9 @@ public class ExecutorHandle {
 	private final String hostAddress;
 	private final ExecutorCapabilities capabilities; 
 
-	public ExecutorHandle(String hostAddress, String... gatewayCapabilities) {
+	public ExecutorHandle(String hostAddress, String... executorCapabilities) {
 		this.hostAddress = Objects.requireNonNull(hostAddress);
-		this.capabilities = new ExecutorCapabilities(gatewayCapabilities);
+		this.capabilities = new ExecutorCapabilities(executorCapabilities);
 	}
 	public static ExecutorHandle BASIC_JAVA_GATEWAY(String hostAddress) {
 		return new ExecutorHandle(hostAddress, ExecutorCapabilities.javalibs);

@@ -1,9 +1,9 @@
 package de.upb.sede.interfaces;
 
-import de.upb.sede.requests.GSMRegistration;
+import de.upb.sede.requests.ExecutorRegistration;
 
 public interface OTFMarket {
-    public void register(GSMRegistration registry);
+    public void register(ExecutorRegistration registry);
     public String getServices();
     public String getGatewayhost();
     public String getGatewayhostFor(String Service);

@@ -12,6 +12,10 @@ import de.upb.sede.composition.gc.GraphConstruction;
 import de.upb.sede.composition.gc.ResolveInfo;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.interfaces.Gateway;
+import de.upb.sede.requests.ExecutorRegistration;
+import de.upb.sede.requests.GatewayResolution;
+import de.upb.sede.requests.Request;
 import de.upb.sede.webinterfaces.SunHttpHandler;
 import de.upb.sede.webinterfaces.server.BasicServerResponse;
 import de.upb.sede.webinterfaces.server.StringServerResponse;
@@ -25,9 +29,23 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
-public class GatewayServer {
+public class GatewayServer implements Gateway{
+	
 	private final ExecutorCoordinator execCoordinator = new ExecutorCoordinator();
-	private final ClassesConfig classesConfig = new ClassesConfig();
+	private final ClassesConfig classesConfig;
+	
+	public GatewayServer(String... classConfigFilePaths){
+		classesConfig = new ClassesConfig(classConfigFilePaths);
+	}
+	
+
+	public BasicServerResponse getExecRegisterHandle() {
+		return new ExecutorRegistrationHandler(execCoordinator, classesConfig);
+	}
+
+	public BasicServerResponse getResolveCompositionHandle() {
+		return new ResolveCompositionHandler();
+	}
 	
 	public GraphConstruction buildGraph(String fmComposition, ResolveInfo resolveInfo) {
 		List<String> fmInstructions = FMCompositionParser.separateInstructions(fmComposition);
@@ -43,18 +61,23 @@ public class GatewayServer {
 
     public static void main(String[] args) throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
-        server.createContext("/register", new SunHttpHandler(ExecutorRegister::new));
+        GatewayServer gateWayServer = new GatewayServer();
+        
+        server.createContext("/register", new SunHttpHandler(gateWayServer::getExecRegisterHandle));
+        server.createContext("/resolve", new SunHttpHandler(gateWayServer::getResolveCompositionHandle));
         server.setExecutor(null); // creates a default executor
         server.start();
     }
-    
 
-    static class ExecutorRegister extends StringServerResponse  {
-    	
-		@Override
-		public String receive(String payload) { 
-			return null;
-		}
-    }
+	@Override
+	public GatewayResolution resolve(Request resolveRequest) {
+		return null;
+	}
+
+	@Override
+	public boolean register(ExecutorRegistration registry) {
+		return false;
+	}
+    
 
 }

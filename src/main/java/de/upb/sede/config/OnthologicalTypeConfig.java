@@ -1,24 +1,23 @@
 package de.upb.sede.config;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import de.upb.sede.util.FileUtil;
+import org.apache.log4j.Logger;
 
 public class OnthologicalTypeConfig extends Configuration{
-	private Map<Object,Object> holeConfig = new HashMap<>();
-	
+	private static Logger logger = Logger.getLogger(OnthologicalTypeConfig.class.getSimpleName());
+	private static final String SEMANTIC_TYPE = "semantic_type";
+	private static final String ONTHOLOGICAL_CASTER = "onthological_caster";
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2009780076326140239L;
 
 	/**
-	 * Reads the cofiguration files from configPaths and appends them into itself..
+	 * Reads the configuration files from configPaths and appends them into itself..
 	 */
 	public OnthologicalTypeConfig(String... configPaths) throws IOException {
 		this();
@@ -29,5 +28,44 @@ public class OnthologicalTypeConfig extends Configuration{
 		super();
 	}
 
+	public boolean hasOnthologicalType(String fullClassName) {
+		return this.containsKey(fullClassName);
+	}
+	
+	public String getOnthologicalType(String fullClassName) {
+		if(hasOnthologicalType(fullClassName)) {
+			 Map<String, Object> configEntry = ( Map<String, Object> ) this.get(fullClassName);
+			 String onthologicalType = (String) configEntry.get(SEMANTIC_TYPE);
+			 if(onthologicalType != null)
+				 return onthologicalType;
+		}
+		logger.debug("No onthological type found for: " + fullClassName);
+		return "";
+	}
+	
+	public String getOnthologicalCaster(String fullClassName) {
+		if(hasOnthologicalType(fullClassName)) {
+			 Map<String, Object> configEntry = ( Map<String, Object> ) this.get(fullClassName);
+			 String onthologicalType = (String) configEntry.get(ONTHOLOGICAL_CASTER);
+			 if(onthologicalType != null)
+				 return onthologicalType;
+		}
+		logger.debug("No onthological type found for: " + fullClassName);
+		return "";
+	}
+	
+	public List<String> getClassesForSemanticType(String semanticType){
+		List<String> result = new ArrayList<>();
+		for(Entry<String,Object> onthologyRule: this.entrySet()) {
+			String className = onthologyRule.getKey();
+			Map<String,Object> onthologyAttributes = (Map<String,Object>) onthologyRule.getValue();
+			String semanticTypeInRule = (String) onthologyAttributes.get(SEMANTIC_TYPE);
+			if(semanticType.equals(semanticTypeInRule)) {
+				result.add(className);
+			}
+		}
+		return result;
+	}
+	
 	
 }

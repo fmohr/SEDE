@@ -1,10 +1,10 @@
 package de.upb.sede.gateway;
 
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.management.monitor.StringMonitorMBean;
-import javax.xml.ws.http.HTTPBinding;
+import com.sun.net.httpserver.HttpServer;
 
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.gc.ExecutorCoordinator;
@@ -14,20 +14,10 @@ import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.interfaces.Gateway;
 import de.upb.sede.requests.ExecutorRegistration;
-import de.upb.sede.requests.GatewayResolution;
 import de.upb.sede.requests.Request;
+import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.webinterfaces.SunHttpHandler;
 import de.upb.sede.webinterfaces.server.BasicServerResponse;
-import de.upb.sede.webinterfaces.server.StringServerResponse;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.InetSocketAddress;
-
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
-import com.sun.net.httpserver.HttpServer;
 
 public class GatewayServer implements Gateway{
 	

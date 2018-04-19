@@ -1,64 +1,52 @@
 package de.upb.sede.composition.gc;
 
-
 import java.io.Serializable;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
-public class ServiceInstanceHandle implements Serializable {
+import org.json.simple.JSONObject;
+
+import de.upb.sede.util.JsonSerializable;
+
+public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	/* default values */
-	private static final String OWN_HOST = "home";
-
-	private static final String not_serialized_id = "NULL";
-
-	private static final String not_specified_classpath = "NO_CLASS_SPECIFIED";
-
 	/**
 	 *
 	 */
-	private final String host;
-	private final String classpath;
-	private final String id;
+	private Optional<String> host;
+	private Optional<String> classpath;
+	private Optional<String> id;
 
 	/**
-	   * Standard constructor
-	   *
-	   * @param id
-	   *          Id which the service can be accessed through
-	   * @param service
-	   *          inner service
-	   */
-	  public ServiceInstanceHandle(final String host, final String classpath, final String id) {
-	    super();
-	    this.host = Objects.requireNonNull(host);
-	    this.classpath = Objects.requireNonNull(classpath);
-	    this.id = Objects.requireNonNull(id);
-	  }
+	 * Standard constructor
+	 */
+	public ServiceInstanceHandle(final String host, final String classpath, final String id) {
+		super();
+		this.host = Optional.of(host);
+		this.classpath = Optional.of(classpath);
+		this.id = Optional.of(id);
+	}
 
 	/**
-	   * Contructor for local host.
-	   */
-	  public ServiceInstanceHandle(final String classpath, final String id) {
-	    this(OWN_HOST, classpath, id);
-	  }
-
-	/**
-	   * Empty constructor to create service handle with default values.
-	   */
-	  public ServiceInstanceHandle() {
-	    this(OWN_HOST, not_specified_classpath, not_serialized_id);
-	  }
+	 * Empty constructor to create service handle with default values.
+	 */
+	public ServiceInstanceHandle() {
+		this.host = Optional.empty();
+		this.classpath = Optional.empty();
+		this.id = Optional.empty();
+	}
 
 	/**
 	 * Returns the id of the service. Throws Runtime-Exception if wasSerialized()
 	 * returns false.
 	 */
 	public String getId() {
-		return this.id;
+		return this.id.get();
 	}
 
 	/**
@@ -66,67 +54,28 @@ public class ServiceInstanceHandle implements Serializable {
 	 * @return Host of this service.
 	 */
 	public String getHost() {
-		return this.host;
+		return this.host.get();
 	}
 
 	public String getClasspath() {
-		return this.classpath;
+		return this.classpath.get();
+	}
+	
+	
+	
+	@Override
+	public JSONObject toJson() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("host", getHost());
+		jsonObject.put("classpath", getClasspath());
+		jsonObject.put("id", getId());
+		return jsonObject;
 	}
 
-	/**
-	 * @return True if the service is only remotely accessible.
-	 */
-	public boolean isRemote() {
-		return !OWN_HOST.equals(this.getHost());
-	}
-
-
-	public boolean isSerialized() {
-		return !this.id.equals(not_serialized_id);
-	}
-
-	public boolean isClassPathSpecified() {
-		return !this.classpath.equals(not_specified_classpath);
-	}
-
-	/**
-	 * Returns a copy of this object with the given host.
-	 */
-	public ServiceInstanceHandle withExternalHost(final String otherHost) {
-		Objects.requireNonNull(otherHost);
-		if (otherHost.equals(this.getHost())) {
-			// otherhost changes nothing
-			return this;
-		}
-		return new ServiceInstanceHandle(otherHost, this.getClasspath(), this.getId());
-	}
-
-	public ServiceInstanceHandle withLocalHost() {
-		return this.withExternalHost(OWN_HOST);
-	}
-
-	/**
-	 * Returns a copy of this object with the given host.
-	 */
-	public ServiceInstanceHandle withClassPath(final String classPath) {
-		Objects.requireNonNull(classPath);
-		if (classPath.equals(this.getClasspath())) {
-			// otherhost changes nothing
-			return this;
-		}
-		return new ServiceInstanceHandle(this.getHost(), classPath, this.getId());
-	}
-
-
-	public ServiceInstanceHandle withId(final String id2) {
-		Objects.requireNonNull(id2);
-		return new ServiceInstanceHandle(this.getHost(), this.getClasspath(), id2);
-	}
-
-	/**
-	 * Returns a copy of this object with empty id.
-	 */
-	public ServiceInstanceHandle unsuccessedSerialize() {
-		return new ServiceInstanceHandle(this.getHost(), this.getClasspath(), not_serialized_id);
+	@Override
+	public void fromJson(Map<String, Object> data) {
+		this.host = Optional.ofNullable((String)data.get("host"));
+		this.id = Optional.ofNullable((String)data.get("id"));
+		this.classpath = Optional.ofNullable((String)data.get("classpath"));
 	}
 }

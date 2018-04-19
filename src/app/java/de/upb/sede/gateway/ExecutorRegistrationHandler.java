@@ -42,10 +42,9 @@ public class ExecutorRegistrationHandler extends StringServerResponse {
 			logger.error("The body of the executor registration cannot be parsed as JSON: " + e.getMessage(), e);
 			return "Parse error: " + e.getMessage();
 		}
-		String host = (String) registrationDatamap.get("host");
-		List<String> capabilities = (List) registrationDatamap.get("capabilities");
-		List<String> supportedServices = (List) registrationDatamap.get("services");
-		ExecutorRegistration execRegister = new ExecutorRegistration(host, capabilities, supportedServices);
+		
+		ExecutorRegistration execRegister = new ExecutorRegistration();
+		execRegister.fromJson(registrationDatamap);
 		register(execRegister);
 		return "Registration Successfull";
 	}

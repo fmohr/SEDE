@@ -1,4 +1,4 @@
-package de.upb.sede.requests;
+package de.upb.sede.requests.resolve;
 
 import java.util.Map;
 

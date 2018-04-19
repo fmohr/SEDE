@@ -1,53 +1,66 @@
 package de.upb.sede.requests;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-import de.upb.sede.composition.gc.ResolvePolicy;
+import org.json.simple.JSONObject;
+
+import de.upb.sede.util.JsonSerializable;
+
 
 /**
  * All instances of request should be immutable.
  */
-public abstract class Request {
-	protected final static String UNDEFINED_REQUESTID = "NO_RID";
-	protected final static String UNDEFINED_CLIENTHOST = "NO_CLIENTHOST";
-	protected final static String UNDEFINED_COMPOSITION = "NO_COMPOSITION";
-	protected final static String UNDEFINED_COMPOSITIONGRAPH = "NO_COMPOSITIONGRAPH";
-	protected final static ResolvePolicy UNDEFINED_POLICY = new ResolvePolicy();
-	protected final static Map<String, Object> UNDEFINED_VARIABLES = new HashMap<>();
+public abstract class Request implements JsonSerializable {
 
-	protected String requestId;
-	protected String clientHost;
+	protected Optional<String> requestId;
+	protected Optional<String> clientHost;
 
 	public Request() {
-		this.requestId = UNDEFINED_REQUESTID;
-		this.clientHost = UNDEFINED_CLIENTHOST;
+		this.requestId = Optional.empty();
+		this.clientHost = Optional.empty();
 	}
 
 	public Request(String requestId, String clientHost) {
-		this.requestId = requestId;
-		this.clientHost = clientHost;
+		this.requestId = Optional.of(requestId);
+		this.clientHost = Optional.of(clientHost);
 	}
 
-	public abstract Request withRequestId(String requestId);
-
-	public abstract Request withClientHost(String clientHost);
 
 	public boolean hasRequestId() {
-		return this.requestId != UNDEFINED_REQUESTID;
+		return this.requestId.isPresent();
 	}
 
 	public boolean hasclientHost() {
-		return this.clientHost != UNDEFINED_CLIENTHOST;
+		return this.clientHost.isPresent();
 	}
 
 	public String getRequestID() {
 		assert hasRequestId();
-		return requestId;
+		return requestId.get();
 	}
 
 	public String getClientHost() {
 		assert hasclientHost();
-		return clientHost;
+		return clientHost.get();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject toJson() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("requestId", getRequestID());
+		jsonObject.put("clientHost", getClientHost());
+		return jsonObject;
+	}
+
+	@Override
+	public void fromJson(Map<String, Object> data) {
+		requestId = Optional.of((String)data.get("requestId"));
+		clientHost = Optional.of((String)data.get("clientHost"));
+	}
+
+	
 }

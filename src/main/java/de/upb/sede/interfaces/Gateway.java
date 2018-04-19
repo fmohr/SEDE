@@ -1,8 +1,8 @@
 package de.upb.sede.interfaces;
 
 import de.upb.sede.requests.ExecutorRegistration;
-import de.upb.sede.requests.GatewayResolution;
 import de.upb.sede.requests.Request;
+import de.upb.sede.requests.resolve.GatewayResolution;
 
 public interface Gateway {
     public GatewayResolution resolve(Request resolveRequest);

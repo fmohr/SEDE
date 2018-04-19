@@ -3,13 +3,19 @@ package de.upb.sede.gateway;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.JSONObject;
 
+import de.upb.sede.composition.gc.ClientInfo;
 import de.upb.sede.composition.gc.ExecutorCoordinator;
-import de.upb.sede.composition.gc.ResolvePolicy;
+import de.upb.sede.composition.gc.GraphConstruction;
+import de.upb.sede.composition.gc.ResolveInfo;
+import de.upb.sede.composition.graphs.CompositionGraph;
+import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
 import de.upb.sede.config.ClassesConfig;
-import de.upb.sede.requests.ResolveRequest;
+import de.upb.sede.requests.resolve.InputFields;
+import de.upb.sede.requests.resolve.ResolvePolicy;
+import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.webinterfaces.server.StringServerResponse;
 
 public class ResolveCompositionHandler extends StringServerResponse {
@@ -39,20 +45,40 @@ public class ResolveCompositionHandler extends StringServerResponse {
 			logger.error("The body of the resolve request cannot be parsed as JSON: " + e.getMessage(), e);
 			return "Parse error: " + e.getMessage();
 		}
-		String requestId = (String) resolveDatamap.get("requestId");
-		String clientHost = (String) resolveDatamap.get("clientHost");
-		String fmComposition = (String) resolveDatamap.get("fmComposition");
-		ResolvePolicy resolvePolicy = ResolvePolicy.fromJson(resolveDatamap.get("policy"));
-		Map<String, String> inputTypeMap = (Map<String, String>) resolveDatamap.get("inputTypeMap");
-
-		ResolveRequest resolveRequest = new ResolveRequest().withClientHost(clientHost).withComposition(fmComposition)
-				.withInputTypeMap(inputTypeMap).withRequestId(requestId).withPolicy(resolvePolicy);
-		JSONObject resolvedGraph = resolveGraph(resolveRequest);
-		return "";
+		/*
+		 * gather all the information to resolve the composition:
+		 */
+		ResolveRequest resolveRequest = new ResolveRequest();
+		resolveRequest.fromJsonString(jsonResolveRequest);
+		ResolveInfo resolveInfo = resolveInfoFromRequest(resolveRequest);
+		/*
+		 * Resolve the composition by calculating the client graph:
+		 */
+		CompositionGraph clientGraph = GraphConstruction.RESOLVE_CLIENT_GRAPH(resolveRequest.getComposition(), resolveInfo);
+		
+		/*
+		 * Serializae the graph to json:
+		 */
+		GraphJsonSerializer gjs = new GraphJsonSerializer();
+		JSONObject jsonClientGraph = gjs.toJson(clientGraph);
+		
+		/*
+		 * Return the client graph as the body of the answer:
+		 */
+		return jsonClientGraph.toJSONString();
 	}
 	
-	public JSONObject resolveGraph(ResolveRequest resolveRequest) {
-		return null; // TODO
+	/**
+	 * Builds and returns a new instance of ResolveInfo from the given ResolveRequest.
+	 */
+	public ResolveInfo resolveInfoFromRequest(ResolveRequest resolveRequest) {
+		ResolveInfo info = new ResolveInfo();
+		info.setClassesConfiguration(classesConfig);
+		info.setExecutorCoordinator(coordinator);
+		info.setResolvePolicy(resolveRequest.getPolicy());
+		info.setInputFields(resolveRequest.getInputFields());
+		info.setClientInfo(new ClientInfo(resolveRequest.getClientHost()));
+		return info;
 	}
 
 }

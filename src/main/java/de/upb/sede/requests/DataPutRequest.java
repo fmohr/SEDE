@@ -1,41 +1,38 @@
 package de.upb.sede.requests;
 
+import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
 
+import org.json.simple.JSONObject;
+
 public class DataPutRequest extends Request {
 
-	private final Map<String, Object> variables;
+	private final String fieldname;
+	private final Object data;
+	
 
-	public DataPutRequest() {
-		this.variables = UNDEFINED_VARIABLES;
-	}
-
-	private DataPutRequest(String requestId, String clientHost, Map<String, Object> variables) {
+	public DataPutRequest(String requestId, String clientHost, String fieldname, Object data) {
 		super(requestId, clientHost);
-		this.variables = variables;
+		this.fieldname = fieldname;
+		this.data = data;
 	}
 
-	@Override
-	public DataPutRequest withRequestId(String requestId) {
-		return new DataPutRequest(Objects.requireNonNull(requestId), clientHost, variables);
+	public String getFieldname() {
+		return fieldname;
 	}
+	
+	public Object getData() {
+		return data;
+	}
+	
+	public JSONObject toJson() {
+		throw new RuntimeException("Data put request cannot be transformed to json with this method. ");
+	}
+	
+	public void fromJson(Map<String, Object> data) {
+		throw new RuntimeException("Data put request cannot be transformed to json with this method. ");
+	}
+	
 
-	@Override
-	public DataPutRequest withClientHost(String clientHost) {
-		return new DataPutRequest(requestId, Objects.requireNonNull(clientHost), variables);
-	}
-
-	public DataPutRequest withVariables(Map<String, Object> variables) {
-		return new DataPutRequest(requestId, clientHost, Objects.requireNonNull(variables));
-	}
-
-	public boolean hasVariables() {
-		return this.variables != UNDEFINED_VARIABLES;
-	}
-
-	public Map<String, Object> getVariables() {
-		assert hasVariables();
-		return variables;
-	}
 }

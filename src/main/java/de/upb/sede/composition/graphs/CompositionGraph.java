@@ -57,7 +57,7 @@ public class CompositionGraph {
 	 * Alters this graph. From the given graph adds all edges whose source and
 	 * target nodes are also contained in this graph.
 	 */
-	public void addEdges(CompositionGraph graph) {
+	public void addEdgesFromGraph(CompositionGraph graph) {
 		graph.edges.stream().filter(e -> this.contains(e.getFrom()) && this.contains(e.getTo())).forEach(this::addEdge);
 	}
 
@@ -65,7 +65,7 @@ public class CompositionGraph {
 	 * Alters this graph by adding the given edge.
 	 * 
 	 */
-	private void addEdge(Edge newEdge) {
+	public void addEdge(Edge newEdge) {
 		// Objects.requireNonNull(newEdge); // no check needed because this is a private
 		// method and this class ensures it wont be invoked with null objects.
 		if (newEdge.getFrom().equals(newEdge.getTo())) {

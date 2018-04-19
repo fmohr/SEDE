@@ -58,7 +58,7 @@ public class GraphJsonDeserializer {
 		Map<Object, Object> edgeMap = (Map<Object, Object>) jsonGraphObject.get(JSON_FIELDNAME_NODES);
 		
 		/*
-		 * Deserialize nodes:
+		 * Deserialize tasks:
 		 */
 		TaskJsonDeserializer tjs = new TaskJsonDeserializer();
 		List<Task> orderOfTasks = new ArrayList<>(serializedNodes.size()); // fill a map to hold indices of nodes. 
@@ -69,15 +69,15 @@ public class GraphJsonDeserializer {
 			deserializedGraph.addTask(task);
 		}
 		/*
-		 * connect nodes in the graph:
+		 * connect tasks in the graph:
 		 */
 		for(Object edge : edgeMap.keySet()) {
-			int sourceNodeIndex = Integer.parseInt(edge.toString()); // edge itself is the string representation of the source index
+			int sourceTaskIndex = Integer.parseInt(edge.toString()); // edge itself is the string representation of the source index
 			
-			List<Object> targetNodeIndices = (List<Object>) edgeMap.get(edge);
-			for(Object targetNodeObject : targetNodeIndices) {
+			List<Object> targetTaskIndices = (List<Object>) edgeMap.get(edge);
+			for(Object targetNodeObject : targetTaskIndices) {
 				Integer targetNodeIndex = (Integer) targetNodeObject;
-				deserializedGraph.connectTasks(orderOfTasks.get(sourceNodeIndex), orderOfTasks.get(targetNodeIndex));
+				deserializedGraph.connectTasks(orderOfTasks.get(sourceTaskIndex), orderOfTasks.get(targetNodeIndex));
 			}
 		}
 		return deserializedGraph;

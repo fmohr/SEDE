@@ -1,6 +1,8 @@
 package de.upb.sede.composition.gc;
 
 import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.requests.resolve.InputFields;
+import de.upb.sede.requests.resolve.ResolvePolicy;
 
 /**
  * This class bundles all classes whose pointer is needed for resolving a composition graph.

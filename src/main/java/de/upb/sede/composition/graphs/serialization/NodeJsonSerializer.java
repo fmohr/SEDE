@@ -13,6 +13,7 @@ import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.graphs.nodes.ParseConstantNode;
 import de.upb.sede.composition.graphs.nodes.ReceiveDataNode;
 import de.upb.sede.composition.graphs.nodes.SendDataNode;
+import de.upb.sede.composition.graphs.nodes.SendGraphNode;
 import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
 import de.upb.sede.exceptions.CompositionGraphSerializationException;
 
@@ -29,6 +30,7 @@ final class NodeJsonSerializer {
 	public static final String NODETYPE_RECEIVE_DATA = "ReceiveData";
 	public static final String NODETYPE_PARSE_CONSTANT = "ParseConstant";
 	public static final String NODETYPE_SEND_DATA = "SendData";
+	public static final String NODETYPE_SEND_GRAPH = "SendGraph";
 	public static final String NODETYPE_SERVICE_INSTANCE_STORAGE = "ServiceInstanceStorage";
 
 	public final BaseNode fromJSON(Map<Object, Object> jsonObject) {
@@ -176,6 +178,23 @@ final class NodeJsonSerializer {
 		String targetaddress = (String) node.get("targetaddress");
 		String fieldname = (String) node.get("fieldname");
 		SendDataNode n = new SendDataNode(fieldname, targetaddress);
+		return n;
+	}
+
+	@SuppressWarnings("unchecked")
+	public JSONObject SendGraphNodeToJSON(SendGraphNode sendGraphNode) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put(NODETYPE, NODETYPE_SEND_GRAPH);
+		jsonObject.put("targetaddress", sendGraphNode.getExecutorsAddress());
+		jsonObject.put("graph", sendGraphNode.getGraph());
+		return jsonObject;
+	}
+
+	public SendGraphNode SendGraphNodeFromJSON(Map<Object, Object> node) {
+		assert node.get(NODETYPE).equals(NODETYPE_SEND_GRAPH);
+		String execAddress = (String) node.get("targetaddress");
+		String graph = (String) node.get("graph");
+		SendGraphNode n = new SendGraphNode(graph, execAddress);
 		return n;
 	}
 

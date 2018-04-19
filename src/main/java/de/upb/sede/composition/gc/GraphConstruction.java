@@ -10,13 +10,16 @@ import java.util.Set;
 
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.graphs.CompositionGraph;
+import de.upb.sede.composition.graphs.Edge;
 import de.upb.sede.composition.graphs.GraphTraversal;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.graphs.nodes.ParseConstantNode;
 import de.upb.sede.composition.graphs.nodes.ReceiveDataNode;
 import de.upb.sede.composition.graphs.nodes.SendDataNode;
+import de.upb.sede.composition.graphs.nodes.SendGraphNode;
 import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
+import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
 import de.upb.sede.exceptions.CompositionSemanticException;
 import de.upb.sede.exceptions.GraphFormException;
 import de.upb.sede.util.DefaultMap;
@@ -37,6 +40,49 @@ public class GraphConstruction {
 
 	private final ResolveInfo resolveInfo;
 
+	public final static CompositionGraph RESOLVE_CLIENT_GRAPH(String fmComposition, ResolveInfo resolveInformation) {
+
+		/*
+		 * Parse the fm composition
+		 */
+		List<String> fmInstructionList = FMCompositionParser.separateInstructions(fmComposition);
+		List<InstructionNode> instructionList = new ArrayList<>();
+		for (String fmInstruction : fmInstructionList) {
+			InstructionNode instruction = FMCompositionParser.parseInstruction(fmInstruction);
+			instructionList.add(instruction);
+		}
+		GraphConstruction graphConst = new GraphConstruction(resolveInformation, instructionList);
+
+		/*
+		 * populate client graph with input nodes.
+		 * 
+		 */
+		graphConst.createInputNodesOnClientGraph();
+
+		/*
+		 * assign each instruction to a specific Executor
+		 */
+		instructionList.forEach(graphConst::resolveContext);
+
+		/*
+		 * build graphs
+		 */
+		List<ExecutorHandle> executors = new ArrayList<>(graphConst.graphs.keySet());
+		// remove the client executor
+		executors.removeIf(resolveInformation.getClientInfo().getClientExecutor()::equals);
+
+		executors.forEach(graphConst::resolveDataFlowConsumerDependency);
+		executors.forEach(graphConst::resolveReceivingNodes);
+		executors.forEach(graphConst::storeServiceInstances);
+		executors.forEach(graphConst::addSendToClientNodes);
+
+		graphConst.forwardUnresolvedNodes();
+
+		graphConst.resolveClientGraph();
+
+		return graphConst.getClientGraph();
+	}
+
 	/**
 	 */
 	private GraphConstruction(ResolveInfo resolveInfo) {
@@ -55,7 +101,7 @@ public class GraphConstruction {
 	/**
 	 * 
 	 */
-	public GraphConstruction(ResolveInfo resolveInfo, List<InstructionNode> instNodes) {
+	GraphConstruction(ResolveInfo resolveInfo, List<InstructionNode> instNodes) {
 		this(resolveInfo);
 		createOrderedInstructionGraph(instNodes);
 	}
@@ -238,8 +284,7 @@ public class GraphConstruction {
 							/*
 							 * fieldname is a service here. Load service before its execution:
 							 */
-							ServiceInstanceHandle sh = resolveInfo.getInputFields()
-									.getServiceInstanceHandle(fieldname);
+							ServiceInstanceHandle sh = resolveInfo.getInputFields().getServiceInstanceHandle(fieldname);
 							ServiceInstanceStorageNode storageNode = new ServiceInstanceStorageNode(true, fieldname,
 									sh.getClasspath(), sh.getId());
 							graph.addNode(storageNode);
@@ -426,6 +471,47 @@ public class GraphConstruction {
 			throw new GraphFormException(
 					"Unsupported composition. Currenctly the forwarding to another gateway is not supported.");
 		}
+	}
+
+	/**
+	 * Merging all graphs by adding SendGraphNodes to the client graph which each
+	 * sends each graph to the rightful executor.
+	 */
+	public void resolveClientGraph() {
+
+		GraphJsonSerializer gjs = new GraphJsonSerializer();
+		CompositionGraph clientGraph = getClientGraph();
+		/*
+		 * create the send graph nodes and add them to a list.
+		 */
+		List<BaseNode> sendGraphList = new ArrayList<>();
+		
+		for (ExecutorHandle exhandle : graphs.keySet()) {
+			CompositionGraph execGraph = getGraphFor(exhandle);
+			if (execGraph == clientGraph) {
+				// don't need to send the client graph
+				continue;
+			}
+			String jsonExecGrap = gjs.toJson(execGraph).toJSONString();
+			SendGraphNode sendGraph = new SendGraphNode(jsonExecGrap, exhandle.getHostAddress());
+			sendGraphList.add(sendGraph);
+		}
+		
+		/*
+		 * add every node in the sendGraphList to the client graph 
+		 * and connect them to every other existing node in the client graph.
+		 * This way the graphs are sent first then the data is prepared and sent.
+		 */
+		List<Edge> newEdges = new ArrayList<>();
+		for(BaseNode sendGraphNode : sendGraphList) {
+			for(BaseNode otherNodes : GraphTraversal.iterateNodes(clientGraph)) {
+				Edge firstSendGraph = new Edge(sendGraphNode, otherNodes);
+				newEdges.add(firstSendGraph);
+			}
+		}
+		// finally: add the new nodes and edges to the client graph
+		sendGraphList.forEach(clientGraph::addNode);
+		newEdges.forEach(clientGraph::addEdge);
 	}
 
 	/**

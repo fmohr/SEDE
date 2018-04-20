@@ -40,7 +40,7 @@ public class GraphConstruction {
 
 	private final ResolveInfo resolveInfo;
 
-	public final static CompositionGraph RESOLVE_CLIENT_GRAPH(String fmComposition, ResolveInfo resolveInformation) {
+	public final static CompositionGraph resolveClientGraph(String fmComposition, ResolveInfo resolveInformation) {
 
 		/*
 		 * Parse the fm composition
@@ -204,6 +204,7 @@ public class GraphConstruction {
 						CompositionGraph newExecutorGraph = new CompositionGraph();
 						newExecutorGraph.addNode(instNode);
 						graphs.put(randomExecutor, newExecutorGraph);
+						resolvedContext = true;
 					}
 				}
 			}
@@ -382,13 +383,16 @@ public class GraphConstruction {
 			InstructionNode instructionNode = (InstructionNode) bn;
 			/* service instance construction */
 			if (instructionNode.isServiceConstruct() && instructionNode.isAssignedLeftSideFieldname()) {
+				/*
+				 * Service that is being created
+				 */
 				String serviceInstanceFieldname = instructionNode.getLeftSideFieldname();
 				if (resolveInfo.getInputFields().isServiceInstanceHandle(serviceInstanceFieldname)) {
 					throw new CompositionSemanticException(
 							"An instruction creates a service instance and tries to rebind a fieldname of a service-instance-handle which is already defined in the input list. Fieldname: "
 									+ serviceInstanceFieldname);
 				}
-
+				
 				if ((!serviceInstanceFieldnameMap.containsKey(serviceInstanceFieldname))
 						&& resolveInfo.getResolvePolicy().isPersistentService(serviceInstanceFieldname)) {
 					ServiceInstanceStorageNode saveServiceInstaceNode = new ServiceInstanceStorageNode(

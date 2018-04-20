@@ -9,7 +9,7 @@ import java.util.Objects;
  *
  */
 public class ExecutorCoordinator {
-	private List<ExecutorHandle> executors;
+	private final List<ExecutorHandle> executors = new ArrayList<>();
 	
 	public synchronized List<ExecutorHandle> executorsSupportingServiceClass(String ServiceClass){
 		List<ExecutorHandle> capableExecutors = new ArrayList<>();

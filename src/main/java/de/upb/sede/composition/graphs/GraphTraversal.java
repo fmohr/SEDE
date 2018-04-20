@@ -187,7 +187,7 @@ public final class GraphTraversal {
 			topologicalSortedList.addAll(independentNodes);
 			independentNodes.forEach(clonedGraph::removeNode);
 		}
-		return Collections.unmodifiableList(topologicalSortedList);
+		return topologicalSortedList;
 	}
 	
 	public static Iterable<Edge> iterateEdges(final CompositionGraph graph){

@@ -3,8 +3,8 @@ package de.upb.sede.gateway;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import org.json.simple.parser.JSONParser;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import de.upb.sede.composition.gc.ClientInfo;
 import de.upb.sede.composition.gc.ExecutorCoordinator;
@@ -13,8 +13,6 @@ import de.upb.sede.composition.gc.ResolveInfo;
 import de.upb.sede.composition.graphs.CompositionGraph;
 import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
 import de.upb.sede.config.ClassesConfig;
-import de.upb.sede.requests.resolve.InputFields;
-import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.webinterfaces.server.StringServerResponse;
 
@@ -54,7 +52,7 @@ public class ResolveCompositionHandler extends StringServerResponse {
 		/*
 		 * Resolve the composition by calculating the client graph:
 		 */
-		CompositionGraph clientGraph = GraphConstruction.RESOLVE_CLIENT_GRAPH(resolveRequest.getComposition(), resolveInfo);
+		CompositionGraph clientGraph = GraphConstruction.resolveClientGraph(resolveRequest.getComposition(), resolveInfo);
 		
 		/*
 		 * Serializae the graph to json:

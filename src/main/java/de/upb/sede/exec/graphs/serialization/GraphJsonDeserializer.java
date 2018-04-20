@@ -1,24 +1,16 @@
 package de.upb.sede.exec.graphs.serialization;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import de.upb.sede.composition.graphs.Edge;
-import de.upb.sede.composition.graphs.CompositionGraph;
-import de.upb.sede.composition.graphs.GraphTraversal;
-import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.exceptions.CompositionGraphSerializationException;
 import de.upb.sede.exec.Execution;
 import de.upb.sede.exec.ExecutionGraph;
-import de.upb.sede.exec.graphs.EGraph;
 import de.upb.sede.exec.Task;
-import de.upb.sede.util.Iterators;
+import de.upb.sede.exec.graphs.EGraph;
 
 /**
  * Contains methods to deserialize an execution graph from its JSON representation.

@@ -2,7 +2,6 @@ package de.upb.sede.composition.gc;
 
 import java.io.Serializable;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 import org.json.simple.JSONObject;

@@ -3,7 +3,6 @@ package de.upb.sede.composition.graphs.nodes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 import java.util.Objects;
 
 import de.upb.sede.composition.gc.ResolveInfo;

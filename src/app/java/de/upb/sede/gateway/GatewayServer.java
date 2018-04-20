@@ -36,18 +36,6 @@ public class GatewayServer implements Gateway{
 	public BasicServerResponse getResolveCompositionHandle() {
 		return new ResolveCompositionHandler(execCoordinator, classesConfig);
 	}
-	
-	public GraphConstruction buildGraph(String fmComposition, ResolveInfo resolveInfo) {
-		List<String> fmInstructions = FMCompositionParser.separateInstructions(fmComposition);
-		List<InstructionNode> instNodes = new ArrayList<>();
-		for(String instruction : fmInstructions) {
-			instNodes.add(FMCompositionParser.parseInstruction(instruction));
-		}
-		GraphConstruction graphConstruction = new GraphConstruction(resolveInfo, instNodes);
-		
-		return graphConstruction;
-	}
-	
 
     public static void main(String[] args) throws Exception {
         HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);

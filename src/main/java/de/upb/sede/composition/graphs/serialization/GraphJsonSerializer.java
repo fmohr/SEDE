@@ -1,18 +1,16 @@
 package de.upb.sede.composition.graphs.serialization;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import de.upb.sede.composition.graphs.Edge;
 import de.upb.sede.composition.graphs.CompositionGraph;
+import de.upb.sede.composition.graphs.Edge;
 import de.upb.sede.composition.graphs.GraphTraversal;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.exceptions.CompositionGraphSerializationException;
 import de.upb.sede.util.Iterators;
 

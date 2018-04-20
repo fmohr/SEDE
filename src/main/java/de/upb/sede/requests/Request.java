@@ -1,14 +1,11 @@
 package de.upb.sede.requests;
 
-import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import org.json.simple.JSONObject;
 
 import de.upb.sede.util.JsonSerializable;
-
 
 /**
  * All instances of request should be immutable.
@@ -27,7 +24,6 @@ public abstract class Request implements JsonSerializable {
 		this.requestId = Optional.of(requestId);
 		this.clientHost = Optional.of(clientHost);
 	}
-
 
 	public boolean hasRequestId() {
 		return this.requestId.isPresent();
@@ -58,9 +54,8 @@ public abstract class Request implements JsonSerializable {
 
 	@Override
 	public void fromJson(Map<String, Object> data) {
-		requestId = Optional.of((String)data.get("requestId"));
-		clientHost = Optional.of((String)data.get("clientHost"));
+		requestId = Optional.of((String) data.get("requestId"));
+		clientHost = Optional.of((String) data.get("clientHost"));
 	}
 
-	
 }

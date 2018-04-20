@@ -1,15 +1,12 @@
 package de.upb.sede.composition.graphs;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
 import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.config.ClassesConfig;
 
 /**
  * A directed, acyclic graph to represent a composition. Each node contains the

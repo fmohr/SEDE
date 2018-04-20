@@ -3,16 +3,10 @@ package de.upb.sede.composition.graphs.nodes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-
 import de.upb.sede.composition.gc.ResolveInfo;
-import de.upb.sede.composition.gc.ServiceInstanceHandle;
 import de.upb.sede.exceptions.UnassignedFieldException;
 
 /**

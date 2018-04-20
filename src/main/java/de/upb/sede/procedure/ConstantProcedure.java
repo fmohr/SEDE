@@ -5,7 +5,7 @@ import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.SEDEObject;
 import de.upb.sede.exec.Task;
 
-public class ConstantNodeProcedure implements Procedure {
+public class ConstantProcedure implements Procedure {
 	public void process(Task task) {
 		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
 		String constant = (String) task.getAttributes().get("constant");

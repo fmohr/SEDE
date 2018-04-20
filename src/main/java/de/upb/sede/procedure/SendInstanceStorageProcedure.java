@@ -2,7 +2,7 @@ package de.upb.sede.procedure;
 
 import de.upb.sede.exec.Task;
 
-public class SendInstanceStorageNodeProcedure implements Procedure {
+public class SendInstanceStorageProcedure implements Procedure {
 
 	@Override
 	public void process(Task task) {

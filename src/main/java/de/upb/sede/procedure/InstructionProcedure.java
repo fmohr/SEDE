@@ -17,8 +17,8 @@ import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.SEDEObject;
 import de.upb.sede.exec.Task;
 
-public class InstructionNodeProcedure implements Procedure {
-	static Logger logger = Logger.getLogger(InstructionNodeProcedure.class);
+public class InstructionProcedure implements Procedure {
+	static Logger logger = Logger.getLogger(InstructionProcedure.class);
 
 	@Override
 	public void process(Task task) {

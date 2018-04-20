@@ -4,7 +4,7 @@ import de.upb.sede.exec.SEDEObject;
 import de.upb.sede.exec.Task;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
 
-public class SendDataNodeProcedure implements Procedure {
+public class SendDataProcedure implements Procedure {
 
 	@Override
 	public void process(Task task) {

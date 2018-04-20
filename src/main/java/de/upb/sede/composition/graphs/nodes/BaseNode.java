@@ -1,9 +1,6 @@
 package de.upb.sede.composition.graphs.nodes;
 
 import java.util.Collection;
-import java.util.Map;
-
-import org.json.simple.JSONObject;
 
 import de.upb.sede.composition.gc.ResolveInfo;
 

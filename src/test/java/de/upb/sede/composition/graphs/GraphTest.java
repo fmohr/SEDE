@@ -1,6 +1,5 @@
 package de.upb.sede.composition.graphs;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import junit.framework.Assert;

@@ -15,7 +15,7 @@ public class DummyNode extends BaseNode {
 		super();
 	}
 
-	DummyNode(String name){
+	public DummyNode(String name){
 		this.name = name;
 	}
 	

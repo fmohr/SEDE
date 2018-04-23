@@ -140,46 +140,46 @@ public class GraphTraversalTest {
 
 	@Test
 	public void testAllEdgesWith() {
-		List<Edge> allEdgesWith = new ArrayList<>();
+		List<DependencyEdge> allEdgesWith = new ArrayList<>();
 		// Incidence of next node
 		GraphTraversal.allEdgesWith(graph1, a).forEach(edge -> allEdgesWith.add(edge));
 		Assert.assertTrue(allEdgesWith.size() == 2);
-		Assert.assertTrue(allEdgesWith.contains(new Edge(a, b)));
-		Assert.assertTrue(allEdgesWith.contains(new Edge(a, c)));
+		Assert.assertTrue(allEdgesWith.contains(new DependencyEdge(a, b)));
+		Assert.assertTrue(allEdgesWith.contains(new DependencyEdge(a, c)));
 		// Incidence of next node
 		allEdgesWith.clear();
 		GraphTraversal.allEdgesWith(graph1, b).forEach(edge -> allEdgesWith.add(edge));
 		Assert.assertTrue(allEdgesWith.size() == 1);
-		Assert.assertTrue(allEdgesWith.contains(new Edge(a, b)));
+		Assert.assertTrue(allEdgesWith.contains(new DependencyEdge(a, b)));
 		// Incidence of next node
 		allEdgesWith.clear();
 		GraphTraversal.allEdgesWith(graph1, c).forEach(edge -> allEdgesWith.add(edge));
 		Assert.assertTrue(allEdgesWith.size() == 4);
-		Assert.assertTrue(allEdgesWith.contains(new Edge(a, c)));
-		Assert.assertTrue(allEdgesWith.contains(new Edge(g, c)));
-		Assert.assertTrue(allEdgesWith.contains(new Edge(c, d)));
-		Assert.assertTrue(allEdgesWith.contains(new Edge(c, e)));
+		Assert.assertTrue(allEdgesWith.contains(new DependencyEdge(a, c)));
+		Assert.assertTrue(allEdgesWith.contains(new DependencyEdge(g, c)));
+		Assert.assertTrue(allEdgesWith.contains(new DependencyEdge(c, d)));
+		Assert.assertTrue(allEdgesWith.contains(new DependencyEdge(c, e)));
 		// Incidence of next node
 		allEdgesWith.clear();
 		GraphTraversal.allEdgesWith(graph1, d).forEach(edge -> allEdgesWith.add(edge));
 		Assert.assertTrue(allEdgesWith.size() == 2);
-		Assert.assertTrue(allEdgesWith.contains(new Edge(c, d)));
-		Assert.assertTrue(allEdgesWith.contains(new Edge(d, f)));
+		Assert.assertTrue(allEdgesWith.contains(new DependencyEdge(c, d)));
+		Assert.assertTrue(allEdgesWith.contains(new DependencyEdge(d, f)));
 		// Incidence of next node
 		allEdgesWith.clear();
 		GraphTraversal.allEdgesWith(graph1, e).forEach(edge -> allEdgesWith.add(edge));
 		Assert.assertTrue(allEdgesWith.size() == 1);
-		Assert.assertTrue(allEdgesWith.contains(new Edge(c, e)));
+		Assert.assertTrue(allEdgesWith.contains(new DependencyEdge(c, e)));
 		// Incidence of next node
 		allEdgesWith.clear();
 		GraphTraversal.allEdgesWith(graph1, f).forEach(edge -> allEdgesWith.add(edge));
 		Assert.assertTrue(allEdgesWith.size() == 1);
-		Assert.assertTrue(allEdgesWith.contains(new Edge(d, f)));
+		Assert.assertTrue(allEdgesWith.contains(new DependencyEdge(d, f)));
 		// Incidence of next node
 		allEdgesWith.clear();
 		GraphTraversal.allEdgesWith(graph1, g).forEach(edge -> allEdgesWith.add(edge));
 		Assert.assertTrue(allEdgesWith.size() == 1);
-		Assert.assertTrue(allEdgesWith.contains(new Edge(g, c)));
+		Assert.assertTrue(allEdgesWith.contains(new DependencyEdge(g, c)));
 	}
 
 	@Test

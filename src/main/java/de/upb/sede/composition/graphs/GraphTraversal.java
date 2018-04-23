@@ -98,8 +98,8 @@ public final class GraphTraversal {
 	/**
 	 * Returns an iterable of all edges that contain the given node.
 	 */
-	public static Iterable<Edge> allEdgesWith(final CompositionGraph graph, final BaseNode node) {
-		return () -> new FilteredIterator<Edge>(graph.getEdges().iterator(), edge -> edge.contains(node));
+	public static Iterable<DependencyEdge> allEdgesWith(final CompositionGraph graph, final BaseNode node) {
+		return () -> new FilteredIterator<DependencyEdge>(graph.getEdges().iterator(), edge -> edge.contains(node));
 	}
 	
 
@@ -190,7 +190,7 @@ public final class GraphTraversal {
 		return topologicalSortedList;
 	}
 	
-	public static Iterable<Edge> iterateEdges(final CompositionGraph graph){
+	public static Iterable<DependencyEdge> iterateEdges(final CompositionGraph graph){
 		return graph.getEdges();
 	}
 

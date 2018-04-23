@@ -10,7 +10,7 @@ import de.upb.sede.composition.graphs.nodes.BaseNode;
  * 
  * Immutable
  */
-public final class Edge{
+public final class DependencyEdge{
     private final BaseNode from;
     private final BaseNode to;
 
@@ -18,7 +18,7 @@ public final class Edge{
      * Standard constructor creating an 2-tuple edge. 
      * Null values will throw an exception.
      */
-    public Edge(BaseNode fromNode, BaseNode toNode){
+    public DependencyEdge(BaseNode fromNode, BaseNode toNode){
         this.from = Objects.requireNonNull(fromNode);
         this.to = Objects.requireNonNull(toNode);
     }
@@ -38,8 +38,8 @@ public final class Edge{
     }
 
     public boolean equals(Object anotherObject){
-        if(anotherObject instanceof Edge){
-            Edge otherEdge = (Edge) anotherObject;
+        if(anotherObject instanceof DependencyEdge){
+            DependencyEdge otherEdge = (DependencyEdge) anotherObject;
             return getFrom().equals(otherEdge.getFrom()) && getTo().equals(otherEdge.getTo());
         } else {
             return false;

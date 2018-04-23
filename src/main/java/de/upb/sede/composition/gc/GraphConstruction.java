@@ -10,7 +10,7 @@ import java.util.Set;
 
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.graphs.CompositionGraph;
-import de.upb.sede.composition.graphs.Edge;
+import de.upb.sede.composition.graphs.DependencyEdge;
 import de.upb.sede.composition.graphs.GraphTraversal;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
@@ -506,10 +506,10 @@ public class GraphConstruction {
 		 * and connect them to every other existing node in the client graph.
 		 * This way the graphs are sent first then the data is prepared and sent.
 		 */
-		List<Edge> newEdges = new ArrayList<>();
+		List<DependencyEdge> newEdges = new ArrayList<>();
 		for(BaseNode sendGraphNode : sendGraphList) {
 			for(BaseNode otherNodes : GraphTraversal.iterateNodes(clientGraph)) {
-				Edge firstSendGraph = new Edge(sendGraphNode, otherNodes);
+				DependencyEdge firstSendGraph = new DependencyEdge(sendGraphNode, otherNodes);
 				newEdges.add(firstSendGraph);
 			}
 		}

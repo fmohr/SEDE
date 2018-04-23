@@ -8,7 +8,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import de.upb.sede.composition.graphs.CompositionGraph;
-import de.upb.sede.composition.graphs.Edge;
+import de.upb.sede.composition.graphs.DependencyEdge;
 import de.upb.sede.composition.graphs.GraphTraversal;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.exceptions.CompositionGraphSerializationException;
@@ -53,7 +53,7 @@ public class GraphJsonSerializer {
 		 * Indexes are defined by orderOfNodes list from above.
 		 */
 		JSONObject edges = new JSONObject();
-		for (Edge edge : GraphTraversal.iterateEdges(graph)) {
+		for (DependencyEdge edge : GraphTraversal.iterateEdges(graph)) {
 			/*
 			 * mapping: "m" : n
 			 */

@@ -22,7 +22,7 @@ public class CompositionGraph {
 	/* node set */
 	private final Set<BaseNode> nodes;
 	/* edge set */
-	private final Set<Edge> edges;
+	private final Set<DependencyEdge> edges;
 
 	public CompositionGraph() {
 		this.nodes = new HashSet<>();
@@ -39,7 +39,7 @@ public class CompositionGraph {
 	/**
 	 * Returns an unmodifiable view on the edge-set.
 	 */
-	Collection<Edge> getEdges() {
+	Collection<DependencyEdge> getEdges() {
 		return Collections.unmodifiableCollection(edges);
 	}
 
@@ -62,7 +62,7 @@ public class CompositionGraph {
 	 * Alters this graph by adding the given edge.
 	 * 
 	 */
-	public void addEdge(Edge newEdge) {
+	public void addEdge(DependencyEdge newEdge) {
 		// Objects.requireNonNull(newEdge); // no check needed because this is a private
 		// method and this class ensures it wont be invoked with null objects.
 		if (newEdge.getFrom().equals(newEdge.getTo())) {
@@ -80,7 +80,7 @@ public class CompositionGraph {
 		if (from.equals(to)) {
 			return;
 		}
-		Edge newEdge = new Edge(from, to);
+		DependencyEdge newEdge = new DependencyEdge(from, to);
 		addEdge(newEdge);
 	}
 
@@ -95,13 +95,13 @@ public class CompositionGraph {
 	 * Returns true if this graph connects 'from' to 'to'.
 	 */
 	boolean containsEdge(BaseNode from, BaseNode to) {
-		return containsEdge(new Edge(from, to));
+		return containsEdge(new DependencyEdge(from, to));
 	}
 
 	/**
 	 * Returns true if the given edge is present in this graph.
 	 */
-	private boolean containsEdge(Edge edge) {
+	private boolean containsEdge(DependencyEdge edge) {
 		return edges.contains(edge);
 	}
 

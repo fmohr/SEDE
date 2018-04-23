@@ -82,15 +82,15 @@ public class GraphTest {
 		CompositionGraph graph1 = new CompositionGraph();
 		graph1.connectNodes(a, b);
 		Assert.assertEquals(1, graph1.getEdges().size());
-		Assert.assertTrue(graph1.getEdges().contains(new Edge(a,b)));
-		Assert.assertFalse(graph1.getEdges().contains(new Edge(b,a)));
-		Assert.assertFalse(graph1.getEdges().contains(new Edge(a,a)));
+		Assert.assertTrue(graph1.getEdges().contains(new DependencyEdge(a,b)));
+		Assert.assertFalse(graph1.getEdges().contains(new DependencyEdge(b,a)));
+		Assert.assertFalse(graph1.getEdges().contains(new DependencyEdge(a,a)));
 		
 		graph1.connectNodes(a, b);
 		Assert.assertEquals(1, graph1.getEdges().size());
-		Assert.assertTrue(graph1.getEdges().contains(new Edge(a,b)));
-		Assert.assertFalse(graph1.getEdges().contains(new Edge(b,a)));
-		Assert.assertFalse(graph1.getEdges().contains(new Edge(a,a)));
+		Assert.assertTrue(graph1.getEdges().contains(new DependencyEdge(a,b)));
+		Assert.assertFalse(graph1.getEdges().contains(new DependencyEdge(b,a)));
+		Assert.assertFalse(graph1.getEdges().contains(new DependencyEdge(a,a)));
 
 		graph1.connectNodes(a, c);
 		graph1.connectNodes(b, c);
@@ -99,9 +99,9 @@ public class GraphTest {
 		
 		graph1.removeNode(a);
 		Assert.assertEquals(1, graph1.getEdges().size());
-		Assert.assertFalse(graph1.getEdges().contains(new Edge(a,b)));
-		Assert.assertFalse(graph1.getEdges().contains(new Edge(a,c)));
-		Assert.assertTrue(graph1.getEdges().contains(new Edge(b,c)));
+		Assert.assertFalse(graph1.getEdges().contains(new DependencyEdge(a,b)));
+		Assert.assertFalse(graph1.getEdges().contains(new DependencyEdge(a,c)));
+		Assert.assertTrue(graph1.getEdges().contains(new DependencyEdge(b,c)));
 		
 
 		boolean exceptionThrown = false;

@@ -8,7 +8,6 @@ public class DataPutRequest extends Request {
 
 	private final String fieldname;
 	private final Object data;
-	
 
 	public DataPutRequest(String requestId, String clientHost, String fieldname, Object data) {
 		super(requestId, clientHost);
@@ -19,18 +18,17 @@ public class DataPutRequest extends Request {
 	public String getFieldname() {
 		return fieldname;
 	}
-	
+
 	public Object getData() {
 		return data;
 	}
-	
+
 	public JSONObject toJson() {
 		throw new RuntimeException("Data put request cannot be transformed to json with this method. ");
 	}
-	
+
 	public void fromJson(Map<String, Object> data) {
 		throw new RuntimeException("Data put request cannot be transformed to json with this method. ");
 	}
-	
 
 }

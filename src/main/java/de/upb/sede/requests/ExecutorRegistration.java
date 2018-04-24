@@ -10,19 +10,18 @@ import org.json.simple.JSONObject;
 
 import de.upb.sede.util.JsonSerializable;
 
-public class ExecutorRegistration implements JsonSerializable{
-	
+public class ExecutorRegistration implements JsonSerializable {
+
 	private Optional<String> executorHost;
 
 	private Optional<List<String>> capabilities;
 
 	private Optional<List<String>> supportedServices;
 
-	
 	public ExecutorRegistration() {
-		
+
 	}
-	
+
 	public ExecutorRegistration(String myHost, List<String> capabilities, List<String> supportedServices) {
 		super();
 		this.executorHost = Optional.of(myHost);
@@ -67,9 +66,9 @@ public class ExecutorRegistration implements JsonSerializable{
 
 	@Override
 	public void fromJson(Map<String, Object> data) {
-		executorHost = Optional.of((String)data.get("host"));
-		capabilities = Optional.of(new ArrayList<>((List<String>)data.get("capabilities")));
-		supportedServices = Optional.of(new ArrayList<>((List<String>)data.get("supported-services")));
+		executorHost = Optional.of((String) data.get("host"));
+		capabilities = Optional.of(new ArrayList<>((List<String>) data.get("capabilities")));
+		supportedServices = Optional.of(new ArrayList<>((List<String>) data.get("supported-services")));
 	}
 
 }

@@ -8,7 +8,7 @@ import org.json.simple.JSONObject;
 import de.upb.sede.requests.resolve.ResolvePolicy;
 
 public class RunRequest extends Request {
-	
+
 	private Optional<String> composition;
 	private Optional<ResolvePolicy> policy;
 
@@ -28,7 +28,6 @@ public class RunRequest extends Request {
 		this.policy = Optional.of(policy);
 		this.variables = Optional.of(variables);
 	}
-
 
 	public boolean hasComposition() {
 		return this.composition.isPresent();
@@ -64,14 +63,14 @@ public class RunRequest extends Request {
 		// TODO serialize variables with the marshal system.
 		return jsonObject;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public void fromJson(Map<String, Object> data) {
 		super.fromJson(data);
 		composition = Optional.of((String) data.get("composition"));
 		ResolvePolicy policy = new ResolvePolicy();
-		if(data.containsKey("policy")) { // if policy defined overwrite standard policy:
-			policy.fromJson((Map<String, Object>) data.get("policy")); 
+		if (data.containsKey("policy")) { // if policy defined overwrite standard policy:
+			policy.fromJson((Map<String, Object>) data.get("policy"));
 		}
 		this.policy = Optional.of(policy);
 		// TODO deserialize variables using the marshal system.

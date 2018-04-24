@@ -27,7 +27,6 @@ public class InstructionNode extends BaseNode {
 	private String context;
 	private boolean contextIsField;
 	private String method;
-	
 
 	/**
 	 * Parameters for method or constructor invocation. The order of the parameters
@@ -137,46 +136,21 @@ public class InstructionNode extends BaseNode {
 	}
 
 	@Override
-	public
-	boolean producesField(String fieldname, ResolveInfo resolveInfo) {
+	public boolean producesField(String fieldname, ResolveInfo resolveInfo) {
 		if (isAssignedLeftSideFieldname() && getLeftSideFieldname().equals(fieldname)) {
 			return true;
 		} else if (isContextAFieldname() && getContext().equals(fieldname)) {
 			/*
-			 * Lookup if the method changes the state of the service:
+			 * The method changes the state of the service:
 			 */
-			if (resolveInfo.getClassesConfiguration().stateMutational(getServiceClass(resolveInfo), getMethod())) {
-				/*
-				 * The method changes the state of the service:
-				 */
-				return true;
-			} else {
-				return false;
-			}
+			return true;
 		} else {
 			return false;
 		}
 	}
-	
-	public String getServiceClass(ResolveInfo resolveInfo) {
-		String serviceClasspath;
-		if(isContextAFieldname()) {
-			/*
-			 * the context is a fieldname. Get its class path information from the serviceInstancehandle:
-			 */
-			serviceClasspath = resolveInfo.getInputFields().getServiceInstanceHandle(getContext()).getClasspath();
-		} else {
-			/*
-			 * if the context is class path:
-			 */
-			serviceClasspath = getContext();
-		}
-		return serviceClasspath;
-	}
 
 	@Override
-	public
-	Collection<String> consumingFields(ResolveInfo resolveInfo) {
+	public Collection<String> consumingFields(ResolveInfo resolveInfo) {
 		List<String> consumingFields = new ArrayList<>();
 		if (isContextAFieldname()) {
 			consumingFields.add(getContext());
@@ -187,28 +161,26 @@ public class InstructionNode extends BaseNode {
 	}
 
 	@Override
-	public
-	Collection<String> producingFields(ResolveInfo resolveInfo) {
+	public Collection<String> producingFields(ResolveInfo resolveInfo) {
 		ArrayList<String> producingFields = new ArrayList<>();
-		if(isAssignedLeftSideFieldname()) {
+		if (isAssignedLeftSideFieldname()) {
 			producingFields.add(getLeftSideFieldname());
 		}
-		if(isContextAFieldname()) {
-			String serviceClass = getServiceClass(resolveInfo);
-			resolveInfo.getClassesConfiguration().stateMutational(serviceClass, getMethod());
+		if (isContextAFieldname()) {
+			producingFields.add(getContext());
 		}
 		return producingFields;
 	}
-	
+
 	/**
-	 * Returns the fm composition representation  of the instruction.
+	 * Returns the fm composition representation of the instruction.
 	 */
 	public String toString() {
 		String s = "";
-		if(isAssignedLeftSideFieldname()) {
-			s +=  getLeftSideFieldname() + " = ";
+		if (isAssignedLeftSideFieldname()) {
+			s += getLeftSideFieldname() + " = ";
 		}
-		if(isAssignedHost()) {
+		if (isAssignedHost()) {
 			s += getHost() + "/";
 		}
 		s += getContext() + "::";
@@ -218,7 +190,7 @@ public class InstructionNode extends BaseNode {
 	}
 
 	public boolean isServiceConstruct() {
-		return getMethod().equals("__construct");
+		return !isContextAFieldname() && getMethod().equals("__construct");
 	}
 
 }

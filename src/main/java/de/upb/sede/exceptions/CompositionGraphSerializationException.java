@@ -1,6 +1,6 @@
 package de.upb.sede.exceptions;
 
-public class CompositionGraphSerializationException extends RuntimeException{
+public class CompositionGraphSerializationException extends RuntimeException {
 	/**
 	 * 
 	 */

@@ -37,7 +37,7 @@ public class InputFields implements JsonSerializable {
 		return fieldTypes.get(Objects.requireNonNull(fieldname));
 	}
 
-	public boolean isServiceInstanceHandle(String fieldname) {
+	public boolean isServiceInstance(String fieldname) {
 		return serviceInstanceMap.containsKey(fieldname);
 	}
 
@@ -74,11 +74,16 @@ public class InputFields implements JsonSerializable {
 		this.fieldTypes = new HashMap<>(jsonFieldTypes);
 
 		this.serviceInstanceMap = new HashMap<>();
-		Map<String, Map<String, Object>> jsonServiceInstanceMap = (Map<String, Map<String, Object>>) data.get("service-instance-map");
-		for(String fieldname : jsonServiceInstanceMap.keySet()) {
+		Map<String, Map<String, Object>> jsonServiceInstanceMap = (Map<String, Map<String, Object>>) data
+				.get("service-instance-map");
+		for (String fieldname : jsonServiceInstanceMap.keySet()) {
 			ServiceInstanceHandle serviceInstanceHandle = new ServiceInstanceHandle();
 			serviceInstanceHandle.fromJson(jsonServiceInstanceMap.get(fieldname));
 			serviceInstanceMap.put(fieldname, serviceInstanceHandle);
 		}
+	}
+
+	public Iterable<String> iterateInputs() {
+		return fieldTypes.keySet();
 	}
 }

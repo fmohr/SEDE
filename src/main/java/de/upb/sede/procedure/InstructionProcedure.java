@@ -25,9 +25,9 @@ public class InstructionProcedure implements Procedure {
 		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
 		InstructionNodeAttributes attributes = new InstructionNodeAttributes(task);
 		try {
-			Map<String, SEDEObject> parameterObjects = getParameterObjects(attributes.getParameters(), environment); 
+			Map<String, SEDEObject> parameterObjects = getParameterObjects(attributes.getParameters(), environment);
 			Class<?>[] parameterClasses = getParameterClasses(parameterObjects);
-			
+
 			List<Object> parameterValues = getParameterValues(parameterObjects);
 			Class<?> contextClass = addClassInClassLoader(attributes.getContext());
 			if (attributes.isConstructor()) {

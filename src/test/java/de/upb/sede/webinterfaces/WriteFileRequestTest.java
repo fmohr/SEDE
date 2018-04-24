@@ -13,20 +13,20 @@ import org.junit.Test;
 import de.upb.sede.webinterfaces.client.WriteFileRequest;
 
 public class WriteFileRequestTest {
-	@Test public void writeBasicFile() throws IOException {
+	@Test
+	public void writeBasicFile() throws IOException {
 		String filePath = "testrsc/temp/a.txt";
 		File file = new File(filePath);
-		if(file.exists()) {
+		if (file.exists()) {
 			file.delete();
 		}
 		WriteFileRequest writeFile = new WriteFileRequest(filePath, "ok");
 		String answer = writeFile.send("Hello, filesystem!");
-		
-		
-        String testRead = "";
-        try (Stream<String> stream = Files.lines(Paths.get(filePath))) {
-        		testRead = stream.collect(Collectors.joining());
-        }
+
+		String testRead = "";
+		try (Stream<String> stream = Files.lines(Paths.get(filePath))) {
+			testRead = stream.collect(Collectors.joining());
+		}
 		Assert.assertEquals("Hello, filesystem!", testRead);
 		Assert.assertEquals("ok", answer);
 	}

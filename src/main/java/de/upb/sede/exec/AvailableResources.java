@@ -1,9 +1,8 @@
 package de.upb.sede.exec;
 
-
 public class AvailableResources {
 	public static final AvailableResources UNDEFINED_RESOURCES = new AvailableResources();
-	
+
 	private int fpga, gpu, cpu;
 
 	public int getFPGANumber() {

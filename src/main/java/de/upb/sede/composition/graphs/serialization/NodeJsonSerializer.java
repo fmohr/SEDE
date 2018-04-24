@@ -9,17 +9,20 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import de.upb.sede.composition.graphs.nodes.BaseNode;
+import de.upb.sede.composition.graphs.nodes.CastTypeNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.graphs.nodes.ParseConstantNode;
-import de.upb.sede.composition.graphs.nodes.ReceiveDataNode;
-import de.upb.sede.composition.graphs.nodes.SendDataNode;
+import de.upb.sede.composition.graphs.nodes.AcceptDataNode;
+import de.upb.sede.composition.graphs.nodes.TransmitDataNode;
 import de.upb.sede.composition.graphs.nodes.SendGraphNode;
 import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
 import de.upb.sede.exceptions.CompositionGraphSerializationException;
 
 /**
- * This class defines methods to serialize and deserialize instruction nodes into their JSON representation.
- * These methods are only to be used from GraphJsonSerializer.
+ * This class defines methods to serialize and deserialize instruction nodes
+ * into their JSON representation. These methods are only to be used from
+ * GraphJsonSerializer.
+ * 
  * @author aminfaez
  *
  */
@@ -27,9 +30,10 @@ final class NodeJsonSerializer {
 
 	public static final String NODETYPE = "nodetype";
 	public static final String NODETYPE_INSTRUCTION = "Instruction";
-	public static final String NODETYPE_RECEIVE_DATA = "ReceiveData";
+	public static final String NODETYPE_ACCEPT_DATA = "AcceptData";
+	public static final String NODETYPE_CAST_TYPE = "CastType";
 	public static final String NODETYPE_PARSE_CONSTANT = "ParseConstant";
-	public static final String NODETYPE_SEND_DATA = "SendData";
+	public static final String NODETYPE_TRANSMIT_DATA = "TransmitData";
 	public static final String NODETYPE_SEND_GRAPH = "SendGraph";
 	public static final String NODETYPE_SERVICE_INSTANCE_STORAGE = "ServiceInstanceStorage";
 
@@ -113,7 +117,7 @@ final class NodeJsonSerializer {
 		boolean contextisfield = (Boolean) node.get("is-context-a-fieldname");
 		String method = (String) node.get("method");
 		List params = (JSONArray) node.get("params");
-	
+
 		InstructionNode instructionNode = new InstructionNode(fmInstruction, context, method);
 		instructionNode.setContextIsField(contextisfield);
 		if (leftsidefieldname != null) {
@@ -129,17 +133,17 @@ final class NodeJsonSerializer {
 	}
 
 	@SuppressWarnings("unchecked")
-	public JSONObject ReceiveDataNodeToJSON(ReceiveDataNode receiveNode) {
+	public JSONObject AcceptDataNodeToJSON(AcceptDataNode receiveNode) {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put(NODETYPE, NODETYPE_RECEIVE_DATA);
+		jsonObject.put(NODETYPE, NODETYPE_ACCEPT_DATA);
 		jsonObject.put("fieldname", receiveNode.getReceivingFieldname());
 		return jsonObject;
 	}
 
-	public ReceiveDataNode ReceiveDataNodeFromJSON(Map<Object, Object> node) {
-		assert node.get(NODETYPE).equals(NODETYPE_RECEIVE_DATA);
+	public AcceptDataNode AcceptDataNodeFromJSON(Map<Object, Object> node) {
+		assert node.get(NODETYPE).equals(NODETYPE_ACCEPT_DATA);
 		String fieldname = (String) node.get("fieldname");
-		ReceiveDataNode n = new ReceiveDataNode(fieldname);
+		AcceptDataNode n = new AcceptDataNode(fieldname);
 		return n;
 	}
 
@@ -148,12 +152,12 @@ final class NodeJsonSerializer {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(NODETYPE, NODETYPE_PARSE_CONSTANT);
 		jsonObject.put("constant", parseConstantNode.getConstant());
-		
+
 		jsonObject.put("isString", parseConstantNode.getType() == ParseConstantNode.ConstantType.String);
 		jsonObject.put("isBool", parseConstantNode.getType() == ParseConstantNode.ConstantType.Bool);
 		jsonObject.put("isNumber", parseConstantNode.getType() == ParseConstantNode.ConstantType.Number);
 		jsonObject.put("isNULL", parseConstantNode.getType() == ParseConstantNode.ConstantType.NULL);
-		
+
 		return jsonObject;
 	}
 
@@ -165,19 +169,19 @@ final class NodeJsonSerializer {
 	}
 
 	@SuppressWarnings("unchecked")
-	public JSONObject SendDataNodeToJSON(SendDataNode sendDataNode) {
+	public JSONObject TransmitDataNodeToJSON(TransmitDataNode sendDataNode) {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put(NODETYPE, NODETYPE_SEND_DATA);
+		jsonObject.put(NODETYPE, NODETYPE_TRANSMIT_DATA);
 		jsonObject.put("targetaddress", sendDataNode.getTargetAddress());
 		jsonObject.put("fieldname", sendDataNode.getSendingFieldName());
 		return jsonObject;
 	}
 
-	public SendDataNode SendDataNodeFromJSON(Map<Object, Object> node) {
-		assert node.get(NODETYPE).equals(NODETYPE_SEND_DATA);
+	public TransmitDataNode TransmitDataNodeFromJSON(Map<Object, Object> node) {
+		assert node.get(NODETYPE).equals(NODETYPE_TRANSMIT_DATA);
 		String targetaddress = (String) node.get("targetaddress");
 		String fieldname = (String) node.get("fieldname");
-		SendDataNode n = new SendDataNode(fieldname, targetaddress);
+		TransmitDataNode n = new TransmitDataNode(fieldname, targetaddress);
 		return n;
 	}
 
@@ -202,8 +206,6 @@ final class NodeJsonSerializer {
 	public JSONObject ServiceInstanceStorageNodeToJSON(ServiceInstanceStorageNode serviceInstanceStorageNode) {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(NODETYPE, NODETYPE_SERVICE_INSTANCE_STORAGE);
-		jsonObject.put("id", serviceInstanceStorageNode.getId());
-		jsonObject.put("hasId", serviceInstanceStorageNode.hasId());
 		jsonObject.put("serviceClasspath", serviceInstanceStorageNode.getServiceClasspath());
 		jsonObject.put("serviceinstanceFieldname", serviceInstanceStorageNode.getServiceInstanceFieldname());
 		jsonObject.put("isLoadInstruction", serviceInstanceStorageNode.isLoadInstruction());
@@ -212,18 +214,39 @@ final class NodeJsonSerializer {
 
 	public ServiceInstanceStorageNode ServiceInstanceStorageNodeFromJSON(Map<Object, Object> node) {
 		assert node.get(NODETYPE).equals(NODETYPE_SERVICE_INSTANCE_STORAGE);
-		String id = (String) node.get("id");
-		Boolean hasId = (Boolean) node.get("hasId");
 		String serviceClasspath = (String) node.get("serviceClasspath");
 		String serviceinstanceFieldname = (String) node.get("serviceinstanceFieldname");
 		Boolean isLoadInstruction = (Boolean) node.get("isLoadInstruction");
 
 		ServiceInstanceStorageNode n;
-		if (hasId) {
-			n = new ServiceInstanceStorageNode(isLoadInstruction, serviceinstanceFieldname, serviceClasspath, id);
-		} else {
-			n = new ServiceInstanceStorageNode(serviceinstanceFieldname, serviceClasspath);
-		}
+		n = new ServiceInstanceStorageNode(isLoadInstruction, serviceinstanceFieldname, serviceClasspath);
+		return n;
+	}
+
+	@SuppressWarnings("unchecked")
+	public JSONObject CastTypeNodeToJSON(CastTypeNode castTypeNode) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put(NODETYPE, NODETYPE_CAST_TYPE);
+
+		jsonObject.put("fieldname", castTypeNode.getFieldname());
+		jsonObject.put("casterClasspath", castTypeNode.getCasterClasspath());
+		jsonObject.put("originalType", castTypeNode.getOriginType());
+		jsonObject.put("targetType", castTypeNode.getTargetType());
+		jsonObject.put("castToSemantic", castTypeNode.isCastToSemantic());
+
+		return jsonObject;
+	}
+
+	@SuppressWarnings("unchecked")
+	public CastTypeNode CastTypeNodeFromJSON(Map<Object, Object> node) {
+		assert node.get(NODETYPE).equals(NODETYPE_CAST_TYPE);
+		String fieldname = (String) node.get("fieldname");
+		String casterClasspath = (String) node.get("casterClasspath");
+		String originalType = (String) node.get("originalType");
+		String targetType = (String) node.get("targetType");
+		boolean castToSemantic = (Boolean) node.get("castToSemantic");
+		CastTypeNode n = new CastTypeNode(fieldname, originalType, targetType, castToSemantic, casterClasspath);
+
 		return n;
 	}
 }

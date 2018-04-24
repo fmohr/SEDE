@@ -15,11 +15,10 @@ public class FileServerResponse implements BasicServerResponse {
 	public void receive(InputStream payload, OutputStream answer) {
 		String filepath = Streams.InReadString(payload);
 		try {
-			Files.copy(Paths.get(filepath),
-					answer);
+			Files.copy(Paths.get(filepath), answer);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
 	}
-	
+
 }

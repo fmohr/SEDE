@@ -59,9 +59,7 @@ public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 	public String getClasspath() {
 		return this.classpath.get();
 	}
-	
-	
-	
+
 	@Override
 	public JSONObject toJson() {
 		JSONObject jsonObject = new JSONObject();
@@ -73,8 +71,8 @@ public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 
 	@Override
 	public void fromJson(Map<String, Object> data) {
-		this.host = Optional.ofNullable((String)data.get("host"));
-		this.id = Optional.ofNullable((String)data.get("id"));
-		this.classpath = Optional.ofNullable((String)data.get("classpath"));
+		this.host = Optional.ofNullable((String) data.get("host"));
+		this.id = Optional.ofNullable((String) data.get("id"));
+		this.classpath = Optional.ofNullable((String) data.get("classpath"));
 	}
 }

@@ -14,7 +14,6 @@ public final class Task {
 		this.attributes = Objects.requireNonNull(parameters);
 	}
 
-
 	public Execution getExecution() {
 		return execution;
 	}
@@ -26,22 +25,23 @@ public final class Task {
 	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public final boolean equals(Object otherObject) {
 		return super.equals(otherObject);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
 	public final int hashCode() {
 		return super.hashCode();
 	}
-
 
 }

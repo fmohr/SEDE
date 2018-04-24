@@ -1,28 +1,21 @@
 package de.upb.sede.composition.graphs.nodes;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
 import de.upb.sede.composition.gc.ResolveInfo;
 
-public class SendGraphNode extends BaseNode {
+public class DeleteFieldNode extends BaseNode {
 
-	private final String graph;
+	private final String fieldname;
 
-	private final String executorsAddress;
-
-	public SendGraphNode(String graph, String executorsAddress) {
-		super();
-		this.graph = graph;
-		this.executorsAddress = executorsAddress;
+	public String getFieldname() {
+		return fieldname;
 	}
 
-	public String getGraph() {
-		return graph;
-	}
-
-	public String getExecutorsAddress() {
-		return executorsAddress;
+	public DeleteFieldNode(String fieldname) {
+		this.fieldname = fieldname;
 	}
 
 	@Override
@@ -32,7 +25,7 @@ public class SendGraphNode extends BaseNode {
 
 	@Override
 	public Collection<String> consumingFields(ResolveInfo resolveInfo) {
-		return Collections.EMPTY_LIST;
+		return Arrays.asList(getFieldname());
 	}
 
 	@Override
@@ -41,6 +34,7 @@ public class SendGraphNode extends BaseNode {
 	}
 
 	public String toString() {
-		return "sendgraph-" + executorsAddress;
+		return "delete-" + fieldname;
 	}
+
 }

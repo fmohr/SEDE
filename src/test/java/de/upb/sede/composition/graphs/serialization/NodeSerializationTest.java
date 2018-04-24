@@ -14,8 +14,9 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.graphs.nodes.ParseConstantNode;
-import de.upb.sede.composition.graphs.nodes.ReceiveDataNode;
-import de.upb.sede.composition.graphs.nodes.SendDataNode;
+import de.upb.sede.composition.graphs.nodes.AcceptDataNode;
+import de.upb.sede.composition.graphs.nodes.CastTypeNode;
+import de.upb.sede.composition.graphs.nodes.TransmitDataNode;
 import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
 import de.upb.sede.util.FileUtil;
 
@@ -63,7 +64,6 @@ public class NodeSerializationTest {
 		InstructionNode instNode6 = new InstructionNode("someFieldname::method1()", "someFieldname", "method1");
 		instNode6.setContextIsField(true);
 		JSONAssert.assertEquals(getJSONResource("instNode6"), njs.toJSON(instNode6).toJSONString(), true);
-
 
 		/*
 		 * Test deserialization
@@ -114,14 +114,12 @@ public class NodeSerializationTest {
 				.fromJSON(getJSONResourceAsObject("constantNodeNumber"));
 		ParseConstantNode constantNodeNull_ = (ParseConstantNode) njs
 				.fromJSON(getJSONResourceAsObject("constantNodeNull"));
-		
 
 		assertEquals(constantNodeBool, constantNodeBool_);
 		assertEquals(constantNodeString, constantNodeString_);
 		assertEquals(constantNodeNumber, constantNodeNumber_);
 		assertEquals(constantNodeNull, constantNodeNull_);
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	@Test
@@ -130,14 +128,13 @@ public class NodeSerializationTest {
 		/*
 		 * Test serialization
 		 */
-		SendDataNode sendDataNode = new SendDataNode("a", "10.10.10.10:100");
-		JSONAssert.assertEquals(getJSONResource("sendDataNode"), njs.toJSON(sendDataNode).toJSONString(), true);
+		TransmitDataNode sendDataNode = new TransmitDataNode("a", "10.10.10.10:100");
+		JSONAssert.assertEquals(getJSONResource("transmitDataNode"), njs.toJSON(sendDataNode).toJSONString(), true);
 
 		/*
 		 * Test deserialization
 		 */
-		SendDataNode sendDataNode_ = (SendDataNode) njs
-				.fromJSON(getJSONResourceAsObject("sendDataNode"));
+		TransmitDataNode sendDataNode_ = (TransmitDataNode) njs.fromJSON(getJSONResourceAsObject("transmitDataNode"));
 		assertEquals(sendDataNode, sendDataNode_);
 	}
 
@@ -148,15 +145,37 @@ public class NodeSerializationTest {
 		/*
 		 * Test serialization
 		 */
-		ReceiveDataNode receiveDataNode = new ReceiveDataNode("a");
-		JSONAssert.assertEquals(getJSONResource("receiveDataNode"), njs.toJSON(receiveDataNode).toJSONString(), true);
-		
+		AcceptDataNode receiveDataNode = new AcceptDataNode("a");
+		JSONAssert.assertEquals(getJSONResource("acceptDataNode"), njs.toJSON(receiveDataNode).toJSONString(), true);
+
 		/*
 		 * Test deserialization
 		 */
-		ReceiveDataNode receiveDataNode_ = (ReceiveDataNode) njs
-				.fromJSON(getJSONResourceAsObject("receiveDataNode"));
+		AcceptDataNode receiveDataNode_ = (AcceptDataNode) njs.fromJSON(getJSONResourceAsObject("acceptDataNode"));
 		assertEquals(receiveDataNode, receiveDataNode_);
+
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testCastTypeNodeSerializations() throws JSONException {
+		NodeJsonSerializer njs = new NodeJsonSerializer();
+		/*
+		 * Test serialization
+		 */
+		CastTypeNode castType = new CastTypeNode("a", "some.Lib", "semanticType1", true, "casters.Caster1");
+		FileUtil.writeStringToFile(getJSONResourcePath("castTypeNode"), njs.toJSON(castType).toJSONString());
+		JSONAssert.assertEquals(getJSONResource("castTypeNode"), njs.toJSON(castType).toJSONString(), true);
+
+		/*
+		 * Test deserialization
+		 */
+		CastTypeNode castTypeNode_ = (CastTypeNode) njs.fromJSON(getJSONResourceAsObject("castTypeNode"));
+		Assert.assertEquals(castType.getCasterClasspath(), castTypeNode_.getCasterClasspath());
+		Assert.assertEquals(castType.getFieldname(), castTypeNode_.getFieldname());
+		Assert.assertEquals(castType.getOriginType(), castTypeNode_.getOriginType());
+		Assert.assertEquals(castType.getTargetType(), castTypeNode_.getTargetType());
+		Assert.assertEquals(castType.isCastToSemantic(), castTypeNode_.isCastToSemantic());
 
 	}
 
@@ -167,9 +186,11 @@ public class NodeSerializationTest {
 		/*
 		 * Test serialization
 		 */
-		ServiceInstanceStorageNode serviceInstanceStorageNode = new ServiceInstanceStorageNode("a", "serviceClasspath.someLib.SomeServiceClass");
-		JSONAssert.assertEquals(getJSONResource("serviceInstanceStorageNode"), njs.toJSON(serviceInstanceStorageNode).toJSONString(), true);
-		
+		ServiceInstanceStorageNode serviceInstanceStorageNode = new ServiceInstanceStorageNode(false, "a",
+				"serviceClasspath.someLib.SomeServiceClass");
+		JSONAssert.assertEquals(getJSONResource("serviceInstanceStorageNode"),
+				njs.toJSON(serviceInstanceStorageNode).toJSONString(), true);
+
 		/*
 		 * Test deserialization
 		 */
@@ -207,21 +228,19 @@ public class NodeSerializationTest {
 		Assert.assertEquals(expected.getConstant(), actual.getConstant());
 		Assert.assertEquals(expected.getType(), actual.getType());
 	}
-	
-	public void assertEquals(ReceiveDataNode expected, ReceiveDataNode actual) {
+
+	public void assertEquals(AcceptDataNode expected, AcceptDataNode actual) {
 		Assert.assertEquals(expected.getReceivingFieldname(), actual.getReceivingFieldname());
 	}
-	
-	public void assertEquals(SendDataNode expected, SendDataNode actual) {
+
+	public void assertEquals(TransmitDataNode expected, TransmitDataNode actual) {
 		Assert.assertEquals(expected.getSendingFieldName(), actual.getSendingFieldName());
 		Assert.assertEquals(expected.getTargetAddress(), actual.getTargetAddress());
 	}
-	
+
 	public void assertEquals(ServiceInstanceStorageNode expected, ServiceInstanceStorageNode actual) {
-		Assert.assertEquals(expected.getId(), actual.getId());
 		Assert.assertEquals(expected.getServiceClasspath(), actual.getServiceClasspath());
 		Assert.assertEquals(expected.getServiceInstanceFieldname(), actual.getServiceInstanceFieldname());
-		Assert.assertEquals(expected.hasId(), actual.hasId());
 		Assert.assertEquals(expected.isLoadInstruction(), actual.isLoadInstruction());
 	}
 

@@ -18,7 +18,7 @@ public class SEDEObject {
 	public String getType() {
 		return type;
 	}
-	
+
 	public String toJSON() {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("type", type);

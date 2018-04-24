@@ -8,33 +8,32 @@ import java.util.Objects;
 public class ExecutorCapabilities {
 	public static final String javalibs = "JAVA-LIB";
 	public static final String pythonlibs = "PYTHON-LIB";
-	
 
 	private final List<String> executorCapabilities;
 	private final List<String> supportedServiceClasses;
-	
-	public ExecutorCapabilities(String...capabilities) {
+
+	public ExecutorCapabilities(String... capabilities) {
 		List<String> capabilityList = new ArrayList<>();
 		this.supportedServiceClasses = new ArrayList<>();
-		for(String capability : capabilities) {
+		for (String capability : capabilities) {
 			capabilityList.add(capability);
 		}
 		executorCapabilities = Collections.unmodifiableList(capabilityList);
 	}
-	
+
 	public void addAllServiceClasses(String... newServiceClasses) {
 		Objects.requireNonNull(newServiceClasses);
-		for(String serviceClass : newServiceClasses) {
+		for (String serviceClass : newServiceClasses) {
 			supportedServiceClasses.add(serviceClass);
 		}
 	}
-	
-	public boolean supportsServiceClass(String capability) {
-		return supportedServiceClasses.contains(capability);
+
+	public boolean supportsServiceClass(String serviceClasspath) {
+		return supportedServiceClasses.contains(serviceClasspath);
 	}
-	
+
 	public boolean isCapableOf(String capability) {
 		return executorCapabilities.contains(capability);
 	}
-	
+
 }

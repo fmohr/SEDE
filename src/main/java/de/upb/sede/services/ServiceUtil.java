@@ -24,7 +24,7 @@ public class ServiceUtil {
 	 *         the keys of the map.
 	 */
 	public static Object[] sort(Map<String, Object> parameter) {
-		if(parameter==null || parameter.size()==0) {
+		if (parameter == null || parameter.size() == 0) {
 			return new Object[0];
 		}
 		Object[] inOrderObjects = new Object[parameter.size()];
@@ -63,7 +63,7 @@ public class ServiceUtil {
 
 	public static String getOpName(String calledServiceOp) {
 		if (calledServiceOp.contains("."))
-			return calledServiceOp.substring(calledServiceOp.lastIndexOf(".")+1);
+			return calledServiceOp.substring(calledServiceOp.lastIndexOf(".") + 1);
 		else
 			return LAMPDA_METHOD_NAME;
 	}

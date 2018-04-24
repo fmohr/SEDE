@@ -46,7 +46,7 @@ public class ServiceMetaInformation implements Serializable {
 		placeholderIDs.add("");
 		List<String> placeholderInformation = new ArrayList<>();
 		placeholderInformation.add("");
-		Map<String,List<String>> placeholderOperation = new HashMap<>();
+		Map<String, List<String>> placeholderOperation = new HashMap<>();
 		placeholderOperation.put("", new ArrayList<>());
 		List<String> placeholderResources = new ArrayList<>();
 		placeholderResources.add("");
@@ -56,7 +56,7 @@ public class ServiceMetaInformation implements Serializable {
 		this.resources = placeholderResources;
 		this.language = Language.UNSPECIFIED;
 	}
-	
+
 	public ServiceMetaInformation(List<String> ids, List<String> information, Map<String, List<String>> operations,
 			List<String> resources, Language language) {
 		if (ids != null)

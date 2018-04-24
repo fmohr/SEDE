@@ -63,12 +63,17 @@ public class CompositionGraph {
 	 * 
 	 */
 	public void addEdge(DependencyEdge newEdge) {
-		// Objects.requireNonNull(newEdge); // no check needed because this is a private
+		Objects.requireNonNull(newEdge);
 		// method and this class ensures it wont be invoked with null objects.
 		if (newEdge.getFrom().equals(newEdge.getTo())) {
-			return;
+			throw new RuntimeException("Cannot connect to the a node to itself.");
 		}
-		edges.add(newEdge);
+		if (contains(newEdge.getFrom()) && contains(newEdge.getTo())) {
+			edges.add(newEdge);
+		} else {
+			throw new RuntimeException("Cannot connect two nodes that arent in the graph.");
+		}
+
 	}
 
 	/**
@@ -78,7 +83,7 @@ public class CompositionGraph {
 		Objects.requireNonNull(from);
 		Objects.requireNonNull(to);
 		if (from.equals(to)) {
-			return;
+			throw new RuntimeException("Cannot connect to the a node to itself.");
 		}
 		DependencyEdge newEdge = new DependencyEdge(from, to);
 		addEdge(newEdge);

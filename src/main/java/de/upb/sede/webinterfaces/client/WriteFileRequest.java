@@ -7,8 +7,11 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
+
 /**
- * Implementation of basic client that writes the payload to a file located at destination.
+ * Implementation of basic client that writes the payload to a file located at
+ * destination.
+ * 
  * @author aminfaez
  *
  */
@@ -16,8 +19,8 @@ public class WriteFileRequest implements BasicClientRequest {
 
 	private final String filepath;
 	private final byte[] answer;
-	
-	public WriteFileRequest(String filepath, String answer){
+
+	public WriteFileRequest(String filepath, String answer) {
 		this.filepath = filepath;
 		this.answer = answer.getBytes();
 	}
@@ -26,10 +29,10 @@ public class WriteFileRequest implements BasicClientRequest {
 	public OutputStream send() {
 		File file = new File(filepath);
 		/*
-		 * Create directories up to the file. 
+		 * Create directories up to the file.
 		 */
 		file.getParentFile().mkdirs();
-		
+
 		/*
 		 * return output stream
 		 */
@@ -42,7 +45,7 @@ public class WriteFileRequest implements BasicClientRequest {
 
 	@Override
 	public InputStream receive() {
-		return new ByteArrayInputStream(answer); 
+		return new ByteArrayInputStream(answer);
 	}
 
 }

@@ -42,18 +42,19 @@ public class ExecutorRegistrationHandler extends StringServerResponse {
 			logger.error("The body of the executor registration cannot be parsed as JSON: " + e.getMessage(), e);
 			return "Parse error: " + e.getMessage();
 		}
-		
+
 		ExecutorRegistration execRegister = new ExecutorRegistration();
 		execRegister.fromJson(registrationDatamap);
 		register(execRegister);
 		return "Registration Successfull";
 	}
-	
+
 	public void register(ExecutorRegistration execRegister) {
 		/*
 		 * TODO load services onto the executor.
 		 */
-		ExecutorHandle execHandle = new ExecutorHandle(execRegister.getHost(), execRegister.getCapabilities().toArray(new String[0]));
+		ExecutorHandle execHandle = new ExecutorHandle(execRegister.getHost(),
+				execRegister.getCapabilities().toArray(new String[0]));
 		/*
 		 * Remove all the supported Services from the executor that are not supported by
 		 * this gateway:

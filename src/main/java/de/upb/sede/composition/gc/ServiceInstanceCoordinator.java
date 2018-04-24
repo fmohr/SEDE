@@ -5,6 +5,5 @@ import java.util.List;
 
 public class ServiceInstanceCoordinator {
 	private List<ServiceInstanceHandle> serviceInstances = new ArrayList<>();
-	
-	
+
 }

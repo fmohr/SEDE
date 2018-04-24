@@ -13,7 +13,9 @@ import de.upb.sede.exec.Task;
 import de.upb.sede.exec.graphs.EGraph;
 
 /**
- * Contains methods to deserialize an execution graph from its JSON representation.
+ * Contains methods to deserialize an execution graph from its JSON
+ * representation.
+ * 
  * @author aminfaez
  *
  */
@@ -24,7 +26,9 @@ public class GraphJsonDeserializer {
 
 	/**
 	 * Serializes the given graph to JSON.
-	 * @param graph an arbitrary graph
+	 * 
+	 * @param graph
+	 *            an arbitrary graph
 	 * @return JSON representation of the graph.
 	 */
 	@SuppressWarnings("unchecked")
@@ -33,9 +37,11 @@ public class GraphJsonDeserializer {
 	}
 
 	/**
-	 * Deserializes the given json map into an execution graph. 
+	 * Deserializes the given json map into an execution graph.
 	 * 
-	 * @param jsonGraphObject json object which is the serialization of a graph. Needs to define nodes and edges field.
+	 * @param jsonGraphObject
+	 *            json object which is the serialization of a graph. Needs to define
+	 *            nodes and edges field.
 	 * @return The deserialized execution graph
 	 */
 	@SuppressWarnings("unchecked")
@@ -48,13 +54,13 @@ public class GraphJsonDeserializer {
 		EGraph deserializedGraph = new EGraph();
 		List<Object> serializedNodes = (List<Object>) jsonGraphObject.get(JSON_FIELDNAME_NODES);
 		Map<Object, Object> edgeMap = (Map<Object, Object>) jsonGraphObject.get(JSON_FIELDNAME_NODES);
-		
+
 		/*
 		 * Deserialize tasks:
 		 */
 		TaskJsonDeserializer tjs = new TaskJsonDeserializer();
-		List<Task> orderOfTasks = new ArrayList<>(serializedNodes.size()); // fill a map to hold indices of nodes. 
-		for(Object jsonNode : serializedNodes) {
+		List<Task> orderOfTasks = new ArrayList<>(serializedNodes.size()); // fill a map to hold indices of nodes.
+		for (Object jsonNode : serializedNodes) {
 			Map<String, Object> serializedNode = (Map<String, Object>) jsonNode;
 			Task task = tjs.fromJSON(execution, serializedNode);
 			orderOfTasks.add(task);
@@ -63,11 +69,12 @@ public class GraphJsonDeserializer {
 		/*
 		 * connect tasks in the graph:
 		 */
-		for(Object edge : edgeMap.keySet()) {
-			int sourceTaskIndex = Integer.parseInt(edge.toString()); // edge itself is the string representation of the source index
-			
+		for (Object edge : edgeMap.keySet()) {
+			int sourceTaskIndex = Integer.parseInt(edge.toString()); // edge itself is the string representation of the
+																		// source index
+
 			List<Object> targetTaskIndices = (List<Object>) edgeMap.get(edge);
-			for(Object targetNodeObject : targetTaskIndices) {
+			for (Object targetNodeObject : targetTaskIndices) {
 				Integer targetNodeIndex = (Integer) targetNodeObject;
 				deserializedGraph.connectTasks(orderOfTasks.get(sourceTaskIndex), orderOfTasks.get(targetNodeIndex));
 			}

@@ -11,6 +11,6 @@ public class SendInstanceStorageProcedure implements Procedure {
 		boolean isLoadInstruction = (boolean) task.getAttributes().get("isLoadInstruction");
 		String serviceClasspath = (String) task.getAttributes().get("serviceClasspath");
 		String id = (String) task.getAttributes().get("id");
-		
+
 	}
 }

@@ -12,8 +12,7 @@ import de.upb.sede.exceptions.FMCompositionSyntaxException;
 
 /**
  * 
- * Defines a set of regex-patterns that parse fmCompositions.
- * Tested
+ * Defines a set of regex-patterns that parse fmCompositions. Tested
  *
  * @author aminfaez
  * 
@@ -291,24 +290,28 @@ public final class FMCompositionParser {
 		}
 		return PATTERN_const.matcher(text).matches();
 	}
+
 	public static boolean isConstantString(String text) {
 		if (text == null) {
 			return false;
 		}
 		return PATTERN_constString.matcher(text).matches();
 	}
+
 	public static boolean isConstantBool(String text) {
 		if (text == null) {
 			return false;
 		}
 		return PATTERN_constBool.matcher(text).matches();
 	}
+
 	public static boolean isConstantNumber(String text) {
 		if (text == null) {
 			return false;
 		}
 		return PATTERN_constNumber.matcher(text).matches();
 	}
+
 	public static boolean isConstantNull(String text) {
 		if (text == null) {
 			return false;

@@ -9,8 +9,9 @@ import java.nio.file.Paths;
 import de.upb.sede.webinterfaces.client.WriteFileRequest;
 
 /**
- * Defines methods to access files reading and writing their content.
- * Use this class when you don't want to bother with checked IO-exceptions.
+ * Defines methods to access files reading and writing their content. Use this
+ * class when you don't want to bother with checked IO-exceptions.
+ * 
  * @author aminfaez
  *
  */
@@ -30,7 +31,8 @@ public class FileUtil {
 		byte[] encoded;
 		try {
 			encoded = Files.readAllBytes(Paths.get(filePath));
-			return new String(encoded, Charset.defaultCharset());
+			String fileContent = new String(encoded, Charset.defaultCharset());
+			return fileContent.replaceAll("\r\n", "\n");
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}

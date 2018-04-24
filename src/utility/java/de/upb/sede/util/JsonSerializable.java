@@ -8,18 +8,20 @@ import org.json.simple.parser.ParseException;
 
 /**
  * Interface to offer JSON serialization/deserialization methods.
+ * 
  * @author aminfaez
  *
  */
-public interface JsonSerializable  {
-	
+public interface JsonSerializable {
+
 	public JSONObject toJson();
-	
+
 	public void fromJson(Map<String, Object> data);
 
 	public default String toJsonString() {
 		return toJson().toJSONString();
 	}
+
 	@SuppressWarnings("unchecked")
 	public default void fromJsonString(String jsonString) {
 		try {

@@ -1,4 +1,5 @@
 package de.upb.sede;
+
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -9,11 +10,10 @@ import org.junit.BeforeClass;
  */
 import org.junit.Test;
 
-
-
 public class Rudimentary {
 
-    @Test public void testTrue() {
-        assertTrue("abc".equalsIgnoreCase("ABC"));
-    }
+	@Test
+	public void testTrue() {
+		assertTrue("abc".equalsIgnoreCase("ABC"));
+	}
 }

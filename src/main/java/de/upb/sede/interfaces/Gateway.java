@@ -5,6 +5,7 @@ import de.upb.sede.requests.Request;
 import de.upb.sede.requests.resolve.GatewayResolution;
 
 public interface Gateway {
-    public GatewayResolution resolve(Request resolveRequest);
-    public boolean register(ExecutorRegistration registry);
+	public GatewayResolution resolve(Request resolveRequest);
+
+	public boolean register(ExecutorRegistration registry);
 }

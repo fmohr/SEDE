@@ -1,5 +1,6 @@
 package de.upb.sede.config;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -94,7 +95,7 @@ public class ClassesConfig extends Configuration {
 		if (classconfig.containsKey("extends")) {
 			// Go once through the array to check for circled dependency.
 			List<String> extensions = (List<String>) classconfig.get("extends");
-			for (String  superConfig : extensions) {
+			for (String superConfig : extensions) {
 				if (unresolved.contains(superConfig)) {
 					throw new RuntimeException("Circled dependency in Inheritance in ClassesConfig:"
 							+ " The given class and class: " + superConfig + " extend from each other.");
@@ -123,10 +124,10 @@ public class ClassesConfig extends Configuration {
 					if (classconfig.containsKey(attributeName)) {
 						// first try to add the value to the array or dictionary
 						Object baseAttribute = classconfig.get(attributeName);
-						if (baseAttribute instanceof List && superAttribute instanceof List ) {
+						if (baseAttribute instanceof List && superAttribute instanceof List) {
 							((ArrayNode) baseAttribute).addAll((ArrayNode) superAttribute);
 							extended = true;
-						} else if (baseAttribute instanceof Map  && baseAttribute instanceof Map) {
+						} else if (baseAttribute instanceof Map && baseAttribute instanceof Map) {
 							((Map) baseAttribute).putAll((Map) superAttribute);
 							extended = true;
 						} else {
@@ -241,7 +242,7 @@ public class ClassesConfig extends Configuration {
 				return false;
 			} else {
 				// object node. use the has method
-				return ((Map<String, Object>)methods).containsKey(methodName);
+				return ((Map<String, Object>) methods).containsKey(methodName);
 			}
 		} else {
 			// the 'methods' fields is not defined.
@@ -283,7 +284,8 @@ public class ClassesConfig extends Configuration {
 		if (classConfig.containsKey("methods")) {
 			Object methods = classConfig.get("methods");
 			if (!(methods instanceof List)) { // if its not an array it's method may define mapping
-				Map<String, Object> methodMap = (Map<String, Object>) ((Map<String, Object>)(classConfig.get("methods"))).get(methodName);
+				Map<String, Object> methodMap = (Map<String, Object>) ((Map<String, Object>) (classConfig
+						.get("methods"))).get(methodName);
 				if (methodMap == null) {
 					return null;
 				}
@@ -336,7 +338,92 @@ public class ClassesConfig extends Configuration {
 	}
 
 	public boolean stateMutational(String classpath, String methodname) {
-		return true; // TODO
+		return classInfo(classpath).methodInfo(methodname).isStateMutating();
+	}
+
+	public ClassInfo classInfo(String classpath) {
+		if (containsKey(classpath)) {
+			return new ClassInfo((Map<String, Object>) get(classpath));
+		} else {
+			throw new RuntimeException("Class " + classpath + " not found.");
+		}
+	}
+
+	public static class ClassInfo {
+		private final Map<String, Object> configuration;
+
+		private ClassInfo(Map<String, Object> config) {
+			configuration = config;
+		}
+
+		private Map<String, Object> getMethods() {
+			if (configuration.containsKey("methods")) {
+				return (Map<String, Object>) configuration.get("methods");
+			} else {
+				return Collections.EMPTY_MAP;
+			}
+		}
+
+		public boolean hasMethod(String methodname) {
+			if (getMethods().containsKey(methodname)) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		public MethodInfo constructInfo() {
+			if (hasMethod("$construct")) {
+				return new MethodInfo((Map<String, Object>) getMethods().get("$construct"));
+			} else {
+				return MethodInfo.emptyConstructor();
+			}
+		}
+
+		public MethodInfo methodInfo(String methodname) {
+			if (hasMethod(methodname)) {
+				return new MethodInfo((Map<String, Object>) getMethods().get(methodname));
+			} else {
+				throw new RuntimeException("Method " + methodname + " not found.");
+			}
+		}
+
+	}
+
+	public static class MethodInfo {
+		private final Map<String, Object> configuration;
+
+		private MethodInfo(Map<String, Object> config) {
+			configuration = config;
+		}
+
+		public boolean isStateMutating() {
+			if (configuration.containsKey("statemutating")) {
+				return (boolean) configuration.get("statemutating");
+			} else {
+				return true;
+			}
+		}
+
+		public static MethodInfo emptyConstructor() {
+			HashMap<String, Object> emptyConstructConfig = new HashMap<>();
+			emptyConstructConfig.put("paramtypes", Collections.EMPTY_LIST);
+			return new MethodInfo(emptyConstructConfig);
+		}
+
+		@SuppressWarnings("unchecked")
+		public List<String> paramTypes() {
+			return (List<String>) configuration.get("paramtypes");
+		}
+
+		public boolean hasReturnType() {
+			return configuration.containsKey("returntype");
+		}
+
+		public String getReturnType() {
+			return (String) configuration.get("returntype");
+		}
+
 	}
 
 }

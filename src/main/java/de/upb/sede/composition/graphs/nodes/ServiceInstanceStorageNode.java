@@ -7,23 +7,17 @@ import java.util.Objects;
 
 import de.upb.sede.composition.gc.ResolveInfo;
 
-public class ServiceInstanceStorageNode extends BaseNode{
-	
-	private static final String NO_ID = "UNDEFINED ID";
-	
+public class ServiceInstanceStorageNode extends BaseNode {
+
 	private final boolean isLoadInstruction;
 	private final String serviceInstanceFieldname;
 	private final String serviceClasspath;
-	private final String id;
-	private final boolean hasId;
-	
-	/* a collection that is used by both producer and consumer method based on the isLoadInstruction flag. */
+
+	/*
+	 * a collection that is used by both producer and consumer method based on the
+	 * isLoadInstruction flag.
+	 */
 	private Collection<String> consumerProducerField;
-	
-	
-	public static final String getNoId() {
-		return NO_ID;
-	}
 
 	public final boolean isLoadInstruction() {
 		return isLoadInstruction;
@@ -37,31 +31,17 @@ public class ServiceInstanceStorageNode extends BaseNode{
 		return serviceClasspath;
 	}
 
-	public final String getId() {
-		return id;
-	}
-
-	public final boolean hasId() {
-		return hasId;
-	}
-
-	ServiceInstanceStorageNode(boolean isLoadInstruction, boolean hasId, String fieldname, String serviceclasspath, String id) {
+	ServiceInstanceStorageNode(boolean isLoadInstruction, boolean hasId, String fieldname, String serviceclasspath) {
 		super();
 		this.isLoadInstruction = isLoadInstruction;
 		this.serviceInstanceFieldname = Objects.requireNonNull(fieldname);
 		this.serviceClasspath = Objects.requireNonNull(serviceclasspath);
-		this.id = Objects.requireNonNull(id);
-		this.hasId = hasId;
 		consumerProducerField = new ArrayList<>();
 		consumerProducerField.add(serviceInstanceFieldname);
 	}
 
-	public ServiceInstanceStorageNode(boolean isLoadInstruction, String fieldname, String serviceclasspath, String id) {
-		this(isLoadInstruction, true, fieldname, serviceclasspath, id);
-	}
-	
-	public ServiceInstanceStorageNode(String fieldname, String serviceclasspath) {
-		this(false, false, fieldname, serviceclasspath, NO_ID);
+	public ServiceInstanceStorageNode(boolean isLoadInstruction, String fieldname, String serviceclasspath) {
+		this(isLoadInstruction, true, fieldname, serviceclasspath);
 	}
 
 	@Override
@@ -71,21 +51,23 @@ public class ServiceInstanceStorageNode extends BaseNode{
 
 	@Override
 	public Collection<String> consumingFields(ResolveInfo resolveInfo) {
-		if(isLoadInstruction) {
+		if (isLoadInstruction) {
 			return Collections.EMPTY_LIST;
-		}
-		else {
+		} else {
 			return consumerProducerField;
 		}
 	}
 
 	@Override
 	public Collection<String> producingFields(ResolveInfo resolveInfo) {
-		if(!isLoadInstruction)  {
+		if (!isLoadInstruction) {
 			return Collections.EMPTY_LIST;
-		}
-		else {
+		} else {
 			return consumerProducerField;
 		}
+	}
+
+	public String toString() {
+		return "serviceInstance-" + getServiceInstanceFieldname() + " " + (isLoadInstruction() ? "load" : "store");
 	}
 }

@@ -17,8 +17,6 @@ public class ExecRequest extends Request {
 		this.compositionGraph = Optional.of(compositionGraph);
 	}
 
-	
-
 	public boolean hasCompositionGraph() {
 		return this.compositionGraph.isPresent();
 	}
@@ -27,15 +25,15 @@ public class ExecRequest extends Request {
 		assert hasCompositionGraph();
 		return compositionGraph.get();
 	}
-	
+
 	public JSONObject toJSON() {
 		JSONObject jsonObject = super.toJson();
 		jsonObject.put("graph", getCompositionGraph());
 		return jsonObject;
 	}
-	
+
 	public void fromJSON(Map<String, Object> data) {
 		super.fromJson(data);
-		this.compositionGraph = Optional.ofNullable((String)data.get("graph"));
+		this.compositionGraph = Optional.ofNullable((String) data.get("graph"));
 	}
 }

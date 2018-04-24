@@ -111,6 +111,10 @@ public class ResolvePolicy implements JsonSerializable {
 		}
 	}
 
+	public boolean clientsideExecutionAllowed() {
+		return true; // TODO
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJson() {
@@ -128,12 +132,12 @@ public class ResolvePolicy implements JsonSerializable {
 
 	@Override
 	public void fromJson(Map<String, Object> data) {
-		
+
 		this.setReturnPolicy((String) data.get("return-policy"));
 		this.setServicePolicy((String) data.get("service-policy"));
-		
+
 		this.setPersistentServices((List<String>) data.get("persistent-service"));
 		this.setReturnFieldnames((List<String>) data.get("return-fieldnames"));
-		
+
 	}
 }

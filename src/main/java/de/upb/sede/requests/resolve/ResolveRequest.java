@@ -10,7 +10,7 @@ import de.upb.sede.requests.Request;
 public class ResolveRequest extends Request {
 	private Optional<String> composition;
 	private Optional<ResolvePolicy> policy;
-	private Optional<InputFields> inputFields; 
+	private Optional<InputFields> inputFields;
 
 	public ResolveRequest() {
 		this.composition = Optional.empty();
@@ -18,14 +18,14 @@ public class ResolveRequest extends Request {
 		this.inputFields = Optional.empty();
 	}
 
-	public ResolveRequest(String requestId, String clientHost, String composition, ResolvePolicy policy, InputFields inputFields) {
+	public ResolveRequest(String requestId, String clientHost, String composition, ResolvePolicy policy,
+			InputFields inputFields) {
 		super(requestId, clientHost);
 		this.composition = Optional.of(composition);
 		this.policy = Optional.of(policy);
 		this.inputFields = Optional.of(inputFields);
 	}
 
-	
 	public boolean hasComposition() {
 		return this.composition.isPresent();
 	}
@@ -43,11 +43,10 @@ public class ResolveRequest extends Request {
 		assert hasPolicy();
 		return policy.get();
 	}
-	
-	public InputFields getInputFields(){
+
+	public InputFields getInputFields() {
 		return inputFields.get();
 	}
-	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -62,13 +61,13 @@ public class ResolveRequest extends Request {
 	@Override
 	public void fromJson(Map<String, Object> data) {
 		super.fromJson(data);
-		
-		composition = Optional.of((String)data.get("composition"));
-		
+
+		composition = Optional.of((String) data.get("composition"));
+
 		ResolvePolicy resolvePolicy = new ResolvePolicy();
 		resolvePolicy.fromJson((Map<String, Object>) data.get("policy"));
 		policy = Optional.of(resolvePolicy);
-		
+
 		InputFields jsonInputFields = new InputFields();
 		jsonInputFields.fromJson((Map<String, Object>) data.get("input-fields"));
 		this.inputFields = Optional.of(jsonInputFields);

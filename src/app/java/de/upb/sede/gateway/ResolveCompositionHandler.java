@@ -52,22 +52,23 @@ public class ResolveCompositionHandler extends StringServerResponse {
 		/*
 		 * Resolve the composition by calculating the client graph:
 		 */
-		CompositionGraph clientGraph = GraphConstruction.resolveClientGraph(resolveRequest.getComposition(), resolveInfo);
-		
+		GraphConstruction gc = GraphConstruction.resolveClientGraph(resolveRequest.getComposition(), resolveInfo);
+		CompositionGraph clientGraph = gc.getResolvedClientGraph();
 		/*
 		 * Serializae the graph to json:
 		 */
 		GraphJsonSerializer gjs = new GraphJsonSerializer();
 		JSONObject jsonClientGraph = gjs.toJson(clientGraph);
-		
+
 		/*
 		 * Return the client graph as the body of the answer:
 		 */
 		return jsonClientGraph.toJSONString();
 	}
-	
+
 	/**
-	 * Builds and returns a new instance of ResolveInfo from the given ResolveRequest.
+	 * Builds and returns a new instance of ResolveInfo from the given
+	 * ResolveRequest.
 	 */
 	public ResolveInfo resolveInfoFromRequest(ResolveRequest resolveRequest) {
 		ResolveInfo info = new ResolveInfo();

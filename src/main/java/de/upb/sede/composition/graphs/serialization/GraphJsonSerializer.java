@@ -16,6 +16,7 @@ import de.upb.sede.util.Iterators;
 
 /**
  * Contains methods to serialize a graph into and from its JSON representation.
+ * 
  * @author aminfaez
  *
  */
@@ -26,7 +27,9 @@ public class GraphJsonSerializer {
 
 	/**
 	 * Serializes the given graph to JSON.
-	 * @param graph an arbitrary graph
+	 * 
+	 * @param graph
+	 *            an arbitrary graph
 	 * @return JSON representation of the graph.
 	 */
 	@SuppressWarnings("unchecked")
@@ -59,13 +62,13 @@ public class GraphJsonSerializer {
 			 */
 			int m = orderOfNodes.indexOf(edge.getFrom());
 			String edgeKey = String.valueOf(m);
-			if(!edges.containsKey(edgeKey)) {
+			if (!edges.containsKey(edgeKey)) {
 				JSONArray targetNodes = new JSONArray();
 				edges.put(edgeKey, targetNodes);
-			} 
-			
+			}
+
 			int n = orderOfNodes.indexOf(edge.getTo());
-			((JSONArray)edges.get(edgeKey)).add(n);
+			((JSONArray) edges.get(edgeKey)).add(n);
 		}
 		JSONObject jsonGraphObject = new JSONObject();
 		jsonGraphObject.put(JSON_FIELDNAME_NODES, nodearray);
@@ -74,9 +77,11 @@ public class GraphJsonSerializer {
 	}
 
 	/**
-	 * Deserializes the given json map into a graph. 
+	 * Deserializes the given json map into a graph.
 	 * 
-	 * @param jsonGraphObject json object which is the serialization of a graph. Needs to define nodes and edges field.
+	 * @param jsonGraphObject
+	 *            json object which is the serialization of a graph. Needs to define
+	 *            nodes and edges field.
 	 * @return The deserialized graph
 	 */
 	@SuppressWarnings("unchecked")
@@ -88,31 +93,30 @@ public class GraphJsonSerializer {
 		}
 		CompositionGraph deserializedGraph = new CompositionGraph();
 		List<Object> serializedNodes = (List<Object>) jsonGraphObject.get(JSON_FIELDNAME_NODES);
-		Map<Object, Object> edgeMap = (Map<Object, Object>) jsonGraphObject.get(JSON_FIELDNAME_NODES);
-		
+		Map<Object, Object> edgeMap = (Map<Object, Object>) jsonGraphObject.get(JSON_FIELDNAME_EDGES);
+
 		/*
 		 * Deserialize nodes:
 		 */
 		NodeJsonSerializer njs = new NodeJsonSerializer();
-		List<BaseNode> orderOfNodes = new ArrayList<>(serializedNodes.size()); // fill a map to hold indices of nodes. 
-		for(Object jsonNode : serializedNodes) {
+		List<BaseNode> orderOfNodes = new ArrayList<>(serializedNodes.size()); // fill a map to hold indices of nodes.
+		for (Object jsonNode : serializedNodes) {
 			Map<Object, Object> serializedNode = (Map<Object, Object>) jsonNode;
 			BaseNode bn = njs.fromJSON(serializedNode);
 			orderOfNodes.add(bn);
 			deserializedGraph.addNode(bn);
 		}
 		/*
-		 * connect nodes in the graph:
-		 * edgemap defines values like: 
-		 * 		"m" : n
-		 * 		m is the index of the source node and n is the target node of the edge.
+		 * connect nodes in the graph: edgemap defines values like: "m" : n m is the
+		 * index of the source node and n is the target node of the edge.
 		 */
-		for(Object edge : edgeMap.keySet()) {
-			int sourceNodeIndex = Integer.parseInt(edge.toString()); // edge itself is the string representation of the source index
-			
+		for (Object edge : edgeMap.keySet()) {
+			int sourceNodeIndex = Integer.parseInt(edge.toString()); // edge itself is the string representation of the
+																		// source index
+
 			List<Object> targetNodeIndices = (List<Object>) edgeMap.get(edge);
-			for(Object targetNodeObject : targetNodeIndices) {
-				Integer targetNodeIndex = (Integer) targetNodeObject;
+			for (Object targetNodeObject : targetNodeIndices) {
+				int targetNodeIndex = ((Number) targetNodeObject).intValue();
 				deserializedGraph.connectNodes(orderOfNodes.get(sourceNodeIndex), orderOfNodes.get(targetNodeIndex));
 			}
 		}

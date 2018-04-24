@@ -11,6 +11,6 @@ public abstract class Executor {
 		ExecutorConfiguration executorConfiguration = ExecutorConfiguration.parse(executorConfigurationPath);
 		resourceAllocator = new ResourceAllocator(executorConfiguration.getAvailableResources());
 	}
-	
+
 	public abstract void start();
 }

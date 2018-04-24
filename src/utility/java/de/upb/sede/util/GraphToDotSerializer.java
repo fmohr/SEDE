@@ -11,7 +11,7 @@ import info.leadinglight.jdot.enums.Shape;
 
 public class GraphToDotSerializer {
 
-	public static String getDOTForGraph(CompositionGraph compGraph) {
+	private static Graph GraphCompositionToDot(CompositionGraph compGraph) {
 		Graph graph = new Graph();
 		for (BaseNode baseNode : GraphTraversal.iterateNodes(compGraph)) {
 			Node dotNode = new Node(baseNode.toString()).setShape(Shape.circle);
@@ -24,6 +24,14 @@ public class GraphToDotSerializer {
 			dotEdge.addNode(fromNode.toString()).addNode(toNode.toString());
 			graph.addEdge(dotEdge);
 		}
-		return graph.toDot();
+		return graph;
+	}
+
+	public static String getDOTForGraph(CompositionGraph compGraph) {
+		return GraphCompositionToDot(compGraph).toDot();
+	}
+	
+	public static String getSVGForGraph(CompositionGraph compGraph) {
+		return GraphCompositionToDot(compGraph).dot2svg();
 	}
 }

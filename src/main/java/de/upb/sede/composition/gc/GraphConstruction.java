@@ -108,6 +108,9 @@ public class GraphConstruction {
 		CompositionGraph graph = exec.graph;
 		for (FieldType dependency : dataFlow.getConsumingFields(unresolvedNode)) {
 			List<BaseNode> producers = dataFlow.getProducers(dependency);
+			if(producers.size() == 0) {
+				throw new RuntimeException("No producers for " + dependency);
+			}
 			boolean found = false;
 			BaseNode localProducer = null;
 			for (BaseNode producer : producers) {

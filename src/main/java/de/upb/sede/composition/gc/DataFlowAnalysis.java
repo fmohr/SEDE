@@ -60,7 +60,9 @@ public class DataFlowAnalysis {
 				ServiceInstanceStorageNode storageNode = new ServiceInstanceStorageNode(true, inputFieldname,
 						serviceClasspath);
 				FieldType serviceHandle = new FieldType(acceptNode, inputFieldname, typeClass, typeName, true);
+				addFieldType(serviceHandle);
 				nodeConsumesField(storageNode, serviceHandle);
+
 				FieldType serviceInstance = new FieldType(storageNode, inputFieldname, typeClass, typeName, true);
 				addFieldType(serviceInstance);
 			} else {

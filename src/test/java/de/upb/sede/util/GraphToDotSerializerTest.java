@@ -1,7 +1,10 @@
 package de.upb.sede.util;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.junit.Test;
 
@@ -24,6 +27,14 @@ public class GraphToDotSerializerTest {
 			DependencyEdge edge = new DependencyEdge(nodes.get(i % 10), nodes.get((i + 3) % 10));
 			graph.addEdge(edge);
 		}
-		FileUtil.writeStringToFile("testrsc/test.dot", GraphToDotSerializer.getDOTForGraph(graph));
+		String dotSerialization = GraphToDotSerializer.getDOTForGraph(graph);
+//		FileUtil.writeStringToFile("testrsc/test.dot", GraphToDotSerializer.getDOTForGraph(graph));
+		assertTrue(dotSerialization.contains("digraph"));
+		for (int i = 0; i < 10; i++) {
+			assertTrue(Pattern.compile("\"" + i + "\" \\[.*\\]").matcher(dotSerialization).find());
+		}
+		for (int i = 0; i < 5; i++) {
+			assertTrue(dotSerialization.contains("\"" + i % 10 + "\" -> \"" + (i + 3) % 10 + "\""));
+		}
 	}
 }

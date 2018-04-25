@@ -7,6 +7,7 @@ import java.util.Objects;
 
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.graphs.CompositionGraph;
+import de.upb.sede.composition.graphs.GraphTraversal;
 import de.upb.sede.composition.graphs.nodes.AcceptDataNode;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.CastTypeNode;
@@ -66,6 +67,7 @@ public class GraphConstruction {
 		return resolvedClientGraph;
 	}
 
+	
 	private void resolveReturnFields(String resultFieldname) {
 		FieldType resultFieldType = dataFlow.resultFieldtype(resultFieldname);
 
@@ -108,7 +110,7 @@ public class GraphConstruction {
 		CompositionGraph graph = exec.graph;
 		for (FieldType dependency : dataFlow.getConsumingFields(unresolvedNode)) {
 			List<BaseNode> producers = dataFlow.getProducers(dependency);
-			if(producers.size() == 0) {
+			if (producers.size() == 0) {
 				throw new RuntimeException("No producers for " + dependency);
 			}
 			boolean found = false;
@@ -173,7 +175,6 @@ public class GraphConstruction {
 			}
 			dataFlow.nodeProducesField(localProducer, dependency);
 			graph.connectNodes(localProducer, unresolvedNode);
-
 		}
 	}
 

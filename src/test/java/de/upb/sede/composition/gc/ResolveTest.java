@@ -74,6 +74,7 @@ public class ResolveTest {
 		fmComposition += "a = testlib.A::__construct();";
 		fmComposition += "d = a::m({i1=b,i2=c});";
 		fmComposition += "f = e::m({i1=d});";
+		fmComposition += "d = e::m({i1=c});";
 		
 
 		resolveInfo.setResolvePolicy(policy);
@@ -90,29 +91,4 @@ public class ResolveTest {
 		}
 
 	}
-	
-	public static void dotToSvg(String dotPath) {
-		Process p;
-		try {
-			String svgpath = dotPath.substring(0, dotPath.length()-3) + "svg";
-			String commmand = "/bin/bash -c dot -Tsvg " + dotPath + " -o " + svgpath;
-			p = Runtime.getRuntime().exec(commmand);
-			p.waitFor();
-			BufferedReader reader = 
-                            new BufferedReader(new InputStreamReader(p.getInputStream()));
-
-			StringBuffer output = new StringBuffer();
-            String line = "";			
-			while ((line = reader.readLine())!= null) {
-				output.append(line + "\n");
-			}
-			if(!output.toString().isEmpty()) {
-				System.out.println(output);
-			}
-
-		} catch (Exception e) {
-			System.err.println(e.getMessage());
-		}
-	}
-	
 }

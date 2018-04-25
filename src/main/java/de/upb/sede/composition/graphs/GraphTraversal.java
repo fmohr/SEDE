@@ -98,6 +98,15 @@ public final class GraphTraversal {
 	}
 
 	/**
+	 * returns a collections of all the nodes from the given graph that have an edge targeting the given node. 
+	 * Thus the given node is the neighbor of all iterated nodes.
+	 */
+	public static Iterable<BaseNode> neighborOf(final CompositionGraph graph, final BaseNode node) {
+		return () -> new FilteredIterator<BaseNode>(graph.getNodes().iterator(),
+				otherNode -> (node != otherNode && graph.containsEdge(otherNode, node)));
+	}
+
+	/**
 	 * Returns an iterable of all edges that contain the given node.
 	 */
 	public static Iterable<DependencyEdge> allEdgesWith(final CompositionGraph graph, final BaseNode node) {

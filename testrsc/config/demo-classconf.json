@@ -1,5 +1,5 @@
 {
-    "demo.types.Addierer": {
+    "demo.math.Addierer": {
         "methods": {
             "$construct":{
                 "paramtypes": ["Number"]
@@ -14,7 +14,7 @@
             }
         }
     }, 
-    "demo.types.Gerade": {
+    "demo.math.Gerade": {
         "methods": {
             "$construct":{
                 "paramtypes": ["Number", "Number"]

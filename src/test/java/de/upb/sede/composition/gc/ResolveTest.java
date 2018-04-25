@@ -23,20 +23,20 @@ import de.upb.sede.util.GraphToDotSerializer;
 public class ResolveTest {
 
 	private static ClassesConfig getTestClassConfig() {
-		return new ClassesConfig("testrsc/config/test-classconf.json");
+		return new ClassesConfig("testrsc/config/demo-classconf.json");
 	}
 
 	private static OnthologicalTypeConfig getTestTypeConfig() {
-		return new OnthologicalTypeConfig("testrsc/config/test-typeconf.json");
+		return new OnthologicalTypeConfig("testrsc/config/demo-typeconf.json");
 	}
 
 	private static ExecutorCoordinator getTestExecCoordinator1() {
 		ExecutorCoordinator coordinator = new ExecutorCoordinator();
 		
 		ExecutorHandle execHandle1 = new ExecutorHandle("executor_1", "java");
-		execHandle1.getExecutionerCapabilities().addAllServiceClasses("testlib.A");
+		execHandle1.getExecutionerCapabilities().addAllServiceClasses("demo.math.Addierer");
 		ExecutorHandle execHandle2 = new ExecutorHandle("executor_2", "java");
-		execHandle2.getExecutionerCapabilities().addAllServiceClasses("testlib.B");
+		execHandle2.getExecutionerCapabilities().addAllServiceClasses("demo.math.Gerade");
 		
 		coordinator.addExecutor(execHandle1);
 		coordinator.addExecutor(execHandle2);
@@ -60,21 +60,27 @@ public class ResolveTest {
 
 		ResolvePolicy policy = new ResolvePolicy();
 		HashMap<String, String> inputFieldTypes = new HashMap<>();
-		inputFieldTypes.put("b", "semType1");
-		inputFieldTypes.put("c", "semType2");
+		inputFieldTypes.put("b", "Array");
+		inputFieldTypes.put("c", "Array");
 		inputFieldTypes.put("e",  "ServiceInstanceHandle");
-		ServiceInstanceHandle serviceInstanceHandle = new ServiceInstanceHandle("executor_2", "testlib.B", "id0");
+		ServiceInstanceHandle serviceInstanceHandle = new ServiceInstanceHandle("executor_2", "demo.math.Gerade", "id0");
 		
 		HashMap<String, ServiceInstanceHandle> serviceHandleFields = new HashMap<>();
 		serviceHandleFields.put("e", serviceInstanceHandle);
 		
 		InputFields inputFields = new InputFields(inputFieldTypes, serviceHandleFields);
 
+//		String fmComposition = "";
+//		fmComposition += "a = testlib.A::__construct();";
+//		fmComposition += "d = a::m({i1=b,i2=c});";
+//		fmComposition += "f = e::m({i1=d});";
+//		fmComposition += "d = e::m({i1=c});";
+		
 		String fmComposition = "";
-		fmComposition += "a = testlib.A::__construct();";
-		fmComposition += "d = a::m({i1=b,i2=c});";
-		fmComposition += "f = e::m({i1=d});";
-		fmComposition += "d = e::m({i1=c});";
+		fmComposition += "a = demo.math.Addierer::__construct({100});";
+		fmComposition += "d = a::addier({20});";
+		fmComposition += "f = a::addierListe({b});";
+		fmComposition += "d = e::liagtAufGerade({f});";
 		
 
 		resolveInfo.setResolvePolicy(policy);

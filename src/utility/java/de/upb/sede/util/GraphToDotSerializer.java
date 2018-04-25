@@ -13,7 +13,7 @@ import info.leadinglight.jdot.enums.Shape;
 
 public class GraphToDotSerializer {
 	
-	private static String DOT_PATH = "/usr/bin/dot";
+	private static String DOT_PATH = "/usr/local/bin/dot";
 
 	private static Graph GraphCompositionToDot(CompositionGraph compGraph) {
 		Graph graph = new Graph();

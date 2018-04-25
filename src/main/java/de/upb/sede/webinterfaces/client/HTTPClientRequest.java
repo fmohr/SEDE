@@ -9,7 +9,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class HTTPClientRequest implements BasicClientRequest {
-	URL url;
+	private final URL url;
+	private HttpURLConnection httpConnection;
 
 	public HTTPClientRequest(String urlAddress) {
 		try {
@@ -22,8 +23,7 @@ public class HTTPClientRequest implements BasicClientRequest {
 	@Override
 	public OutputStream send() {
 		try {
-			HttpURLConnection httpConnection = establishHTTPConnection(url);
-			return httpConnection.getOutputStream();
+			return establishHTTPConnection(url).getOutputStream();
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
@@ -32,18 +32,19 @@ public class HTTPClientRequest implements BasicClientRequest {
 	@Override
 	public InputStream receive() {
 		try {
-			HttpURLConnection httpConnection = establishHTTPConnection(url);
-			return httpConnection.getInputStream();
+			return establishHTTPConnection(url).getInputStream();
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
 	}
 
 	private HttpURLConnection establishHTTPConnection(URL url) throws IOException {
-		HttpURLConnection httpConnection = (HttpURLConnection) url.openConnection();
-		httpConnection.setDoInput(true);
-		httpConnection.setDoOutput(true);
-		httpConnection.connect();
+		if(httpConnection == null) {
+			httpConnection = (HttpURLConnection) url.openConnection();
+			httpConnection.setDoInput(true);
+			httpConnection.setDoOutput(true);
+			httpConnection.connect();
+		} 
 		return httpConnection;
 	}
 }

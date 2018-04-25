@@ -31,7 +31,7 @@ public class GatewayServer implements Gateway {
 	}
 
 	public static void main(String[] args) throws Exception {
-		HttpServer server = HttpServer.create(new InetSocketAddress(8000), 0);
+		HttpServer server = HttpServer.create(new InetSocketAddress(6060), 0);
 		GatewayServer gateWayServer = new GatewayServer();
 
 		server.createContext("/register", new SunHttpHandler(gateWayServer::getExecRegisterHandle));

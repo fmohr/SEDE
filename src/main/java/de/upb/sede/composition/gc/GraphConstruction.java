@@ -49,22 +49,22 @@ public class GraphConstruction {
 		for (String resultFieldname : gc.dataFlow.resultFieldnames()) {
 			gc.resolveReturnFields(resultFieldname);
 		}
+		gc.calcResolvedClientGraph();
 		return gc;
 
 	}
 
-	public CompositionGraph getResolvedClientGraph() {
+	public void calcResolvedClientGraph() {
 		/*
 		 * Add send graph nodes to the client graph and returns it:
 		 */
-		CompositionGraph resolvedClientGraph = clientExecution.graph.clone();
+		CompositionGraph resolvedClientGraph = clientExecution.graph;
 		GraphJsonSerializer gjs = new GraphJsonSerializer();
 		for (Execution exec : executions) {
 			String jsonGraph = gjs.toJson(exec.graph).toJSONString();
 			SendGraphNode sendGraph = new SendGraphNode(jsonGraph, exec.executor.getHostAddress());
 			resolvedClientGraph.addNode(sendGraph);
 		}
-		return resolvedClientGraph;
 	}
 
 	
@@ -307,5 +307,9 @@ public class GraphConstruction {
 
 	public List<Execution> getExecutions() {
 		return executions;
+	}
+
+	public CompositionGraph getResolvedClientGraph() {
+		return clientExecution.graph;
 	}
 }

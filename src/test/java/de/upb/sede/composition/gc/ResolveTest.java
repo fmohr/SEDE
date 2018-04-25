@@ -89,7 +89,6 @@ public class ResolveTest {
 		GraphConstruction graphComposition = GraphConstruction.resolveClientGraph(fmComposition, resolveInfo);
 
 		for (GraphConstruction.Execution execution : graphComposition.getExecutions()) {
-
 			String svgGraph = GraphToDotSerializer.getSVGForGraph(execution.getGraph());
 			String file = "testout/resolved-graphs/" + execution.getExecutor().getHostAddress() + ".svg";
 			FileUtil.writeStringToFile(file,

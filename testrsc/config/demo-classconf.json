@@ -1,0 +1,40 @@
+{
+    "demo.types.Addierer": {
+        "methods": {
+            "$construct":{
+                "paramtypes": ["Number"]
+            },
+            "addier":{
+                "paramtypes": ["Number"],
+                "returntype" : "Number"
+            },
+            "addierListe":{
+                "paramtypes": ["demo.types.NummerList"],
+                "returntype" : "demo.types.NummerList"
+            }
+        }
+    }, 
+    "demo.types.Gerade": {
+        "methods": {
+            "$construct":{
+                "paramtypes": ["Number", "Number"]
+            },
+            "calc":{
+                "paramtypes": ["Number"],
+                "returntype" : "demo.types.Punkt"
+            },
+            "liagtAufGerade":{
+                "paramtypes": ["demo.types.Punkt"],
+                "returntype" : "Bool"
+            },
+            "achsenabschnitt":{
+                "paramtypes": [],
+                "returntype" : "demo.types.Punkt"
+            },
+            "nullstelle":{
+                "paramtypes": [],
+                "returntype" : "demo.types.Punkt"
+            }
+        }
+    }
+}

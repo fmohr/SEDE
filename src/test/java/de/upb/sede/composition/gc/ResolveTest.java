@@ -85,7 +85,7 @@ public class ResolveTest {
 		for (GraphConstruction.Execution execution : graphComposition.getExecutions()) {
 
 			String svgGraph = GraphToDotSerializer.getSVGForGraph(execution.getGraph());
-			String file = "testrsc/dot-files/" + execution.getExecutor().getHostAddress() + ".svg";
+			String file = "testout/resolved-graphs/" + execution.getExecutor().getHostAddress() + ".svg";
 			FileUtil.writeStringToFile(file,
 					svgGraph);
 		}

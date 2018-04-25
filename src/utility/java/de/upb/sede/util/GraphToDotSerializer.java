@@ -1,5 +1,7 @@
 package de.upb.sede.util;
 
+import java.io.IOException;
+
 import de.upb.sede.composition.graphs.CompositionGraph;
 import de.upb.sede.composition.graphs.DependencyEdge;
 import de.upb.sede.composition.graphs.GraphTraversal;
@@ -10,6 +12,8 @@ import info.leadinglight.jdot.Node;
 import info.leadinglight.jdot.enums.Shape;
 
 public class GraphToDotSerializer {
+	
+	private static String DOT_PATH = "/usr/bin/dot";
 
 	private static Graph GraphCompositionToDot(CompositionGraph compGraph) {
 		Graph graph = new Graph();
@@ -24,6 +28,7 @@ public class GraphToDotSerializer {
 			dotEdge.addNode(fromNode.toString()).addNode(toNode.toString());
 			graph.addEdge(dotEdge);
 		}
+		graph.setDefaultCmd(DOT_PATH);
 		return graph;
 	}
 
@@ -32,6 +37,11 @@ public class GraphToDotSerializer {
 	}
 	
 	public static String getSVGForGraph(CompositionGraph compGraph) {
-		return GraphCompositionToDot(compGraph).dot2svg();
+		try {
+			return GraphCompositionToDot(compGraph).dot2svg();
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			throw new RuntimeException("Cannot run program \""+DOT_PATH + "\"");
+		}
 	}
 }

@@ -33,6 +33,9 @@ public class OnthologicalTypeConfig extends Configuration {
 	}
 
 	public String getOnthologicalType(String fullClassName) {
+		if(fullClassName.equals("Bool")) {
+			return "Bool";
+		}
 		if (hasOnthologicalType(fullClassName)) {
 			Map<String, Object> configEntry = (Map<String, Object>) this.get(fullClassName);
 			String onthologicalType = (String) configEntry.get(SEMANTIC_TYPE);

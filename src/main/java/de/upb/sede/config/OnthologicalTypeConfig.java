@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class OnthologicalTypeConfig extends Configuration {
-	private static Logger logger = Logger.getLogger(OnthologicalTypeConfig.class.getSimpleName());
+	private static Logger logger = LogManager.getLogger(OnthologicalTypeConfig.class.getSimpleName());
 	private static final String SEMANTIC_TYPE = "semantic_type";
 	private static final String ONTHOLOGICAL_CASTER = "onthological_caster";
 	/**
@@ -33,9 +34,6 @@ public class OnthologicalTypeConfig extends Configuration {
 	}
 
 	public String getOnthologicalType(String fullClassName) {
-		if(fullClassName.equals("Bool")) {
-			return "Bool";
-		}
 		if (hasOnthologicalType(fullClassName)) {
 			Map<String, Object> configEntry = (Map<String, Object>) this.get(fullClassName);
 			String onthologicalType = (String) configEntry.get(SEMANTIC_TYPE);

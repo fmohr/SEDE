@@ -18,7 +18,7 @@ public class GraphToDotSerializer {
 	private static Graph GraphCompositionToDot(CompositionGraph compGraph) {
 		Graph graph = new Graph();
 		for (BaseNode baseNode : GraphTraversal.iterateNodes(compGraph)) {
-			Node dotNode = new Node(baseNode.toString()).setShape(Shape.circle);
+			Node dotNode = new Node(baseNode.toString()).setShape(Shape.box);
 			graph.addNode(dotNode);
 		}
 		for (DependencyEdge edge : GraphTraversal.iterateEdges(compGraph)) {

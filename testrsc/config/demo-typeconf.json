@@ -6,5 +6,21 @@
 	"demo.types.Punkt": {
 		"semantic_type": "Array",
 		"onthological_caster": "demo.casters.PunktCaster"
+	},
+	"Bool":{
+		"semantic_type": "Bool",
+		"onthological_caster": "demo.casters.primitiveCaster"
+	},
+	"Number":{
+		"semantic_type": "Number",
+		"onthological_caster": "demo.casters.primitiveCaster"
+	},
+	"String":{
+		"semantic_type": "String",
+		"onthological_caster": "demo.casters.primitiveCaster"
+	},
+	"NULL":{
+		"semantic_type": "null",
+		"onthological_caster": "demo.casters.primitiveCaster"
 	}
 }

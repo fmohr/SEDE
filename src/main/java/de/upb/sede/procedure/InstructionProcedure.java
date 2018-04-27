@@ -11,14 +11,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.jar.Attributes;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.SEDEObject;
 import de.upb.sede.exec.Task;
 
 public class InstructionProcedure implements Procedure {
-	static Logger logger = Logger.getLogger(InstructionProcedure.class);
+	static Logger logger = LogManager.getLogger(InstructionProcedure.class);
 
 	@Override
 	public void process(Task task) {

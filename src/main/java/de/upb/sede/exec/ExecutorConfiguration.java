@@ -5,7 +5,8 @@ import java.io.File;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -13,7 +14,7 @@ import org.xml.sax.helpers.DefaultHandler;
 public class ExecutorConfiguration {
 	private static final String UNDEFINED_SERVICE_STORE_LOC = "No location defined to store services in.";
 
-	private static Logger logger = Logger.getLogger(ExecutorConfiguration.class);
+	private static Logger logger = LogManager.getLogger(ExecutorConfiguration.class);
 
 	private AvailableResources resources = new AvailableResources();
 	private int threadNumber = 0;

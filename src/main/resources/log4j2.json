@@ -1,0 +1,30 @@
+{
+  "configuration": {
+    "appenders": {
+      "RollingFile": {
+        "name": "File",
+        "fileName": "logs/Gateway.log",
+        "filePattern": "logs/Gateway-backup-%d{HH-mm-ss}-%i.log.gz",
+        "PatternLayout": {
+          "pattern": "%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n"
+        },
+        "Policies": {
+          "SizeBasedTriggeringPolicy": {
+            "size": "1 MB"
+          }
+        },
+        "DefaultRolloverStrategy": {
+          "max": "100"
+        }
+      }
+    },
+    "loggers": {
+      "root": {
+        "level": "debug",
+        "appender-ref": {
+          "ref": "File"
+        }
+      }
+    }
+  }
+}

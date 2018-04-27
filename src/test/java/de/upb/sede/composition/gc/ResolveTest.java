@@ -60,9 +60,9 @@ public class ResolveTest {
 
 		ResolvePolicy policy = new ResolvePolicy();
 		HashMap<String, String> inputFieldTypes = new HashMap<>();
-		inputFieldTypes.put("b", "Array");
-		inputFieldTypes.put("c", "Array");
-		inputFieldTypes.put("e",  "ServiceInstanceHandle");
+		inputFieldTypes.put("input1", "Array");
+		inputFieldTypes.put("input2", "Array");
+		inputFieldTypes.put("input3",  "ServiceInstanceHandle");
 		ServiceInstanceHandle serviceInstanceHandle = new ServiceInstanceHandle("executor_2", "demo.math.Gerade", "id0");
 		
 		HashMap<String, ServiceInstanceHandle> serviceHandleFields = new HashMap<>();
@@ -81,7 +81,7 @@ public class ResolveTest {
 		fmComposition += "d = a::addier({20});";
 		fmComposition += "f = a::addierListe({b});";
 		fmComposition += "d = e::liagtAufGerade({f});";
-		
+		fmComposition += "e = d::addie{30";
 
 		resolveInfo.setResolvePolicy(policy);
 		resolveInfo.setInputFields(inputFields);
@@ -89,7 +89,7 @@ public class ResolveTest {
 		GraphConstruction graphComposition = GraphConstruction.resolveClientGraph(fmComposition, resolveInfo);
 
 		for (Execution execution : graphComposition.getExecutions()) {
-			String svgGraph = GraphToDotSerializer.getDOTForGraph(execution.getGraph());
+			String svgGraph = GraphToDotSerializer.getSVGForGraph(execution.getGraph());
 			String file = "testout/resolved-graphs/" + execution.getExecutor().getHostAddress() + ".svg";
 			FileUtil.writeStringToFile(file,
 					svgGraph);

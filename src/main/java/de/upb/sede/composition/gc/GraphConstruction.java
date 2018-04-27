@@ -3,21 +3,12 @@ package de.upb.sede.composition.gc;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.graphs.CompositionGraph;
-import de.upb.sede.composition.graphs.GraphTraversal;
-import de.upb.sede.composition.graphs.nodes.AcceptDataNode;
-import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.composition.graphs.nodes.CastTypeNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
-import de.upb.sede.composition.graphs.nodes.ParseConstantNode;
 import de.upb.sede.composition.graphs.nodes.SendGraphNode;
-import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
-import de.upb.sede.composition.graphs.nodes.TransmitDataNode;
 import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
-import sun.misc.GC;
 
 public class GraphConstruction {
 

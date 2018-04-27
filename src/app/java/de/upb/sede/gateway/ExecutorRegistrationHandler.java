@@ -4,10 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
-import org.apache.log4j.spi.LoggerFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import de.upb.sede.composition.gc.ExecutorCoordinator;
 import de.upb.sede.composition.gc.ExecutorHandle;
@@ -17,7 +16,7 @@ import de.upb.sede.webinterfaces.server.StringServerResponse;
 
 public class ExecutorRegistrationHandler extends StringServerResponse {
 
-	private final static Logger logger = Logger.getLogger("Executor Registration");
+	private static final Logger logger = LogManager.getLogger();
 	private final ExecutorCoordinator coordinator;
 	private final ClassesConfig classesConfig;
 

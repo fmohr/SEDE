@@ -2,7 +2,8 @@ package de.upb.sede.gateway;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -18,7 +19,7 @@ import de.upb.sede.webinterfaces.server.StringServerResponse;
 
 public class ResolveCompositionHandler extends StringServerResponse {
 
-	private final static Logger logger = Logger.getLogger("Composition Resolve");
+	private final static Logger logger = LogManager.getLogger();
 	private final ExecutorCoordinator coordinator;
 	private final ClassesConfig classesConfig;
 

@@ -3,7 +3,7 @@ package de.upb.sede.composition.graphs.nodes;
 import java.util.Arrays;
 import java.util.Collection;
 
-import de.upb.sede.composition.gc.ResolveInfo;
+import de.upb.sede.gateway.ResolveInfo;
 
 public class CastTypeNode extends BaseNode {
 

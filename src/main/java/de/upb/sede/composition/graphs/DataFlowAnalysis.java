@@ -1,4 +1,4 @@
-package de.upb.sede.composition.gc;
+package de.upb.sede.composition.graphs;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,8 +10,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import de.upb.sede.composition.FMCompositionParser;
-import de.upb.sede.composition.graphs.CompositionGraph;
-import de.upb.sede.composition.graphs.GraphTraversal;
 import de.upb.sede.composition.graphs.nodes.AcceptDataNode;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.CastTypeNode;
@@ -21,7 +19,10 @@ import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
 import de.upb.sede.composition.graphs.nodes.TransmitDataNode;
 import de.upb.sede.config.ClassesConfig.ClassInfo;
 import de.upb.sede.config.ClassesConfig.MethodInfo;
+import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exceptions.CompositionSemanticException;
+import de.upb.sede.gateway.ExecutorHandle;
+import de.upb.sede.gateway.ResolveInfo;
 import de.upb.sede.requests.resolve.InputFields;
 import de.upb.sede.util.DefaultMap;
 
@@ -438,9 +439,6 @@ public class DataFlowAnalysis {
 
 		for (String resultFieldname : resultFieldnames()) {
 			FieldType resultFieldType = resultFieldtype(resultFieldname);
-			if(resultFieldType.getTypeName().equals("Bool")) {
-				System.out.println("Bool found");
-			}
 			if (resultFieldType.isConstant()) {
 				continue; // no need to send back constants
 			}

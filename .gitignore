@@ -4,6 +4,7 @@ bin
 
 # Log file
 *.log
+/logs/
 
 # BlueJ files
 *.ctxt
@@ -45,4 +46,4 @@ gradle-app.setting
 ## own ignores
 
 !.gitignore
-/.classpath
+.classpath

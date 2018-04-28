@@ -22,7 +22,7 @@ repositories {
 sourceSets {
     main {
         java {
-            srcDirs = ['src/main/java', 'src/app/java', 'src/utility/java']
+            srcDirs = ['src/main/java', 'src/http-app/java', 'src/utility/java']
         }
     }
     test {

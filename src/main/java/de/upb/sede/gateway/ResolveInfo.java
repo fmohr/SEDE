@@ -1,4 +1,4 @@
-package de.upb.sede.composition.gc;
+package de.upb.sede.gateway;
 
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;

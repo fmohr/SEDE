@@ -10,9 +10,9 @@ import java.util.List;
 import java.util.Set;
 
 import de.upb.sede.composition.FMCompositionParser;
-import de.upb.sede.composition.gc.ResolveInfo;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.exceptions.GraphFormException;
+import de.upb.sede.gateway.ResolveInfo;
 import de.upb.sede.util.ChainedIterator;
 import de.upb.sede.util.FilteredIterator;
 import de.upb.sede.util.Iterators;

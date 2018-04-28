@@ -1,23 +1,20 @@
-package de.upb.sede.composition.gc;
+package de.upb.sede.composition.graphs;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import de.upb.sede.composition.FMCompositionParser;
-import de.upb.sede.composition.graphs.CompositionGraph;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.graphs.nodes.SendGraphNode;
 import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
+import de.upb.sede.gateway.ResolveInfo;
 
 public class GraphConstruction {
 
 	private final DataFlowAnalysis dataFlow;
 
-	private final ResolveInfo resolveInfo;
-	
-
-	public final static GraphConstruction resolveClientGraph(String fmComposition, ResolveInfo resolveInformation) {
+	public final static GraphConstruction constructFromFMComp(String fmComposition, ResolveInfo resolveInformation) {
 
 		/*
 		 * Parse the fm composition
@@ -53,8 +50,6 @@ public class GraphConstruction {
 	
 	
 	private GraphConstruction(ResolveInfo resolveInfo, List<InstructionNode> instructions) {
-		this.resolveInfo = resolveInfo;
-
 		this.dataFlow = new DataFlowAnalysis(resolveInfo, instructions);
 	}
 

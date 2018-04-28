@@ -6,7 +6,7 @@ import java.util.Collections;
 import java.util.Objects;
 
 import de.upb.sede.composition.FMCompositionParser;
-import de.upb.sede.composition.gc.ResolveInfo;
+import de.upb.sede.gateway.ResolveInfo;
 
 public class ParseConstantNode extends BaseNode {
 

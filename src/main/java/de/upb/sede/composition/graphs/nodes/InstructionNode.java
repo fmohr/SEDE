@@ -6,8 +6,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import de.upb.sede.composition.gc.ResolveInfo;
 import de.upb.sede.exceptions.UnassignedFieldException;
+import de.upb.sede.gateway.ResolveInfo;
 
 /**
  * 

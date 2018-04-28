@@ -2,8 +2,8 @@ package de.upb.sede.composition.graphs;
 
 import java.util.Collection;
 
-import de.upb.sede.composition.gc.ResolveInfo;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
+import de.upb.sede.gateway.ResolveInfo;
 
 public class DummyNode extends BaseNode {
 

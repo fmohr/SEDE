@@ -1,11 +1,9 @@
 package de.upb.sede.exec;
 
-import java.util.Arrays;
-
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.webinterfaces.client.HTTPClientRequest;
 
-public class HttpRegistration {
+public class HttpRegistrator {
 	
 	public static String registerToGateway(String gatewayHost, ExecutorRegistration registration) {
 		

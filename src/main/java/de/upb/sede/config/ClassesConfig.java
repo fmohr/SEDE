@@ -176,6 +176,13 @@ public class ClassesConfig extends Configuration {
 	}
 
 	/**
+	 * Returns true if the configuration doesn't have the given classpath entry.
+	 */
+	public boolean classunknown(String classpath) {
+		return !classknown(classpath);
+	}
+
+	/**
 	 * Returns the JsonNode for the classpath in as it is defined in the
 	 * configuration.
 	 */

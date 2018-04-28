@@ -8,7 +8,7 @@ import java.util.Objects;
 
 import org.json.simple.JSONObject;
 
-import de.upb.sede.composition.gc.ServiceInstanceHandle;
+import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.util.JsonSerializable;
 
 /**

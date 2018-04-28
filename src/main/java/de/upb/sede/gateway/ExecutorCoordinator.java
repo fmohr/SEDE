@@ -1,4 +1,4 @@
-package de.upb.sede.composition.gc;
+package de.upb.sede.gateway;
 
 import java.util.ArrayList;
 import java.util.List;

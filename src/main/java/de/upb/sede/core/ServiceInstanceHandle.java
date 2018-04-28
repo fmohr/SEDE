@@ -1,4 +1,4 @@
-package de.upb.sede.composition.gc;
+package de.upb.sede.core;
 
 import java.io.Serializable;
 import java.util.Map;

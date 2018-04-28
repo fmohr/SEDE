@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
-import de.upb.sede.composition.gc.ResolveInfo;
+import de.upb.sede.gateway.ResolveInfo;
 
 public class TransmitDataNode extends BaseNode {
 

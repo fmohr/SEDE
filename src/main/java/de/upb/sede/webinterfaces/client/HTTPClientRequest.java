@@ -23,7 +23,7 @@ public class HTTPClientRequest implements BasicClientRequest {
 	@Override
 	public OutputStream send() {
 		try {
-			return establishHTTPConnection(url).getOutputStream();
+			return establishHTTPConnection().getOutputStream();
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
@@ -32,13 +32,13 @@ public class HTTPClientRequest implements BasicClientRequest {
 	@Override
 	public InputStream receive() {
 		try {
-			return establishHTTPConnection(url).getInputStream();
+			return establishHTTPConnection().getInputStream();
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
 	}
 
-	private HttpURLConnection establishHTTPConnection(URL url) throws IOException {
+	private HttpURLConnection establishHTTPConnection() throws IOException {
 		if(httpConnection == null) {
 			httpConnection = (HttpURLConnection) url.openConnection();
 			httpConnection.setDoInput(true);

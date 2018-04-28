@@ -1,20 +1,16 @@
-package de.upb.sede.composition.gc;
+package de.upb.sede.composition.graphs;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.HashMap;
 
 import org.junit.Test;
 
-import de.upb.sede.composition.gc.ClientInfo;
-import de.upb.sede.composition.gc.ExecutorCoordinator;
-import de.upb.sede.composition.gc.ExecutorHandle;
-import de.upb.sede.composition.gc.GraphConstruction;
-import de.upb.sede.composition.gc.ResolveInfo;
-import de.upb.sede.composition.graphs.CompositionGraph;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
+import de.upb.sede.core.ServiceInstanceHandle;
+import de.upb.sede.gateway.ClientInfo;
+import de.upb.sede.gateway.ExecutorCoordinator;
+import de.upb.sede.gateway.ExecutorHandle;
+import de.upb.sede.gateway.ResolveInfo;
 import de.upb.sede.requests.resolve.InputFields;
 import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.util.FileUtil;
@@ -60,9 +56,9 @@ public class ResolveTest {
 
 		ResolvePolicy policy = new ResolvePolicy();
 		HashMap<String, String> inputFieldTypes = new HashMap<>();
-		inputFieldTypes.put("input1", "Array");
-		inputFieldTypes.put("input2", "Array");
-		inputFieldTypes.put("input3",  "ServiceInstanceHandle");
+		inputFieldTypes.put("b", "Array");
+		inputFieldTypes.put("c", "Array");
+		inputFieldTypes.put("e",  "ServiceInstanceHandle");
 		ServiceInstanceHandle serviceInstanceHandle = new ServiceInstanceHandle("executor_2", "demo.math.Gerade", "id0");
 		
 		HashMap<String, ServiceInstanceHandle> serviceHandleFields = new HashMap<>();
@@ -81,12 +77,11 @@ public class ResolveTest {
 		fmComposition += "d = a::addier({20});";
 		fmComposition += "f = a::addierListe({b});";
 		fmComposition += "d = e::liagtAufGerade({f});";
-		fmComposition += "e = d::addie{30";
 
 		resolveInfo.setResolvePolicy(policy);
 		resolveInfo.setInputFields(inputFields);
 
-		GraphConstruction graphComposition = GraphConstruction.resolveClientGraph(fmComposition, resolveInfo);
+		GraphConstruction graphComposition = GraphConstruction.constructFromFMComp(fmComposition, resolveInfo);
 
 		for (Execution execution : graphComposition.getExecutions()) {
 			String svgGraph = GraphToDotSerializer.getSVGForGraph(execution.getGraph());

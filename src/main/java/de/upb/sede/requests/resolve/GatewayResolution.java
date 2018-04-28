@@ -1,10 +1,30 @@
 package de.upb.sede.requests.resolve;
 
 import java.util.Map;
+import java.util.Optional;
 
-public class GatewayResolution {
-	private String compositionGraph;
-	private String firstAddress;
-	private Map<String, String> putAddresses; // LinkedHashMap
+import org.json.simple.JSONObject;
+
+import de.upb.sede.util.JsonSerializable;
+
+public class GatewayResolution implements JsonSerializable{
+	private Optional<String> compositionGraph;
+	public GatewayResolution(String compositionGraph) {
+		this.compositionGraph = Optional.of(compositionGraph);
+	}
+	public GatewayResolution() {
+		this.compositionGraph = Optional.empty();
+	}
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject toJson() {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("graph", compositionGraph);
+		return jsonObject;
+	}
+	@Override
+	public void fromJson(Map<String, Object> data) {
+		this.compositionGraph = Optional.of((String) data.get("graph"));
+	}
 
 }

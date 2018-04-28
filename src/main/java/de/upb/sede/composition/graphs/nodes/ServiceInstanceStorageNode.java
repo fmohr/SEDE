@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 
-import de.upb.sede.composition.gc.ResolveInfo;
+import de.upb.sede.gateway.ResolveInfo;
 
 public class ServiceInstanceStorageNode extends BaseNode {
 

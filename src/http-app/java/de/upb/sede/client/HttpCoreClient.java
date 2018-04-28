@@ -1,6 +1,6 @@
 package de.upb.sede.client;
 
-public class CoreClient {
+public class HttpCoreClient {
 	
 	public static void main(String[] args) {
 		String gatewayHost = "localhost:6060";

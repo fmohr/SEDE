@@ -27,7 +27,7 @@ public class GraphToDotSerializerTest {
 			DependencyEdge edge = new DependencyEdge(nodes.get(i % 10), nodes.get((i + 3) % 10));
 			graph.addEdge(edge);
 		}
-		String dotSerialization = GraphToDotSerializer.getDOTForGraph(graph);
+		String dotSerialization = GraphToDot.getDOTForGraph(graph);
 //		FileUtil.writeStringToFile("testrsc/test.dot", GraphToDotSerializer.getDOTForGraph(graph));
 		assertTrue(dotSerialization.contains("digraph"));
 		for (int i = 0; i < 10; i++) {

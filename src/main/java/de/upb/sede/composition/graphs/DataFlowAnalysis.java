@@ -505,7 +505,7 @@ public class DataFlowAnalysis {
 			return exec;
 
 		} else {
-			throw new RuntimeException("The specified executor host " + executorHost + " is not specified ");
+			throw new RuntimeException("Cannot resolve executor with host: \"" + executorHost + "\". No such executor is registered.");
 		}
 	}
 

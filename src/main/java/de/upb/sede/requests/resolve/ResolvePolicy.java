@@ -1,9 +1,14 @@
 package de.upb.sede.requests.resolve;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.swing.DebugGraphics;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -16,6 +21,8 @@ import de.upb.sede.util.JsonSerializable;
  *
  */
 public class ResolvePolicy implements JsonSerializable {
+	
+	private static final Logger log = LogManager.getLogger();
 
 	/*
 	 * list flags
@@ -36,50 +43,6 @@ public class ResolvePolicy implements JsonSerializable {
 		setStandardPolicy();
 	}
 
-	public String getReturnPolicy() {
-		return returnPolicy;
-	}
-
-	private void setReturnPolicy(String returnPolicy) {
-		Objects.requireNonNull(returnPolicy);
-		if (returnPolicy.equalsIgnoreCase(all) || returnPolicy.equalsIgnoreCase(none)
-				|| returnPolicy.equalsIgnoreCase(listed)) {
-			this.returnPolicy = returnPolicy;
-		} else {
-			throw new BadResolveRequest("Not recognizable return policy: " + returnPolicy);
-		}
-	}
-
-	public String getServicePolicy() {
-		return servicePolicy;
-	}
-
-	private void setServicePolicy(String servicePolicy) {
-		Objects.requireNonNull(servicePolicy);
-		if (servicePolicy.equalsIgnoreCase(all) || servicePolicy.equalsIgnoreCase(none)
-				|| servicePolicy.equalsIgnoreCase(listed)) {
-			this.servicePolicy = servicePolicy;
-		} else {
-			throw new BadResolveRequest("Not recognizable service policy: " + servicePolicy);
-		}
-	}
-
-	public List<String> getReturnFieldnames() {
-		return returnFieldnames;
-	}
-
-	private void setReturnFieldnames(List<String> returnFieldnames) {
-		this.returnFieldnames = returnFieldnames;
-	}
-
-	public List<String> getPersistentServices() {
-		return persistentServices;
-	}
-
-	private void setPersistentServices(List<String> persistentServices) {
-		this.persistentServices = persistentServices;
-	}
-
 	private void setStandardPolicy() {
 		setReturnPolicy(all);
 		setServicePolicy(all);
@@ -92,7 +55,7 @@ public class ResolvePolicy implements JsonSerializable {
 		if (returnPolicy.equalsIgnoreCase(none)) {
 			return false;
 		} else if (returnPolicy.equalsIgnoreCase(listed)) {
-			return (returnFieldnames != null && returnFieldnames.contains(fieldName));
+			return returnFieldnames.contains(fieldName);
 		} else {
 			throw new BadResolveRequest("Not recognizable return policy: " + returnPolicy);
 		}
@@ -105,39 +68,101 @@ public class ResolvePolicy implements JsonSerializable {
 		if (servicePolicy.equalsIgnoreCase(none)) {
 			return false;
 		} else if (servicePolicy.equalsIgnoreCase(listed)) {
-			return (returnFieldnames != null && returnFieldnames.contains(serviceInstanceFieldName));
+			return returnFieldnames.contains(serviceInstanceFieldName);
 		} else {
 			throw new BadResolveRequest("Not recognizable return policy: " + servicePolicy);
 		}
 	}
 
+	public String getReturnPolicy() {
+		return returnPolicy;
+	}
+
+	public String getServicePolicy() {
+		return servicePolicy;
+	}
+
+	private void setReturnPolicy(String returnPolicy) {
+		Objects.requireNonNull(returnPolicy);
+		if (returnPolicy.equalsIgnoreCase(all) || returnPolicy.equalsIgnoreCase(none)) {
+			this.returnPolicy = returnPolicy;
+			this.returnFieldnames = Collections.EMPTY_LIST;
+		} else {
+			throw new BadResolveRequest("Not recognizable return policy: " + returnPolicy);
+		}
+	}
+
+	private void setServicePolicy(String servicePolicy) {
+		Objects.requireNonNull(servicePolicy);
+		if (servicePolicy.equalsIgnoreCase(all) || servicePolicy.equalsIgnoreCase(none)) {
+			this.servicePolicy = servicePolicy;
+			this.returnFieldnames = Collections.EMPTY_LIST;
+		} else {
+			throw new BadResolveRequest("Not recognizable service policy: " + servicePolicy);
+		}
+	}
+
+	public List<String> getReturnFieldnames() {
+		return Collections.unmodifiableList(returnFieldnames);
+	}
+
+	public List<String> getPersistentServices() {
+		return Collections.unmodifiableList(persistentServices);
+	}
+
+	private void setReturnFieldnames(List<String> returnFieldnames) {
+		this.returnFieldnames = Objects.requireNonNull(returnFieldnames);
+		this.returnPolicy = listed;
+	}
+
+	private void setPersistentServices(List<String> persistentServices) {
+		this.servicePolicy = listed;
+		this.persistentServices = Objects.requireNonNull(persistentServices);
+	}
+
 	public boolean clientsideExecutionAllowed() {
-		return true; // TODO
+		return true; // TODO do we need this to be turned off? note that the method isn't being used yet.
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJson() {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("return-policy", getReturnPolicy());
-		jsonObject.put("service-policy", getServicePolicy());
-		JSONArray persistantServices = new JSONArray();
-		persistantServices.addAll(getPersistentServices());
-		JSONArray returnFieldnames = new JSONArray();
-		persistantServices.addAll(getReturnFieldnames());
-		jsonObject.put("persistent-services", persistantServices);
-		jsonObject.put("return-fieldnames", returnFieldnames);
+		if(getReturnPolicy().equals(listed)) {
+			jsonObject.put("return-policy", getReturnFieldnames());
+		} else {
+			jsonObject.put("return-policy", getReturnPolicy());
+		}
+		if(getServicePolicy().equals(listed)) {
+			jsonObject.put("service-policy", getPersistentServices());
+		} else {
+			jsonObject.put("service-policy", getServicePolicy());
+		}
 		return jsonObject;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void fromJson(Map<String, Object> data) {
-
-		this.setReturnPolicy((String) data.get("return-policy"));
-		this.setServicePolicy((String) data.get("service-policy"));
-
-		this.setPersistentServices((List<String>) data.get("persistent-service"));
-		this.setReturnFieldnames((List<String>) data.get("return-fieldnames"));
-
+		Object returnPolicy = Objects.requireNonNull(data.get("return-policy"));
+		Object servicePolicy = Objects.requireNonNull(data.get("service-policy"));
+		
+		if(returnPolicy instanceof String) {
+			setReturnPolicy((String) returnPolicy);
+		} else if(returnPolicy instanceof List) {
+			setReturnFieldnames((List<String>) returnPolicy);
+		}
+		else {
+			log.error("return policy type mismatch: "  + returnPolicy.toString());
+		}
+		
+		if(servicePolicy instanceof String) {
+			setServicePolicy((String) servicePolicy);
+		} else if(servicePolicy instanceof List) {
+			setPersistentServices((List<String>) servicePolicy);
+		}
+		else {
+			log.error("service policy type mismatch: "  + servicePolicy.toString());
+		}
 	}
 }

@@ -1,10 +1,13 @@
 package de.upb.sede.requests.resolve;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.json.simple.JSONObject;
 
+import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.requests.Request;
 
 public class ResolveRequest extends Request {
@@ -52,7 +55,7 @@ public class ResolveRequest extends Request {
 	@Override
 	public JSONObject toJson() {
 		JSONObject jsonObject = super.toJson();
-		jsonObject.put("composition", getComposition());
+		jsonObject.put("composition", FMCompositionParser.separateInstructions(getComposition()));
 		jsonObject.put("policy", getPolicy().toJson());
 		jsonObject.put("input-fields", getInputFields().toJson());
 		return jsonObject;
@@ -62,7 +65,15 @@ public class ResolveRequest extends Request {
 	public void fromJson(Map<String, Object> data) {
 		super.fromJson(data);
 
-		composition = Optional.of((String) data.get("composition"));
+		Object compositionEntry =  data.get("composition");
+
+		if(compositionEntry instanceof String) {
+			this.composition = Optional.of((String) compositionEntry);
+		} else if(compositionEntry instanceof List) {
+			this.composition = Optional.of(((List<String>) compositionEntry).stream().collect(Collectors.joining(";")));
+		} else {
+			throw new RuntimeException("");
+		}
 
 		ResolvePolicy resolvePolicy = new ResolvePolicy();
 		resolvePolicy.fromJson((Map<String, Object>) data.get("policy"));

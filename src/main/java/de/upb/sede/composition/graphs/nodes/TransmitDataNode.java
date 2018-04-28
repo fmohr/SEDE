@@ -44,6 +44,6 @@ public class TransmitDataNode extends BaseNode {
 	}
 
 	public String toString() {
-		return "transmit-" + fieldname + ">" + targetAddress;
+		return "transmit \"" + fieldname + "\" to " + targetAddress;
 	}
 }

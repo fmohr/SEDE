@@ -265,6 +265,7 @@ public class DataFlowAnalysis {
 				}
 			} else {
 				/*
+				 * Field is not a constant.
 				 * if the parameter is data the required field needs to be found/created.
 				 */
 				List<FieldType> paramFieldTypes = resolveFieldname(parameter);
@@ -399,13 +400,25 @@ public class DataFlowAnalysis {
 			addFieldType(serviceInstanceFieldType);
 		}
 		if (instNode.isAssignedLeftSideFieldname()) {
+			String leftsideFieldname = instNode.getLeftSideFieldname();
 			/*
-			 * the instruction outputs a new value to the leftside fieldname: Resolve the
-			 * type of the left side fieldname:
+			 * the instruction outputs a new value to the leftside fieldname.
+			 * See if the fieldname is already defined and add dependency to avoid collision:
+			 */
+			if(hasFieldname(leftsideFieldname) ) {
+				FieldType fieldType = resultFieldtype(leftsideFieldname);
+				/*
+				 * only consume the fieldtype if its on the same executor:
+				 */
+				if(getAssignedExec(fieldType.getProducer())==getAssignedExec(instNode)) {
+					nodeConsumesField(instNode, resultFieldtype(leftsideFieldname));
+				}
+			}
+			/*
+			 * Resolve the type of the left side fieldname:
 			 */
 			TypeClass typeClass;
 			String typeName;
-
 			if (instNode.isServiceConstruct()) {
 				/*
 				 * leftside field is a new service instance:
@@ -426,7 +439,7 @@ public class DataFlowAnalysis {
 				typeClass = TypeClass.RealDataType;
 				typeName = methodInfo.getReturnType();
 			}
-			FieldType leftSideFieldType = new FieldType(instNode, instNode.getLeftSideFieldname(), typeClass, typeName,
+			FieldType leftSideFieldType = new FieldType(instNode, leftsideFieldname, typeClass, typeName,
 					true);
 			addFieldType(leftSideFieldType);
 		}
@@ -595,6 +608,10 @@ public class DataFlowAnalysis {
 		} else {
 			return this.fieldnameTypeResult.get(fieldname);
 		}
+	}
+
+	private boolean hasFieldname(String fieldname) {
+		return this.fieldnameTypeResult.containsKey(fieldname);
 	}
 
 	private boolean isResolvable(String fieldname) {

@@ -60,6 +60,6 @@ public class CastTypeNode extends BaseNode {
 	}
 
 	public String toString() {
-		return "cast-" + fieldname + " " + originType + "->" + targetType;
+		return "cast \"" + fieldname + "\" from " + originType + " to " + targetType;
 	}
 }

@@ -37,7 +37,7 @@ public class GraphToDot {
 		}
 	}
 	private static String toString(BaseNode baseNode) {
-		return baseNode.toString().replaceAll("\"", "'");
+		return baseNode.toString().replaceAll("\"", "");
 	}
 
 	private static ClusterGraph clusterFromCompGraph(String name, CompositionGraph compGraph) {

@@ -34,7 +34,7 @@ public class DeleteFieldNode extends BaseNode {
 	}
 
 	public String toString() {
-		return "delete-" + fieldname;
+		return "delete \"" + fieldname + "\"";
 	}
 
 }

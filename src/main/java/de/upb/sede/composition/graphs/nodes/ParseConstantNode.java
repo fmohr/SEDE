@@ -63,7 +63,7 @@ public class ParseConstantNode extends BaseNode {
 	}
 
 	public String toString() {
-		return "parse-" + constantValue + "|" + type;
+		return "parse " + type + ": " + constantValue;
 	}
 
 }

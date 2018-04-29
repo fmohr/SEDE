@@ -68,6 +68,6 @@ public class ServiceInstanceStorageNode extends BaseNode {
 	}
 
 	public String toString() {
-		return (isLoadInstruction() ? "load" : "store") + "service instance \"" + getServiceInstanceFieldname() + "\"";
+		return (isLoadInstruction() ? "load" : "store") + " \"" + getServiceInstanceFieldname() + "\"";
 	}
 }

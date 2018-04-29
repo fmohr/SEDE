@@ -47,3 +47,4 @@ gradle-app.setting
 
 !.gitignore
 .classpath
+/testout/

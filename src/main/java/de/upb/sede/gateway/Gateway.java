@@ -54,8 +54,10 @@ public class Gateway implements IGateway{
 		this.typeConfig = typeConfig;
 	}
 	
-	@Override
-	public final GatewayResolution resolve(ResolveRequest resolveRequest) {
+	/**
+	 * Constructs the resolved graphs using the graph construction algorithm and returns the resolved graphs in the graph construction algorithm.
+	 */
+	public final GraphConstruction constructGraphs(ResolveRequest resolveRequest) {
 		/*
 		 * gather all the information to resolve the composition:
 		 */
@@ -64,6 +66,13 @@ public class Gateway implements IGateway{
 		 * Resolve the composition by calculating the client graph:
 		 */
 		GraphConstruction gc = GraphConstruction.constructFromFMComp(resolveRequest.getComposition(), resolveInfo);
+		
+		return gc;
+	}
+	
+	@Override
+	public final GatewayResolution resolve(ResolveRequest resolveRequest) {
+		GraphConstruction gc = constructGraphs(resolveRequest);
 		CompositionGraph clientGraph = gc.getResolvedClientGraph();
 		/*
 		 * Serializae the graph to json:

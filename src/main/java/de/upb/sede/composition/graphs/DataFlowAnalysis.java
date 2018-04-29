@@ -658,6 +658,10 @@ public class DataFlowAnalysis {
 		return executions;
 	}
 
+	public CompositionGraph getTransmissionGraph() {
+		return dataTransmissionGraph;
+	}
+
 }
 
 /**

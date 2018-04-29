@@ -1,39 +1,65 @@
 {
     "demo.math.Addierer": {
         "methods": {
-            "$construct":{
-                "paramtypes": ["Number"]
+            "$construct": {
+                "paramtypes": [
+                    "Number"
+                ]
             },
-            "addier":{
-                "paramtypes": ["Number"],
-                "returntype" : "Number"
+            "addier": {
+                "paramtypes": [
+                    "Number"
+                ],
+                "returntype": "Number"
             },
-            "addierListe":{
-                "paramtypes": ["demo.types.NummerList"],
-                "returntype" : "demo.types.NummerList"
+            "addierListe": {
+                "paramtypes": [
+                    "demo.types.NummerList"
+                ],
+                "returntype": "demo.types.NummerList"
+            },
+            "summierListe": {
+                "paramtypes": [
+                    "demo.types.NummerList",
+                    "demo.types.NummerList"
+                ],
+                "returntype": "demo.types.NummerList"
+            },
+            "summier": {
+                "paramtypes": [
+                    "demo.types.NummerList"
+                ],
+                "returntype": "Number"
             }
         }
-    }, 
+    },
     "demo.math.Gerade": {
         "methods": {
-            "$construct":{
-                "paramtypes": ["Number", "Number"]
+            "$construct": {
+                "paramtypes": [
+                    "Number",
+                    "Number"
+                ]
             },
-            "calc":{
-                "paramtypes": ["Number"],
-                "returntype" : "demo.types.Punkt"
+            "calc": {
+                "paramtypes": [
+                    "Number"
+                ],
+                "returntype": "demo.types.Punkt"
             },
-            "liagtAufGerade":{
-                "paramtypes": ["demo.types.Punkt"],
-                "returntype" : "Bool"
+            "liagtAufGerade": {
+                "paramtypes": [
+                    "demo.types.Punkt"
+                ],
+                "returntype": "Bool"
             },
-            "achsenabschnitt":{
+            "achsenabschnitt": {
                 "paramtypes": [],
-                "returntype" : "demo.types.Punkt"
+                "returntype": "demo.types.Punkt"
             },
-            "nullstelle":{
+            "nullstelle": {
                 "paramtypes": [],
-                "returntype" : "demo.types.Punkt"
+                "returntype": "demo.types.Punkt"
             }
         }
     }

@@ -41,6 +41,6 @@ public class SendGraphNode extends BaseNode {
 	}
 
 	public String toString() {
-		return "send graph to " + executorsAddress;
+		return "send graph -> " + executorsAddress;
 	}
 }

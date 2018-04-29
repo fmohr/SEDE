@@ -2,6 +2,7 @@ package de.upb.sede.composition.graphs;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +25,7 @@ import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.GraphToDot;
+import de.upb.sede.util.GraphToDotNidi;
 
 public class DemoOfResolveCompositionGraph {
 
@@ -64,33 +66,46 @@ public class DemoOfResolveCompositionGraph {
 	@Test
 	public void demoAll() {
 		for(String pathToRequest : FileUtil.listAllFilesInDir(rscPath, "(.*?)\\.json$")) {
-			logger.info("Demonstrating resolve algorithm on request from: {}", pathToRequest);
+			logger.info("Resolving request from: {}", pathToRequest);
 			resolveToDot(pathToRequest);
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	public void resolveToDot(String filenameOfRequest) {
 		try {
+			Map<String, CompositionGraph> resolvedGraphs = new LinkedHashMap<>();
+			
 			ResolveRequest resolveRequest = fromFile(filenameOfRequest);
-			GatewayResolution resolution = gateway.resolve(resolveRequest);
-			Map<String, CompositionGraph> resolvedGraphs = new HashMap<>();
-			CompositionGraph clientGraph = GJS.fromJson((Map<Object, Object>) JP.parse(resolution.getCompositionGraph()));
-			resolvedGraphs.put(resolveRequest.getClientHost(), clientGraph);
-			for(BaseNode node : GraphTraversal.iterateNodesWithClassname(clientGraph, SendGraphNode.class.getSimpleName())){
-				SendGraphNode graphNode = (SendGraphNode)node;
-				CompositionGraph execGraph = GJS.fromJson((Map<Object, Object>) JP.parse(graphNode.getGraph()));
-				resolvedGraphs.put(graphNode.getExecutorsAddress(), execGraph);
+//			GatewayResolution resolution = gateway.resolve(resolveRequest);
+//			
+//			CompositionGraph clientGraph = GJS.fromJson((Map<Object, Object>) JP.parse(resolution.getCompositionGraph()));
+//			resolvedGraphs.put(resolveRequest.getClientHost(), clientGraph);
+//			for(BaseNode node : GraphTraversal.iterateNodesWithClassname(clientGraph, SendGraphNode.class.getSimpleName())){
+//				SendGraphNode graphNode = (SendGraphNode)node;
+//				CompositionGraph execGraph = GJS.fromJson((Map<Object, Object>) JP.parse(graphNode.getGraph()));
+//				resolvedGraphs.put(graphNode.getExecutorsAddress(), execGraph);
+//			}
+			
+			GraphConstruction gc = gateway.constructGraphs(resolveRequest);
+			resolvedGraphs.put(resolveRequest.getClientHost(), gc.getResolvedClientGraph());
+			for(Execution exec : gc.getExecutions()) {
+				if(exec.getExecutor().getHostAddress().equals(resolveRequest.getClientHost())) {
+					continue;
+				}
+				resolvedGraphs.put(exec.getExecutor().getHostAddress(), exec.getGraph());
 			}
+			
+			
+
 			for(String hostname : resolvedGraphs.keySet()) {
-				String svgGraph = GraphToDot.getSVGForGraph(resolvedGraphs.get(hostname));
+				String svgGraph = GraphToDotNidi.getSVGForGraph(resolvedGraphs.get(hostname));
 				String file = rscPath + filenameOfRequest.substring(0, filenameOfRequest.length()-5) + ".reso/" + hostname + ".svg";
 				FileUtil.writeStringToFile(file, svgGraph);
 			}
 
-//			String svgGraph = GraphToDot.getSVGForGraphs(resolvedGraphs);
-//			String file = rscPath + filenameOfRequest.substring(0, filenameOfRequest.length()-5) + ".all.svg";
-//			FileUtil.writeStringToFile(file, svgGraph);
+			String svgGraph = GraphToDotNidi.getSVGForGraphs(resolvedGraphs, gc.getTransmissionGraph());
+			String file = rscPath + filenameOfRequest.substring(0, filenameOfRequest.length()-5) + ".reso/all.svg";
+			FileUtil.writeStringToFile(file, svgGraph);
 			
 		} catch (Exception e) {
 			logger.error("Error during " + filenameOfRequest + ":", e);

@@ -5,10 +5,12 @@ import java.util.Collections;
 import java.util.List;
 
 import de.upb.sede.composition.FMCompositionParser;
+import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.graphs.nodes.SendGraphNode;
 import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
 import de.upb.sede.gateway.ResolveInfo;
+import de.upb.sede.util.FilteredIterator;
 
 public class GraphConstruction {
 
@@ -31,11 +33,18 @@ public class GraphConstruction {
 		return gc;
 	}
 
-	public void calcResolvedClientGraph() {
+	private void calcResolvedClientGraph() {
+		CompositionGraph resolvedClientGraph = dataFlow.getClientExecution().getGraph();
+//		/*
+//		 * prioritize executions on the client node:
+//		 */
+//		List<BaseNode> sortedNodes = GraphTraversal.topologicalSort(resolvedClientGraph);
+//		for(int i = 0, size = sortedNodes.size(); i < size-1; i++) {
+//			resolvedClientGraph.connectNodes(sortedNodes.get(i), sortedNodes.get(i+1));
+//		}
 		/*
 		 * Add send graph nodes to the client graph and returns it:
 		 */
-		CompositionGraph resolvedClientGraph = dataFlow.getClientExecution().getGraph();
 		GraphJsonSerializer gjs = new GraphJsonSerializer();
 		for (Execution exec : dataFlow.getInvolvedExecutions()) {
 			if(exec == dataFlow.getClientExecution()) {
@@ -45,6 +54,18 @@ public class GraphConstruction {
 			SendGraphNode sendGraph = new SendGraphNode(jsonGraph, exec.getExecutor().getHostAddress());
 			resolvedClientGraph.addNode(sendGraph);
 		}
+//		for(DependencyEdge transmitEdge : GraphTraversal.iterateEdges(getTransmissionGraph())) {
+//			if(resolvedClientGraph.contains(transmitEdge.getFrom())) {
+//				resolvedClientGraph.connectNodes(oldNode, transmitEdge.getFrom());
+//				oldNode = transmitEdge.getFrom();
+//			}
+//		}
+//		for(DependencyEdge transmitEdge : GraphTraversal.iterateEdges(getTransmissionGraph())) {
+//			if(resolvedClientGraph.contains(transmitEdge.getTo())) {
+//				resolvedClientGraph.connectNodes(oldNode, transmitEdge.getTo());
+//				oldNode = transmitEdge.getTo();
+//			}
+//		}
 	}
 
 	
@@ -60,5 +81,9 @@ public class GraphConstruction {
 
 	public CompositionGraph getResolvedClientGraph() {
 		return dataFlow.getClientExecution().getGraph();
+	}
+
+	CompositionGraph getTransmissionGraph() {
+		return dataFlow.getTransmissionGraph();
 	}
 }

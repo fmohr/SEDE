@@ -65,12 +65,12 @@ public class FileUtil {
 	}
 
 	/**
-	 * Creates a list of all files in the given directory that match the given
+	 * Creates a list of all file names in the given directory that match the given
 	 * regex. The list will not contain sub-directories even if their name match the
 	 * given regex.
 	 * 
 	 * @param dirPath
-	 *            Directory path that is looked into
+	 *            path to the Directory that is looked into
 	 * @param regex
 	 *            regular expression used as a filter over the files. If null all
 	 *            files in the directory are returned.

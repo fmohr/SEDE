@@ -37,7 +37,7 @@ public class AcceptDataNode extends BaseNode {
 	}
 
 	public String toString() {
-		return "Accept \"" + getReceivingFieldname() + "\"";
+		return "accept \"" + getReceivingFieldname() + "\"";
 	}
 
 }

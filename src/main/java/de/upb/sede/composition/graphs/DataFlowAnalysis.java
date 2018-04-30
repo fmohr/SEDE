@@ -406,16 +406,55 @@ public class DataFlowAnalysis {
 			 * See if the fieldname is already defined and add dependency to avoid collision:
 			 */
 			if(hasFieldname(leftsideFieldname) ) {
-				FieldType fieldType = resultFieldtype(leftsideFieldname);
+				FieldType leftsideField = resultFieldtype(leftsideFieldname);
 				/*
 				 * only consume the fieldtype if its on the same executor:
 				 */
-				if(getAssignedExec(fieldType.getProducer())==getAssignedExec(instNode)) {
-					nodeConsumesField(instNode, resultFieldtype(leftsideFieldname));
+				if(getAssignedExec(leftsideField.getProducer())==getAssignedExec(instNode)) {
+					/*
+					 * look if the field is needed by another instruction:
+					 */
+					List<BaseNode> consumers = getConsumingersOfField(leftsideField);
+					if(consumers.isEmpty()) {
+						/*
+						 * the produced field is not neccessary.
+						 * if the old producer of the field is an instruction and the field is its leftside, remove the leftside assignment:
+						 * if the old producer is an instruction and the field is the service instance of the operation, add a dependency to the current instruction 
+						 */
+						BaseNode oldProducer = leftsideField.getProducer();
+						if(oldProducer instanceof InstructionNode) {
+							InstructionNode oldInst = (InstructionNode) oldProducer;
+							if(oldInst.isAssignedLeftSideFieldname() && oldInst.getLeftSideFieldname().equals(leftsideFieldname)) {
+								oldInst.unsetLeftSideField();
+							} 
+							if(oldInst.getContext().equals(leftsideFieldname)) {
+								nodeConsumesField(instNode, leftsideField);
+							}
+						}
+					} else {
+						/*
+						 * there are consumers of the leftside fieldname.
+						 * because those consumers were added before this instruction they have to operate on the old state of the field.
+						 * So they have to consume the fieldname before this instruction can produce a new version of it.
+						 * Thus add them as a dependency to this instruction to avoid having this instruction rewrite the fieldname before they can consume it.
+						 */
+						for(BaseNode consumer : consumers) {
+							if(consumer == instNode) {
+								continue;
+							}
+							if(getAssignedExec(consumer) != getAssignedExec(instNode)) {
+								/*
+								 * dont need to add dependency between nodes that aren't on the same executor:
+								 */
+								continue;
+							}
+							getAssignedExec(instNode).getGraph().connectNodes(consumer, instNode);
+						}
+					}
 				}
 			}
 			/*
-			 * Resolve the type of the left side fieldname:
+			 * Resolve the type of the left side fieldname and mark this instruction as a producer of it:
 			 */
 			TypeClass typeClass;
 			String typeName;
@@ -624,7 +663,7 @@ public class DataFlowAnalysis {
 		nodeConsumingFields.get(consumer).add(consumedField);
 	}
 
-	FieldType getFieldType(BaseNode consumer, String fieldname) {
+	private FieldType getFieldType(BaseNode consumer, String fieldname) {
 		for (FieldType ft : nodeConsumingFields.get(consumer)) {
 			if (ft.getFieldname().equals(fieldname)) {
 				return ft;
@@ -633,15 +672,24 @@ public class DataFlowAnalysis {
 		throw new RuntimeException("Consumer  " + consumer.toString() + " doesn't know the field: " + fieldname + ".");
 	}
 
-	List<FieldType> getConsumingFields(BaseNode consumer) {
+	private List<FieldType> getConsumingFields(BaseNode consumer) {
 		return Collections.unmodifiableList(nodeConsumingFields.get(consumer));
 	}
+	private List<BaseNode> getConsumingersOfField(FieldType field) {
+		List<BaseNode> consumers = new ArrayList<>();
+		for(BaseNode baseNode : GraphTraversal.iterateNodes(getAssignedExec(field.getProducer()).getGraph())) {
+			if(getConsumingFields(baseNode).contains(field)) {
+				consumers.add(baseNode);
+			}
+		}
+		return consumers;
+	}
 
-	Set<String> resultFieldnames() {
+	private Set<String> resultFieldnames() {
 		return fieldnameTypeResult.keySet();
 	}
 
-	FieldType resultFieldtype(String fieldname) {
+	private FieldType resultFieldtype(String fieldname) {
 		for (FieldType fieldType : fieldnameTypeResult.get(fieldname)) {
 			if (fieldType.isChangedState()) {
 				return fieldType;

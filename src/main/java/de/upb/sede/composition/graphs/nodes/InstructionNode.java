@@ -74,6 +74,10 @@ public class InstructionNode extends BaseNode {
 		return leftsideFieldname != unassignedValue;
 	}
 
+	public void unsetLeftSideField() {
+		leftsideFieldname = unassignedValue;
+	}
+
 	public String getHost() {
 		if (!isAssignedHost()) {
 			throw new UnassignedFieldException(this, "host");

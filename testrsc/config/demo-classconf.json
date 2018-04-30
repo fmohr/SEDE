@@ -6,30 +6,37 @@
                     "Number"
                 ]
             },
+            "ZEHN_ADDIERER": {
+                "returntype": "demo.math.Addierer"
+            },
             "addier": {
                 "paramtypes": [
                     "Number"
                 ],
-                "returntype": "Number"
+                "returntype": "Number",
+                "statemutating" : false
             },
             "addierListe": {
                 "paramtypes": [
                     "demo.types.NummerList"
                 ],
-                "returntype": "demo.types.NummerList"
+                "returntype": "demo.types.NummerList",
+                "statemutating" : false
             },
             "summierListe": {
                 "paramtypes": [
                     "demo.types.NummerList",
                     "demo.types.NummerList"
                 ],
-                "returntype": "demo.types.NummerList"
+                "returntype": "demo.types.NummerList",
+                "statemutating" : false
             },
             "summier": {
                 "paramtypes": [
                     "demo.types.NummerList"
                 ],
-                "returntype": "Number"
+                "returntype": "Number",
+                "statemutating" : false
             }
         }
     },
@@ -45,21 +52,25 @@
                 "paramtypes": [
                     "Number"
                 ],
-                "returntype": "demo.types.Punkt"
+                "returntype": "demo.types.Punkt",
+                "statemutating" : false
             },
             "liagtAufGerade": {
                 "paramtypes": [
                     "demo.types.Punkt"
                 ],
-                "returntype": "Bool"
+                "returntype": "Bool",
+                "statemutating" : false
             },
             "achsenabschnitt": {
                 "paramtypes": [],
-                "returntype": "demo.types.Punkt"
+                "returntype": "demo.types.Punkt",
+                "statemutating" : false
             },
             "nullstelle": {
                 "paramtypes": [],
-                "returntype": "demo.types.Punkt"
+                "returntype": "demo.types.Punkt",
+                "statemutating" : false
             }
         }
     }

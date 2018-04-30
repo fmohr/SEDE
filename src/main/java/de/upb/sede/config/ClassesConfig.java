@@ -420,7 +420,11 @@ public class ClassesConfig extends Configuration {
 
 		@SuppressWarnings("unchecked")
 		public List<String> paramTypes() {
-			return (List<String>) configuration.get("paramtypes");
+			if(configuration.containsKey("paramtypes")) {
+				return (List<String>) configuration.get("paramtypes");
+			} else {
+				return Collections.EMPTY_LIST;
+			}
 		}
 
 		public boolean hasReturnType() {

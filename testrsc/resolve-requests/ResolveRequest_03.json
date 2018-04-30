@@ -46,7 +46,7 @@
         }
     },
     "policy": {
-        "service-policy": ["s1", "s2"],
-        "return-policy": ["p1", "s2"]
+        "service-policy": [],
+        "return-policy": ["p1"]
     }
 }

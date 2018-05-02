@@ -30,6 +30,10 @@ hs_err_pid*
 .settings/org.eclipse.jdt.core.prefs
 .settings/org.eclipse.buildship.core.prefs
 
+##intellij ignores
+
+.idea/
+
 
 ## gradle ignores
 
@@ -48,3 +52,5 @@ gradle-app.setting
 !.gitignore
 .classpath
 /testout/
+/out/
+SEDE.iml

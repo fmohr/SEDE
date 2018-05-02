@@ -52,6 +52,7 @@ public class GraphToDotNidi {
 			}
 			graph = graph.with(node);
 		}
+		System.out.println(graph.toString());
 		return graph;
 	}
 	

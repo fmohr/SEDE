@@ -24,21 +24,28 @@ public class InstructionProcedure implements Procedure {
 	@Override
 	public void process(Task task) {
 		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
-		InstructionNodeAttributes attributes = new InstructionNodeAttributes(task);
+		InstructionNodeAttributes nodeAttributes = new InstructionNodeAttributes(task);
 		try {
-			Map<String, SEDEObject> parameterObjects = getParameterObjects(attributes.getParameters(), environment);
+			Map<String, SEDEObject> parameterObjects = getParameterObjects(nodeAttributes.getParameters(), environment);
 			Class<?>[] parameterClasses = getParameterClasses(parameterObjects);
 
-			List<Object> parameterValues = getParameterValues(parameterObjects);
-			Class<?> contextClass = addClassInClassLoader(attributes.getContext());
-			if (attributes.isConstructor()) {
+			Object[] parameterValues = getParameterValues(parameterObjects);
+			Class<?> contextClass = addClassInClassLoader(nodeAttributes.getContext());
+			if (nodeAttributes.isConstructor()) {
 				Constructor<?> constructor = contextClass.getConstructor(parameterClasses);
-				constructor.newInstance(parameterValues);
+				Object newInstance = constructor.newInstance(parameterValues);
+				SEDEObject newInstanceSEDEObject = new SEDEObject(nodeAttributes.context, newInstance);
+				environment.put(nodeAttributes.leftsidefieldname, newInstanceSEDEObject);
 			} else {
-
+				SEDEObject environmentInstance = environment.get(nodeAttributes.leftsidefieldname);
+				Class<?> typeClass = Class.forName(environmentInstance.getType());
+				Method calledMethod = typeClass.getMethod(nodeAttributes.method, parameterClasses);
+				Object returnValue = calledMethod.invoke(environmentInstance.getObject(), parameterValues);
+				String returnType = calledMethod.getReturnType().getName();
+				SEDEObject returnAsSEDEObject = new SEDEObject(returnType, returnValue);
+				environment.put(nodeAttributes.getLeftsidefieldname(), returnAsSEDEObject);
 			}
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -61,33 +68,30 @@ public class InstructionProcedure implements Procedure {
 		return inOrderClassesArray;
 	}
 
-	private List<Object> getParameterValues(Map<String, SEDEObject> parameterObjects) {
+	private Object[] getParameterValues(Map<String, SEDEObject> parameterObjects) {
 		List<Object> inOrderObjects = new ArrayList<>(parameterObjects.size());
 		for (SEDEObject sedeObject : parameterObjects.values()) {
 			inOrderObjects.add(sedeObject.getObject());
 		}
-		return inOrderObjects;
+		Object[] parameterArray = new Object[inOrderObjects.size()];
+		parameterArray = inOrderObjects.toArray(parameterArray);
+		return parameterArray;
 	}
 
 	private Class<?> addClassInClassLoader(String context) throws Exception {
-		try {
-			URL serviceFilesURL = new URL("jar", "", context + "!/");
-			JarURLConnection jarURLConnection = (JarURLConnection) serviceFilesURL.openConnection();
-			Attributes attr = jarURLConnection.getMainAttributes();
-			if (attr != null) {
-				logger.info("Servicefile: " + context + "\n Main class:" + attr.getValue(Attributes.Name.MAIN_CLASS));
-			} else {
-				logger.error("No entry point in: \"" + context + "\"");
-			}
-			URLClassLoader urlClassLoader = new URLClassLoader(new URL[] { serviceFilesURL },
-					this.getClass().getClassLoader());
-			Class<?> reflectedClass = Class.forName(context, true, urlClassLoader);
-			addURLToClassLoader(serviceFilesURL);
-			return reflectedClass;
-		} catch (Exception e) {
-			logger.error("Service file" + context + "could not be loaded.");
-			throw e;
+		URL serviceFilesURL = new URL("jar", "", context + "!/");
+		JarURLConnection jarURLConnection = (JarURLConnection) serviceFilesURL.openConnection();
+		Attributes attr = jarURLConnection.getMainAttributes();
+		if (attr != null) {
+			logger.info("Servicefile: " + context + "\n Main class:" + attr.getValue(Attributes.Name.MAIN_CLASS));
+		} else {
+			logger.error("No entry point in: \"" + context + "\"");
 		}
+		URLClassLoader urlClassLoader = new URLClassLoader(new URL[] { serviceFilesURL },
+				this.getClass().getClassLoader());
+		Class<?> reflectedClass = Class.forName(context, true, urlClassLoader);
+		addURLToClassLoader(serviceFilesURL);
+		return reflectedClass;
 	}
 
 	private static void addURLToClassLoader(URL url) throws Exception {
@@ -113,6 +117,7 @@ public class InstructionProcedure implements Procedure {
 		private final String fmInstruction;
 		private final List<String> parameters;
 
+		@SuppressWarnings("unchecked")
 		public InstructionNodeAttributes(Task task) {
 			Map<String, Object> parameters = task.getAttributes();
 			this.isConstructor = (boolean) parameters.get("is-service-construction");

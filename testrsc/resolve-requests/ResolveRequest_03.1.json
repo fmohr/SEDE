@@ -1,0 +1,36 @@
+{
+    "clientHost": "client1",
+    "composition": [
+        "a = demo.math.Addierer::__construct({1})"
+        
+    ],
+
+    "requestId": "id",
+
+    "input-fields": {
+        "service-instance-map": {
+            "s1": {
+                "classpath": "demo.math.Gerade",
+                "host": "exec_2",
+                "id": "id0"
+            },
+            "s2": {
+                "classpath": "demo.math.Gerade",
+                "host": "exec_2",
+                "id": "id1"
+            }
+        },
+        "field-types": {
+            "in1": "Array",
+            "in2": "Array",
+            "in3": "Number",
+            "in4": "Number",
+            "s1": "ServiceInstanceHandle",
+            "s2": "ServiceInstanceHandle"
+        }
+    },
+    "policy": {
+        "service-policy": ["a"],
+        "return-policy": ["a"]
+    }
+}

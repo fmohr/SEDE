@@ -29,14 +29,6 @@ public class GraphToDotNidi {
 	
 	private static final String PATH_TO_DOT = "/usr/local/bin/dot";
 	
-	static {
-
-		/*
-		 * append folders of where the dot program lies:
-		 */
-//		String DOT_ENV = "/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/bin";
-//		Graphviz.useEngine((new GraphvizCmdLineEngine(DOT_ENV, new DefaultExecutor())));
-	}
 	
 	private static Graph buildDotGraph(Graph graph, CompositionGraph compGraph, boolean dotted) {
 		Map<BaseNode, Node> nodeMap = new HashMap<>();
@@ -52,7 +44,6 @@ public class GraphToDotNidi {
 			}
 			graph = graph.with(node);
 		}
-		System.out.println(graph.toString());
 		return graph;
 	}
 	

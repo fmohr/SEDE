@@ -17,7 +17,7 @@ public class ResolveRequest extends Request {
 
 	public ResolveRequest() {
 		this.composition = Optional.empty();
-		this.policy = Optional.empty();
+		this.policy = Optional.of(new ResolvePolicy());
 		this.inputFields = Optional.empty();
 	}
 

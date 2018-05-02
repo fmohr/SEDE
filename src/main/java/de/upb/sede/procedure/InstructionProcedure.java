@@ -14,8 +14,10 @@ import java.util.jar.Attributes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.SEDEObject;
+import de.upb.sede.exec.ServiceInstance;
 import de.upb.sede.exec.Task;
 
 public class InstructionProcedure implements Procedure {
@@ -26,24 +28,49 @@ public class InstructionProcedure implements Procedure {
 		ExecutionEnvironment environment = task.getExecutionGraph().getExecution().getExecutionEnvironment();
 		InstructionNodeAttributes nodeAttributes = new InstructionNodeAttributes(task);
 		try {
+			// Get SEDEObjects of the parameters that the method is called with.
 			Map<String, SEDEObject> parameterObjects = getParameterObjects(nodeAttributes.getParameters(), environment);
+			// Get the class of the parameters.
 			Class<?>[] parameterClasses = getParameterClasses(parameterObjects);
-
+			// Get the values of the parameters
 			Object[] parameterValues = getParameterValues(parameterObjects);
-			Class<?> contextClass = addClassInClassLoader(nodeAttributes.getContext());
+			// Get class to be called.
+			String contextType;
+			if (!nodeAttributes.isContextAFieldname()) {
+				contextType = nodeAttributes.getContext();
+			} else {
+				// Get the service from the environment and afterwards its type.
+				contextType = environment.get(nodeAttributes.getContext()).getType();
+			}
+			Class<?> contextClass = Class.forName(contextType);
+			/*
+			 * When the call is a constructor call the the constructor is being reflected
+			 * and called.
+			 */
+			SEDEObject returnSEDEObject;
 			if (nodeAttributes.isConstructor()) {
 				Constructor<?> constructor = contextClass.getConstructor(parameterClasses);
 				Object newInstance = constructor.newInstance(parameterValues);
-				SEDEObject newInstanceSEDEObject = new SEDEObject(nodeAttributes.context, newInstance);
-				environment.put(nodeAttributes.leftsidefieldname, newInstanceSEDEObject);
+				ServiceInstanceHandle serviceInstanceHandle = task.getExecutionGraph().getExecution()
+						.getServiceInstanceHandleSupplier().apply(newInstance);
+				returnSEDEObject = new SEDEObject(ServiceInstanceHandle.class.getName(), serviceInstanceHandle);
 			} else {
-				SEDEObject environmentInstance = environment.get(nodeAttributes.leftsidefieldname);
-				Class<?> typeClass = Class.forName(environmentInstance.getType());
-				Method calledMethod = typeClass.getMethod(nodeAttributes.method, parameterClasses);
-				Object returnValue = calledMethod.invoke(environmentInstance.getObject(), parameterValues);
-				String returnType = calledMethod.getReturnType().getName();
-				SEDEObject returnAsSEDEObject = new SEDEObject(returnType, returnValue);
-				environment.put(nodeAttributes.getLeftsidefieldname(), returnAsSEDEObject);
+				Method methodToBeCalled = contextClass.getMethod(nodeAttributes.getMethod(), parameterClasses);
+				String returnType = methodToBeCalled.getReturnType().getName();
+				Object contextServiceInstance;
+				if (nodeAttributes.isContextAFieldname()) {
+					contextServiceInstance = environment.get(nodeAttributes.getContext());
+					assert (contextServiceInstance instanceof ServiceInstance);
+					contextServiceInstance = ((ServiceInstance)contextServiceInstance).getServiceInstance();
+				}
+				else {
+					contextServiceInstance = null;
+				}
+				Object returnValue = methodToBeCalled.invoke(contextServiceInstance, parameterValues);
+				returnSEDEObject = new SEDEObject(returnType, returnValue);
+			}
+			if (nodeAttributes.getLeftsidefieldname() != null) {
+				environment.put(nodeAttributes.getLeftsidefieldname(), returnSEDEObject);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -78,6 +105,7 @@ public class InstructionProcedure implements Procedure {
 		return parameterArray;
 	}
 
+	// TODO Must be moved into another class.
 	private Class<?> addClassInClassLoader(String context) throws Exception {
 		URL serviceFilesURL = new URL("jar", "", context + "!/");
 		JarURLConnection jarURLConnection = (JarURLConnection) serviceFilesURL.openConnection();

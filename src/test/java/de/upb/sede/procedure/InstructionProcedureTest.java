@@ -2,55 +2,52 @@ package de.upb.sede.procedure;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.junit.Test;
 
 import de.upb.sede.exec.Execution;
-import de.upb.sede.exec.ExecutionGraph;
 import de.upb.sede.exec.SEDEObject;
 import de.upb.sede.exec.Task;
+import de.upb.sede.exec.graphs.EGraph;
 
 public class InstructionProcedureTest {
-	@SuppressWarnings("serial")
 	@Test
 	public void testReflectingStaticJar() {
-		Execution exec = null;
-		Map<String, Object> testTaskParameters = new HashMap<>();
-		testTaskParameters.put("nodetype", "Instruction");
-		testTaskParameters.put("method", "addObject");
-		testTaskParameters.put("is-service-construction", false);
-		testTaskParameters.put("host", null);
-		testTaskParameters.put("leftsidefieldname", "x");
-		testTaskParameters.put("context", "de.upb.sede.procedure.InstructionProcedureTest");
-		testTaskParameters.put("is-context-a-fieldname", false);
-		testTaskParameters.put("params", new ArrayList<String>() {
-			{
-				add("a");
-				add("b");
-			}
-		});
-		testTaskParameters.put("fmInstruction", "de.upb.sede.procedure.InstructionProcedureTest::addObject(a,b)");
-		Task task = new Task(exec, "testTask", testTaskParameters);
-		ExecutionGraph graph = new ExecutionGraph() {
-
-			@Override
-			public Iterator<Task> iterator() {
-				return null;
-			}
-
-			@Override
-			public Task getNextTask() {
-				return task;
-			}
-		};
-		exec = new Execution(graph, "test");
-		exec.getExecutionEnvironment().put("a", new SEDEObject(Integer.class.getName(), new Integer(1)));
-		exec.getExecutionEnvironment().put("b", new SEDEObject(Integer.class.getName(), new Integer(2)));
+		Execution execution = new Execution(null, "test");
+		execution.getExecutionEnvironment().put("a", new SEDEObject(Integer.class.getName(), new Integer(1)));
+		execution.getExecutionEnvironment().put("b", new SEDEObject(Integer.class.getName(), new Integer(2)));
+		EGraph graph = new EGraph();
+		Map<String, Object> testTaskParameters = new TestTaskParameters("addObject");
+		Task task = new Task(graph, "testTask", testTaskParameters);
+		graph.addTask(task);
+		
 		InstructionProcedure instructionProcedure = new InstructionProcedure();
 		instructionProcedure.process(task);
+	}
 
-		//TODO task requires non null for execution but execution requires task. -> Cyclic dependency?
+	class TestTaskParameters extends HashMap<String, Object> {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1438116688789645674L;
+
+		@SuppressWarnings("serial")
+		public TestTaskParameters(String methodName) {
+			put("nodetype", "Instruction");
+			put("method", methodName);
+			put("is-service-construction", false);
+			put("host", null);
+			put("leftsidefieldname", "x");
+			put("context", "de.upb.sede.procedure.StaticMathReflectionTestfile");
+			put("is-context-a-fieldname", false);
+			put("fmInstruction", "de.upb.sede.procedure.InstructionProcedureTest::" + methodName + "(a,b)");
+			put("params", new ArrayList<String>() {
+				{
+					add("a");
+					add("b");
+				}
+			});
+		}
 	}
 }

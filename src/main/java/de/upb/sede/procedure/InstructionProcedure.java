@@ -23,7 +23,7 @@ public class InstructionProcedure implements Procedure {
 
 	@Override
 	public void process(Task task) {
-		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
+		ExecutionEnvironment environment = task.getExecutionGraph().getExecution().getExecutionEnvironment();
 		InstructionNodeAttributes nodeAttributes = new InstructionNodeAttributes(task);
 		try {
 			Map<String, SEDEObject> parameterObjects = getParameterObjects(nodeAttributes.getParameters(), environment);

@@ -51,7 +51,7 @@ public class GraphJsonDeserializer {
 					"Cannot create a graph from a json object that doesn't contain fields: " + JSON_FIELDNAME_EDGES
 							+ " and " + JSON_FIELDNAME_NODES);
 		}
-		EGraph deserializedGraph = new EGraph();
+		EGraph deserializedGraph = new EGraph(execution);
 		List<Object> serializedNodes = (List<Object>) jsonGraphObject.get(JSON_FIELDNAME_NODES);
 		Map<Object, Object> edgeMap = (Map<Object, Object>) jsonGraphObject.get(JSON_FIELDNAME_NODES);
 
@@ -62,7 +62,7 @@ public class GraphJsonDeserializer {
 		List<Task> orderOfTasks = new ArrayList<>(serializedNodes.size()); // fill a map to hold indices of nodes.
 		for (Object jsonNode : serializedNodes) {
 			Map<String, Object> serializedNode = (Map<String, Object>) jsonNode;
-			Task task = tjs.fromJSON(execution, serializedNode);
+			Task task = tjs.fromJSON(deserializedGraph, serializedNode);
 			orderOfTasks.add(task);
 			deserializedGraph.addTask(task);
 		}

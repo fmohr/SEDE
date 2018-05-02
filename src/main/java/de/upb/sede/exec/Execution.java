@@ -14,7 +14,6 @@ public class Execution {
 	Function<String, BasicClientRequest> clientRequestSupplier = (url) -> new HTTPClientRequest(url);
 
 	public Execution(ExecutionGraph graph, String requestID) {
-		Objects.requireNonNull(graph);
 		Objects.requireNonNull(requestID);
 		this.graph = graph;
 		this.requestID = requestID;

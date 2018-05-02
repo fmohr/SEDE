@@ -6,20 +6,20 @@ import java.util.Map;
 import java.util.Objects;
 
 public final class Task implements TaskObserver {
-	private final Execution execution;
+	private final ExecutionGraph graph;
 	private final String taskName;
 	private final Map<String, Object> attributes;
 
 	private List<TaskObserver> observers = new ArrayList<>();
 
-	public Task(Execution execution, String taskName, Map<String, Object> parameters) {
-		this.execution = Objects.requireNonNull(execution);
+	public Task(ExecutionGraph graph, String taskName, Map<String, Object> parameters) {
+		this.graph = Objects.requireNonNull(graph);
 		this.taskName = Objects.requireNonNull(taskName);
 		this.attributes = Objects.requireNonNull(parameters);
 	}
 
-	public Execution getExecution() {
-		return execution;
+	public ExecutionGraph getExecutionGraph() {
+		return graph;
 	}
 
 	public String getTaskName() {

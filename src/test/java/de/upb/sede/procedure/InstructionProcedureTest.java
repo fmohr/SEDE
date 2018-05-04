@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import de.upb.sede.core.ServiceInstanceHandle;
+import de.upb.sede.webinterfaces.client.BasicClientRequest;
 import org.junit.Test;
 
 import de.upb.sede.exec.Execution;
@@ -15,7 +17,17 @@ import de.upb.sede.exec.graphs.EGraph;
 public class InstructionProcedureTest {
 	@Test
 	public void testReflectingStaticJar() {
-		Execution execution = new Execution("testID");
+		Execution execution = new Execution("testID") {
+			@Override
+			public BasicClientRequest createClientRequest(Object o) {
+				return null;
+			}
+
+			@Override
+			public ServiceInstanceHandle createServiceInstanceHandle(Object serviceInstance) {
+				return null;
+			}
+		};
 		execution.setEnvironment(new TestExecutionEnvironment());
 		execution.getExecutionEnvironment().put("a", new SEDEObject(Integer.class.getName(), new Integer(1)));
 		execution.getExecutionEnvironment().put("b", new SEDEObject(Integer.class.getName(), new Integer(2)));

@@ -29,8 +29,7 @@ public class StaticMathReflectionTestfile {
 		return a * b;
 	}
 
-	public static Float divideObject(Float a, Float b) {
-		return a / b;
+	public static Float divideObject(Integer a, Integer b) {
+		return (float) a / b;
 	}
-
 }

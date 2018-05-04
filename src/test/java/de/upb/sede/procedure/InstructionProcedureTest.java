@@ -12,7 +12,6 @@ import de.upb.sede.exec.Execution;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.SEDEObject;
 import de.upb.sede.exec.Task;
-import de.upb.sede.exec.graphs.EGraph;
 
 public class InstructionProcedureTest {
 	@Test
@@ -31,7 +30,6 @@ public class InstructionProcedureTest {
 		execution.setEnvironment(new TestExecutionEnvironment());
 		execution.getExecutionEnvironment().put("a", new SEDEObject(Integer.class.getName(), new Integer(1)));
 		execution.getExecutionEnvironment().put("b", new SEDEObject(Integer.class.getName(), new Integer(2)));
-		EGraph graph = new EGraph(execution);
 		Map<String, Object> testTaskParameters = new TestTaskParameters("addObject");
 		Task task = new Task(graph, "testTask", testTaskParameters);
 		graph.addTask(task);

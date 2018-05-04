@@ -12,13 +12,17 @@ import java.util.List;
  */
 public class Observable<T> {
 
+	private Observable(){
+
+	}
+
 	private final List<Observer<T>> observers = new ArrayList<>();
 
 	/**
 	 * Adds the given observer to the list.
 	 * @param observer observer which will be notified.
 	 */
-	public final synchronized void observe(Observer<T> observer){
+	public synchronized void observe(Observer<T> observer){
 		this.observers.add(observer);
 	}
 
@@ -55,12 +59,16 @@ public class Observable<T> {
 	/**
 	 * Implements the notification process. <p>
 	 * See the <tt>Observer</tt> documentation.
+	 *
+	 * @return true if the observer is to be removed from the observers list.
 	 */
 	private final boolean notificationProcess(Observer<T> observer, T t){
 		if(observer.notifyCondition(t)){
 			observer.notification(t);
+			return observer.removeAfterNotification(t);
+
 		}
-		return observer.removeAfterNotification(t);
+		return false;
 	}
 
 	/**
@@ -106,6 +114,21 @@ public class Observable<T> {
 		 */
 		public final synchronized void update() {
 			super.update(observedInstance);
+		}
+
+
+		/**
+		 * Adds the given observer to the list.
+		 * Additionaly executes the notificationProcess with the observedInstance.
+		 * @param observer observer which will be notified.
+		 */
+		public final synchronized void observe(Observer<T> observer){
+			if(!super.notificationProcess(observer, this.observedInstance)){
+				/*
+				 * if it doesn't want to be removed add it to the observers list:
+				 */
+				super.observe(observer);
+			}
 		}
 
 	}

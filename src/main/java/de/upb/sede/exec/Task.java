@@ -7,7 +7,7 @@ import java.util.*;
 
 public final class Task implements Observer<Task>{
 
-	private final ExecutionGraph graph;
+	private final Execution execution;
 
 	private final String taskName;
 
@@ -18,25 +18,25 @@ public final class Task implements Observer<Task>{
 	/*
 	 * Flags which define the state of the task.
 	 */
-	private boolean resolved = false, 	// resolve: true if the dependencies are all resolved. (This value is set by the notification method)
-					started = false,  	// started: true if a worker has started processing this task.
-					doneRunning = false,// doneRunning: true if started and the worker has finished processing.
-					failed = false,		// failed: true if done and an error has occured.
-					succeeded = false;	// succeeded: true if done and the worker successfully carried out the task.
+	private boolean resolved = false, 		// resolve: true if the dependencies are all resolved. (This value is set by the notification method)
+					started = false,  		// started: true if a worker has started processing this task.
+					doneRunning = false,	// doneRunning: true if started and the worker has finished processing.
+					failed = false,			// failed: true if done and an error has occured.
+					succeeded = false;		// succeeded: true if done and the worker successfully carried out the task.
 
 
 	private Observable<Task> taskState = Observable.ofInstance(this);
 
 
 
-	public Task(ExecutionGraph graph, String taskName, Map<String, Object> parameters) {
-		this.graph = Objects.requireNonNull(graph);
+	public Task(Execution execution, String taskName, Map<String, Object> parameters) {
+		this.execution = Objects.requireNonNull(execution);
 		this.taskName = Objects.requireNonNull(taskName);
 		this.attributes = Objects.requireNonNull(parameters);
 	}
 
-	public ExecutionGraph getExecutionGraph() {
-		return graph;
+	public Execution getExecutor() {
+		return execution;
 	}
 
 	public String getTaskName() {
@@ -108,7 +108,7 @@ public final class Task implements Observer<Task>{
 	}
 
 	public boolean isRunning() {
-		return !isDoneRunning();
+		return hasStarted() && !isDoneRunning();
 	}
 
 	public boolean isDoneRunning(){

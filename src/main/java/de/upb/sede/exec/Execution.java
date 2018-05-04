@@ -12,9 +12,9 @@ import de.upb.sede.webinterfaces.client.HTTPClientRequest;
 
 public abstract class Execution implements Observer<Task> {
 
-	private ExecutionGraph graph;
 	private ExecutionEnvironment environment;
 	private final String requestID;
+
 
 	/**
 	 * Tasks that are resolved but haven't started processing yet.
@@ -26,29 +26,16 @@ public abstract class Execution implements Observer<Task> {
 	 */
 	private final Set<Task> unresultedTasks = new HashSet<>();
 
-	/**
-	 * Exectu
-	 */
-	private final DefaultMap<Task, TaskExec> taskExecutions;
-
 	public Execution(String requestID) {
 		Objects.requireNonNull(requestID);
 		this.requestID = requestID;
 		this.environment = new ExecutionInv();
-		taskExecutions = new DefaultMap<>(TaskExec::new);
 	}
 	
 	public ExecutionEnvironment getExecutionEnvironment() {
 		return environment;
 	}
 
-	public ExecutionGraph getGraph() {
-		return graph;
-	}
-
-	public void setGraph(ExecutionGraph graph) {
-		this.graph = graph;
-	}
 
 	public ExecutionEnvironment getEnvironment() {
 		return environment;
@@ -72,6 +59,9 @@ public abstract class Execution implements Observer<Task> {
 		if(task.isResolved() && !task.hasStarted()){
 			return true;
 		}
+		if(task.isRunning() && openTasks.contains(task)) {
+			return true;
+		}
 		if(task.isDoneRunning() && !task.resulted()){
 			return true;
 		}
@@ -86,6 +76,9 @@ public abstract class Execution implements Observer<Task> {
 		if(task.isResolved() && !task.hasStarted()){
 			openTasks.add(task);
 		}
+		if(task.hasStarted() && openTasks.contains(task)) {
+			openTasks.remove(task);
+		}
 		if(task.isDoneRunning() && !task.resulted()){
 			unresultedTasks.add(task);
 		}
@@ -94,12 +87,12 @@ public abstract class Execution implements Observer<Task> {
 		}
 	}
 
-	public synchronized Set<Task> getOpenTasks(){
-		return Collections.unmodifiableSet(openTasks);
+	public boolean executionDone(){
+		return openTasks.isEmpty() && unresultedTasks.isEmpty();
 	}
 
-	public synchronized void executingTaskNotice(Task task){
-		openTasks.remove(task);
+	public synchronized Set<Task> getOpenTasks(){
+		return Collections.unmodifiableSet(openTasks);
 	}
 
 	@Override
@@ -112,10 +105,4 @@ public abstract class Execution implements Observer<Task> {
 		return true;
 	}
 
-
-	private class TaskExec {
-		TaskExec(){
-
-		}
-	}
 }

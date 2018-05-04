@@ -4,13 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.json.simple.JSONObject;
-
 import de.upb.sede.exceptions.CompositionGraphSerializationException;
 import de.upb.sede.exec.Execution;
-import de.upb.sede.exec.ExecutionGraph;
 import de.upb.sede.exec.Task;
-import de.upb.sede.exec.graphs.EGraph;
 
 /**
  * Contains methods to deserialize an execution graph from its JSON
@@ -25,18 +21,6 @@ public class GraphJsonDeserializer {
 	private static final String JSON_FIELDNAME_EDGES = "edges";
 
 	/**
-	 * Serializes the given graph to JSON.
-	 * 
-	 * @param graph
-	 *            an arbitrary graph
-	 * @return JSON representation of the graph.
-	 */
-	@SuppressWarnings("unchecked")
-	public JSONObject toJson(ExecutionGraph graph) {
-		return null; // TODO do we need this?
-	}
-
-	/**
 	 * Deserializes the given json map into an execution graph.
 	 * 
 	 * @param jsonGraphObject
@@ -44,14 +28,14 @@ public class GraphJsonDeserializer {
 	 *            nodes and edges field.
 	 * @return The deserialized execution graph
 	 */
-	@SuppressWarnings("unchecked")
-	public ExecutionGraph fromJson(Execution execution, Map<Object, Object> jsonGraphObject) {
+	public void deserializeTasksInto(Execution execution, Map<Object, Object> jsonGraphObject) {
 		if (!jsonGraphObject.containsKey(JSON_FIELDNAME_EDGES) || !jsonGraphObject.containsKey(JSON_FIELDNAME_NODES)) {
 			throw new CompositionGraphSerializationException(
 					"Cannot create a graph from a json object that doesn't contain fields: " + JSON_FIELDNAME_EDGES
 							+ " and " + JSON_FIELDNAME_NODES);
 		}
-		EGraph deserializedGraph = new EGraph(execution);
+
+		 deserializedGraph = new EGraph(execution);
 		List<Object> serializedNodes = (List<Object>) jsonGraphObject.get(JSON_FIELDNAME_NODES);
 		Map<Object, Object> edgeMap = (Map<Object, Object>) jsonGraphObject.get(JSON_FIELDNAME_NODES);
 

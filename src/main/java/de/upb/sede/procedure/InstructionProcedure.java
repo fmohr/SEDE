@@ -6,6 +6,7 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,6 +15,7 @@ import java.util.jar.Attributes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import de.upb.sede.composition.graphs.nodes.ParseConstantNode.ConstantType;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.SEDEObject;
@@ -31,7 +33,7 @@ public class InstructionProcedure implements Procedure {
 			// Get SEDEObjects of the parameters that the method is called with.
 			Map<String, SEDEObject> parameterObjects = getParameterObjects(nodeAttributes.getParameters(), environment);
 			// Get the class of the parameters.
-			Class<?>[] parameterClasses = getParameterClasses(parameterObjects);
+			Class<?>[] parameterClasses = getParameterClasses(parameterObjects, nodeAttributes.getMethod());
 			// Get the values of the parameters
 			Object[] parameterValues = getParameterValues(parameterObjects);
 			// Get class to be called.
@@ -61,9 +63,8 @@ public class InstructionProcedure implements Procedure {
 				if (nodeAttributes.isContextAFieldname()) {
 					contextServiceInstance = environment.get(nodeAttributes.getContext());
 					assert (contextServiceInstance instanceof ServiceInstance);
-					contextServiceInstance = ((ServiceInstance)contextServiceInstance).getServiceInstance();
-				}
-				else {
+					contextServiceInstance = ((ServiceInstance) contextServiceInstance).getServiceInstance();
+				} else {
 					contextServiceInstance = null;
 				}
 				Object returnValue = methodToBeCalled.invoke(contextServiceInstance, parameterValues);
@@ -83,16 +84,25 @@ public class InstructionProcedure implements Procedure {
 		return result;
 	}
 
-	private Class<?>[] getParameterClasses(Map<String, SEDEObject> parameterObjects) throws ClassNotFoundException {
+	private Class<?>[] getParameterClasses(Map<String, SEDEObject> parameterObjects, String methodName)
+			throws ClassNotFoundException {
 		List<Class<?>> inOrderClasses = new ArrayList<>(parameterObjects.size());
-		for (SEDEObject sedeObject : parameterObjects.values()) {
-			String classType = sedeObject.getType();
-			Class<?> clazz = Class.forName(classType);
-			inOrderClasses.add(clazz);
+		if (parameterIncludeConstantType(parameterObjects.values())) {
+		} else {
+			for (SEDEObject sedeObject : parameterObjects.values()) {
+				String classType = sedeObject.getType();
+				Class<?> clazz = Class.forName(classType);
+				inOrderClasses.add(clazz);
+			}
 		}
 		Class<?>[] inOrderClassesArray = new Class<?>[inOrderClasses.size()];
 		inOrderClassesArray = inOrderClasses.toArray(inOrderClassesArray);
 		return inOrderClassesArray;
+	}
+
+	private boolean parameterIncludeConstantType(Collection<SEDEObject> values) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	private Object[] getParameterValues(Map<String, SEDEObject> parameterObjects) {

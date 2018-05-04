@@ -52,7 +52,7 @@ public class InstructionProcedure implements Procedure {
 				Constructor<?> constructor = contextClass.getConstructor(parameterClasses);
 				Object newInstance = constructor.newInstance(parameterValues);
 				ServiceInstanceHandle serviceInstanceHandle = task.getExecutionGraph().getExecution()
-						.getServiceInstanceHandleSupplier().apply(newInstance);
+						.createServiceInstanceHandle(newInstance);
 				returnSEDEObject = new SEDEObject(ServiceInstanceHandle.class.getName(), serviceInstanceHandle);
 			} else {
 				Method methodToBeCalled = contextClass.getMethod(nodeAttributes.getMethod(), parameterClasses);

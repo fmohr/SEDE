@@ -11,7 +11,7 @@ public class SendDataProcedure implements Procedure {
 		String fieldname = (String) task.getAttributes().get("fieldname");
 		String targetaddress = (String) task.getAttributes().get("targetaddress");
 		SEDEObject sedeObjectToSend = task.getExecutionGraph().getExecution().getExecutionEnvironment().get(fieldname);
-		BasicClientRequest request = task.getExecutionGraph().getExecution().getClientRequest(targetaddress);
+		BasicClientRequest request = task.getExecutionGraph().getExecution().createClientRequest(targetaddress);
 
 	}
 }

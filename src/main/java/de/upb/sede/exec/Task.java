@@ -18,10 +18,11 @@ public final class Task implements Observer<Task>{
 	/*
 	 * Flags which define the state of the task.
 	 */
-	private boolean resolved = false,
-					started = false,
-					failed = false,
-					succeeded = false;
+	private boolean resolved = false, 	// resolve: true if the dependencies are all resolved. (This value is set by the notification method)
+					started = false,  	// started: true if a worker has started processing this task.
+					doneRunning = false,// doneRunning: true if started and the worker has finished processing.
+					failed = false,		// failed: true if done and an error has occured.
+					succeeded = false;	// succeeded: true if done and the worker successfully carried out the task.
 
 
 	private Observable<Task> taskState = Observable.ofInstance(this);
@@ -46,23 +47,7 @@ public final class Task implements Observer<Task>{
 		return attributes;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
-	public final boolean equals(Object otherObject) {
-		return super.equals(otherObject);
-	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see java.lang.Object#hashCode()
-	 */
-	public final int hashCode() {
-		return super.hashCode();
-	}
 
 	public Observable<Task> getState(){
 		return taskState;
@@ -79,11 +64,11 @@ public final class Task implements Observer<Task>{
 	 */
 	@Override
 	public boolean notifyCondition(Task task) {
-		return task.isDone() && this.dependencies.contains(task);
+		return task.resulted() && this.dependencies.contains(task);
 	}
 
 	/**
-	 * Notification is invoked when a dependency task is done (failed or succeeded).
+	 * Notification is invoked when a dependency task has resulted (failed or succeeded).
 	 * @param task dependency task.
 	 */
 	@Override
@@ -92,11 +77,19 @@ public final class Task implements Observer<Task>{
 			/* this task may have failed already if another dependency of this task has failed. */
 			return;
 		}
+
 		this.dependencies.remove(task);
+
 		if(task.hasFailed()){
 			failed();
 		}
-		else if(dependencies.isEmpty()){
+		else {
+			updateDependendency();
+		}
+	}
+
+	public void updateDependendency(){
+		if(dependencies.isEmpty()){
 			setResolved();
 		}
 	}
@@ -115,10 +108,17 @@ public final class Task implements Observer<Task>{
 	}
 
 	public boolean isRunning() {
-		return hasStarted() && ! isDone();
+		return !isDoneRunning();
 	}
 
-	public boolean isDone(){
+	public boolean isDoneRunning(){
+		return doneRunning;
+	}
+
+	/**
+	 * @return true, if the task has resulted in failure or success.
+	 */
+	public boolean resulted() {
 		return hasFailed() || hasSucceeded();
 	}
 
@@ -141,9 +141,17 @@ public final class Task implements Observer<Task>{
 		taskState.update(this);
 	}
 
+	public void setDone(){
+		resolved = true;
+		started = true;
+		doneRunning = true;
+		taskState.update(this);
+	}
+
 	public void succeeded(){
 		resolved = true;
 		started = true;
+		doneRunning = true;
 		succeeded = true;
 		taskState.update(this);
 	}
@@ -151,9 +159,17 @@ public final class Task implements Observer<Task>{
 	public void failed(){
 		resolved = true;
 		started = true;
+		doneRunning = true;
 		failed = true;
 		taskState.update(this);
 	}
 
 
+	public final boolean equals(Object otherObject) {
+		return super.equals(otherObject);
+	}
+
+	public final int hashCode() {
+		return super.hashCode();
+	}
 }

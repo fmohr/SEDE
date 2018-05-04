@@ -7,7 +7,6 @@ import java.util.Collection;
 public abstract class Executor {
 	private ExecutionPool requestPool;
 	private ResourceAllocator resourceAllocator;
-	private Collection<Worker> workerpool;
 
 
 	public Executor(String executorConfigurationPath) throws Exception {

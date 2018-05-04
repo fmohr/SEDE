@@ -1,6 +1,7 @@
 package de.upb.sede.exec;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Function;
 
@@ -106,6 +107,9 @@ public abstract class Execution implements Observer<Task> {
 	@Override
 	public boolean synchronizedNotification() {
 		return true;
+	}
+	static class ExecutionInv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
+
 	}
 
 }

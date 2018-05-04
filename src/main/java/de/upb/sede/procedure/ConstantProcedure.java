@@ -7,7 +7,7 @@ import de.upb.sede.exec.Task;
 
 public class ConstantProcedure implements Procedure {
 	public void process(Task task) {
-		ExecutionEnvironment environment = task.getExecutionGraph().getExecution().getExecutionEnvironment();
+		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
 		String constant = (String) task.getAttributes().get("constant");
 		constant = constant.substring(1, constant.length() - 1);
 		boolean isBool = (boolean) task.getAttributes().get("isBool");

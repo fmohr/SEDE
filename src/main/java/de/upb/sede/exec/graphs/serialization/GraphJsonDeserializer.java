@@ -35,20 +35,18 @@ public class GraphJsonDeserializer {
 							+ " and " + JSON_FIELDNAME_NODES);
 		}
 
-		 deserializedGraph = new EGraph(execution);
 		List<Object> serializedNodes = (List<Object>) jsonGraphObject.get(JSON_FIELDNAME_NODES);
 		Map<Object, Object> edgeMap = (Map<Object, Object>) jsonGraphObject.get(JSON_FIELDNAME_NODES);
 
 		/*
 		 * Deserialize tasks:
 		 */
-		TaskJsonDeserializer tjs = new TaskJsonDeserializer();
-		List<Task> orderOfTasks = new ArrayList<>(serializedNodes.size()); // fill a map to hold indices of nodes.
+		List<Task> tasks = new ArrayList<>(serializedNodes.size()); // fill a map to hold indices of nodes.
 		for (Object jsonNode : serializedNodes) {
 			Map<String, Object> serializedNode = (Map<String, Object>) jsonNode;
-			Task task = tjs.fromJSON(deserializedGraph, serializedNode);
-			orderOfTasks.add(task);
-			deserializedGraph.addTask(task);
+			Task task = fromJSON(execution, serializedNode);
+			tasks.add(task);
+			execution.addTask(task);
 		}
 		/*
 		 * connect tasks in the graph:
@@ -59,11 +57,25 @@ public class GraphJsonDeserializer {
 
 			List<Object> targetTaskIndices = (List<Object>) edgeMap.get(edge);
 			for (Object targetNodeObject : targetTaskIndices) {
-				Integer targetNodeIndex = (Integer) targetNodeObject;
-				deserializedGraph.connectTasks(orderOfTasks.get(sourceTaskIndex), orderOfTasks.get(targetNodeIndex));
+				Integer targetTaskIndex = (Integer) targetNodeObject;
+				Task sourceTask = tasks.get(sourceTaskIndex);
+				Task targetTask = tasks.get(targetTaskIndex);
+				targetTask.getState().observe(sourceTask);
 			}
 		}
-		return deserializedGraph;
+		for(Task t : tasks){
+			t.updateDependendency();
+		}
+	}
+
+	/**
+	 *
+	 * Deserializes a node from the composition graph into a task object.
+	 *
+	 */
+	private Task fromJSON(Execution execution, Map<String, Object> jsonData) {
+		Task task = new Task(execution, (String) jsonData.get("nodetype"), jsonData);
+		return task;
 	}
 
 }

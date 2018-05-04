@@ -31,8 +31,8 @@ public class InstructionProcedureTest {
 		execution.getExecutionEnvironment().put("a", new SEDEObject(Integer.class.getName(), new Integer(1)));
 		execution.getExecutionEnvironment().put("b", new SEDEObject(Integer.class.getName(), new Integer(2)));
 		Map<String, Object> testTaskParameters = new TestTaskParameters("addObject");
-		Task task = new Task(graph, "testTask", testTaskParameters);
-		graph.addTask(task);
+		Task task = new Task(execution, "testTask", testTaskParameters);
+
 
 		InstructionProcedure instructionProcedure = new InstructionProcedure();
 		instructionProcedure.process(task);

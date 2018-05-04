@@ -53,6 +53,9 @@ public abstract class Execution implements Observer<Task> {
 
 	public abstract ServiceInstanceHandle createServiceInstanceHandle(Object serviceInstance);
 
+	public void addTask(Task task) {
+		task.getState().observe(this);
+	}
 
 	@Override
 	public boolean notifyCondition(Task task) {

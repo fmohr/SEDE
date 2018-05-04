@@ -35,7 +35,7 @@ public final class Task implements Observer<Task>{
 		this.attributes = Objects.requireNonNull(parameters);
 	}
 
-	public Execution getExecutor() {
+	public Execution getExecution() {
 		return execution;
 	}
 

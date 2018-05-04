@@ -25,7 +25,7 @@ public class InstructionProcedure implements Procedure {
 
 	@Override
 	public void process(Task task) {
-		ExecutionEnvironment environment = task.getExecutionGraph().getExecution().getExecutionEnvironment();
+		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
 		InstructionNodeAttributes nodeAttributes = new InstructionNodeAttributes(task);
 		try {
 			// Get SEDEObjects of the parameters that the method is called with.
@@ -51,7 +51,7 @@ public class InstructionProcedure implements Procedure {
 			if (nodeAttributes.isConstructor()) {
 				Constructor<?> constructor = contextClass.getConstructor(parameterClasses);
 				Object newInstance = constructor.newInstance(parameterValues);
-				ServiceInstanceHandle serviceInstanceHandle = task.getExecutionGraph().getExecution()
+				ServiceInstanceHandle serviceInstanceHandle = task.getExecution()
 						.createServiceInstanceHandle(newInstance);
 				returnSEDEObject = new SEDEObject(ServiceInstanceHandle.class.getName(), serviceInstanceHandle);
 			} else {

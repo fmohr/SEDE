@@ -8,6 +8,6 @@ public class ReceiveDataProcedure implements Procedure {
 	@Override
 	public void process(Task task) {
 		String fieldname = (String) task.getAttributes().get("fieldname");
-		ExecutionEnvironment environment = task.getExecutionGraph().getExecution().getExecutionEnvironment();
+		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
 	}
 }

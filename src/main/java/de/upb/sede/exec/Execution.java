@@ -13,6 +13,8 @@ public class Execution {
 	String requestID;
 	Function<String, BasicClientRequest> clientRequestSupplier = (url) -> new HTTPClientRequest(url);
 	Function<Object,ServiceInstanceHandle> serviceInstanceHandleSupplier;
+
+
 	
 	public Execution(String requestID) {
 		Objects.requireNonNull(requestID);
@@ -56,4 +58,10 @@ public class Execution {
 	}
 	
 	
+}
+interface ExecutionObserver {
+
+	public boolean conditionSatisfies(Execution exec);
+
+	public void update(Execution exec);
 }

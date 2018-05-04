@@ -1,16 +1,32 @@
 package de.upb.sede.exec;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import de.upb.sede.util.Observable;
+import de.upb.sede.util.Observer;
 
-public final class Task implements TaskObserver {
+import java.util.*;
+
+public final class Task implements Observer<Task>{
+
 	private final ExecutionGraph graph;
+
 	private final String taskName;
+
 	private final Map<String, Object> attributes;
 
-	private List<TaskObserver> observers = new ArrayList<>();
+	private final Set<Task> dependencies = new HashSet<>();
+
+	/*
+	 * Flags which define the state of the task.
+	 */
+	private boolean resolved = false,
+					started = false,
+					failed = false,
+					succeeded = false;
+
+
+	private Observable<Task> taskState = Observable.ofInstance(this);
+
+
 
 	public Task(ExecutionGraph graph, String taskName, Map<String, Object> parameters) {
 		this.graph = Objects.requireNonNull(graph);
@@ -48,40 +64,96 @@ public final class Task implements TaskObserver {
 		return super.hashCode();
 	}
 
+	public Observable<Task> getState(){
+		return taskState;
+	}
+
+	public void addDependency(Task task) {
+		this.dependencies.add(task);
+		task.getState().observe(this);
+	}
+
 	/**
-	 * This method is invoked when any of the observed tasks change their state.
-	 * The Task itself is given as an argument to the invokation.
-	 * <p>
-	 * When implementing this function be aware of racing conditions.
-	 * There can be multiple threads in this method at once as the notifyObservers functions in Task is usually called by workers.
-	 *
-	 * @param updatedTask the task whose state is changed.
+	 * @param task  task with updated state
+	 * @return true if the task is done and the dependency contains this task.
 	 */
 	@Override
-	public void taskUpdated(Task updatedTask) {
-		// TODO update the resolved flag.
+	public boolean notifyCondition(Task task) {
+		return task.isDone() && this.dependencies.contains(task);
 	}
 
 	/**
-	 * Adds an observer to this task.
-	 *
-	 * @param observer observer that will be added to the observers list.
+	 * Notification is invoked when a dependency task is done (failed or succeeded).
+	 * @param task dependency task.
 	 */
-	public void addObserver(TaskObserver observer) {
-		synchronized (this.observers) {
-			observers.add(observer);
+	@Override
+	public void notification(Task task) {
+		if(this.hasFailed()){
+			/* this task may have failed already if another dependency of this task has failed. */
+			return;
+		}
+		this.dependencies.remove(task);
+		if(task.hasFailed()){
+			failed();
+		}
+		else if(dependencies.isEmpty()){
+			setResolved();
 		}
 	}
 
-	/**
-	 * All observers who were added by addObserver are notified by calling taskUpdated using this instance as the argument.
-	 * The order in which observers are added is the same as they are n
-	 */
-	public void notifyObserver() {
-		synchronized (this.observers) {
-			for (TaskObserver obs : this.observers) {
-				obs.taskUpdated(this);
-			}
-		}
+	@Override
+	public boolean synchronizedNotification() {
+		return true;
 	}
+
+	public boolean isResolved(){
+		return resolved;
+	}
+
+	public boolean hasStarted() {
+		return started;
+	}
+
+	public boolean isRunning() {
+		return hasStarted() && ! isDone();
+	}
+
+	public boolean isDone(){
+		return hasFailed() || hasSucceeded();
+	}
+
+	public boolean hasFailed(){
+		return failed;
+	}
+
+	public boolean hasSucceeded(){
+		return succeeded;
+	}
+
+	public void setResolved(){
+		resolved = true;
+		taskState.update(this);
+	}
+
+	public void setStarted(){
+		resolved = true;
+		started = true;
+		taskState.update(this);
+	}
+
+	public void succeeded(){
+		resolved = true;
+		started = true;
+		succeeded = true;
+		taskState.update(this);
+	}
+
+	public void failed(){
+		resolved = true;
+		started = true;
+		failed = true;
+		taskState.update(this);
+	}
+
+
 }

@@ -2,112 +2,184 @@ package de.upb.sede.exec;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.Function;
 
 import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.util.DefaultMap;
+import de.upb.sede.util.Observable;
 import de.upb.sede.util.Observer;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
-import de.upb.sede.webinterfaces.client.HTTPClientRequest;
 
-public abstract class Execution implements Observer<Task> {
+/**
+ * Represents one execution.
+ */
+public abstract class Execution {
 
-	private ExecutionEnvironment environment;
-	private final String requestID;
+	private final ExecutionEnvironment environment;
 
+	private final String execId;
+
+	private final Observable<Execution> state;
+
+	/**
+	 * Flag that indicates that the execution has been interrupted.
+	 */
+	private boolean interrupted = false;
 
 	/**
 	 * Tasks that are resolved but haven't started processing yet.
 	 */
-	private final Set<Task> openTasks = new HashSet<>();
+	private final Set<Task> waitingTasks = new HashSet<>();
 
 	/**
 	 * Set of tasks that are waiting for an event to happen. E.g. waiting for input data.
 	 */
-	private final Set<Task> unresultedTasks = new HashSet<>();
+	private final Set<Task> unfinishedTasks = new HashSet<>();
 
-	public Execution(String requestID) {
-		Objects.requireNonNull(requestID);
-		this.requestID = requestID;
+	/**
+	 * Observes all tasks.
+	 * Once an observed task changes its state to resolved, this observer will put it into the waiting-Tasks set.
+	 */
+	private final Observer<Task> unresolvedTasksObserver = Observer.lambda(
+			Task::isWaiting, this::taskResolved);
+
+	/**
+	 * Observes all tasks.
+	 * Once an observed task has started processing, it will be removed from the waiting-Tasks set.
+	 */
+	private final Observer<Task> waitingTasksObserver = Observer.lambda(
+			Task::hasStarted, this::taskStarted);
+
+	/**
+	 * Observes all tasks.
+	 * Once an observed tasks has finished (success or fail), it will be removed from the unfinished-Tasks set.
+	 */
+	private final Observer<Task> unfinishedTasksObserver = Observer.lambda(
+			Task::hasFinished, this::taskFinished);
+
+	/**
+	 * An array of any observer of this class that needs to observe every task added to this execution object.
+	 * See: addTask method.
+	 */
+	@SuppressWarnings("unchecked")
+	private final Observer<Task> observersOfAllTasks[] = (Observer<Task>[]) new Object[]{
+			waitingTasksObserver,
+			unresolvedTasksObserver,
+			unfinishedTasksObserver};
+
+	public Execution(String execId) {
+		Objects.requireNonNull(execId);
+		this.execId = execId;
 		this.environment = new ExecutionInv();
+		this.state = Observable.ofInstance(this);
 	}
-	
+
+	/**
+	 * Create a new client request based on the request info.
+	 * This method does not affect the state of the execution object.
+	 *
+	 * @return a new client request.
+	 */
+	public abstract BasicClientRequest createClientRequest(Object requestInfo);
+
+	/**
+	 * Create new new service instance handle with the given service instance.
+	 * This method does not affect the state of the execution object.
+	 *
+	 * @return a new ServiceInstanceHandle
+	 */
+	public abstract ServiceInstanceHandle createServiceInstanceHandle(Object serviceInstance);
+
+	/**
+	 * Returns the execution-id of this execution.
+	 *
+	 * @return the execution-id
+	 */
+	public String getExecutionId() {
+		return execId;
+	}
+
+	/**
+	 * Returns an observable instance of the execution state.
+	 * This state updates whenever a task finishes.
+	 *
+	 * @return observable of the execution.
+	 */
+	public Observable<Execution> getState() {
+		return state;
+	}
+
+	/**
+	 * Returns the environment of this execution.
+	 *
+	 * @return the exeuction environment.
+	 */
 	public ExecutionEnvironment getExecutionEnvironment() {
 		return environment;
 	}
 
 
-	public ExecutionEnvironment getEnvironment() {
-		return environment;
+	/*
+	 * private methods to allow synchronized access to the 2 set of tasks.
+	 * Used by the observers.
+	 */
+
+	private final synchronized void taskResolved(Task task) {
+		waitingTasks.add(task);
 	}
 
-	public void setEnvironment(ExecutionEnvironment environment) {
-		this.environment = environment;
+	private final synchronized void taskStarted(Task task) {
+		waitingTasks.remove(task);
 	}
 
-	public String getRequestID() {
-		return requestID;
+	private final synchronized void taskFinished(Task task) {
+		unfinishedTasks.remove(task);
 	}
 
-	public abstract BasicClientRequest createClientRequest(Object o);
-
-	public abstract ServiceInstanceHandle createServiceInstanceHandle(Object serviceInstance);
-
-	public void addTask(Task task) {
-		task.getState().observe(this);
-	}
-
-	@Override
-	public boolean notifyCondition(Task task) {
-		if(task.isResolved() && !task.hasStarted()){
-			return true;
+	/**
+	 * Adds the given task to this execution. <p>
+	 * If it wasn't added before, it will be added to the set of unfinished tasks and waiting tasks.  <p>
+	 * Additionally every observer in <tt>observersOfAllTasks</tt> will observe the given task.
+	 *
+	 * @param task assigned to this execution.
+	 */
+	synchronized void addTask(Task task) {
+		if (task.getExecution() != this) {
+			throw new RuntimeException("Bug: Task states that it belongs to another execution.");
 		}
-		if(task.isRunning() && openTasks.contains(task)) {
-			return true;
+		if (task.hasStarted()) {
+			throw new RuntimeException("Bug: the given task was already started before.");
 		}
-		if(task.isDoneRunning() && !task.resulted()){
-			return true;
-		}
-		if(task.resulted() && unresultedTasks.contains(task)){
-			return true;
-		}
-		return false;
-	}
-
-	@Override
-	public void notification(Task task) {
-		if(task.isResolved() && !task.hasStarted()){
-			openTasks.add(task);
-		}
-		if(task.hasStarted() && openTasks.contains(task)) {
-			openTasks.remove(task);
-		}
-		if(task.isDoneRunning() && !task.resulted()){
-			unresultedTasks.add(task);
-		}
-		if(task.resulted() && unresultedTasks.contains(task)){
-			unresultedTasks.remove(task);
+		boolean newTask = unfinishedTasks.add(task);
+		if (newTask) {
+			waitingTasks.add(task);
+			for (Observer<Task> taskObserver : observersOfAllTasks) {
+				task.getState().observe(taskObserver);
+			}
 		}
 	}
 
-	public boolean executionDone(){
-		return openTasks.isEmpty() && unresultedTasks.isEmpty();
+	/**
+	 * Returns true if the set of all unfinished tasks is empty or the execution was interrupted.
+	 * IF true, the set returned by getWaitingTasks is empty too.
+	 *
+	 * @return true if the execution has finished
+	 */
+	synchronized boolean hasExecutionFinished() {
+		return interrupted || unfinishedTasks.isEmpty();
 	}
 
-	public synchronized Set<Task> getOpenTasks(){
-		return Collections.unmodifiableSet(openTasks);
+	/**
+	 * Returns the set of tasks that are waiting to be executed at the time the query is made.
+	 *
+	 * @return set of waiting tasks
+	 */
+	synchronized Set<Task> getWaitingTasks() {
+		if (hasExecutionFinished()) {
+			return Collections.EMPTY_SET;
+		} else {
+			return Collections.unmodifiableSet(waitingTasks);
+		}
 	}
 
-	@Override
-	public boolean removeAfterNotification(Task task) {
-		return false;
-	}
-
-	@Override
-	public boolean synchronizedNotification() {
-		return true;
-	}
 	static class ExecutionInv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
 
 	}

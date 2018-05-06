@@ -52,10 +52,9 @@ public interface Observer<T>{
 
 	/**
 	 * Defines whether or not the notifcation process should be synchronized.
-	 * @return true if
 	 */
 	default boolean synchronizedNotification() {
-		return false;
+		return true;
 	}
 
 	/**

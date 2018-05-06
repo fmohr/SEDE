@@ -64,11 +64,11 @@ public final class Task implements Observer<Task>{
 	 */
 	@Override
 	public boolean notifyCondition(Task task) {
-		return task.resulted() && this.dependencies.contains(task);
+		return task.hasFinished() && this.dependencies.contains(task);
 	}
 
 	/**
-	 * Notification is invoked when a dependency task has resulted (failed or succeeded).
+	 * Notification is invoked when a dependency task has hasFinished (failed or succeeded).
 	 * @param task dependency task.
 	 */
 	@Override
@@ -107,20 +107,19 @@ public final class Task implements Observer<Task>{
 		return started;
 	}
 
-	public boolean isRunning() {
-		return hasStarted() && !isDoneRunning();
+	public boolean isWaiting() {
+		return isResolved() && !hasStarted();
 	}
 
 	public boolean isDoneRunning(){
 		return doneRunning;
 	}
 
-	/**
-	 * @return true, if the task has resulted in failure or success.
-	 */
-	public boolean resulted() {
-		return hasFailed() || hasSucceeded();
+
+	public boolean isRunning() {
+		return hasStarted() && !isDoneRunning();
 	}
+
 
 	public boolean hasFailed(){
 		return failed;
@@ -128,6 +127,17 @@ public final class Task implements Observer<Task>{
 
 	public boolean hasSucceeded(){
 		return succeeded;
+	}
+
+	/**
+	 * @return true, if the task has hasFinished in failure or success.
+	 */
+	public boolean hasFinished() {
+		return hasFailed() || hasSucceeded();
+	}
+
+	public boolean hasNotFinished() {
+		return! hasFinished();
 	}
 
 	public void setResolved(){

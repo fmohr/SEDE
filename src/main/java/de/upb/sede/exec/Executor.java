@@ -16,9 +16,9 @@ public abstract class Executor implements IExecutor{
 	private final ExecutorConfiguration config;
 
 
-	public Executor(String executorConfigurationPath, ExecutionPool execPool) throws Exception {
+	public Executor(ExecutorConfiguration execConfig, ExecutionPool execPool) throws Exception {
 		this.execPool = execPool;
-		this.config = ExecutorConfiguration.parse(executorConfigurationPath);
+		this.config = execConfig;
 		this.resourceAllocator = new ResourceAllocator(this.config.getAvailableResources());
 	}
 

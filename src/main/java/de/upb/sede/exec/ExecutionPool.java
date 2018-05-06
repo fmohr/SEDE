@@ -6,10 +6,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 public abstract class ExecutionPool {
+	/**
+	 * be aware that the implementation of the map is not thread safe.
+	 * So don't expose the variable and only operate on it synchronously.
+	 */
 	private final Map<String, Execution> execMap = new HashMap<>();
 
 
-	private final Observer<Execution> executionObserver = Observer.lambda(	exec -> exec.executionDone(),  // when an execution is done, ..
+	private final Observer<Execution> executionObserver = Observer.lambda(	Execution::hasExecutionFinished,  // when an execution is done, ..
 																			exec -> removeExecution(exec.getExecutionId())); // remove it.
 
 	public synchronized Execution getOrCreateExecution(String execId) {
@@ -21,7 +25,7 @@ public abstract class ExecutionPool {
 			 */
 			exec = executionSupplier(execId);
 			execMap.put(execId, exec);
-			exec.get
+			exec.getState().observe(executionObserver);
 		}
 		return exec;
 	}
@@ -38,7 +42,7 @@ public abstract class ExecutionPool {
 
 	/**
 	 * Supplier of execution instances. <p>
-	 * Given a execution-id this method creates a new Execution object without altering the state of the execution pool.
+	 * Given an execution-id this method creates a new Execution object without altering the state of the execution pool.
 	 *
 	 * @param execId request id of the new execution object.
 	 *

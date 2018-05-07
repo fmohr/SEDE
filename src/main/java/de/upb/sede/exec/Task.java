@@ -43,7 +43,7 @@ public final class Task implements Observer<Task>{
 		return taskName;
 	}
 
-	public Map<String, Object> getAttributes() {
+	public Map getAttributes() {
 		return attributes;
 	}
 

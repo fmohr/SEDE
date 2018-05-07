@@ -75,4 +75,8 @@ public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 		this.id = Optional.of((String) data.get("id"));
 		this.classpath = Optional.of((String) data.get("classpath"));
 	}
+
+	public Optional<Object> getServiceInstance() {
+		return Optional.empty();
+	}
 }

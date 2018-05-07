@@ -61,9 +61,11 @@ public class InstructionProcedure implements Procedure {
 				String returnType = methodToBeCalled.getReturnType().getName();
 				Object contextServiceInstance;
 				if (nodeAttributes.isContextAFieldname()) {
-					contextServiceInstance = environment.get(nodeAttributes.getContext());
-					assert (contextServiceInstance instanceof ServiceInstance);
-					contextServiceInstance = ((ServiceInstance) contextServiceInstance).getServiceInstance();
+					SEDEObject serviceInstace = environment.get(nodeAttributes.getContext());
+					if(!serviceInstace.isServiceInstance()){
+						throw new RuntimeException("BUG: trying to operate on service of type: " + contextType + " instead the SEDE Object is " + serviceInstace.getType());
+					}
+					contextServiceInstance = ((ServiceInstanceHandle) serviceInstace.getObject()).getServiceInstance().get();
 				} else {
 					contextServiceInstance = null;
 				}

@@ -2,6 +2,8 @@ package de.upb.sede.exec;
 
 import de.upb.sede.core.ServiceInstanceHandle;
 
+import java.util.Optional;
+
 public class ServiceInstance extends ServiceInstanceHandle{
 	/**
 	 * 
@@ -13,7 +15,8 @@ public class ServiceInstance extends ServiceInstanceHandle{
 		this.serviceInstance = serviceInstance;
 	}
 
-	public Object getServiceInstance() {
-		return serviceInstance;
+	public Optional<Object> getServiceInstance() {
+		return Optional.of(serviceInstance);
 	}
+
 }

@@ -1,6 +1,5 @@
 package de.upb.sede.composition.graphs;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -364,6 +363,11 @@ public class DataFlowAnalysis {
 					 */
 					nodeConsumesField(instNode, requiredData);
 					continue;
+				} else if(requiredData.isPrimitive()){
+					/**
+					 *
+					 */
+					throw new CompositionSemanticException("Type mismatch: " + instExec.toString() + "\nfield:" + requiredData.getFieldname());
 				}
 
 				/*
@@ -517,7 +521,7 @@ public class DataFlowAnalysis {
 
 		for (String resultFieldname : resultFieldnames()) {
 			FieldType resultFieldType = resultFieldtype(resultFieldname);
-			if (resultFieldType.isConstant()) {
+			if (resultFieldType.isPrimitive()) {
 				continue; // no need to send back constants
 			}
 			BaseNode resultProducer = resultFieldType.getProducer();
@@ -801,7 +805,7 @@ class FieldType {
 		return typeClass == TypeClass.RealDataType;
 	}
 
-	public boolean isConstant() {
+	public boolean isPrimitive() {
 		return typeClass == TypeClass.PrimitiveType;
 	}
 

@@ -3,6 +3,7 @@ package de.upb.sede.exec;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.util.Observable;
 import de.upb.sede.util.Observer;

@@ -1,4 +1,4 @@
-package de.upb.sede.exec;
+package de.upb.sede.core;
 
 import de.upb.sede.core.ServiceInstanceHandle;
 import org.json.simple.JSONObject;
@@ -9,6 +9,15 @@ import java.util.regex.Pattern;
 public class SEDEObject {
 	public static enum PrimitiveType {
 		NULL, String, Number, Bool;
+
+		public static PrimitiveType insensitiveValueOf(String searchName){
+			for(PrimitiveType type : PrimitiveType.values()){
+				if(type.name().equalsIgnoreCase(searchName)){
+					return type;
+				}
+			}
+			throw new RuntimeException("BUG: search name: " + searchName);
+		}
 	}
 
 	public final static String SERVICE_INSTANCE_HANDLE_TYPE = ServiceInstanceHandle.class.getSimpleName();
@@ -29,6 +38,9 @@ public class SEDEObject {
 
 		if(object instanceof ServiceInstanceHandle && !type.equalsIgnoreCase(SERVICE_INSTANCE_HANDLE_TYPE)){
 			throw new RuntimeException("BUG: given object is service instance handle but t givenype is: " + type);
+		}
+		if(isSemantic(type) && !this.isSemantic()){
+			throw new RuntimeException("BUG: given object is of semantic type but given data isn't a byte array: " + object.getClass());
 		}
 	}
 

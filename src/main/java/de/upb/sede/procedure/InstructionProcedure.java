@@ -15,11 +15,9 @@ import java.util.jar.Attributes;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.upb.sede.composition.graphs.nodes.ParseConstantNode.ConstantType;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutionEnvironment;
-import de.upb.sede.exec.SEDEObject;
-import de.upb.sede.exec.ServiceInstance;
+import de.upb.sede.core.SEDEObject;
 import de.upb.sede.exec.Task;
 
 public class InstructionProcedure implements Procedure {

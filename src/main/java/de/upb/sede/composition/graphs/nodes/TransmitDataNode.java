@@ -12,10 +12,20 @@ public class TransmitDataNode extends BaseNode {
 
 	private final String targetAddress;
 
-	public TransmitDataNode(String fieldname, String targetAddress) {
-		super();
+
+	private final String caster;
+
+	private final String semanticTypename;
+
+	public TransmitDataNode(String fieldname, String targetAddress, String caster, String semanticTypename) {
 		this.fieldname = fieldname;
 		this.targetAddress = targetAddress;
+		this.caster = caster;
+		this.semanticTypename = semanticTypename;
+	}
+
+	public static TransmitDataNode rawTransmit(String fieldname, String targetAddress){
+		return new TransmitDataNode(fieldname, targetAddress, "raw", "raw");
 	}
 
 	public String getTargetAddress() {
@@ -24,6 +34,14 @@ public class TransmitDataNode extends BaseNode {
 
 	public String getSendingFieldName() {
 		return fieldname;
+	}
+
+	public String getCaster() {
+		return caster;
+	}
+
+	public String getSemanticTypename() {
+		return semanticTypename;
 	}
 
 	@Override

@@ -9,7 +9,7 @@ import org.junit.Test;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.Execution;
 import de.upb.sede.exec.ExecutionEnvironment;
-import de.upb.sede.exec.SEDEObject;
+import de.upb.sede.core.SEDEObject;
 import de.upb.sede.exec.Task;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
 
@@ -28,7 +28,6 @@ public class InstructionProcedureTest {
 			}
 		};
 
-		execution.setEnvironment(new TestExecutionEnvironment());
 		execution.getExecutionEnvironment().put("a", new SEDEObject(Integer.class.getName(), new Integer(1)));
 		execution.getExecutionEnvironment().put("b", new SEDEObject(Integer.class.getName(), new Integer(2)));
 		Task task;

@@ -1,7 +1,7 @@
 package de.upb.sede.composition.graphs;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +17,8 @@ import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.graphs.nodes.ParseConstantNode;
 import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
 import de.upb.sede.composition.graphs.nodes.TransmitDataNode;
-import de.upb.sede.config.ClassesConfig.ClassInfo;
 import de.upb.sede.config.ClassesConfig.MethodInfo;
+import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exceptions.CompositionSemanticException;
 import de.upb.sede.gateway.ExecutorHandle;
@@ -81,7 +81,16 @@ public class DataFlowAnalysis {
 				addFieldType(fieldType);
 			} else {
 				typeName = inputFields.getInputFieldType(inputFieldname);
-				typeClass = TypeClass.SemanticDataType;
+				if(SEDEObject.isPrimitive(typeName)) {
+					typeClass = TypeClass.PrimitiveType;
+				} else if(SEDEObject.isReal(typeName)) {
+					typeClass = TypeClass.RealDataType;
+				} else if(SEDEObject.isSemantic(typeName)){
+					typeClass = TypeClass.SemanticDataType;
+				} else{
+					throw new RuntimeException("BUG: The type of the given input field cannot be reolved to a type class, "
+							+ inputFieldname + ":" + typeName);
+				}
 				FieldType fieldType = new FieldType(acceptNode, inputFieldname, typeClass, typeName, true);
 				addFieldType(fieldType);
 			}
@@ -251,7 +260,7 @@ public class DataFlowAnalysis {
 					 * add constant parser and its fieldtype:
 					 */
 					ParseConstantNode parseConstantNode = new ParseConstantNode(parameter);
-					constantType = new FieldType(parseConstantNode, parameter, TypeClass.ConstantPrimitivType,
+					constantType = new FieldType(parseConstantNode, parameter, TypeClass.PrimitiveType,
 							parseConstantNode.getType().name(), true);
 					addFieldType(constantType);
 					assignNodeToExec(parseConstantNode, instExec);
@@ -347,6 +356,14 @@ public class DataFlowAnalysis {
 					requiredData = new FieldType(castToSemantic, parameter, TypeClass.SemanticDataType,
 							semanticTypename, false);
 					addFieldType(requiredData);
+				}
+
+				if(requiredData.getTypeName().equalsIgnoreCase(requiredType)){
+					/*
+					 * incase the type matches already just add it as a consumer and continue:
+					 */
+					nodeConsumesField(instNode, requiredData);
+					continue;
 				}
 
 				/*
@@ -475,8 +492,17 @@ public class DataFlowAnalysis {
 							"The type of the leftside fieldname of instruction: " + instNode.toString()
 									+ " cannot be resolved. The return type of method signature is void.");
 				}
-				typeClass = TypeClass.RealDataType;
 				typeName = methodInfo.getReturnType();
+				if(SEDEObject.isPrimitive(typeName)) {
+					typeClass = TypeClass.PrimitiveType;
+				} else if(SEDEObject.isReal(typeName)) {
+					typeClass = TypeClass.RealDataType;
+				} else if(SEDEObject.isSemantic(typeName)){
+					typeClass = TypeClass.SemanticDataType;
+				} else{
+					throw new RuntimeException("BUG: The return type of the instruction " +  instNode.toString() +" cannot be reolved to a type class, "
+							+ typeName);
+				}
 			}
 			FieldType leftSideFieldType = new FieldType(instNode, leftsideFieldname, typeClass, typeName,
 					true);
@@ -573,7 +599,7 @@ public class DataFlowAnalysis {
 		AcceptDataNode accept = new AcceptDataNode(fieldname);
 		assignNodeToExec(accept, clientExecution);
 		String clientHost = clientExecution.getExecutor().getHostAddress();
-		TransmitDataNode transmit = new TransmitDataNode(fieldname, clientHost);
+		TransmitDataNode transmit = TransmitDataNode.rawTransmit(fieldname, clientHost);
 
 		addTransmission(transmit, accept);
 
@@ -584,8 +610,17 @@ public class DataFlowAnalysis {
 		String fieldname = datafield.getFieldname();
 		AcceptDataNode accept = new AcceptDataNode(fieldname);
 		assignNodeToExec(accept, targetExec);
+		String targetAddress = targetExec.getExecutor().getHostAddress();
+		TransmitDataNode transmit;
+		if(datafield.isRealData()) {
+			String caster = resolveInfo.getTypeConfig().getOnthologicalCaster(datafield.getTypeName());
+			String semanticType = resolveInfo.getTypeConfig().getOnthologicalType(datafield.getTypeName());
+			transmit = new TransmitDataNode(fieldname, targetAddress, caster, semanticType);
+		}
+		else {
+			transmit = TransmitDataNode.rawTransmit(fieldname, targetAddress);
+		}
 
-		TransmitDataNode transmit = new TransmitDataNode(fieldname, targetExec.getExecutor().getHostAddress());
 		assignNodeToExec(transmit, sourceExec);
 		nodeConsumesField(transmit, datafield);
 		addTransmission(transmit, accept);
@@ -596,11 +631,8 @@ public class DataFlowAnalysis {
 			String typeName = resolveInfo.getTypeConfig().getOnthologicalType(datafield.getTypeName());
 			inputField = new FieldType(accept, fieldname, inputTypeClass, typeName, false);
 
-		} else if (datafield.isServiceInstance() || datafield.isServiceInstanceHandle() || datafield.isSemanticData()) {
+		} else  {
 			inputField = datafield.clone(accept, false);
-		} else {
-			throw new RuntimeException(
-					"Coding error: Primitive datatypes should not be transmitted: " + datafield.toString());
 		}
 		addFieldType(inputField);
 		return inputField;
@@ -770,7 +802,7 @@ class FieldType {
 	}
 
 	public boolean isConstant() {
-		return typeClass == TypeClass.ConstantPrimitivType;
+		return typeClass == TypeClass.PrimitiveType;
 	}
 
 	public String toString() {
@@ -784,7 +816,7 @@ class FieldType {
 }
 
 enum TypeClass {
-	ServiceInstance, SemanticDataType, RealDataType, ConstantPrimitivType, ServiceInstanceHandle;
+	ServiceInstance, SemanticDataType, RealDataType, PrimitiveType, ServiceInstanceHandle;
 }
 
 class Execution {

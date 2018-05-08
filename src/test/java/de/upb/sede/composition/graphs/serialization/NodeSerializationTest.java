@@ -128,7 +128,7 @@ public class NodeSerializationTest {
 		/*
 		 * Test serialization
 		 */
-		TransmitDataNode sendDataNode = new TransmitDataNode("a", "10.10.10.10:100");
+		TransmitDataNode sendDataNode = new TransmitDataNode("a", "10.10.10.10:100", "caster1", "semtype1");
 		JSONAssert.assertEquals(getJSONResource("transmitDataNode"), njs.toJSON(sendDataNode).toJSONString(), true);
 
 		/*

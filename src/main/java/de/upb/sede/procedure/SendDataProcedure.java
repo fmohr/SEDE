@@ -1,6 +1,6 @@
 package de.upb.sede.procedure;
 
-import de.upb.sede.exec.SEDEObject;
+import de.upb.sede.core.SEDEObject;
 import de.upb.sede.exec.Task;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
 

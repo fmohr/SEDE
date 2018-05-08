@@ -1,12 +1,12 @@
 package de.upb.sede.exec;
 
+import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.ServiceInstanceHandle;
+import de.upb.sede.procedure.ParseConstantProcedure;
 import de.upb.sede.util.Streams;
 
 import java.io.*;
 import java.lang.reflect.Method;
-import java.text.NumberFormat;
-import java.text.ParseException;
 
 public final class SemanticStreamer {
 
@@ -18,7 +18,7 @@ public final class SemanticStreamer {
 			 * data could be: Integer Double String Boolean or null
 			 */
 			String primitiveStr = Streams.InReadString(is);
-			data = castStringToPrimitive(primitiveStr, type);
+			data = castStringToPrimitive(primitiveStr, type).getObject();
 
 		} else if(SEDEObject.isServiceInstanceHandle(type)){
 			/*
@@ -41,19 +41,24 @@ public final class SemanticStreamer {
 		return parsedObject;
 	}
 
-	private static Object castStringToPrimitive(String data, String type){
-		if(type.equalsIgnoreCase("Number")){
-			try {
-				return NumberFormat.getInstance().parse(data);
-			} catch (ParseException e) {
-				throw new RuntimeException(e);
-			}
-		} else if(type.equalsIgnoreCase("String")) {
-			return data;
-		} else if(type.equalsIgnoreCase("Bool")){
+	private static SEDEObject castStringToPrimitive(String data, String type){
+		SEDEObject.PrimitiveType enumType = SEDEObject.PrimitiveType.insensitiveValueOf(type);
+		return ParseConstantProcedure.parsePrimitive(data, enumType);
+	}
 
+
+
+	public static SEDEObject readObjectFrom(InputStream is, String caster, String sourceSemanticType, String targetRealTypeCp) {
+		String targetRealType = getSimpleNameFromClasspath(targetRealTypeCp);
+		String casterMethod = getCastMethod(sourceSemanticType, targetRealType, false);
+		Method method = getMethodFor(caster, casterMethod);
+		try {
+			Object casterInstance = Class.forName(caster).getConstructor().newInstance();
+			SEDEObject sedeObject = (SEDEObject) method.invoke(casterInstance, is);
+			return sedeObject;
+		} catch (ReflectiveOperationException ex){
+			throw new RuntimeException(ex);
 		}
-		return null; // TODO
 	}
 
 	public static void writeInto(OutputStream os, SEDEObject content) {
@@ -86,9 +91,9 @@ public final class SemanticStreamer {
 	}
 
 
-	public static void streamObjectInto(OutputStream os, SEDEObject content, String caster, String sourceClasspath, String targetType) {
-		String sourceType = getSimpleNameFromClasspath(sourceClasspath);
-		String casterMethod = getCastMethod(sourceType, targetType, true);
+	public static void streamObjectInto(OutputStream os, SEDEObject content, String caster, String sourceClasspath, String targetSemanticType) {
+		String sourceRealType = getSimpleNameFromClasspath(sourceClasspath);
+		String casterMethod = getCastMethod(sourceRealType, targetSemanticType, true);
 		Method method = getMethodFor(caster, casterMethod);
 		try {
 			Object casterInstance = Class.forName(caster).getConstructor().newInstance();

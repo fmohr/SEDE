@@ -32,7 +32,7 @@ public class GraphSerializationTest {
 		InstructionNode instNodeAdd = new InstructionNode("d=c::add({a,b})", "a", "b");
 		instNodeAdd.setLeftSideFieldname("d");
 		instNodeCon.setParameterFields(Arrays.asList("a", "b"));
-		TransmitDataNode sendToClient = new TransmitDataNode("d", "clientdomain.com");
+		TransmitDataNode sendToClient = new TransmitDataNode("d", "clientdomain.com", "caster1" , "semtype1");
 		ServiceInstanceStorageNode saveSI = new ServiceInstanceStorageNode(false, "c", "de.upb.SEDE.testlib.A");
 
 		CompositionGraph graph1 = new CompositionGraph();

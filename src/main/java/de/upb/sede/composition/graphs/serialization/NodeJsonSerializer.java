@@ -174,6 +174,8 @@ final class NodeJsonSerializer {
 		jsonObject.put(NODETYPE, NODETYPE_TRANSMIT_DATA);
 		jsonObject.put("targetaddress", sendDataNode.getTargetAddress());
 		jsonObject.put("fieldname", sendDataNode.getSendingFieldName());
+		jsonObject.put("caster", sendDataNode.getCaster());
+		jsonObject.put("semantic-type", sendDataNode.getSemanticTypename());
 		return jsonObject;
 	}
 
@@ -181,7 +183,11 @@ final class NodeJsonSerializer {
 		assert node.get(NODETYPE).equals(NODETYPE_TRANSMIT_DATA);
 		String targetaddress = (String) node.get("targetaddress");
 		String fieldname = (String) node.get("fieldname");
-		TransmitDataNode n = new TransmitDataNode(fieldname, targetaddress);
+		String caster = (String) node.get("caster");
+		String semanticType = (String) node.get("semantic-type");
+
+		TransmitDataNode n = new TransmitDataNode(fieldname, targetaddress, caster, semanticType);
+
 		return n;
 	}
 

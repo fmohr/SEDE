@@ -12,6 +12,13 @@ public abstract class ExecutionPool {
 	 */
 	private final Map<String, Execution> execMap = new HashMap<>();
 
+	private final ExecutorConfiguration config;
+
+	public ExecutionPool(ExecutorConfiguration config){
+		this.config = config;
+
+	}
+
 
 	private final Observer<Execution> executionObserver = Observer.lambda(	Execution::hasExecutionFinished,  // when an execution is done, ..
 			exec -> removeExecution(exec.getExecutionId())); // remove it.

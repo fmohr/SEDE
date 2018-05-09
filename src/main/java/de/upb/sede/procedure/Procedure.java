@@ -17,7 +17,7 @@ public abstract class Procedure implements Runnable{
 		try{
 			this.process(task);
 		} catch(Exception ex) {
-			task.setError(ex);
+//			task.setError(ex);
 			task.failed();
 		}
 		finally {

@@ -33,44 +33,41 @@ public abstract class Execution {
 	private final Set<Task> waitingTasks = new HashSet<>();
 
 	/**
-	 * Set of tasks that are waiting for an event to happen. E.g. waiting for input data.
+	 * Set of tasks that are waiting for an event to happen. E.g. waiting for input
+	 * data.
 	 */
 	private final Set<Task> unfinishedTasks = new HashSet<>();
 
 	/**
-	 * Observes all tasks.
-	 * Once an observed task changes its state to resolved, this observer will put it into the waiting-Tasks set.
+	 * Observes all tasks. Once an observed task changes its state to resolved, this
+	 * observer will put it into the waiting-Tasks set.
 	 */
-	private final Observer<Task> unresolvedTasksObserver = Observer.lambda(
-			Task::isWaiting, this::taskResolved);
+	private final Observer<Task> unresolvedTasksObserver = Observer.lambda(Task::isWaiting, this::taskResolved);
 
 	/**
-	 * Observes all tasks.
-	 * Once an observed task has started processing, it will be removed from the waiting-Tasks set.
+	 * Observes all tasks. Once an observed task has started processing, it will be
+	 * removed from the waiting-Tasks set.
 	 */
-	private final Observer<Task> waitingTasksObserver = Observer.lambda(
-			Task::hasStarted, this::taskStarted);
+	private final Observer<Task> waitingTasksObserver = Observer.lambda(Task::hasStarted, this::taskStarted);
 
 	/**
-	 * Observes all tasks.
-	 * Once an observed tasks has finished (success or fail), it will be removed from the unfinished-Tasks set.
+	 * Observes all tasks. Once an observed tasks has finished (success or fail), it
+	 * will be removed from the unfinished-Tasks set.
 	 */
-	private final Observer<Task> unfinishedTasksObserver = Observer.lambda(
-			Task::hasFinished, this::taskFinished);
+	private final Observer<Task> unfinishedTasksObserver = Observer.lambda(Task::hasFinished, this::taskFinished);
 
 	/**
-	 * An array of any observer of this class that needs to observe every task added to this execution object.
-	 * See: addTask method.
+	 * An array of any observer of this class that needs to observe every task added
+	 * to this execution object. See: addTask method.
 	 */
-	@SuppressWarnings("unchecked")
-	private final Observer<Task> observersOfAllTasks[] = (Observer<Task>[]) new Object[]{
-			waitingTasksObserver,
-			unresolvedTasksObserver,
-			unfinishedTasksObserver};
+	private final List<Observer<Task>> observersOfAllTasks = Arrays.asList(waitingTasksObserver,
+			unresolvedTasksObserver, unfinishedTasksObserver);
 
 	/**
 	 * Default constructor.
-	 * @param execId identifier of this execution.
+	 * 
+	 * @param execId
+	 *            identifier of this execution.
 	 */
 
 	public Execution(String execId) {
@@ -81,16 +78,16 @@ public abstract class Execution {
 	}
 
 	/**
-	 * Create a new client request based on the request info.
-	 * This method does not affect the state of the execution object.
+	 * Create a new client request based on the request info. This method does not
+	 * affect the state of the execution object.
 	 *
 	 * @return a new client request.
 	 */
 	public abstract BasicClientRequest createClientRequest(Object requestInfo);
 
 	/**
-	 * Create new new service instance handle with the given service instance.
-	 * This method does not affect the state of the execution object.
+	 * Create new new service instance handle with the given service instance. This
+	 * method does not affect the state of the execution object.
 	 *
 	 * @return a new ServiceInstanceHandle
 	 */
@@ -106,8 +103,8 @@ public abstract class Execution {
 	}
 
 	/**
-	 * Returns an observable instance of the execution state.
-	 * This state updates whenever a task finishes.
+	 * Returns an observable instance of the execution state. This state updates
+	 * whenever a task finishes.
 	 *
 	 * @return observable of the execution.
 	 */
@@ -124,10 +121,9 @@ public abstract class Execution {
 		return environment;
 	}
 
-
 	/*
-	 * private methods to allow synchronized access to the 2 set of tasks.
-	 * Used by the observers.
+	 * private methods to allow synchronized access to the 2 set of tasks. Used by
+	 * the observers.
 	 */
 
 	private final synchronized void taskResolved(Task task) {
@@ -147,11 +143,16 @@ public abstract class Execution {
 	}
 
 	/**
-	 * Adds the given task to this execution. <p>
-	 * If it wasn't added before, it will be added to the set of unfinished tasks and waiting tasks.  <p>
-	 * Additionally every observer in <tt>observersOfAllTasks</tt> will observe the given task.
+	 * Adds the given task to this execution.
+	 * <p>
+	 * If it wasn't added before, it will be added to the set of unfinished tasks
+	 * and waiting tasks.
+	 * <p>
+	 * Additionally every observer in <tt>observersOfAllTasks</tt> will observe the
+	 * given task.
 	 *
-	 * @param task assigned to this execution.
+	 * @param task
+	 *            assigned to this execution.
 	 */
 	synchronized void addTask(Task task) {
 		if (task.getExecution() != this) {
@@ -170,8 +171,8 @@ public abstract class Execution {
 	}
 
 	/**
-	 * Returns true if the set of all unfinished tasks is empty or the execution was interrupted.
-	 * IF true, the set returned by getWaitingTasks is empty too.
+	 * Returns true if the set of all unfinished tasks is empty or the execution was
+	 * interrupted. IF true, the set returned by getWaitingTasks is empty too.
 	 *
 	 * @return true if the execution has finished
 	 */
@@ -180,8 +181,8 @@ public abstract class Execution {
 	}
 
 	/**
-	 * Returns true if the execution was interrupted.
-	 * IF true, the set returned by getWaitingTasks is empty too.
+	 * Returns true if the execution was interrupted. IF true, the set returned by
+	 * getWaitingTasks is empty too.
 	 *
 	 * @return true if the execution was interrupted
 	 */
@@ -189,19 +190,19 @@ public abstract class Execution {
 		return interrupted;
 	}
 
-
 	/**
-	 * Returns true if the set of all unfinished tasks is empty.
-	 * IF true, the set returned by getWaitingTasks is empty too.
+	 * Returns true if the set of all unfinished tasks is empty. IF true, the set
+	 * returned by getWaitingTasks is empty too.
 	 *
 	 * @return true all tasks of this execution is done.
 	 */
 	synchronized boolean zeroTasksRemaining() {
-		return  unfinishedTasks.isEmpty();
+		return unfinishedTasks.isEmpty();
 	}
 
 	/**
-	 * Returns the set of tasks that are waiting to be executed at the time the query is made.
+	 * Returns the set of tasks that are waiting to be executed at the time the
+	 * query is made.
 	 *
 	 * @return set of waiting tasks
 	 */
@@ -217,8 +218,7 @@ public abstract class Execution {
 		return newTask;
 	}
 
-
-	synchronized void interrupt(){
+	synchronized void interrupt() {
 		interrupted = true;
 		state.update(this);
 	}

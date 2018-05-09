@@ -1,6 +1,6 @@
 package de.upb.sede.procedure;
 
-public class StaticMathReflectionTestfile {
+public class StaticMathTestfile {
 	public static int addPrimitive(int a, int b) {
 		return a + b;
 	}

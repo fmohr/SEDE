@@ -108,7 +108,7 @@ public class InstructionProcedure extends Procedure {
 				returnSEDEObject = new SEDEObject(ServiceInstanceHandle.class.getName(), serviceInstanceHandle);
 			} else {
 				Method methodToBeCalled = contextClass.getMethod(nodeAttributes.getMethod(), parameterClasses);
-				String returnType = methodToBeCalled.getReturnType().getName();
+				String returnType =nodeAttributes.getLeftsidefieldType();
 				Object contextServiceInstance;
 				if (nodeAttributes.isContextAFieldname()) {
 					SEDEObject serviceInstace = environment.get(nodeAttributes.getContext());
@@ -348,7 +348,7 @@ public class InstructionProcedure extends Procedure {
 		private final String context;
 		private final String fmInstruction;
 		private final List<String> parameters;
-
+		private final String leftSideFieldType;
 		@SuppressWarnings("unchecked")
 		public InstructionNodeAttributes(Task task) {
 			Map<String, Object> parameters = task.getAttributes();
@@ -360,6 +360,11 @@ public class InstructionProcedure extends Procedure {
 			this.context = (String) parameters.get("context");
 			this.fmInstruction = (String) parameters.get("fmInstruction");
 			this.parameters = (List<String>) parameters.get("params");
+			this.leftSideFieldType = (String) parameters.get("leftsidefieldtype");
+		}
+
+		public String getLeftsidefieldType() {
+			return leftSideFieldType;
 		}
 
 		public String getFmInstruction() {

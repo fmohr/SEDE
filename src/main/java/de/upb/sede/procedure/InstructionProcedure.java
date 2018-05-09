@@ -1,6 +1,7 @@
 package de.upb.sede.procedure;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -14,7 +15,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.jar.Attributes;
-import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -70,7 +70,7 @@ public class InstructionProcedure extends Procedure {
 	public InstructionProcedure(Task task) {
 		super(task);
 	}
-	
+
 	@Override
 	public void process(Task task) {
 		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
@@ -145,7 +145,7 @@ public class InstructionProcedure extends Procedure {
 		return result;
 	}
 
-	private Class<?>[] getParameterClasses(List<String> paramTypes, String methodName, Class<?> contextClass)
+	private Class<?>[] getParameterClasses(List<String> paramTypes, String invocationName, Class<?> contextClass)
 			throws ClassNotFoundException, NoSuchMethodException {
 		List<Class<?>> inOrderClasses = new ArrayList<>(paramTypes.size());
 		/*
@@ -153,9 +153,9 @@ public class InstructionProcedure extends Procedure {
 		 * iterated over all possible methods (matching name and parameter count).
 		 */
 		if (parameterIncludeConstantType(paramTypes)) {
-			Method methodThatMatchesSignatureWithConstantTypes = getMethodThatMatchesSignatureWithConstantTypes(
-					paramTypes, methodName, contextClass);
-			for (Class<?> clazz : methodThatMatchesSignatureWithConstantTypes.getParameterTypes()) {
+			Executable executableThatMatchesSignatureWithConstantTypes = getExecutableThatMatchesSignatureWithConstantTypes(
+					paramTypes, invocationName, contextClass);
+			for (Class<?> clazz : executableThatMatchesSignatureWithConstantTypes.getParameterTypes()) {
 				inOrderClasses.add(clazz);
 			}
 		} else {
@@ -181,29 +181,29 @@ public class InstructionProcedure extends Procedure {
 		return false;
 	}
 
-	private Method getMethodThatMatchesSignatureWithConstantTypes(List<String> paramTypes, String calledMethodName,
-			Class<?> contextClass) throws NoSuchMethodException {
-		Method[] contextClassMethods = contextClass.getMethods();
-		List<Method> methodsThatMatchMethodNameAndParamCount = new ArrayList<>();
-		for (Method method : contextClassMethods) {
-			if (nameAndParamCountMatches(paramTypes, calledMethodName, method)) {
-				methodsThatMatchMethodNameAndParamCount.add(method);
+	private Executable getExecutableThatMatchesSignatureWithConstantTypes(List<String> paramTypes,
+			String calledMethodName, Class<?> contextClass) throws NoSuchMethodException {
+		Executable[] contextClassExecutables = contextClass.getMethods();
+		List<Executable> executablesThatMatchMethodNameAndParamCount = new ArrayList<>();
+		for (Executable executable : contextClassExecutables) {
+			if (nameAndParamCountMatches(paramTypes, calledMethodName, executable)) {
+				executablesThatMatchMethodNameAndParamCount.add(executable);
 			}
 		}
-		for (Method method : methodsThatMatchMethodNameAndParamCount) {
-			if (matchesSignature(paramTypes, method)) {
-				return method;
+		for (Executable executable : executablesThatMatchMethodNameAndParamCount) {
+			if (matchesSignature(paramTypes, executable)) {
+				return executable;
 			}
 		}
 		throw new NoSuchMethodException();
 	}
 
-	private boolean nameAndParamCountMatches(List<String> paramTypes, String calledMethodName, Method method) {
-		return method.getName().equals(calledMethodName) && method.getParameterCount() == paramTypes.size();
+	private boolean nameAndParamCountMatches(List<String> paramTypes, String calledMethodName, Executable executable) {
+		return executable.getName().equals(calledMethodName) && executable.getParameterCount() == paramTypes.size();
 	}
 
-	private boolean matchesSignature(List<String> calledParamTypes, Method methodToCheck) {
-		List<String> methodParameterClasses = getParamTypes(methodToCheck);
+	private boolean matchesSignature(List<String> calledParamTypes, Executable executableToCheck) {
+		List<String> methodParameterClasses = getParamTypes(executableToCheck);
 		Map<Integer, String> realTypesInCall = getIndicesOfRealTypes(calledParamTypes);
 		// If the real types do not match then this method is no candidate for the
 		// called parameters.
@@ -282,12 +282,12 @@ public class InstructionProcedure extends Procedure {
 		return getConstantTypeNames().contains(type);
 	}
 
-	private List<String> getParamTypes(Method methodToCheck) {
-		List<String> methodParamTypes = new ArrayList<>();
-		for (Class<?> clazz : methodToCheck.getParameterTypes()) {
-			methodParamTypes.add(clazz.getName());
+	private List<String> getParamTypes(Executable executable) {
+		List<String> executableParamTypes = new ArrayList<>();
+		for (Class<?> clazz : executable.getParameterTypes()) {
+			executableParamTypes.add(clazz.getName());
 		}
-		return methodParamTypes;
+		return executableParamTypes;
 	}
 
 	private Set<String> getConstantTypeNames() {

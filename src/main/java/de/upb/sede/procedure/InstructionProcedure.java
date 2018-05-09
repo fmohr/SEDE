@@ -25,7 +25,7 @@ import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
 
-public class InstructionProcedure implements Procedure {
+public class InstructionProcedure extends Procedure {
 	private static final Set<String> CLASSES_FOR_NUMBER = new HashSet<String>() {
 		private static final long serialVersionUID = 1940970420361621252L;
 
@@ -67,6 +67,10 @@ public class InstructionProcedure implements Procedure {
 
 	static Logger logger = LogManager.getLogger(InstructionProcedure.class);
 
+	public InstructionProcedure(Task task) {
+		super(task);
+	}
+	
 	@Override
 	public void process(Task task) {
 		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();

@@ -10,8 +10,12 @@ import java.text.ParseException;
 import java.util.Map;
 import java.util.Objects;
 
-public class ParseConstantProcedure implements Procedure {
+public class ParseConstantProcedure extends Procedure {
 
+	ParseConstantProcedure(Task task) {
+		super(task);
+	}
+	
 	@SuppressWarnings("unchecked")
 	public void process(Task task) {
 		String constant = (String) task.getAttributes().get("constant");

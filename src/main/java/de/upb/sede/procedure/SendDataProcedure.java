@@ -4,7 +4,14 @@ import de.upb.sede.core.SEDEObject;
 import de.upb.sede.exec.Task;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
 
-public class SendDataProcedure implements Procedure {
+public class SendDataProcedure extends Procedure {
+
+	
+	
+	public SendDataProcedure(Task task) {
+		super(task);
+		// TODO Auto-generated constructor stub
+	}
 
 	@Override
 	public void process(Task task) {

@@ -7,9 +7,11 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.jar.Attributes;
 
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutionEnvironment;
+import de.upb.sede.composition.graphs.nodes.ParseConstantNode.ConstantType;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.exec.Task;
 
@@ -60,10 +63,12 @@ public class InstructionProcedure implements Procedure {
 				Object contextServiceInstance;
 				if (nodeAttributes.isContextAFieldname()) {
 					SEDEObject serviceInstace = environment.get(nodeAttributes.getContext());
-					if(!serviceInstace.isServiceInstance()){
-						throw new RuntimeException("BUG: trying to operate on service of type: " + contextType + " instead the SEDE Object is " + serviceInstace.getType());
+					if (!serviceInstace.isServiceInstance()) {
+						throw new RuntimeException("BUG: trying to operate on service of type: " + contextType
+								+ " instead the SEDE Object is " + serviceInstace.getType());
 					}
-					contextServiceInstance = ((ServiceInstanceHandle) serviceInstace.getObject()).getServiceInstance().get();
+					contextServiceInstance = ((ServiceInstanceHandle) serviceInstace.getObject()).getServiceInstance()
+							.get();
 				} else {
 					contextServiceInstance = null;
 				}
@@ -100,8 +105,16 @@ public class InstructionProcedure implements Procedure {
 		return inOrderClassesArray;
 	}
 
-	private boolean parameterIncludeConstantType(Collection<SEDEObject> values) {
-		// TODO Auto-generated method stub
+	private boolean parameterIncludeConstantType(Collection<SEDEObject> sedeObjectParameters) {
+		ConstantType[] constantTypes = ConstantType.values();
+		Set<String> constantTypeNames = new HashSet<>();
+		for (ConstantType type : constantTypes) {
+			constantTypeNames.add(type.toString());
+		}
+		for (SEDEObject parameter : sedeObjectParameters) {
+			if (constantTypeNames.contains(parameter.getType()))
+				return true;
+		}
 		return false;
 	}
 

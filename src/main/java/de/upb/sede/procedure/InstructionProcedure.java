@@ -6,21 +6,23 @@ import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.jar.Attributes;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.composition.graphs.nodes.ParseConstantNode.ConstantType;
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.ServiceInstanceHandle;
+import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
 
 public class InstructionProcedure implements Procedure {
@@ -31,12 +33,6 @@ public class InstructionProcedure implements Procedure {
 		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
 		InstructionNodeAttributes nodeAttributes = new InstructionNodeAttributes(task);
 		try {
-			// Get SEDEObjects of the parameters that the method is called with.
-			Map<String, SEDEObject> parameterObjects = getParameterObjects(nodeAttributes.getParameters(), environment);
-			// Get the class of the parameters.
-			Class<?>[] parameterClasses = getParameterClasses(parameterObjects, nodeAttributes.getMethod());
-			// Get the values of the parameters
-			Object[] parameterValues = getParameterValues(parameterObjects);
 			// Get class to be called.
 			String contextType;
 			if (!nodeAttributes.isContextAFieldname()) {
@@ -46,6 +42,16 @@ public class InstructionProcedure implements Procedure {
 				contextType = environment.get(nodeAttributes.getContext()).getType();
 			}
 			Class<?> contextClass = Class.forName(contextType);
+
+			// Get SEDEObjects of the parameters that the method is called with.
+			Map<String, SEDEObject> parameterObjects = getParameterObjectsInOrder(nodeAttributes.getParameters(),
+					environment);
+			// Get the class of the parameters.
+			List<String> parameterTypes = getParameterTypes(parameterObjects);
+			Class<?>[] parameterClasses = getParameterClasses(parameterTypes, nodeAttributes.getMethod(), contextClass);
+			// Get the values of the parameters
+			Object[] parameterValues = getParameterValues(parameterObjects);
+
 			/*
 			 * When the call is a constructor call the the constructor is being reflected
 			 * and called.
@@ -83,19 +89,34 @@ public class InstructionProcedure implements Procedure {
 		}
 	}
 
-	private Map<String, SEDEObject> getParameterObjects(List<String> parameters, ExecutionEnvironment environment) {
+	private List<String> getParameterTypes(Map<String, SEDEObject> parameterObjects) {
+		List<String> paramTypes = new ArrayList<>();
+		parameterObjects.values().stream().forEach(sedeObj -> paramTypes.add(sedeObj.getType()));
+		return paramTypes;
+	}
+
+	private Map<String, SEDEObject> getParameterObjectsInOrder(List<String> parameters,
+			ExecutionEnvironment environment) {
 		Map<String, SEDEObject> result = new LinkedHashMap<>(parameters.size());
 		parameters.forEach(varName -> result.put(varName, environment.get(varName)));
 		return result;
 	}
 
-	private Class<?>[] getParameterClasses(Map<String, SEDEObject> parameterObjects, String methodName)
-			throws ClassNotFoundException {
-		List<Class<?>> inOrderClasses = new ArrayList<>(parameterObjects.size());
-		if (parameterIncludeConstantType(parameterObjects.values())) {
+	private Class<?>[] getParameterClasses(List<String> paramTypes, String methodName, Class<?> contextClass)
+			throws ClassNotFoundException, NoSuchMethodException {
+		List<Class<?>> inOrderClasses = new ArrayList<>(paramTypes.size());
+		/*
+		 * If there are ConstantTypes in the signature of the method to be called, it's
+		 * iterated over all possible methods (matching name and parameter count).
+		 */
+		if (parameterIncludeConstantType(paramTypes)) {
+			Method methodThatMatchesSignatureWithConstantTypes = getMethodThatMatchesSignatureWithConstantTypes(
+					paramTypes, methodName, contextClass);
+			for (Class<?> clazz : methodThatMatchesSignatureWithConstantTypes.getParameterTypes()) {
+				inOrderClasses.add(clazz);
+			}
 		} else {
-			for (SEDEObject sedeObject : parameterObjects.values()) {
-				String classType = sedeObject.getType();
+			for (String classType : paramTypes) {
 				Class<?> clazz = Class.forName(classType);
 				inOrderClasses.add(clazz);
 			}
@@ -105,14 +126,73 @@ public class InstructionProcedure implements Procedure {
 		return inOrderClassesArray;
 	}
 
-	private boolean parameterIncludeConstantType(Collection<SEDEObject> sedeObjectParameters) {
+	private Method getMethodThatMatchesSignatureWithConstantTypes(List<String> paramTypes, String calledMethodName,
+			Class<?> contextClass) throws NoSuchMethodException {
+		Method[] contextClassMethods = contextClass.getMethods();
+		List<Method> methodsThatMatchMethodNameAndParamCount = new ArrayList<>();
+		for (Method method : contextClassMethods) {
+			if (nameAndParamCountMatches(paramTypes, calledMethodName, method)) {
+				methodsThatMatchMethodNameAndParamCount.add(method);
+			}
+		}
+		for (Method method : methodsThatMatchMethodNameAndParamCount) {
+			if (matchesSignature(paramTypes, method)) {
+				return method;
+			}
+		}
+		throw new NoSuchMethodException();
+	}
+
+	private boolean nameAndParamCountMatches(List<String> paramTypes, String calledMethodName, Method method) {
+		return method.getName().equals(calledMethodName) && method.getParameterCount() == paramTypes.size();
+	}
+
+	private boolean matchesSignature(List<String> calledParamTypes, Method methodToCheck) {
+		Class<?>[] methodParameters = methodToCheck.getParameterTypes();
+		Map<Integer, String> indicesOfRealTypesInCall = getIndicesOfRealTypes(calledParamTypes);
+		// If the real types do not match then this method is no candidate for the
+		// called parameters.
+		for (Entry<Integer, String> indexTypePairInCall : indicesOfRealTypesInCall.entrySet()) {
+			if (methodParameters[indexTypePairInCall.getKey()].getName() != indexTypePairInCall.getValue()) {
+				return false;
+			}
+		}
+		Map<Integer, String> indicesOfConstantTypesInCall = getInverseIndicesTypes(indicesOfRealTypesInCall,
+				calledParamTypes);
+		return false;
+	}
+
+	private Map<Integer, String> getInverseIndicesTypes(Map<Integer, String> indicesOfRealTypesInCall,
+			List<String> calledParamTypes) {
+		Map<Integer, String> mapOfParameters = new HashMap<>();
+		for (int i = 0, size = calledParamTypes.size(); i < size; i++) {
+			mapOfParameters.put(i, calledParamTypes.get(i));
+		}
+		
+		return null;
+	}
+
+	private Map<Integer, String> getIndicesOfRealTypes(List<String> calledParamTypes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	private List<String> getParamTypes(Method methodToCheck) {
+		List<String> methodParamTypes = new ArrayList<>();
+		for (Class<?> clazz : methodToCheck.getParameterTypes()) {
+			methodParamTypes.add(clazz.getName());
+		}
+		return methodParamTypes;
+	}
+
+	private boolean parameterIncludeConstantType(List<String> paramTypes) {
 		ConstantType[] constantTypes = ConstantType.values();
 		Set<String> constantTypeNames = new HashSet<>();
 		for (ConstantType type : constantTypes) {
 			constantTypeNames.add(type.toString());
 		}
-		for (SEDEObject parameter : sedeObjectParameters) {
-			if (constantTypeNames.contains(parameter.getType()))
+		for (String paramType : paramTypes) {
+			if (constantTypeNames.contains(paramType))
 				return true;
 		}
 		return false;

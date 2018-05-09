@@ -26,6 +26,45 @@ import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
 
 public class InstructionProcedure implements Procedure {
+	private static final Set<String> CLASSES_FOR_NUMBER = new HashSet<String>() {
+		private static final long serialVersionUID = 1940970420361621252L;
+
+		{
+			add("boolean.class");
+			add("java.lang.Boolean");
+			add("byte.class");
+			add("java.lang.Byte");
+			add("char.class");
+			add("java.lang.Character");
+			add("short.class");
+			add("java.lang.Short");
+			add("int.class");
+			add("java.lang.Integer");
+			add("long.class");
+			add("java.lang.Long");
+			add("float.class");
+			add("java.lang.Float");
+			add("double.class");
+			add("java.lang.Double");
+		}
+	};
+	private static final Set<String> CLASSES_FOR_BOOL = new HashSet<String>() {
+		private static final long serialVersionUID = 8951983401200957911L;
+
+		{
+			add("boolean.class");
+			add("java.lang.Boolean");
+		}
+	};
+
+	private static final Set<String> CLASSES_FOR_STRING = new HashSet<String>() {
+		private static final long serialVersionUID = 1581782927839968915L;
+
+		{
+			add("java.lang.String");
+		}
+	};
+
 	static Logger logger = LogManager.getLogger(InstructionProcedure.class);
 
 	@Override
@@ -121,9 +160,21 @@ public class InstructionProcedure implements Procedure {
 				inOrderClasses.add(clazz);
 			}
 		}
+		/*
+		 * Convert the list to an array.
+		 */
 		Class<?>[] inOrderClassesArray = new Class<?>[inOrderClasses.size()];
 		inOrderClassesArray = inOrderClasses.toArray(inOrderClassesArray);
 		return inOrderClassesArray;
+	}
+
+	private boolean parameterIncludeConstantType(List<String> paramTypes) {
+		Set<String> constantTypes = getConstantTypeNames();
+		for (String paramType : paramTypes) {
+			if (constantTypes.contains(paramType))
+				return true;
+		}
+		return false;
 	}
 
 	private Method getMethodThatMatchesSignatureWithConstantTypes(List<String> paramTypes, String calledMethodName,
@@ -148,33 +199,83 @@ public class InstructionProcedure implements Procedure {
 	}
 
 	private boolean matchesSignature(List<String> calledParamTypes, Method methodToCheck) {
-		Class<?>[] methodParameters = methodToCheck.getParameterTypes();
-		Map<Integer, String> indicesOfRealTypesInCall = getIndicesOfRealTypes(calledParamTypes);
+		List<String> methodParameterClasses = getParamTypes(methodToCheck);
+		Map<Integer, String> realTypesInCall = getIndicesOfRealTypes(calledParamTypes);
 		// If the real types do not match then this method is no candidate for the
 		// called parameters.
-		for (Entry<Integer, String> indexTypePairInCall : indicesOfRealTypesInCall.entrySet()) {
-			if (methodParameters[indexTypePairInCall.getKey()].getName() != indexTypePairInCall.getValue()) {
+		for (Entry<Integer, String> indexTypePairInCall : realTypesInCall.entrySet()) {
+			if (methodParameterClasses.get(indexTypePairInCall.getKey()) != indexTypePairInCall.getValue()) {
 				return false;
 			}
 		}
-		Map<Integer, String> indicesOfConstantTypesInCall = getInverseIndicesTypes(indicesOfRealTypesInCall,
-				calledParamTypes);
-		return false;
+		Map<Integer, String> constantTypesInCall = getInverseIndicesTypes(realTypesInCall, calledParamTypes);
+		for (Entry<Integer, String> constantType : constantTypesInCall.entrySet()) {
+			String constantTypeName = constantType.getValue();
+			int indexInSignature = constantType.getKey();
+			String classNameOnIndex = methodParameterClasses.get(indexInSignature);
+			switch (constantTypeName) {
+			case "Number":
+				if (isNumber(classNameOnIndex)) {
+					continue;
+				}
+			case "String":
+				if (isString(classNameOnIndex)) {
+					continue;
+				}
+			case "Bool":
+				if (isBool(classNameOnIndex)) {
+					continue;
+				}
+			case "NULL":
+				if (isNULL(classNameOnIndex)) {
+					continue;
+				}
+			}
+			return false;
+		}
+		return true;
 	}
 
-	private Map<Integer, String> getInverseIndicesTypes(Map<Integer, String> indicesOfRealTypesInCall,
+	private boolean isNULL(String classNameOnIndex) {
+		return true;
+	}
+
+	private boolean isBool(String classNameOnIndex) {
+		return CLASSES_FOR_BOOL.contains(classNameOnIndex);
+	}
+
+	private boolean isString(String classNameOnIndex) {
+		return CLASSES_FOR_STRING.contains(classNameOnIndex);
+	}
+
+	private boolean isNumber(String classNameOnIndex) {
+		return CLASSES_FOR_NUMBER.contains(classNameOnIndex);
+	}
+
+	private Map<Integer, String> getInverseIndicesTypes(Map<Integer, String> realTypesInCall,
 			List<String> calledParamTypes) {
 		Map<Integer, String> mapOfParameters = new HashMap<>();
 		for (int i = 0, size = calledParamTypes.size(); i < size; i++) {
 			mapOfParameters.put(i, calledParamTypes.get(i));
 		}
-		
-		return null;
+		for (Integer index : realTypesInCall.keySet()) {
+			mapOfParameters.remove(index);
+		}
+		return mapOfParameters;
 	}
 
 	private Map<Integer, String> getIndicesOfRealTypes(List<String> calledParamTypes) {
-		// TODO Auto-generated method stub
-		return null;
+		Map<Integer, String> result = new HashMap<>();
+		for (int i = 0; i < calledParamTypes.size(); i++) {
+			String type = calledParamTypes.get(i);
+			if (!isConstantType(type))
+				result.put(i, type);
+		}
+		return result;
+	}
+
+	private boolean isConstantType(String type) {
+		return getConstantTypeNames().contains(type);
 	}
 
 	private List<String> getParamTypes(Method methodToCheck) {
@@ -185,17 +286,13 @@ public class InstructionProcedure implements Procedure {
 		return methodParamTypes;
 	}
 
-	private boolean parameterIncludeConstantType(List<String> paramTypes) {
+	private Set<String> getConstantTypeNames() {
 		ConstantType[] constantTypes = ConstantType.values();
 		Set<String> constantTypeNames = new HashSet<>();
 		for (ConstantType type : constantTypes) {
 			constantTypeNames.add(type.toString());
 		}
-		for (String paramType : paramTypes) {
-			if (constantTypeNames.contains(paramType))
-				return true;
-		}
-		return false;
+		return constantTypeNames;
 	}
 
 	private Object[] getParameterValues(Map<String, SEDEObject> parameterObjects) {

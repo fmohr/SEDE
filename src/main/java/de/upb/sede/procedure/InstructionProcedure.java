@@ -25,9 +25,14 @@ import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
 
-public class InstructionProcedure implements Procedure {
+public class InstructionProcedure extends Procedure {
+	
 	static Logger logger = LogManager.getLogger(InstructionProcedure.class);
 
+	public InstructionProcedure(Task task) {
+		super(task);
+	}
+	
 	@Override
 	public void process(Task task) {
 		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();

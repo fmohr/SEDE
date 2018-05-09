@@ -22,11 +22,11 @@ public class InstructionNode extends BaseNode {
 
 	private String fmInstruction;
 	private String leftsideFieldname;
+	private String leftsideFieldtype;
 	private String host;
 	private String context;
 	private boolean contextIsField;
 	private String method;
-
 	/**
 	 * Parameters for method or constructor invocation. The order of the parameters
 	 * has to be kept unchanged. May either contain field-names referencing to data
@@ -44,8 +44,10 @@ public class InstructionNode extends BaseNode {
 	public InstructionNode(String basedOnInstruction, String context, String method) {
 		this.fmInstruction = Objects.requireNonNull(basedOnInstruction);
 		leftsideFieldname = unassignedValue;
+		leftsideFieldtype = unassignedValue;
 		host = unassignedValue;
 		parameterFields = Collections.EMPTY_LIST;
+		parameterTypes = Collections.EMPTY_LIST;
 		this.context = Objects.requireNonNull(context);
 		this.method = Objects.requireNonNull(method);
 		this.contextIsField = false;
@@ -76,7 +78,26 @@ public class InstructionNode extends BaseNode {
 
 	public void unsetLeftSideField() {
 		leftsideFieldname = unassignedValue;
+		leftsideFieldtype = unassignedValue;
 	}
+
+	public String getLeftSideFieldtype() {
+		if (!isAssignedLeftSideFieldname()) {
+			throw new UnassignedFieldException(this, "leftSideFieldtype");
+		}
+		return leftsideFieldtype;
+	}
+
+	public void setLeftSideFieldtype(String type) {
+		this.leftsideFieldtype = Objects.requireNonNull(type);
+	}
+
+	public boolean isAssignedLeftSideFieldtype() {
+		return leftsideFieldtype != unassignedValue;
+	}
+
+
+
 
 	public String getHost() {
 		if (!isAssignedHost()) {

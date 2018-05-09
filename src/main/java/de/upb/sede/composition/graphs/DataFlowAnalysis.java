@@ -512,6 +512,7 @@ public class DataFlowAnalysis {
 			FieldType leftSideFieldType = new FieldType(instNode, leftsideFieldname, typeClass, typeName,
 					true);
 			addFieldType(leftSideFieldType);
+			instNode.setLeftSideFieldtype(typeName);
 		}
 	}
 

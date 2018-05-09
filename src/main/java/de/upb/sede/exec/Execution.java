@@ -20,6 +20,8 @@ public abstract class Execution {
 
 	private final Observable<Execution> state;
 
+	private final Observable<Task> newTask = new Observable<Task>();
+
 	/**
 	 * Flag that indicates that the execution has been interrupted.
 	 */
@@ -65,6 +67,11 @@ public abstract class Execution {
 			waitingTasksObserver,
 			unresolvedTasksObserver,
 			unfinishedTasksObserver};
+
+	/**
+	 * Default constructor.
+	 * @param execId identifier of this execution.
+	 */
 
 	public Execution(String execId) {
 		Objects.requireNonNull(execId);
@@ -125,14 +132,18 @@ public abstract class Execution {
 
 	private final synchronized void taskResolved(Task task) {
 		waitingTasks.add(task);
+		newTask.update(task);
+		state.update(this);
 	}
 
 	private final synchronized void taskStarted(Task task) {
 		waitingTasks.remove(task);
+		state.update(this);
 	}
 
 	private final synchronized void taskFinished(Task task) {
 		unfinishedTasks.remove(task);
+		state.update(this);
 	}
 
 	/**
@@ -169,6 +180,27 @@ public abstract class Execution {
 	}
 
 	/**
+	 * Returns true if the execution was interrupted.
+	 * IF true, the set returned by getWaitingTasks is empty too.
+	 *
+	 * @return true if the execution was interrupted
+	 */
+	synchronized boolean hasExecutionBeenInterrupted() {
+		return interrupted;
+	}
+
+
+	/**
+	 * Returns true if the set of all unfinished tasks is empty.
+	 * IF true, the set returned by getWaitingTasks is empty too.
+	 *
+	 * @return true all tasks of this execution is done.
+	 */
+	synchronized boolean zeroTasksRemaining() {
+		return  unfinishedTasks.isEmpty();
+	}
+
+	/**
 	 * Returns the set of tasks that are waiting to be executed at the time the query is made.
 	 *
 	 * @return set of waiting tasks
@@ -179,6 +211,16 @@ public abstract class Execution {
 		} else {
 			return Collections.unmodifiableSet(waitingTasks);
 		}
+	}
+
+	Observable<Task> getNewTasksObservable() {
+		return newTask;
+	}
+
+
+	synchronized void interrupt(){
+		interrupted = true;
+		state.update(this);
 	}
 
 	static class ExecutionInv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {

@@ -12,7 +12,7 @@ import java.util.List;
  */
 public class Observable<T> {
 
-	private Observable(){
+	public Observable(){
 
 	}
 

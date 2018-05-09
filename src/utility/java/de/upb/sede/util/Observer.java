@@ -68,6 +68,11 @@ public interface Observer<T>{
 	 * @return a new Oberver.
 	 */
 	public static <T>Observer<T> lambda(Function<T, Boolean> condition, Consumer<T> notification){
+		return lambda(condition, notification, t -> true);
+	}
+	/**
+	 */
+	public static <T>Observer<T> lambda(Function<T, Boolean> condition, Consumer<T> notification, Function<T, Boolean> removeCondition){
 		return new Observer<T>() {
 			@Override
 			public boolean notifyCondition(T t) {
@@ -78,6 +83,9 @@ public interface Observer<T>{
 			public void notification(T t) {
 				notification.accept(t);
 			}
+
+			@Override
+			public boolean removeAfterNotification(T t) { return removeCondition.apply(t); }
 		};
 	}
 }

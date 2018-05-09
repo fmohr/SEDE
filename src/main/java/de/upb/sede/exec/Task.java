@@ -15,6 +15,8 @@ public final class Task implements Observer<Task>{
 
 	private final Set<Task> dependencies = new HashSet<>();
 
+	private Optional<Exception> error = Optional.empty();
+
 	/*
 	 * Flags which define the state of the task.
 	 */
@@ -141,37 +143,52 @@ public final class Task implements Observer<Task>{
 	}
 
 	public void setResolved(){
-		resolved = true;
-		taskState.update(this);
+		if(!isResolved()) {
+			resolved = true;
+			taskState.update(this);
+		}
 	}
 
 	public void setStarted(){
-		resolved = true;
-		started = true;
-		taskState.update(this);
+		if(!hasStarted()) {
+			resolved = true;
+			started = true;
+			taskState.update(this);
+		}
 	}
 
 	public void setDone(){
-		resolved = true;
-		started = true;
-		doneRunning = true;
-		taskState.update(this);
+		if(!isDoneRunning()) {
+			resolved = true;
+			started = true;
+			doneRunning = true;
+			taskState.update(this);
+		}
 	}
 
 	public void succeeded(){
-		resolved = true;
-		started = true;
-		doneRunning = true;
-		succeeded = true;
-		taskState.update(this);
+		if(!hasSucceeded()) {
+			resolved = true;
+			started = true;
+			doneRunning = true;
+			succeeded = true;
+			taskState.update(this);
+		}
 	}
 
 	public void failed(){
-		resolved = true;
-		started = true;
-		doneRunning = true;
-		failed = true;
-		taskState.update(this);
+		if(!hasFailed()) {
+			resolved = true;
+			started = true;
+			doneRunning = true;
+			failed = true;
+			taskState.update(this);
+		}
+	}
+
+
+	public void setError(Exception ex) {
+		error = Optional.of(ex);
 	}
 
 
@@ -182,4 +199,5 @@ public final class Task implements Observer<Task>{
 	public final int hashCode() {
 		return super.hashCode();
 	}
+
 }

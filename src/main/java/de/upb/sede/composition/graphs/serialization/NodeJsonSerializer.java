@@ -102,6 +102,7 @@ final class NodeJsonSerializer {
 		jsonObject.put("context", instructionNode.getContext());
 		jsonObject.put("method", instructionNode.getMethod());
 		jsonObject.put("params", instructionNode.getParameterFields());
+		jsonObject.put("param-types", instructionNode.getParameterTypes());
 		jsonObject.put("is-service-construction", instructionNode.isServiceConstruct());
 		jsonObject.put("is-context-a-fieldname", instructionNode.isContextAFieldname());
 		return jsonObject;
@@ -117,6 +118,7 @@ final class NodeJsonSerializer {
 		boolean contextisfield = (Boolean) node.get("is-context-a-fieldname");
 		String method = (String) node.get("method");
 		List params = (JSONArray) node.get("params");
+		List paramTypes = (JSONArray) node.get("param-types");
 
 		InstructionNode instructionNode = new InstructionNode(fmInstruction, context, method);
 		instructionNode.setContextIsField(contextisfield);
@@ -129,6 +131,7 @@ final class NodeJsonSerializer {
 		if (params != null) {
 			instructionNode.setParameterFields(params);
 		}
+		instructionNode.setParameterType(paramTypes);
 		return instructionNode;
 	}
 

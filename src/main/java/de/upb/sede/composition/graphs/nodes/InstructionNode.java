@@ -10,12 +10,11 @@ import de.upb.sede.exceptions.UnassignedFieldException;
 import de.upb.sede.gateway.ResolveInfo;
 
 /**
- * 
  * @author aminfaez
- *
- *         This node represents an instruction in a graphComposition which was
- *         parsed from a fmInstruction. This can either be a method invocation
- *         or a Service creation.
+ * <p>
+ * This node represents an instruction in a graphComposition which was
+ * parsed from a fmInstruction. This can either be a method invocation
+ * or a Service creation.
  */
 public class InstructionNode extends BaseNode {
 
@@ -34,11 +33,12 @@ public class InstructionNode extends BaseNode {
 	 * or else constants like numbers or strings. e.g.: ["a1", "b1", "10", "\"a\""]
 	 * The first two are fieldnames. The third is a constant number. The fourth is a
 	 * constant string.
-	 * 
-	 * 
+	 * <p>
+	 * <p>
 	 * The list itself is read-only.
 	 */
 	private List<String> parameterFields;
+	private List<String> parameterTypes;
 
 	@SuppressWarnings("unchecked")
 	public InstructionNode(String basedOnInstruction, String context, String method) {
@@ -125,6 +125,17 @@ public class InstructionNode extends BaseNode {
 
 	public List<String> getParameterFields() {
 		return parameterFields;
+	}
+
+	public List<String> getParameterTypes() {
+		if (parameterTypes == null) {
+			throw new RuntimeException("BUG: Parameter types is null.");
+		}
+		return parameterTypes;
+	}
+
+	public void setParameterType(List<String> parameterTypes) {
+		this.parameterTypes = parameterTypes;
 	}
 
 	/**

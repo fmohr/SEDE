@@ -25,7 +25,7 @@ public abstract class Procedure implements Runnable{
 		}
 	}
 
-	private Procedure procedureForTask(Task task) {
+	public static Procedure procedureForTask(Task task) {
 		String taskName = task.getTaskName();
 		String procedureClassName = taskName + "Procedure";
 		Class<?> procedureClass;
@@ -37,7 +37,7 @@ public abstract class Procedure implements Runnable{
 
 		Procedure procedure;
 		try {
-			procedure = (Procedure) procedureClass.getConstructor().newInstance();
+			procedure = (Procedure) procedureClass.getConstructor(Task.class).newInstance(task);
 		} catch (ReflectiveOperationException ex) {
 			throw new RuntimeException("Cannot instantiate procedure: " + procedureClassName);
 		}

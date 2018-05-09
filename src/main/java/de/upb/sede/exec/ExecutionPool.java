@@ -8,13 +8,13 @@ import java.util.Map;
 public abstract class ExecutionPool {
 	/**
 	 * be aware that the implementation of the map is not thread safe.
-	 * So don't expose the variable and only operate on it synchronously.
+	 * So don't expose the map itself and only operate on it in synchronous methods.
 	 */
 	private final Map<String, Execution> execMap = new HashMap<>();
 
 
 	private final Observer<Execution> executionObserver = Observer.lambda(	Execution::hasExecutionFinished,  // when an execution is done, ..
-																			exec -> removeExecution(exec.getExecutionId())); // remove it.
+			exec -> removeExecution(exec.getExecutionId())); // remove it.
 
 	public synchronized Execution getOrCreateExecution(String execId) {
 		Execution exec = execMap.get(execId);
@@ -50,11 +50,4 @@ public abstract class ExecutionPool {
 	 */
 	protected abstract Execution executionSupplier(String execId);
 
-	/**
-	 * Scheduler of tasks.
-	 * This method decides which task is to be processed next.
-	 *
-	 * @return The task that is to be processed next.
-	 */
-	public abstract Task getNextTask();
 }

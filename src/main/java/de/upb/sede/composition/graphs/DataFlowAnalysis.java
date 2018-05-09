@@ -226,6 +226,7 @@ public class DataFlowAnalysis {
 			methodInfo = resolveInfo.getClassesConfiguration().classInfo(contextClasspath).methodInfo(methodname);
 		}
 		List<String> requiredParamTypes = methodInfo.paramTypes();
+		instNode.setParameterType(requiredParamTypes);
 
 		if (instParamFieldnames.size() != requiredParamTypes.size()) {
 			int stated = instParamFieldnames.size();

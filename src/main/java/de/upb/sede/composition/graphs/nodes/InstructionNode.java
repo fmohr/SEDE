@@ -1,13 +1,10 @@
 package de.upb.sede.composition.graphs.nodes;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
 import de.upb.sede.exceptions.UnassignedFieldException;
-import de.upb.sede.gateway.ResolveInfo;
 
 /**
  * @author aminfaez
@@ -169,43 +166,6 @@ public class InstructionNode extends BaseNode {
 		} else {
 			this.parameterFields = Collections.unmodifiableList(parameterFields);
 		}
-	}
-
-	@Override
-	public boolean producesField(String fieldname, ResolveInfo resolveInfo) {
-		if (isAssignedLeftSideFieldname() && getLeftSideFieldname().equals(fieldname)) {
-			return true;
-		} else if (isContextAFieldname() && getContext().equals(fieldname)) {
-			/*
-			 * The method changes the state of the service:
-			 */
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	@Override
-	public Collection<String> consumingFields(ResolveInfo resolveInfo) {
-		List<String> consumingFields = new ArrayList<>();
-		if (isContextAFieldname()) {
-			consumingFields.add(getContext());
-		}
-		consumingFields.addAll(getParameterFields());
-		return consumingFields;
-
-	}
-
-	@Override
-	public Collection<String> producingFields(ResolveInfo resolveInfo) {
-		ArrayList<String> producingFields = new ArrayList<>();
-		if (isAssignedLeftSideFieldname()) {
-			producingFields.add(getLeftSideFieldname());
-		}
-		if (isContextAFieldname()) {
-			producingFields.add(getContext());
-		}
-		return producingFields;
 	}
 
 	/**

@@ -45,7 +45,7 @@ public class DataFlowAnalysis {
 
 	public DataFlowAnalysis(ResolveInfo resolveInfo, List<InstructionNode> instructionNodes) {
 		this.resolveInfo = Objects.requireNonNull(resolveInfo);
-		clientExecution = new Execution(resolveInfo.getClientInfo().getClientExecutor());
+		clientExecution = new Execution(resolveInfo.getClientExecutor());
 		executions = new ArrayList<>();
 		executions.add(clientExecution);
 		dataTransmissionGraph = new CompositionGraph();
@@ -589,7 +589,7 @@ public class DataFlowAnalysis {
 			return exec;
 
 		} else {
-			throw new RuntimeException("Cannot resolve executor with host: \"" + executorHost + "\". No such executor is registered.");
+			throw new RuntimeException("BUG: Cannot resolve executor with host: \"" + executorHost + "\". No such executor is registered.");
 		}
 	}
 
@@ -604,8 +604,8 @@ public class DataFlowAnalysis {
 	private AcceptDataNode clientAcceptInput(String fieldname) {
 		AcceptDataNode accept = new AcceptDataNode(fieldname);
 		assignNodeToExec(accept, clientExecution);
-		String clientHost = clientExecution.getExecutor().getHostAddress();
-		TransmitDataNode transmit = TransmitDataNode.rawTransmit(fieldname, clientHost);
+		Map<String, String> clientContactInfo = clientExecution.getExecutor().getContactInfo();
+		TransmitDataNode transmit = TransmitDataNode.rawTransmit(fieldname, clientContactInfo);
 
 		addTransmission(transmit, accept);
 
@@ -616,15 +616,15 @@ public class DataFlowAnalysis {
 		String fieldname = datafield.getFieldname();
 		AcceptDataNode accept = new AcceptDataNode(fieldname);
 		assignNodeToExec(accept, targetExec);
-		String targetAddress = targetExec.getExecutor().getHostAddress();
+		Map<String, String> contactInfo = targetExec.getExecutor().getContactInfo();
 		TransmitDataNode transmit;
 		if(datafield.isRealData()) {
 			String caster = resolveInfo.getTypeConfig().getOnthologicalCaster(datafield.getTypeName());
 			String semanticType = resolveInfo.getTypeConfig().getOnthologicalType(datafield.getTypeName());
-			transmit = new TransmitDataNode(fieldname, targetAddress, caster, semanticType);
+			transmit = new TransmitDataNode(fieldname, contactInfo, caster, semanticType);
 		}
 		else {
-			transmit = TransmitDataNode.rawTransmit(fieldname, targetAddress);
+			transmit = TransmitDataNode.rawTransmit(fieldname, contactInfo);
 		}
 
 		assignNodeToExec(transmit, sourceExec);

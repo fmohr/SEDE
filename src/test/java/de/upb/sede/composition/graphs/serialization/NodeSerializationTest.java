@@ -1,8 +1,11 @@
 package de.upb.sede.composition.graphs.serialization;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import de.upb.sede.composition.graphs.nodes.*;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -12,12 +15,6 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 import de.upb.sede.composition.FMCompositionParser;
-import de.upb.sede.composition.graphs.nodes.InstructionNode;
-import de.upb.sede.composition.graphs.nodes.ParseConstantNode;
-import de.upb.sede.composition.graphs.nodes.AcceptDataNode;
-import de.upb.sede.composition.graphs.nodes.CastTypeNode;
-import de.upb.sede.composition.graphs.nodes.TransmitDataNode;
-import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
 import de.upb.sede.util.FileUtil;
 
 /**
@@ -39,30 +36,39 @@ public class NodeSerializationTest {
 		 */
 		InstructionNode instNode1 = new InstructionNode("some.service.Library::method1()", "some.service.Library",
 				"method1");
+//		FileUtil.writeStringToFile(getJSONResourcePath("instNode1"), njs.toJSON(instNode1).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("instNode1"), njs.toJSON(instNode1).toJSONString(), true);
 
 		InstructionNode instNode2 = new InstructionNode("a=some.service.Library::method1()", "some.service.Library",
 				"method1");
 		instNode2.setLeftSideFieldname("a");
+		instNode2.setLeftSideFieldtype("Number");
+//		FileUtil.writeStringToFile(getJSONResourcePath("instNode2"), njs.toJSON(instNode2).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("instNode2"), njs.toJSON(instNode2).toJSONString(), true);
 
 		InstructionNode instNode3 = new InstructionNode("localhost:10/some.service.Library::method1()",
 				"some.service.Library", "method1");
 		instNode3.setHost("localhost:10");
+//		FileUtil.writeStringToFile(getJSONResourcePath("instNode3"), njs.toJSON(instNode3).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("instNode3"), njs.toJSON(instNode3).toJSONString(), true);
 
 		InstructionNode instNode4 = new InstructionNode("some.service.Library::method1({1,true,b})",
 				"some.service.Library", "method1");
 		List<String> params = Arrays.asList("1", "true", "b");
 		instNode4.setParameterFields(params);
+		List<String> param_types = Arrays.asList("Number", "Bool", "List");
+		instNode4.setParameterType(param_types);
+//		FileUtil.writeStringToFile(getJSONResourcePath("instNode4"), njs.toJSON(instNode4).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("instNode4"), njs.toJSON(instNode4).toJSONString(), true);
 
 		InstructionNode instNode5 = new InstructionNode("some.service.Library::__construct()", "some.service.Library",
 				"__construct");
+//		FileUtil.writeStringToFile(getJSONResourcePath("instNode5"), njs.toJSON(instNode5).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("instNode5"), njs.toJSON(instNode5).toJSONString(), true);
 
 		InstructionNode instNode6 = new InstructionNode("someFieldname::method1()", "someFieldname", "method1");
 		instNode6.setContextIsField(true);
+//		FileUtil.writeStringToFile(getJSONResourcePath("instNode6"), njs.toJSON(instNode6).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("instNode6"), njs.toJSON(instNode6).toJSONString(), true);
 
 		/*
@@ -123,12 +129,16 @@ public class NodeSerializationTest {
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testSendDataNodeSerializations() throws JSONException {
+	public void testTransmitNodeSerializations() throws JSONException {
 		NodeJsonSerializer njs = new NodeJsonSerializer();
 		/*
 		 * Test serialization
 		 */
-		TransmitDataNode sendDataNode = new TransmitDataNode("a", "10.10.10.10:100", "caster1", "semtype1");
+		Map<String, String> contactInfo = basicContactInfo("id0", "10.10.10.10:100");
+		TransmitDataNode sendDataNode = new TransmitDataNode("a", contactInfo, "caster1", "semtype1");
+
+		String path = getJSONResourcePath("transmitDataNode");
+//		FileUtil.writeStringToFile(path, njs.toJSON(sendDataNode).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("transmitDataNode"), njs.toJSON(sendDataNode).toJSONString(), true);
 
 		/*
@@ -137,10 +147,29 @@ public class NodeSerializationTest {
 		TransmitDataNode sendDataNode_ = (TransmitDataNode) njs.fromJSON(getJSONResourceAsObject("transmitDataNode"));
 		assertEquals(sendDataNode, sendDataNode_);
 	}
+	@SuppressWarnings("unchecked")
+	@Test
+	public void testSendGraphNodeSerializations() throws JSONException {
+		NodeJsonSerializer njs = new NodeJsonSerializer();
+		/*
+		 * Test serialization
+		 */
+		Map<String, String> contactInfo = basicContactInfo("id0", "10.10.10.10:100");
+		SendGraphNode sendGraphNode = new SendGraphNode("<graph serialization>", contactInfo);
+		String path = getJSONResourcePath("sendGraphNode");
+		FileUtil.writeStringToFile(path, njs.toJSON(sendGraphNode).toJSONString());
+		JSONAssert.assertEquals(getJSONResource("sendGraphNode"), njs.toJSON(sendGraphNode).toJSONString(), true);
+
+		/*
+		 * Test deserialization
+		 */
+		SendGraphNode sendGraphNode_ = (SendGraphNode) njs.fromJSON(getJSONResourceAsObject("sendGraphNode"));
+		assertEquals(sendGraphNode, sendGraphNode_);
+	}
 
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testReceiveDataNodeSerializations() throws JSONException {
+	public void testAcceptNodeSerializations() throws JSONException {
 		NodeJsonSerializer njs = new NodeJsonSerializer();
 		/*
 		 * Test serialization
@@ -235,8 +264,17 @@ public class NodeSerializationTest {
 
 	public void assertEquals(TransmitDataNode expected, TransmitDataNode actual) {
 		Assert.assertEquals(expected.getSendingFieldName(), actual.getSendingFieldName());
-		Assert.assertEquals(expected.getTargetAddress(), actual.getTargetAddress());
+		Assert.assertEquals(expected.getContactInfo(), actual.getContactInfo());
+		Assert.assertEquals(expected.getCaster(), actual.getCaster());
+		Assert.assertEquals(expected.getSemanticTypename(), actual.getSemanticTypename());
 	}
+
+
+	private void assertEquals(SendGraphNode expected, SendGraphNode actual) {
+		Assert.assertEquals(expected.getGraph(), actual.getGraph());
+		Assert.assertEquals(expected.getContactInfo(), actual.getContactInfo());
+	}
+
 
 	public void assertEquals(ServiceInstanceStorageNode expected, ServiceInstanceStorageNode actual) {
 		Assert.assertEquals(expected.getServiceClasspath(), actual.getServiceClasspath());
@@ -262,4 +300,10 @@ public class NodeSerializationTest {
 		return FileUtil.readFileAsString(path);
 	}
 
+	private Map<String, String> basicContactInfo (String id, String host){
+		Map<String, String> contactInfo = new HashMap<>();
+		contactInfo.put("id", id);
+		contactInfo.put("host-address", host);
+		return contactInfo;
+	}
 }

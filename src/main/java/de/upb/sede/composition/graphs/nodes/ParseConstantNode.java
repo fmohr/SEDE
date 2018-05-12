@@ -1,12 +1,8 @@
 package de.upb.sede.composition.graphs.nodes;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
 
 import de.upb.sede.composition.FMCompositionParser;
-import de.upb.sede.gateway.ResolveInfo;
 
 public class ParseConstantNode extends BaseNode {
 
@@ -39,27 +35,12 @@ public class ParseConstantNode extends BaseNode {
 		this.type = ConstantType.TYPE_FOR(constantValue);
 	}
 
-	@Override
-	public boolean producesField(String fieldname, ResolveInfo resolveInfo) {
-		return constantValue.equals(fieldname);
-	}
-
 	public String getConstant() {
 		return constantValue;
 	}
 
 	public ConstantType getType() {
 		return this.type;
-	}
-
-	@Override
-	public Collection<String> consumingFields(ResolveInfo resolveInfo) {
-		return Collections.EMPTY_LIST;
-	}
-
-	@Override
-	public Collection<String> producingFields(ResolveInfo resolveInfo) {
-		return Arrays.asList(getConstant());
 	}
 
 	public String toString() {

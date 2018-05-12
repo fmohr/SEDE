@@ -1,5 +1,10 @@
 {
     "fieldname": "a",
-    "targetaddress": "10.10.10.10:100",
-    "nodetype": "TransmitData"
+    "caster": "caster1",
+    "nodetype": "TransmitData",
+    "semantic-type": "semtype1",
+    "contact-info": {
+        "id": "id0",
+        "host-address": "10.10.10.10:100"
+    }
 }

@@ -15,7 +15,7 @@ public class ResolveInfo {
 	private InputFields inputFields;
 	private ResolvePolicy resolvePolicy;
 	private ExecutorCoordinator executorCoordinator;
-	private ClientInfo clientInfo;
+	private ExecutorHandle clientExecutor;
 	private OnthologicalTypeConfig typeConfig;
 
 	public ClassesConfig getClassesConfiguration() {
@@ -50,12 +50,12 @@ public class ResolveInfo {
 		this.executorCoordinator = executorCoordinator;
 	}
 
-	public ClientInfo getClientInfo() {
-		return clientInfo;
+	public ExecutorHandle getClientExecutor() {
+		return clientExecutor;
 	}
 
-	public void setClientInfo(ClientInfo clientInfo) {
-		this.clientInfo = clientInfo;
+	public void setClientExecutor(ExecutorHandle clientExecutor) {
+		this.clientExecutor = clientExecutor;
 	}
 
 	public OnthologicalTypeConfig getTypeConfig() {

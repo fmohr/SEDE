@@ -1,9 +1,6 @@
 package de.upb.sede.requests;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -12,28 +9,35 @@ import de.upb.sede.util.JsonSerializable;
 
 public class ExecutorRegistration implements JsonSerializable {
 
-	private Optional<String> executorHost;
+	private Optional<Map<String, String>> contactInformation = Optional.empty();
 
-	private Optional<List<String>> capabilities;
 
-	private Optional<List<String>> supportedServices;
+	private Optional<List<String>> capabilities = Optional.empty();
+
+	private Optional<List<String>> supportedServices = Optional.empty();
 
 	public ExecutorRegistration() {
-
 	}
 
-	public ExecutorRegistration(String myHost, List<String> capabilities, List<String> supportedServices) {
+	public ExecutorRegistration(Map<String, String> contactInfo, List<String> capabilities, List<String> supportedServices) {
 		super();
-		this.executorHost = Optional.of(myHost);
-		this.capabilities = Optional.of(capabilities);
-		this.supportedServices = Optional.ofNullable(supportedServices);
+		setContactInformation(contactInfo);
+		setCapabilities(capabilities);
+		setSupportedServices(supportedServices);
 	}
 
 	/**
 	 * @return the executor host address
 	 */
-	public String getHost() {
-		return executorHost.get();
+	public String getId() {
+		return contactInformation.get().get("id");
+	}
+
+	/**
+	 * @return the executor contact information.
+	 */
+	public Map<String, String> getContactInfo() {
+		return contactInformation.get();
 	}
 
 	/**
@@ -50,25 +54,34 @@ public class ExecutorRegistration implements JsonSerializable {
 		return supportedServices.get();
 	}
 
+
+
+	public void setContactInformation(Map<String, String> contactInformation) {
+		this.contactInformation = Optional.of(contactInformation);
+	}
+
+	public void setCapabilities(List<String> capabilities) {
+		this.capabilities = Optional.of(Optional.ofNullable(capabilities).orElse(Collections.EMPTY_LIST));
+	}
+
+	public void setSupportedServices(List<String> supportedServices) {
+		this.supportedServices = Optional.of(Optional.ofNullable(supportedServices).orElse(Collections.EMPTY_LIST));
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJson() {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("host", getHost());
-		JSONArray jsonCapabilites = new JSONArray();
-		jsonCapabilites.addAll(getCapabilities());
-		jsonObject.put("capabilities", jsonCapabilites);
-		JSONArray jsonSupportedServices = new JSONArray();
-		jsonSupportedServices.addAll(getSupportedServices());
-		jsonObject.put("supported-services", jsonSupportedServices);
+		jsonObject.put("contact-info", getContactInfo());
+		jsonObject.put("capabilities", getCapabilities());
+		jsonObject.put("supported-services", getSupportedServices());
 		return jsonObject;
 	}
 
 	@Override
 	public void fromJson(Map<String, Object> data) {
-		executorHost = Optional.of((String) data.get("host"));
-		capabilities = Optional.of(new ArrayList<>((List<String>) data.get("capabilities")));
-		supportedServices = Optional.of(new ArrayList<>((List<String>) data.get("supported-services")));
+		setContactInformation((Map<String, String> )data.get("contact-info"));
+		setCapabilities((List<String>) data.get("capabilities"));
+		setSupportedServices((List<String>) data.get("supported-services"));
 	}
-
 }

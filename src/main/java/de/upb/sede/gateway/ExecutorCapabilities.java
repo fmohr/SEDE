@@ -28,6 +28,10 @@ public class ExecutorCapabilities {
 		}
 	}
 
+	public List<String> supportedServices(){
+		return Collections.unmodifiableList(supportedServiceClasses);
+	}
+
 	public boolean supportsServiceClass(String serviceClasspath) {
 		return supportedServiceClasses.contains(serviceClasspath);
 	}

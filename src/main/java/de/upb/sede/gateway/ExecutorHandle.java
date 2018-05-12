@@ -1,41 +1,50 @@
 package de.upb.sede.gateway;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class ExecutorHandle {
-	private final static String UNKNOWN_EXEC_ADDRESS = "UNKNOWN";
-	private final static ExecutorHandle UNKNOWN_EXEC = new ExecutorHandle(UNKNOWN_EXEC_ADDRESS);
 
-	private final String hostAddress;
+	private final Map<String, String>  contactInfo;
+	private final String executorId;
 	private final ExecutorCapabilities capabilities;
 
-	public ExecutorHandle(String hostAddress, String... executorCapabilities) {
-		this.hostAddress = Objects.requireNonNull(hostAddress);
+	public ExecutorHandle(String executorId, Map<String, String>  contactInfo, String... executorCapabilities) {
+		this.executorId = Objects.requireNonNull(executorId);
+		this.contactInfo = Objects.requireNonNull(contactInfo);
 		this.capabilities = new ExecutorCapabilities(executorCapabilities);
-	}
-
-	public static ExecutorHandle BASIC_JAVA_GATEWAY(String hostAddress) {
-		return new ExecutorHandle(hostAddress, ExecutorCapabilities.javalibs);
-	}
-
-	public static ExecutorHandle UNKNOWN_EXECUTOR() {
-		return UNKNOWN_EXEC;
 	}
 
 	public ExecutorCapabilities getExecutionerCapabilities() {
 		return capabilities;
 	}
 
-	public String getHostAddress() {
-		return hostAddress;
+
+	public boolean equalsId(String id) {
+		return getExecutorId().equals(id);
 	}
 
-	public boolean equalsHostAddress(String execHostAddress) {
-		return hostAddress.equals(execHostAddress);
+	public String getExecutorId(){
+		return  executorId;
 	}
 
-	public boolean unknownExecutor() {
-		return getHostAddress().equals(UNKNOWN_EXEC_ADDRESS);
+	public Map<String, String> getContactInfo(){
+		return contactInfo;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		ExecutorHandle that = (ExecutorHandle) o;
+
+		return getExecutorId().equals(that.getExecutorId());
+	}
+
+	@Override
+	public int hashCode() {
+		return getExecutorId().hashCode();
 	}
 
 }

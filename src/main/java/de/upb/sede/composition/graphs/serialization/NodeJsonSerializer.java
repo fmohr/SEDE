@@ -183,7 +183,7 @@ final class NodeJsonSerializer {
 	public JSONObject TransmitDataNodeToJSON(TransmitDataNode sendDataNode) {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(NODETYPE, NODETYPE_TRANSMIT_DATA);
-		jsonObject.put("targetaddress", sendDataNode.getTargetAddress());
+		jsonObject.put("contact-info", sendDataNode.getContactInfo());
 		jsonObject.put("fieldname", sendDataNode.getSendingFieldName());
 		jsonObject.put("caster", sendDataNode.getCaster());
 		jsonObject.put("semantic-type", sendDataNode.getSemanticTypename());
@@ -192,12 +192,12 @@ final class NodeJsonSerializer {
 
 	public TransmitDataNode TransmitDataNodeFromJSON(Map<Object, Object> node) {
 		assert node.get(NODETYPE).equals(NODETYPE_TRANSMIT_DATA);
-		String targetaddress = (String) node.get("targetaddress");
+		Map<String, String> contactInfo = (Map<String, String>) node.get("contact-info");
 		String fieldname = (String) node.get("fieldname");
 		String caster = (String) node.get("caster");
 		String semanticType = (String) node.get("semantic-type");
 
-		TransmitDataNode n = new TransmitDataNode(fieldname, targetaddress, caster, semanticType);
+		TransmitDataNode n = new TransmitDataNode(fieldname, contactInfo, caster, semanticType);
 
 		return n;
 	}
@@ -206,16 +206,16 @@ final class NodeJsonSerializer {
 	public JSONObject SendGraphNodeToJSON(SendGraphNode sendGraphNode) {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(NODETYPE, NODETYPE_SEND_GRAPH);
-		jsonObject.put("targetaddress", sendGraphNode.getExecutorsAddress());
+		jsonObject.put("contact-info", sendGraphNode.getContactInfo());
 		jsonObject.put("graph", sendGraphNode.getGraph());
 		return jsonObject;
 	}
 
 	public SendGraphNode SendGraphNodeFromJSON(Map<Object, Object> node) {
 		assert node.get(NODETYPE).equals(NODETYPE_SEND_GRAPH);
-		String execAddress = (String) node.get("targetaddress");
+		Object contactInfo = (Object) node.get("contact-info");
 		String graph = (String) node.get("graph");
-		SendGraphNode n = new SendGraphNode(graph, execAddress);
+		SendGraphNode n = new SendGraphNode(graph, contactInfo);
 		return n;
 	}
 

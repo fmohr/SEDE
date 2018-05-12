@@ -29,13 +29,13 @@ public class ExecutorCoordinator {
 		return executors.get(randomIndex);
 	}
 
-	public synchronized boolean hasExecutor(String execHostAddress) {
-		return executors.stream().anyMatch(handle -> handle.equalsHostAddress(execHostAddress));
+	public synchronized boolean hasExecutor(String id) {
+		return executors.stream().anyMatch(h -> h.equalsId(id));
 	}
 
 	public synchronized ExecutorHandle getExecutorFor(String host) {
 		for (ExecutorHandle executor : executors) {
-			if (executor.getHostAddress().equals(host)) {
+			if (executor.getExecutorId().equals(host)) {
 				return executor;
 			}
 		}

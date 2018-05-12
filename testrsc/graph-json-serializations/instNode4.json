@@ -1,5 +1,11 @@
 {
     "nodetype": "Instruction",
+    "param-types": [
+        "Number",
+        "Bool",
+        "List"
+    ],
+    "leftsidefieldtype": null,
     "method": "method1",
     "is-service-construction": false,
     "leftsidefieldname": null,

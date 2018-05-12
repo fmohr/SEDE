@@ -1,6 +1,8 @@
 package de.upb.sede.composition.graphs.serialization;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.json.JSONException;
 import org.json.simple.JSONObject;
@@ -32,7 +34,7 @@ public class GraphSerializationTest {
 		InstructionNode instNodeAdd = new InstructionNode("d=c::add({a,b})", "a", "b");
 		instNodeAdd.setLeftSideFieldname("d");
 		instNodeCon.setParameterFields(Arrays.asList("a", "b"));
-		TransmitDataNode sendToClient = new TransmitDataNode("d", "clientdomain.com", "caster1" , "semtype1");
+		TransmitDataNode sendToClient = new TransmitDataNode("d", basicContactInfo("id0", "some.host:1000"), "caster1" , "semtype1");
 		ServiceInstanceStorageNode saveSI = new ServiceInstanceStorageNode(false, "c", "de.upb.SEDE.testlib.A");
 
 		CompositionGraph graph1 = new CompositionGraph();
@@ -82,6 +84,13 @@ public class GraphSerializationTest {
 	private String getJSONResource(String jsonFileName) {
 		String path = getJSONResourcePath(jsonFileName);
 		return FileUtil.readFileAsString(path);
+	}
+
+	private Map<String, String> basicContactInfo (String id, String host){
+		Map<String, String> contactInfo = new HashMap<>();
+		contactInfo.put("id", id);
+		contactInfo.put("host-address", host);
+		return contactInfo;
 	}
 
 }

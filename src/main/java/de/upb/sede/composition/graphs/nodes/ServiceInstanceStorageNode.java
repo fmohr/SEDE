@@ -2,10 +2,7 @@ package de.upb.sede.composition.graphs.nodes;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Objects;
-
-import de.upb.sede.gateway.ResolveInfo;
 
 public class ServiceInstanceStorageNode extends BaseNode {
 
@@ -42,29 +39,6 @@ public class ServiceInstanceStorageNode extends BaseNode {
 
 	public ServiceInstanceStorageNode(boolean isLoadInstruction, String fieldname, String serviceclasspath) {
 		this(isLoadInstruction, true, fieldname, serviceclasspath);
-	}
-
-	@Override
-	public boolean producesField(String fieldname, ResolveInfo resolveInfo) {
-		return isLoadInstruction && this.serviceInstanceFieldname.equals(fieldname);
-	}
-
-	@Override
-	public Collection<String> consumingFields(ResolveInfo resolveInfo) {
-		if (isLoadInstruction) {
-			return Collections.EMPTY_LIST;
-		} else {
-			return consumerProducerField;
-		}
-	}
-
-	@Override
-	public Collection<String> producingFields(ResolveInfo resolveInfo) {
-		if (!isLoadInstruction) {
-			return Collections.EMPTY_LIST;
-		} else {
-			return consumerProducerField;
-		}
 	}
 
 	public String toString() {

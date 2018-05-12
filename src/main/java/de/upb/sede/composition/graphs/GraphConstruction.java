@@ -5,12 +5,10 @@ import java.util.Collections;
 import java.util.List;
 
 import de.upb.sede.composition.FMCompositionParser;
-import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.graphs.nodes.SendGraphNode;
 import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
 import de.upb.sede.gateway.ResolveInfo;
-import de.upb.sede.util.FilteredIterator;
 
 public class GraphConstruction {
 
@@ -51,7 +49,7 @@ public class GraphConstruction {
 				continue;
 			}
 			String jsonGraph = gjs.toJson(exec.getGraph()).toJSONString();
-			SendGraphNode sendGraph = new SendGraphNode(jsonGraph, exec.getExecutor().getHostAddress());
+			SendGraphNode sendGraph = new SendGraphNode(jsonGraph, exec.getExecutor().getContactInfo());
 			resolvedClientGraph.addNode(sendGraph);
 		}
 //		for(DependencyEdge transmitEdge : GraphTraversal.iterateEdges(getTransmissionGraph())) {

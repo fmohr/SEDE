@@ -8,23 +8,17 @@ import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.composition.graphs.nodes.SendGraphNode;
 import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
-import de.upb.sede.gateway.ClientInfo;
 import de.upb.sede.gateway.Gateway;
 import de.upb.sede.requests.ExecutorRegistration;
-import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.util.FileUtil;
-import de.upb.sede.util.GraphToDot;
 import de.upb.sede.util.GraphToDotNidi;
 
 public class DemoOfResolveCompositionGraph {
@@ -42,11 +36,17 @@ public class DemoOfResolveCompositionGraph {
 	@BeforeClass
 	public static void setupGateway() {
 		gateway = new Gateway(getTestClassConfig(), getTestTypeConfig());
-		ExecutorRegistration registration1 = new ExecutorRegistration("exec_1", Arrays.asList("java"),
+
+		Map<String, String> contactInfo = new HashMap<>();
+		contactInfo.put("id", "exec_1");
+		ExecutorRegistration registration1 = new ExecutorRegistration(contactInfo, Arrays.asList("java"),
 				Arrays.asList("demo.math.Addierer"));
-		ExecutorRegistration registration2 = new ExecutorRegistration("exec_2", Arrays.asList("java"),
-				Arrays.asList("demo.math.Gerade"));
 		gateway.register(registration1);
+
+		contactInfo = new HashMap<>();
+		contactInfo.put("id", "exec_2");
+		ExecutorRegistration registration2 = new ExecutorRegistration(contactInfo, Arrays.asList("java"),
+				Arrays.asList("demo.math.Gerade"));
 		gateway.register(registration2);
 	}
 	
@@ -87,12 +87,13 @@ public class DemoOfResolveCompositionGraph {
 //			}
 			
 			GraphConstruction gc = gateway.constructGraphs(resolveRequest);
-			resolvedGraphs.put(resolveRequest.getClientHost(), gc.getResolvedClientGraph());
+			String clientId =  resolveRequest.getClientExecutorRegistration().getId();
+			resolvedGraphs.put(clientId, gc.getResolvedClientGraph());
 			for(Execution exec : gc.getExecutions()) {
-				if(exec.getExecutor().getHostAddress().equals(resolveRequest.getClientHost())) {
+				if(exec.getExecutor().getExecutorId().equals(clientId)) {
 					continue;
 				}
-				resolvedGraphs.put(exec.getExecutor().getHostAddress(), exec.getGraph());
+				resolvedGraphs.put(exec.getExecutor().getExecutorId(), exec.getGraph());
 			}
 			
 			

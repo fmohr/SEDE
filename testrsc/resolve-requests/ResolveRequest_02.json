@@ -1,5 +1,7 @@
 {
-    "clientHost": "client1",
+    "client-executor": {
+        "contact-info": { "id": "client executor" }
+    },
     "composition": [
         "adder1 = demo.math.Addierer::__construct({100})",
         "n1 = adder1::addier({in3})",

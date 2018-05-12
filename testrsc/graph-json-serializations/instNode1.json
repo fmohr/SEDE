@@ -1,5 +1,7 @@
 {
     "nodetype": "Instruction",
+    "param-types": [],
+    "leftsidefieldtype": null,
     "method": "method1",
     "is-service-construction": false,
     "leftsidefieldname": null,

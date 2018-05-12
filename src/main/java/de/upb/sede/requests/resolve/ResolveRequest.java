@@ -5,28 +5,34 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import de.upb.sede.requests.ExecutorRegistration;
 import org.json.simple.JSONObject;
 
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.requests.Request;
 
+import javax.swing.text.html.Option;
+
 public class ResolveRequest extends Request {
 	private Optional<String> composition;
 	private Optional<ResolvePolicy> policy;
 	private Optional<InputFields> inputFields;
+	private Optional<ExecutorRegistration> clientExecutor;
 
 	public ResolveRequest() {
 		this.composition = Optional.empty();
 		this.policy = Optional.of(new ResolvePolicy());
 		this.inputFields = Optional.empty();
+		this.clientExecutor = Optional.empty();
 	}
 
 	public ResolveRequest(String requestId, String clientHost, String composition, ResolvePolicy policy,
-			InputFields inputFields) {
+			InputFields inputFields, ExecutorRegistration clientExecutor) {
 		super(requestId, clientHost);
 		this.composition = Optional.of(composition);
 		this.policy = Optional.of(policy);
 		this.inputFields = Optional.of(inputFields);
+		this.clientExecutor = Optional.of(clientExecutor);
 	}
 
 	public boolean hasComposition() {
@@ -47,6 +53,11 @@ public class ResolveRequest extends Request {
 		return policy.get();
 	}
 
+
+	public ExecutorRegistration getClientExecutorRegistration() {
+		return clientExecutor.get();
+	}
+
 	public InputFields getInputFields() {
 		return inputFields.get();
 	}
@@ -58,6 +69,7 @@ public class ResolveRequest extends Request {
 		jsonObject.put("composition", FMCompositionParser.separateInstructions(getComposition()));
 		jsonObject.put("policy", getPolicy().toJson());
 		jsonObject.put("input-fields", getInputFields().toJson());
+		jsonObject.put("client-executor", getClientExecutorRegistration().toJson());
 		return jsonObject;
 	}
 
@@ -77,10 +89,17 @@ public class ResolveRequest extends Request {
 
 		ResolvePolicy resolvePolicy = new ResolvePolicy();
 		resolvePolicy.fromJson((Map<String, Object>) data.get("policy"));
-		policy = Optional.of(resolvePolicy);
+		this.policy = Optional.of(resolvePolicy);
 
 		InputFields jsonInputFields = new InputFields();
 		jsonInputFields.fromJson((Map<String, Object>) data.get("input-fields"));
 		this.inputFields = Optional.of(jsonInputFields);
+
+
+
+		ExecutorRegistration clientExec = new ExecutorRegistration();
+		clientExec.fromJson((Map<String, Object>) data.get("client-executor"));
+		this.clientExecutor = Optional.of(clientExec);
 	}
+
 }

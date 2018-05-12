@@ -141,23 +141,6 @@ public final class GraphTraversal {
 	}
 
 	/**
-	 * Returns a set of all producing field names of a graph. The set doesn't
-	 * contain constant values.
-	 */
-	public static Set<String> producedFields(final CompositionGraph graph, final ResolveInfo resolveInfo) {
-		Set<String> producedFields = new HashSet<>();
-		/* collect all fields */
-		for (BaseNode bn : graph.getNodes()) {
-			producedFields.addAll(bn.producingFields(resolveInfo));
-		}
-		/*
-		 * Remove all constatns.
-		 */
-		producedFields.removeIf(FMCompositionParser::isConstant);
-		return producedFields;
-	}
-
-	/**
 	 * Returns true if there is no edge in the given graph that targets the given
 	 * node.
 	 */
@@ -219,18 +202,4 @@ public final class GraphTraversal {
 				n -> (n.getClass().getSimpleName().equals(simpleNodeClassName)));
 	}
 
-	/**
-	 * Iterator of all nodes that changes the state of the given fieldname.
-	 */
-	public static Iterable<BaseNode> iterateNodesProducingFieldname(final CompositionGraph graph,
-			final String producedFieldname, final ResolveInfo resolveInfo) {
-		return () -> new FilteredIterator<>(iterateNodes(graph).iterator(),
-				n -> n.producesField(producedFieldname, resolveInfo));
-	}
-
-	public static Iterable<String> iterateProducedFieldnames(final CompositionGraph graph,
-			final ResolveInfo resolveInfo) {
-		return () -> new ChainedIterator<>(iterateNodes(graph).iterator(),
-				n -> n.producingFields(resolveInfo).iterator());
-	}
 }

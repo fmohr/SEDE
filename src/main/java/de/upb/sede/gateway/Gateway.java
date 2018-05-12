@@ -84,14 +84,9 @@ public class Gateway implements IGateway{
 		
 		return gatewayResolution;
 	}
-	
 
-	@Override
-	public final boolean register(ExecutorRegistration execRegister) {
-		/*
-		 * TODO load services onto the executor.
-		 */
-		ExecutorHandle execHandle = new ExecutorHandle(execRegister.getHost(),
+	private final ExecutorHandle createExecHandle(ExecutorRegistration execRegister){
+		ExecutorHandle execHandle = new ExecutorHandle(execRegister.getId(), execRegister.getContactInfo(),
 				execRegister.getCapabilities().toArray(new String[0]));
 		/*
 		 * Remove all the supported Services from the executor that are not supported by
@@ -100,23 +95,33 @@ public class Gateway implements IGateway{
 		List<String> supportedServices = new ArrayList<>(execRegister.getSupportedServices());
 		supportedServices.removeIf(classesConfig::classunknown);
 		execHandle.getExecutionerCapabilities().addAllServiceClasses(supportedServices.toArray(new String[0]));
-		if(supportedServices.isEmpty()) {
+		return execHandle;
+	}
+	
+
+	@Override
+	public final boolean register(ExecutorRegistration execRegister) {
+		/*
+		 * TODO load services onto the executor.
+		 */
+		ExecutorHandle execHandle = createExecHandle(execRegister);
+		if(execHandle.getExecutionerCapabilities().supportedServices().isEmpty()) {
 			/*
 			 * as this implementation doesn't support loading services onto the executor, registration with empty services are denied.
 			 */
-			logger.warn("Executor tried to register with 0 amount of supported services. Denied registration. Executors host: {}", execHandle.getHostAddress());
+			logger.warn("Executor tried to register with 0 amount of supported services. Denied registration. Executors host: {}", execHandle.getExecutorId());
 			return false;
 			
-		} if(execCoordinator.hasExecutor(execHandle.getHostAddress())) {
+		} if(execCoordinator.hasExecutor(execHandle.getExecutorId())) {
 			/*
 			 * dont accept double registration.
 			 */
-			logger.warn("ExecutorRegistration with a host that has already been registered: {}",  execHandle.getHostAddress());
+			logger.warn("ExecutorRegistration with a host that has already been registered: {}",  execHandle.getExecutorId());
 			return false;
 		} else {
 			execCoordinator.addExecutor(execHandle);
-			logger.info("Executor registered successfully with {} services. Executor's Host: {}", supportedServices.size(), execRegister.getHost());
-			logger.trace("Supported service of executor with host {} are {}.", execRegister.getHost(), supportedServices);
+			logger.info("Executor registered successfully with {} services. Executor's Host: {}", execHandle.getExecutionerCapabilities().supportedServices().size(), execRegister.getId());
+			logger.trace("Supported service of executor with host {} are {}.", execRegister.getId(), execHandle.getExecutionerCapabilities().supportedServices());
 			return true;
 		}
 	}
@@ -133,7 +138,10 @@ public class Gateway implements IGateway{
 		info.setTypeConfig(typeConfig);
 		info.setResolvePolicy(resolveRequest.getPolicy());
 		info.setInputFields(resolveRequest.getInputFields());
-		info.setClientInfo(new ClientInfo(resolveRequest.getClientHost()));
+		ExecutorRegistration clientExecRegistration = resolveRequest.getClientExecutorRegistration();
+
+		ExecutorHandle clientExecHandle = createExecHandle(clientExecRegistration);
+		info.setClientExecutor(clientExecHandle);
 		return info;
 	}
 	/**

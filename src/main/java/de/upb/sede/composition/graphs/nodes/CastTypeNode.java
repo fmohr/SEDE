@@ -1,10 +1,5 @@
 package de.upb.sede.composition.graphs.nodes;
 
-import java.util.Arrays;
-import java.util.Collection;
-
-import de.upb.sede.gateway.ResolveInfo;
-
 public class CastTypeNode extends BaseNode {
 
 	private final String fieldname;
@@ -42,21 +37,6 @@ public class CastTypeNode extends BaseNode {
 
 	public String getCasterClasspath() {
 		return casterClasspath;
-	}
-
-	@Override
-	public boolean producesField(String fieldname, ResolveInfo resolveInfo) {
-		return fieldname.equals(getFieldname());
-	}
-
-	@Override
-	public Collection<String> consumingFields(ResolveInfo resolveInfo) {
-		return Arrays.asList(getFieldname());
-	}
-
-	@Override
-	public Collection<String> producingFields(ResolveInfo resolveInfo) {
-		return Arrays.asList(getFieldname());
 	}
 
 	public String toString() {

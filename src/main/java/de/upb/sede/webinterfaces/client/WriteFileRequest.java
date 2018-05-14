@@ -1,12 +1,6 @@
 package de.upb.sede.webinterfaces.client;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 
 /**
  * Implementation of basic client that writes the payload to a file located at
@@ -19,6 +13,8 @@ public class WriteFileRequest implements BasicClientRequest {
 
 	private final String filepath;
 	private final byte[] answer;
+
+	private OutputStream outputStream;
 
 	public WriteFileRequest(String filepath, String answer) {
 		this.filepath = filepath;
@@ -37,7 +33,8 @@ public class WriteFileRequest implements BasicClientRequest {
 		 * return output stream
 		 */
 		try {
-			return new FileOutputStream(file);
+			outputStream = new FileOutputStream(file);
+			return outputStream;
 		} catch (FileNotFoundException e) {
 			throw new UncheckedIOException(e);
 		}
@@ -48,4 +45,8 @@ public class WriteFileRequest implements BasicClientRequest {
 		return new ByteArrayInputStream(answer);
 	}
 
+	@Override
+	public void close() throws IOException {
+		outputStream.close();
+	}
 }

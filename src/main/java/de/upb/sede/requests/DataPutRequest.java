@@ -10,8 +10,8 @@ public class DataPutRequest extends Request {
 	private final String fieldname;
 	private final SEDEObject data;
 
-	public DataPutRequest(String requestId, String clientHost, String fieldname, SEDEObject data) {
-		super(requestId, clientHost);
+	public DataPutRequest(String requestId, String fieldname, SEDEObject data) {
+		super(requestId);
 		this.fieldname = fieldname;
 		this.data = data;
 	}

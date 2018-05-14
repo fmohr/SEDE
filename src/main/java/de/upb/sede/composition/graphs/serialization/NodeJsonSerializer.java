@@ -180,13 +180,17 @@ final class NodeJsonSerializer {
 	}
 
 	@SuppressWarnings("unchecked")
-	public JSONObject TransmitDataNodeToJSON(TransmitDataNode sendDataNode) {
+	public JSONObject TransmitDataNodeToJSON(TransmitDataNode transmitDataNode) {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(NODETYPE, NODETYPE_TRANSMIT_DATA);
-		jsonObject.put("contact-info", sendDataNode.getContactInfo());
-		jsonObject.put("fieldname", sendDataNode.getSendingFieldName());
-		jsonObject.put("caster", sendDataNode.getCaster());
-		jsonObject.put("semantic-type", sendDataNode.getSemanticTypename());
+		jsonObject.put("contact-info", transmitDataNode.getContactInfo());
+		jsonObject.put("fieldname", transmitDataNode.getSendingFieldName());
+		if(transmitDataNode.hasCaster()){
+			jsonObject.put("caster", transmitDataNode.getCaster());
+		}
+		if(transmitDataNode.hasSemanticType()){
+			jsonObject.put("semantic-type", transmitDataNode.getSemanticTypename());
+		}
 		return jsonObject;
 	}
 
@@ -194,10 +198,15 @@ final class NodeJsonSerializer {
 		assert node.get(NODETYPE).equals(NODETYPE_TRANSMIT_DATA);
 		Map<String, String> contactInfo = (Map<String, String>) node.get("contact-info");
 		String fieldname = (String) node.get("fieldname");
+
 		String caster = (String) node.get("caster");
 		String semanticType = (String) node.get("semantic-type");
-
-		TransmitDataNode n = new TransmitDataNode(fieldname, contactInfo, caster, semanticType);
+		TransmitDataNode n;
+		if(caster == null || semanticType == null){
+			n = new TransmitDataNode(fieldname, contactInfo);
+		} else{
+			n = new TransmitDataNode(fieldname, contactInfo, caster, semanticType);
+		}
 
 		return n;
 	}

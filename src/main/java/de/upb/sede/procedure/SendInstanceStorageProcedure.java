@@ -4,10 +4,6 @@ import de.upb.sede.exec.Task;
 
 public class SendInstanceStorageProcedure extends Procedure {
 
-	public SendInstanceStorageProcedure(Task task) {
-		super(task);
-	}
-
 	@Override
 	public void process(Task task) {
 		String serviceinstanceFieldname = (String) task.getAttributes().get("serviceinstanceFieldname");

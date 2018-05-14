@@ -17,16 +17,16 @@ public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 	/**
 	 *
 	 */
-	private Optional<String> host;
+	private Optional<String> executorId;
 	private Optional<String> classpath;
 	private Optional<String> id;
 
 	/**
 	 * Standard constructor
 	 */
-	public ServiceInstanceHandle(final String host, final String classpath, final String id) {
+	public ServiceInstanceHandle(final String executorId, final String classpath, final String id) {
 		super();
-		this.host = Optional.of(host);
+		this.executorId = Optional.of(executorId);
 		this.classpath = Optional.of(classpath);
 		this.id = Optional.of(id);
 	}
@@ -35,7 +35,7 @@ public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 	 * Empty constructor to create service handle with default values.
 	 */
 	public ServiceInstanceHandle() {
-		this.host = Optional.empty();
+		this.executorId = Optional.empty();
 		this.classpath = Optional.empty();
 		this.id = Optional.empty();
 	}
@@ -52,8 +52,8 @@ public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 	 *
 	 * @return Host of this service.
 	 */
-	public String getHost() {
-		return this.host.get();
+	public String getExecutorId() {
+		return this.executorId.get();
 	}
 
 	public String getClasspath() {
@@ -63,7 +63,7 @@ public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 	@Override
 	public JSONObject toJson() {
 		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("host", getHost());
+		jsonObject.put("executorId", getExecutorId());
 		jsonObject.put("classpath", getClasspath());
 		jsonObject.put("id", getId());
 		return jsonObject;
@@ -71,7 +71,7 @@ public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 
 	@Override
 	public void fromJson(Map<String, Object> data) {
-		this.host = Optional.of((String) data.get("host"));
+		this.executorId = Optional.of((String) data.get("executorId"));
 		this.id = Optional.of((String) data.get("id"));
 		this.classpath = Optional.of((String) data.get("classpath"));
 	}

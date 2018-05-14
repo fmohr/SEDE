@@ -157,7 +157,7 @@ public class GraphConstruction {
 			 */
 			if (instNode.isAssignedHost()) {
 				/*
-				 * Explicit host is defined by the instruction.
+				 * Explicit executorId is defined by the instruction.
 				 */
 				if (resolveInfo.getExecutorCoordinator().hasExecutor(instNode.getHost())) {
 					/*
@@ -176,7 +176,7 @@ public class GraphConstruction {
 					resolvedContext = true;
 				}
 				/*
-				 * if the host of the explicit stated executor is unknown, resolvedContext
+				 * if the executorId of the explicit stated executor is unknown, resolvedContext
 				 * remains false and the instruction will be added to the
 				 * unresolvedInstructionList.
 				 */

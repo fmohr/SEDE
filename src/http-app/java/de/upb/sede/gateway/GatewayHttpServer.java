@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -77,11 +78,14 @@ public final class GatewayHttpServer extends Gateway {
 			/*
 			 * TODO: Do validation before parsing.
 			 */
-
-			ExecutorRegistration execRegister = new ExecutorRegistration();
-			execRegister.fromJsonString(jsonRegistration);
-			register(execRegister);
-			return "Registration Successfull";
+			try{
+				ExecutorRegistration execRegister = new ExecutorRegistration();
+				execRegister.fromJsonString(jsonRegistration);
+				register(execRegister);
+				return "";
+			} catch (Exception ex){
+				return ex.getMessage();
+			}
 		}
 
 	}
@@ -89,20 +93,25 @@ public final class GatewayHttpServer extends Gateway {
 	class ResolveCompositionHandler extends StringServerResponse {
 		@Override
 		public String receive(String jsonResolveRequest) {
+
 			logger.debug("Received executor registration.");
 			/*
 			 * TODO: Do validation before parsing.
 			 */
-			/*
-			 * parse request:
-			 */
-			ResolveRequest resolveRequest = new ResolveRequest();
-			resolveRequest.fromJsonString(jsonResolveRequest);
-			/*
-			 * calculate the resolved graph:
-			 */
-			GatewayResolution resolution = resolve(resolveRequest);
-			return resolution.toJson().toJSONString();
+			try{
+				/*
+				 * parse request:
+				 */
+				ResolveRequest resolveRequest = new ResolveRequest();
+				resolveRequest.fromJsonString(jsonResolveRequest);
+				/*
+				 * calculate the resolved graph:
+				 */
+				GatewayResolution resolution = resolve(resolveRequest);
+				return resolution.toJson().toJSONString();
+			} catch (Exception ex){
+				return ex.getMessage();
+			}
 		}
 	}
 

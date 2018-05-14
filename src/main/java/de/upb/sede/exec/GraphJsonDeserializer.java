@@ -33,7 +33,7 @@ public class GraphJsonDeserializer {
 	 * @param execution created tasks are added to this instance.
 	 *
 	 */
-	public void deserializeTasksInto(Execution execution, String jsonStringGraph) {
+	public static void deserializeTasksInto(Execution execution, String jsonStringGraph) {
 		JSONParser jsonParser = new JSONParser();
 		try {
 			deserializeTasksInto(execution, (Map<Object, Object>) jsonParser.parse(jsonStringGraph));
@@ -52,7 +52,7 @@ public class GraphJsonDeserializer {
 	 *
 	 * @param execution created tasks are added to this instance.
 	 */
-	public void deserializeTasksInto(Execution execution, Map<Object, Object> jsonGraphObject) {
+	public static void deserializeTasksInto(Execution execution, Map<Object, Object> jsonGraphObject) {
 		if (!jsonGraphObject.containsKey(JSON_FIELDNAME_EDGES) || !jsonGraphObject.containsKey(JSON_FIELDNAME_NODES)) {
 			throw new CompositionGraphSerializationException(
 					"Cannot create a graph from a json object that doesn't contain fields: " + JSON_FIELDNAME_EDGES
@@ -97,7 +97,7 @@ public class GraphJsonDeserializer {
 	 * Deserializes a node from the composition graph into a task object.
 	 *
 	 */
-	private Task fromJSON(Execution execution, Map<String, Object> jsonData) {
+	private static Task fromJSON(Execution execution, Map<String, Object> jsonData) {
 		Task task = new Task(execution, (String) jsonData.get("nodetype"), jsonData);
 		return task;
 	}

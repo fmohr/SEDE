@@ -5,13 +5,6 @@ import de.upb.sede.exec.Task;
 
 public class ReceiveDataProcedure extends Procedure {
 
-	
-	
-	public ReceiveDataProcedure(Task task) {
-		super(task);
-		// TODO Auto-generated constructor stub
-	}
-
 	@Override
 	public void process(Task task) {
 		String fieldname = (String) task.getAttributes().get("fieldname");

@@ -61,7 +61,7 @@ public final class SemanticStreamer {
 		}
 	}
 
-	public static void writeInto(OutputStream os, SEDEObject content) {
+	public static void streamInto(OutputStream os, SEDEObject content) {
 		try {
 			if(content.isPrimitive()){
 				/*
@@ -91,8 +91,8 @@ public final class SemanticStreamer {
 	}
 
 
-	public static void streamObjectInto(OutputStream os, SEDEObject content, String caster, String sourceClasspath, String targetSemanticType) {
-		String sourceRealType = getSimpleNameFromClasspath(sourceClasspath);
+	public static void streamObjectInto(OutputStream os, SEDEObject content, String caster, String targetSemanticType) {
+		String sourceRealType = getSimpleNameFromClasspath(content.getType());
 		String casterMethod = getCastMethod(sourceRealType, targetSemanticType, true);
 		Method method = getMethodFor(caster, casterMethod);
 		try {

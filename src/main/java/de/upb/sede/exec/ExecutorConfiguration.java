@@ -1,6 +1,9 @@
 package de.upb.sede.exec;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -19,6 +22,7 @@ public class ExecutorConfiguration {
 	private AvailableResources resources = new AvailableResources();
 	private int threadNumber = 0;
 	private String serviceStoreLocation = UNDEFINED_SERVICE_STORE_LOC;
+	private final String executorId = UUID.randomUUID().toString();
 
 	public static ExecutorConfiguration parse(String executorConfigurationPath) throws Exception {
 		File configFile = getConfigurationFile(executorConfigurationPath);
@@ -60,6 +64,18 @@ public class ExecutorConfiguration {
 
 	public String getServiceStoreLocation() {
 		return serviceStoreLocation;
+	}
+
+	public String getExecutorId() {
+		return executorId;
+	}
+
+	public List<String> getExecutorCapabilities() {
+		return Collections.EMPTY_LIST;
+	}
+
+	public List<String> getSupportedServices(){
+		return Collections.EMPTY_LIST;
 	}
 
 	static class ExecutorConfigurationHandler extends DefaultHandler {

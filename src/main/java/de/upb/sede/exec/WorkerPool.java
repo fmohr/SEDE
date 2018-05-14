@@ -8,6 +8,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class WorkerPool {
 
@@ -18,6 +20,8 @@ public class WorkerPool {
 	 */
 	private final Map<Execution, List<Future>> executionFutureMap = new WeakHashMap<>();
 
+	private final Map<String, Supplier<Procedure>> procedureSupplierMap = new HashMap<>();
+
 
 	WorkerPool(int workerNumber){
 		workers = Executors.newFixedThreadPool(workerNumber);
@@ -25,10 +29,10 @@ public class WorkerPool {
 
 
 	public synchronized void processTask(Task task){
-		Procedure procedure = Procedure.procedureForTask(task);
-		Future future = workers.submit(procedure);
+		Procedure procedure = procedureForTask(task.getTaskName());
+		ProcedureRunner  runner = new ProcedureRunner(task, procedure);
+		Future future = workers.submit(runner);
 		addFuture(task.getExecution(), future);
-
 	}
 
 
@@ -57,5 +61,38 @@ public class WorkerPool {
 
 	private synchronized  void removeExec(Execution execution) {
 		executionFutureMap.remove(execution);
+	}
+
+	public synchronized void bindProcedure(String procedureName, Supplier<Procedure> procedureSupplier) {
+		procedureSupplierMap.put(procedureName, procedureSupplier);
+	}
+
+	private Procedure procedureForTask(String taskName) {
+		if(procedureSupplierMap.containsKey(taskName)){
+			return procedureSupplierMap.get(taskName).get();
+		}
+		else {
+			throw new RuntimeException("Task \"" + taskName + "\" was not bound to a procedure supplier.");
+		}
+	}
+	private static class ProcedureRunner implements  Runnable {
+		private Task task;
+		private Procedure procedure;
+		ProcedureRunner(Task task, Procedure procedure) {
+			this.task = task;
+			this.procedure = procedure;
+		}
+		public void run() {
+			task.setStarted();
+			try{
+				procedure.process(task);
+			} catch(Exception ex) {
+//				task.setError(ex); TODO
+				task.setFailed();
+			}
+			finally {
+				task.isDoneRunning();
+			}
+		}
 	}
 }

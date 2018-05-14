@@ -24,7 +24,7 @@ public final class Task implements Observer<Task>{
 					started = false,  		// started: true if a worker has started processing this task.
 					doneRunning = false,	// doneRunning: true if started and the worker has finished processing.
 					failed = false,			// failed: true if done and an error has occured.
-					succeeded = false;		// succeeded: true if done and the worker successfully carried out the task.
+					succeeded = false;		// setSucceeded: true if done and the worker successfully carried out the task.
 
 
 	private Observable<Task> taskState = Observable.ofInstance(this);
@@ -70,7 +70,7 @@ public final class Task implements Observer<Task>{
 	}
 
 	/**
-	 * Notification is invoked when a dependency task has hasFinished (failed or succeeded).
+	 * Notification is invoked when a dependency task has hasFinished (failed or Succeeded).
 	 * @param task dependency task.
 	 */
 	@Override
@@ -83,7 +83,7 @@ public final class Task implements Observer<Task>{
 		this.dependencies.remove(task);
 
 		if(task.hasFailed()){
-			failed();
+			setFailed();
 		}
 		else {
 			updateDependendency();
@@ -166,7 +166,7 @@ public final class Task implements Observer<Task>{
 		}
 	}
 
-	public void succeeded(){
+	public void setSucceeded(){
 		if(!hasSucceeded()) {
 			resolved = true;
 			started = true;
@@ -176,7 +176,7 @@ public final class Task implements Observer<Task>{
 		}
 	}
 
-	public void failed(){
+	public void setFailed(){
 		if(!hasFailed()) {
 			resolved = true;
 			started = true;

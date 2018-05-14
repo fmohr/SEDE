@@ -33,9 +33,9 @@ public class ExecutorCoordinator {
 		return executors.stream().anyMatch(h -> h.equalsId(id));
 	}
 
-	public synchronized ExecutorHandle getExecutorFor(String host) {
+	public synchronized ExecutorHandle getExecutorFor(String id) {
 		for (ExecutorHandle executor : executors) {
-			if (executor.getExecutorId().equals(host)) {
+			if (executor.getExecutorId().equals(id)) {
 				return executor;
 			}
 		}

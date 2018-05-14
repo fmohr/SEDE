@@ -16,17 +16,7 @@ import de.upb.sede.webinterfaces.client.BasicClientRequest;
 public class InstructionProcedureTest {
 	@Test
 	public void testStaticConstantTypeInvocation() {
-		Execution execution = new Execution("testID") {
-			@Override
-			public BasicClientRequest createClientRequest(Object o) {
-				return null;
-			}
-
-			@Override
-			public ServiceInstanceHandle createServiceInstanceHandle(Object serviceInstance) {
-				return null;
-			}
-		};
+		Execution execution = new Execution("testID", null);
 
 		execution.getExecutionEnvironment().put("Number_1", new SEDEObject("Number", new Integer(1)));
 		execution.getExecutionEnvironment().put("Number_2", new SEDEObject("Number", new Integer(2)));
@@ -37,7 +27,7 @@ public class InstructionProcedureTest {
 		String methodResultName;
 		methodResultName = "resultAddObject";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("addObject", methodResultName));
-		new InstructionProcedure(task).process(task);
+		new InstructionProcedure().process(task);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName) != null);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName).getObject() instanceof Integer);
 		Integer addObject = (Integer) execution.getExecutionEnvironment().get(methodResultName).getObject();
@@ -45,7 +35,7 @@ public class InstructionProcedureTest {
 
 		methodResultName = "resultSubtractObject";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("subtractObject", methodResultName));
-		new InstructionProcedure(task).process(task);
+		new InstructionProcedure().process(task);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName) != null);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName).getObject() instanceof Integer);
 		Integer subtractObject = (Integer) execution.getExecutionEnvironment().get(methodResultName).getObject();
@@ -53,7 +43,7 @@ public class InstructionProcedureTest {
 
 		methodResultName = "resultMultiplyObject";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("multiplyObject", methodResultName));
-		new InstructionProcedure(task).process(task);
+		new InstructionProcedure().process(task);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName) != null);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName).getObject() instanceof Integer);
 		Integer multiplyObject = (Integer) execution.getExecutionEnvironment().get(methodResultName).getObject();
@@ -61,7 +51,7 @@ public class InstructionProcedureTest {
 
 		methodResultName = "resultDivideObject";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("divideObject", methodResultName));
-		new InstructionProcedure(task).process(task);
+		new InstructionProcedure().process(task);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName) != null);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName).getObject() instanceof Float);
 		Float divideObject = (Float) execution.getExecutionEnvironment().get(methodResultName).getObject();
@@ -69,7 +59,7 @@ public class InstructionProcedureTest {
 
 		methodResultName = "resultAddPrimitive";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("addPrimitive", methodResultName));
-		new InstructionProcedure(task).process(task);
+		new InstructionProcedure().process(task);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName) != null);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName).getObject() instanceof Integer);
 		Integer addPrimitive = (Integer) execution.getExecutionEnvironment().get(methodResultName).getObject();
@@ -77,7 +67,7 @@ public class InstructionProcedureTest {
 
 		methodResultName = "resultSubtractPrimitive";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("subtractPrimitive", methodResultName));
-		new InstructionProcedure(task).process(task);
+		new InstructionProcedure().process(task);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName) != null);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName).getObject() instanceof Integer);
 		Integer subtractPrimitive = (Integer) execution.getExecutionEnvironment().get(methodResultName).getObject();
@@ -85,7 +75,7 @@ public class InstructionProcedureTest {
 
 		methodResultName = "resultMultiplyPrimitive";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("multiplyPrimitive", methodResultName));
-		new InstructionProcedure(task).process(task);
+		new InstructionProcedure().process(task);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName) != null);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName).getObject() instanceof Integer);
 		Integer multiplyPrimitive = (Integer) execution.getExecutionEnvironment().get(methodResultName).getObject();
@@ -93,7 +83,7 @@ public class InstructionProcedureTest {
 
 		methodResultName = "resultDividePrimitive";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("dividePrimitive", methodResultName));
-		new InstructionProcedure(task).process(task);
+		new InstructionProcedure().process(task);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName) != null);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName).getObject() instanceof Float);
 		Float dividePrimitive = (Float) execution.getExecutionEnvironment().get(methodResultName).getObject();
@@ -101,7 +91,7 @@ public class InstructionProcedureTest {
 
 		methodResultName = "resultStringLength";
 		task = new Task(execution, "testTask", new TestTaskParametersString1("length", methodResultName));
-		new InstructionProcedure(task).process(task);
+		new InstructionProcedure().process(task);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName) != null);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName).getObject() instanceof String);
 		Integer lengthString = (Integer) execution.getExecutionEnvironment().get(methodResultName).getObject();
@@ -109,7 +99,7 @@ public class InstructionProcedureTest {
 
 		methodResultName = "resultConcat";
 		task = new Task(execution, "testTask", new TestTaskParametersString2("concat", methodResultName));
-		new InstructionProcedure(task).process(task);
+		new InstructionProcedure().process(task);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName) != null);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(methodResultName).getObject() instanceof String);
 		String concat = (String) execution.getExecutionEnvironment().get(methodResultName).getObject();

@@ -257,7 +257,7 @@ public class GraphConstruction {
 			return exec;
 
 		} else {
-			throw new RuntimeException("The specified executor host " + executorHost + " is not specified ");
+			throw new RuntimeException("The specified executor executorId " + executorHost + " is not specified ");
 		}
 	}
 

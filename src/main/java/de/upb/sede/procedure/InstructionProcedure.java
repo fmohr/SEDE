@@ -6,16 +6,11 @@ import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.jar.Attributes;
 
+import de.upb.sede.exec.ServiceInstance;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -26,6 +21,7 @@ import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
 
 public class InstructionProcedure extends Procedure {
+
 	private static final Set<String> CLASSES_FOR_NUMBER = new HashSet<String>() {
 		private static final long serialVersionUID = 1940970420361621252L;
 
@@ -67,9 +63,6 @@ public class InstructionProcedure extends Procedure {
 
 	static Logger logger = LogManager.getLogger(InstructionProcedure.class);
 
-	public InstructionProcedure(Task task) {
-		super(task);
-	}
 
 	@Override
 	public void process(Task task) {
@@ -103,8 +96,7 @@ public class InstructionProcedure extends Procedure {
 			if (nodeAttributes.isConstructor()) {
 				Constructor<?> constructor = contextClass.getConstructor(parameterClasses);
 				Object newInstance = constructor.newInstance(parameterValues);
-				ServiceInstanceHandle serviceInstanceHandle = task.getExecution()
-						.createServiceInstanceHandle(newInstance);
+				ServiceInstanceHandle serviceInstanceHandle = createServiceInstanceHandle(task, newInstance);
 				returnSEDEObject = new SEDEObject(ServiceInstanceHandle.class.getName(), serviceInstanceHandle);
 			} else {
 				Method methodToBeCalled = contextClass.getMethod(nodeAttributes.getMethod(), parameterClasses);
@@ -398,6 +390,18 @@ public class InstructionProcedure extends Procedure {
 		public List<String> getParameters() {
 			return parameters;
 		}
+	}
 
+	/**
+	 * Create new new service instance handle with the given service instance.
+	 *
+	 * @return a new ServiceInstanceHandle
+	 */
+	private ServiceInstance createServiceInstanceHandle(Task task, Object newServiceInstance){
+		String serviceInstanceId = UUID.randomUUID().toString();
+		String executorId = task.getExecution().getConfiguration().getExecutorId();
+		String classpath = newServiceInstance.getClass().getName();
+		ServiceInstance si = new ServiceInstance(executorId, classpath, serviceInstanceId, newServiceInstance);
+		return si;
 	}
 }

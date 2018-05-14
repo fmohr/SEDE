@@ -21,9 +21,9 @@ public class RunRequest extends Request {
 
 	}
 
-	public RunRequest(String requestId, String clientHost, String composition, ResolvePolicy policy,
-			Map<String, Object> variables) {
-		super(requestId, clientHost);
+	public RunRequest(String requestId, String composition, ResolvePolicy policy,
+					  Map<String, Object> variables) {
+		super(requestId);
 		this.composition = Optional.of(composition);
 		this.policy = Optional.of(policy);
 		this.variables = Optional.of(variables);

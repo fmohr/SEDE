@@ -12,10 +12,6 @@ import java.util.Objects;
 
 public class ParseConstantProcedure extends Procedure {
 
-	ParseConstantProcedure(Task task) {
-		super(task);
-	}
-	
 	@SuppressWarnings("unchecked")
 	public void process(Task task) {
 		String constant = (String) task.getAttributes().get("constant");
@@ -63,7 +59,7 @@ public class ParseConstantProcedure extends Procedure {
 			case String: data = constantStr.substring(1, constantStr.length() - 1);
 				break;
 			default: throw new RuntimeException("All cases covered. " +
-					"Add default have data initialized.");
+					"Default to have data initialized.");
 		}
 		return new SEDEObject(primitiveType.name(), data);
 	}

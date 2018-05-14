@@ -11,8 +11,6 @@ import org.json.simple.JSONObject;
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.requests.Request;
 
-import javax.swing.text.html.Option;
-
 public class ResolveRequest extends Request {
 	private Optional<String> composition;
 	private Optional<ResolvePolicy> policy;
@@ -26,9 +24,9 @@ public class ResolveRequest extends Request {
 		this.clientExecutor = Optional.empty();
 	}
 
-	public ResolveRequest(String requestId, String clientHost, String composition, ResolvePolicy policy,
-			InputFields inputFields, ExecutorRegistration clientExecutor) {
-		super(requestId, clientHost);
+	public ResolveRequest(String requestId, String composition, ResolvePolicy policy,
+						  InputFields inputFields, ExecutorRegistration clientExecutor) {
+		super(requestId);
 		this.composition = Optional.of(composition);
 		this.policy = Optional.of(policy);
 		this.inputFields = Optional.of(inputFields);

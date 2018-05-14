@@ -119,7 +119,7 @@ public class DataFlowAnalysis {
 				 */
 				ServiceInstanceHandle serviceInstanceHandle = resolveInfo.getInputFields()
 						.getServiceInstanceHandle(serviceInstanceFieldname);
-				resolvedExecution = getOrCreateExecutionForHost(serviceInstanceHandle.getHost());
+				resolvedExecution = getOrCreateExecutionForId(serviceInstanceHandle.getExecutorId());
 			} else {
 				/*
 				 * The field is bound to a new service instance. producer is another instruction
@@ -573,9 +573,9 @@ public class DataFlowAnalysis {
 		}
 	}
 
-	private Execution getOrCreateExecutionForHost(String executorHost) {
-		if (resolveInfo.getExecutorCoordinator().hasExecutor(executorHost)) {
-			ExecutorHandle executor = resolveInfo.getExecutorCoordinator().getExecutorFor(executorHost);
+	private Execution getOrCreateExecutionForId(String executorId) {
+		if (resolveInfo.getExecutorCoordinator().hasExecutor(executorId)) {
+			ExecutorHandle executor = resolveInfo.getExecutorCoordinator().getExecutorFor(executorId);
 			for (Execution exec : executions) {
 				if (exec.getExecutor().equals(executor)) {
 					return exec;
@@ -589,7 +589,7 @@ public class DataFlowAnalysis {
 			return exec;
 
 		} else {
-			throw new RuntimeException("BUG: Cannot resolve executor with host: \"" + executorHost + "\". No such executor is registered.");
+			throw new RuntimeException("BUG: Cannot resolve executor with id: \"" + executorId + "\". No such executor is registered.");
 		}
 	}
 
@@ -605,7 +605,7 @@ public class DataFlowAnalysis {
 		AcceptDataNode accept = new AcceptDataNode(fieldname);
 		assignNodeToExec(accept, clientExecution);
 		Map<String, String> clientContactInfo = clientExecution.getExecutor().getContactInfo();
-		TransmitDataNode transmit = TransmitDataNode.rawTransmit(fieldname, clientContactInfo);
+		TransmitDataNode transmit = new TransmitDataNode(fieldname, clientContactInfo);
 
 		addTransmission(transmit, accept);
 
@@ -624,7 +624,7 @@ public class DataFlowAnalysis {
 			transmit = new TransmitDataNode(fieldname, contactInfo, caster, semanticType);
 		}
 		else {
-			transmit = TransmitDataNode.rawTransmit(fieldname, contactInfo);
+			transmit = new TransmitDataNode(fieldname, contactInfo);
 		}
 
 		assignNodeToExec(transmit, sourceExec);

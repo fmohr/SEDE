@@ -1,8 +1,6 @@
 package de.upb.sede.webinterfaces.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 
 import de.upb.sede.util.Streams;
 
@@ -14,7 +12,7 @@ import de.upb.sede.util.Streams;
  *         sending data.
  * 
  */
-public interface BasicClientRequest {
+public interface BasicClientRequest extends Closeable{
 
 	/**
 	 * Send returns an outputstream. Writing into it should send the data.
@@ -44,7 +42,16 @@ public interface BasicClientRequest {
 		/*
 		 * read answer
 		 */
-		return Streams.InReadString(receive());
+		String answer = Streams.InReadString(receive());
+		/*
+		 * close the request
+		 */
+		try {
+			close();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+		return answer;
 	}
 
 }

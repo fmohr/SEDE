@@ -12,8 +12,8 @@ public class ExecRequest extends Request {
 		this.compositionGraph = Optional.empty();
 	}
 
-	public ExecRequest(String requestId, String clientHost, String compositionGraph) {
-		super(requestId, clientHost);
+	public ExecRequest(String requestId, String compositionGraph) {
+		super(requestId);
 		this.compositionGraph = Optional.of(compositionGraph);
 	}
 

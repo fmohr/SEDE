@@ -2,6 +2,8 @@ package de.upb.sede.exec;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.ServiceInstanceHandle;
@@ -12,7 +14,7 @@ import de.upb.sede.webinterfaces.client.BasicClientRequest;
 /**
  * Represents one execution.
  */
-public abstract class Execution {
+public class Execution {
 
 	private final ExecutionEnvironment environment;
 
@@ -21,6 +23,12 @@ public abstract class Execution {
 	private final Observable<Execution> state;
 
 	private final Observable<Task> newTask = new Observable<Task>();
+
+//	public final Function<Object, ServiceInstanceHandle> serviceInstanceProvider;
+//
+//	public final BiFunction<Object, Task, BasicClientRequest> clientRequestProvider;
+
+	private final ExecutorConfiguration executorConfiguration;
 
 	/**
 	 * Flag that indicates that the execution has been interrupted.
@@ -70,28 +78,13 @@ public abstract class Execution {
 	 *            identifier of this execution.
 	 */
 
-	public Execution(String execId) {
+	public Execution(String execId, ExecutorConfiguration executorConfiguration) {
 		Objects.requireNonNull(execId);
 		this.execId = execId;
 		this.environment = new ExecutionInv();
 		this.state = Observable.ofInstance(this);
+		this.executorConfiguration = executorConfiguration;
 	}
-
-	/**
-	 * Create a new client request based on the request info. This method does not
-	 * affect the state of the execution object.
-	 *
-	 * @return a new client request.
-	 */
-	public abstract BasicClientRequest createClientRequest(Object requestInfo);
-
-	/**
-	 * Create new new service instance handle with the given service instance. This
-	 * method does not affect the state of the execution object.
-	 *
-	 * @return a new ServiceInstanceHandle
-	 */
-	public abstract ServiceInstanceHandle createServiceInstanceHandle(Object serviceInstance);
 
 	/**
 	 * Returns the execution-id of this execution.
@@ -223,8 +216,18 @@ public abstract class Execution {
 		state.update(this);
 	}
 
-	static class ExecutionInv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
+	public ExecutorConfiguration getConfiguration() {
+		return executorConfiguration;
+	}
 
+	static class ExecutionInv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
+		final Observable<SEDEObject> state = new Observable<>();
+		@Override
+		public SEDEObject put(String key, SEDEObject value) {
+			SEDEObject prevValue = super.put(key, value);
+			state.update(value);
+			return prevValue;
+		}
 	}
 
 }

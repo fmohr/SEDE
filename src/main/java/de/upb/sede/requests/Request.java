@@ -18,7 +18,7 @@ public abstract class Request implements JsonSerializable {
 		this.requestId = Optional.empty();
 	}
 
-	public Request(String requestId, String clientHost) {
+	public Request(String requestId) {
 		this.requestId = Optional.of(requestId);
 	}
 

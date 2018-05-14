@@ -8,19 +8,23 @@ public class TransmitDataNode extends BaseNode {
 
 	private final Map<String, String> contactInfo;
 
-	private final String caster;
+	private final Optional<String> caster;
 
-	private final String semanticTypename;
+	private final Optional<String> semanticTypename;
 
 	public TransmitDataNode(String fieldname, Map<String, String>  contactInfo, String caster, String semanticTypename) {
 		this.fieldname = Objects.requireNonNull(fieldname);
 		this.contactInfo = Objects.requireNonNull(contactInfo);
-		this.caster = Objects.requireNonNull(caster);
-		this.semanticTypename = Objects.requireNonNull(semanticTypename);
+		this.caster = Optional.of(caster);
+		this.semanticTypename = Optional.of(semanticTypename);
 	}
 
-	public static TransmitDataNode rawTransmit(String fieldname, Map<String, String>  contactInfo){
-		return new TransmitDataNode(fieldname, contactInfo, "raw", "raw");
+
+	public TransmitDataNode(String fieldname, Map<String, String>  contactInfo){
+		this.fieldname = Objects.requireNonNull(fieldname);
+		this.contactInfo = Objects.requireNonNull(contactInfo);
+		this.caster = Optional.empty();
+		this.semanticTypename = Optional.empty();
 	}
 
 	public Map<String, String>  getContactInfo() {
@@ -31,12 +35,21 @@ public class TransmitDataNode extends BaseNode {
 		return fieldname;
 	}
 
+
+	public boolean hasCaster() {
+		return caster.isPresent();
+	}
+
+	public boolean hasSemanticType() {
+		return semanticTypename.isPresent();
+	}
+
 	public String getCaster() {
-		return caster;
+		return caster.get();
 	}
 
 	public String getSemanticTypename() {
-		return semanticTypename;
+		return semanticTypename.get();
 	}
 
 	public String toString() {

@@ -1,8 +1,6 @@
 package de.upb.sede.util;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,6 +10,8 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 import de.upb.sede.webinterfaces.client.WriteFileRequest;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Defines methods to access files reading and writing their content. Use this
@@ -21,6 +21,8 @@ import de.upb.sede.webinterfaces.client.WriteFileRequest;
  *
  */
 public class FileUtil {
+
+	private static Logger logger = LogManager.getLogger(FileUtil.class);
 
 	/**
 	 * Returns the content of the file located at the given file path as a string.
@@ -104,6 +106,39 @@ public class FileUtil {
 			}
 		}
 		return listedFiles;
+	}
+
+
+
+
+	protected static void mkDir(File file) {
+		if (!file.exists()) {
+			logger.info("Creating directory: \"" + file.getAbsolutePath() + "\"");
+			file.mkdir();
+		}
+	}
+
+	protected static String getFileExtension(String filename) throws IOException {
+		try {
+			return filename.substring(filename.lastIndexOf("."));
+		} catch (IndexOutOfBoundsException e) {
+			logger.debug("File: \"" + filename + "\" does not have a file extension.", e);
+			return "";
+		}
+	}
+
+	public void save(byte[] data, String filePath) {
+		try {
+			File destination = new File(filePath);
+			if (destination.exists())
+				System.out.println("Overwriting file: " + destination.getName());
+			BufferedOutputStream output = new BufferedOutputStream(new FileOutputStream(destination));
+			output.write(data, 0, data.length);
+			output.close();
+			System.out.println(">>> recv file " + filePath + " (" + (data.length >> 10) + " kiB)");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

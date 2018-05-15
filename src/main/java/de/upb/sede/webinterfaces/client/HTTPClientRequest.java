@@ -12,6 +12,11 @@ public class HTTPClientRequest implements BasicClientRequest {
 	private final URL url;
 	private HttpURLConnection httpConnection;
 
+
+	public HTTPClientRequest(String ipAddress, int port, String url) {
+		this(ipAddress + ":" + port + (url.startsWith("/")? "" : "/")  + url);
+	}
+
 	public HTTPClientRequest(String urlAddress) {
 		if(!urlAddress.startsWith("http://")){
 			urlAddress = "http://" + urlAddress;

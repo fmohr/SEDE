@@ -1,5 +1,6 @@
 package de.upb.sede.procedure;
 
+import java.lang.reflect.Executable;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -7,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.Execution;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.ServiceInstance;
@@ -184,7 +186,6 @@ public class InstructionProcedureTest {
 		});
 		new InstructionProcedure().process(task);
 		Assert.assertTrue(execution.getExecutionEnvironment().get(resultCalc) != null);
-		System.out.println(execution.getExecutionEnvironment().get(resultCalc).getObject().getClass());
 		Assert.assertTrue(execution.getExecutionEnvironment().get(resultCalc).getObject() instanceof Punkt);
 		Punkt calc = (Punkt) execution.getExecutionEnvironment().get(resultCalc).getObject();
 		Assert.assertEquals(new Punkt(2, 5), calc);
@@ -193,19 +194,21 @@ public class InstructionProcedureTest {
 	@Test
 	public void testInstanciation() {
 		Execution execution = new Execution("testID", null);
+		execution.getExecutionEnvironment().put("0", new SEDEObject("Number", 0));
+		execution.getExecutionEnvironment().put("1", new SEDEObject("Number", 1));
 		final String newInstance = "newInstance";
 		Task task = new Task(execution, "testTask", new HashMap<String, Object>() {
 			{
 				put("nodetype", "Instruction");
-				put("method", "__construct");
+				put("method", "demo.math.Gerade");
 				put("is-service-construction", true);
 				put("host", null);
 				put("leftsidefieldname", newInstance);
 				put("context", "demo.math.Gerade");
 				put("is-context-a-fieldname", false);
-				put("fmInstruction", "wumpe");
-				put("leftsidefieldtype", "wumpe");
-				put("params", Arrays.asList(0, 1));
+				put("fmInstruction", "demo.math.Gerade::demo.math.Gerade(0,1)");
+				put("leftsidefieldtype", "demo.math.Gerade");
+				put("params", Arrays.asList("0", "1"));
 			}
 		});
 		new InstructionProcedure().process(task);

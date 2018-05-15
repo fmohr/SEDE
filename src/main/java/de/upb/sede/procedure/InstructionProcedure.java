@@ -2,6 +2,7 @@ package de.upb.sede.procedure;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -67,63 +68,84 @@ public class InstructionProcedure extends Procedure {
 	public void process(Task task) {
 		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
 		InstructionNodeAttributes nodeAttributes = new InstructionNodeAttributes(task);
+		// Get class to be called.
+		String contextType;
+		if (!nodeAttributes.isContextAFieldname()) {
+			contextType = nodeAttributes.getContext();
+		} else {
+			// Get the service from the environment and afterwards its type.
+			if (!environment.get(nodeAttributes.getContext()).isServiceInstance()) {
+				throw new RuntimeException("Context: " + nodeAttributes.getContext() + " is no ServiceInstance.");
+			}
+			contextType = ((ServiceInstance) environment.get(nodeAttributes.getContext()).getObject()).getClasspath();
+		}
+		Class<?> contextClass;
 		try {
-			// Get class to be called.
-			String contextType;
-			if (!nodeAttributes.isContextAFieldname()) {
-				contextType = nodeAttributes.getContext();
-			} else {
-				// Get the service from the environment and afterwards its type.
-				if (!environment.get(nodeAttributes.getContext()).isServiceInstance()) {
-					throw new RuntimeException("Context: " + nodeAttributes.getContext() + " is no ServiceInstance.");
-				}
-				contextType = ((ServiceInstance) environment.get(nodeAttributes.getContext()).getObject())
-						.getClasspath();
-			}
-			Class<?> contextClass = Class.forName(contextType);
-
-			// Get SEDEObjects of the parameters that the method is called with.
-			Map<String, SEDEObject> parameterObjects = getParameterObjectsInOrder(nodeAttributes.getParameters(),
-					environment);
-			// Get the class of the parameters.
-			List<String> parameterTypes = getParameterTypes(parameterObjects);
-			Class<?>[] parameterClasses = getParameterClasses(parameterTypes, nodeAttributes.getMethod(), contextClass);
-			// Get the values of the parameters
-			Object[] parameterValues = getParameterValues(parameterObjects);
-
-			/*
-			 * When the call is a constructor call the the constructor is being reflected
-			 * and called.
-			 */
-			SEDEObject returnSEDEObject;
-			if (nodeAttributes.isConstructor()) {
-				Constructor<?> constructor = contextClass.getConstructor(parameterClasses);
-				Object newInstance = constructor.newInstance(parameterValues);
-				ServiceInstanceHandle serviceInstanceHandle = createServiceInstanceHandle(task, newInstance);
-				returnSEDEObject = new SEDEObject(ServiceInstanceHandle.class.getName(), serviceInstanceHandle);
-			} else {
-				Method methodToBeCalled = contextClass.getMethod(nodeAttributes.getMethod(), parameterClasses);
-				String returnType = nodeAttributes.getLeftsidefieldType();
-				Object contextServiceInstance;
-				if (nodeAttributes.isContextAFieldname()) {
-					SEDEObject serviceInstace = environment.get(nodeAttributes.getContext());
-					if (!serviceInstace.isServiceInstance()) {
-						throw new RuntimeException("BUG: trying to operate on service of type: " + contextType
-								+ " instead the SEDE Object is " + serviceInstace.getType());
-					}
-					contextServiceInstance = ((ServiceInstanceHandle) serviceInstace.getObject()).getServiceInstance()
-							.get();
-				} else {
-					contextServiceInstance = null;
-				}
-				Object returnValue = methodToBeCalled.invoke(contextServiceInstance, parameterValues);
-				returnSEDEObject = new SEDEObject(returnType, returnValue);
-			}
-			if (nodeAttributes.getLeftsidefieldname() != null) {
-				environment.put(nodeAttributes.getLeftsidefieldname(), returnSEDEObject);
-			}
-		} catch (Exception e) {
+			contextClass = Class.forName(contextType);
+		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e);
+		}
+
+		// Get SEDEObjects of the parameters that the method is called with.
+		Map<String, SEDEObject> parameterObjects = getParameterObjectsInOrder(nodeAttributes.getParameters(),
+				environment);
+		// Get the class of the parameters.
+		List<String> parameterTypes = getParameterTypes(parameterObjects);
+		Class<?>[] parameterClasses;
+		try {
+			parameterClasses = getParameterClasses(parameterTypes, nodeAttributes.getMethod(), contextClass);
+		} catch (ClassNotFoundException | NoSuchMethodException e) {
+			throw new RuntimeException(e);
+		}
+		// Get the values of the parameters
+		Object[] parameterValues = getParameterValues(parameterObjects);
+
+		/*
+		 * When the call is a constructor call the the constructor is being reflected
+		 * and called.
+		 */
+		SEDEObject returnSEDEObject;
+		if (nodeAttributes.isConstructor()) {
+			Constructor<?> constructor;
+			Object newInstance;
+			try {
+				constructor = contextClass.getConstructor(parameterClasses);
+				newInstance = constructor.newInstance(parameterValues);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			ServiceInstanceHandle serviceInstanceHandle = createServiceInstanceHandle(task, newInstance);
+			returnSEDEObject = new SEDEObject(ServiceInstanceHandle.class.getName(), serviceInstanceHandle);
+		} else {
+			Method methodToBeCalled;
+			try {
+				methodToBeCalled = contextClass.getMethod(nodeAttributes.getMethod(), parameterClasses);
+			} catch (NoSuchMethodException | SecurityException e) {
+				throw new RuntimeException(e);
+			}
+			String returnType = nodeAttributes.getLeftsidefieldType();
+			Object contextServiceInstance;
+			if (nodeAttributes.isContextAFieldname()) {
+				SEDEObject serviceInstace = environment.get(nodeAttributes.getContext());
+				if (!serviceInstace.isServiceInstance()) {
+					throw new RuntimeException("BUG: trying to operate on service of type: " + contextType
+							+ " instead the SEDE Object is " + serviceInstace.getType());
+				}
+				contextServiceInstance = ((ServiceInstanceHandle) serviceInstace.getObject()).getServiceInstance()
+						.get();
+			} else {
+				contextServiceInstance = null;
+			}
+			Object returnValue;
+			try {
+				returnValue = methodToBeCalled.invoke(contextServiceInstance, parameterValues);
+			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				throw new RuntimeException(e);
+			}
+			returnSEDEObject = new SEDEObject(returnType, returnValue);
+		}
+		if (nodeAttributes.getLeftsidefieldname() != null) {
+			environment.put(nodeAttributes.getLeftsidefieldname(), returnSEDEObject);
 		}
 		task.setSucceeded();
 	}

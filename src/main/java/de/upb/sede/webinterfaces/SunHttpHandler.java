@@ -26,7 +26,7 @@ public class SunHttpHandler implements HttpHandler {
 	public void handle(HttpExchange httpExchange) throws IOException {
 		try {
 			HTTPServerResponse response = serverResponder.get();
-//			httpExchange.sendResponseHeaders(200, 0);
+			httpExchange.sendResponseHeaders(200, 0);
 			String path = httpExchange.getRequestURI().getPath();
 			response.receive(Optional.of(path), httpExchange.getRequestBody(), httpExchange.getResponseBody());
 		} catch(RuntimeException ex) {

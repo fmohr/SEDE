@@ -126,12 +126,13 @@ public class ExecutorHttpServer extends Executor{
 					throw new RuntimeException("Put data needs to specify URL with fieldname and execution handle");
 				}
 				String[] urlPaths = url.get().split("/");
-				if(urlPaths.length != 4 || urlPaths[0].equalsIgnoreCase("put")){
+				int pathIndex = 1;
+				if(urlPaths.length != 5 || urlPaths[pathIndex++].equalsIgnoreCase("put")){
 					throw new RuntimeException("URL syntax error: "  + url.get());
 				}
-				String execId = urlPaths[1];
-				String fieldname = urlPaths[2];
-				String semanticType = urlPaths[3];
+				String execId = urlPaths[pathIndex++];
+				String fieldname = urlPaths[pathIndex++];
+				String semanticType = urlPaths[pathIndex++];
 				SEDEObject inputObject = SemanticStreamer.readFrom(payload, semanticType);
 				DataPutRequest putRequest = new DataPutRequest(execId, fieldname, inputObject);
 				put(putRequest);

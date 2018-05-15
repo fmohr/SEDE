@@ -63,7 +63,6 @@ public class InstructionProcedure extends Procedure {
 
 	static Logger logger = LogManager.getLogger(InstructionProcedure.class);
 
-
 	@Override
 	public void process(Task task) {
 		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
@@ -75,7 +74,11 @@ public class InstructionProcedure extends Procedure {
 				contextType = nodeAttributes.getContext();
 			} else {
 				// Get the service from the environment and afterwards its type.
-				contextType = environment.get(nodeAttributes.getContext()).getType();
+				if (!environment.get(nodeAttributes.getContext()).isServiceInstance()) {
+					throw new RuntimeException("Context: " + nodeAttributes.getContext() + " is no ServiceInstance.");
+				}
+				contextType = ((ServiceInstance) environment.get(nodeAttributes.getContext()).getObject())
+						.getClasspath();
 			}
 			Class<?> contextClass = Class.forName(contextType);
 
@@ -100,7 +103,7 @@ public class InstructionProcedure extends Procedure {
 				returnSEDEObject = new SEDEObject(ServiceInstanceHandle.class.getName(), serviceInstanceHandle);
 			} else {
 				Method methodToBeCalled = contextClass.getMethod(nodeAttributes.getMethod(), parameterClasses);
-				String returnType =nodeAttributes.getLeftsidefieldType();
+				String returnType = nodeAttributes.getLeftsidefieldType();
 				Object contextServiceInstance;
 				if (nodeAttributes.isContextAFieldname()) {
 					SEDEObject serviceInstace = environment.get(nodeAttributes.getContext());
@@ -120,8 +123,9 @@ public class InstructionProcedure extends Procedure {
 				environment.put(nodeAttributes.getLeftsidefieldname(), returnSEDEObject);
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
+		task.setSucceeded();
 	}
 
 	private List<String> getParameterTypes(Map<String, SEDEObject> parameterObjects) {
@@ -341,6 +345,7 @@ public class InstructionProcedure extends Procedure {
 		private final String fmInstruction;
 		private final List<String> parameters;
 		private final String leftSideFieldType;
+
 		@SuppressWarnings("unchecked")
 		public InstructionNodeAttributes(Task task) {
 			Map<String, Object> parameters = task.getAttributes();
@@ -397,7 +402,7 @@ public class InstructionProcedure extends Procedure {
 	 *
 	 * @return a new ServiceInstanceHandle
 	 */
-	private ServiceInstance createServiceInstanceHandle(Task task, Object newServiceInstance){
+	private ServiceInstance createServiceInstanceHandle(Task task, Object newServiceInstance) {
 		String serviceInstanceId = UUID.randomUUID().toString();
 		String executorId = task.getExecution().getConfiguration().getExecutorId();
 		String classpath = newServiceInstance.getClass().getName();

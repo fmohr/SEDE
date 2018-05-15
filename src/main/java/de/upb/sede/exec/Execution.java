@@ -2,14 +2,10 @@ package de.upb.sede.exec;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 import de.upb.sede.core.SEDEObject;
-import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.util.Observable;
 import de.upb.sede.util.Observer;
-import de.upb.sede.webinterfaces.client.BasicClientRequest;
 
 /**
  * Represents one execution.
@@ -221,12 +217,18 @@ public class Execution {
 	}
 
 	static class ExecutionInv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
-		final Observable<SEDEObject> state = new Observable<>();
+		final Observable<ExecutionEnvironment> state = Observable.ofInstance(this);
 		@Override
 		public SEDEObject put(String key, SEDEObject value) {
 			SEDEObject prevValue = super.put(key, value);
-			state.update(value);
+			state.update(this);
 			return prevValue;
+		}
+
+
+		@Override
+		public Observable<ExecutionEnvironment> getState() {
+			return state;
 		}
 	}
 

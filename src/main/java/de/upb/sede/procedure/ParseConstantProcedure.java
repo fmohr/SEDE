@@ -23,6 +23,8 @@ public class ParseConstantProcedure extends Procedure {
 		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
 
 		environment.put(constant, sedeObject);
+
+		task.setSucceeded();
 	}
 
 

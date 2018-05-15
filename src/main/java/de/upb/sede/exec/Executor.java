@@ -1,20 +1,17 @@
 package de.upb.sede.exec;
 
-import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exceptions.ExecutionIdOccupiedException;
 import de.upb.sede.interfaces.IExecutor;
 import de.upb.sede.procedure.InstructionProcedure;
 import de.upb.sede.procedure.ParseConstantProcedure;
-import de.upb.sede.procedure.ReceiveDataProcedure;
-import de.upb.sede.procedure.SendInstanceStorageProcedure;
+import de.upb.sede.procedure.AcceptDataProcedure;
+import de.upb.sede.procedure.ServiceInstanceStorage;
 import de.upb.sede.requests.DataPutRequest;
 import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.util.Observer;
-import de.upb.sede.webinterfaces.client.BasicClientRequest;
 import org.json.simple.JSONObject;
 
 import java.util.Map;
-import java.util.UUID;
 
 public class Executor implements IExecutor{
 
@@ -43,10 +40,10 @@ public class Executor implements IExecutor{
 	private final void bindProcedureNames(){
 		workerPool.bindProcedure("Instruction", InstructionProcedure::new);
 		workerPool.bindProcedure("ParseConstant", ParseConstantProcedure::new);
-		workerPool.bindProcedure("AcceptData", ReceiveDataProcedure::new);
+		workerPool.bindProcedure("AcceptData", AcceptDataProcedure::new);
 		workerPool.bindProcedure("CastType", null); // TODO
 		workerPool.bindProcedure("DeleteField", null); // TODO
-		workerPool.bindProcedure("ServiceInstanceStorage", SendInstanceStorageProcedure::new);
+		workerPool.bindProcedure("ServiceInstanceStorage", ServiceInstanceStorage::new);
 		// send graph and transmit data needs to be specified..
 	}
 

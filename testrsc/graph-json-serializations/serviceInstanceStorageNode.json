@@ -1,6 +1,1 @@
-{
-    "serviceinstanceFieldname": "a",
-    "nodetype": "ServiceInstanceStorage",
-    "isLoadInstruction": false,
-    "serviceClasspath": "serviceClasspath.someLib.SomeServiceClass"
-}
+{"nodetype":"ServiceInstanceStorage","is-load-instruction":false,"service-classpath":"serviceClasspath.someLib.SomeServiceClass","serviceinstance-fieldname":"a"}

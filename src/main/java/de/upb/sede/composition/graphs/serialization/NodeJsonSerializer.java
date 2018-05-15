@@ -232,17 +232,17 @@ final class NodeJsonSerializer {
 	public JSONObject ServiceInstanceStorageNodeToJSON(ServiceInstanceStorageNode serviceInstanceStorageNode) {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(NODETYPE, NODETYPE_SERVICE_INSTANCE_STORAGE);
-		jsonObject.put("serviceClasspath", serviceInstanceStorageNode.getServiceClasspath());
-		jsonObject.put("serviceinstanceFieldname", serviceInstanceStorageNode.getServiceInstanceFieldname());
-		jsonObject.put("isLoadInstruction", serviceInstanceStorageNode.isLoadInstruction());
+		jsonObject.put("service-classpath", serviceInstanceStorageNode.getServiceClasspath());
+		jsonObject.put("serviceinstance-fieldname", serviceInstanceStorageNode.getServiceInstanceFieldname());
+		jsonObject.put("is-load-instruction", serviceInstanceStorageNode.isLoadInstruction());
 		return jsonObject;
 	}
 
 	public ServiceInstanceStorageNode ServiceInstanceStorageNodeFromJSON(Map<Object, Object> node) {
 		assert node.get(NODETYPE).equals(NODETYPE_SERVICE_INSTANCE_STORAGE);
-		String serviceClasspath = (String) node.get("serviceClasspath");
-		String serviceinstanceFieldname = (String) node.get("serviceinstanceFieldname");
-		Boolean isLoadInstruction = (Boolean) node.get("isLoadInstruction");
+		String serviceClasspath = (String) node.get("service-classpath");
+		String serviceinstanceFieldname = (String) node.get("serviceinstance-fieldname");
+		Boolean isLoadInstruction = (Boolean) node.get("is-load-instruction");
 
 		ServiceInstanceStorageNode n;
 		n = new ServiceInstanceStorageNode(isLoadInstruction, serviceinstanceFieldname, serviceClasspath);

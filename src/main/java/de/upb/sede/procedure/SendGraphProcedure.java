@@ -7,7 +7,7 @@ import de.upb.sede.webinterfaces.client.BasicClientRequest;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 
-public abstract class SendGraphProcedure extends Procedure {
+public abstract class SendGraphProcedure implements Procedure {
 	@Override
 	public void process(Task task) {
 		String graph = (String) task.getAttributes().get("graph");

@@ -5,7 +5,7 @@ import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
 import de.upb.sede.util.Observer;
 
-public class AcceptDataProcedure extends Procedure {
+public class AcceptDataProcedure implements Procedure {
 
 
 	@Override

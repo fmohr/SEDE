@@ -10,7 +10,7 @@ import java.text.ParseException;
 import java.util.Map;
 import java.util.Objects;
 
-public class ParseConstantProcedure extends Procedure {
+public class ParseConstantProcedure implements Procedure {
 
 	@SuppressWarnings("unchecked")
 	public void process(Task task) {

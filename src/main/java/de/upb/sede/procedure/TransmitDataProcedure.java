@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 
-public abstract class TransmitDataProcedure extends Procedure{
+public abstract class TransmitDataProcedure implements Procedure{
 
 	@Override
 	public void process(Task task) {

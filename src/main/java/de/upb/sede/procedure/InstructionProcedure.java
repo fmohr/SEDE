@@ -20,7 +20,7 @@ import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
 
-public class InstructionProcedure extends Procedure {
+public class InstructionProcedure implements Procedure {
 
 	private static final Set<String> CLASSES_FOR_NUMBER = new HashSet<String>() {
 		private static final long serialVersionUID = 1940970420361621252L;

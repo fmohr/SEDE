@@ -15,7 +15,7 @@ public abstract class TransmitDataProcedure implements Procedure{
 	@Override
 	public void process(Task task) {
 		String fieldname = (String) task.getAttributes().get("fieldname");
-		SEDEObject sedeObjectToSend = task.getExecution().getExecutionEnvironment().get(fieldname);
+		SEDEObject sedeObjectToSend = task.getExecution().getEnvironment().get(fieldname);
 
 
 		try (BasicClientRequest putDataRequest = getPutDataRequest(task)){

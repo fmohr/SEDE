@@ -5,7 +5,7 @@ import de.upb.sede.interfaces.IExecutor;
 import de.upb.sede.procedure.InstructionProcedure;
 import de.upb.sede.procedure.ParseConstantProcedure;
 import de.upb.sede.procedure.AcceptDataProcedure;
-import de.upb.sede.procedure.ServiceInstanceStorage;
+import de.upb.sede.procedure.ServiceInstanceStorageProcedure;
 import de.upb.sede.requests.DataPutRequest;
 import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.util.Observer;
@@ -43,7 +43,7 @@ public class Executor implements IExecutor{
 		workerPool.bindProcedure("AcceptData", AcceptDataProcedure::new);
 		workerPool.bindProcedure("CastType", null); // TODO
 		workerPool.bindProcedure("DeleteField", null); // TODO
-		workerPool.bindProcedure("ServiceInstanceStorage", ServiceInstanceStorage::new);
+		workerPool.bindProcedure("ServiceInstanceStorageProcedure", ServiceInstanceStorageProcedure::new);
 		// send graph and transmit data needs to be specified..
 	}
 
@@ -62,7 +62,7 @@ public class Executor implements IExecutor{
 	@Override
 	public void put(DataPutRequest dataPutRequest){
 		Execution exec = getExecWithId(dataPutRequest.getRequestID());
-		exec.getExecutionEnvironment().put(dataPutRequest.getFieldname(), dataPutRequest.getData());
+		exec.getEnvironment().put(dataPutRequest.getFieldname(), dataPutRequest.getData());
 	}
 
 	@Override

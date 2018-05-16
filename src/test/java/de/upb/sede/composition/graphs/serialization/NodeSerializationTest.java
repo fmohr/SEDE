@@ -157,7 +157,7 @@ public class NodeSerializationTest {
 		Map<String, String> contactInfo = basicContactInfo("id0", "10.10.10.10:100");
 		SendGraphNode sendGraphNode = new SendGraphNode("<graph serialization>", contactInfo);
 		String path = getJSONResourcePath("sendGraphNode");
-		FileUtil.writeStringToFile(path, njs.toJSON(sendGraphNode).toJSONString());
+//		FileUtil.writeStringToFile(path, njs.toJSON(sendGraphNode).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("sendGraphNode"), njs.toJSON(sendGraphNode).toJSONString(), true);
 
 		/*
@@ -217,7 +217,7 @@ public class NodeSerializationTest {
 		 */
 		ServiceInstanceStorageNode serviceInstanceStorageNode = new ServiceInstanceStorageNode("id_123", "a",
 				"serviceClasspath.someLib.SomeServiceClass");
-		FileUtil.writeStringToFile(getJSONResourcePath("serviceInstanceStorageNode"), njs.toJSON(serviceInstanceStorageNode).toJSONString());
+//		FileUtil.writeStringToFile(getJSONResourcePath("serviceInstanceStorageNode"), njs.toJSON(serviceInstanceStorageNode).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("serviceInstanceStorageNode"),
 				njs.toJSON(serviceInstanceStorageNode).toJSONString(), true);
 

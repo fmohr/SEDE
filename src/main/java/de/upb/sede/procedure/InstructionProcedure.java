@@ -65,7 +65,7 @@ public class InstructionProcedure implements Procedure {
 
 	@Override
 	public void process(Task task) {
-		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
+		ExecutionEnvironment environment = task.getExecution().getEnvironment();
 		InstructionNodeAttributes nodeAttributes = new InstructionNodeAttributes(task);
 		// Get class to be called.
 		String contextType;

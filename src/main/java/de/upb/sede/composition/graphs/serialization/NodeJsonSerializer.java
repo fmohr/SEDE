@@ -265,10 +265,10 @@ final class NodeJsonSerializer {
 		jsonObject.put(NODETYPE, NODETYPE_CAST_TYPE);
 
 		jsonObject.put("fieldname", castTypeNode.getFieldname());
-		jsonObject.put("casterClasspath", castTypeNode.getCasterClasspath());
-		jsonObject.put("originalType", castTypeNode.getOriginType());
-		jsonObject.put("targetType", castTypeNode.getTargetType());
-		jsonObject.put("castToSemantic", castTypeNode.isCastToSemantic());
+		jsonObject.put("caster-classpath", castTypeNode.getCasterClasspath());
+		jsonObject.put("original-type", castTypeNode.getOriginType());
+		jsonObject.put("target-type", castTypeNode.getTargetType());
+		jsonObject.put("cast-to-semantic", castTypeNode.isCastToSemantic());
 
 		return jsonObject;
 	}
@@ -277,10 +277,10 @@ final class NodeJsonSerializer {
 	public CastTypeNode CastTypeNodeFromJSON(Map<Object, Object> node) {
 		assert node.get(NODETYPE).equals(NODETYPE_CAST_TYPE);
 		String fieldname = (String) node.get("fieldname");
-		String casterClasspath = (String) node.get("casterClasspath");
-		String originalType = (String) node.get("originalType");
-		String targetType = (String) node.get("targetType");
-		boolean castToSemantic = (Boolean) node.get("castToSemantic");
+		String casterClasspath = (String) node.get("caster-classpath");
+		String originalType = (String) node.get("original-type");
+		String targetType = (String) node.get("target-type");
+		boolean castToSemantic = (Boolean) node.get("cast-to-semantic");
 		CastTypeNode n = new CastTypeNode(fieldname, originalType, targetType, castToSemantic, casterClasspath);
 
 		return n;

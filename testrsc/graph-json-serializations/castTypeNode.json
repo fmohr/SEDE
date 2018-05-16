@@ -1,1 +1,8 @@
-{"fieldname":"a","nodetype":"CastType","originalType":"some.Lib","casterClasspath":"casters.Caster1","targetType":"semanticType1","castToSemantic":true}
+{
+    "fieldname": "a",
+    "nodetype": "CastType",
+    "cast-to-semantic": true,
+    "original-type": "some.Lib",
+    "caster-classpath": "casters.Caster1",
+    "target-type": "semanticType1"
+}

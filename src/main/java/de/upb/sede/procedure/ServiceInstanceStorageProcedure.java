@@ -14,7 +14,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UncheckedIOException;
 
-public class ServiceInstanceStorage implements Procedure {
+public class ServiceInstanceStorageProcedure implements Procedure {
 
 	@Override
 	public void process(Task task) {
@@ -40,10 +40,10 @@ public class ServiceInstanceStorage implements Procedure {
 			} catch (ClassNotFoundException e) {
 				throw new RuntimeException(e);
 			}
-			task.getExecution().getExecutionEnvironment().put(fieldname, loadedSedeObject);
+			task.getExecution().getEnvironment().put(fieldname, loadedSedeObject);
 		} else {
 			/* store the service instance which the fieldname is pointing to */
-			ServiceInstanceHandle instanceHandle = task.getExecution().getExecutionEnvironment().get(fieldname).getServiceHandle();
+			ServiceInstanceHandle instanceHandle = task.getExecution().getEnvironment().get(fieldname).getServiceHandle();
 			instanceId = instanceHandle.getId();
 			BasicClientRequest storeRequest = getStoreRequest(instanceId, serviceClasspath);
 

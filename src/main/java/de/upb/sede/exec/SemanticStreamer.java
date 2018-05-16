@@ -103,7 +103,7 @@ public final class SemanticStreamer {
 		}
 	}
 
-	private static String getCastMethod(String sourceType, String targetType, boolean toSemantic) {
+	public static String getCastMethod(String sourceType, String targetType, boolean toSemantic) {
 		String methodName;
 		if(toSemantic) {
 			methodName = "cts_";
@@ -130,7 +130,7 @@ public final class SemanticStreamer {
 
 	}
 
-	private static String getSimpleNameFromClasspath(String classpath){
+	public static String getSimpleNameFromClasspath(String classpath){
 		try {
 			return Class.forName(classpath).getSimpleName();
 		} catch (ClassNotFoundException e) {
@@ -144,6 +144,29 @@ public final class SemanticStreamer {
 		}
 		else {
 			return primitiveObject.toString();
+		}
+	}
+
+	public static final SEDEObject deserialize(InputStream inputStream, String type) {
+		ObjectInputStream objectIn = null;
+		try {
+			objectIn = new ObjectInputStream(inputStream);
+			Object nummberList = objectIn.readObject();
+			SEDEObject field = new SEDEObject(type, nummberList);
+			return field;
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static final void serialize(OutputStream os, Serializable serializable) {
+		try {
+			ObjectOutputStream objectOut = new ObjectOutputStream(os);
+			objectOut.writeObject(serializable);
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
 		}
 	}
 }

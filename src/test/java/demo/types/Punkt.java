@@ -1,6 +1,8 @@
 package demo.types;
 
-public class Punkt {
+import java.io.Serializable;
+
+public class Punkt implements Serializable {
 	public final double x, y;
 
 	public Punkt(double x, double y) {

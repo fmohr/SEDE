@@ -15,7 +15,7 @@ public class Gerade implements Serializable {
 	public boolean liegtAufGerade(Punkt p) {
 		return calc(p.x).y == p.y;
 	}
-	
+
 	public Punkt calc(double stelle) {
 		return new Punkt(stelle, steigung * stelle + achsenabschnitt);
 	}

@@ -106,7 +106,7 @@ public class Execution {
 	 *
 	 * @return the exeuction environment.
 	 */
-	public ExecutionEnvironment getExecutionEnvironment() {
+	public ExecutionEnvironment getEnvironment() {
 		return environment;
 	}
 

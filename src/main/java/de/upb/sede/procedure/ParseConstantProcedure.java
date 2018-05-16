@@ -20,7 +20,7 @@ public class ParseConstantProcedure implements Procedure {
 
 		SEDEObject sedeObject = parsePrimitive(constant, type);
 
-		ExecutionEnvironment environment = task.getExecution().getExecutionEnvironment();
+		ExecutionEnvironment environment = task.getExecution().getEnvironment();
 
 		environment.put(constant, sedeObject);
 

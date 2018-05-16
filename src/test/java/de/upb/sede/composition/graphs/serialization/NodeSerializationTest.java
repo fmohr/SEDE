@@ -215,7 +215,7 @@ public class NodeSerializationTest {
 		/*
 		 * Test serialization
 		 */
-		ServiceInstanceStorageNode serviceInstanceStorageNode = new ServiceInstanceStorageNode(false, "a",
+		ServiceInstanceStorageNode serviceInstanceStorageNode = new ServiceInstanceStorageNode("id_123", "a",
 				"serviceClasspath.someLib.SomeServiceClass");
 		FileUtil.writeStringToFile(getJSONResourcePath("serviceInstanceStorageNode"), njs.toJSON(serviceInstanceStorageNode).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("serviceInstanceStorageNode"),

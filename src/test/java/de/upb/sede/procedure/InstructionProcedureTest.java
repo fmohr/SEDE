@@ -166,7 +166,7 @@ public class InstructionProcedureTest {
 				new Gerade(5, 0));
 
 		execution.getExecutionEnvironment().put("geradeFieldName",
-				new SEDEObject(SEDEObject.SERVICE_INSTANCE_HANDLE_TYPE, testGeradeInstance));
+				new SEDEObject(testGeradeInstance));
 		execution.getExecutionEnvironment().put("2", new SEDEObject("Number", 2));
 
 		final String resultCalc = "resultCalc";

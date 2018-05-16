@@ -1,1 +1,84 @@
-{"nodes":[{"fieldname":"b","nodetype":"AcceptData"},{"nodetype":"ParseConstant","constant":"100","isBool":false,"isNumber":true,"isNULL":false,"isString":false},{"nodetype":"Instruction","method":"b","is-service-construction":false,"leftsidefieldname":"d","host":null,"context":"a","is-context-a-fieldname":false,"params":[],"fmInstruction":"d=c::add({a,b})"},{"fieldname":"a","nodetype":"AcceptData"},{"fieldname":"d","targetaddress":"clientdomain.com","nodetype":"TransmitData"},{"nodetype":"Instruction","method":"__construct","is-service-construction":true,"leftsidefieldname":"c","host":null,"context":"de.upb.SEDE.testlib.A","is-context-a-fieldname":false,"params":["a","b"],"fmInstruction":"c=de.upb.SEDE.testlib.A::__construct({100})"},{"serviceinstanceFieldname":"c","nodetype":"ServiceInstanceStorage","isLoadInstruction":false,"serviceClasspath":"de.upb.SEDE.testlib.A"}],"edges":{"0":[2],"1":[5],"2":[6,4],"3":[2],"5":[2]}}
+{
+    "nodes": [
+        {
+            "fieldname": "a",
+            "nodetype": "AcceptData"
+        },
+        {
+            "nodetype": "Instruction",
+            "param-types": [],
+            "leftsidefieldtype": null,
+            "method": "b",
+            "is-service-construction": false,
+            "leftsidefieldname": "d",
+            "host": null,
+            "context": "a",
+            "is-context-a-fieldname": false,
+            "params": [],
+            "fmInstruction": "d=c::add({a,b})"
+        },
+        {
+            "nodetype": "Instruction",
+            "param-types": [],
+            "leftsidefieldtype": null,
+            "method": "__construct",
+            "is-service-construction": true,
+            "leftsidefieldname": "c",
+            "host": null,
+            "context": "de.upb.SEDE.testlib.A",
+            "is-context-a-fieldname": false,
+            "params": [
+                "a",
+                "b"
+            ],
+            "fmInstruction": "c=de.upb.SEDE.testlib.A::__construct({100})"
+        },
+        {
+            "fieldname": "b",
+            "nodetype": "AcceptData"
+        },
+        {
+            "nodetype": "ParseConstant",
+            "constant": "100",
+            "isBool": false,
+            "isNumber": true,
+            "isNULL": false,
+            "isString": false
+        },
+        {
+            "nodetype": "ServiceInstanceStorage",
+            "is-load-instruction": true,
+            "instance-id": "id123",
+            "service-classpath": "de.upb.SEDE.testlib.A",
+            "serviceinstance-fieldname": "c"
+        },
+        {
+            "fieldname": "d",
+            "caster": "caster1",
+            "nodetype": "TransmitData",
+            "semantic-type": "semtype1",
+            "contact-info": {
+                "id": "id0",
+                "host-address": "some.host:1000"
+            }
+        }
+    ],
+    "edges": {
+        "0": [
+            1
+        ],
+        "1": [
+            6,
+            5
+        ],
+        "2": [
+            1
+        ],
+        "3": [
+            1
+        ],
+        "4": [
+            2
+        ]
+    }
+}

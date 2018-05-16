@@ -35,7 +35,7 @@ public class GraphSerializationTest {
 		instNodeAdd.setLeftSideFieldname("d");
 		instNodeCon.setParameterFields(Arrays.asList("a", "b"));
 		TransmitDataNode sendToClient = new TransmitDataNode("d", basicContactInfo("id0", "some.host:1000"), "caster1" , "semtype1");
-		ServiceInstanceStorageNode saveSI = new ServiceInstanceStorageNode(false, "c", "de.upb.SEDE.testlib.A");
+		ServiceInstanceStorageNode saveSI = new ServiceInstanceStorageNode("id123", "c", "de.upb.SEDE.testlib.A");
 
 		CompositionGraph graph1 = new CompositionGraph();
 		graph1.addNode(receiveA);

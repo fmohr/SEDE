@@ -196,13 +196,15 @@ public class DataFlowAnalysis {
 				 * add an intermediate service instance storage node to load the service
 				 * instance.
 				 */
-				ServiceInstanceStorageNode storageNode = new ServiceInstanceStorageNode(true, serviceInstanceFieldname,
+				ServiceInstanceHandle serviceInstanceHandle = resolveInfo.getInputFields()
+						.getServiceInstanceHandle(serviceInstanceFieldname);
+				ServiceInstanceStorageNode loadService = new ServiceInstanceStorageNode(serviceInstanceHandle.getId(), serviceInstanceFieldname,
 						contextClasspath);
-				assignNodeToExec(storageNode, instExec);
+				assignNodeToExec(loadService, instExec);
 
-				nodeConsumesField(storageNode, serviceInstance);
+				nodeConsumesField(loadService, serviceInstance);
 
-				serviceInstance = new FieldType(storageNode, serviceInstanceFieldname, TypeClass.ServiceInstance,
+				serviceInstance = new FieldType(loadService, serviceInstanceFieldname, TypeClass.ServiceInstance,
 						contextClasspath, true);
 				addFieldType(serviceInstance);
 
@@ -544,7 +546,7 @@ public class DataFlowAnalysis {
 				/*
 				 * store service instance:
 				 */
-				ServiceInstanceStorageNode store = new ServiceInstanceStorageNode(false, resultFieldname,
+				ServiceInstanceStorageNode store = new ServiceInstanceStorageNode(resultFieldname,
 						resultFieldType.getTypeName());
 				assignNodeToExec(store, resultExecution);
 				nodeConsumesField(store, resultFieldType);

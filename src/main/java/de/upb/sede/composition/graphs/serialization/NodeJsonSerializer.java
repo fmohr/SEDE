@@ -235,6 +235,11 @@ final class NodeJsonSerializer {
 		jsonObject.put("service-classpath", serviceInstanceStorageNode.getServiceClasspath());
 		jsonObject.put("serviceinstance-fieldname", serviceInstanceStorageNode.getServiceInstanceFieldname());
 		jsonObject.put("is-load-instruction", serviceInstanceStorageNode.isLoadInstruction());
+		if(serviceInstanceStorageNode.isLoadInstruction()) {
+			jsonObject.put("instance-id", serviceInstanceStorageNode.getId());
+		} else {
+			jsonObject.put("instance-id", "NO_ID_SPECIFIED!");
+		}
 		return jsonObject;
 	}
 
@@ -245,7 +250,12 @@ final class NodeJsonSerializer {
 		Boolean isLoadInstruction = (Boolean) node.get("is-load-instruction");
 
 		ServiceInstanceStorageNode n;
-		n = new ServiceInstanceStorageNode(isLoadInstruction, serviceinstanceFieldname, serviceClasspath);
+		if(isLoadInstruction) {
+			String instanceId = (String) node.get("instance-id");
+			n = new ServiceInstanceStorageNode(instanceId, serviceinstanceFieldname, serviceClasspath);
+		} else {
+			n = new ServiceInstanceStorageNode( serviceinstanceFieldname, serviceClasspath);
+		}
 		return n;
 	}
 

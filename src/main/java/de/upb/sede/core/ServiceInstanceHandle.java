@@ -79,4 +79,8 @@ public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 	public Optional<Object> getServiceInstance() {
 		return Optional.empty();
 	}
+
+	public String toString() {
+		return "cp: " + getClasspath() + " " + getId() + "/" + getExecutorId();
+	}
 }

@@ -45,6 +45,11 @@ public class SEDEObject {
 		}
 	}
 
+
+	public SEDEObject(ServiceInstanceHandle instanceHandle) {
+		this(SERVICE_INSTANCE_HANDLE_TYPE, instanceHandle);
+	}
+
 	public Object getObject() {
 		return object;
 	}

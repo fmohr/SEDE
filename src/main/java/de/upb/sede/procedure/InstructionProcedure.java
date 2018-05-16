@@ -2,7 +2,6 @@ package de.upb.sede.procedure;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.JarURLConnection;
 import java.net.URL;
@@ -74,10 +73,11 @@ public class InstructionProcedure extends Procedure {
 			contextType = nodeAttributes.getContext();
 		} else {
 			// Get the service from the environment and afterwards its type.
-			if (!environment.get(nodeAttributes.getContext()).isServiceInstance()) {
+			SEDEObject serviceInstance = environment.get(nodeAttributes.getContext());
+			if (!serviceInstance.isServiceInstance()) {
 				throw new RuntimeException("Context: " + nodeAttributes.getContext() + " is no ServiceInstance.");
 			}
-			contextType = ((ServiceInstance) environment.get(nodeAttributes.getContext()).getObject()).getClasspath();
+			contextType = serviceInstance.getServiceHandle().getClasspath();
 		}
 		Class<?> contextClass;
 		try {
@@ -93,7 +93,7 @@ public class InstructionProcedure extends Procedure {
 		List<String> parameterTypes = getParameterTypes(parameterObjects);
 		Class<?>[] parameterClasses;
 		try {
-			parameterClasses = getParameterClasses(parameterTypes, nodeAttributes.getMethod(), contextClass);
+			parameterClasses = getParameterClasses(parameterTypes, nodeAttributes.isConstructor(), nodeAttributes.getMethod(), contextClass);
 		} catch (ClassNotFoundException | NoSuchMethodException e) {
 			throw new RuntimeException(e);
 		}
@@ -104,7 +104,8 @@ public class InstructionProcedure extends Procedure {
 		 * When the call is a constructor call the the constructor is being reflected
 		 * and called.
 		 */
-		SEDEObject returnSEDEObject;
+		Object outputValue;
+		String outputType;
 		if (nodeAttributes.isConstructor()) {
 			Constructor<?> constructor;
 			Object newInstance;
@@ -115,7 +116,8 @@ public class InstructionProcedure extends Procedure {
 				throw new RuntimeException(e);
 			}
 			ServiceInstanceHandle serviceInstanceHandle = createServiceInstanceHandle(task, newInstance);
-			returnSEDEObject = new SEDEObject(ServiceInstanceHandle.class.getName(), serviceInstanceHandle);
+			outputType = SEDEObject.SERVICE_INSTANCE_HANDLE_TYPE;
+			outputValue = serviceInstanceHandle;
 		} else {
 			Method methodToBeCalled;
 			try {
@@ -123,29 +125,40 @@ public class InstructionProcedure extends Procedure {
 			} catch (NoSuchMethodException | SecurityException e) {
 				throw new RuntimeException(e);
 			}
-			String returnType = nodeAttributes.getLeftsidefieldType();
-			Object contextServiceInstance;
+			outputType = nodeAttributes.getLeftsidefieldType();
+			Object contextInstance;
 			if (nodeAttributes.isContextAFieldname()) {
-				SEDEObject serviceInstace = environment.get(nodeAttributes.getContext());
-				if (!serviceInstace.isServiceInstance()) {
+				/*
+				 * The context is fieldname which points to a service instance.
+				 * The context instance is the field itself.
+				 */
+				SEDEObject field = environment.get(nodeAttributes.getContext());
+				if (!field.isServiceInstance()) {
 					throw new RuntimeException("BUG: trying to operate on service of type: " + contextType
-							+ " instead the SEDE Object is " + serviceInstace.getType());
+							+ " instead the SEDE Object is " + field.getType());
 				}
-				contextServiceInstance = ((ServiceInstanceHandle) serviceInstace.getObject()).getServiceInstance()
-						.get();
+				contextInstance = field.getServiceInstance();
 			} else {
-				contextServiceInstance = null;
+				/*
+				 * invoking a static method or a constructor.
+				 * so set context instance to null.
+				 */
+				contextInstance = null;
 			}
-			Object returnValue;
 			try {
-				returnValue = methodToBeCalled.invoke(contextServiceInstance, parameterValues);
-			} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+				outputValue = methodToBeCalled.invoke(contextInstance, parameterValues);
+			} catch (ReflectiveOperationException e) {
 				throw new RuntimeException(e);
 			}
-			returnSEDEObject = new SEDEObject(returnType, returnValue);
 		}
 		if (nodeAttributes.getLeftsidefieldname() != null) {
-			environment.put(nodeAttributes.getLeftsidefieldname(), returnSEDEObject);
+			/*
+			 * the output of the invocation is to be stored under the leftside fieldname.
+			 *
+			 */
+			SEDEObject outputSEDEObject = new SEDEObject(outputType, outputValue);
+			String leftsideFieldname = nodeAttributes.getLeftsidefieldname();
+			environment.put(leftsideFieldname, outputSEDEObject);
 		}
 		task.setSucceeded();
 	}
@@ -163,7 +176,7 @@ public class InstructionProcedure extends Procedure {
 		return result;
 	}
 
-	private Class<?>[] getParameterClasses(List<String> paramTypes, String invocationName, Class<?> contextClass)
+	private Class<?>[] getParameterClasses(List<String> paramTypes, boolean constructor, String invocationName, Class<?> contextClass)
 			throws ClassNotFoundException, NoSuchMethodException {
 		List<Class<?>> inOrderClasses = new ArrayList<>(paramTypes.size());
 		/*
@@ -172,7 +185,7 @@ public class InstructionProcedure extends Procedure {
 		 */
 		if (parameterIncludeConstantType(paramTypes)) {
 			Executable executableThatMatchesSignatureWithConstantTypes = getExecutableThatMatchesSignatureWithConstantTypes(
-					paramTypes, invocationName, contextClass);
+					paramTypes, constructor, invocationName, contextClass);
 			for (Class<?> clazz : executableThatMatchesSignatureWithConstantTypes.getParameterTypes()) {
 				inOrderClasses.add(clazz);
 			}
@@ -200,24 +213,40 @@ public class InstructionProcedure extends Procedure {
 	}
 
 	private Executable getExecutableThatMatchesSignatureWithConstantTypes(List<String> paramTypes,
-			String calledMethodName, Class<?> contextClass) throws NoSuchMethodException {
-		Executable[] contextClassExecutables = contextClass.getMethods();
+			boolean constructor, String calledMethodName, Class<?> contextClass) throws NoSuchMethodException {
+
+		Executable[] contextClassExecutables;
+		if(constructor) {
+			contextClassExecutables = contextClass.getConstructors();
+		} else {
+			contextClassExecutables = contextClass.getMethods();
+		}
+
+
 		List<Executable> executablesThatMatchMethodNameAndParamCount = new ArrayList<>();
 		for (Executable executable : contextClassExecutables) {
-			if (nameAndParamCountMatches(paramTypes, calledMethodName, executable)) {
-				executablesThatMatchMethodNameAndParamCount.add(executable);
+
+			if(!constructor && !executable.getName().equals(calledMethodName)) {
+				/* not a constructor and method name doesn't match. */
+				continue;
 			}
+			if(paramTypes.size() != executable.getParameterCount()) {
+				/* parameter size doesn't match. */
+				continue;
+			}
+			/* perfect fit */
+			executablesThatMatchMethodNameAndParamCount.add(executable);
 		}
 		for (Executable executable : executablesThatMatchMethodNameAndParamCount) {
 			if (matchesSignature(paramTypes, executable)) {
 				return executable;
 			}
 		}
-		throw new NoSuchMethodException();
+		throw new NoSuchMethodException(calledMethodName);
 	}
 
-	private boolean nameAndParamCountMatches(List<String> paramTypes, String calledMethodName, Executable executable) {
-		return executable.getName().equals(calledMethodName) && executable.getParameterCount() == paramTypes.size();
+	private boolean nameAndParamCountMatches(int parameterCount, String calledMethodName, Executable executable) {
+		return executable.getName().equals(calledMethodName) && executable.getParameterCount() == parameterCount;
 	}
 
 	private boolean matchesSignature(List<String> calledParamTypes, Executable executableToCheck) {
@@ -426,7 +455,7 @@ public class InstructionProcedure extends Procedure {
 	 */
 	private ServiceInstance createServiceInstanceHandle(Task task, Object newServiceInstance) {
 		String serviceInstanceId = UUID.randomUUID().toString();
-		String executorId = task.getExecution().getConfiguration().getExecutorId();
+		String executorId = task.getExecution().getExecutionId();
 		String classpath = newServiceInstance.getClass().getName();
 		ServiceInstance si = new ServiceInstance(executorId, classpath, serviceInstanceId, newServiceInstance);
 		return si;

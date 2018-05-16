@@ -1,6 +1,7 @@
 package de.upb.sede.core;
 
 import de.upb.sede.core.ServiceInstanceHandle;
+import de.upb.sede.exec.ServiceInstance;
 import org.json.simple.JSONObject;
 
 import java.util.Objects;
@@ -106,5 +107,29 @@ public class SEDEObject {
 
 	public String toString(){
 		return getType() + " - " + object == null ? "null" : object.getClass().getSimpleName();
+	}
+
+
+	/**
+	 * Returns the serviceinstancehandle if the sede object holds one.
+	 * Else it will throw an exception.
+	 * @return Service instance handle of this sede object.
+	 */
+	public ServiceInstanceHandle getServiceHandle() {
+		if(!isServiceInstance()) {
+			throw new RuntimeException("Trying to access a service instance although SEDEObject holds object of type: \"" + getType() + "\"");
+		} else {
+			return  ((ServiceInstanceHandle)object);
+		}
+	}
+
+	/**
+	 * If this sede object holds a service instance it will try to parse the inner service instance to the given generic type and return it.
+	 *
+	 * @param <T> Type of the inner service.
+	 * @return Service instance.
+	 */
+	public <T>T getServiceInstance() {
+		return (T) (getServiceHandle().getServiceInstance().get());
 	}
 }

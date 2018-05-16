@@ -200,7 +200,7 @@ public class InstructionProcedureTest {
 		Task task = new Task(execution, "testTask", new HashMap<String, Object>() {
 			{
 				put("nodetype", "Instruction");
-				put("method", "demo.math.Gerade");
+				put("method", "__construct");
 				put("is-service-construction", true);
 				put("host", null);
 				put("leftsidefieldname", newInstance);
@@ -212,6 +212,13 @@ public class InstructionProcedureTest {
 			}
 		});
 		new InstructionProcedure().process(task);
+		SEDEObject newService = execution.getExecutionEnvironment().get(newInstance);
+		Assert.assertTrue(newService.isServiceInstance());
+		Assert.assertEquals(Gerade.class, newService.getServiceInstance().getClass());
+		Gerade gerade = newService.getServiceInstance();
+		Assert.assertEquals(0, gerade.achsenabschnitt().y, 0.0001);
+		Assert.assertEquals(0, gerade.nullstelle().x, 0.0001);
+
 	}
 
 	class TestExecutionEnvironment extends HashMap<String, SEDEObject> implements ExecutionEnvironment {

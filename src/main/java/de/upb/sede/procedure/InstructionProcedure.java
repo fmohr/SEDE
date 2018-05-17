@@ -68,99 +68,136 @@ public class InstructionProcedure implements Procedure {
 		ExecutionEnvironment environment = task.getExecution().getEnvironment();
 		InstructionNodeAttributes nodeAttributes = new InstructionNodeAttributes(task);
 		// Get class to be called.
-		String contextType;
-		if (!nodeAttributes.isContextAFieldname()) {
-			contextType = nodeAttributes.getContext();
-		} else {
-			// Get the service from the environment and afterwards its type.
-			SEDEObject serviceInstance = environment.get(nodeAttributes.getContext());
-			if (!serviceInstance.isServiceInstance()) {
-				throw new RuntimeException("Context: " + nodeAttributes.getContext() + " is no ServiceInstance.");
-			}
-			contextType = serviceInstance.getServiceHandle().getClasspath();
-		}
-		Class<?> contextClass;
-		try {
-			contextClass = Class.forName(contextType);
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
-		}
-
+		String contextType = getContextType(environment, nodeAttributes);
+		Class<?> contextClass = getContextClassForName(contextType);
 		// Get SEDEObjects of the parameters that the method is called with.
 		Map<String, SEDEObject> parameterObjects = getParameterObjectsInOrder(nodeAttributes.getParameters(),
 				environment);
 		// Get the class of the parameters.
 		List<String> parameterTypes = getParameterTypes(parameterObjects);
 		Class<?>[] parameterClasses;
-		try {
-			parameterClasses = getParameterClasses(parameterTypes, nodeAttributes.isConstructor(), nodeAttributes.getMethod(), contextClass);
-		} catch (ClassNotFoundException | NoSuchMethodException e) {
-			throw new RuntimeException(e);
-		}
+		parameterClasses = getParameterClasses(parameterTypes, nodeAttributes, contextClass);
 		// Get the values of the parameters
 		Object[] parameterValues = getParameterValues(parameterObjects);
-
-		/*
-		 * When the call is a constructor call the the constructor is being reflected
-		 * and called.
-		 */
-		Object outputValue;
-		String outputType;
+		// When the call is a constructor call the the constructor is being reflected
+		// and called.
+		InvocationResult invocationResult;
 		if (nodeAttributes.isConstructor()) {
-			Constructor<?> constructor;
-			Object newInstance;
-			try {
-				constructor = contextClass.getConstructor(parameterClasses);
-				newInstance = constructor.newInstance(parameterValues);
-			} catch (Exception e) {
-				throw new RuntimeException(e);
-			}
-			ServiceInstanceHandle serviceInstanceHandle = createServiceInstanceHandle(task, newInstance);
-			outputType = SEDEObject.SERVICE_INSTANCE_HANDLE_TYPE;
-			outputValue = serviceInstanceHandle;
+			invocationResult = callConstructor(task, contextClass, parameterClasses, parameterValues);
 		} else {
-			Method methodToBeCalled;
-			try {
-				methodToBeCalled = contextClass.getMethod(nodeAttributes.getMethod(), parameterClasses);
-			} catch (NoSuchMethodException | SecurityException e) {
-				throw new RuntimeException(e);
-			}
-			outputType = nodeAttributes.getLeftsidefieldType();
-			Object contextInstance;
-			if (nodeAttributes.isContextAFieldname()) {
-				/*
-				 * The context is fieldname which points to a service instance.
-				 * The context instance is the field itself.
-				 */
-				SEDEObject field = environment.get(nodeAttributes.getContext());
-				if (!field.isServiceInstance()) {
-					throw new RuntimeException("BUG: trying to operate on service of type: " + contextType
-							+ " instead the SEDE Object is " + field.getType());
-				}
-				contextInstance = field.getServiceInstance();
-			} else {
-				/*
-				 * invoking a static method or a constructor.
-				 * so set context instance to null.
-				 */
-				contextInstance = null;
-			}
-			try {
-				outputValue = methodToBeCalled.invoke(contextInstance, parameterValues);
-			} catch (ReflectiveOperationException e) {
-				throw new RuntimeException(e);
-			}
+			invocationResult = callMethod(contextClass, contextType, parameterClasses, parameterValues, environment,
+					nodeAttributes);
 		}
 		if (nodeAttributes.getLeftsidefieldname() != null) {
-			/*
-			 * the output of the invocation is to be stored under the leftside fieldname.
-			 *
-			 */
-			SEDEObject outputSEDEObject = new SEDEObject(outputType, outputValue);
+			// The output of the invocation is to be stored under the left side field name.
+			SEDEObject outputSEDEObject = invocationResult.toSEDEObject();
 			String leftsideFieldname = nodeAttributes.getLeftsidefieldname();
 			environment.put(leftsideFieldname, outputSEDEObject);
 		}
 		task.setSucceeded();
+	}
+
+	/**
+	 * Returns the type of the context that the instruction node demands. If the
+	 * invocation is called on the class name itself, this name is returned.
+	 * Otherwise the class is derived from a service handle that already exists in
+	 * the environment.
+	 * 
+	 * @param environment
+	 *            Environment to look for the service handle in.
+	 * @param nodeAttributes
+	 *            Attributes of the task.
+	 * @return Type of context.
+	 */
+	private String getContextType(ExecutionEnvironment environment, InstructionNodeAttributes nodeAttributes) {
+		String nodeContext = nodeAttributes.getContext();
+		if (!nodeAttributes.isContextAFieldname()) {
+			return nodeContext;
+		} else {
+			// Get the service from the environment and afterwards its type.
+			SEDEObject serviceInstance = environment.get(nodeContext);
+			if (!serviceInstance.isServiceInstance()) {
+				throw new RuntimeException("Context: " + nodeContext + " is no ServiceInstance.");
+			}
+			return serviceInstance.getServiceHandle().getClasspath();
+		}
+	}
+
+	private Class<?> getContextClassForName(String contextType) {
+		try {
+			return Class.forName(contextType);
+		} catch (ClassNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private Object[] getParameterValues(Map<String, SEDEObject> parameterObjects) {
+		List<Object> inOrderObjects = new ArrayList<>(parameterObjects.size());
+		for (SEDEObject sedeObject : parameterObjects.values()) {
+			inOrderObjects.add(sedeObject.getObject());
+		}
+		Object[] parameterArray = new Object[inOrderObjects.size()];
+		parameterArray = inOrderObjects.toArray(parameterArray);
+		return parameterArray;
+	}
+
+	private InvocationResult callConstructor(Task task, Class<?> contextClass, Class<?>[] parameterClasses,
+			Object[] parameterValues) {
+		Constructor<?> constructor;
+		Object newInstance;
+		try {
+			constructor = contextClass.getConstructor(parameterClasses);
+			newInstance = constructor.newInstance(parameterValues);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		ServiceInstanceHandle serviceInstanceHandle = createServiceInstanceHandle(task, newInstance);
+		return new InvocationResult(serviceInstanceHandle, SEDEObject.SERVICE_INSTANCE_HANDLE_TYPE);
+	}
+
+	/**
+	 * Create new new service instance handle with the given service instance.
+	 *
+	 * @return a new ServiceInstanceHandle
+	 */
+	private ServiceInstance createServiceInstanceHandle(Task task, Object newServiceInstance) {
+		String serviceInstanceId = UUID.randomUUID().toString();
+		String executorId = task.getExecution().getExecutionId();
+		String classpath = newServiceInstance.getClass().getName();
+		ServiceInstance si = new ServiceInstance(executorId, classpath, serviceInstanceId, newServiceInstance);
+		return si;
+	}
+
+	private InvocationResult callMethod(Class<?> contextClass, String contextType, Class<?>[] parameterClasses,
+			Object[] parameterValues, ExecutionEnvironment environment, InstructionNodeAttributes nodeAttributes) {
+		Method methodToBeCalled;
+		try {
+			methodToBeCalled = contextClass.getMethod(nodeAttributes.getMethod(), parameterClasses);
+		} catch (NoSuchMethodException | SecurityException e) {
+			throw new RuntimeException(e);
+		}
+		String outputType = nodeAttributes.getLeftsidefieldType();
+		// If invoking a static method or a constructor the context instance is null.
+		Object contextInstance = null;
+		if (nodeAttributes.isContextAFieldname()) {
+			/*
+			 * The context is field name which points to a service instance. The context
+			 * instance is the field itself.
+			 */
+			SEDEObject field = environment.get(nodeAttributes.getContext());
+			if (!field.isServiceInstance()) {
+				throw new RuntimeException("BUG: trying to operate on service of type: " + contextType
+						+ " instead the SEDE Object is " + field.getType());
+			}
+			contextInstance = field.getServiceInstance();
+		}
+		Object outputValue;
+		try {
+			outputValue = methodToBeCalled.invoke(contextInstance, parameterValues);
+		} catch (ReflectiveOperationException e) {
+			throw new RuntimeException(e);
+		}
+		return new InvocationResult(outputValue, outputType);
 	}
 
 	private List<String> getParameterTypes(Map<String, SEDEObject> parameterObjects) {
@@ -169,6 +206,17 @@ public class InstructionProcedure implements Procedure {
 		return paramTypes;
 	}
 
+	/**
+	 * Gathers the SEDEObjects by the variable name from the environment in order of
+	 * occurrence in the parameters.
+	 * 
+	 * @param parameters
+	 *            Parameter names to look up.
+	 * @param environment
+	 *            Environment to look in.
+	 * @return Variable names and their corresponding object in order of the
+	 *         parameters
+	 */
 	private Map<String, SEDEObject> getParameterObjectsInOrder(List<String> parameters,
 			ExecutionEnvironment environment) {
 		Map<String, SEDEObject> result = new LinkedHashMap<>(parameters.size());
@@ -176,28 +224,43 @@ public class InstructionProcedure implements Procedure {
 		return result;
 	}
 
-	private Class<?>[] getParameterClasses(List<String> paramTypes, boolean constructor, String invocationName, Class<?> contextClass)
-			throws ClassNotFoundException, NoSuchMethodException {
+	/**
+	 * Returns the classes of the parameter given. Therefore it's necessary to
+	 * consider every real type for constant types in the signature of the method to
+	 * be invoked.
+	 * 
+	 * @param paramTypes
+	 *            Types of the parameters.
+	 * @param nodeAttributes
+	 *            Attributes of the instruction node.
+	 * @param contextClass
+	 *            Class that the method is called from.
+	 * @return Classes of the parameters in order of occurence in the parameters.
+	 */
+	private Class<?>[] getParameterClasses(List<String> paramTypes, InstructionNodeAttributes nodeAttributes,
+			Class<?> contextClass) {
 		List<Class<?>> inOrderClasses = new ArrayList<>(paramTypes.size());
 		/*
 		 * If there are ConstantTypes in the signature of the method to be called, it's
 		 * iterated over all possible methods (matching name and parameter count).
 		 */
-		if (parameterIncludeConstantType(paramTypes)) {
-			Executable executableThatMatchesSignatureWithConstantTypes = getExecutableThatMatchesSignatureWithConstantTypes(
-					paramTypes, constructor, invocationName, contextClass);
-			for (Class<?> clazz : executableThatMatchesSignatureWithConstantTypes.getParameterTypes()) {
-				inOrderClasses.add(clazz);
+		try {
+			if (parameterIncludeConstantType(paramTypes)) {
+				Executable executableThatMatchesSignatureWithConstantTypes = getExecutableThatMatchesSignatureWithConstantTypes(
+						paramTypes, nodeAttributes, contextClass);
+				for (Class<?> clazz : executableThatMatchesSignatureWithConstantTypes.getParameterTypes()) {
+					inOrderClasses.add(clazz);
+				}
+			} else {
+				for (String classType : paramTypes) {
+					Class<?> clazz = Class.forName(classType);
+					inOrderClasses.add(clazz);
+				}
 			}
-		} else {
-			for (String classType : paramTypes) {
-				Class<?> clazz = Class.forName(classType);
-				inOrderClasses.add(clazz);
-			}
+		} catch (ClassNotFoundException | NoSuchMethodException e) {
+			throw new RuntimeException(e);
 		}
-		/*
-		 * Convert the list to an array.
-		 */
+		// Convert the list to an array.
 		Class<?>[] inOrderClassesArray = new Class<?>[inOrderClasses.size()];
 		inOrderClassesArray = inOrderClasses.toArray(inOrderClassesArray);
 		return inOrderClassesArray;
@@ -212,25 +275,48 @@ public class InstructionProcedure implements Procedure {
 		return false;
 	}
 
-	private Executable getExecutableThatMatchesSignatureWithConstantTypes(List<String> paramTypes,
-			boolean constructor, String calledMethodName, Class<?> contextClass) throws NoSuchMethodException {
+	private Set<String> getConstantTypeNames() {
+		ConstantType[] constantTypes = ConstantType.values();
+		Set<String> constantTypeNames = new HashSet<>();
+		for (ConstantType type : constantTypes) {
+			constantTypeNames.add(type.toString());
+		}
+		return constantTypeNames;
+	}
 
+	/**
+	 * Tries to find an Executable (Method or Constructor) provided by the context
+	 * class that matches the name of the invocation and its signature.
+	 * 
+	 * @param paramTypes
+	 *            Types of the parameters.
+	 * @param nodeAttributes
+	 *            Attributes of the InstructionNode
+	 * @param contextClass
+	 *            Class to invoke the Executable from.
+	 * @return Executable that matches the demanded invocation.
+	 * @throws NoSuchMethodException
+	 *             No Method with the demanded signature was found.
+	 */
+	private Executable getExecutableThatMatchesSignatureWithConstantTypes(List<String> paramTypes,
+			InstructionNodeAttributes nodeAttributes, Class<?> contextClass) throws NoSuchMethodException {
+		boolean isConstructor = nodeAttributes.isConstructor();
+		String methodName = nodeAttributes.getMethod();
 		Executable[] contextClassExecutables;
-		if(constructor) {
+		if (isConstructor) {
 			contextClassExecutables = contextClass.getConstructors();
 		} else {
 			contextClassExecutables = contextClass.getMethods();
 		}
 
-
 		List<Executable> executablesThatMatchMethodNameAndParamCount = new ArrayList<>();
 		for (Executable executable : contextClassExecutables) {
 
-			if(!constructor && !executable.getName().equals(calledMethodName)) {
+			if (!isConstructor && !executable.getName().equals(methodName)) {
 				/* not a constructor and method name doesn't match. */
 				continue;
 			}
-			if(paramTypes.size() != executable.getParameterCount()) {
+			if (paramTypes.size() != executable.getParameterCount()) {
 				/* parameter size doesn't match. */
 				continue;
 			}
@@ -242,13 +328,21 @@ public class InstructionProcedure implements Procedure {
 				return executable;
 			}
 		}
-		throw new NoSuchMethodException(calledMethodName);
+		throw new NoSuchMethodException(methodName);
 	}
 
-	private boolean nameAndParamCountMatches(int parameterCount, String calledMethodName, Executable executable) {
-		return executable.getName().equals(calledMethodName) && executable.getParameterCount() == parameterCount;
-	}
-
+	/**
+	 * Checks whether the given executable is suitable for the types of the
+	 * parameters. Therefore constant types must be checked against all suitable
+	 * real types.
+	 * 
+	 * @param calledParamTypes
+	 *            Types of the parameters.
+	 * @param executableToCheck
+	 *            Executable that is checked against the parameters.
+	 * @return True if the executable is suitable for the parameters. False
+	 *         otherwise.
+	 */
 	private boolean matchesSignature(List<String> calledParamTypes, Executable executableToCheck) {
 		List<String> methodParameterClasses = getParamTypes(executableToCheck);
 		Map<Integer, String> realTypesInCall = getIndicesOfRealTypes(calledParamTypes);
@@ -261,8 +355,8 @@ public class InstructionProcedure implements Procedure {
 		}
 		Map<Integer, String> constantTypesInCall = getInverseIndicesTypes(realTypesInCall, calledParamTypes);
 		for (Entry<Integer, String> constantType : constantTypesInCall.entrySet()) {
-			String constantTypeName = constantType.getValue();
 			int indexInSignature = constantType.getKey();
+			String constantTypeName = constantType.getValue();
 			String classNameOnIndex = methodParameterClasses.get(indexInSignature);
 			switch (constantTypeName) {
 			case "Number":
@@ -287,6 +381,36 @@ public class InstructionProcedure implements Procedure {
 		return true;
 	}
 
+	private List<String> getParamTypes(Executable executable) {
+		List<String> executableParamTypes = new ArrayList<>();
+		for (Class<?> clazz : executable.getParameterTypes()) {
+			executableParamTypes.add(clazz.getName());
+		}
+		return executableParamTypes;
+	}
+
+	private Map<Integer, String> getIndicesOfRealTypes(List<String> calledParamTypes) {
+		Map<Integer, String> result = new HashMap<>();
+		for (int i = 0; i < calledParamTypes.size(); i++) {
+			String type = calledParamTypes.get(i);
+			if (!isConstantType(type))
+				result.put(i, type);
+		}
+		return result;
+	}
+
+	private Map<Integer, String> getInverseIndicesTypes(Map<Integer, String> realTypesInCall,
+			List<String> calledParamTypes) {
+		Map<Integer, String> mapOfParameters = new HashMap<>();
+		for (int i = 0, size = calledParamTypes.size(); i < size; i++) {
+			mapOfParameters.put(i, calledParamTypes.get(i));
+		}
+		for (Integer index : realTypesInCall.keySet()) {
+			mapOfParameters.remove(index);
+		}
+		return mapOfParameters;
+	}
+
 	private boolean isNULL(String classNameOnIndex) {
 		return true;
 	}
@@ -303,72 +427,23 @@ public class InstructionProcedure implements Procedure {
 		return CLASSES_FOR_NUMBER.contains(classNameOnIndex);
 	}
 
-	private Map<Integer, String> getInverseIndicesTypes(Map<Integer, String> realTypesInCall,
-			List<String> calledParamTypes) {
-		Map<Integer, String> mapOfParameters = new HashMap<>();
-		for (int i = 0, size = calledParamTypes.size(); i < size; i++) {
-			mapOfParameters.put(i, calledParamTypes.get(i));
-		}
-		for (Integer index : realTypesInCall.keySet()) {
-			mapOfParameters.remove(index);
-		}
-		return mapOfParameters;
-	}
-
-	private Map<Integer, String> getIndicesOfRealTypes(List<String> calledParamTypes) {
-		Map<Integer, String> result = new HashMap<>();
-		for (int i = 0; i < calledParamTypes.size(); i++) {
-			String type = calledParamTypes.get(i);
-			if (!isConstantType(type))
-				result.put(i, type);
-		}
-		return result;
-	}
-
 	private boolean isConstantType(String type) {
 		return getConstantTypeNames().contains(type);
 	}
 
-	private List<String> getParamTypes(Executable executable) {
-		List<String> executableParamTypes = new ArrayList<>();
-		for (Class<?> clazz : executable.getParameterTypes()) {
-			executableParamTypes.add(clazz.getName());
-		}
-		return executableParamTypes;
-	}
-
-	private Set<String> getConstantTypeNames() {
-		ConstantType[] constantTypes = ConstantType.values();
-		Set<String> constantTypeNames = new HashSet<>();
-		for (ConstantType type : constantTypes) {
-			constantTypeNames.add(type.toString());
-		}
-		return constantTypeNames;
-	}
-
-	private Object[] getParameterValues(Map<String, SEDEObject> parameterObjects) {
-		List<Object> inOrderObjects = new ArrayList<>(parameterObjects.size());
-		for (SEDEObject sedeObject : parameterObjects.values()) {
-			inOrderObjects.add(sedeObject.getObject());
-		}
-		Object[] parameterArray = new Object[inOrderObjects.size()];
-		parameterArray = inOrderObjects.toArray(parameterArray);
-		return parameterArray;
-	}
-
 	// TODO Must be moved into another class.
-	private Class<?> addClassInClassLoader(String context) throws Exception {
-		URL serviceFilesURL = new URL("jar", "", context + "!/");
+	private Class<?> addClassInClassLoader(String jarFilePath) throws Exception {
+		URL serviceFilesURL = new URL("jar", "", jarFilePath + "!/");
 		JarURLConnection jarURLConnection = (JarURLConnection) serviceFilesURL.openConnection();
 		Attributes attr = jarURLConnection.getMainAttributes();
 		if (attr != null) {
-			logger.info("Servicefile: " + context + "\n Main class:" + attr.getValue(Attributes.Name.MAIN_CLASS));
+			logger.info("Servicefile: " + jarFilePath + "\n Main class:" + attr.getValue(Attributes.Name.MAIN_CLASS));
 		} else {
-			logger.error("No entry point in: \"" + context + "\"");
+			logger.error("No entry point in: \"" + jarFilePath + "\"");
 		}
 		URLClassLoader urlClassLoader = new URLClassLoader(new URL[] { serviceFilesURL },
 				this.getClass().getClassLoader());
-		Class<?> reflectedClass = Class.forName(context, true, urlClassLoader);
+		Class<?> reflectedClass = Class.forName(jarFilePath, true, urlClassLoader);
 		addURLToClassLoader(serviceFilesURL);
 		return reflectedClass;
 	}
@@ -448,16 +523,25 @@ public class InstructionProcedure implements Procedure {
 		}
 	}
 
-	/**
-	 * Create new new service instance handle with the given service instance.
-	 *
-	 * @return a new ServiceInstanceHandle
-	 */
-	private ServiceInstance createServiceInstanceHandle(Task task, Object newServiceInstance) {
-		String serviceInstanceId = UUID.randomUUID().toString();
-		String executorId = task.getExecution().getExecutionId();
-		String classpath = newServiceInstance.getClass().getName();
-		ServiceInstance si = new ServiceInstance(executorId, classpath, serviceInstanceId, newServiceInstance);
-		return si;
+	class InvocationResult {
+		Object outputValue;
+		String outputType;
+
+		InvocationResult(Object outputValue, String outputType) {
+			this.outputValue = outputValue;
+			this.outputType = outputType;
+		}
+
+		public Object getOutputValue() {
+			return outputValue;
+		}
+
+		public String getOutputType() {
+			return outputType;
+		}
+
+		public SEDEObject toSEDEObject() {
+			return new SEDEObject(getOutputType(), getOutputValue());
+		}
 	}
 }

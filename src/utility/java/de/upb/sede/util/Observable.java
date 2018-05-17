@@ -33,26 +33,32 @@ public class Observable<T> {
 		Iterator<Observer<T>> observerIterator = this.observers.iterator();
 		while(observerIterator.hasNext()) {
 			Observer<T> observer = observerIterator.next();
-			boolean removeObserver;
-			if(observer.synchronizedNotification()){
-				/*
-				 * Observer wants synchronized notification.
-				 */
-				synchronized (observer){
+			try{
+				boolean removeObserver;
+				if(observer.synchronizedNotification()){
+					/*
+					 * Observer wants synchronized notification.
+					 */
+					synchronized (observer){
+						removeObserver = notificationProcess(observer, updatedInstance);
+					}
+				} else{
+					/*
+					 * Observer allows parallel notification.
+					 */
 					removeObserver = notificationProcess(observer, updatedInstance);
 				}
-			} else{
-				/*
-				 * Observer allows parallel notification.
-				 */
-				removeObserver = notificationProcess(observer, updatedInstance);
+				if(removeObserver){
+					/*
+					 * remove this observer from the list of observers.
+					 */
+					observerIterator.remove();
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				throw new RuntimeException(ex);
 			}
-			if(removeObserver){
-				/*
-				 * remove this observer from the list of observers.
-				 */
-				observerIterator.remove();
-			}
+
 		}
 	}
 

@@ -21,7 +21,7 @@ import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.GraphToDotNidi;
 
-public class DemoOfResolveCompositionGraph {
+public class Demo_Resolve {
 
 	
 	private static final String rscPath = "testrsc/resolve-requests/"; 
@@ -70,12 +70,13 @@ public class DemoOfResolveCompositionGraph {
 			resolveToDot(pathToRequest);
 		}
 	}
-	
 	public void resolveToDot(String filenameOfRequest) {
+		ResolveRequest resolveRequest = fromFile(filenameOfRequest);
+		resolveToDot(resolveRequest, gateway, rscPath + filenameOfRequest.substring(0, filenameOfRequest.length()-5));
+	}
+
+	public static void resolveToDot(ResolveRequest resolveRequest, Gateway gateway, String outputFolder) {
 		try {
-			Map<String, CompositionGraph> resolvedGraphs = new LinkedHashMap<>();
-			
-			ResolveRequest resolveRequest = fromFile(filenameOfRequest);
 //			GatewayResolution resolution = gateway.resolve(resolveRequest);
 //			
 //			CompositionGraph clientGraph = GJS.fromJson((Map<Object, Object>) JP.parse(resolution.getCompositionGraph()));
@@ -85,7 +86,8 @@ public class DemoOfResolveCompositionGraph {
 //				CompositionGraph execGraph = GJS.fromJson((Map<Object, Object>) JP.parse(graphNode.getGraph()));
 //				resolvedGraphs.put(graphNode.getExecutorsAddress(), execGraph);
 //			}
-			
+
+			Map<String, CompositionGraph> resolvedGraphs = new LinkedHashMap<>();
 			GraphConstruction gc = gateway.constructGraphs(resolveRequest);
 			String clientId =  resolveRequest.getClientExecutorRegistration().getId();
 			resolvedGraphs.put(clientId, gc.getResolvedClientGraph());
@@ -100,17 +102,17 @@ public class DemoOfResolveCompositionGraph {
 
 			for(String hostname : resolvedGraphs.keySet()) {
 				String svgGraph = GraphToDotNidi.getSVGForGraph(resolvedGraphs.get(hostname));
-				String file = rscPath + filenameOfRequest.substring(0, filenameOfRequest.length()-5) + ".reso/" + hostname + ".svg";
+				String file = outputFolder + ".reso/" + hostname + ".svg";
 				FileUtil.writeStringToFile(file, svgGraph);
 			}
 
 			String svgGraph = GraphToDotNidi.getSVGForGraphs(resolvedGraphs, gc.getTransmissionGraph());
-			String file = rscPath + filenameOfRequest.substring(0, filenameOfRequest.length()-5) + ".reso/all.svg";
+			String file = outputFolder + ".reso/all.svg";
 			FileUtil.writeStringToFile(file, svgGraph);
 			
 		} catch (Exception e) {
-			logger.error("Error during " + filenameOfRequest + ":", e);
-//			System.err.println("Error during " + filenameOfRequest + ": \n\t" + e.getMessage() + "\nStacktrace: ");
+			logger.error("Error during " + outputFolder + ":", e);
+//			System.err.println("Error during " + outputFolder + ": \n\t" + e.getMessage() + "\nStacktrace: ");
 //			e.printStackTrace(System.err);
 		}
 	}

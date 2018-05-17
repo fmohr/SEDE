@@ -6,11 +6,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.util.Observable;
 import de.upb.sede.util.Observer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Represents one execution.
  */
 public class Execution {
+	private static final Logger logger = LogManager.getLogger();
 
 	private final ExecutionEnvironment environment;
 
@@ -82,7 +85,7 @@ public class Execution {
 		this.executorConfiguration = executorConfiguration;
 	}
 
-	/**
+	/**t
 	 * Returns the execution-id of this execution.
 	 *
 	 * @return the execution-id
@@ -165,7 +168,7 @@ public class Execution {
 	 *
 	 * @return true if the execution has finished
 	 */
-	synchronized boolean hasExecutionFinished() {
+	public synchronized boolean hasExecutionFinished() {
 		return interrupted || unfinishedTasks.isEmpty();
 	}
 
@@ -175,7 +178,7 @@ public class Execution {
 	 *
 	 * @return true if the execution was interrupted
 	 */
-	synchronized boolean hasExecutionBeenInterrupted() {
+	public synchronized boolean hasExecutionBeenInterrupted() {
 		return interrupted;
 	}
 
@@ -185,7 +188,7 @@ public class Execution {
 	 *
 	 * @return true all tasks of this execution is done.
 	 */
-	synchronized boolean zeroTasksRemaining() {
+	public synchronized boolean zeroTasksRemaining() {
 		return unfinishedTasks.isEmpty();
 	}
 

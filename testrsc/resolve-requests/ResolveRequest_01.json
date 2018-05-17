@@ -15,13 +15,13 @@
         "service-instance-map": {
             "e": {
                 "classpath": "demo.math.Gerade",
-                "host": "exec_2",
+                "executorId": "exec_2",
                 "id": "id0"
             }
         },
         "field-types": {
-            "b": "Array",
-            "c": "Array",
+            "b": "Arr",
+            "c": "Arr",
             "e": "ServiceInstanceHandle"
         }
     },

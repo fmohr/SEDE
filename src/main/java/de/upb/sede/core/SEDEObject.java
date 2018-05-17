@@ -2,12 +2,17 @@ package de.upb.sede.core;
 
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ServiceInstance;
+import de.upb.sede.util.JsonSerializable;
 import org.json.simple.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-public class SEDEObject {
+public class SEDEObject implements JsonSerializable {
+
 	public static enum PrimitiveType {
 		NULL, String, Number, Bool;
 
@@ -29,9 +34,13 @@ public class SEDEObject {
 	private final static Pattern PATTERN_real_type = Pattern.compile(REGEX_real_type);
 
 
-	private final String type;
+	private String type;
 
-	private final Object object;
+	private Object object;
+
+	private SEDEObject() {
+		// dont make this public. its only used by fromJson method.
+	}
 
 	public SEDEObject(String type, Object object) {
 		this.type = Objects.requireNonNull(type);
@@ -56,13 +65,6 @@ public class SEDEObject {
 
 	public String getType() {
 		return type;
-	}
-
-	public String toJSON() {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("type", type);
-		jsonObject.put("object", object);
-		return jsonObject.toJSONString();
 	}
 
 	public static boolean isPrimitive(String type){
@@ -137,4 +139,60 @@ public class SEDEObject {
 	public <T>T getServiceInstance() {
 		return (T) (getServiceHandle().getServiceInstance().get());
 	}
+
+
+	@Override
+	public JSONObject toJson() {
+		Object data;
+		if(isServiceInstanceHandle()) {
+			data = getServiceHandle().toJson();
+		}
+		else if(isSemantic()) {
+			byte[] byteArr = (byte[]) getObject();
+			List<Character> charList = new ArrayList<Character>(byteArr.length);
+			for (byte b : byteArr) {
+				charList.add((char)b);
+			}
+			data = byteArr;
+		} else if(isPrimitive()) {
+			data = getObject();
+		} else {
+			throw new RuntimeException("cannot parse real data to json. Use semantic streamer instead: " + toString());
+		}
+		JSONObject jsonResult = new JSONObject();
+		jsonResult.put("type", getType());
+		jsonResult.put("data", data);
+		return jsonResult;
+	}
+
+
+	@Override
+	public void fromJson(Map<String, Object> jsonData) {
+		this.type = (String) jsonData.get("type");
+		Object data = jsonData.get("data");
+		if(isServiceInstanceHandle(type)) {
+			ServiceInstanceHandle serviceInstanceHandle = new ServiceInstanceHandle();
+			serviceInstanceHandle.fromJson((Map<String, Object>) data);
+			this.object = serviceInstanceHandle;
+		}
+		else if(isSemantic(type)) {
+			List<Character> charList = (List<Character>) data;
+			byte[] byteArr = new byte[charList.size()];
+			for (int i = 0; i < byteArr.length; i++) {
+				byteArr[i] = (byte)charList.get(i).charValue();
+			}
+			this.object = byteArr;
+		} else if(isPrimitive()) {
+			this.object = data;
+		} else {
+			throw new RuntimeException("cannot parse real data from json. Use semantic streamer instead: " + type);
+		}
+	}
+
+	public static SEDEObject constructFromJson(Map<String, Object> jsonData) {
+		SEDEObject sedeObject = new SEDEObject();
+		sedeObject.fromJson(jsonData);
+		return sedeObject;
+	}
+
 }

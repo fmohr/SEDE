@@ -1,8 +1,13 @@
 package de.upb.sede.requests;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
+import de.upb.sede.core.SEDEObject;
+import de.upb.sede.util.Maps;
 import org.json.simple.JSONObject;
 
 import de.upb.sede.requests.resolve.ResolvePolicy;
@@ -12,21 +17,21 @@ public class RunRequest extends Request {
 	private Optional<String> composition;
 	private Optional<ResolvePolicy> policy;
 
-	private Optional<Map<String, Object>> variables;
+	private Optional<Map<String, SEDEObject>> inputs;
 
 	public RunRequest() {
 		this.composition = Optional.empty();
 		this.policy = Optional.empty();
-		this.variables = Optional.empty();
+		this.inputs = Optional.empty();
 
 	}
 
 	public RunRequest(String requestId, String composition, ResolvePolicy policy,
-					  Map<String, Object> variables) {
+					  Map<String, SEDEObject> inputs) {
 		super(requestId);
 		this.composition = Optional.of(composition);
 		this.policy = Optional.of(policy);
-		this.variables = Optional.of(variables);
+		this.inputs = Optional.of(inputs);
 	}
 
 	public boolean hasComposition() {
@@ -38,7 +43,7 @@ public class RunRequest extends Request {
 	}
 
 	public boolean hasVariables() {
-		return this.variables.isPresent();
+		return this.inputs.isPresent();
 	}
 
 	public String getComposition() {
@@ -51,28 +56,40 @@ public class RunRequest extends Request {
 		return policy.get();
 	}
 
-	public Map<String, Object> getVariables() {
+	public Map<String, SEDEObject> getInputs() {
 		assert hasVariables();
-		return variables.get();
+		return inputs.get();
 	}
 
 	public JSONObject toJson() {
 		JSONObject jsonObject = super.toJson();
-		jsonObject.put("composition", composition);
+		jsonObject.put("composition", getComposition());
 		jsonObject.put("policy", getPolicy().toJson());
-		// TODO serialize variables with the marshal system.
+		JSONObject jsonInputs = new JSONObject();
+		Maps.translate(getInputs(), jsonInputs, SEDEObject::toJson);
+		jsonObject.put("inputs", jsonInputs);
 		return jsonObject;
 	}
 
 	@SuppressWarnings("unchecked")
 	public void fromJson(Map<String, Object> data) {
 		super.fromJson(data);
-		composition = Optional.of((String) data.get("composition"));
+		Object compositionEntry = data.get("composition");
+		if(compositionEntry instanceof String) {
+			this.composition = Optional.of((String) compositionEntry);
+		} else if(compositionEntry instanceof List) {
+			this.composition = Optional.of(((List<String>) compositionEntry).stream().collect(Collectors.joining(";")));
+		} else {
+			throw new RuntimeException(compositionEntry.getClass().getName());
+		}
 		ResolvePolicy policy = new ResolvePolicy();
-		if (data.containsKey("policy")) { // if policy defined overwrite standard policy:
+		if (data.containsKey("policy")) { // if policy is defined overwrite standard policy:
 			policy.fromJson((Map<String, Object>) data.get("policy"));
 		}
 		this.policy = Optional.of(policy);
-		// TODO deserialize variables using the marshal system.
+		JSONObject jsonInputs = (JSONObject) data.get("inputs");
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		Maps.translate(jsonInputs, inputs, SEDEObject::constructFromJson);
+		this.inputs = Optional.of(inputs);
 	}
 }

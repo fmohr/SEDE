@@ -37,6 +37,12 @@ public class Punkt implements Serializable {
 			return false;
 		return true;
 	}
-	
-	
+
+	@Override
+	public String toString() {
+		return "Punkt{" +
+				"x=" + x +
+				", y=" + y +
+				'}';
+	}
 }

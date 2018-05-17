@@ -1,11 +1,17 @@
 package de.upb.sede.exec;
 
 import de.upb.sede.util.Observer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class ExecutionPool {
+
+
+	private static final Logger logger = LogManager.getLogger();
 	/**
 	 * be aware that the implementation of the map is not thread safe.
 	 * So don't expose the map itself and only operate on it in synchronous methods.
@@ -48,8 +54,17 @@ public class ExecutionPool {
 	}
 
 	private Execution createExecution(String execId){
-		return null;
+		return new Execution(execId, executorConfiguration);
 	}
 
 
+	public synchronized  void forAll(Consumer<Execution> executionConsumer) {
+		for(String execId : execMap.keySet()) {
+			executionConsumer.accept(execMap.get(execId));
+		}
+	}
+
+	public synchronized  Execution getExecution(String requestId) {
+		return execMap.get(requestId);
+	}
 }

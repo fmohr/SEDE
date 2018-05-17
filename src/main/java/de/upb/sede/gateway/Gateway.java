@@ -74,13 +74,14 @@ public class Gateway implements IGateway{
 	public final GatewayResolution resolve(ResolveRequest resolveRequest) {
 		GraphConstruction gc = constructGraphs(resolveRequest);
 		CompositionGraph clientGraph = gc.getResolvedClientGraph();
+		List<String> returnFields = gc.getReturnFields();
 		/*
 		 * Serializae the graph to json:
 		 */
 		GraphJsonSerializer gjs = new GraphJsonSerializer();
 		JSONObject jsonClientGraph = gjs.toJson(clientGraph);
 
-		GatewayResolution gatewayResolution = new GatewayResolution(jsonClientGraph.toJSONString());
+		GatewayResolution gatewayResolution = new GatewayResolution(jsonClientGraph.toJSONString(), returnFields);
 		
 		return gatewayResolution;
 	}
@@ -120,8 +121,8 @@ public class Gateway implements IGateway{
 			return false;
 		} else {
 			execCoordinator.addExecutor(execHandle);
-			logger.info("Executor registered successfully with {} services. Executor's Host: {}", execHandle.getExecutionerCapabilities().supportedServices().size(), execRegister.getId());
-			logger.trace("Supported service of executor with host {} are {}.", execRegister.getId(), execHandle.getExecutionerCapabilities().supportedServices());
+			logger.info("Executor registered successfully with {} services. Executor's id: {}", execHandle.getExecutionerCapabilities().supportedServices().size(), execRegister.getId());
+			logger.trace("Supported service of executor with id {} are {}.", execRegister.getId(), execHandle.getExecutionerCapabilities().supportedServices());
 			return true;
 		}
 	}

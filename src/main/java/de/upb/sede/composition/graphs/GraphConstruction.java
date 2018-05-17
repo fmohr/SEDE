@@ -84,4 +84,8 @@ public class GraphConstruction {
 	CompositionGraph getTransmissionGraph() {
 		return dataFlow.getTransmissionGraph();
 	}
+
+	public List<String> getReturnFields() {
+		return dataFlow.getReturnFieldnames();
+	}
 }

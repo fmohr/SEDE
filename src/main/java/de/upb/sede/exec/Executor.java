@@ -2,18 +2,22 @@ package de.upb.sede.exec;
 
 import de.upb.sede.exceptions.ExecutionIdOccupiedException;
 import de.upb.sede.interfaces.IExecutor;
-import de.upb.sede.procedure.InstructionProcedure;
-import de.upb.sede.procedure.ParseConstantProcedure;
-import de.upb.sede.procedure.AcceptDataProcedure;
-import de.upb.sede.procedure.ServiceInstanceStorageProcedure;
+import de.upb.sede.procedure.*;
 import de.upb.sede.requests.DataPutRequest;
 import de.upb.sede.requests.ExecRequest;
+import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.util.Observer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
 
+import java.util.List;
 import java.util.Map;
 
 public class Executor implements IExecutor{
+
+
+	private static final Logger logger = LogManager.getLogger();
 
 	private static final GraphJsonDeserializer deserializer = new GraphJsonDeserializer();
 
@@ -27,8 +31,11 @@ public class Executor implements IExecutor{
 
 	private final Observer<Task> taskWorkerEnqueuer;
 
+	public Executor() {
+		this(new ExecutorConfiguration());
+	}
 
-	public Executor(ExecutorConfiguration execConfig) throws Exception {
+	public Executor(ExecutorConfiguration execConfig) {
 		this.execPool = new ExecutionPool(execConfig);
 		this.config = execConfig;
 		this.resourceAllocator = new ResourceAllocator(this.config.getAvailableResources());
@@ -41,9 +48,9 @@ public class Executor implements IExecutor{
 		workerPool.bindProcedure("Instruction", InstructionProcedure::new);
 		workerPool.bindProcedure("ParseConstant", ParseConstantProcedure::new);
 		workerPool.bindProcedure("AcceptData", AcceptDataProcedure::new);
-		workerPool.bindProcedure("CastType", null); // TODO
+		workerPool.bindProcedure("CastType", CastTypeProcedure::new);
 		workerPool.bindProcedure("DeleteField", null); // TODO
-		workerPool.bindProcedure("ServiceInstanceStorageProcedure", ServiceInstanceStorageProcedure::new);
+		workerPool.bindProcedure("ServiceInstanceStorage", ServiceInstanceStorageProcedure::new);
 		// send graph and transmit data needs to be specified..
 	}
 
@@ -51,7 +58,12 @@ public class Executor implements IExecutor{
 		return workerPool;
 	}
 
-	public Execution getExecWithId(String requestId) {
+
+	public Execution getExecution(String requestId) {
+		return execPool.getExecution(requestId);
+	}
+
+	public Execution getOrCreateExecution(String requestId) {
 		return execPool.getOrCreateExecution(requestId);
 	}
 
@@ -60,22 +72,24 @@ public class Executor implements IExecutor{
 	}
 
 	@Override
-	public void put(DataPutRequest dataPutRequest){
-		Execution exec = getExecWithId(dataPutRequest.getRequestID());
+	public synchronized void put(DataPutRequest dataPutRequest){
+		Execution exec = getOrCreateExecution(dataPutRequest.getRequestID());
 		exec.getEnvironment().put(dataPutRequest.getFieldname(), dataPutRequest.getData());
 	}
 
 	@Override
-	public void exec(ExecRequest execRequest){
+	public synchronized Execution exec(ExecRequest execRequest){
 		String execId = execRequest.getRequestID();
 
 		if(execPool.hasExecution(execId)){
 			throw new ExecutionIdOccupiedException(execId);
 		}
-		Execution exec = getExecWithId(execRequest.getRequestID());
-		deserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
-
+		Execution exec = getOrCreateExecution(execRequest.getRequestID());
 		exec.getNewTasksObservable().observe(taskWorkerEnqueuer);
+
+		deserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
+		logger.debug("Execution request {} started.", execRequest.getRequestID());
+		return exec;
 	}
 
 	@Override
@@ -83,10 +97,29 @@ public class Executor implements IExecutor{
 		// TODO
 	}
 
-	protected Map<String, String> getContactInfo() {
+	@Override
+	public void interrupt(String executionId) {
+		getOrCreateExecution(executionId).interrupt();
+	}
+
+
+	public void interruptAll() {
+		execPool.forAll(Execution::interrupt);
+	}
+
+
+	@Override
+	public Map<String, String> contactInfo() {
 		JSONObject contactInfo = new JSONObject();
 		contactInfo.put("id", getExecutorConfiguration().getExecutorId());
 		return contactInfo;
+	}
+	@Override
+	public ExecutorRegistration registration() {
+		List<String> capibilities = getExecutorConfiguration().getExecutorCapabilities();
+		List<String> supportedServices = getExecutorConfiguration().getSupportedServices();
+		ExecutorRegistration registration = new ExecutorRegistration(contactInfo(), capibilities, supportedServices);
+		return registration;
 	}
 
 

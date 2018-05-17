@@ -1,10 +1,11 @@
 package de.upb.sede.webinterfaces;
 
 import com.sun.net.httpserver.HttpServer;
-import de.upb.sede.exec.ExecutorHttpServer;
 import de.upb.sede.util.Streams;
 import de.upb.sede.webinterfaces.client.HTTPClientRequest;
 import de.upb.sede.webinterfaces.server.HTTPServerResponse;
+import de.upb.sede.webinterfaces.server.SunHttpHandler;
+
 import org.junit.Assert;
 import org.junit.Test;
 

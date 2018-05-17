@@ -3,12 +3,10 @@ package de.upb.sede.gateway;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
-import java.util.Map;
-import java.util.Optional;
 
+import de.upb.sede.webinterfaces.server.ImServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.parser.JSONParser;
 
 import com.sun.net.httpserver.HttpServer;
 
@@ -17,10 +15,10 @@ import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.ResolveRequest;
-import de.upb.sede.webinterfaces.SunHttpHandler;
 import de.upb.sede.webinterfaces.server.StringServerResponse;
+import de.upb.sede.webinterfaces.server.SunHttpHandler;
 
-public final class GatewayHttpServer extends Gateway {
+public final class GatewayHttpServer extends Gateway implements ImServer {
 
 	private final static Logger logger = LogManager.getLogger();
 	private final static int DEFAULT_PORT = 6060;
@@ -67,6 +65,11 @@ public final class GatewayHttpServer extends Gateway {
 		OnthologicalTypeConfig typeConf = new OnthologicalTypeConfig(typeConfigPaths);
 
 		new GatewayHttpServer(port, classConf, typeConf);
+	}
+
+	@Override
+	public void shutdown() {
+		server.stop(1);
 	}
 
 	class ExecutorRegistrationHandler extends StringServerResponse {

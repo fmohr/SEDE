@@ -2,10 +2,14 @@ package de.upb.sede.exec;
 
 import de.upb.sede.util.Observable;
 import de.upb.sede.util.Observer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 
 public final class Task implements Observer<Task>{
+
+	private static final Logger logger = LogManager.getLogger();
 
 	private final Execution execution;
 
@@ -29,6 +33,14 @@ public final class Task implements Observer<Task>{
 
 	private Observable<Task> taskState = Observable.ofInstance(this);
 
+
+	{
+		/* enable trace of task */
+		if(logger.isTraceEnabled()) {
+			final Observer<Task> logObserver = Observer.lambda(t -> true, t -> logger.debug("{} updated", t), t->false);
+			taskState.observe(logObserver);
+		}
+	}
 
 
 	public Task(Execution execution, String taskName, Map<String, Object> parameters) {
@@ -200,4 +212,16 @@ public final class Task implements Observer<Task>{
 		return super.hashCode();
 	}
 
+	@Override
+	public String toString() {
+		return "Task{" +
+				"taskName='" + taskName + '\'' +
+				", resolved=" + resolved +
+				", started=" + started +
+				", doneRunning=" + doneRunning +
+				", failed=" + failed +
+				", succeeded=" + succeeded +
+				//", \nattr:" + attributes.toString() +
+				"}";
+	}
 }

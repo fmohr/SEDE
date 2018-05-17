@@ -2,6 +2,8 @@ package de.upb.sede.exec;
 
 import de.upb.sede.procedure.Procedure;
 import de.upb.sede.util.Observer;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -12,6 +14,8 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class WorkerPool {
+
+	private static final Logger logger = LogManager.getLogger();
 
 	private final ExecutorService workers;
 
@@ -29,6 +33,7 @@ public class WorkerPool {
 
 
 	public synchronized void processTask(Task task){
+		logger.trace("{} submitted.", task);
 		Procedure procedure = procedureForTask(task.getTaskName());
 		ProcedureRunner  runner = new ProcedureRunner(task, procedure);
 		Future future = workers.submit(runner);
@@ -75,6 +80,11 @@ public class WorkerPool {
 			throw new RuntimeException("Task \"" + taskName + "\" was not bound to a procedure supplier.");
 		}
 	}
+
+	public void shutdown() {
+		workers.shutdown();
+	}
+
 	private static class ProcedureRunner implements  Runnable {
 		private Task task;
 		private Procedure procedure;
@@ -83,16 +93,21 @@ public class WorkerPool {
 			this.procedure = procedure;
 		}
 		public void run() {
+//			logger.debug("{} started.", task);
 			task.setStarted();
 			try{
 				procedure.process(task);
 			} catch(Exception ex) {
 //				task.setError(ex); TODO
 				task.setFailed();
+				if(logger.isDebugEnabled()) {
+					logger.error("ERROR during {}:\n", task, ex);
+				}
 			}
 			finally {
 				task.isDoneRunning();
 			}
+			logger.trace("{} ended.", task);
 		}
 	}
 }

@@ -12,7 +12,7 @@ import de.upb.sede.util.JsonSerializable;
  */
 public abstract class Request implements JsonSerializable {
 
-	protected Optional<String> requestId;
+	private Optional<String> requestId;
 
 	public Request() {
 		this.requestId = Optional.empty();

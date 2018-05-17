@@ -82,7 +82,7 @@ public class ResolveRequest extends Request {
 		} else if(compositionEntry instanceof List) {
 			this.composition = Optional.of(((List<String>) compositionEntry).stream().collect(Collectors.joining(";")));
 		} else {
-			throw new RuntimeException("");
+			throw new RuntimeException(compositionEntry.getClass().getName());
 		}
 
 		ResolvePolicy resolvePolicy = new ResolvePolicy();

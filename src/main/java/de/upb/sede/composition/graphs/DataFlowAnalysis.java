@@ -43,6 +43,8 @@ public class DataFlowAnalysis {
 
 	private final Map<BaseNode, Execution> nodeExecutionAssignment = new HashMap<>();
 
+	private final List<String> returnFieldnames = new ArrayList<>();
+
 	public DataFlowAnalysis(ResolveInfo resolveInfo, List<InstructionNode> instructionNodes) {
 		this.resolveInfo = Objects.requireNonNull(resolveInfo);
 		clientExecution = new Execution(resolveInfo.getClientExecutor());
@@ -531,27 +533,30 @@ public class DataFlowAnalysis {
 			BaseNode resultProducer = resultFieldType.getProducer();
 			Execution resultExecution = getAssignedExec(resultProducer);
 
-			if (clientExecution == resultExecution) {
-				continue;
-			}
 			if (resolveInfo.getResolvePolicy().isToReturn(resultFieldname)) {
-
-				/*
-				 * return result to client
-				 */
-				createTransmission(resultExecution, clientExecution, resultFieldType);
-			}
-			if (resultFieldType.isServiceInstance()
-					&& resolveInfo.getResolvePolicy().isPersistentService(resultFieldname)) {
-				/*
-				 * store service instance:
-				 */
-				ServiceInstanceStorageNode store = new ServiceInstanceStorageNode(resultFieldname,
-						resultFieldType.getTypeName());
-				assignNodeToExec(store, resultExecution);
-				nodeConsumesField(store, resultFieldType);
+				if (resultFieldType.isServiceInstance()
+						&& resolveInfo.getResolvePolicy().isPersistentService(resultFieldname)) {
+					/*
+					 * store service instance:
+					 */
+					ServiceInstanceStorageNode store = new ServiceInstanceStorageNode(resultFieldname,
+							resultFieldType.getTypeName());
+					assignNodeToExec(store, resultExecution);
+					nodeConsumesField(store, resultFieldType);
+				}
+				if (clientExecution != resultExecution) {
+					/*
+					 * return result to client
+					 */
+					createTransmission(resultExecution, clientExecution, resultFieldType);
+				}
+				markAsResult(resultFieldType);
 			}
 		}
+	}
+
+	private void markAsResult(FieldType resultFieldType) {
+		returnFieldnames.add(resultFieldType.getFieldname());
 	}
 
 	private void connectDependencyEdges() {
@@ -576,15 +581,20 @@ public class DataFlowAnalysis {
 	}
 
 	private Execution getOrCreateExecutionForId(String executorId) {
+		/*
+		 * First search the list of already involved executors to look for it:
+		 */
+		for (Execution exec : executions) {
+			if (exec.getExecutor().getExecutorId().equals(executorId)) {
+				return exec;
+			}
+		}
+		
 		if (resolveInfo.getExecutorCoordinator().hasExecutor(executorId)) {
 			ExecutorHandle executor = resolveInfo.getExecutorCoordinator().getExecutorFor(executorId);
-			for (Execution exec : executions) {
-				if (exec.getExecutor().equals(executor)) {
-					return exec;
-				}
-			}
+			
 			/*
-			 * None found
+			 * Add a new executor to the involved list of executors:
 			 */
 			Execution exec = new Execution(executor);
 			executions.add(exec);
@@ -745,6 +755,12 @@ public class DataFlowAnalysis {
 	public List<Execution> getInvolvedExecutions() {
 		return executions;
 	}
+
+
+	public List<String> getReturnFieldnames() {
+		return returnFieldnames;
+	}
+
 
 	public CompositionGraph getTransmissionGraph() {
 		return dataTransmissionGraph;

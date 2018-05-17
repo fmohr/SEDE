@@ -1,0 +1,14 @@
+{
+    "composition": "composition blabla",
+    "requestId": "this will be ignored anyway",
+    "inputs": {
+        "a": {
+            "data": 10,
+            "type": "Number"
+        }
+    },
+    "policy": {
+        "service-policy": "ALL",
+        "return-policy": "ALL"
+    }
+}

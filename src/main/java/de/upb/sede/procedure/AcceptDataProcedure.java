@@ -9,9 +9,7 @@ public class AcceptDataProcedure implements Procedure {
 
 	@Override
 	public void process(Task task) {
-		String fieldname = (String) task.getAttributes().get("fieldname");
-
-
+		final String fieldname = (String) task.getAttributes().get("fieldname");
 		Observer<ExecutionEnvironment> envObserver = Observer.<ExecutionEnvironment>lambda(env -> env.containsKey(fieldname),
 				env -> task.setSucceeded());
 

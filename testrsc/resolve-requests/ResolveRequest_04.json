@@ -1,6 +1,7 @@
 {
     "client-executor": {
-        "contact-info": { "id": "client executor" }
+        "contact-info": { "id": "client executor" },
+        "supported-services" : ["demo.math.Addierer", "demo.math.Gerade"]
     },
     "composition": [
         "a = demo.math.Addierer::__construct({1})",
@@ -29,12 +30,12 @@
         "service-instance-map": {
             "s1": {
                 "classpath": "demo.math.Gerade",
-                "executorId": "exec_2",
+                "executorId": "client executor",
                 "id": "id0"
             },
             "s2": {
                 "classpath": "demo.math.Gerade",
-                "executorId": "exec_2",
+                "executorId": "client executor",
                 "id": "id1"
             }
         },

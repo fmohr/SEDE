@@ -1,0 +1,13 @@
+{
+    "composition": [
+        "gerade1 = demo.math.Gerade::__construct({2,-1})",
+        "p =  gerade1::calc({1})"
+    ],
+    "requestId": "this will be ignored anyway",
+    "inputs": {
+    },
+    "policy": {
+        "service-policy": "ALL",
+        "return-policy": "ALL"
+    }
+}

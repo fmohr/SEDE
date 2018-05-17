@@ -19,12 +19,12 @@
         "service-instance-map": {
             "s1": {
                 "classpath": "demo.math.Gerade",
-                "host": "exec_2",
+                "executorId": "exec_2",
                 "id": "id0"
             },
             "s2": {
                 "classpath": "demo.math.Gerade",
-                "host": "exec_2",
+                "executorId": "exec_2",
                 "id": "id1"
             }
         },

@@ -2,21 +2,21 @@ package de.upb.sede.exec;
 
 import com.sun.net.httpserver.HttpServer;
 import de.upb.sede.core.SEDEObject;
-import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.gateway.GatewayHttpServer;
-import de.upb.sede.procedure.Procedure;
 import de.upb.sede.procedure.SendGraphProcedure;
 import de.upb.sede.procedure.TransmitDataProcedure;
 import de.upb.sede.requests.DataPutRequest;
 import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.util.Streams;
-import de.upb.sede.webinterfaces.SunHttpHandler;
+import de.upb.sede.webinterfaces.server.ImServer;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
 import de.upb.sede.webinterfaces.client.HTTPClientRequest;
 import de.upb.sede.webinterfaces.server.HTTPServerResponse;
 import de.upb.sede.webinterfaces.server.StringServerResponse;
-import org.json.simple.JSONObject;
+import de.upb.sede.webinterfaces.server.SunHttpHandler;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,16 +27,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class ExecutorHttpServer extends Executor{
+public class ExecutorHttpServer extends Executor implements ImServer {
+
+	private static final Logger logger = LogManager.getLogger();
 
 	private final String hostAddress;
 
 
 	private final HttpServer server;
 
-	public ExecutorHttpServer(ExecutorConfiguration execConfig, String hostAddress, int port) throws Exception {
+	public ExecutorHttpServer(ExecutorConfiguration execConfig, String hostAddress, int port) {
 		super(execConfig);
-		this.hostAddress = hostAddress;
+		this.hostAddress = hostAddress + ":" + port;
 		bindHttpProcedures();
 
 		try {
@@ -56,8 +58,8 @@ public class ExecutorHttpServer extends Executor{
 		this(ExecutorConfiguration.parse(pathToExecutionConfig), hostAddress, port);
 	}
 
-	protected Map<String, String> getContactInfo(){
-		Map<String, String> contactInfo = super.getContactInfo();
+	public Map<String, String> contactInfo(){
+		Map<String, String> contactInfo = super.contactInfo();
 		contactInfo.put("host-address", this.hostAddress);
 		return contactInfo;
 	}
@@ -65,7 +67,7 @@ public class ExecutorHttpServer extends Executor{
 	public void registerToGateway(String gatewayHost) {
 		List<String> capibilities = getExecutorConfiguration().getExecutorCapabilities();
 		List<String> supportedServices = getExecutorConfiguration().getSupportedServices();
-		ExecutorRegistration registration = new ExecutorRegistration(getContactInfo(), capibilities, supportedServices);
+		ExecutorRegistration registration = new ExecutorRegistration(contactInfo(), capibilities, supportedServices);
 
 		HTTPClientRequest httpRegistration = new HTTPClientRequest(gatewayHost + "/register");
 
@@ -73,6 +75,7 @@ public class ExecutorHttpServer extends Executor{
 		if(!registrationAnswer.isEmpty()) {
 			throw new RuntimeException("Registration to gateway \"" + gatewayHost + "\" failed with non empty return message:\n" + registrationAnswer);
 		}
+		logger.debug("Registered to gateway: " + gatewayHost);
 	}
 
 
@@ -80,6 +83,13 @@ public class ExecutorHttpServer extends Executor{
 		WorkerPool wp = super.getWorkerPool();
 		wp.bindProcedure("TransmitData", TransmitDataOverHttp::new);
 		wp.bindProcedure("SendGraph", SendGraphOverHttp::new);
+	}
+
+	@Override
+	public void shutdown() {
+		interruptAll();
+		getWorkerPool().shutdown();
+		server.stop(1);
 	}
 
 	static class TransmitDataOverHttp extends TransmitDataProcedure {

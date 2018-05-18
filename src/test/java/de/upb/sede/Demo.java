@@ -78,18 +78,41 @@ public class Demo {
 				ResolveRequest resolveRequest = cc.runToResolve(runRequest, "id123");
 
 				Demo_Resolve.resolveToDot(resolveRequest, gateway, pathToRequest);
-
-				cc.join(cc.run(runRequest, null), false);
+				String requestId = cc.run(runRequest, null);
+				cc.join(requestId, false);
 			} catch(Exception ex) {
 				logger.error("Error during " + pathToRequest + ":", ex);
 			}
-
 		}
+	}
+	
 
+	@Test public void demoHttpRun() {
+		ExecutorConfiguration config = new ExecutorConfiguration();
+		Executor clientExecutor = new ExecutorHttpServer(config, "localhost", 9003);
+		/* supports everything */
+		clientExecutor.getExecutorConfiguration().setExecutorId("Core Client");
+		CoreClient cc = new CoreClient(clientExecutor, gateway::resolve);
 
+		for(String pathToRequest : FileUtil.listAllFilesInDir(rscPath, "(.*?)\\.json$")) {
+			pathToRequest = rscPath + pathToRequest;
+			logger.info("Running execution from: {}", pathToRequest);
+			try{
+				String jsonRunRequest = FileUtil.readFileAsString(pathToRequest);
+				RunRequest runRequest = new RunRequest();
+				runRequest.fromJsonString(jsonRunRequest);
+				ResolveRequest resolveRequest = cc.runToResolve(runRequest, "id123");
+
+				Demo_Resolve.resolveToDot(resolveRequest, gateway, pathToRequest + ".http");
+				String requestId = cc.run(runRequest, null);
+				cc.join(requestId, false);
+			} catch(Exception ex) {
+				logger.error("Error during " + pathToRequest + ":", ex);
+			}
+		}
 	}
 
-	@Test public void test() {
+	public void test() {
 		HashMap<String, SEDEObject> inputs = new HashMap<>();
 		inputs.put("a", new SEDEObject("Number", 10));
 		RunRequest runRequest = new RunRequest("rId", "composition blabla", new ResolvePolicy(), inputs);

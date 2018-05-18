@@ -26,13 +26,14 @@ public class ExecRequest extends Request {
 		return compositionGraph.get();
 	}
 
-	public JSONObject toJSON() {
+	public JSONObject toJson() {
 		JSONObject jsonObject = super.toJson();
 		jsonObject.put("graph", getCompositionGraph());
 		return jsonObject;
 	}
 
-	public void fromJSON(Map<String, Object> data) {
+	@Override
+	public void fromJson(Map<String, Object> data) {
 		super.fromJson(data);
 		this.compositionGraph = Optional.ofNullable((String) data.get("graph"));
 	}

@@ -5,10 +5,7 @@ import de.upb.sede.exec.ServiceInstance;
 import de.upb.sede.util.JsonSerializable;
 import org.json.simple.JSONObject;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class SEDEObject implements JsonSerializable {
@@ -149,11 +146,8 @@ public class SEDEObject implements JsonSerializable {
 		}
 		else if(isSemantic()) {
 			byte[] byteArr = (byte[]) getObject();
-			List<Character> charList = new ArrayList<Character>(byteArr.length);
-			for (byte b : byteArr) {
-				charList.add((char)b);
-			}
-			data = byteArr;
+			String stringData = new String(byteArr);
+			data = stringData;
 		} else if(isPrimitive()) {
 			data = getObject();
 		} else {
@@ -176,12 +170,8 @@ public class SEDEObject implements JsonSerializable {
 			this.object = serviceInstanceHandle;
 		}
 		else if(isSemantic(type)) {
-			List<Character> charList = (List<Character>) data;
-			byte[] byteArr = new byte[charList.size()];
-			for (int i = 0; i < byteArr.length; i++) {
-				byteArr[i] = (byte)charList.get(i).charValue();
-			}
-			this.object = byteArr;
+			String stringData = (String) data;
+			this.object = stringData.getBytes();
 		} else if(isPrimitive()) {
 			this.object = data;
 		} else {

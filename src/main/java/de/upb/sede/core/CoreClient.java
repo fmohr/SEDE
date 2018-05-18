@@ -44,6 +44,10 @@ public class CoreClient implements ICoreClient{
 
 	@Override
 	public void join(String requestId, boolean interruptExecution) {
+		Execution execution = executor.getExecution(requestId);
+		if(execution == null) {
+			return;
+		}
 		final Object dummy = new Object();
 
 		Observer<Execution> executionDoneObserver = Observer.lambda(Execution::hasExecutionFinished, exec -> {
@@ -52,10 +56,6 @@ public class CoreClient implements ICoreClient{
 			}
 		});
 
-		Execution execution = executor.getExecution(requestId);
-		if(execution == null) {
-			return;
-		}
 		execution.getState().observe(executionDoneObserver);
 		synchronized (dummy) {
 			try {
@@ -91,6 +91,7 @@ public class CoreClient implements ICoreClient{
 		deliverInputs(requestId, runRequest.getInputs());
 
 		List<String> resultFields = resolution.getReturnFields();
+		logger.debug("waiting for {}", resultFields);
 		ResultObserver resultObserver = new ResultObserver(requestId, resultFields, resultConsumer);
 		execution.getEnvironment().getState().observe(resultObserver);
 

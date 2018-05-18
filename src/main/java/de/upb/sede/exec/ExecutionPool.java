@@ -37,8 +37,8 @@ public class ExecutionPool {
 			 * Create a new Execution for the given request id:
 			 */
 			exec = createExecution(execId);
-			execMap.put(execId, exec);
 			exec.getState().observe(executionObserver);
+			execMap.put(execId, exec);
 		}
 		return exec;
 	}

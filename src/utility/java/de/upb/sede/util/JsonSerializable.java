@@ -27,7 +27,7 @@ public interface JsonSerializable {
 		try {
 			fromJson((JSONObject) new JSONParser().parse(jsonString));
 		} catch (ParseException e) {
-			throw new RuntimeException(e);
+			throw new RuntimeException("Error parsing json String: " + jsonString);
 		}
 	}
 }

@@ -38,6 +38,10 @@ public class Gerade implements Serializable {
 		if (Double.compare(gerade.achsenabschnitt, achsenabschnitt) != 0) return false;
 		return Double.compare(gerade.steigung, steigung) == 0;
 	}
+	
+	public boolean liagtAufGerade(Punkt p){
+		return Math.abs(calc(p.x).y - p.y) < 1.;
+	}
 
 	@Override
 	public int hashCode() {

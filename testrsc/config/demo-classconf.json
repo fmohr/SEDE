@@ -29,7 +29,8 @@
                     "demo.types.NummerList"
                 ],
                 "returntype": "demo.types.NummerList",
-                "statemutating" : false
+                "statemutating" : false,
+                "static" : true
             },
             "summier": {
                 "paramtypes": [
@@ -53,7 +54,7 @@
                     "Number"
                 ],
                 "returntype": "demo.types.Punkt",
-                "statemutating" : false
+                "statemutating" : true
             },
             "liagtAufGerade": {
                 "paramtypes": [

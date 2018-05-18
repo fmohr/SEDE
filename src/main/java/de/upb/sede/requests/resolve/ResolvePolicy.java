@@ -68,7 +68,7 @@ public class ResolvePolicy implements JsonSerializable {
 		if (servicePolicy.equalsIgnoreCase(none)) {
 			return false;
 		} else if (servicePolicy.equalsIgnoreCase(listed)) {
-			return returnFieldnames.contains(serviceInstanceFieldName);
+			return persistentServices.contains(serviceInstanceFieldName);
 		} else {
 			throw new BadResolveRequest("Not recognizable return policy: " + servicePolicy);
 		}
@@ -96,7 +96,7 @@ public class ResolvePolicy implements JsonSerializable {
 		Objects.requireNonNull(servicePolicy);
 		if (servicePolicy.equalsIgnoreCase(all) || servicePolicy.equalsIgnoreCase(none)) {
 			this.servicePolicy = servicePolicy;
-			this.returnFieldnames = Collections.EMPTY_LIST;
+			this.persistentServices = Collections.EMPTY_LIST;
 		} else {
 			throw new BadResolveRequest("Not recognizable service policy: " + servicePolicy);
 		}

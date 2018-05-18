@@ -24,4 +24,12 @@ public class Addierer implements Serializable {
 		}
 		return sumList;
 	}
+
+	public NummerList summierListe(NummerList nl1, NummerList nl2) {
+		NummerList sumList = new NummerList();
+		for (int i = 0, size = Math.min(nl1.size(), nl2.size()); i < size; i++) {
+			sumList.add(nl1.get(i) + nl2.get(i));
+		}
+		return sumList;
+	}
 }

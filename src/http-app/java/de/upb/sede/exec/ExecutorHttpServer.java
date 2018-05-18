@@ -89,7 +89,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 	public void shutdown() {
 		interruptAll();
 		getWorkerPool().shutdown();
-		server.stop(1);
+		server.stop(0);
 	}
 
 	static class TransmitDataOverHttp extends TransmitDataProcedure {
@@ -101,8 +101,19 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 			String fieldname = (String) task.getAttributes().get("fieldname");
 			String semType = (String) task.getAttributes().get("semantic-type");
 			String executionId = task.getExecution().getExecutionId();
-			if(host == null || fieldname == null || semType == null) {
+			if(host == null || fieldname == null) {
 				throw new RuntimeException("The task doesn't contain all necessary fields: " + task.getAttributes().toString());
+			}
+			if(semType == null) {
+				SEDEObject sedeObject = task.getExecution().getEnvironment().get(fieldname);
+				if(sedeObject.isReal()) {
+					throw new RuntimeException("The task doesn't contain the 'semantic-type' field "
+							+ "but when transmitting real data the semantic type needs to be defined. \n"
+							+ "task: " + task.getAttributes().toString()
+							+ "\nfield to be sent: " + sedeObject.toString());
+				} else {
+					semType = sedeObject.getType();
+				}
 			}
 			String dataPutUrl = host + "/put/" + executionId + "/" + fieldname + "/" + semType;
 			BasicClientRequest clientRequest = new HTTPClientRequest(dataPutUrl);
@@ -137,7 +148,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 				}
 				String[] urlPaths = url.get().split("/");
 				int pathIndex = 1;
-				if(urlPaths.length != 5 || urlPaths[pathIndex++].equalsIgnoreCase("put")){
+				if(urlPaths.length < 5 || !urlPaths[pathIndex++].equalsIgnoreCase("put")){
 					throw new RuntimeException("URL syntax error: "  + url.get());
 				}
 				String execId = urlPaths[pathIndex++];
@@ -148,6 +159,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 				put(putRequest);
 				response = "";
 			} catch(Exception ex) {
+				logger.error("Error at put request: {}\n", url.get(), ex);
 				response =  ex.getMessage();
 			}
 			Streams.OutWriteString(answer, response, true);

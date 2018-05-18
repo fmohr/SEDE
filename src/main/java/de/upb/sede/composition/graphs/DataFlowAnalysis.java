@@ -228,6 +228,9 @@ public class DataFlowAnalysis {
 			methodInfo = resolveInfo.getClassesConfiguration().classInfo(contextClasspath).constructInfo();
 		} else {
 			methodInfo = resolveInfo.getClassesConfiguration().classInfo(contextClasspath).methodInfo(methodname);
+			if(!instNode.isContextAFieldname() && !methodInfo.isStatic()) {
+				throw new CompositionSemanticException("Method \"" + methodname + "\" is not static but it is tried to access it in a static manner: " + instNode.toString());
+			}
 		}
 		List<String> requiredParamTypes = methodInfo.paramTypes();
 		instNode.setParameterType(requiredParamTypes);
@@ -526,24 +529,30 @@ public class DataFlowAnalysis {
 		 */
 
 		for (String resultFieldname : resultFieldnames()) {
-			FieldType resultFieldType = resultFieldtype(resultFieldname);
-			if (resultFieldType.isPrimitive()) {
+			if (FMCompositionParser.isConstant(resultFieldname)) {
 				continue; // no need to send back constants
 			}
+			FieldType resultFieldType = resultFieldtype(resultFieldname);
+
 			BaseNode resultProducer = resultFieldType.getProducer();
 			Execution resultExecution = getAssignedExec(resultProducer);
 
-			if (resolveInfo.getResolvePolicy().isToReturn(resultFieldname)) {
-				if (resultFieldType.isServiceInstance()
-						&& resolveInfo.getResolvePolicy().isPersistentService(resultFieldname)) {
-					/*
-					 * store service instance:
-					 */
-					ServiceInstanceStorageNode store = new ServiceInstanceStorageNode(resultFieldname,
-							resultFieldType.getTypeName());
-					assignNodeToExec(store, resultExecution);
-					nodeConsumesField(store, resultFieldType);
-				}
+			boolean servicePersistant = resultFieldType.isServiceInstance()
+					&& resolveInfo.getResolvePolicy().isPersistentService(resultFieldname);
+			boolean toBeRetuend = servicePersistant || (!resultFieldType.isServiceInstance() && resolveInfo.getResolvePolicy().isToReturn(resultFieldname));
+
+			if (servicePersistant) {
+				/*
+				 * store service instance:
+				 */
+				ServiceInstanceStorageNode store = new ServiceInstanceStorageNode(resultFieldname,
+						resultFieldType.getTypeName());
+				assignNodeToExec(store, resultExecution);
+				nodeConsumesField(store, resultFieldType);
+			}
+
+			if (toBeRetuend) {
+
 				if (clientExecution != resultExecution) {
 					/*
 					 * return result to client

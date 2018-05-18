@@ -80,6 +80,7 @@ public final class SemanticStreamer {
 				ServiceInstanceHandle instanceHandle = (ServiceInstanceHandle) content.getObject();
 				OutputStreamWriter osWriter = new OutputStreamWriter(os);
 				instanceHandle.toJson().writeJSONString(osWriter);
+				osWriter.flush();
 			} else if(content.isReal()) {
 				throw new RuntimeException("BUG: Use streamObjectInto instead: " + content.toString());
 			} else{
@@ -147,13 +148,12 @@ public final class SemanticStreamer {
 		}
 	}
 
-	public static final SEDEObject deserialize(InputStream inputStream, String type) {
+	public static final <T> T objectDeserialize(InputStream inputStream) {
 		ObjectInputStream objectIn = null;
 		try {
 			objectIn = new ObjectInputStream(inputStream);
-			Object nummberList = objectIn.readObject();
-			SEDEObject field = new SEDEObject(type, nummberList);
-			return field;
+			Object input = objectIn.readObject();
+			return (T)input;
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		} catch (ClassNotFoundException e) {
@@ -161,7 +161,7 @@ public final class SemanticStreamer {
 		}
 	}
 
-	public static final void serialize(OutputStream os, Serializable serializable) {
+	public static final void objectSerialize(OutputStream os, Serializable serializable) {
 		try {
 			ObjectOutputStream objectOut = new ObjectOutputStream(os);
 			objectOut.writeObject(serializable);

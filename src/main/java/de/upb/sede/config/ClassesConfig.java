@@ -435,6 +435,12 @@ public class ClassesConfig extends Configuration {
 			return (String) configuration.get("returntype");
 		}
 
+		public boolean isStatic()  {
+			if(configuration.containsKey("static"))
+				return (boolean) configuration.get("static");
+			else
+				return false;
+		}
 	}
 
 }

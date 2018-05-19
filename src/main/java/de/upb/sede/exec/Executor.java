@@ -29,8 +29,6 @@ public class Executor implements IExecutor{
 
 	private final WorkerPool workerPool;
 
-	private final Observer<Task> taskWorkerEnqueuer;
-
 	public Executor() {
 		this(new ExecutorConfiguration());
 	}
@@ -39,8 +37,7 @@ public class Executor implements IExecutor{
 		this.execPool = new ExecutionPool(execConfig);
 		this.config = execConfig;
 		this.resourceAllocator = new ResourceAllocator(this.config.getAvailableResources());
-		this.workerPool = new WorkerPool(execConfig.getThreadNumber());
-		this.taskWorkerEnqueuer = Observer.lambda(t->true,  workerPool::processTask, t->false);
+		this.workerPool = new WorkerPool(execConfig.getThreadNumber(), execPool.openTasksSupplier());
 		bindProcedureNames();
 	}
 
@@ -82,7 +79,6 @@ public class Executor implements IExecutor{
 		String execId = execRequest.getRequestID();
 
 		Execution exec = getOrCreateExecution(execRequest.getRequestID());
-		exec.getNewTasksObservable().observe(taskWorkerEnqueuer);
 
 		deserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
 

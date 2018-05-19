@@ -17,57 +17,44 @@ public class WorkerPool {
 
 	private static final Logger logger = LogManager.getLogger();
 
-	private final ExecutorService workers;
 
 	/**
 	 * Use weak hashmap to have executions which are finished removed and avoid a memory leak.
 	 */
-	private final Map<Execution, List<Future>> executionFutureMap = new WeakHashMap<>();
-
 	private final Map<String, Supplier<Procedure>> procedureSupplierMap = new HashMap<>();
 
+	private final Supplier<Task> nextTaskSupplier;
 
-	WorkerPool(int workerNumber){
-		workers = Executors.newFixedThreadPool(workerNumber);
-	}
+	private final List<Thread> workerThreads;
 
+	private final Map<Thread, Execution> workingOn = new ConcurrentHashMap<>();
 
-	public synchronized void processTask(Task task){
-		logger.trace("{} submitted.", task.toDebugString());
-		Procedure procedure = procedureForTask(task.getTaskName());
-		ProcedureRunner  runner = new ProcedureRunner(task, procedure);
-		Future future = workers.submit(runner);
-		addFuture(task.getExecution(), future);
-	}
+	private boolean finished = false;
 
 
-
-	private void addFuture(Execution exec, Future<?> future){
-		if(!executionFutureMap.containsKey(exec)){
-			List<Future> futureList = new ArrayList<>();
-			futureList.add(future);
-			executionFutureMap.put(exec, futureList);
-		}  else{
-			executionFutureMap.get(exec).add(future);
+	WorkerPool(int workerNumber, Supplier<Task> nextTaskSupplier){
+		this.nextTaskSupplier = nextTaskSupplier;
+		workerThreads = new ArrayList<>(workerNumber);
+		for (int i = 0; i < workerNumber; i++) {
+			Thread t = new Thread(new Worker());
+			workerThreads.add(t);
+			t.start();
 		}
 	}
 
 
-	public synchronized void interruptExec(Execution execution) {
-		logger.info("{} interrupted.", execution.getExecutionId());
-		if(executionFutureMap.containsKey(execution)){
-			/**
-			 * cancel/interrupt every task in the execution.
-			 */
-			for(Future f : executionFutureMap.get(execution)){
-				f.cancel(true);
+	public synchronized void interruptExec(Execution interruptedExeution) {
+		logger.info("{} interrupted.", interruptedExeution.getExecutionId());
+		/**
+		 * cancel/interrupt every thread that is working on the given execution.
+		 */
+		for(Thread workingThread : workingOn.keySet()){
+			if(workingOn.get(workingThread) == interruptedExeution){
+				workingThread.interrupt();
 			}
 		}
 	}
 
-	private synchronized  void removeExec(Execution execution) {
-		executionFutureMap.remove(execution);
-	}
 
 	public synchronized void bindProcedure(String procedureName, Supplier<Procedure> procedureSupplier) {
 		procedureSupplierMap.put(procedureName, procedureSupplier);
@@ -83,7 +70,25 @@ public class WorkerPool {
 	}
 
 	public void shutdown() {
-		workers.shutdown();
+		finished = true;
+		for(Thread workers : workerThreads){
+			workers.interrupt();
+		}
+	}
+
+	private class Worker implements  Runnable {
+
+		@Override
+		public void run() {
+			while(!finished){
+				Task task = nextTaskSupplier.get();
+				Procedure procedure = procedureForTask(task.getTaskName());
+				ProcedureRunner  runner = new ProcedureRunner(task, procedure);
+				workingOn.put(Thread.currentThread(), task.getExecution());
+				runner.run();
+				workingOn.remove(Thread.currentThread());
+			}
+		}
 	}
 
 	private static class ProcedureRunner implements  Runnable {

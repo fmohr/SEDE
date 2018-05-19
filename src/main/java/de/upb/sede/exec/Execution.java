@@ -21,7 +21,7 @@ public class Execution {
 
 	private final Observable<Execution> state;
 
-	private final Observable<Task> newTask = new Observable<Task>();
+//	private final Observable<Task> newTask = new Observable<Task>();
 
 	private final ExecutorConfiguration executorConfiguration;
 
@@ -117,7 +117,7 @@ public class Execution {
 	private final void taskResolved(Task task) {
 		synchronized (this) {
 			waitingTasks.add(task);
-			newTask.update(task);
+//			newTask.update(task);
 		}
 		state.update(this);
 	}
@@ -208,9 +208,13 @@ public class Execution {
 		}
 	}
 
-	Observable<Task> getNewTasksObservable() {
-		return newTask;
+	synchronized boolean hasWaitingTasks(){
+		return !getWaitingTasks().isEmpty();
 	}
+
+//	Observable<Task> getNewTasksObservable() {
+//		return newTask;
+//	}
 
 	synchronized void interrupt() {
 		interrupted = true;

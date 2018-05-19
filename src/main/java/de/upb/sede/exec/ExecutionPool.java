@@ -32,15 +32,22 @@ public class ExecutionPool {
 	synchronized Execution getOrCreateExecution(String execId) {
 		Execution exec = execMap.get(execId);
 		if(exec == null) {
+			logger.debug("{} created a new execution: {}", executorConfiguration.getExecutorId(),execId);
 			/*
 			 * The given id doesn't have any execution assigned to it.
 			 * Create a new Execution for the given request id:
 			 */
 			exec = createExecution(execId);
-			exec.getState().observe(executionObserver);
 			execMap.put(execId, exec);
 		}
 		return exec;
+	}
+
+	synchronized  void startExecution(String execId) {
+		Execution exec = execMap.get(execId);
+		if(exec!=null){
+			exec.getState().observe(executionObserver);
+		}
 	}
 
 	public synchronized boolean hasExecution(String execId) {

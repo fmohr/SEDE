@@ -532,6 +532,9 @@ public class DataFlowAnalysis {
 			if (FMCompositionParser.isConstant(resultFieldname)) {
 				continue; // no need to send back constants
 			}
+			if(resolveInfo.getInputFields().isInputField(resultFieldname)) {
+				continue;
+			}
 			FieldType resultFieldType = resultFieldtype(resultFieldname);
 
 			BaseNode resultProducer = resultFieldType.getProducer();

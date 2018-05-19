@@ -8,7 +8,7 @@
         "l2 = a1::summierListe({n1, n2})",
         "l3 = a1::addierListe({l1})",
         "l4 = a1::summierListe({l3, l2})",
-        "b1 = g1::liagtAufGerade({l4})",
+        "g1::liagtAufGerade({l4})",
         "b1 = g2::liagtAufGerade({l4})"
     ],
     "requestId": "this will be ignored anyway",

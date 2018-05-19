@@ -17,6 +17,11 @@ public class Gerade implements Serializable {
 	}
 
 	public Punkt calc(double stelle) {
+//		try {
+//			Thread.sleep(100);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 		return new Punkt(stelle, steigung * stelle + achsenabschnitt);
 	}
 
@@ -25,6 +30,11 @@ public class Gerade implements Serializable {
 	}
 	
 	public Punkt nullstelle() {
+//		try {
+//			Thread.sleep(100);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 		return new Punkt(-achsenabschnitt/steigung, 0);
 	}
 

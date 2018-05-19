@@ -1,5 +1,6 @@
 package de.upb.sede;
 
+import de.upb.sede.client.HttpCoreClient;
 import de.upb.sede.composition.graphs.CompositionGraph;
 import de.upb.sede.composition.graphs.Demo_Resolve;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
@@ -24,8 +25,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 public class Demo {
 	private static final Logger logger = LogManager.getLogger();
@@ -86,30 +89,41 @@ public class Demo {
 		}
 	}
 	
+	final static int reruns = 50;
 
 	@Test public void demoHttpRun() {
-		ExecutorConfiguration config = new ExecutorConfiguration();
-		Executor clientExecutor = new ExecutorHttpServer(config, "localhost", 9003);
 		/* supports everything */
-		clientExecutor.getExecutorConfiguration().setExecutorId("Core Client");
-		CoreClient cc = new CoreClient(clientExecutor, gateway::resolve);
 
-		for(String pathToRequest : FileUtil.listAllFilesInDir(rscPath, "(.*?)\\.json$")) {
-			pathToRequest = rscPath + pathToRequest;
-			logger.info("Running execution from: {}", pathToRequest);
-			try{
-				String jsonRunRequest = FileUtil.readFileAsString(pathToRequest);
-				RunRequest runRequest = new RunRequest();
-				runRequest.fromJsonString(jsonRunRequest);
-				ResolveRequest resolveRequest = cc.runToResolve(runRequest, "id123");
+		CoreClient  cc= new HttpCoreClient("localhost", 9003, "localhost", 9000);
+		cc.getClientExecutor().getExecutorConfiguration().setExecutorId("Core Client");
+		List<String> runningRequestsIds = new ArrayList<>();
+		for (int i = 0; i < reruns; i++)
+			for(String pathToRequest : FileUtil.listAllFilesInDir(rscPath, "(.*?)\\.json$")) {
+				pathToRequest = rscPath + pathToRequest;
+				logger.info("Running execution from: {}", pathToRequest);
+				try{
+					String jsonRunRequest = FileUtil.readFileAsString(pathToRequest);
+					RunRequest runRequest = new RunRequest();
+					runRequest.fromJsonString(jsonRunRequest);
+	//				ResolveRequest resolveRequest = cc.runToResolve(runRequest, "id123");
 
-				Demo_Resolve.resolveToDot(resolveRequest, gateway, pathToRequest + ".http");
-				String requestId = cc.run(runRequest, null);
-				cc.join(requestId, false);
-			} catch(Exception ex) {
-				logger.error("Error during " + pathToRequest + ":", ex);
+	//				Demo_Resolve.resolveToDot(resolveRequest, gateway, pathToRequest + ".http");
+					String requestId = cc.run(runRequest, null);
+					runningRequestsIds.add(requestId);
+				} catch(Exception ex) {
+					logger.error("Error during " + pathToRequest + ":", ex);
+				}
+//				System.out.println("Reached " + i);
 			}
-		}
+		for (int i = 0; i < reruns; i++) {
+			cc.join(runningRequestsIds.get(i), false);
+			if(((int)(100. * ((double)i)/((double)reruns))) %5 == 0){
+				logger.info("Reached {}%", ((int)(100. * ((double)i)/((double)reruns))));
+			}
+		}	
+//		for(String unfinishedRequest : runningRequestsIds) {
+//			cc.join(unfinishedRequest, false);
+//		}
 	}
 
 	public void test() {

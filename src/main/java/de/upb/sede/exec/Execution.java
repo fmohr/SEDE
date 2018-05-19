@@ -23,10 +23,6 @@ public class Execution {
 
 	private final Observable<Task> newTask = new Observable<Task>();
 
-//	public final Function<Object, ServiceInstanceHandle> serviceInstanceProvider;
-//
-//	public final BiFunction<Object, Task, BasicClientRequest> clientRequestProvider;
-
 	private final ExecutorConfiguration executorConfiguration;
 
 	/**
@@ -118,19 +114,25 @@ public class Execution {
 	 * the observers.
 	 */
 
-	private final synchronized void taskResolved(Task task) {
-		waitingTasks.add(task);
-		newTask.update(task);
+	private final void taskResolved(Task task) {
+		synchronized (this) {
+			waitingTasks.add(task);
+			newTask.update(task);
+		}
 		state.update(this);
 	}
 
-	private final synchronized void taskStarted(Task task) {
-		waitingTasks.remove(task);
+	private final void taskStarted(Task task) {
+		synchronized (this) {
+			waitingTasks.remove(task);
+		}
 		state.update(this);
 	}
 
-	private final synchronized void taskFinished(Task task) {
-		unfinishedTasks.remove(task);
+	private final void taskFinished(Task task) {
+		synchronized (this) {
+			unfinishedTasks.remove(task);
+		}
 		state.update(this);
 	}
 

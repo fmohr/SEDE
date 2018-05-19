@@ -1,5 +1,6 @@
 package de.upb.sede.exec;
 
+import de.upb.sede.composition.graphs.serialization.NodeJsonSerializer;
 import de.upb.sede.util.Observable;
 import de.upb.sede.util.Observer;
 import org.apache.logging.log4j.LogManager;
@@ -37,7 +38,7 @@ public final class Task implements Observer<Task>{
 	{
 		/* enable trace of task */
 		if(logger.isTraceEnabled()) {
-			final Observer<Task> logObserver = Observer.lambda(t -> true, t -> logger.debug("{} updated", t), t->false);
+			final Observer<Task> logObserver = Observer.lambda(t -> true, t -> logger.debug("{}: {} updated", t, t.toDebugString()), t->false);
 			taskState.observe(logObserver);
 		}
 	}
@@ -161,7 +162,7 @@ public final class Task implements Observer<Task>{
 		}
 	}
 
-	public void setStarted(){
+	public synchronized void setStarted(){
 		if(!hasStarted()) {
 			resolved = true;
 			started = true;
@@ -169,7 +170,7 @@ public final class Task implements Observer<Task>{
 		}
 	}
 
-	public void setDone(){
+	public synchronized void setDone(){
 		if(!isDoneRunning()) {
 			resolved = true;
 			started = true;
@@ -178,8 +179,8 @@ public final class Task implements Observer<Task>{
 		}
 	}
 
-	public void setSucceeded(){
-		if(!hasSucceeded()) {
+	public synchronized void setSucceeded(){
+		if(!hasFinished()) {
 			resolved = true;
 			started = true;
 			doneRunning = true;
@@ -188,8 +189,8 @@ public final class Task implements Observer<Task>{
 		}
 	}
 
-	public void setFailed(){
-		if(!hasFailed()) {
+	public synchronized void setFailed(){
+		if(!hasFinished()) {
 			resolved = true;
 			started = true;
 			doneRunning = true;
@@ -223,5 +224,14 @@ public final class Task implements Observer<Task>{
 				", succeeded=" + succeeded +
 				//", \nattr:" + attributes.toString() +
 				"}";
+	}
+
+
+	public String toDebugString() {
+		if(attributes == null) {
+			return "";
+		}
+		NodeJsonSerializer njs = new NodeJsonSerializer();
+		return njs.fromJSON(getAttributes()).toString();
 	}
 }

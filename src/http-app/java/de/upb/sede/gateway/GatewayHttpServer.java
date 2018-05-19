@@ -97,7 +97,7 @@ public final class GatewayHttpServer extends Gateway implements ImServer {
 		@Override
 		public String receive(String jsonResolveRequest) {
 
-			logger.debug("Received executor registration.");
+			logger.debug("Received resolve request.");
 			/*
 			 * TODO: Do validation before parsing.
 			 */

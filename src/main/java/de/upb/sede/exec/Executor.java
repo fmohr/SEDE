@@ -81,13 +81,12 @@ public class Executor implements IExecutor{
 	public synchronized Execution exec(ExecRequest execRequest){
 		String execId = execRequest.getRequestID();
 
-		if(execPool.hasExecution(execId)){
-			throw new ExecutionIdOccupiedException(execId);
-		}
 		Execution exec = getOrCreateExecution(execRequest.getRequestID());
 		exec.getNewTasksObservable().observe(taskWorkerEnqueuer);
 
 		deserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
+
+		execPool.startExecution(execId);
 		logger.debug("Execution request {} started.", execRequest.getRequestID());
 		return exec;
 	}
@@ -99,7 +98,9 @@ public class Executor implements IExecutor{
 
 	@Override
 	public void interrupt(String executionId) {
-		getOrCreateExecution(executionId).interrupt();
+		if(execPool.hasExecution(executionId)) {
+			execPool.getExecution(executionId).interrupt();
+		}
 	}
 
 

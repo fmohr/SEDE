@@ -26,7 +26,7 @@ import de.upb.sede.exceptions.CompositionGraphSerializationException;
  * @author aminfaez
  *
  */
-final class NodeJsonSerializer {
+public final class NodeJsonSerializer {
 
 	public static final String NODETYPE = "nodetype";
 	public static final String NODETYPE_INSTRUCTION = "Instruction";

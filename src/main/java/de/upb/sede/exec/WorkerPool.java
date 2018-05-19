@@ -33,7 +33,7 @@ public class WorkerPool {
 
 
 	public synchronized void processTask(Task task){
-		logger.trace("{} submitted.", task);
+		logger.trace("{} submitted.", task.toDebugString());
 		Procedure procedure = procedureForTask(task.getTaskName());
 		ProcedureRunner  runner = new ProcedureRunner(task, procedure);
 		Future future = workers.submit(runner);
@@ -54,6 +54,7 @@ public class WorkerPool {
 
 
 	public synchronized void interruptExec(Execution execution) {
+		logger.info("{} interrupted.", execution.getExecutionId());
 		if(executionFutureMap.containsKey(execution)){
 			/**
 			 * cancel/interrupt every task in the execution.
@@ -93,7 +94,7 @@ public class WorkerPool {
 			this.procedure = procedure;
 		}
 		public void run() {
-//			logger.debug("{} started.", task);
+			logger.trace("{} started", task.toDebugString());
 			task.setStarted();
 			try{
 				procedure.process(task);
@@ -107,7 +108,7 @@ public class WorkerPool {
 			finally {
 				task.isDoneRunning();
 			}
-			logger.trace("{} ended.", task);
+			logger.trace("{} finished", task.toDebugString());
 		}
 	}
 }

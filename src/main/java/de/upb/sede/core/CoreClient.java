@@ -16,6 +16,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Semaphore;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -48,22 +49,19 @@ public class CoreClient implements ICoreClient{
 		if(execution == null) {
 			return;
 		}
+		final Semaphore executionIsFinished = new Semaphore(0);
 		final Object dummy = new Object();
 
 		Observer<Execution> executionDoneObserver = Observer.lambda(Execution::hasExecutionFinished, exec -> {
-			synchronized (dummy) {
-				dummy.notifyAll();
-			}
+			executionIsFinished.release();
 		});
 
 		execution.getState().observe(executionDoneObserver);
-		synchronized (dummy) {
-			try {
-				dummy.wait();
-			} catch (InterruptedException e) {
-				if (interruptExecution) {
-					getClientExecutor().interrupt(requestId);
-				}
+		try {
+			executionIsFinished.acquire();
+		} catch (InterruptedException e) {
+			if (interruptExecution) {
+				getClientExecutor().interrupt(requestId);
 			}
 		}
 	}
@@ -145,9 +143,10 @@ public class CoreClient implements ICoreClient{
 	}
 
 	@Override
-	public IExecutor getClientExecutor() {
+	public Executor getClientExecutor() {
 		return executor;
 	}
+
 
 	static class ResultObserver implements Observer<ExecutionEnvironment> {
 		private final String reqId;

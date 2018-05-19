@@ -1,6 +1,6 @@
 package de.upb.sede;
 
-import de.upb.sede.client.HttpCoreClient;
+import de.upb.sede.client.CoreClientHttpServer;
 import de.upb.sede.composition.graphs.CompositionGraph;
 import de.upb.sede.composition.graphs.Demo_Resolve;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
@@ -94,7 +94,7 @@ public class Demo {
 	@Test public void demoHttpRun() {
 		/* supports everything */
 
-		CoreClient  cc= new HttpCoreClient("localhost", 9003, "localhost", 9000);
+		CoreClient cc = new CoreClientHttpServer("localhost", 9003, "localhost", 9000);
 		cc.getClientExecutor().getExecutorConfiguration().setExecutorId("Core Client");
 		List<String> runningRequestsIds = new ArrayList<>();
 		for (int i = 0; i < reruns; i++)

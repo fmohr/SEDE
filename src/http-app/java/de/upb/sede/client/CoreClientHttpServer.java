@@ -11,13 +11,13 @@ import de.upb.sede.webinterfaces.client.HTTPClientRequest;
 
 import java.util.function.Function;
 
-public class HttpCoreClient extends CoreClient {
+public class CoreClientHttpServer extends CoreClient {
 
-	public HttpCoreClient(Executor executor, String gatewayAddress, int gatewayPort) {
+	public CoreClientHttpServer(Executor executor, String gatewayAddress, int gatewayPort) {
 		super(executor, rr -> resolveRequestOverHttp(rr, gatewayAddress, gatewayPort));
 	}
 
-	public HttpCoreClient(final String clientAddress, final int clientPort, final String gatewayAddress, final int gatewayPort) {
+	public CoreClientHttpServer(final String clientAddress, final int clientPort, final String gatewayAddress, final int gatewayPort) {
 		super(simpleClientExecutor(clientAddress, clientPort), rr -> resolveRequestOverHttp(rr, gatewayAddress, gatewayPort));
 	}
 

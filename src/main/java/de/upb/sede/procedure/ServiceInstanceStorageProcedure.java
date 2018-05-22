@@ -1,5 +1,10 @@
 package de.upb.sede.procedure;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.UncheckedIOException;
+
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ServiceInstance;
@@ -9,11 +14,9 @@ import de.upb.sede.webinterfaces.client.BasicClientRequest;
 import de.upb.sede.webinterfaces.client.ReadFileRequest;
 import de.upb.sede.webinterfaces.client.WriteFileRequest;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.UncheckedIOException;
-
+/**
+ * Procedure to load or store an instance of a service with its current state,
+ */
 public class ServiceInstanceStorageProcedure implements Procedure {
 
 	@Override
@@ -24,8 +27,7 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 		String serviceClasspath = (String) task.getAttributes().get("service-classpath");
 		String instanceId;
 
-
-		if(isLoadInstruction) {
+		if (isLoadInstruction) {
 			/* load the service instance and put it into the execution environment */
 			instanceId = (String) task.getAttributes().get("instance-id");
 			BasicClientRequest loadRequest = getLoadRequest(instanceId, serviceClasspath);
@@ -43,7 +45,8 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 			task.getExecution().getEnvironment().put(fieldname, loadedSedeObject);
 		} else {
 			/* store the service instance which the fieldname is pointing to */
-			ServiceInstanceHandle instanceHandle = task.getExecution().getEnvironment().get(fieldname).getServiceHandle();
+			ServiceInstanceHandle instanceHandle = task.getExecution().getEnvironment().get(fieldname)
+					.getServiceHandle();
 			instanceId = instanceHandle.getId();
 			BasicClientRequest storeRequest = getStoreRequest(instanceId, serviceClasspath);
 
@@ -53,19 +56,31 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 				throw new UncheckedIOException(e);
 			}
 			String answer = Streams.InReadString(storeRequest.receive());
-			if(!answer.isEmpty()) {
-				throw new RuntimeException("Error during service storage: " + instanceHandle.toString() + "\nmessage: " + answer);
+			if (!answer.isEmpty()) {
+				throw new RuntimeException(
+						"Error during service storage: " + instanceHandle.toString() + "\nmessage: " + answer);
 			}
 		}
 		task.setSucceeded();
 	}
 
+	/**
+	 * Returns the path of storage for the requested instance.
+	 * 
+	 * @param serviceClasspath
+	 *            class path of the service
+	 * @param instanceid
+	 *            id of the instance to get the path for.
+	 * @return Path of the requested instance.
+	 */
 	public static String pathFor(String serviceClasspath, String instanceid) {
 		int max = 200;
-		/* maximum number of characters that is allowed service classpath to be.
-		the first few  characters  are cut in order to get under the max amount. */
-		if(serviceClasspath.length() > max) {
-			serviceClasspath = serviceClasspath.substring(serviceClasspath.length()-max, serviceClasspath.length());
+		/*
+		 * maximum number of characters that is allowed service classpath to be. the
+		 * first few characters are cut in order to get under the max amount.
+		 */
+		if (serviceClasspath.length() > max) {
+			serviceClasspath = serviceClasspath.substring(serviceClasspath.length() - max, serviceClasspath.length());
 		}
 		return "instances/" + serviceClasspath + "/" + instanceid;
 	}

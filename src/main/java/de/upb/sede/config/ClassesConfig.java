@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 
 import de.upb.sede.util.FilteredIterator;
 
@@ -125,7 +124,7 @@ public class ClassesConfig extends Configuration {
 						// first try to add the value to the array or dictionary
 						Object baseAttribute = classconfig.get(attributeName);
 						if (baseAttribute instanceof List && superAttribute instanceof List) {
-							((ArrayNode) baseAttribute).addAll((ArrayNode) superAttribute);
+							((List) baseAttribute).addAll((List) superAttribute);
 							extended = true;
 						} else if (baseAttribute instanceof Map && baseAttribute instanceof Map) {
 							((Map) baseAttribute).putAll((Map) superAttribute);

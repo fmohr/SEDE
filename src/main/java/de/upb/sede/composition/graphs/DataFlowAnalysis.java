@@ -32,24 +32,24 @@ public class DataFlowAnalysis {
 
 	private final Map<String, List<FieldType>> fieldnameTypeResult = new HashMap<>();
 
-	private final List<Execution> executions;
+	private final List<ExecPlan> execPlans;
 
-	private final Execution clientExecution;
+	private final ExecPlan clientExecPlan;
 
 	private final CompositionGraph dataTransmissionGraph;
 
 	private final DefaultMap<BaseNode, List<FieldType>> nodeConsumingFields = new DefaultMap<>(ArrayList::new);
 	private final DefaultMap<FieldType, List<BaseNode>> fieldProducers = new DefaultMap<>(ArrayList::new);
 
-	private final Map<BaseNode, Execution> nodeExecutionAssignment = new HashMap<>();
+	private final Map<BaseNode, ExecPlan> nodeExecutionAssignment = new HashMap<>();
 
 	private final List<String> returnFieldnames = new ArrayList<>();
 
 	public DataFlowAnalysis(ResolveInfo resolveInfo, List<InstructionNode> instructionNodes) {
 		this.resolveInfo = Objects.requireNonNull(resolveInfo);
-		clientExecution = new Execution(resolveInfo.getClientExecutor());
-		executions = new ArrayList<>();
-		executions.add(clientExecution);
+		clientExecPlan = new ExecPlan(resolveInfo.getClientExecutor());
+		execPlans = new ArrayList<>();
+		execPlans.add(clientExecPlan);
 		dataTransmissionGraph = new CompositionGraph();
 		analyzeDataFlow(Objects.requireNonNull(instructionNodes));
 	}
@@ -99,7 +99,7 @@ public class DataFlowAnalysis {
 	}
 
 	private void resolveExecution(InstructionNode instNode) {
-		Execution resolvedExecution = null;
+		ExecPlan resolvedExecPlan = null;
 		if (instNode.isContextAFieldname()) {
 			/*
 			 * instructions context is field. so it needs to be assigned to the correct
@@ -121,14 +121,14 @@ public class DataFlowAnalysis {
 				 */
 				ServiceInstanceHandle serviceInstanceHandle = resolveInfo.getInputFields()
 						.getServiceInstanceHandle(serviceInstanceFieldname);
-				resolvedExecution = getOrCreateExecutionForId(serviceInstanceHandle.getExecutorId());
+				resolvedExecPlan = getOrCreateExecutionForId(serviceInstanceHandle.getExecutorId());
 			} else {
 				/*
 				 * The field is bound to a new service instance. producer is another instruction
 				 * node.
 				 */
 				BaseNode producer = serviceInstanceField.getProducer();
-				resolvedExecution = getAssignedExec(producer);
+				resolvedExecPlan = getAssignedExec(producer);
 			}
 		} else {
 			/*
@@ -136,11 +136,11 @@ public class DataFlowAnalysis {
 			 */
 			String serviceClasspath = instNode.getContext();
 			boolean found = false;
-			for (Execution exec : executions) {
+			for (ExecPlan exec : execPlans) {
 				ExecutorHandle executor = exec.getExecutor();
 				if (executor.getExecutionerCapabilities().supportsServiceClass(serviceClasspath)) {
 					found = true;
-					resolvedExecution = exec;
+					resolvedExecPlan = exec;
 					break;
 				}
 			}
@@ -151,18 +151,18 @@ public class DataFlowAnalysis {
 				 */
 				ExecutorHandle newExecutor = resolveInfo.getExecutorCoordinator()
 						.randomExecutorWithServiceClass(serviceClasspath);
-				resolvedExecution = new Execution(newExecutor);
-				executions.add(resolvedExecution);
+				resolvedExecPlan = new ExecPlan(newExecutor);
+				execPlans.add(resolvedExecPlan);
 			}
 		}
-		assignNodeToExec(instNode, resolvedExecution);
+		assignNodeToExec(instNode, resolvedExecPlan);
 	}
 
 	private void analyzeDataFlow(InstructionNode instNode) {
 		/*
 		 * map this instruction to all fieldtypes it is depending on. (consuming)
 		 */
-		Execution instExec = getAssignedExec(instNode);
+		ExecPlan instExec = getAssignedExec(instNode);
 		String contextClasspath;
 		if (instNode.isContextAFieldname()) {
 			String serviceInstanceFieldname = instNode.getContext();
@@ -185,7 +185,7 @@ public class DataFlowAnalysis {
 			/*
 			 * make sure the service is available on the instExec:
 			 */
-			Execution sourceExec = getAssignedExec(serviceInstance.getProducer());
+			ExecPlan sourceExec = getAssignedExec(serviceInstance.getProducer());
 			if (getAssignedExec(serviceInstance.getProducer()) != instExec) {
 				/*
 				 * this service is not present on instExec. First transmit the service instance
@@ -335,7 +335,7 @@ public class DataFlowAnalysis {
 						requiredData = paramFieldTypes.get(0);
 					}
 					/* transmit data to instExec: */
-					Execution sourceExec = getAssignedExec(requiredData.getProducer());
+					ExecPlan sourceExec = getAssignedExec(requiredData.getProducer());
 					// the return value of createTransmission is the datafield which is present on
 					// instExec:
 					requiredData = createTransmission(sourceExec, instExec, requiredData);
@@ -538,7 +538,7 @@ public class DataFlowAnalysis {
 			FieldType resultFieldType = resultFieldtype(resultFieldname);
 
 			BaseNode resultProducer = resultFieldType.getProducer();
-			Execution resultExecution = getAssignedExec(resultProducer);
+			ExecPlan resultExecPlan = getAssignedExec(resultProducer);
 
 			boolean servicePersistant = resultFieldType.isServiceInstance()
 					&& resolveInfo.getResolvePolicy().isPersistentService(resultFieldname);
@@ -550,17 +550,17 @@ public class DataFlowAnalysis {
 				 */
 				ServiceInstanceStorageNode store = new ServiceInstanceStorageNode(resultFieldname,
 						resultFieldType.getTypeName());
-				assignNodeToExec(store, resultExecution);
+				assignNodeToExec(store, resultExecPlan);
 				nodeConsumesField(store, resultFieldType);
 			}
 
 			if (toBeRetuend) {
 
-				if (clientExecution != resultExecution) {
+				if (clientExecPlan != resultExecPlan) {
 					/*
 					 * return result to client
 					 */
-					createTransmission(resultExecution, clientExecution, resultFieldType);
+					createTransmission(resultExecPlan, clientExecPlan, resultFieldType);
 				}
 				markAsResult(resultFieldType);
 			}
@@ -572,7 +572,7 @@ public class DataFlowAnalysis {
 	}
 
 	private void connectDependencyEdges() {
-		for(Execution exec : getInvolvedExecutions()) {
+		for(ExecPlan exec : getInvolvedExecutions()) {
 			CompositionGraph graph = exec.getGraph();
 			/*
 			 * connect every consumer in the graph to its producer:
@@ -592,11 +592,11 @@ public class DataFlowAnalysis {
 		}
 	}
 
-	private Execution getOrCreateExecutionForId(String executorId) {
+	private ExecPlan getOrCreateExecutionForId(String executorId) {
 		/*
 		 * First search the list of already involved executors to look for it:
 		 */
-		for (Execution exec : executions) {
+		for (ExecPlan exec : execPlans) {
 			if (exec.getExecutor().getExecutorId().equals(executorId)) {
 				return exec;
 			}
@@ -608,8 +608,8 @@ public class DataFlowAnalysis {
 			/*
 			 * Add a new executor to the involved list of executors:
 			 */
-			Execution exec = new Execution(executor);
-			executions.add(exec);
+			ExecPlan exec = new ExecPlan(executor);
+			execPlans.add(exec);
 			return exec;
 
 		} else {
@@ -627,8 +627,8 @@ public class DataFlowAnalysis {
 
 	private AcceptDataNode clientAcceptInput(String fieldname) {
 		AcceptDataNode accept = new AcceptDataNode(fieldname);
-		assignNodeToExec(accept, clientExecution);
-		Map<String, String> clientContactInfo = clientExecution.getExecutor().getContactInfo();
+		assignNodeToExec(accept, clientExecPlan);
+		Map<String, String> clientContactInfo = clientExecPlan.getExecutor().getContactInfo();
 		TransmitDataNode transmit = new TransmitDataNode(fieldname, clientContactInfo);
 
 		addTransmission(transmit, accept);
@@ -636,7 +636,7 @@ public class DataFlowAnalysis {
 		return accept;
 	}
 
-	private FieldType createTransmission(Execution sourceExec, Execution targetExec, FieldType datafield) {
+	private FieldType createTransmission(ExecPlan sourceExec, ExecPlan targetExec, FieldType datafield) {
 		String fieldname = datafield.getFieldname();
 		AcceptDataNode accept = new AcceptDataNode(fieldname);
 		assignNodeToExec(accept, targetExec);
@@ -680,7 +680,7 @@ public class DataFlowAnalysis {
 		}
 	}
 
-	private void assignNodeToExec(BaseNode node, Execution exec) {
+	private void assignNodeToExec(BaseNode node, ExecPlan exec) {
 		if (isAssignedToExec(node)) {
 			throw new RuntimeException("Coding error: each node can only be assigned to a single execution.");
 		}
@@ -688,7 +688,7 @@ public class DataFlowAnalysis {
 		nodeExecutionAssignment.put(node, exec);
 	}
 
-	private Execution getAssignedExec(BaseNode node) {
+	private ExecPlan getAssignedExec(BaseNode node) {
 		if (!isAssignedToExec(node)) {
 			throw new CompositionSemanticException("The node " + node.toString() + " isn't assigned to a execution.");
 		}
@@ -760,12 +760,12 @@ public class DataFlowAnalysis {
 		throw new RuntimeException("Field " + fieldname + " doens't contain any original fieldtype.");
 	}
 
-	public Execution getClientExecution() {
-		return clientExecution;
+	public ExecPlan getClientExecPlan() {
+		return clientExecPlan;
 	}
 
-	public List<Execution> getInvolvedExecutions() {
-		return executions;
+	public List<ExecPlan> getInvolvedExecutions() {
+		return execPlans;
 	}
 
 
@@ -855,21 +855,3 @@ enum TypeClass {
 	ServiceInstance, SemanticDataType, RealDataType, PrimitiveType, ServiceInstanceHandle;
 }
 
-class Execution {
-	private final CompositionGraph graph;
-	private final ExecutorHandle executor;
-
-	Execution(ExecutorHandle executor) {
-		this.graph = new CompositionGraph();
-		this.executor = executor;
-	}
-
-	public CompositionGraph getGraph() {
-		return graph;
-	}
-
-	public ExecutorHandle getExecutor() {
-		return executor;
-	}
-
-}

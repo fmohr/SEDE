@@ -36,6 +36,10 @@ public class CoreClientHttpServer extends CoreClient {
 		return executor;
 	}
 
+	public ExecutorHttpServer getClientExecutor(){
+		return (ExecutorHttpServer) super.getClientExecutor();
+	}
+
 	public static void main(String[] args) {
 		String gatewayHost = "localhost:6060";
 		String clientExecHost = "client server";

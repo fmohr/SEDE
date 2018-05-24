@@ -52,7 +52,7 @@ dependencies {
 
     
     
-	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0.pr4'
+//	compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.0.pr4'
 	
 	// https://mvnrepository.com/artifact/guru.nidi/graphviz-java
 	testCompile group: 'guru.nidi', name: 'graphviz-java', version: '0.4.0'

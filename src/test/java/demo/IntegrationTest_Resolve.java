@@ -1,10 +1,13 @@
-package de.upb.sede.composition.graphs;
+package demo;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import de.upb.sede.composition.graphs.CompositionGraph;
+import de.upb.sede.composition.graphs.ExecPlan;
+import de.upb.sede.composition.graphs.GraphConstruction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.simple.parser.JSONParser;
@@ -21,7 +24,7 @@ import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.GraphToDotNidi;
 
-public class Demo_Resolve {
+public class IntegrationTest_Resolve {
 
 	
 	private static final String rscPath = "testrsc/resolve-requests/"; 
@@ -91,7 +94,7 @@ public class Demo_Resolve {
 			GraphConstruction gc = gateway.constructGraphs(resolveRequest);
 			String clientId =  resolveRequest.getClientExecutorRegistration().getId();
 			resolvedGraphs.put(clientId, gc.getResolvedClientGraph());
-			for(Execution exec : gc.getExecutions()) {
+			for(ExecPlan exec : gc.getExecutions()) {
 				if(exec.getExecutor().getExecutorId().equals(clientId)) {
 					continue;
 				}

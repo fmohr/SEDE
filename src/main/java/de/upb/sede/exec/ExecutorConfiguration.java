@@ -4,21 +4,25 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import de.upb.sede.util.FileUtil;
+import de.upb.sede.util.JsonSerializable;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class ExecutorConfiguration {
+public class ExecutorConfiguration implements JsonSerializable{
 	private static final String UNDEFINED_SERVICE_STORE_LOC = "No location defined to store services in.";
 
 	private static Logger logger = LogManager.getLogger(ExecutorConfiguration.class);
@@ -145,5 +149,17 @@ public class ExecutorConfiguration {
 		public ExecutorConfiguration getConfiguration() {
 			return configuration;
 		}
+	}
+
+	@Override
+	public JSONObject toJson() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void fromJson(Map<String, Object> data) {
+		// TODO Auto-generated method stub
+		
 	}
 }

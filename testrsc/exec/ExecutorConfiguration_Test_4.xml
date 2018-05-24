@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-	<service_store_location relative_path="service_storage/"></service_store_location>
-	<thread_number number="8"></thread_number>
-	<resources>
-		<gpu number="2"></gpu>
-		<cpu number="4"></cpu></resources></configuration>

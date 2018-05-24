@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.Semaphore;
 
 public class IntegrationTest_Execute {
 	private static final Logger logger = LogManager.getLogger();
@@ -59,12 +58,24 @@ public class IntegrationTest_Execute {
 	}
 
 
-	@Test public void demoLocalRun() {
+
+	@Test public void testLocalRun() {
 		Executor clientExecutor = new Executor();
 		/* supports everything */
 		clientExecutor.getExecutorConfiguration().getSupportedServices().addAll(Arrays.asList("demo.math.Addierer", "demo.math.Gerade"));
 		clientExecutor.getExecutorConfiguration().setExecutorId("Core Client");
 		CoreClient cc = new CoreClient(clientExecutor, gateway::resolve);
+		runAllOnce(cc);
+	}
+
+	@Test public void testHttpRun() {
+		/* supports nothing */
+		CoreClientHttpServer cc = new CoreClientHttpServer("localhost", 9004, "localhost", 9000);
+		runAllOnce(cc);
+		cc.getClientExecutor().shutdown();
+	}
+
+	public void runAllOnce(CoreClient cc) {
 
 		for(String pathToRequest : FileUtil.listAllFilesInDir(rscPath, "(.*?)\\.json$")) {
 			pathToRequest = rscPath + pathToRequest;
@@ -85,67 +96,66 @@ public class IntegrationTest_Execute {
 	}
 
 
-	@Test public void demoHttpRun() {
+	final static int reruns = 50000;
+
+	@Test public void testLocalBenchmark() throws InterruptedException {
+		Executor clientExecutor = new Executor();
 		/* supports everything */
+		clientExecutor.getExecutorConfiguration().getSupportedServices().addAll(Arrays.asList("demo.math.Addierer", "demo.math.Gerade"));
+		clientExecutor.getExecutorConfiguration().setExecutorId("Core Client Benchmark");
+		CoreClient cc = new CoreClient(clientExecutor, gateway::resolve);
+		runBenchmark(cc);
+	}
 
-		CoreClientHttpServer cc = new CoreClientHttpServer("localhost", 9004, "localhost", 9000);
-		cc.getClientExecutor().getExecutorConfiguration().setExecutorId("Core Client");
-		for(String pathToRequest : FileUtil.listAllFilesInDir(rscPath, "(.*?)\\.json$")) {
-			pathToRequest = rscPath + pathToRequest;
-			logger.info("Running execution from: {}", pathToRequest);
-			try {
-				String jsonRunRequest = FileUtil.readFileAsString(pathToRequest);
-				RunRequest runRequest = new RunRequest();
-				runRequest.fromJsonString(jsonRunRequest);
-
-				ResolveRequest resolveRequest = cc.runToResolve(runRequest, "id123");
-				IntegrationTest_Resolve.resolveToDot(resolveRequest, gateway, pathToRequest + ".http");
-
-				String requestId = cc.run(runRequest, null);
-				cc.join(requestId, false);
-			} catch (Exception ex) {
-				logger.error("Error during " + pathToRequest + ": ", ex);
-			}
-		}
+	@Test public void testHttpBenchmark() throws InterruptedException {
+		/* supports nothing */
+		CoreClientHttpServer cc = new CoreClientHttpServer("localhost", 9003, "localhost", 9000);
+		cc.getClientExecutor().getExecutorConfiguration().setExecutorId("Core Client Benchmark");
+		runBenchmark(cc);
 		cc.getClientExecutor().shutdown();
 	}
 
 
-	final static int reruns = 50;
 
-	@Test public void httpBenchmarkTest() throws InterruptedException {
-		/* supports everything */
 
-		CoreClientHttpServer cc = new CoreClientHttpServer("localhost", 9003, "localhost", 9000);
-		cc.getClientExecutor().getExecutorConfiguration().setExecutorId("Core Client Benchmark");
+	public void runBenchmark(CoreClient cc) throws InterruptedException {
 		List<String> runningRequestsIds = new ArrayList<>();
-		for (int i = 0; i < reruns; i++)
-			for(String pathToRequest : FileUtil.listAllFilesInDir(rscPath, "(.*?)\\.json$")) {
-				pathToRequest = rscPath + pathToRequest;
-				logger.info("Running execution from: {}", pathToRequest);
-				try{
-					String jsonRunRequest = FileUtil.readFileAsString(pathToRequest);
-					RunRequest runRequest = new RunRequest();
-					runRequest.fromJsonString(jsonRunRequest);
-					//				ResolveRequest resolveRequest = cc.runToResolve(runRequest, "id123");
-
-					//				IntegrationTest_Resolve.resolveToDot(resolveRequest, gateway, pathToRequest + ".http");
-					String requestId = cc.run(runRequest, null);
-					runningRequestsIds.add(requestId);
-					logger.info("Added request Id {}", requestId);
-				} catch(Exception ex) {
-					logger.error("Error during " + pathToRequest + ":", ex);
-				}
-//				System.out.println("Reached " + i);
-			}
-
-		for (int i = 0; i < runningRequestsIds.size(); i++) {
-			cc.join(runningRequestsIds.get(i), false);
-			if(((int)(100. * ((double)i)/((double)reruns))) %5 == 0){
-				logger.info("Reached {}%", ((int)(100. * ((double)i)/((double)reruns))));
+		List<RunRequest> runRequests = new ArrayList<>();
+		for (String pathToRequest : FileUtil.listAllFilesInDir(rscPath, "(.*?)\\.json$")) {
+			pathToRequest = rscPath + pathToRequest;
+			logger.debug("Running execution from: {}", pathToRequest);
+			try {
+				String jsonRunRequest = FileUtil.readFileAsString(pathToRequest);
+				RunRequest runRequest = new RunRequest();
+				runRequest.fromJsonString(jsonRunRequest);
+				runRequests.add(runRequest);
+			} catch (Exception ex) {
+				logger.error("Error during parsing: " + pathToRequest + ":", ex);
 			}
 		}
-		cc.getClientExecutor().shutdown();
+		for (int i = 0; i < reruns; i++) {
+			for (RunRequest runRequest : runRequests) {
+				try {
+					String requestId = cc.run(runRequest, null);
+					runningRequestsIds.add(requestId);
+					logger.debug("Added request Id {}", requestId);
+				} catch (Exception ex) {
+					logger.error("Error during execution"  + ": ", ex);
+				}
+			}
+		}
+		int requestCount = runningRequestsIds.size();
+		int percentreached = 0;
+		logger.info("{} request many requests have been sent.", requestCount);
+		for (int i = 0; i < requestCount; i++) {
+			cc.join(runningRequestsIds.get(i), false);
+			int currentpercent = ((int)(100. * ((double)i)/((double)requestCount)));
+
+			if(currentpercent > percentreached){
+				logger.info("Reached {}%", currentpercent);
+				percentreached = currentpercent;
+			}
+		}
 	}
 
 	public void test() {

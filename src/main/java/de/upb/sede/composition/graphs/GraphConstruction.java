@@ -32,7 +32,7 @@ public class GraphConstruction {
 	}
 
 	private void calcResolvedClientGraph() {
-		CompositionGraph resolvedClientGraph = dataFlow.getClientExecution().getGraph();
+		CompositionGraph resolvedClientGraph = dataFlow.getClientExecPlan().getGraph();
 //		/*
 //		 * prioritize executions on the client node:
 //		 */
@@ -44,8 +44,8 @@ public class GraphConstruction {
 		 * Add send graph nodes to the client graph and returns it:
 		 */
 		GraphJsonSerializer gjs = new GraphJsonSerializer();
-		for (Execution exec : dataFlow.getInvolvedExecutions()) {
-			if(exec == dataFlow.getClientExecution()) {
+		for (ExecPlan exec : dataFlow.getInvolvedExecutions()) {
+			if(exec == dataFlow.getClientExecPlan()) {
 				continue;
 			}
 			String jsonGraph = gjs.toJson(exec.getGraph()).toJSONString();
@@ -73,15 +73,15 @@ public class GraphConstruction {
 	}
 
 
-	public List<Execution> getExecutions() {
+	public List<ExecPlan> getExecutions() {
 		return dataFlow.getInvolvedExecutions();
 	}
 
 	public CompositionGraph getResolvedClientGraph() {
-		return dataFlow.getClientExecution().getGraph();
+		return dataFlow.getClientExecPlan().getGraph();
 	}
 
-	CompositionGraph getTransmissionGraph() {
+	public CompositionGraph getTransmissionGraph() {
 		return dataFlow.getTransmissionGraph();
 	}
 

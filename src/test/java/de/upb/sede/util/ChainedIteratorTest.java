@@ -6,13 +6,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.function.Function;
 
-import org.hamcrest.BaseDescription;
 import org.junit.Assert;
 import org.junit.Test;
 
-import com.fasterxml.jackson.databind.deser.Deserializers.Base;
 
-import de.upb.sede.composition.graphs.nodes.BaseNode;
 
 public class ChainedIteratorTest {
 

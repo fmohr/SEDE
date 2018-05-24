@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 
+/**
+ * Procedure to transmit data.
+ */
 public abstract class TransmitDataProcedure implements Procedure{
 
 	@Override
@@ -40,6 +43,12 @@ public abstract class TransmitDataProcedure implements Procedure{
 		}
 	}
 
+	 /** 
+	  * Returns a BasicClientReuqest to send the data over and get a response. The
+	 * implementation is dependent on the used framework to send data.
+	  * @param task Task that demands a data transmission.
+	  * @return A BasicClientRequest to use for communication.
+	  */
 	public abstract BasicClientRequest getPutDataRequest(Task task);
 
 }

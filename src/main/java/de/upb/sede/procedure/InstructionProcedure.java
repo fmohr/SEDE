@@ -20,8 +20,19 @@ import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
 
+/**
+ * This procedure is called when an instruction task needs to be executed. This
+ * procedure assumes that the necessary classes are already loaded into the
+ * class loader. The main task of this class is to call the correct method/
+ * constructor based on the signatures dictated by the given parameters.
+ *
+ */
 public class InstructionProcedure implements Procedure {
-
+	/**
+	 * If the parameters include constant types then the existence of a method/
+	 * constructor with the given signature is tested with the various real types
+	 * from the sets below.
+	 */
 	private static final Set<String> CLASSES_FOR_NUMBER = new HashSet<String>() {
 		private static final long serialVersionUID = 1940970420361621252L;
 
@@ -77,19 +88,26 @@ public class InstructionProcedure implements Procedure {
 		List<String> parameterTypes = getParameterTypes(parameterObjects);
 		Class<?>[] parameterClasses;
 		parameterClasses = getParameterClasses(parameterTypes, nodeAttributes, contextClass);
-		// Get the values of the parameters
+		// Get the values of the parameters.
 		Object[] parameterValues = getParameterValues(parameterObjects);
-		// When the call is a constructor call the the constructor is being reflected
-		// and called.
 		InvocationResult invocationResult;
+		// When the call is a constructor call the constructor is being reflected
+		// and called.
 		if (nodeAttributes.isConstructor()) {
 			invocationResult = callConstructor(task, contextClass, parameterClasses, parameterValues);
-		} else {
+		}
+		/*
+		 * ... otherwise a method is called.
+		 */
+		else {
 			invocationResult = callMethod(contextClass, contextType, parameterClasses, parameterValues, environment,
 					nodeAttributes);
 		}
+		/*
+		 * If the left side of the call is not null, than the result of the invocation
+		 * is put into the execution environment.
+		 */
 		if (nodeAttributes.getLeftsidefieldname() != null) {
-			// The output of the invocation is to be stored under the left side field name.
 			SEDEObject outputSEDEObject = invocationResult.toSEDEObject();
 			String leftsideFieldname = nodeAttributes.getLeftsidefieldname();
 			environment.put(leftsideFieldname, outputSEDEObject);

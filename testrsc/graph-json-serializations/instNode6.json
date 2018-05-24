@@ -1,0 +1,13 @@
+{
+    "nodetype": "Instruction",
+    "param-types": [],
+    "leftsidefieldtype": null,
+    "method": "method1",
+    "is-service-construction": false,
+    "leftsidefieldname": null,
+    "host": null,
+    "context": "someFieldname",
+    "is-context-a-fieldname": true,
+    "params": [],
+    "fmInstruction": "someFieldname::method1()"
+}

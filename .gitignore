@@ -48,9 +48,8 @@ gradle-app.setting
 
 
 ## own ignores
-# avoid ignoring gitignore and markdown files.
+
 !.gitignore
-!.md
 .classpath
 /testout/
 /instances/

@@ -1,0 +1,8 @@
+{
+    "nodetype": "ParseConstant",
+    "constant": "\"SomeText\"",
+    "isBool": false,
+    "isNumber": false,
+    "isNULL": false,
+    "isString": true
+}

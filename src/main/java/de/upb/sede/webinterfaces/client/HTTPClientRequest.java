@@ -1,0 +1,81 @@
+package de.upb.sede.webinterfaces.client;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.UncheckedIOException;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+public class HTTPClientRequest implements BasicClientRequest {
+	private final URL url;
+	private HttpURLConnection httpConnection;
+
+
+	public HTTPClientRequest(String ipAddress, int port, String url) {
+		this(ipAddress + ":" + port + (url.startsWith("/")? "" : "/")  + url);
+	}
+
+	public HTTPClientRequest(String urlAddress) {
+		if(!urlAddress.startsWith("http://")){
+			urlAddress = "http://" + urlAddress;
+		}
+		try {
+			url = new URL(urlAddress);
+		} catch (MalformedURLException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+
+	@Override
+	public OutputStream send() {
+		try {
+			return establishHTTPConnection().getOutputStream();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+
+	@Override
+	public InputStream receive() {
+		try {
+			return establishHTTPConnection().getInputStream();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+
+	/**
+	 * If httpConnection field is null this method will create a new http connection to the specified server.
+	 * <p>
+	 *     The connnection can both be first written onto. And the it can be read from.
+	 *     <p>
+	 *         So first invoke  send() and write into the given output stream.
+	 *     </p>
+	 *     <p>Close the output stream.</p>
+	 *     <p>Then invoke receive() and read from the given input stream.</p>
+	 *     <p>Close the input stream.</p>
+	 * </p>
+	 * @return HttpURLConnection to the specified http server.
+	 */
+	private HttpURLConnection establishHTTPConnection() {
+		if(httpConnection == null) {
+			try {
+				httpConnection = (HttpURLConnection) url.openConnection();
+				httpConnection.setDoInput(true);
+				httpConnection.setDoOutput(true);
+				httpConnection.setChunkedStreamingMode(1<<12);
+				httpConnection.connect();
+			} catch (IOException e) {
+				throw new UncheckedIOException(e);
+			}
+		} 
+		return httpConnection;
+	}
+
+	@Override
+	public void close() throws IOException {
+		httpConnection.disconnect();
+	}
+}

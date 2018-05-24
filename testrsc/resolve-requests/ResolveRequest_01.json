@@ -1,0 +1,32 @@
+{
+    "client-executor": {
+      "contact-info": { "id": "client executor" }
+    },
+    "composition": [
+        "a=demo.math.Addierer::__construct({100})",
+        "d=a::addier({20})",
+        "f=a::addierListe({b})",
+        "d=e::liagtAufGerade({f})"
+    ],
+
+    "requestId": "id",
+
+    "input-fields": {
+        "service-instance-map": {
+            "e": {
+                "classpath": "demo.math.Gerade",
+                "executorId": "exec_2",
+                "id": "id0"
+            }
+        },
+        "field-types": {
+            "b": "Arr",
+            "c": "Arr",
+            "e": "ServiceInstanceHandle"
+        }
+    },
+    "policy": {
+        "service-policy": "ALL",
+        "return-policy": "ALL"
+    }
+}

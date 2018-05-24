@@ -1,0 +1,34 @@
+{
+	"real.Type1": {
+		"semantic_type": "semType1",
+		"onthological_caster": "casters.Sem1_typ1_Serializer"
+	},
+	"real.Type2": {
+		"semantic_type": "semType1",
+		"onthological_caster": "casters.Sem1_typ2_Serializer"
+	},
+	"real.Type3": {
+		"semantic_type": "semType2",
+		"onthological_caster": "casters.Sem2_typ3_Serializer"
+	},
+	"real.Type4": {
+		"semantic_type": "semType2",
+		"onthological_caster": "casters.Sem2_typ4_Serializer"
+	},
+	"Bool":{
+		"semantic_type": "Bool",
+		"onthological_caster": "demo.casters.primitiveCaster"
+	},
+	"Number":{
+		"semantic_type": "Number",
+		"onthological_caster": "demo.casters.primitiveCaster"
+	},
+	"String":{
+		"semantic_type": "String",
+		"onthological_caster": "demo.casters.primitiveCaster"
+	},
+	"NULL":{
+		"semantic_type": "null",
+		"onthological_caster": "demo.casters.primitiveCaster"
+	}
+}

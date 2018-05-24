@@ -33,7 +33,6 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 
 	private final String hostAddress;
 
-
 	private final HttpServer server;
 
 	public ExecutorHttpServer(ExecutorConfiguration execConfig, String hostAddress, int port) {
@@ -53,12 +52,11 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 		server.start();
 	}
 
-
 	public ExecutorHttpServer(String pathToExecutionConfig, String hostAddress, int port) throws Exception {
-		this(ExecutorConfiguration.parse(pathToExecutionConfig), hostAddress, port);
+		this(ExecutorConfiguration.parseJSON(pathToExecutionConfig), hostAddress, port);
 	}
 
-	public Map<String, String> contactInfo(){
+	public Map<String, String> contactInfo() {
 		Map<String, String> contactInfo = super.contactInfo();
 		contactInfo.put("host-address", this.hostAddress);
 		return contactInfo;
@@ -72,14 +70,14 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 		HTTPClientRequest httpRegistration = new HTTPClientRequest(gatewayHost + "/register");
 
 		String registrationAnswer = httpRegistration.send(registration.toJsonString());
-		if(!registrationAnswer.isEmpty()) {
-			throw new RuntimeException("Registration to gateway \"" + gatewayHost + "\" failed with non empty return message:\n" + registrationAnswer);
+		if (!registrationAnswer.isEmpty()) {
+			throw new RuntimeException("Registration to gateway \"" + gatewayHost
+					+ "\" failed with non empty return message:\n" + registrationAnswer);
 		}
 		logger.debug("Registered to gateway: " + gatewayHost);
 	}
 
-
-	private void bindHttpProcedures(){
+	private void bindHttpProcedures() {
 		WorkerPool wp = super.getWorkerPool();
 		wp.bindProcedure("TransmitData", TransmitDataOverHttp::new);
 		wp.bindProcedure("SendGraph", SendGraphOverHttp::new);
@@ -101,16 +99,16 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 			String fieldname = (String) task.getAttributes().get("fieldname");
 			String semType = (String) task.getAttributes().get("semantic-type");
 			String executionId = task.getExecution().getExecutionId();
-			if(host == null || fieldname == null) {
-				throw new RuntimeException("The task doesn't contain all necessary fields: " + task.getAttributes().toString());
+			if (host == null || fieldname == null) {
+				throw new RuntimeException(
+						"The task doesn't contain all necessary fields: " + task.getAttributes().toString());
 			}
-			if(semType == null) {
+			if (semType == null) {
 				SEDEObject sedeObject = task.getExecution().getEnvironment().get(fieldname);
-				if(sedeObject.isReal()) {
+				if (sedeObject.isReal()) {
 					throw new RuntimeException("The task doesn't contain the 'semantic-type' field "
-							+ "but when transmitting real data the semantic type needs to be defined. \n"
-							+ "task: " + task.getAttributes().toString()
-							+ "\nfield to be sent: " + sedeObject.toString());
+							+ "but when transmitting real data the semantic type needs to be defined. \n" + "task: "
+							+ task.getAttributes().toString() + "\nfield to be sent: " + sedeObject.toString());
 				} else {
 					semType = sedeObject.getType();
 				}
@@ -121,15 +119,15 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 		}
 	}
 
-
 	static class SendGraphOverHttp extends SendGraphProcedure {
 
 		@Override
 		public BasicClientRequest getExecRequest(Task task) {
 			Map<String, String> contactInfo = (Map<String, String>) task.getAttributes().get("contact-info");
 			String host = contactInfo.get("host-address");
-			if(host == null) {
-				throw new RuntimeException("The task doesn't contain all necessary fields: " + task.getAttributes().toString());
+			if (host == null) {
+				throw new RuntimeException(
+						"The task doesn't contain all necessary fields: " + task.getAttributes().toString());
 			}
 			String executeGraphUrl = host + "/execute";
 			BasicClientRequest clientRequest = new HTTPClientRequest(executeGraphUrl);
@@ -142,14 +140,14 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 		@Override
 		public void receive(Optional<String> url, InputStream payload, OutputStream answer) {
 			String response;
-			try{
-				if(!url.isPresent()){
+			try {
+				if (!url.isPresent()) {
 					throw new RuntimeException("Put data needs to specify URL with fieldname and execution handle");
 				}
 				String[] urlPaths = url.get().split("/");
 				int pathIndex = 1;
-				if(urlPaths.length < 5 || !urlPaths[pathIndex++].equalsIgnoreCase("put")){
-					throw new RuntimeException("URL syntax error: "  + url.get());
+				if (urlPaths.length < 5 || !urlPaths[pathIndex++].equalsIgnoreCase("put")) {
+					throw new RuntimeException("URL syntax error: " + url.get());
 				}
 				String execId = urlPaths[pathIndex++];
 				String fieldname = urlPaths[pathIndex++];
@@ -158,9 +156,9 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 				DataPutRequest putRequest = new DataPutRequest(execId, fieldname, inputObject);
 				put(putRequest);
 				response = "";
-			} catch(Exception ex) {
+			} catch (Exception ex) {
 				logger.error("Error at put request: {}\n", url.get(), ex);
-				response =  ex.getMessage();
+				response = ex.getMessage();
 			}
 			Streams.OutWriteString(answer, response, true);
 		}
@@ -169,16 +167,15 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 	class ExecuteGraphHandler extends StringServerResponse {
 		@Override
 		public String receive(String payload) {
-			try{
+			try {
 				ExecRequest request = new ExecRequest();
 				request.fromJsonString(payload);
 				exec(request);
 				return "";
-			} catch (Exception ex){
+			} catch (Exception ex) {
 				return ex.getMessage();
 			}
 		}
 	}
-
 
 }

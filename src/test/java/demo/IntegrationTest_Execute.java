@@ -35,12 +35,12 @@ public class IntegrationTest_Execute {
 	static GatewayHttpServer gateway;
 
 	@BeforeClass public static void setup() {
-		ExecutorConfiguration config = new ExecutorConfiguration();
+		ExecutorConfiguration config = ExecutorConfiguration.parseJSON(null);
 		config.getSupportedServices().addAll(Arrays.asList("demo.math.Addierer"));
 		config.setExecutorId("Executor 1");
 		executor1 = new ExecutorHttpServer(config, "localhost", 9001);
 
-		config = new ExecutorConfiguration();
+		config = ExecutorConfiguration.parseJSON(null);
 		config.getSupportedServices().addAll(Arrays.asList("demo.math.Gerade"));
 		config.setExecutorId("Executor 2");
 		executor2 = new ExecutorHttpServer(config, "localhost", 9002);

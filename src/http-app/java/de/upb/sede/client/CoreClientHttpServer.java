@@ -31,7 +31,7 @@ public class CoreClientHttpServer extends CoreClient {
 	}
 
 	public static Executor simpleClientExecutor(String clientAddress, int clientPort) {
-		ExecutorConfiguration executorConfiguration = new ExecutorConfiguration();
+		ExecutorConfiguration executorConfiguration = ExecutorConfiguration.parseJSON(null);
 		Executor executor = new ExecutorHttpServer(executorConfiguration, clientAddress, clientPort);
 		return executor;
 	}

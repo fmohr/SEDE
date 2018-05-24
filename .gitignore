@@ -4,6 +4,7 @@ bin
 
 # Log file
 *.log
+/logs/
 
 # BlueJ files
 *.ctxt
@@ -26,6 +27,12 @@ hs_err_pid*
 ## eclipse ignores 
 
 .project
+.settings/org.eclipse.jdt.core.prefs
+.settings/org.eclipse.buildship.core.prefs
+
+##intellij ignores
+
+.idea/
 
 
 ## gradle ignores
@@ -44,3 +51,8 @@ gradle-app.setting
 # avoid ignoring gitignore and markdown files.
 !.gitignore
 !.md
+.classpath
+/testout/
+/instances/
+/out/
+SEDE.iml

@@ -19,8 +19,7 @@ import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.util.Observer;
 
 public class Executor implements IExecutor {
-	private static final String DEFAULT_EXECUTOR_CONFIG = null;
-	
+
 	private static final Logger logger = LogManager.getLogger();
 
 	private static final GraphJsonDeserializer deserializer = new GraphJsonDeserializer();
@@ -32,10 +31,6 @@ public class Executor implements IExecutor {
 	private final WorkerPool workerPool;
 
 	private final Observer<Task> taskWorkerEnqueuer;
-
-	public Executor() {
-		this(ExecutorConfiguration.parseJSON(DEFAULT_EXECUTOR_CONFIG));
-	}
 
 	public Executor(ExecutorConfiguration execConfig) {
 		this.execPool = new ExecutionPool(execConfig);

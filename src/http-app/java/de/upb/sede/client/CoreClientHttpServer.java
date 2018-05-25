@@ -17,10 +17,11 @@ public class CoreClientHttpServer extends CoreClient {
 		super(executor, rr -> resolveRequestOverHttp(rr, gatewayAddress, gatewayPort));
 	}
 
-	public CoreClientHttpServer(final String clientAddress, final int clientPort, final String gatewayAddress, final int gatewayPort) {
-		super(simpleClientExecutor(clientAddress, clientPort), rr -> resolveRequestOverHttp(rr, gatewayAddress, gatewayPort));
+	public CoreClientHttpServer(final ExecutorConfiguration executorConfig, final String clientAddress,
+			final int clientPort, final String gatewayAddress, final int gatewayPort) {
+		super(simpleClientExecutor(executorConfig, clientAddress, clientPort),
+				rr -> resolveRequestOverHttp(rr, gatewayAddress, gatewayPort));
 	}
-
 
 	public static GatewayResolution resolveRequestOverHttp(ResolveRequest rr, String gatewayAddress, int gatewayPort) {
 		BasicClientRequest requestToGateway = new HTTPClientRequest(gatewayAddress, gatewayPort, "resolve");
@@ -30,13 +31,13 @@ public class CoreClientHttpServer extends CoreClient {
 		return gatewayResolution;
 	}
 
-	public static Executor simpleClientExecutor(String clientAddress, int clientPort) {
-		ExecutorConfiguration executorConfiguration = ExecutorConfiguration.parseJSON(null);
-		Executor executor = new ExecutorHttpServer(executorConfiguration, clientAddress, clientPort);
+	public static Executor simpleClientExecutor(ExecutorConfiguration executorConfig, String clientAddress,
+			int clientPort) {
+		Executor executor = new ExecutorHttpServer(executorConfig, clientAddress, clientPort);
 		return executor;
 	}
 
-	public ExecutorHttpServer getClientExecutor(){
+	public ExecutorHttpServer getClientExecutor() {
 		return (ExecutorHttpServer) super.getClientExecutor();
 	}
 

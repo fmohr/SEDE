@@ -15,11 +15,11 @@ import de.upb.sede.util.JsonSerializable;
 
 public class ExecutorConfiguration implements JsonSerializable {
 	private static final String UNDEFINED_SERVICE_STORE_LOC = "No location defined to store services in.";
-	private static final String DEFAULT_GATEWAY_ID = "Default ID for gateway";
-	
+	private static final String UNDEFINED_GATEWAY_ID = "Gateway ID not defined.";
+
 	private String serviceStoreLocation = UNDEFINED_SERVICE_STORE_LOC;
 	private String executorId = UUID.randomUUID().toString();
-	private String gateWayId = DEFAULT_GATEWAY_ID;
+	private String gatewayId = UNDEFINED_GATEWAY_ID;
 	private int threadNumber = 1;
 	private List<String> capabilities = new ArrayList<>();
 	private List<String> services = new ArrayList<>();
@@ -52,13 +52,8 @@ public class ExecutorConfiguration implements JsonSerializable {
 		return executorId;
 	}
 
-	//TODO Get rid of this method. Only here to make tests runnable.
-	public void setExecutorId(String executorId) {
-		this.executorId = executorId;
-	}
-
-	public String getGateWayId() {
-		return gateWayId;
+	public String getGatewayId() {
+		return gatewayId;
 	}
 
 	public int getThreadNumber() {
@@ -77,24 +72,12 @@ public class ExecutorConfiguration implements JsonSerializable {
 	@Override
 	public JSONObject toJson() {
 		JSONObject objectAsJsonObj = new JSONObject();
-		if (!Objects.isNull(capabilities) && !capabilities.isEmpty()) {
-			objectAsJsonObj.put("capabilities", capabilities);
-		}
-		if (!Objects.isNull(services) && !services.isEmpty()) {
-			objectAsJsonObj.put("services", services);
-		}
-		if (!Objects.isNull(executorId)) {
-			objectAsJsonObj.put("executorId", executorId);
-		}
-		if (!Objects.isNull(gateWayId)) {
-			objectAsJsonObj.put("gateWayId", gateWayId);
-		}
-		if (threadNumber == 0) {
-			objectAsJsonObj.put("threadNumber", threadNumber);
-		}
-		if (!Objects.isNull(serviceStoreLocation)) {
-			objectAsJsonObj.put("serviceStoreLocation", serviceStoreLocation);
-		}
+		objectAsJsonObj.put("capabilities", capabilities);
+		objectAsJsonObj.put("services", services);
+		objectAsJsonObj.put("executorId", executorId);
+		objectAsJsonObj.put("gatewayId", gatewayId);
+		objectAsJsonObj.put("threadNumber", threadNumber);
+		objectAsJsonObj.put("serviceStoreLocation", serviceStoreLocation);
 		return objectAsJsonObj;
 	}
 
@@ -110,8 +93,8 @@ public class ExecutorConfiguration implements JsonSerializable {
 		if (jsonObj.containsKey("executorId")) {
 			executorId = (String) jsonObj.get("executorId");
 		}
-		if (jsonObj.containsKey("gateWayId")) {
-			gateWayId = (String) jsonObj.get("gateWayId");
+		if (jsonObj.containsKey("gatewayId")) {
+			gatewayId = (String) jsonObj.get("gatewayId");
 		}
 		if (jsonObj.containsKey("threadNumber")) {
 			threadNumber = (Integer) jsonObj.get("threadNumber");

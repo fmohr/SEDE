@@ -44,6 +44,10 @@ public class ExecutorConfiguration implements JsonSerializable {
 		return newConfigInstance;
 	}
 
+	public static ExecutorConfiguration getDefaultInstance() {
+		return null; // TODO
+	}
+
 	public String getServiceStoreLocation() {
 		return serviceStoreLocation;
 	}

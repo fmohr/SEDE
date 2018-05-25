@@ -18,4 +18,6 @@ public interface ICoreClient {
 
 	public IExecutor getClientExecutor();
 
+	public void interrupt(String requestId);
+
 }

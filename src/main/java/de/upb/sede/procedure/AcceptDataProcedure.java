@@ -10,7 +10,14 @@ public class AcceptDataProcedure implements Procedure {
 	public void process(Task task) {
 		final String fieldname = (String) task.getAttributes().get("fieldname");
 		Observer<ExecutionEnvironment> envObserver = Observer
-				.<ExecutionEnvironment>lambda(env -> env.containsKey(fieldname), env -> task.setSucceeded());
+				.<ExecutionEnvironment>lambda(env -> env.isUnavailable(fieldname) || env.containsKey(fieldname) , env -> {
+					if(env.isUnavailable(fieldname)) {
+						task.setFailed();
+					} else if(env.containsKey(fieldname)) {
+						task.setSucceeded();
+					}
+				});
+
 
 		ExecutionEnvironment environment = task.getExecution().getEnvironment();
 		environment.getState().observe(envObserver);

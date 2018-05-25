@@ -8,4 +8,7 @@ public interface Procedure {
 	public abstract void process(Task task);
 
 
+	public default void processFail(Task task) {
+		// default implementation does nothing
+	}
 }

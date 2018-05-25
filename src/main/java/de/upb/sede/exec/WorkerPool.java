@@ -33,9 +33,21 @@ public class WorkerPool {
 
 
 	public synchronized void processTask(Task task){
-		logger.trace("{} submitted.", task.toDebugString());
+		if(logger.isTraceEnabled()) {
+			logger.trace("{} submitted: ", task.toString(), task.toDebugString());
+		}
+
 		Procedure procedure = procedureForTask(task.getTaskName());
-		ProcedureRunner  runner = new ProcedureRunner(task, procedure);
+		Runnable runner;
+		if(task.hasFailed()) {
+			runner = new OnFailRunner(task, procedure);
+		} else if(!task.hasStarted()) {
+			runner = new ProcedureRunner(task, procedure);
+		} else{
+			logger.error("Task {} has been submitted to run." +
+					" But it hasn't failed and has already started to run:\n{}", task.toString(), task.toDebugString());
+			return; // TODO what to do here?
+		}
 		Future future = workers.submit(runner);
 		addFuture(task.getExecution(), future);
 	}
@@ -94,21 +106,42 @@ public class WorkerPool {
 			this.procedure = procedure;
 		}
 		public void run() {
-			logger.trace("{} started", task.toDebugString());
+			if(logger.isTraceEnabled())
+				logger.trace("worker STARTED working on task: {}", task.toDebugString());
 			task.setStarted();
 			try{
 				procedure.process(task);
 			} catch(Exception ex) {
-//				task.setError(ex); TODO
+				task.setError(ex);
 				task.setFailed();
-				if(logger.isDebugEnabled()) {
-					logger.error("ERROR during {}:\n", task, ex);
-				}
+				logger.error("ERROR during {}:\n", task.toDebugString(), ex);
 			}
 			finally {
 				task.isDoneRunning();
 			}
-			logger.trace("{} finished", task.toDebugString());
+			if(logger.isTraceEnabled())
+				logger.trace("worker IS DONE working on task: {}", task.toDebugString());
+		}
+	}
+
+
+	private static class OnFailRunner implements  Runnable {
+		private Task task;
+		private Procedure procedure;
+		OnFailRunner(Task task, Procedure procedure) {
+			this.task = task;
+			this.procedure = procedure;
+		}
+		@Override
+		public void run() {
+			if(!task.hasFailed()){
+				logger.error("BUG: fail run on not failed task");
+			}
+			try{
+				procedure.processFail(task);
+			} catch(Exception ex) {
+				logger.error("ERROR during process fail of {}:\n", task.toDebugString(), ex);
+			}
 		}
 	}
 }

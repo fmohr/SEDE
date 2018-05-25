@@ -14,8 +14,6 @@ public interface IExecutor {
 
 	public Execution exec(ExecRequest execRequest);
 
-	public void loadServices(Object Services);
-
 	public void interrupt(String executionId);
 
 	public Map<String, String> contactInfo();

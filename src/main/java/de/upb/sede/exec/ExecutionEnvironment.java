@@ -7,4 +7,19 @@ import java.util.Map;
 
 public interface ExecutionEnvironment extends Map<String, SEDEObject> {
 	public Observable<ExecutionEnvironment> getState();
+
+	/**
+	 * Marks the fieldname unavailable, suggesting that it won't be delivered.
+	 * @param fieldname fieldname that wont be available.
+	 */
+	public void markUnavailable(String fieldname);
+
+	/**
+	 * Querries if the given fieldname is equal to an unavailable marked fieldname.
+	 *
+	 * @param fieldname fieldname whose unavailability is checked.
+	 *
+	 * @return true if the given fieldname has been marked unavailable.
+	 */
+	public boolean isUnavailable(Object fieldname);
 }

@@ -97,6 +97,11 @@ public class CoreClient implements ICoreClient{
 		return requestId;
 	}
 
+	@Override
+	public void interrupt(String requestId) {
+
+	}
+
 	public final ResolveRequest runToResolve(RunRequest runRequest, String resolveId) {
 		String composition = runRequest.getComposition();
 		ResolvePolicy policy = runRequest.getPolicy();

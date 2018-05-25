@@ -199,11 +199,9 @@ public final class Task implements Observer<Task>{
 		}
 	}
 
-
 	public void setError(Exception ex) {
 		error = Optional.of(ex);
 	}
-
 
 	public final boolean equals(Object otherObject) {
 		return super.equals(otherObject);

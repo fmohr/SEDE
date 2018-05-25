@@ -18,7 +18,11 @@ import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.util.Observer;
 
-public class Executor implements IExecutor {
+import java.util.List;
+import java.util.Map;
+
+public class Executor implements IExecutor{
+
 
 	private static final Logger logger = LogManager.getLogger();
 
@@ -36,11 +40,11 @@ public class Executor implements IExecutor {
 		this.execPool = new ExecutionPool(execConfig);
 		this.config = execConfig;
 		this.workerPool = new WorkerPool(execConfig.getThreadNumber());
-		this.taskWorkerEnqueuer = Observer.lambda(t -> true, workerPool::processTask, t -> false);
+		this.taskWorkerEnqueuer = Observer.lambda(t->true,  workerPool::processTask, t->false);
 		bindProcedureNames();
 	}
 
-	private final void bindProcedureNames() {
+	private final void bindProcedureNames(){
 		workerPool.bindProcedure("Instruction", InstructionProcedure::new);
 		workerPool.bindProcedure("ParseConstant", ParseConstantProcedure::new);
 		workerPool.bindProcedure("AcceptData", AcceptDataProcedure::new);
@@ -53,6 +57,7 @@ public class Executor implements IExecutor {
 	public WorkerPool getWorkerPool() {
 		return workerPool;
 	}
+
 
 	public Execution getExecution(String requestId) {
 		return execPool.getExecution(requestId);
@@ -67,17 +72,27 @@ public class Executor implements IExecutor {
 	}
 
 	@Override
-	public synchronized void put(DataPutRequest dataPutRequest) {
+	public synchronized void put(DataPutRequest dataPutRequest){
 		Execution exec = getOrCreateExecution(dataPutRequest.getRequestID());
-		exec.getEnvironment().put(dataPutRequest.getFieldname(), dataPutRequest.getData());
+		if(dataPutRequest.isUnavailable()) {
+			/*
+			 * The request indicates that the data is unavailable. (wont be delivered)
+			 */
+			exec.getEnvironment().put(dataPutRequest.getFieldname(), dataPutRequest.getData());
+		} else{
+			/*
+			 * The request contains the data:
+			 */
+			exec.getEnvironment().put(dataPutRequest.getFieldname(), dataPutRequest.getData());
+		}
 	}
 
 	@Override
-	public synchronized Execution exec(ExecRequest execRequest) {
+	public synchronized Execution exec(ExecRequest execRequest){
 		String execId = execRequest.getRequestID();
 
 		Execution exec = getOrCreateExecution(execRequest.getRequestID());
-		exec.getNewTasksObservable().observe(taskWorkerEnqueuer);
+		exec.getRunnableTasksObservable().observe(taskWorkerEnqueuer);
 
 		deserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
 
@@ -87,20 +102,17 @@ public class Executor implements IExecutor {
 	}
 
 	@Override
-	public void loadServices(Object Services) {
-		// TODO
-	}
-
-	@Override
 	public void interrupt(String executionId) {
 		if (execPool.hasExecution(executionId)) {
 			execPool.getExecution(executionId).interrupt();
 		}
 	}
 
+
 	public void interruptAll() {
 		execPool.forAll(Execution::interrupt);
 	}
+
 
 	@Override
 	public Map<String, String> contactInfo() {
@@ -122,13 +134,10 @@ public class Executor implements IExecutor {
 	}
 
 	/**
-	 * Supplier of execution instances.
-	 * <p>
-	 * Given an execution-id this method creates a new Execution object without
-	 * altering the state of the executor.
+	 * Supplier of execution instances. <p>
+	 * Given an execution-id this method creates a new Execution object without altering the state of the executor.
 	 *
-	 * @param executionId
-	 *            request id of the new execution.
+	 * @param executionId request id of the new execution.
 	 *
 	 * @return A fresh new execution object.
 	 */

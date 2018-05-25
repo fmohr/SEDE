@@ -21,7 +21,7 @@ public class Execution {
 
 	private final Observable<Execution> state;
 
-	private final Observable<Task> newTask = new Observable<Task>();
+	private final Observable<Task> runnableTasks = new Observable<Task>();
 
 	private final ExecutorConfiguration executorConfiguration;
 
@@ -58,6 +58,7 @@ public class Execution {
 	 * will be removed from the unfinished-Tasks set.
 	 */
 	private final Observer<Task> unfinishedTasksObserver = Observer.lambda(Task::hasFinished, this::taskFinished);
+
 
 	/**
 	 * An array of any observer of this class that needs to observe every task added
@@ -117,7 +118,7 @@ public class Execution {
 	private final void taskResolved(Task task) {
 		synchronized (this) {
 			waitingTasks.add(task);
-			newTask.update(task);
+			runnableTasks.update(task);
 		}
 		state.update(this);
 	}
@@ -132,8 +133,15 @@ public class Execution {
 	private final void taskFinished(Task task) {
 		synchronized (this) {
 			unfinishedTasks.remove(task);
+			if(task.hasFailed()){
+				taskFailed(task);
+			}
 		}
 		state.update(this);
+	}
+
+	private final void taskFailed(Task task)  {
+		runnableTasks.update(task);
 	}
 
 	/**
@@ -208,8 +216,8 @@ public class Execution {
 		}
 	}
 
-	Observable<Task> getNewTasksObservable() {
-		return newTask;
+	Observable<Task> getRunnableTasksObservable() {
+		return runnableTasks;
 	}
 
 	synchronized void interrupt() {
@@ -222,6 +230,9 @@ public class Execution {
 	}
 
 	static class ExecutionInv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
+
+		private Set<String> unavailableFields = new HashSet<>();
+
 		final Observable<ExecutionEnvironment> state = Observable.ofInstance(this);
 		@Override
 		public SEDEObject put(String key, SEDEObject value) {
@@ -230,10 +241,29 @@ public class Execution {
 			return prevValue;
 		}
 
+		@Override
+		public boolean containsKey(Object fieldname) {
+			if(isUnavailable(fieldname)) {
+				return false;
+			} else {
+				return super.containsKey(fieldname);
+			}
+		}
+
+		@Override
+		public boolean isUnavailable(Object fieldname) {
+			return this.unavailableFields.contains(fieldname);
+		}
 
 		@Override
 		public Observable<ExecutionEnvironment> getState() {
 			return state;
+		}
+
+		@Override
+		public void markUnavailable(String fieldname) {
+			unavailableFields.add(fieldname);
+			state.update(this);
 		}
 	}
 

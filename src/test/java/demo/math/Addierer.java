@@ -30,6 +30,7 @@ public class Addierer implements Serializable {
 		return sumList;
 	}
 
+
 	public NummerList summierListe(NummerList nl1, NummerList nl2) {
 //		try {
 //			Thread.sleep(00);
@@ -41,5 +42,12 @@ public class Addierer implements Serializable {
 			sumList.add(nl1.get(i) + nl2.get(i));
 		}
 		return sumList;
+	}
+
+	/**
+	 * Method to test errors during execution.
+	 */
+	public NummerList fail() {
+		throw new RuntimeException("I fail because in this world it isn't worth trying.");
 	}
 }

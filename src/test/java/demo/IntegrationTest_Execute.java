@@ -24,6 +24,16 @@ import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 public class IntegrationTest_Execute {
 	private static final Logger logger = LogManager.getLogger();
@@ -67,6 +77,8 @@ public class IntegrationTest_Execute {
 		ExecutorConfiguration config = ExecutorConfiguration.parseJSON(clientConfig);
 		Executor clientExecutor = new Executor(config);
 		/* supports everything */
+		clientExecutor.getExecutorConfiguration().getSupportedServices().addAll(Arrays.asList("demo.math.Addierer", "demo.math.Gerade"));
+		clientExecutor.getExecutorConfiguration().setExecutorId("Core Client");
 		CoreClient cc = new CoreClient(clientExecutor, gateway::resolve);
 		runAllOnce(cc);
 	}
@@ -101,7 +113,6 @@ public class IntegrationTest_Execute {
 		}
 	}
 
-	final static int reruns = 50000;
 
 	@Test
 	public void testLocalBenchmark() throws InterruptedException {
@@ -123,6 +134,9 @@ public class IntegrationTest_Execute {
 		runBenchmark(cc);
 		cc.getClientExecutor().shutdown();
 	}
+
+
+
 
 	public void runBenchmark(CoreClient cc) throws InterruptedException {
 		List<String> runningRequestsIds = new ArrayList<>();
@@ -146,7 +160,7 @@ public class IntegrationTest_Execute {
 					runningRequestsIds.add(requestId);
 					logger.debug("Added request Id {}", requestId);
 				} catch (Exception ex) {
-					logger.error("Error during execution" + ": ", ex);
+					logger.error("Error during execution"  + ": ", ex);
 				}
 			}
 		}
@@ -155,9 +169,9 @@ public class IntegrationTest_Execute {
 		logger.info("{} request many requests have been sent.", requestCount);
 		for (int i = 0; i < requestCount; i++) {
 			cc.join(runningRequestsIds.get(i), false);
-			int currentpercent = ((int) (100. * ((double) i) / ((double) requestCount)));
+			int currentpercent = ((int)(100. * ((double)i)/((double)requestCount)));
 
-			if (currentpercent > percentreached) {
+			if(currentpercent > percentreached){
 				logger.info("Reached {}%", currentpercent);
 				percentreached = currentpercent;
 			}
@@ -170,6 +184,7 @@ public class IntegrationTest_Execute {
 		RunRequest runRequest = new RunRequest("rId", "composition blabla", new ResolvePolicy(), inputs);
 		System.out.println(runRequest.toJsonString());
 	}
+
 
 	private static ClassesConfig getTestClassConfig() {
 		return new ClassesConfig("testrsc/config/demo-classconf.json");

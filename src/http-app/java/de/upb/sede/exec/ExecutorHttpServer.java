@@ -18,6 +18,7 @@ import de.upb.sede.webinterfaces.server.SunHttpHandler;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -113,7 +114,12 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 					semType = sedeObject.getType();
 				}
 			}
-			String dataPutUrl = host + "/put/" + executionId + "/" + fieldname + "/" + semType;
+			String dataPutUrl = host + "/put/" + executionId + "/" + fieldname;
+			if(task.hasFailed()) {
+				dataPutUrl += "/unavailable";
+			} else {
+				dataPutUrl += "/" + semType;
+			}
 			BasicClientRequest clientRequest = new HTTPClientRequest(dataPutUrl);
 			return clientRequest;
 		}
@@ -152,9 +158,14 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 				String execId = urlPaths[pathIndex++];
 				String fieldname = urlPaths[pathIndex++];
 				String semanticType = urlPaths[pathIndex++];
-				SEDEObject inputObject = SemanticStreamer.readFrom(payload, semanticType);
-				DataPutRequest putRequest = new DataPutRequest(execId, fieldname, inputObject);
-				put(putRequest);
+				DataPutRequest putRequest;
+				if(semanticType.equals("unavailable")) {
+					putRequest = DataPutRequest.unavailableData(execId, fieldname);
+				} else{
+					SEDEObject inputObject = SemanticStreamer.readFrom(payload, semanticType);
+					putRequest = new DataPutRequest(execId, fieldname, inputObject);
+				}
+				ExecutorHttpServer.this.put(putRequest);
 				response = "";
 			} catch (Exception ex) {
 				logger.error("Error at put request: {}\n", url.get(), ex);

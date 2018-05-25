@@ -225,5 +225,15 @@ public class InstructionProcedureTest {
 		public Observable<ExecutionEnvironment> getState() {
 			return null;
 		}
+
+		@Override
+		public void markUnavailable(String fieldname) {
+
+		}
+
+		@Override
+		public boolean isUnavailable(Object fieldname) {
+			return false;
+		}
 	}
 }

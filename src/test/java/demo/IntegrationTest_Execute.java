@@ -96,7 +96,7 @@ public class IntegrationTest_Execute {
 	}
 
 
-	final static int reruns = 50000;
+	final static int reruns = 500;
 
 	@Test public void testLocalBenchmark() throws InterruptedException {
 		Executor clientExecutor = new Executor();

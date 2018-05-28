@@ -100,8 +100,13 @@ public class InstructionProcedure implements Procedure {
 		 * ... otherwise a method is called.
 		 */
 		else {
-			invocationResult = callMethod(contextClass, contextType, parameterClasses, parameterValues, environment,
-					nodeAttributes);
+			try{
+
+				invocationResult = callMethod(contextClass, contextType, parameterClasses, parameterValues, environment,
+						nodeAttributes);
+			} catch(RuntimeException ex) {
+				throw new RuntimeException("Error during invocation of method of instruction: " +  task.toDebugString(), ex);
+			}
 		}
 		/*
 		 * If the left side of the call is not null, than the result of the invocation
@@ -193,6 +198,9 @@ public class InstructionProcedure implements Procedure {
 			methodToBeCalled = contextClass.getMethod(nodeAttributes.getMethod(), parameterClasses);
 		} catch (NoSuchMethodException | SecurityException e) {
 			throw new RuntimeException(e);
+		}
+		if(methodToBeCalled == null) {
+			throw new RuntimeException("Method not found.");
 		}
 		String outputType = nodeAttributes.getLeftsidefieldType();
 		// If invoking a static method or a constructor the context instance is null.

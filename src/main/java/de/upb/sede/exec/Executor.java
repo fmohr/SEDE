@@ -78,7 +78,7 @@ public class Executor implements IExecutor{
 			/*
 			 * The request indicates that the data is unavailable. (wont be delivered)
 			 */
-			exec.getEnvironment().put(dataPutRequest.getFieldname(), dataPutRequest.getData());
+			exec.getEnvironment().markUnavailable(dataPutRequest.getFieldname());
 		} else{
 			/*
 			 * The request contains the data:

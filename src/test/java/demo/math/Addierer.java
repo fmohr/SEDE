@@ -47,7 +47,7 @@ public class Addierer implements Serializable {
 	/**
 	 * Method to test errors during execution.
 	 */
-	public NummerList fail() {
-		throw new RuntimeException("I fail because in this world it isn't worth trying.");
+	public static NummerList fail() {
+		throw new RuntimeException("I fail because in this world it isn't worth trying not to.");
 	}
 }

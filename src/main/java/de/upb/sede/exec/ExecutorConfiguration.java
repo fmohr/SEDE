@@ -20,32 +20,35 @@ public class ExecutorConfiguration implements JsonSerializable {
 	private String serviceStoreLocation = UNDEFINED_SERVICE_STORE_LOC;
 	private String executorId = UUID.randomUUID().toString();
 	private String gatewayId = UNDEFINED_GATEWAY_ID;
-	private int threadNumber = 1;
+	private int threadNumber = 4;
 	private List<String> capabilities = new ArrayList<>();
 	private List<String> services = new ArrayList<>();
 
 	private ExecutorConfiguration() {
 	}
 
+	private static ExecutorConfiguration parseJSONFromFile(String configPath) {
+		String jsonString = FileUtil.readFileAsString(configPath);
+		return parseJSON(jsonString);
+	}
+
 	@SuppressWarnings("unchecked")
-	public static ExecutorConfiguration parseJSON(String configPath) {
+	public static ExecutorConfiguration parseJSON(String jsonString) {
+		Objects.requireNonNull(jsonString);
 		ExecutorConfiguration newConfigInstance = new ExecutorConfiguration();
-		if (!Objects.isNull(configPath)) {
-			JSONParser jsonParser = new JSONParser();
-			String fileContent = FileUtil.readFileAsString(configPath);
-			JSONObject jsonConf;
-			try {
-				jsonConf = (JSONObject) jsonParser.parse(fileContent);
-			} catch (ParseException e) {
-				throw new RuntimeException(e);
-			}
-			newConfigInstance.fromJson(jsonConf);
+		JSONParser jsonParser = new JSONParser();
+		JSONObject jsonConf;
+		try {
+			jsonConf = (JSONObject) jsonParser.parse(jsonString);
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
 		}
+		newConfigInstance.fromJson(jsonConf);
 		return newConfigInstance;
 	}
 
 	public static ExecutorConfiguration getDefaultInstance() {
-		return null; // TODO
+		return new ExecutorConfiguration();
 	}
 
 	public String getServiceStoreLocation() {

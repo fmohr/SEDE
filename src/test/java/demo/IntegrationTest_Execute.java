@@ -1,5 +1,7 @@
 package demo;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -77,8 +79,6 @@ public class IntegrationTest_Execute {
 		ExecutorConfiguration config = ExecutorConfiguration.parseJSON(clientConfig);
 		Executor clientExecutor = new Executor(config);
 		/* supports everything */
-		clientExecutor.getExecutorConfiguration().getSupportedServices().addAll(Arrays.asList("demo.math.Addierer", "demo.math.Gerade"));
-		clientExecutor.getExecutorConfiguration().setExecutorId("Core Client");
 		CoreClient cc = new CoreClient(clientExecutor, gateway::resolve);
 		runAllOnce(cc);
 	}
@@ -153,6 +153,7 @@ public class IntegrationTest_Execute {
 				logger.error("Error during parsing: " + pathToRequest + ":", ex);
 			}
 		}
+		int reruns = 100;
 		for (int i = 0; i < reruns; i++) {
 			for (RunRequest runRequest : runRequests) {
 				try {

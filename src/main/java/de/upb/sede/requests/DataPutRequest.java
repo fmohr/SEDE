@@ -32,7 +32,7 @@ public class DataPutRequest extends Request {
 	}
 
 	public static DataPutRequest unavailableData(String requestId, String fieldname) {
-		return new DataPutRequest(requestId, fieldname, Optional.empty(), false);
+		return new DataPutRequest(requestId, fieldname, Optional.empty(), true);
 	}
 
 

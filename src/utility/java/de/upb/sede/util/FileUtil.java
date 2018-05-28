@@ -37,7 +37,7 @@ public class FileUtil {
 	public static String readFileAsString(String filePath) {
 		byte[] encoded;
 		try {
-			encoded = Files.readAllBytes(Paths.get(filePath));
+			encoded = Files.readAllBytes(Paths.get(Objects.requireNonNull(filePath)));
 			String fileContent = new String(encoded, Charset.defaultCharset());
 			return fileContent.replaceAll("\r\n", "\n");
 		} catch (IOException e) {

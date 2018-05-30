@@ -4,7 +4,6 @@ import de.upb.sede.exec.Execution;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Executor;
 import de.upb.sede.interfaces.ICoreClient;
-import de.upb.sede.interfaces.IExecutor;
 import de.upb.sede.requests.*;
 import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.InputFields;
@@ -33,14 +32,12 @@ public class CoreClient implements ICoreClient{
 	}
 
 	@Override
-	public Map<String, SEDEObject> blockingRun(RunRequest runRequest) {
-		Map<String, SEDEObject> resultMap = new ConcurrentHashMap<>();
-		Consumer<Result> resultConsumer = result -> resultMap.put(result.getFieldname(), result.getResultData());
-		String execId = run(runRequest, resultConsumer);
+	public Map<String, Result> blockingRun(RunRequest runRequest) {
+		MapResultConsumer resultMap = new MapResultConsumer();
+		String execId = run(runRequest, resultMap);
 
 		join(execId, true);
 		return resultMap;
-
 	}
 
 	@Override
@@ -61,7 +58,7 @@ public class CoreClient implements ICoreClient{
 			executionIsFinished.acquire();
 		} catch (InterruptedException e) {
 			if (interruptExecution) {
-				getClientExecutor().interrupt(requestId);
+				interrupt(requestId);
 			}
 		}
 	}
@@ -73,8 +70,7 @@ public class CoreClient implements ICoreClient{
 		} else if(logger.isDebugEnabled()) {
 			resultConsumer = resultConsumer.andThen(CoreClient::logResult);
 		}
-		/* choose a random request id */
-		String requestId = UUID.randomUUID().toString();
+		String requestId = runRequest.getRequestID();
 
 		/* make a resolve request from the run request */
 		ResolveRequest resolveRequest = runToResolve(runRequest, requestId);
@@ -99,7 +95,7 @@ public class CoreClient implements ICoreClient{
 
 	@Override
 	public void interrupt(String requestId) {
-
+		getClientExecutor().interrupt(requestId);
 	}
 
 	public final ResolveRequest runToResolve(RunRequest runRequest, String resolveId) {
@@ -170,6 +166,9 @@ public class CoreClient implements ICoreClient{
 				if(env.containsKey(field)){
 					return true;
 				}
+				if(env.isUnavailable(field)) {
+					return true;
+				}
 			}
 			return false;
 		}
@@ -183,6 +182,10 @@ public class CoreClient implements ICoreClient{
 					Result result = new Result(reqId, fieldname, env.get(fieldname));
 					sedeObjectConsumer.accept(result);
 					remaining.remove();
+				} else if(env.isUnavailable(fieldname)) {
+					Result result = Result.failed(reqId, fieldname);
+					sedeObjectConsumer.accept(result);
+					remaining.remove();
 				}
 			}
 		}
@@ -190,6 +193,14 @@ public class CoreClient implements ICoreClient{
 		@Override
 		public boolean removeAfterNotification(ExecutionEnvironment executionEnvironment) {
 			return false;
+		}
+	}
+
+	public static class MapResultConsumer extends ConcurrentHashMap<String, Result> implements Consumer<Result> {
+
+		@Override
+		public void accept(Result result) {
+			this.put(result.getFieldname(), result);
 		}
 	}
 }

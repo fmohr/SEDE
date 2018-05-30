@@ -42,9 +42,13 @@
             "fail": {
                 "paramtypes": [],
                 "returntype": "demo.types.NummerList",
-                "statemutating" : false,
+                "static" : true
+            },
+            "sleep":{
+                "paramtypes": [],
                 "static" : true
             }
+
         }
     },
     "demo.math.Gerade": {

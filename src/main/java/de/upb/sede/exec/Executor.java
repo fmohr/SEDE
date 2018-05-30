@@ -104,7 +104,9 @@ public class Executor implements IExecutor{
 	@Override
 	public void interrupt(String executionId) {
 		if (execPool.hasExecution(executionId)) {
-			execPool.getExecution(executionId).interrupt();
+			Execution toBeInterrupted = execPool.getExecution(executionId);
+			workerPool.interruptExec(toBeInterrupted);
+			toBeInterrupted.interrupt();
 		}
 	}
 

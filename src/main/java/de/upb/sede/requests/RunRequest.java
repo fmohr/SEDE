@@ -1,9 +1,6 @@
 package de.upb.sede.requests;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import de.upb.sede.core.SEDEObject;
@@ -26,6 +23,12 @@ public class RunRequest extends Request {
 
 	}
 
+
+	public RunRequest(String composition, ResolvePolicy policy,
+					  Map<String, SEDEObject> inputs) {
+		this(generateRequestId(), composition, policy, inputs);
+	}
+
 	public RunRequest(String requestId, String composition, ResolvePolicy policy,
 					  Map<String, SEDEObject> inputs) {
 		super(requestId);
@@ -44,6 +47,10 @@ public class RunRequest extends Request {
 
 	public boolean hasVariables() {
 		return this.inputs.isPresent();
+	}
+
+	public static String generateRequestId() {
+		return UUID.randomUUID().toString();
 	}
 
 	public String getComposition() {
@@ -73,6 +80,12 @@ public class RunRequest extends Request {
 
 	@SuppressWarnings("unchecked")
 	public void fromJson(Map<String, Object> data) {
+		if(!data.containsKey("requestId")) {
+			/*
+				Run request doesn't define an id. Generate a new one:
+			 */
+			data.put("requestId", generateRequestId());
+		}
 		super.fromJson(data);
 		Object compositionEntry = data.get("composition");
 		if(compositionEntry instanceof String) {
@@ -87,9 +100,14 @@ public class RunRequest extends Request {
 			policy.fromJson((Map<String, Object>) data.get("policy"));
 		}
 		this.policy = Optional.of(policy);
-		JSONObject jsonInputs = (JSONObject) data.get("inputs");
-		Map<String, SEDEObject> inputs = new HashMap<>();
-		Maps.translate(jsonInputs, inputs, SEDEObject::constructFromJson);
-		this.inputs = Optional.of(inputs);
+		if (data.containsKey("inputs")) {
+			JSONObject jsonInputs = (JSONObject) data.get("inputs");
+			Map<String, SEDEObject> inputs = new HashMap<>();
+			Maps.translate(jsonInputs, inputs, SEDEObject::constructFromJson);
+			this.inputs = Optional.of(inputs);
+		} else {
+			// if no inputs is defined set it to an empty map.
+			this.inputs = Optional.of(Collections.EMPTY_MAP);
+		}
 	}
 }

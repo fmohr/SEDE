@@ -2,15 +2,16 @@ package demo;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
+import de.upb.sede.exec.SemanticStreamer;
+import de.upb.sede.requests.Result;
+import demo.math.Addierer;
+import demo.types.DemoCaster;
+import demo.types.NummerList;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import de.upb.sede.client.CoreClientHttpServer;
 import de.upb.sede.config.ClassesConfig;
@@ -33,7 +34,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -44,6 +44,9 @@ public class IntegrationTest_Execute {
 
 	static ExecutorHttpServer executor1;
 	static ExecutorHttpServer executor2;
+
+	static CoreClient localClient;
+	static CoreClientHttpServer httpClient;
 
 	static GatewayHttpServer gateway;
 
@@ -63,6 +66,18 @@ public class IntegrationTest_Execute {
 
 		executor1.registerToGateway("localhost:9000");
 		executor2.registerToGateway("localhost:9000");
+
+		String clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core Client Benchmark")
+				.withSupportedServices("demo.math.Addierer", "demo.math.Gerade").toString();
+		config = ExecutorConfiguration.parseJSON(clientConfig);
+		Executor clientExecutor = new Executor(config);
+		localClient = new CoreClient(clientExecutor, gateway::resolve);
+
+		/* supports nothing */
+		clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core Client Benchmark")
+				.toString();
+		config = ExecutorConfiguration.parseJSON(clientConfig);
+		httpClient = new CoreClientHttpServer(config, "localhost", 9003, "localhost", 9000);
 	}
 
 	@AfterClass
@@ -72,23 +87,74 @@ public class IntegrationTest_Execute {
 		executor2.shutdown();
 	}
 
+
+	@Test
+	public void testLocalInterrupt() throws InterruptedException {
+		CoreClient cc = getLocalClient();
+		testInterruptExecution(cc);
+	}
+
+
+	public void testInterruptExecution(CoreClient cc) throws InterruptedException {
+		String sleepInstruction = 	"c = demo.math.Addierer::summierListe({a,b});" +
+									"demo.math.Addierer::sleep()";
+
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		NummerList a = new NummerList(Arrays.asList(1,2,3));
+		NummerList b = new NummerList(Arrays.asList(3,2,1));
+		SEDEObject inputA = new SEDEObject(NummerList.class.getName(), a);
+		SEDEObject inputB = new SEDEObject(NummerList.class.getName(), b);
+		inputs.put("a", inputA);
+		inputs.put("b", inputB);
+
+		RunRequest rr = new RunRequest("SleepRequest", sleepInstruction, new ResolvePolicy(), inputs);
+		CoreClient.MapResultConsumer results = new CoreClient.MapResultConsumer();
+		String requestId = cc.run(rr, results);
+		Assert.assertEquals("SleepRequest", requestId);
+
+		Thread.sleep(100); // wait for the result to be calculated.
+
+		cc.interrupt(requestId);
+
+		Assert.assertTrue(results.containsKey("c"));
+		Assert.assertFalse(results.get("c").hasFailed());
+		NummerList c = (NummerList) results.get("c").castResultData(NummerList.class, DemoCaster.class).getObject();
+
+		Assert.assertEquals(Addierer.summierListe(a,b), c);
+	}
+
+
+	@Test //TODO
+	public void testLocalFail() {
+		CoreClient cc = getLocalClient();
+		runFailInstruction(cc);
+	}
+
+	@Test
+	public void testHttpFail() {
+		CoreClientHttpServer cc = getHttpClient();
+		runFailInstruction(cc);
+		cc.getClientExecutor().shutdown();
+	}
+
+	public void runFailInstruction(CoreClient cc) {
+		String failInstruction = "a = demo.math.Addierer::fail()";
+
+		RunRequest rr = new RunRequest("FailRequest", failInstruction, new ResolvePolicy(), Collections.EMPTY_MAP);
+		Map<String, Result> resultMap = cc.blockingRun(rr);
+		Assert.assertTrue(resultMap.containsKey("a"));
+		Assert.assertTrue(resultMap.get("a").hasFailed());
+	}
+
 	@Test
 	public void testLocalRun() {
-		String clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core Client")
-				.withSupportedServices("demo.math.Addierer", "demo.math.Gerade").toString();
-		ExecutorConfiguration config = ExecutorConfiguration.parseJSON(clientConfig);
-		Executor clientExecutor = new Executor(config);
-		/* supports everything */
-		CoreClient cc = new CoreClient(clientExecutor, gateway::resolve);
+		CoreClient cc = getLocalClient();
 		runAllOnce(cc);
 	}
 
 	@Test
-	public void testHttpRun() {
-		/* supports nothing */
-		String clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core Client").toString();
-		ExecutorConfiguration config = ExecutorConfiguration.parseJSON(clientConfig);
-		CoreClientHttpServer cc = new CoreClientHttpServer(config, "localhost", 9004, "localhost", 9000);
+	public void  testHttpRun() {
+		CoreClientHttpServer cc = getHttpClient();
 		runAllOnce(cc);
 		cc.getClientExecutor().shutdown();
 	}
@@ -102,9 +168,10 @@ public class IntegrationTest_Execute {
 				String jsonRunRequest = FileUtil.readFileAsString(pathToRequest);
 				RunRequest runRequest = new RunRequest();
 				runRequest.fromJsonString(jsonRunRequest);
-				ResolveRequest resolveRequest = cc.runToResolve(runRequest, "id123");
 
-				IntegrationTest_Resolve.resolveToDot(resolveRequest, gateway, pathToRequest);
+//				ResolveRequest resolveRequest = cc.runToResolve(runRequest, "id123");
+//				IntegrationTest_Resolve.resolveToDot(resolveRequest, gateway, pathToRequest);
+
 				String requestId = cc.run(runRequest, null);
 				cc.join(requestId, false);
 			} catch (Exception ex) {
@@ -114,23 +181,15 @@ public class IntegrationTest_Execute {
 	}
 
 
-	@Test
+	//@Test
 	public void testLocalBenchmark() throws InterruptedException {
-		String clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core Client Benchmark")
-				.withSupportedServices("demo.math.Addierer", "demo.math.Gerade").toString();
-		ExecutorConfiguration config = ExecutorConfiguration.parseJSON(clientConfig);
-		Executor clientExecutor = new Executor(config);
-		CoreClient cc = new CoreClient(clientExecutor, gateway::resolve);
+		CoreClient cc = getLocalClient();
 		runBenchmark(cc);
 	}
 
-	@Test
+	//@Test
 	public void testHttpBenchmark() throws InterruptedException {
-		/* supports nothing */
-		String clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core Client Benchmark")
-				.toString();
-		ExecutorConfiguration config = ExecutorConfiguration.parseJSON(clientConfig);
-		CoreClientHttpServer cc = new CoreClientHttpServer(config, "localhost", 9003, "localhost", 9000);
+		CoreClientHttpServer cc = getHttpClient();
 		runBenchmark(cc);
 		cc.getClientExecutor().shutdown();
 	}
@@ -193,5 +252,13 @@ public class IntegrationTest_Execute {
 
 	private static OnthologicalTypeConfig getTestTypeConfig() {
 		return new OnthologicalTypeConfig("testrsc/config/demo-typeconf.json");
+	}
+
+	private static CoreClient getLocalClient() {
+		return localClient;
+	}
+
+	private static CoreClientHttpServer getHttpClient() {
+		return httpClient;
 	}
 }

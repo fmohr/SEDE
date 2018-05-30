@@ -66,7 +66,6 @@ public class WorkerPool {
 
 
 	public synchronized void interruptExec(Execution execution) {
-		logger.info("{} interrupted.", execution.getExecutionId());
 		if(executionFutureMap.containsKey(execution)){
 			/**
 			 * cancel/interrupt every task in the execution.
@@ -74,6 +73,7 @@ public class WorkerPool {
 			for(Future f : executionFutureMap.get(execution)){
 				f.cancel(true);
 			}
+			logger.info("{} interrupted.", execution.getExecutionId());
 		}
 	}
 
@@ -95,7 +95,7 @@ public class WorkerPool {
 	}
 
 	public void shutdown() {
-		workers.shutdown();
+		//workers.shutdown();
 	}
 
 	private static class ProcedureRunner implements  Runnable {

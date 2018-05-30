@@ -46,7 +46,14 @@ public final class SemanticStreamer {
 		return ParseConstantProcedure.parsePrimitive(data, enumType);
 	}
 
-
+	public static SEDEObject readObjectFrom(SEDEObject semanticObject, String caster, String sourceSemanticType, String targetRealTypeCp) {
+		if(semanticObject.isSemantic()){
+			ByteArrayInputStream inputStream = new ByteArrayInputStream((byte[]) semanticObject.getObject());
+			return readObjectFrom(inputStream, caster, sourceSemanticType, targetRealTypeCp);
+		} else{
+			throw new RuntimeException("The given SEDEObject\n" + semanticObject.toString() + "\n is not semantic.");
+		}
+	}
 
 	public static SEDEObject readObjectFrom(InputStream is, String caster, String sourceSemanticType, String targetRealTypeCp) {
 		String targetRealType = getSimpleNameFromClasspath(targetRealTypeCp);

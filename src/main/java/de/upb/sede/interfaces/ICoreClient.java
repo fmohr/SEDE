@@ -1,7 +1,5 @@
 package de.upb.sede.interfaces;
 
-import de.upb.sede.core.SEDEObject;
-import de.upb.sede.requests.Request;
 import de.upb.sede.requests.Result;
 import de.upb.sede.requests.RunRequest;
 
@@ -12,7 +10,7 @@ public interface ICoreClient {
 
 	public String run(RunRequest runRequest, Consumer<Result> resultConsumer);
 
-	public Map<String, SEDEObject> blockingRun(RunRequest runRequest);
+	public Map<String, Result> blockingRun(RunRequest runRequest);
 
 	public void join(String requestId, boolean interruptExecution);
 

@@ -404,6 +404,9 @@ public class ClassesConfig extends Configuration {
 		}
 
 		public boolean isStateMutating() {
+			if(isStatic()) {
+				return false;
+			}
 			if (configuration.containsKey("statemutating")) {
 				return (boolean) configuration.get("statemutating");
 			} else {

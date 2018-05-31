@@ -4,7 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.*;
 
-import de.upb.sede.exec.SemanticStreamer;
+import de.upb.sede.exec.*;
 import de.upb.sede.requests.Result;
 import demo.math.Addierer;
 import demo.types.DemoCaster;
@@ -18,9 +18,6 @@ import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.core.CoreClient;
 import de.upb.sede.core.SEDEObject;
-import de.upb.sede.exec.Executor;
-import de.upb.sede.exec.ExecutorConfiguration;
-import de.upb.sede.exec.ExecutorHttpServer;
 import de.upb.sede.gateway.GatewayHttpServer;
 import de.upb.sede.requests.RunRequest;
 import de.upb.sede.requests.resolve.ResolvePolicy;
@@ -52,12 +49,12 @@ public class IntegrationTest_Execute {
 
 	@BeforeClass
 	public static void setup() {
-		String exec1Config = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Executor 1")
+		String exec1Config = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Executor_1")
 				.withSupportedServices("demo.math.Addierer").toString();
 		ExecutorConfiguration config = ExecutorConfiguration.parseJSON(exec1Config);
 		executor1 = new ExecutorHttpServer(config, "localhost", 9001);
 
-		String exec2Config = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Executor 2")
+		String exec2Config = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Executor_2")
 				.withSupportedServices("demo.math.Gerade").toString();
 		config = ExecutorConfiguration.parseJSON(exec2Config);
 		executor2 = new ExecutorHttpServer(config, "localhost", 9002);
@@ -67,14 +64,14 @@ public class IntegrationTest_Execute {
 		executor1.registerToGateway("localhost:9000");
 		executor2.registerToGateway("localhost:9000");
 
-		String clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core Client Benchmark")
+		String clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core_Client_Services")
 				.withSupportedServices("demo.math.Addierer", "demo.math.Gerade").toString();
 		config = ExecutorConfiguration.parseJSON(clientConfig);
 		Executor clientExecutor = new Executor(config);
 		localClient = new CoreClient(clientExecutor, gateway::resolve);
 
 		/* supports nothing */
-		clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core Client Benchmark")
+		clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core_Client")
 				.toString();
 		config = ExecutorConfiguration.parseJSON(clientConfig);
 		httpClient = new CoreClientHttpServer(config, "localhost", 9003, "localhost", 9000);
@@ -87,11 +84,45 @@ public class IntegrationTest_Execute {
 		executor2.shutdown();
 	}
 
+	@Test
+	public void testHttpInterrupt() throws InterruptedException {
+		CoreClient cc = getHttpClient();
+		testInterruptExecution(cc);
+
+
+		Execution exec = cc.getClientExecutor().getExecution("SleepRequest");
+		if(exec!=null) {
+			Assert.assertTrue(exec.hasExecutionFinished());
+			Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(exec));
+			logger.info("Execution has beed interrupted.");
+		}
+		exec = executor1.getExecution("SleepRequest");
+		if(exec!=null) {
+			Assert.assertTrue(exec.hasExecutionFinished());
+			Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(exec));
+			logger.info("Execution has beed interrupted.");
+		}
+
+		exec = executor2.getExecution("SleepRequest");
+		if(exec!=null) {
+			Assert.assertTrue(exec.hasExecutionFinished());
+			Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(exec));
+			logger.info("Execution has beed interrupted.");
+		}
+	}
+
 
 	@Test
 	public void testLocalInterrupt() throws InterruptedException {
 		CoreClient cc = getLocalClient();
 		testInterruptExecution(cc);
+		Execution clientExec = cc.getClientExecutor().getExecution("SleepRequest");
+		if(clientExec!=null) {
+			Assert.assertTrue(clientExec.hasExecutionFinished());
+			Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(clientExec));
+			logger.info("Execution has beed interrupted.");
+		}
+
 	}
 
 

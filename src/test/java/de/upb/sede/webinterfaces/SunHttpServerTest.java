@@ -35,7 +35,7 @@ public class SunHttpServerTest {
 		}));
 		server.setExecutor(null); // creates a default executor
 		server.start();
-		String url = "/echo/d5f60134-7fd8-42a4-930c-d3b130f0e7a9/p/Arr";
+		String url = "/echo/d5f60134-7fd8-42a4-930c-d3b130f0e7a9/ p/Arr";
 		HTTPClientRequest request = new HTTPClientRequest("localhost", port, url);
 		String answer = request.send("123");
 		Assert.assertEquals(url, answer);

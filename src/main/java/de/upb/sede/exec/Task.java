@@ -28,7 +28,7 @@ public final class Task implements Observer<Task>{
 	private boolean resolved = false, 		// resolve: true if the dependencies are all resolved. (This value is set by the notification method)
 					started = false,  		// started: true if a worker has started processing this task.
 					doneRunning = false,	// doneRunning: true if started and the worker has finished processing.
-					failed = false,			// failed: true if done and an error has occured.
+					failed = false,			// failed: true an error has occured during execution.
 					succeeded = false;		// setSucceeded: true if done and the worker successfully carried out the task.
 
 
@@ -60,6 +60,10 @@ public final class Task implements Observer<Task>{
 
 	public Map getAttributes() {
 		return attributes;
+	}
+
+	public <T> T getAttribute(String attrName) {
+		return (T) attributes.get(attrName);
 	}
 
 
@@ -130,11 +134,9 @@ public final class Task implements Observer<Task>{
 		return doneRunning;
 	}
 
-
 	public boolean isRunning() {
 		return hasStarted() && !isDoneRunning();
 	}
-
 
 	public boolean hasFailed(){
 		return failed;

@@ -1,12 +1,15 @@
 package de.upb.sede.exec;
 
 import com.sun.net.httpserver.HttpServer;
+import de.upb.sede.composition.graphs.nodes.FinishNode;
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.procedure.FinishProcedure;
 import de.upb.sede.procedure.SendGraphProcedure;
 import de.upb.sede.procedure.TransmitDataProcedure;
 import de.upb.sede.requests.DataPutRequest;
 import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.requests.ExecutorRegistration;
+import de.upb.sede.requests.Request;
 import de.upb.sede.util.Streams;
 import de.upb.sede.webinterfaces.server.ImServer;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
@@ -49,6 +52,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 
 		server.createContext("/put", new SunHttpHandler(PutDataHandler::new));
 		server.createContext("/execute", new SunHttpHandler(ExecuteGraphHandler::new));
+		server.createContext("/interrupt", new SunHttpHandler(InterruptHandler::new));
 		server.setExecutor(null); // creates a default executor
 		server.start();
 	}
@@ -82,6 +86,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 		WorkerPool wp = super.getWorkerPool();
 		wp.bindProcedure("TransmitData", TransmitDataOverHttp::new);
 		wp.bindProcedure("SendGraph", SendGraphOverHttp::new);
+		wp.bindProcedure("Finish", FinishOverHttp::new);
 	}
 
 	@Override
@@ -89,6 +94,22 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 		interruptAll();
 		getWorkerPool().shutdown();
 		server.stop(0);
+	}
+
+	private static BasicClientRequest createPutDataRequest(String host, String fieldname, String semType, String executionId, boolean failed) {
+		if (host == null || fieldname == null) {
+			throw new RuntimeException(
+					"Cannot create a put data request without host or fieldname");
+		}
+		String dataPutUrl = host + "/put/" + executionId + "/" + fieldname;
+		if(failed) {
+			dataPutUrl += "/unavailable";
+		} else {
+			dataPutUrl += "/" + semType;
+		}
+		BasicClientRequest clientRequest = new HTTPClientRequest(dataPutUrl);
+		return clientRequest;
+
 	}
 
 	static class TransmitDataOverHttp extends TransmitDataProcedure {
@@ -100,10 +121,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 			String fieldname = (String) task.getAttributes().get("fieldname");
 			String semType = (String) task.getAttributes().get("semantic-type");
 			String executionId = task.getExecution().getExecutionId();
-			if (host == null || fieldname == null) {
-				throw new RuntimeException(
-						"The task doesn't contain all necessary fields: " + task.getAttributes().toString());
-			}
+			boolean failed = task.hasFailed();
 			if (semType == null) {
 				SEDEObject sedeObject = task.getExecution().getEnvironment().get(fieldname);
 				if (sedeObject.isReal()) {
@@ -122,6 +140,21 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 			}
 			BasicClientRequest clientRequest = new HTTPClientRequest(dataPutUrl);
 			return clientRequest;
+//			return createPutDataRequest(host, fieldname, semType, executionId, failed);
+		}
+	}
+
+	static class FinishOverHttp extends FinishProcedure {
+
+		@Override
+		public BasicClientRequest getFinishFlagRequest(Task task) {
+			Map<String, String> contactInfo = (Map<String, String>) task.getAttributes().get("contact-info");
+			String host = contactInfo.get("host-address");
+			String fieldname = (String) task.getAttributes().get("fieldname");
+			String semType = SEDEObject.PrimitiveType.Bool.name();
+			String executionId = task.getExecution().getExecutionId();
+			boolean failed = false;
+			return createPutDataRequest(host, fieldname, semType, executionId, failed);
 		}
 	}
 
@@ -138,6 +171,20 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 			String executeGraphUrl = host + "/execute";
 			BasicClientRequest clientRequest = new HTTPClientRequest(executeGraphUrl);
 			return clientRequest;
+		}
+
+		@Override
+		public void handleInterrupt(Task task) {
+			Map<String, String> contactInfo = (Map<String, String>) task.getAttributes().get("contact-info");
+			String host = contactInfo.get("host-address");
+			String interruptUrl = host + "/interrupt";
+			BasicClientRequest interruptRequest = new HTTPClientRequest(interruptUrl);
+			Request interruptData = new Request(task.getExecution().getExecutionId());
+			logger.debug("Interrupting remote execution: {}", contactInfo);
+			String response = interruptRequest.send(interruptData.toJsonString());
+			if(!response.isEmpty()) {
+				logger.error("Interrupting remote execution with an http request failed. The response is not empty: {}\nexec Id: {}\ncontact info: {}", response, task.getExecution().getExecutionId(), contactInfo.toString());
+			}
 		}
 	}
 
@@ -182,6 +229,20 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 				ExecRequest request = new ExecRequest();
 				request.fromJsonString(payload);
 				exec(request);
+				return "";
+			} catch (Exception ex) {
+				return ex.getMessage();
+			}
+		}
+	}
+	class InterruptHandler extends StringServerResponse {
+
+		@Override
+		public String receive(String payload) {
+			try {
+				Request intRequest = new Request();
+				intRequest.fromJsonString(payload);
+				ExecutorHttpServer.this.interrupt(intRequest.getRequestID());
 				return "";
 			} catch (Exception ex) {
 				return ex.getMessage();

@@ -1,12 +1,9 @@
 package de.upb.sede.composition.graphs;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import de.upb.sede.composition.graphs.nodes.BaseNode;
+import de.upb.sede.util.Iterators;
 
 /**
  * A directed, acyclic graph to represent a composition. Each node contains the
@@ -87,6 +84,64 @@ public class CompositionGraph {
 		}
 		DependencyEdge newEdge = new DependencyEdge(from, to);
 		addEdge(newEdge);
+	}
+
+	/**
+	 * Alters this graph by adding the given set of nodes to this graph and connecting everyone of them
+	 * with every node that has no incoming edge. <p>
+	 *
+	 * The execution of the resulting graph would need to process the given nodes first.
+	 */
+	public void executeFirst(Collection<BaseNode> nodes){
+		/*
+			Gather a list of nodes that are independent (no incoming edge):
+		 */
+		List<BaseNode> independentNodes = Iterators.TO_LIST(GraphTraversal.independentNodes(this).iterator());
+		/*
+			Make sure the given nodes are already in the graph:
+		 */
+		for(BaseNode node : nodes) {
+			if(!this.contains(node)) {
+				this.addNode(node);
+			}
+		}
+		/*
+			Add an edge from the given nodes to the independent ones:
+		 */
+		for(BaseNode independentNode : independentNodes) {
+			for(BaseNode givenNode : nodes) {
+				this.connectNodes(givenNode, independentNode);
+			}
+		}
+	}
+
+	/**
+	 * Alters this graph by adding the given set of nodes to this graph and connecting everyone of them
+	 * with every node that has no outgoing edge. <p>
+	 *
+	 * The execution of the resulting graph would need to process the given nodes last.
+	 */
+	public void executeLast(Collection<BaseNode> nodes){
+		/*
+			Gather a list of nodes that are last (no outgoing edge):
+		 */
+		List<BaseNode> lastNodes = Iterators.TO_LIST(GraphTraversal.lastNodes(this).iterator());
+		/*
+			Make sure the given nodes are already in the graph:
+		 */
+		for(BaseNode node : nodes) {
+			if(!this.contains(node)) {
+				this.addNode(node);
+			}
+		}
+		/*
+			Add an edge from the given nodes to the independent ones:
+		 */
+		for(BaseNode lastNode : lastNodes) {
+			for(BaseNode givenNode : nodes) {
+				this.connectNodes(lastNode, givenNode);
+			}
+		}
 	}
 
 	/**

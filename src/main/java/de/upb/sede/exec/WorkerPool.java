@@ -98,6 +98,14 @@ public class WorkerPool {
 		//workers.shutdown();
 	}
 
+	public boolean isExecutionOngoing(Execution exec) {
+		if(executionFutureMap.containsKey(exec)) {
+			return !executionFutureMap.get(exec).isEmpty();
+		} else{
+			return false;
+		}
+	}
+
 	private static class ProcedureRunner implements  Runnable {
 		private Task task;
 		private Procedure procedure;

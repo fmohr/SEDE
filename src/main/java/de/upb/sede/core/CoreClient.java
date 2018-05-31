@@ -140,7 +140,10 @@ public class CoreClient implements ICoreClient{
 
 
 	public static void logResult(Result result) {
-		logger.debug("Received Result {}: {}: {}", result.getFieldname(), result.getResultData(), result.getResultData().getObject());
+		if(!result.hasFailed())
+			logger.debug("Received Result {}: {}: {}", result.getFieldname(), result.getResultData(), result.getResultData().getObject());
+		else
+			logger.debug("Result unavailable {}", result.getFieldname());
 	}
 
 	@Override

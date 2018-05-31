@@ -1,11 +1,14 @@
 package de.upb.sede.procedure;
 
+import de.upb.sede.exec.Execution;
 import de.upb.sede.exec.Task;
 import de.upb.sede.requests.ExecRequest;
+import de.upb.sede.util.Observer;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.util.function.Consumer;
 
 /**
  * Procedure to send a graph to some other executor.
@@ -16,6 +19,8 @@ public abstract class SendGraphProcedure implements Procedure {
 		String graph = (String) task.getAttributes().get("graph");
 		String executionId = task.getExecution().getExecutionId();
 		ExecRequest request = new ExecRequest(executionId, graph);
+
+		task.getExecution().getState().observe(Observer.lambda(Execution::hasExecutionBeenInterrupted, e -> handleInterrupt(task)));
 
 		try (BasicClientRequest execRequest = getExecRequest(task)) {
 			String response = execRequest.send(request.toJsonString());
@@ -40,4 +45,10 @@ public abstract class SendGraphProcedure implements Procedure {
 	 * @return The BasicClientReuqest to use for communication
 	 */
 	public abstract BasicClientRequest getExecRequest(Task task);
+
+	/**
+	 * This method is invoked when the execution has been interrupted.
+	 * @param task Send graph task. Contains 'contact-info' in its attribute map.
+	 */
+	public abstract void handleInterrupt(Task task);
 }

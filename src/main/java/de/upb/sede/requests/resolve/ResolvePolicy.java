@@ -5,11 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.swing.DebugGraphics;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import de.upb.sede.exceptions.BadResolveRequest;
@@ -39,6 +36,8 @@ public class ResolvePolicy implements JsonSerializable {
 
 	private List<String> persistentServices;
 
+	private boolean blockTillFinished;
+
 	public ResolvePolicy() {
 		setStandardPolicy();
 	}
@@ -46,6 +45,7 @@ public class ResolvePolicy implements JsonSerializable {
 	private void setStandardPolicy() {
 		setReturnPolicy(all);
 		setServicePolicy(all);
+		setBlockTillFinished(true);
 	}
 
 	public boolean isToReturn(String fieldName) {
@@ -124,6 +124,14 @@ public class ResolvePolicy implements JsonSerializable {
 		return true; // TODO do we need this to be turned off? note that the method isn't being used yet.
 	}
 
+	public boolean isBlockTillFinished() {
+		return blockTillFinished;
+	}
+
+	public void setBlockTillFinished(boolean blockTillFinished) {
+		this.blockTillFinished = blockTillFinished;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJson() {
@@ -138,6 +146,7 @@ public class ResolvePolicy implements JsonSerializable {
 		} else {
 			jsonObject.put("service-policy", getServicePolicy());
 		}
+		jsonObject.put("block-till-finished", isBlockTillFinished());
 		return jsonObject;
 	}
 
@@ -163,6 +172,10 @@ public class ResolvePolicy implements JsonSerializable {
 		}
 		else {
 			log.error("service policy type mismatch: "  + servicePolicy.toString());
+		}
+		Boolean blockTillFinished = (Boolean) data.get("block-till-finished");
+		if(blockTillFinished!=null) {
+			this.setBlockTillFinished(blockTillFinished);
 		}
 	}
 }

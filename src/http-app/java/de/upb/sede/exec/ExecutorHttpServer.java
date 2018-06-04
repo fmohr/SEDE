@@ -30,6 +30,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 public class ExecutorHttpServer extends Executor implements ImServer {
 
@@ -50,15 +51,20 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 			throw new UncheckedIOException(e);
 		}
 
-		server.createContext("/put", new SunHttpHandler(PutDataHandler::new));
-		server.createContext("/execute", new SunHttpHandler(ExecuteGraphHandler::new));
-		server.createContext("/interrupt", new SunHttpHandler(InterruptHandler::new));
+		addHandle("/put", PutDataHandler::new);
+		addHandle("/execute", PutDataHandler::new);
+		addHandle("/interrupt", PutDataHandler::new);
+
 		server.setExecutor(null); // creates a default executor
 		server.start();
 	}
 
-	public ExecutorHttpServer(String pathToExecutionConfig, String hostAddress, int port) throws Exception {
-		this(ExecutorConfiguration.parseJSON(pathToExecutionConfig), hostAddress, port);
+	public ExecutorHttpServer(String pathToExecutionConfig, String hostAddress, int port) {
+		this(ExecutorConfiguration.parseJSONFromFile(pathToExecutionConfig), hostAddress, port);
+	}
+
+	public void addHandle(String context, Supplier<HTTPServerResponse> serverResponder) {
+		server.createContext(context, new SunHttpHandler(serverResponder));
 	}
 
 	public Map<String, String> contactInfo() {
@@ -93,7 +99,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 	public void shutdown() {
 		interruptAll();
 		getWorkerPool().shutdown();
-		server.stop(0);
+		server.stop(1);
 	}
 
 	private static BasicClientRequest createPutDataRequest(String host, String fieldname, String semType, String executionId, boolean failed) {

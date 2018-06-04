@@ -10,6 +10,7 @@
 apply plugin: 'java-library'
 apply plugin: 'eclipse'
 
+version = '1.0'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -45,7 +46,7 @@ dependencies {
 	testCompile group: 'info.leadinglight', name: 'jdot', version: '1.0'
 
     // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
     // https://mvnrepository.com/artifact/org.skyscreamer/jsonassert
 	testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
 
@@ -65,3 +66,14 @@ test {
     }
 }
 
+// build Jar:
+task buildJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'SEDE',
+                'Implementation-Version': version
+    }
+    destinationDir = file("$rootDir/deploy")
+    baseName = project.name
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}

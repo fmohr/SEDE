@@ -1,11 +1,6 @@
 package de.upb.sede.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UncheckedIOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class Streams {
@@ -65,5 +60,26 @@ public class Streams {
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
+	}
+
+	/**
+	 * Reads a line of characters out of the given input stream.
+	 * @return the read string
+	 */
+	public static String InReadLine(InputStream in) {
+		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		try {
+			return br.readLine();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+
+	public static String errToString(Exception ex) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		ex.printStackTrace(pw);
+		String sStackTrace = sw.toString();
+		return sStackTrace;
 	}
 }

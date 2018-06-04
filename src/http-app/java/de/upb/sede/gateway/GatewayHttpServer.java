@@ -3,7 +3,9 @@ package de.upb.sede.gateway;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
+import java.util.function.Supplier;
 
+import de.upb.sede.webinterfaces.server.HTTPServerResponse;
 import de.upb.sede.webinterfaces.server.ImServer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,9 +35,8 @@ public final class GatewayHttpServer extends Gateway implements ImServer {
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
-
-		server.createContext("/register", new SunHttpHandler(ExecutorRegistrationHandler::new));
-		server.createContext("/resolve", new SunHttpHandler(ResolveCompositionHandler::new));
+		addHandle("/register", ExecutorRegistrationHandler::new);
+		addHandle("/resolve", ResolveCompositionHandler::new);
 		server.setExecutor(null); // creates a default executor
 		server.start();
 	}
@@ -70,6 +71,11 @@ public final class GatewayHttpServer extends Gateway implements ImServer {
 	@Override
 	public void shutdown() {
 		server.stop(1);
+	}
+
+	@Override
+	public void addHandle(String context, Supplier<HTTPServerResponse> serverResponder) {
+		server.createContext(context, new SunHttpHandler(serverResponder));
 	}
 
 	class ExecutorRegistrationHandler extends StringServerResponse {

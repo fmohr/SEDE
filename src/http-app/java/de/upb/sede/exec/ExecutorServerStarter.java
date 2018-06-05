@@ -1,14 +1,10 @@
 package de.upb.sede.exec;
 
 import de.upb.sede.util.Streams;
-import de.upb.sede.webinterfaces.server.HTTPServerResponse;
 import de.upb.sede.webinterfaces.server.ServerCommandListener;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.*;
 import java.util.function.Function;
 

@@ -1,12 +1,6 @@
 package de.upb.sede.config;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 
 
@@ -414,6 +408,61 @@ public class ClassesConfig extends Configuration {
 			}
 		}
 
+		public int paramCount() {
+			if(configuration.containsKey("params")) {
+				return ((List)configuration.get("params")).size();
+			} else {
+				return 0;
+			}
+		}
+
+		private Map getParameter(int paramIndex) {
+			if(paramIndex < paramCount() && paramIndex >= 0) {
+				Object param = ((List<Object>) configuration.get("paramtypes")).get(paramIndex);
+				if(param instanceof String) {
+					Map parameterMap = new HashMap();
+					parameterMap.put("type", param);
+					return parameterMap;
+
+				} else if(param instanceof  Map){
+					return (Map) param;
+				} else {
+					throw new RuntimeException("Faulty configuration: " + param);
+				}
+			} else{
+				throw new RuntimeException("Parameter index " + paramIndex + " is out of bound: max is " + paramCount());
+			}
+		}
+
+		public String getParamType(int paramIndex) {
+			return (String) Objects.requireNonNull(getParameter(paramIndex).get("type"));
+		}
+
+		public boolean isParamStateMutating(int paramIndex) {
+			Map parameter = getParameter(paramIndex);
+			if(parameter.containsKey("statemutating")) {
+				return (boolean) parameter.get("statemutating");
+			} else {
+				return false;
+			}
+		}
+
+		/**
+		 * Returns the param index of the nth state mutating parameter.
+		 */
+		public int indexOfNthStateMutatingParam(int nth) {
+			for(int i = 0, size = paramCount(); i < size; i++) {
+				if(isParamStateMutating(i)){
+					if(nth == 0) {
+						return i;
+					} else{
+						nth--;
+					}
+				}
+			}
+			throw new RuntimeException("The " + nth + "th state mutating parameter does not exist.");
+		}
+
 		public static MethodInfo emptyConstructor() {
 			HashMap<String, Object> emptyConstructConfig = new HashMap<>();
 			emptyConstructConfig.put("paramtypes", Collections.EMPTY_LIST);
@@ -422,8 +471,18 @@ public class ClassesConfig extends Configuration {
 
 		@SuppressWarnings("unchecked")
 		public List<String> paramTypes() {
-			if(configuration.containsKey("paramtypes")) {
-				return (List<String>) configuration.get("paramtypes");
+			if(configuration.containsKey("params")) {
+				List<String> paramTypes = new ArrayList<>();
+				for(Object param : (List<Object>) configuration.get("paramtypes")){
+					if(param instanceof String) {
+						paramTypes.add((String) param);
+					} else if(param instanceof Map){
+						paramTypes.add(Objects.requireNonNull((String) ((Map)param).get("type")));
+					} else{
+						throw new RuntimeException("Faulty configuration: " + param);
+					}
+				}
+				return paramTypes;
 			} else {
 				return Collections.EMPTY_LIST;
 			}

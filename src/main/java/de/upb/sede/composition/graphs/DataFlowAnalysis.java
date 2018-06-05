@@ -232,6 +232,12 @@ public class DataFlowAnalysis {
 			throw new CompositionSemanticException("Instruction: " + instNode.toString() + " states that there are  "
 					+ stated + " amount of parameters while the classes config defines " + actual + " many.");
 		}
+
+		/*
+		 * Create an array of fieldtype which represents the consumed parameters.
+		 */
+		FieldType[] consumedParams = new FieldType[instParamFieldnames.size()];
+
 		for (int index = 0, size = instParamFieldnames.size(); index < size; index++) {
 			String parameter = instParamFieldnames.get(index);
 			String requiredType = requiredParamTypes.get(index);
@@ -264,6 +270,7 @@ public class DataFlowAnalysis {
 					assignNodeToExec(parseConstantNode, instExec);
 				}
 				if (constantType.getTypeName().equals(requiredType)) {
+					consumedParams[index] = constantType;
 					nodeConsumesField(instNode, constantType);
 				} else {
 					throw new CompositionSemanticException("Type mismatch for invocation of: " + instNode.toString()
@@ -292,6 +299,7 @@ public class DataFlowAnalysis {
 							 */
 							found = true;
 							resolvedDependency = true;
+							consumedParams[index] = paramType;
 							nodeConsumesField(instNode, paramType);
 							break;
 						} else {
@@ -360,6 +368,7 @@ public class DataFlowAnalysis {
 					/*
 					 * incase the type matches already just add it as a consumer and continue:
 					 */
+					consumedParams[index] = requiredData;
 					nodeConsumesField(instNode, requiredData);
 					continue;
 				} else if(requiredData.isPrimitive()){
@@ -401,7 +410,24 @@ public class DataFlowAnalysis {
 				FieldType requiredParamType = new FieldType(castTypeNode, parameter, TypeClass.RealDataType,
 						requiredType, false);
 				addFieldType(requiredParamType);
+				consumedParams[index] = requiredParamType;
 				nodeConsumesField(instNode, requiredParamType);
+			}
+		}
+		/**
+		 * The instruction might change the state of its parameters:
+		 */
+		for (int index = 0, size = instParamFieldnames.size(); index < size; index++) {
+			/*
+				For each parameter which is stated to be changed by the config let this instruction be a new producer of it.
+			 */
+			FieldType consumedParam = consumedParams[index];
+			if(consumedParam == null) {
+				throw new RuntimeException("Coding error. The " + index + "th parameter type of instruciton " + instNode.toString() + " is null.");
+			}
+			if(methodInfo.isParamStateMutating(index) && !consumedParam.isPrimitive()){ // primitive parameters are ignored.
+				FieldType mutatedParameter = consumedParam.clone(instNode, true);
+				nodeProducesField(instNode, mutatedParameter);
 			}
 		}
 
@@ -419,6 +445,9 @@ public class DataFlowAnalysis {
 					contextClasspath, true);
 			addFieldType(serviceInstanceFieldType);
 		}
+
+
+
 		if (instNode.isAssignedLeftSideFieldname()) {
 			String leftsideFieldname = instNode.getLeftSideFieldname();
 			/*
@@ -434,10 +463,10 @@ public class DataFlowAnalysis {
 					/*
 					 * look if the field is needed by another instruction:
 					 */
-					List<BaseNode> consumers = getConsumingersOfField(leftsideField);
+					List<BaseNode> consumers = getConsumersOfField(leftsideField);
 					if(consumers.isEmpty()) {
 						/*
-						 * the produced field is not neccessary.
+						 * the produced field is not necessary.
 						 * if the old producer of the field is an instruction and the field is its leftside, remove the leftside assignment:
 						 * if the old producer is an instruction and the field is the service instance of the operation, add a dependency to the current instruction 
 						 */
@@ -488,13 +517,9 @@ public class DataFlowAnalysis {
 				 * invoked:
 				 */
 				typeName = instNode.getContext();
-			} else {
+			} else if(methodInfo.hasReturnType()){
 				/* return type defined in the classes configuration */
-				if (!methodInfo.hasReturnType()) {
-					throw new CompositionSemanticException(
-							"The type of the leftside fieldname of instruction: " + instNode.toString()
-									+ " cannot be resolved. The return type of method signature is void.");
-				}
+
 				typeName = methodInfo.getReturnType();
 				if(SEDEObject.isPrimitive(typeName)) {
 					typeClass = TypeClass.PrimitiveType;
@@ -506,6 +531,17 @@ public class DataFlowAnalysis {
 					throw new RuntimeException("BUG: The return type of the instruction " +  instNode.toString() +" cannot be reolved to a type class, "
 							+ typeName);
 				}
+			} else {
+				/*
+					The method info doesn't define a return type.
+					This means that the method returns nothing.
+					However there is a leftside fieldname defined.
+					This field will be filled with the first state mutating parameter.
+					This covers the case that some methods apply changes in place but the fm-composition treats it as if it has a return value:
+				 */
+				int paramIndex = methodInfo.indexOfNthStateMutatingParam(0);
+				typeClass = consumedParams[paramIndex].getTypeClass();
+				typeName = consumedParams[paramIndex].getTypeName();
 			}
 			FieldType leftSideFieldType = new FieldType(instNode, leftsideFieldname, typeClass, typeName,
 					true);
@@ -772,7 +808,7 @@ public class DataFlowAnalysis {
 	private List<FieldType> getConsumingFields(BaseNode consumer) {
 		return Collections.unmodifiableList(nodeConsumingFields.get(consumer));
 	}
-	private List<BaseNode> getConsumingersOfField(FieldType field) {
+	private List<BaseNode> getConsumersOfField(FieldType field) {
 		List<BaseNode> consumers = new ArrayList<>();
 		for(BaseNode baseNode : GraphTraversal.iterateNodes(getAssignedExec(field.getProducer()).getGraph())) {
 			if(getConsumingFields(baseNode).contains(field)) {

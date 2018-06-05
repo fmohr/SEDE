@@ -7,8 +7,6 @@ import java.util.Objects;
 import java.util.UUID;
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.JsonSerializable;
@@ -21,6 +19,7 @@ public class ExecutorConfiguration implements JsonSerializable {
 	private int threadNumber = 4;
 	private List<String> capabilities = new ArrayList<>();
 	private List<String> services = new ArrayList<>();
+	private List<String> gateways = new ArrayList<>();
 
 	private ExecutorConfiguration() {
 	}
@@ -62,6 +61,10 @@ public class ExecutorConfiguration implements JsonSerializable {
 		return services;
 	}
 
+	public List<String> getGateways() {
+		return gateways;
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJson() {
@@ -71,6 +74,7 @@ public class ExecutorConfiguration implements JsonSerializable {
 		objectAsJsonObj.put("executorId", executorId);
 		objectAsJsonObj.put("threadNumber", threadNumber);
 		objectAsJsonObj.put("serviceStoreLocation", serviceStoreLocation);
+		objectAsJsonObj.put("gateways", gateways);
 		return objectAsJsonObj;
 	}
 
@@ -91,6 +95,9 @@ public class ExecutorConfiguration implements JsonSerializable {
 		}
 		if (jsonObj.containsKey("serviceStoreLocation")) {
 			serviceStoreLocation = (String) jsonObj.get("serviceStoreLocation");
+		}
+		if(jsonObj.containsKey("gateways")) {
+			gateways = Objects.requireNonNull((List<String>) jsonObj.get("gateways"));
 		}
 	}
 }

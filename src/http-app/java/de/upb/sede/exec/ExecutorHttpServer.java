@@ -85,6 +85,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 			throw new RuntimeException("Registration to gateway \"" + gatewayHost
 					+ "\" failed with non empty return message:\n" + registrationAnswer);
 		}
+		getExecutorConfiguration().getGateways().add(gatewayHost);
 		logger.debug("Registered to gateway: " + gatewayHost);
 	}
 

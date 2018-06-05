@@ -1,4 +1,7 @@
 #!/bin/bash
+# directory of the script
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
 # look up the ip address:
 ip=$(ip route get 8.8.8.8 | awk 'NR==1 {print $NF}')
 echo IP address: "$ip"
@@ -15,4 +18,4 @@ echo Port: "$port"
 config=config.json
 echo Configuration file: "$config"
 
-java -cp ../SEDE-1.0.jar:services/* de.upb.sede.exec.ExecutorServerStarter "$config" "$ip" "$port"
+java -cp "$DIR"/../SEDE-1.0.jar:"$DIR"/services/* de.upb.sede.exec.ExecutorServerStarter "$config" "$ip" "$port"

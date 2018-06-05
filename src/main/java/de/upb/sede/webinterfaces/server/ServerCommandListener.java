@@ -51,16 +51,13 @@ public final class ServerCommandListener {
 		String input  = Streams.InReadLine(System.in);
 		logger.info("Processing console command: {}", input);
 		List<String> inputItems = new ArrayList<>(Arrays.asList(input.split(" ")));
-		if(inputItems.isEmpty()) {
-			printCommands();
-		} else {
+		if(!inputItems.isEmpty()) {
 			String commandname = inputItems.get(0);
 			if(commands.containsKey(commandname)) {
 				input = "/" + input.replaceAll(" ", "/");
 				ByteArrayInputStream in = new ByteArrayInputStream("".getBytes());
 				commands.get(commandname).get().receive(Optional.of(input), in, System.out);
-			} else {
-				printCommands();
+				System.out.println();
 			}
 		}
 	}

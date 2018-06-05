@@ -15,13 +15,27 @@ public class ExecutorServerStarter {
 
 
 	private ExecutorServerStarter(String configPath, String serverHostAddress, int serverPort) throws InterruptedException {
-		executor = new ExecutorHttpServer(configPath, serverHostAddress, serverPort);
+		ExecutorConfiguration executorConfiguration = ExecutorConfiguration.parseJSONFromFile(configPath);
+		List<String> gatewaysToBeRegistered = new ArrayList<>(executorConfiguration.getGateways());
+
+		executor = new ExecutorHttpServer(executorConfiguration, serverHostAddress, serverPort);
+
+		/*
+		 * Register to every gateway stated by the config.
+		 */
+		for(String gatewayAddress : gatewaysToBeRegistered) {
+			try{
+				executor.registerToGateway(gatewayAddress);
+				logger.info("Registered executor to gateway: {}", gatewayAddress);
+			}
+			catch(Exception ex) {
+				logger.error("Error during registration to gateway: {}", gatewayAddress, ex);
+			}
+		}
 
 		commandListener = new ServerCommandListener(executor);
-		commandListener.addCommandHandle("register-to", new RegisterToGatewat());
+		commandListener.addCommandHandle("register-to", new RegisterToGateway());
 		commandListener.listenEndlessly();
-
-
 	}
 
 	public static void main(String[] args) throws InterruptedException {
@@ -39,7 +53,7 @@ public class ExecutorServerStarter {
 		new ExecutorServerStarter(configPath, serverHostAddress, serverPort);
 	}
 
-	class RegisterToGatewat implements Function<List<String>, String> {
+	class RegisterToGateway implements Function<List<String>, String> {
 
 		@Override
 		public String apply(List<String> inputs) {
@@ -52,7 +66,7 @@ public class ExecutorServerStarter {
 				executor.registerToGateway(gatewayAddress);
 				return "Successfully registered to " + gatewayAddress;
 			} catch(Exception ex) {
-				return "Registration to " + gatewayAddress + " failed.\nError: " + Streams.errToString(ex);
+				return "Registration to " + gatewayAddress + " failed.\nError: " + Streams.ErrToString(ex);
 			}
 		}
 	}

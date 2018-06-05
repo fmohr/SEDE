@@ -5,6 +5,7 @@ import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.util.function.Supplier;
 
+import de.upb.sede.util.Streams;
 import de.upb.sede.webinterfaces.server.HTTPServerResponse;
 import de.upb.sede.webinterfaces.server.ImServer;
 import org.apache.logging.log4j.LogManager;
@@ -37,6 +38,8 @@ public final class GatewayHttpServer extends Gateway implements ImServer {
 		}
 		addHandle("/register", ExecutorRegistrationHandler::new);
 		addHandle("/resolve", ResolveCompositionHandler::new);
+		addHandle("/add-conf/classes", ClassConfigAdditionHandler::new);
+		addHandle("/add-conf/types", TypeConfigAdditionHandler::new);
 		server.setExecutor(null); // creates a default executor
 		server.start();
 	}
@@ -93,7 +96,7 @@ public final class GatewayHttpServer extends Gateway implements ImServer {
 				register(execRegister);
 				return "";
 			} catch (Exception ex){
-				return ex.getMessage();
+				return Streams.ErrToString(ex);
 			}
 		}
 
@@ -119,7 +122,35 @@ public final class GatewayHttpServer extends Gateway implements ImServer {
 				GatewayResolution resolution = resolve(resolveRequest);
 				return resolution.toJson().toJSONString();
 			} catch (Exception ex){
-				return ex.getMessage();
+				return Streams.ErrToString(ex);
+			}
+		}
+	}
+	class ClassConfigAdditionHandler extends StringServerResponse {
+		@Override
+		public String receive(String configurationJson) {
+
+			logger.info("Received request to add class configuration.");
+			logger.trace("Added config:\n" + configurationJson);
+			try{
+				getClassesConfig().appendConfigFromJsonStrings(configurationJson);
+				return "";
+			} catch (Exception ex){
+				return Streams.ErrToString(ex);
+			}
+		}
+	}
+	class TypeConfigAdditionHandler extends StringServerResponse {
+		@Override
+		public String receive(String configurationJson) {
+
+			logger.info("Received request to add type configuration.");
+			logger.trace("Added config:\n" + configurationJson);
+			try{
+				getTypeConfig().appendConfigFromJsonStrings(configurationJson);
+				return "";
+			} catch (Exception ex){
+				return Streams.ErrToString(ex);
 			}
 		}
 	}

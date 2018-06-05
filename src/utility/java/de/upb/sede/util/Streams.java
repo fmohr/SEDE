@@ -75,7 +75,7 @@ public class Streams {
 		}
 	}
 
-	public static String errToString(Exception ex) {
+	public static String ErrToString(Exception ex) {
 		StringWriter sw = new StringWriter();
 		PrintWriter pw = new PrintWriter(sw);
 		ex.printStackTrace(pw);

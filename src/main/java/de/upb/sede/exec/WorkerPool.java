@@ -1,14 +1,11 @@
 package de.upb.sede.exec;
 
 import de.upb.sede.procedure.Procedure;
-import de.upb.sede.util.Observer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import sun.nio.ch.ThreadPool;
 
 import java.util.*;
 import java.util.concurrent.*;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 public class WorkerPool {

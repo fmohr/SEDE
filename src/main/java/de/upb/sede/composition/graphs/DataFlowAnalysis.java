@@ -520,7 +520,7 @@ public class DataFlowAnalysis {
 			} else if(methodInfo.hasReturnType()){
 				/* return type defined in the classes configuration */
 
-				typeName = methodInfo.getReturnType();
+				typeName = methodInfo.returnType();
 				if(SEDEObject.isPrimitive(typeName)) {
 					typeClass = TypeClass.PrimitiveType;
 				} else if(SEDEObject.isReal(typeName)) {

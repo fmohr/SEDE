@@ -36,8 +36,8 @@ public class Execution {
 	private final Set<Task> waitingTasks = new HashSet<>();
 
 	/**
-	 * Set of tasks that are waiting for an event to happen. E.g. waiting for input
-	 * data.
+	 * Set of tasks that are not finished yet. Every task is added to this set at the beginning when the execuiton is being deserialized.
+	 * Each time a task finished it will be removed.
 	 */
 	private final Set<Task> unfinishedTasks = new HashSet<>();
 
@@ -178,7 +178,7 @@ public class Execution {
 	 *
 	 * @return true if the execution has finished
 	 */
-	public synchronized boolean hasExecutionFinished() {
+	public boolean hasExecutionFinished() {
 		return interrupted || unfinishedTasks.isEmpty();
 	}
 
@@ -213,6 +213,19 @@ public class Execution {
 			return Collections.EMPTY_SET;
 		} else {
 			return Collections.unmodifiableSet(waitingTasks);
+		}
+	}
+
+	/**
+	 * Returns the set of tasks that are unfinished.
+	 *
+	 * @return set of unfinished tasks
+	 */
+	Set<Task> getUnfinishedTasks() {
+		if (hasExecutionFinished()) {
+			return Collections.EMPTY_SET;
+		} else {
+			return Collections.unmodifiableSet(unfinishedTasks);
 		}
 	}
 

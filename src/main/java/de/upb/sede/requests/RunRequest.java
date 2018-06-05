@@ -110,4 +110,11 @@ public class RunRequest extends Request {
 			this.inputs = Optional.of(Collections.EMPTY_MAP);
 		}
 	}
+
+	/**
+	 * For testing purposes.
+	 */
+	public void setRequestId(String requestId) {
+		this.requestId = Optional.of(requestId);
+	}
 }

@@ -165,7 +165,7 @@ public class IntegrationTest_Execute {
 	public void testHttpFail() {
 		CoreClientHttpServer cc = getHttpClient();
 		runFailInstruction(cc);
-		cc.getClientExecutor().shutdown();
+//		cc.getClientExecutor().shutdown();
 	}
 
 	public void runFailInstruction(CoreClient cc) {
@@ -200,8 +200,8 @@ public class IntegrationTest_Execute {
 				RunRequest runRequest = new RunRequest();
 				runRequest.fromJsonString(jsonRunRequest);
 
-//				ResolveRequest resolveRequest = cc.runToResolve(runRequest, "id123");
-//				IntegrationTest_Resolve.resolveToDot(resolveRequest, gateway, pathToRequest);
+				ResolveRequest resolveRequest = cc.runToResolve(runRequest, "id123");
+				IntegrationTest_Resolve.resolveToDot(resolveRequest, gateway, pathToRequest);
 
 				String requestId = cc.run(runRequest, null);
 				cc.join(requestId, false);
@@ -212,13 +212,13 @@ public class IntegrationTest_Execute {
 	}
 
 
-	//@Test
+	@Test
 	public void testLocalBenchmark() throws InterruptedException {
 		CoreClient cc = getLocalClient();
 		runBenchmark(cc);
 	}
 
-	//@Test
+	@Test
 	public void testHttpBenchmark() throws InterruptedException {
 		CoreClientHttpServer cc = getHttpClient();
 		runBenchmark(cc);
@@ -247,7 +247,9 @@ public class IntegrationTest_Execute {
 		for (int i = 0; i < reruns; i++) {
 			for (RunRequest runRequest : runRequests) {
 				try {
-					String requestId = cc.run(runRequest, null);
+					String requestId = runRequest.getRequestID() + "_" + i;
+					runRequest.setRequestId(requestId);
+					cc.run(runRequest, null);
 					runningRequestsIds.add(requestId);
 					logger.debug("Added request Id {}", requestId);
 				} catch (Exception ex) {

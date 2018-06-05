@@ -418,7 +418,7 @@ public class ClassesConfig extends Configuration {
 
 		private Map getParameter(int paramIndex) {
 			if(paramIndex < paramCount() && paramIndex >= 0) {
-				Object param = ((List<Object>) configuration.get("paramtypes")).get(paramIndex);
+				Object param = ((List<Object>) configuration.get("params")).get(paramIndex);
 				if(param instanceof String) {
 					Map parameterMap = new HashMap();
 					parameterMap.put("type", param);
@@ -473,7 +473,7 @@ public class ClassesConfig extends Configuration {
 		public List<String> paramTypes() {
 			if(configuration.containsKey("params")) {
 				List<String> paramTypes = new ArrayList<>();
-				for(Object param : (List<Object>) configuration.get("paramtypes")){
+				for(Object param : (List<Object>) configuration.get("params")){
 					if(param instanceof String) {
 						paramTypes.add((String) param);
 					} else if(param instanceof Map){

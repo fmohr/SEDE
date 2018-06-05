@@ -52,8 +52,8 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 		}
 
 		addHandle("/put", PutDataHandler::new);
-		addHandle("/execute", PutDataHandler::new);
-		addHandle("/interrupt", PutDataHandler::new);
+		addHandle("/execute", ExecuteGraphHandler::new);
+		addHandle("/interrupt", InterruptHandler::new);
 
 		server.setExecutor(null); // creates a default executor
 		server.start();

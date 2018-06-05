@@ -4,12 +4,10 @@ import de.upb.sede.procedure.Procedure;
 import de.upb.sede.util.Observer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sun.nio.ch.ThreadPool;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -26,9 +24,14 @@ public class WorkerPool {
 
 	private final Map<String, Supplier<Procedure>> procedureSupplierMap = new HashMap<>();
 
+	/**
+	 * Comparator of runnable. Used by the 
+	 */
+	private final Comparator<Runnable> taskScheduler = Comparator.comparing(r -> ((FutureWithTask)r).getTask(),
+			WorkerPool::lessRemainingTasks);
 
 	WorkerPool(int workerNumber){
-		workers = Executors.newFixedThreadPool(workerNumber);
+		workers = new PriorityThreadPool(workerNumber);
 	}
 
 
@@ -38,7 +41,7 @@ public class WorkerPool {
 		}
 
 		Procedure procedure = procedureForTask(task.getTaskName());
-		Runnable runner;
+		TaskRunner runner;
 		if(task.hasFailed()) {
 			runner = new OnFailRunner(task, procedure);
 		} else if(!task.hasStarted()) {
@@ -106,7 +109,11 @@ public class WorkerPool {
 		}
 	}
 
-	private static class ProcedureRunner implements  Runnable {
+	private interface TaskRunner extends   Runnable {
+		Task getTask();
+	}
+
+	private static class ProcedureRunner implements  TaskRunner {
 		private Task task;
 		private Procedure procedure;
 		ProcedureRunner(Task task, Procedure procedure) {
@@ -130,10 +137,15 @@ public class WorkerPool {
 			if(logger.isTraceEnabled())
 				logger.trace("worker IS DONE working on task: {}", task.toDebugString());
 		}
+
+		@Override
+		public Task getTask() {
+			return task;
+		}
 	}
 
 
-	private static class OnFailRunner implements  Runnable {
+	private static class OnFailRunner implements  TaskRunner {
 		private Task task;
 		private Procedure procedure;
 		OnFailRunner(Task task, Procedure procedure) {
@@ -151,5 +163,55 @@ public class WorkerPool {
 				logger.error("ERROR during process fail of {}:\n", task.toDebugString(), ex);
 			}
 		}
+
+		@Override
+		public Task getTask() {
+			return task;
+		}
 	}
+
+	/**
+	 * Defines a comparator for Tasks.
+	 * It sorts the given tasks by how many tasks remain in their executions.
+	 * The less tasks remain the higher priority it will get:
+	 */
+	private static int lessRemainingTasks(Task t_x, Task t_y) {
+		int x = t_x.getExecution().getUnfinishedTasks().size();
+		int y = t_y.getExecution().getUnfinishedTasks().size();
+		return Integer.compare(x, y);
+	}
+
+	private class PriorityThreadPool extends ThreadPoolExecutor {
+
+		PriorityThreadPool(int workerNumber) {
+			super(workerNumber, workerNumber,
+					0L, TimeUnit.MILLISECONDS,
+					new PriorityBlockingQueue<>(1000, taskScheduler));
+		}
+		@Override
+		protected <T> RunnableFuture<T> newTaskFor(final Callable<T> callable) {
+			throw new RuntimeException("Code Error.");
+		}
+
+		@Override
+		protected <T> RunnableFuture<T> newTaskFor(final Runnable runnable,
+												   final T value) {
+			if (runnable instanceof TaskRunner)
+				return new FutureWithTask<T>(runnable, value);
+			else
+				throw new RuntimeException("Code Error.");
+		}
+	}
+
+	private static class FutureWithTask<T> extends  FutureTask<T> {
+		private final Task task;
+		public FutureWithTask(Runnable runnable, T result) {
+			super(runnable, result);
+			task = ((TaskRunner)runnable).getTask();
+		}
+		Task getTask(){
+			return task;
+		}
+	}
+
 }

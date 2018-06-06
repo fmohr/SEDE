@@ -157,6 +157,21 @@ public final class GraphTraversal {
 	}
 
 	/**
+	 * Returns true if there is no edge in the given graph that leaves from the given
+	 * node.
+	 */
+	public static boolean isLast(CompositionGraph graph, BaseNode baseNode) {
+		return graph.getEdges().stream().allMatch(e -> !e.getFrom().equals(baseNode));
+	}
+
+	/**
+	 * Returns an iterable of all last nodes (nodes which have no other node be dependent on them)
+	 */
+	public static Iterable<BaseNode> lastNodes(CompositionGraph graph) {
+		return () -> new FilteredIterator<>(graph.getNodes().iterator(), node -> isLast(graph, node));
+	}
+
+	/**
 	 * Flattens the given graph to a list with Topological sorting of its nodes.
 	 * (The order of the list matters because nodes are independent of the nodes
 	 * with higher indices.) By flattening the graph information about concrete

@@ -1,8 +1,8 @@
 package de.upb.sede.composition.graphs;
 
+import org.junit.Assert;
 import org.junit.Test;
 
-import junit.framework.Assert;
 
 public class GraphTest {
 

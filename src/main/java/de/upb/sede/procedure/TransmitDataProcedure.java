@@ -43,6 +43,19 @@ public abstract class TransmitDataProcedure implements Procedure{
 		}
 	}
 
+	public void processFail(Task task) {
+		try (BasicClientRequest dataUnavailableNotice = getPutDataRequest(task)){
+			String response = dataUnavailableNotice.send(""); // TODO what do we put in the body?
+			if(!response.isEmpty()) {
+				throw new RuntimeException("Error giving unavailability notice to:\n\t" + task.getAttributes().get("contact-info").toString()+
+						"\nReturned message is not empty:\n\t" + response);
+			}
+		}
+		catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+
 	 /** 
 	  * Returns a BasicClientReuqest to send the data over and get a response. The
 	 * implementation is dependent on the used framework to send data.

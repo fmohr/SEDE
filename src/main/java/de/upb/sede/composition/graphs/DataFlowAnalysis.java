@@ -1,21 +1,9 @@
 package de.upb.sede.composition.graphs;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import de.upb.sede.composition.FMCompositionParser;
-import de.upb.sede.composition.graphs.nodes.AcceptDataNode;
-import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.composition.graphs.nodes.CastTypeNode;
-import de.upb.sede.composition.graphs.nodes.InstructionNode;
-import de.upb.sede.composition.graphs.nodes.ParseConstantNode;
-import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
-import de.upb.sede.composition.graphs.nodes.TransmitDataNode;
+import de.upb.sede.composition.graphs.nodes.*;
 import de.upb.sede.config.ClassesConfig.MethodInfo;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.ServiceInstanceHandle;
@@ -63,6 +51,9 @@ public class DataFlowAnalysis {
 		}
 		resolveResults();
 		connectDependencyEdges();
+		if(resolveInfo.getResolvePolicy().isBlockTillFinished()) {
+			addFinishingNodes();
+		}
 	}
 
 	private void addInputNodesFieldTypes() {
@@ -241,6 +232,12 @@ public class DataFlowAnalysis {
 			throw new CompositionSemanticException("Instruction: " + instNode.toString() + " states that there are  "
 					+ stated + " amount of parameters while the classes config defines " + actual + " many.");
 		}
+
+		/*
+		 * Create an array of fieldtype which represents the consumed parameters.
+		 */
+		FieldType[] consumedParams = new FieldType[instParamFieldnames.size()];
+
 		for (int index = 0, size = instParamFieldnames.size(); index < size; index++) {
 			String parameter = instParamFieldnames.get(index);
 			String requiredType = requiredParamTypes.get(index);
@@ -273,6 +270,7 @@ public class DataFlowAnalysis {
 					assignNodeToExec(parseConstantNode, instExec);
 				}
 				if (constantType.getTypeName().equals(requiredType)) {
+					consumedParams[index] = constantType;
 					nodeConsumesField(instNode, constantType);
 				} else {
 					throw new CompositionSemanticException("Type mismatch for invocation of: " + instNode.toString()
@@ -301,6 +299,7 @@ public class DataFlowAnalysis {
 							 */
 							found = true;
 							resolvedDependency = true;
+							consumedParams[index] = paramType;
 							nodeConsumesField(instNode, paramType);
 							break;
 						} else {
@@ -369,10 +368,11 @@ public class DataFlowAnalysis {
 					/*
 					 * incase the type matches already just add it as a consumer and continue:
 					 */
+					consumedParams[index] = requiredData;
 					nodeConsumesField(instNode, requiredData);
 					continue;
 				} else if(requiredData.isPrimitive()){
-					/**
+					/*
 					 *
 					 */
 					throw new CompositionSemanticException("Type mismatch: " + instExec.toString() + "\nfield:" + requiredData.getFieldname());
@@ -410,7 +410,24 @@ public class DataFlowAnalysis {
 				FieldType requiredParamType = new FieldType(castTypeNode, parameter, TypeClass.RealDataType,
 						requiredType, false);
 				addFieldType(requiredParamType);
+				consumedParams[index] = requiredParamType;
 				nodeConsumesField(instNode, requiredParamType);
+			}
+		}
+		/**
+		 * The instruction might change the state of its parameters:
+		 */
+		for (int index = 0, size = instParamFieldnames.size(); index < size; index++) {
+			/*
+				For each parameter which is stated to be changed by the config let this instruction be a new producer of it.
+			 */
+			FieldType consumedParam = consumedParams[index];
+			if(consumedParam == null) {
+				throw new RuntimeException("Coding error. The " + index + "th parameter type of instruciton " + instNode.toString() + " is null.");
+			}
+			if(methodInfo.isParamStateMutating(index) && !consumedParam.isPrimitive()){ // primitive parameters are ignored.
+				FieldType mutatedParameter = consumedParam.clone(instNode, true);
+				nodeProducesField(instNode, mutatedParameter);
 			}
 		}
 
@@ -428,13 +445,16 @@ public class DataFlowAnalysis {
 					contextClasspath, true);
 			addFieldType(serviceInstanceFieldType);
 		}
+
+
+
 		if (instNode.isAssignedLeftSideFieldname()) {
 			String leftsideFieldname = instNode.getLeftSideFieldname();
 			/*
 			 * the instruction outputs a new value to the leftside fieldname.
 			 * See if the fieldname is already defined and add dependency to avoid collision:
 			 */
-			if(hasFieldname(leftsideFieldname) ) {
+			if(isResolvable(leftsideFieldname) ) {
 				FieldType leftsideField = resultFieldtype(leftsideFieldname);
 				/*
 				 * only consume the fieldtype if its on the same executor:
@@ -443,10 +463,10 @@ public class DataFlowAnalysis {
 					/*
 					 * look if the field is needed by another instruction:
 					 */
-					List<BaseNode> consumers = getConsumingersOfField(leftsideField);
+					List<BaseNode> consumers = getConsumersOfField(leftsideField);
 					if(consumers.isEmpty()) {
 						/*
-						 * the produced field is not neccessary.
+						 * the produced field is not necessary.
 						 * if the old producer of the field is an instruction and the field is its leftside, remove the leftside assignment:
 						 * if the old producer is an instruction and the field is the service instance of the operation, add a dependency to the current instruction 
 						 */
@@ -497,14 +517,10 @@ public class DataFlowAnalysis {
 				 * invoked:
 				 */
 				typeName = instNode.getContext();
-			} else {
+			} else if(methodInfo.hasReturnType()){
 				/* return type defined in the classes configuration */
-				if (!methodInfo.hasReturnType()) {
-					throw new CompositionSemanticException(
-							"The type of the leftside fieldname of instruction: " + instNode.toString()
-									+ " cannot be resolved. The return type of method signature is void.");
-				}
-				typeName = methodInfo.getReturnType();
+
+				typeName = methodInfo.returnType();
 				if(SEDEObject.isPrimitive(typeName)) {
 					typeClass = TypeClass.PrimitiveType;
 				} else if(SEDEObject.isReal(typeName)) {
@@ -515,6 +531,17 @@ public class DataFlowAnalysis {
 					throw new RuntimeException("BUG: The return type of the instruction " +  instNode.toString() +" cannot be reolved to a type class, "
 							+ typeName);
 				}
+			} else {
+				/*
+					The method info doesn't define a return type.
+					This means that the method returns nothing.
+					However there is a leftside fieldname defined.
+					This field will be filled with the first state mutating parameter.
+					This covers the case that some methods apply changes in place but the fm-composition treats it as if it has a return value:
+				 */
+				int paramIndex = methodInfo.indexOfNthStateMutatingParam(0);
+				typeClass = consumedParams[paramIndex].getTypeClass();
+				typeName = consumedParams[paramIndex].getTypeName();
 			}
 			FieldType leftSideFieldType = new FieldType(instNode, leftsideFieldname, typeClass, typeName,
 					true);
@@ -522,6 +549,30 @@ public class DataFlowAnalysis {
 			instNode.setLeftSideFieldtype(typeName);
 		}
 	}
+
+//	private void removeUnusedInputs() {
+//		/*
+//			Remove every input from the client that was not used:
+//		 */
+//		Collection<String> notUsedInputs = resolveInfo.getInputFields().getInputFields();
+//		/*
+//		 	Iterate over all the transmit nodes in the client graph
+//		 	and remove every fieldname that is used by a transmit node.
+//		  */
+//		for(BaseNode baseNode :
+//				GraphTraversal.iterateNodesWithClassname(getClientExecPlan().getGraph(), TransmitDataNode.class.getName())) {
+//			TransmitDataNode transmitDataNode = (TransmitDataNode) baseNode;
+//			notUsedInputs.remove(transmitDataNode.getSendingFieldName());
+//		}
+//		/*
+//			The remaining elements in notUsedInputs are not sent to any executor.
+//			Add a delete node to remove them from the client:
+//		 */
+//		for(String notUsedInput : notUsedInputs) {
+//			DeleteFieldNode deleteField = new DeleteFieldNode(notUsedInput);
+//			nodeConsumesField(deleteField, );
+//		}
+//	}
 
 	private void resolveResults() {
 		/*
@@ -536,13 +587,13 @@ public class DataFlowAnalysis {
 				continue;
 			}
 			FieldType resultFieldType = resultFieldtype(resultFieldname);
-
+			// Node that last produced the result:
 			BaseNode resultProducer = resultFieldType.getProducer();
 			ExecPlan resultExecPlan = getAssignedExec(resultProducer);
 
 			boolean servicePersistant = resultFieldType.isServiceInstance()
 					&& resolveInfo.getResolvePolicy().isPersistentService(resultFieldname);
-			boolean toBeRetuend = servicePersistant || (!resultFieldType.isServiceInstance() && resolveInfo.getResolvePolicy().isToReturn(resultFieldname));
+			boolean toBeReturned = servicePersistant || (!resultFieldType.isServiceInstance() && resolveInfo.getResolvePolicy().isToReturn(resultFieldname));
 
 			if (servicePersistant) {
 				/*
@@ -554,7 +605,7 @@ public class DataFlowAnalysis {
 				nodeConsumesField(store, resultFieldType);
 			}
 
-			if (toBeRetuend) {
+			if (toBeReturned) {
 
 				if (clientExecPlan != resultExecPlan) {
 					/*
@@ -589,6 +640,31 @@ public class DataFlowAnalysis {
 					exec.getGraph().connectNodes(producer, consumer);
 				}
 			}
+		}
+	}
+
+	private void addFinishingNodes() {
+
+		for(ExecPlan exec : getInvolvedExecutions()) {
+			if(exec == getClientExecPlan()) {
+				continue;
+			}
+			/*
+				Add node that indicate that the execution is done:
+		 	*/
+			String flagname = ("&finished&" + exec.getExecutor().getExecutorId());
+			FinishNode finishNode = new FinishNode(getClientExecPlan().getExecutor().getContactInfo(), flagname);
+			exec.getGraph().executeLast(Arrays.asList(finishNode));
+
+			/*
+				Add accept node to client:
+			 */
+			AcceptDataNode acceptFinishFlag = new AcceptDataNode(flagname);
+			getClientExecPlan().getGraph().addNode(acceptFinishFlag);
+
+			getTransmissionGraph().addNode(finishNode);
+			getTransmissionGraph().addNode(acceptFinishFlag);
+			getTransmissionGraph().connectNodes(finishNode, acceptFinishFlag);
 		}
 	}
 
@@ -710,11 +786,6 @@ public class DataFlowAnalysis {
 			return this.fieldnameTypeResult.get(fieldname);
 		}
 	}
-
-	private boolean hasFieldname(String fieldname) {
-		return this.fieldnameTypeResult.containsKey(fieldname);
-	}
-
 	private boolean isResolvable(String fieldname) {
 		return this.fieldnameTypeResult.containsKey(fieldname) && !this.fieldnameTypeResult.get(fieldname).isEmpty();
 	}
@@ -737,7 +808,7 @@ public class DataFlowAnalysis {
 	private List<FieldType> getConsumingFields(BaseNode consumer) {
 		return Collections.unmodifiableList(nodeConsumingFields.get(consumer));
 	}
-	private List<BaseNode> getConsumingersOfField(FieldType field) {
+	private List<BaseNode> getConsumersOfField(FieldType field) {
 		List<BaseNode> consumers = new ArrayList<>();
 		for(BaseNode baseNode : GraphTraversal.iterateNodes(getAssignedExec(field.getProducer()).getGraph())) {
 			if(getConsumingFields(baseNode).contains(field)) {

@@ -6,7 +6,7 @@ import de.upb.sede.requests.resolve.InputFields;
 import de.upb.sede.requests.resolve.ResolvePolicy;
 
 /**
- * This class bundles all classes whose pointer is needed for resolving a
+ * This class bundles all classes whose pointers are needed for resolving a
  * composition graph.
  */
 public class ResolveInfo {

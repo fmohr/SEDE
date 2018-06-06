@@ -1,10 +1,8 @@
 package de.upb.sede.config;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
+import de.upb.sede.util.Maps;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -21,6 +19,7 @@ public class Configuration extends HashMap<String, Object> {
 		if (configFiles.length == 0) {
 			return;
 		}
+
 		List<String> jsonStringList = new ArrayList<>(configFiles.length);
 		for (String filePath : configFiles) {
 			String jsonString = FileUtil.readFileAsString(filePath);
@@ -38,19 +37,36 @@ public class Configuration extends HashMap<String, Object> {
 			return;
 		}
 		JSONParser parser = new JSONParser();
+		List<HashMap<String, Object>> loadedConfigs = new ArrayList<>();
 		for (String jsonString : jsonStrings) {
 			// iterate over configs and append them to the existing configuration
-			HashMap<String, Object> loadedConfig;
 			try {
-				loadedConfig = (HashMap<String, Object>) parser.parse(jsonString);
-				rawConfiguration.putAll(loadedConfig);
+				loadedConfigs.add((HashMap<String, Object>) parser.parse(jsonString));
 			} catch (ParseException e) {
 				throw new RuntimeException(e);
 			}
+
+		}
+		HashMap<String, Object>[] maps = loadedConfigs.toArray(new HashMap[0]);
+		appendConfigFromJsonMaps(maps);
+
+	}
+
+	/**
+	 * Appends class configurations from json-Maps to the existing ones.
+	 */
+	public void appendConfigFromJsonMaps(Map<String, Object>... jsonMaps) {
+		for(Map<String, Object> jsonMap : jsonMaps) {
+			Set intersection = Maps.keyIntersection(jsonMap, rawConfiguration);
+			if(!intersection.isEmpty()) {
+				throw new RuntimeException("Cannot redefine Classes:\n" + intersection.toString());
+			}
+			rawConfiguration.putAll(jsonMap);
 		}
 		// reset this configuration, in order to call resolveInheritances on a
 		// unextended configurations
 		this.clear(); // clear all configurations.
 		this.putAll(rawConfiguration);
+
 	}
 }

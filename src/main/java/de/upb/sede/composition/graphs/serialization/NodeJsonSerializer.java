@@ -5,17 +5,10 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 
+import de.upb.sede.composition.graphs.nodes.*;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
-import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.composition.graphs.nodes.CastTypeNode;
-import de.upb.sede.composition.graphs.nodes.InstructionNode;
-import de.upb.sede.composition.graphs.nodes.ParseConstantNode;
-import de.upb.sede.composition.graphs.nodes.AcceptDataNode;
-import de.upb.sede.composition.graphs.nodes.TransmitDataNode;
-import de.upb.sede.composition.graphs.nodes.SendGraphNode;
-import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
 import de.upb.sede.exceptions.CompositionGraphSerializationException;
 
 /**
@@ -35,6 +28,8 @@ public final class NodeJsonSerializer {
 	public static final String NODETYPE_PARSE_CONSTANT = "ParseConstant";
 	public static final String NODETYPE_TRANSMIT_DATA = "TransmitData";
 	public static final String NODETYPE_SEND_GRAPH = "SendGraph";
+	public static final String NODETYPE_INT_EXEC = "InterruptExec";
+	public static final String NODETYPE_FINISH = "Finish";
 	public static final String NODETYPE_SERVICE_INSTANCE_STORAGE = "ServiceInstanceStorage";
 
 	public final BaseNode fromJSON(Map<Object, Object> jsonObject) {
@@ -225,6 +220,40 @@ public final class NodeJsonSerializer {
 		Object contactInfo = (Object) node.get("contact-info");
 		String graph = (String) node.get("graph");
 		SendGraphNode n = new SendGraphNode(graph, contactInfo);
+		return n;
+	}
+
+	@SuppressWarnings("unchecked")
+	public JSONObject InterruptExecNodeToJSON(InterruptExecNode interruptExecNode) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put(NODETYPE, NODETYPE_INT_EXEC);
+		jsonObject.put("contact-info", interruptExecNode.getContactInfo());
+		return jsonObject;
+	}
+
+	public InterruptExecNode InterruptExecNodeFromJSON(Map<Object, Object> node) {
+		assert node.get(NODETYPE).equals(NODETYPE_INT_EXEC);
+		Object contactInfo = (Object) node.get("contact-info");
+		InterruptExecNode n = new InterruptExecNode(contactInfo);
+		return n;
+	}
+
+
+	@SuppressWarnings("unchecked")
+	public JSONObject FinishNodeToJSON(FinishNode finishNode) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put(NODETYPE, NODETYPE_FINISH);
+		jsonObject.put("contact-info", finishNode.getContactInfo());
+		jsonObject.put("fieldname", finishNode.getFieldname());
+		return jsonObject;
+	}
+
+	public FinishNode FinishExecNodeFromJSON(Map<Object, Object> node) {
+		assert node.get(NODETYPE).equals(NODETYPE_FINISH);
+		Object contactInfo = (Object) node.get("contact-info");
+		String fieldname = (String) node.get("fieldname");
+
+		FinishNode n = new FinishNode((Map<String, String>) contactInfo, fieldname);
 		return n;
 	}
 

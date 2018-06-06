@@ -1,85 +1,43 @@
 package de.upb.sede.exec;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
+import org.json.simple.JSONObject;
 
 import de.upb.sede.util.FileUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-import org.xml.sax.Attributes;
-import org.xml.sax.SAXException;
-import org.xml.sax.helpers.DefaultHandler;
+import de.upb.sede.util.JsonSerializable;
 
-public class ExecutorConfiguration {
-	private static final String UNDEFINED_SERVICE_STORE_LOC = "No location defined to store services in.";
+public class ExecutorConfiguration implements JsonSerializable {
+	private static final String UNDEFINED_SERVICE_STORE_LOC = "instances";
 
-	private static Logger logger = LogManager.getLogger(ExecutorConfiguration.class);
-
-	private AvailableResources resources = new AvailableResources();
-	private int threadNumber = 4;
 	private String serviceStoreLocation = UNDEFINED_SERVICE_STORE_LOC;
 	private String executorId = UUID.randomUUID().toString();
-
-	private List<String> capabilties = new ArrayList<>();
+	private int threadNumber = 4;
+	private List<String> capabilities = new ArrayList<>();
 	private List<String> services = new ArrayList<>();
+	private List<String> gateways = new ArrayList<>();
 
-	public static ExecutorConfiguration parse(String executorConfigurationPath) throws Exception {
-		File configFile = getConfigurationFile(executorConfigurationPath);
-		SAXParserFactory saxFactory = SAXParserFactory.newInstance();
-		SAXParser saxParser = saxFactory.newSAXParser();
-		ExecutorConfigurationHandler executorConfigurationHandler = new ExecutorConfigurationHandler();
-		saxParser.parse(configFile, executorConfigurationHandler);
-		return executorConfigurationHandler.getConfiguration();
+	private ExecutorConfiguration() {
 	}
 
-	public static ExecutorConfiguration parseJSON(String configPath) {
-		ExecutorConfiguration configuration = new ExecutorConfiguration();
-		JSONParser jsonParser = new JSONParser();
-		String fileContent = FileUtil.readFileAsString(configPath);
-		try {
-			jsonParser.parse(fileContent); // TODO
-		} catch (ParseException e) {
-			throw new RuntimeException(e);
-		}
-		return configuration;
+	public static ExecutorConfiguration parseJSONFromFile(String configPath) {
+		String jsonString = FileUtil.readFileAsString(configPath);
+		return parseJSON(jsonString);
 	}
 
-	private static File getConfigurationFile(String executorConfigurationPath) {
-		File executorConfigurationFile = new File(executorConfigurationPath);
-		if (!executorConfigurationFile.exists()) {
-			RuntimeException e = new RuntimeException("File: \"" + executorConfigurationPath + "\" does not exist.");
-			logger.error(e);
-			throw e;
-		}
-		return executorConfigurationFile;
+	public static ExecutorConfiguration parseJSON(String jsonString) {
+		Objects.requireNonNull(jsonString);
+		ExecutorConfiguration newConfigInstance = new ExecutorConfiguration();
+		newConfigInstance.fromJsonString(jsonString);
+		return newConfigInstance;
 	}
 
-	private void setAvailableResources(AvailableResources resources) {
-		this.resources = resources;
-	}
-
-	private void setThreadNumber(int threadNumber) {
-		this.threadNumber = threadNumber;
-	}
-
-	private void setServiceStoreLocation(String serviceStoreLocation) {
-		this.serviceStoreLocation = serviceStoreLocation;
-	}
-
-	public AvailableResources getAvailableResources() {
-		return resources;
-	}
-
-	public int getThreadNumber() {
-		return threadNumber;
+	public static ExecutorConfiguration getDefaultInstance() {
+		return new ExecutorConfiguration();
 	}
 
 	public String getServiceStoreLocation() {
@@ -90,60 +48,55 @@ public class ExecutorConfiguration {
 		return executorId;
 	}
 
-	public List<String> getExecutorCapabilities() {
-		return capabilties;
+	public int getThreadNumber() {
+		return threadNumber;
 	}
 
-	public List<String> getSupportedServices(){
+	public List<String> getExecutorCapabilities() {
+		return capabilities;
+	}
+
+	public List<String> getSupportedServices() {
 		return services;
 	}
 
-	public void setExecutorId(String core_client) {
-		executorId = core_client;
+	public List<String> getGateways() {
+		return gateways;
 	}
 
-	static class ExecutorConfigurationHandler extends DefaultHandler {
-		private ExecutorConfiguration configuration = new ExecutorConfiguration();
-		private AvailableResources resources = AvailableResources.UNDEFINED_RESOURCES;
+	@SuppressWarnings("unchecked")
+	@Override
+	public JSONObject toJson() {
+		JSONObject objectAsJsonObj = new JSONObject();
+		objectAsJsonObj.put("capabilities", capabilities);
+		objectAsJsonObj.put("services", services);
+		objectAsJsonObj.put("executorId", executorId);
+		objectAsJsonObj.put("threadNumber", threadNumber);
+		objectAsJsonObj.put("serviceStoreLocation", serviceStoreLocation);
+		objectAsJsonObj.put("gateways", gateways);
+		return objectAsJsonObj;
+	}
 
-		@Override
-		public void startElement(String uri, String localName, String qName, Attributes attributes)
-				throws SAXException {
-			switch (qName) {
-				case "resources": {
-					resources = new AvailableResources();
-					break;
-				}
-				case "fpga": {
-					resources.setFPGANumber(Integer.parseInt(attributes.getValue("number")));
-					break;
-				}
-				case "cpu": {
-					resources.setCPUNumber(Integer.parseInt(attributes.getValue("number")));
-					break;
-				}
-				case "gpu": {
-					resources.setGPUNumber(Integer.parseInt(attributes.getValue("number")));
-					break;
-				}
-				case "thread_number": {
-					configuration.setThreadNumber(Integer.parseInt(attributes.getValue("number")));
-					break;
-				}
-				case "service_store_location": {
-					configuration.setServiceStoreLocation(attributes.getValue("relative_path"));
-					break;
-				}
-			}
+	@SuppressWarnings("unchecked")
+	@Override
+	public void fromJson(Map<String, Object> jsonObj) {
+		if (jsonObj.containsKey("capabilities")) {
+			capabilities = (List<String>) jsonObj.get("capabilities");
 		}
-
-		@Override
-		public void endDocument() throws SAXException {
-			configuration.setAvailableResources(resources);
+		if (jsonObj.containsKey("services")) {
+			services = (List<String>) jsonObj.get("services");
 		}
-
-		public ExecutorConfiguration getConfiguration() {
-			return configuration;
+		if (jsonObj.containsKey("executorId")) {
+			executorId = (String) jsonObj.get("executorId");
+		}
+		if (jsonObj.containsKey("threadNumber")) {
+			threadNumber =  ((Number) jsonObj.get("threadNumber")).intValue();
+		}
+		if (jsonObj.containsKey("serviceStoreLocation")) {
+			serviceStoreLocation = (String) jsonObj.get("serviceStoreLocation");
+		}
+		if(jsonObj.containsKey("gateways")) {
+			gateways = Objects.requireNonNull((List<String>) jsonObj.get("gateways"));
 		}
 	}
 }

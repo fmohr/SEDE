@@ -3,9 +3,12 @@ package demo.math;
 import java.io.Serializable;
 
 import demo.types.NummerList;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 public class Addierer implements Serializable {
+	private static final Logger logger = LogManager.getLogger();
 	private static final long serialVersionUID = 1L;
 	final double basisZahl;
 
@@ -30,7 +33,8 @@ public class Addierer implements Serializable {
 		return sumList;
 	}
 
-	public NummerList summierListe(NummerList nl1, NummerList nl2) {
+
+	public static NummerList summierListe(NummerList nl1, NummerList nl2) {
 //		try {
 //			Thread.sleep(00);
 //		} catch (InterruptedException e) {
@@ -41,5 +45,28 @@ public class Addierer implements Serializable {
 			sumList.add(nl1.get(i) + nl2.get(i));
 		}
 		return sumList;
+	}
+
+	/**
+	 * Method to test errors during execution.
+	 */
+	public static NummerList fail() {
+		throw new RuntimeException("I fail because in this world it isn't worth trying not to.");
+	}
+
+	/**
+	 * Method to test interruptibility during execution.
+	 */
+	public static void sleep() throws InterruptedException {
+		Object obj = new Object();
+		synchronized (obj) {
+			try {
+				logger.info("started sleeping.");
+				obj.wait();
+			} catch (InterruptedException e) {
+				logger.info("interrupted sleep.");
+//				throw e;
+			}
+		}
 	}
 }

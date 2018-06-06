@@ -1,11 +1,6 @@
 package de.upb.sede.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UncheckedIOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class Streams {
@@ -65,5 +60,73 @@ public class Streams {
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
+	}
+
+	/**
+	 * Reads a line of characters out of the given input stream.
+	 * @return the read string
+	 */
+	public static String InReadLine(InputStream in) {
+		BufferedReader br = new BufferedReader(new InputStreamReader(in));
+		try {
+			return br.readLine();
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+
+	/**
+	 * Returns the stacktrace of the given exception as a String.
+	 * @param ex Exception whose stack trace will be returned.
+	 * @return Stack trace of the given exception.
+	 */
+	public static String ErrToString(Exception ex) {
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		ex.printStackTrace(pw);
+		String sStackTrace = sw.toString();
+		return sStackTrace;
+	}
+
+	/**
+	 * Returns an inputstream which is empty.
+	 * Using read() will return -1;
+	 * @return empty input stream.
+	 */
+	public static InputStream EmptyInStream(){
+		return new EmptyIn();
+	}
+
+	private static class EmptyIn extends InputStream {
+
+		@Override
+		public int read() throws IOException {
+			return -1; // end of stream.
+		}
+	}
+
+	/**
+	 * Returns an output stream. Writing into the given output stream will discard the the input.
+	 * write method of the stream doens't do anything.
+	 *
+	 * @return outputstream which discards the input.
+	 */
+	public static OutputStream DiscardOutStream() {
+		return new DiscardingOut();
+	}
+
+	private static class DiscardingOut extends OutputStream {
+		@Override
+		public void write(int b) throws IOException {
+			// do nothing..
+		}
+		@Override
+		public void write(byte b[], int off, int len) throws IOException {
+			if (b == null) {
+				throw new NullPointerException();
+			}
+			// do nothing..
+		}
+
 	}
 }

@@ -30,7 +30,7 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 		if (isLoadInstruction) {
 			/* load the service instance and put it into the execution environment */
 			instanceId = (String) task.getAttributes().get("instance-id");
-			BasicClientRequest loadRequest = getLoadRequest(instanceId, serviceClasspath);
+			BasicClientRequest loadRequest = getLoadRequest(task, instanceId, serviceClasspath);
 			SEDEObject loadedSedeObject;
 			try (ObjectInputStream objectIn = new ObjectInputStream(loadRequest.receive())) {
 				Object instanceObject = objectIn.readObject();
@@ -48,7 +48,7 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 			ServiceInstanceHandle instanceHandle = task.getExecution().getEnvironment().get(fieldname)
 					.getServiceHandle();
 			instanceId = instanceHandle.getId();
-			BasicClientRequest storeRequest = getStoreRequest(instanceId, serviceClasspath);
+			BasicClientRequest storeRequest = getStoreRequest(task, instanceId, serviceClasspath);
 
 			try (ObjectOutputStream objectOut = new ObjectOutputStream(storeRequest.send())) {
 				objectOut.writeObject(instanceHandle.getServiceInstance().get());
@@ -73,7 +73,7 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 	 *            id of the instance to get the path for.
 	 * @return Path of the requested instance.
 	 */
-	public static String pathFor(String serviceClasspath, String instanceid) {
+	public static String pathFor(String servicesPath, String serviceClasspath, String instanceid) {
 		int max = 200;
 		/*
 		 * maximum number of characters that is allowed service classpath to be. the
@@ -82,16 +82,16 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 		if (serviceClasspath.length() > max) {
 			serviceClasspath = serviceClasspath.substring(serviceClasspath.length() - max, serviceClasspath.length());
 		}
-		return "instances/" + serviceClasspath + "/" + instanceid;
+		return servicesPath + "/" + serviceClasspath + "/" + instanceid;
 	}
 
-	private BasicClientRequest getStoreRequest(String instanceId, String serviceClassPath) {
-		String path = pathFor(serviceClassPath, instanceId);
+	private BasicClientRequest getStoreRequest(Task task, String instanceId, String serviceClassPath) {
+		String path = pathFor(task.getExecution().getConfiguration().getServiceStoreLocation(), serviceClassPath, instanceId);
 		return new WriteFileRequest(path, "");
 	}
 
-	private BasicClientRequest getLoadRequest(String instanceId, String serviceClassPath) {
-		String path = pathFor(serviceClassPath, instanceId);
+	private BasicClientRequest getLoadRequest(Task task, String instanceId, String serviceClassPath) {
+		String path = pathFor(task.getExecution().getConfiguration().getServiceStoreLocation(), serviceClassPath, instanceId);
 		return new ReadFileRequest(path);
 	}
 }

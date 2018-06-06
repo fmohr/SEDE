@@ -10,9 +10,9 @@ import de.upb.sede.util.JsonSerializable;
 /**
  * All instances of request should be immutable.
  */
-public abstract class Request implements JsonSerializable {
+public class Request implements JsonSerializable {
 
-	private Optional<String> requestId;
+	protected Optional<String> requestId;
 
 	public Request() {
 		this.requestId = Optional.empty();

@@ -1,15 +1,22 @@
 package de.upb.sede.exec;
 
-import de.upb.sede.exceptions.ExecutionIdOccupiedException;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONObject;
+
 import de.upb.sede.interfaces.IExecutor;
-import de.upb.sede.procedure.*;
+import de.upb.sede.procedure.AcceptDataProcedure;
+import de.upb.sede.procedure.CastTypeProcedure;
+import de.upb.sede.procedure.InstructionProcedure;
+import de.upb.sede.procedure.ParseConstantProcedure;
+import de.upb.sede.procedure.ServiceInstanceStorageProcedure;
 import de.upb.sede.requests.DataPutRequest;
 import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.util.Observer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONObject;
 
 import java.util.List;
 import java.util.Map;
@@ -23,22 +30,15 @@ public class Executor implements IExecutor{
 
 	private final ExecutionPool execPool;
 
-	private final ResourceAllocator resourceAllocator;
-
 	private final ExecutorConfiguration config;
 
 	private final WorkerPool workerPool;
 
 	private final Observer<Task> taskWorkerEnqueuer;
 
-	public Executor() {
-		this(new ExecutorConfiguration());
-	}
-
 	public Executor(ExecutorConfiguration execConfig) {
 		this.execPool = new ExecutionPool(execConfig);
 		this.config = execConfig;
-		this.resourceAllocator = new ResourceAllocator(this.config.getAvailableResources());
 		this.workerPool = new WorkerPool(execConfig.getThreadNumber());
 		this.taskWorkerEnqueuer = Observer.lambda(t->true,  workerPool::processTask, t->false);
 		bindProcedureNames();
@@ -67,14 +67,24 @@ public class Executor implements IExecutor{
 		return execPool.getOrCreateExecution(requestId);
 	}
 
-	public ExecutionPool getExecPool(){
+	public ExecutionPool getExecPool() {
 		return execPool;
 	}
 
 	@Override
 	public synchronized void put(DataPutRequest dataPutRequest){
 		Execution exec = getOrCreateExecution(dataPutRequest.getRequestID());
-		exec.getEnvironment().put(dataPutRequest.getFieldname(), dataPutRequest.getData());
+		if(dataPutRequest.isUnavailable()) {
+			/*
+			 * The request indicates that the data is unavailable. (wont be delivered)
+			 */
+			exec.getEnvironment().markUnavailable(dataPutRequest.getFieldname());
+		} else{
+			/*
+			 * The request contains the data:
+			 */
+			exec.getEnvironment().put(dataPutRequest.getFieldname(), dataPutRequest.getData());
+		}
 	}
 
 	@Override
@@ -82,7 +92,7 @@ public class Executor implements IExecutor{
 		String execId = execRequest.getRequestID();
 
 		Execution exec = getOrCreateExecution(execRequest.getRequestID());
-		exec.getNewTasksObservable().observe(taskWorkerEnqueuer);
+		exec.getRunnableTasksObservable().observe(taskWorkerEnqueuer);
 
 		deserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
 
@@ -92,14 +102,11 @@ public class Executor implements IExecutor{
 	}
 
 	@Override
-	public void loadServices(Object Services){
-		// TODO
-	}
-
-	@Override
 	public void interrupt(String executionId) {
-		if(execPool.hasExecution(executionId)) {
-			execPool.getExecution(executionId).interrupt();
+		if (execPool.hasExecution(executionId)) {
+			Execution toBeInterrupted = execPool.getExecution(executionId);
+			workerPool.interruptExec(toBeInterrupted);
+			toBeInterrupted.interrupt();
 		}
 	}
 
@@ -115,6 +122,7 @@ public class Executor implements IExecutor{
 		contactInfo.put("id", getExecutorConfiguration().getExecutorId());
 		return contactInfo;
 	}
+
 	@Override
 	public ExecutorRegistration registration() {
 		List<String> capibilities = getExecutorConfiguration().getExecutorCapabilities();
@@ -123,11 +131,9 @@ public class Executor implements IExecutor{
 		return registration;
 	}
 
-
 	public ExecutorConfiguration getExecutorConfiguration() {
 		return config;
 	}
-
 
 	/**
 	 * Supplier of execution instances. <p>

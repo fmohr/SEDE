@@ -3,13 +3,8 @@ package de.upb.sede.webinterfaces.server;
 import de.upb.sede.util.Streams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.SystemPropertiesPropertySource;
 
-import javax.swing.text.html.Option;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -29,6 +24,7 @@ public final class ServerCommandListener {
 	public ServerCommandListener(ImServer server) {
 		this.server = server;
 		addCommandHandle("shutdown", ShutdownServer::new);
+		addCommandHandle("help", CommandPrinter::new);
 	}
 
 	public void addCommandHandle(String commandname, final Supplier<HTTPServerResponse> responder) {
@@ -48,7 +44,7 @@ public final class ServerCommandListener {
 	}
 
 	private void listenToStandardIn() {
-		printCommands();
+		System.out.print("Enter command: ");
 		String input  = Streams.InReadLine(System.in);
 		List<String> inputItems = new ArrayList<>(Arrays.asList(input.split(" ")));
 		if(!inputItems.isEmpty()) {
@@ -62,12 +58,6 @@ public final class ServerCommandListener {
 			}
 		}
 	}
-
-	private void printCommands() {
-		String commandList = "\n\t" + commands.keySet().stream().sorted().collect(Collectors.joining("\n\t"));
-		System.out.println("Commands are: " + commandList);
-	}
-
 
 	static class ServerCommandHandle implements HTTPServerResponse {
 
@@ -106,6 +96,14 @@ public final class ServerCommandListener {
 			server.shutdown();
 			running = false;
 			System.exit(0);
+		}
+	}
+
+	class CommandPrinter implements HTTPServerResponse {
+		@Override
+		public void receive(Optional<String> url, InputStream payload, OutputStream answer) {
+			String commandList = "\n\t" + commands.keySet().stream().sorted().collect(Collectors.joining("\n\t"));
+			Streams.OutWriteString(answer, commandList, true);
 		}
 	}
 }

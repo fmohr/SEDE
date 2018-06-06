@@ -7,6 +7,7 @@ import org.apache.logging.log4j.util.SystemPropertiesPropertySource;
 
 import javax.swing.text.html.Option;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
@@ -49,21 +50,21 @@ public final class ServerCommandListener {
 	private void listenToStandardIn() {
 		printCommands();
 		String input  = Streams.InReadLine(System.in);
-		logger.info("Processing console command: {}", input);
 		List<String> inputItems = new ArrayList<>(Arrays.asList(input.split(" ")));
 		if(!inputItems.isEmpty()) {
 			String commandname = inputItems.get(0);
 			if(commands.containsKey(commandname)) {
-				input = "/" + input.replaceAll(" ", "/");
-				ByteArrayInputStream in = new ByteArrayInputStream("".getBytes());
-				commands.get(commandname).get().receive(Optional.of(input), in, System.out);
-				System.out.println();
+				input = "/" + input.replaceAll(" ", "/"); // convert input list to url.
+				ByteArrayOutputStream out = new ByteArrayOutputStream();
+				HTTPServerResponse responder = commands.get(commandname).get();
+				responder.receive(Optional.of(input), Streams.EmptyInStream(), out);
+				System.out.println(out.toString());
 			}
 		}
 	}
 
 	private void printCommands() {
-		String commandList = "\n\t" + commands.keySet().stream().collect(Collectors.joining("\n\t"));
+		String commandList = "\n\t" + commands.keySet().stream().sorted().collect(Collectors.joining("\n\t"));
 		System.out.println("Commands are: " + commandList);
 	}
 
@@ -81,13 +82,14 @@ public final class ServerCommandListener {
 			Streams.InReadString(payload);
 			String returnMessage;
 			if(url.isPresent()) {
-				logger.info("Processing server command. url: {}", url.get());
+				logger.info("Processing command. url: {}", url.get());
 				List<String> inputItems = new ArrayList<>(Arrays.asList(url.get().split("/")));
 				if(inputItems.size() < 2) {
 					returnMessage = "url contains no command: " + url;
 				} else {
 					inputItems.remove(0); // first one is empty.
 					inputItems.remove(0); // the second one is the command name
+					logger.trace("Delegating list to command: {}", inputItems);
 					returnMessage = command.apply(inputItems);
 				}
 			} else {

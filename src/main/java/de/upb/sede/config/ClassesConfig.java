@@ -164,6 +164,14 @@ public class ClassesConfig extends Configuration {
 	}
 
 	/**
+	 * Returns list of loaded class paths.
+	 * @return list of supported class paths.
+	 */
+	public Set<String> classesKnown() {
+		return Collections.unmodifiableSet(this.keySet());
+	}
+
+	/**
 	 * Returns true if the configuration has the given classpath entry.
 	 */
 	public boolean classknown(String classpath) {
@@ -283,6 +291,7 @@ public class ClassesConfig extends Configuration {
 			throw new RuntimeException("Class " + classpath + " not found.");
 		}
 	}
+
 
 	public static class ClassInfo {
 		private final Map<String, Object> configuration;

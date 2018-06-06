@@ -4,21 +4,27 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
+import de.upb.sede.exec.ExecutorConfiguration;
 
 public abstract class ServiceInventory {
 
 	List<ServiceAssembly> serviceAssamblies;
 
 	ServiceFileProvider serviceFileProvider;
-	ClassConfigurationProvider classConfigProvider;
-	TypeConfigurationProvider typeConfigProvider;
+	ConfigurationProvider classConfigProvider;
+	ConfigurationProvider typeConfigProvider;
 
-	abstract ServiceAssembly getServiceAssemblyFor(JSONObject execConfiguration);
+	public Collection<ServiceAssembly> getServiceAssembliesFor(ExecutorConfiguration execConfig) {
+		Collection<ServiceAssembly> neededAssemblies = serviceAssamblies.stream()
+				.filter(assembly -> assembly.getClassConfiguration().classesKnown().stream()
+						.anyMatch(className -> execConfig.getSupportedServices().contains(className)))
+				.collect(Collectors.toSet());
+		return neededAssemblies;
+	}
 
 	public void loadServices(Collection<ServiceAssemblyLoad> serviceAssemblyLoad) throws ParseException {
 		for (ServiceAssemblyLoad addressObject : serviceAssemblyLoad) {

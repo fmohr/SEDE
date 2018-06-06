@@ -29,7 +29,6 @@ public class ExecutorConfiguration implements JsonSerializable {
 		return parseJSON(jsonString);
 	}
 
-	@SuppressWarnings("unchecked")
 	public static ExecutorConfiguration parseJSON(String jsonString) {
 		Objects.requireNonNull(jsonString);
 		ExecutorConfiguration newConfigInstance = new ExecutorConfiguration();

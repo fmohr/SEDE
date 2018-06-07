@@ -1,5 +1,6 @@
 package demo.math;
 
+import Catalano.Imaging.Filters.Crop;
 import demo.types.Punkt;
 
 import java.io.Serializable;

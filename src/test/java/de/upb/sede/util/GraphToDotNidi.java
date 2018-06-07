@@ -1,27 +1,16 @@
 package de.upb.sede.util;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import de.upb.sede.composition.graphs.CompositionGraph;
-import de.upb.sede.composition.graphs.DependencyEdge;
-import de.upb.sede.composition.graphs.GraphTraversal;
+import de.upb.sede.composition.graphs.*;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import guru.nidi.graphviz.attribute.Color;
 import guru.nidi.graphviz.attribute.Label;
 import guru.nidi.graphviz.attribute.Shape;
 import guru.nidi.graphviz.attribute.Style;
-import guru.nidi.graphviz.engine.Format;
-import guru.nidi.graphviz.engine.Graphviz;
-import guru.nidi.graphviz.engine.GraphvizCmdLineEngine;
-import guru.nidi.graphviz.engine.Renderer;
 import guru.nidi.graphviz.model.Graph;
-import guru.nidi.graphviz.model.Link;
-import guru.nidi.graphviz.model.MutableGraph;
-import guru.nidi.graphviz.model.MutableNode;
 import guru.nidi.graphviz.model.Node;
-import guru.nidi.graphviz.service.DefaultExecutor;
-import info.leadinglight.jdot.impl.Util;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static guru.nidi.graphviz.model.Factory.*;
 
@@ -75,6 +64,20 @@ public class GraphToDotNidi {
 			g = buildDotGraph(g, transitionGraph, true);
 		}
 		return formatDotToSVG(g.toString());
+	}
+
+	public static String getSVGForGC(GraphConstruction gc) {
+		Map<String, CompositionGraph> comps = new HashMap<>();
+		DataFlowAnalysis df = gc.getDataFlow();
+		String clientId = df.getClientExecPlan().getExecutor().getExecutorId();
+		comps.put(clientId, df.getClientExecPlan().getGraph());
+		for(ExecPlan exec : df.getInvolvedExecutions()) {
+			if(exec.getExecutor().getExecutorId().equals(clientId)) {
+				continue;
+			}
+			comps.put(exec.getExecutor().getExecutorId(), exec.getGraph());
+		}
+		return getSVGForGraphs(comps, df.getTransmissionGraph());
 	}
 
 	public static String getDOTForGraph(CompositionGraph compGraph) {

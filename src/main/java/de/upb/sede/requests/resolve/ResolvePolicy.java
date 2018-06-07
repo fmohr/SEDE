@@ -38,6 +38,8 @@ public class ResolvePolicy implements JsonSerializable {
 
 	private boolean blockTillFinished;
 
+	private boolean returnDotGraph;
+
 	public ResolvePolicy() {
 		setStandardPolicy();
 	}
@@ -46,6 +48,7 @@ public class ResolvePolicy implements JsonSerializable {
 		setReturnPolicy(all);
 		setServicePolicy(all);
 		setBlockTillFinished(true);
+		setToReturnDotGraph(false);
 	}
 
 	public boolean isToReturn(String fieldName) {
@@ -82,7 +85,7 @@ public class ResolvePolicy implements JsonSerializable {
 		return servicePolicy;
 	}
 
-	private void setReturnPolicy(String returnPolicy) {
+	public void setReturnPolicy(String returnPolicy) {
 		Objects.requireNonNull(returnPolicy);
 		if (returnPolicy.equalsIgnoreCase(all) || returnPolicy.equalsIgnoreCase(none)) {
 			this.returnPolicy = returnPolicy;
@@ -92,7 +95,7 @@ public class ResolvePolicy implements JsonSerializable {
 		}
 	}
 
-	private void setServicePolicy(String servicePolicy) {
+	public void setServicePolicy(String servicePolicy) {
 		Objects.requireNonNull(servicePolicy);
 		if (servicePolicy.equalsIgnoreCase(all) || servicePolicy.equalsIgnoreCase(none)) {
 			this.servicePolicy = servicePolicy;
@@ -110,12 +113,12 @@ public class ResolvePolicy implements JsonSerializable {
 		return Collections.unmodifiableList(persistentServices);
 	}
 
-	private void setReturnFieldnames(List<String> returnFieldnames) {
+	public void setReturnFieldnames(List<String> returnFieldnames) {
 		this.returnFieldnames = Objects.requireNonNull(returnFieldnames);
 		this.returnPolicy = listed;
 	}
 
-	private void setPersistentServices(List<String> persistentServices) {
+	public void setPersistentServices(List<String> persistentServices) {
 		this.servicePolicy = listed;
 		this.persistentServices = Objects.requireNonNull(persistentServices);
 	}
@@ -130,6 +133,14 @@ public class ResolvePolicy implements JsonSerializable {
 
 	public void setBlockTillFinished(boolean blockTillFinished) {
 		this.blockTillFinished = blockTillFinished;
+	}
+
+	public boolean isToReturnDotGraph() {
+		return returnDotGraph;
+	}
+
+	public void setToReturnDotGraph(boolean returnDotGraph) {
+		this.returnDotGraph = returnDotGraph;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -147,6 +158,7 @@ public class ResolvePolicy implements JsonSerializable {
 			jsonObject.put("service-policy", getServicePolicy());
 		}
 		jsonObject.put("block-till-finished", isBlockTillFinished());
+		jsonObject.put("return-dot", isToReturnDotGraph());
 		return jsonObject;
 	}
 
@@ -177,5 +189,10 @@ public class ResolvePolicy implements JsonSerializable {
 		if(blockTillFinished!=null) {
 			this.setBlockTillFinished(blockTillFinished);
 		}
+		Boolean dotGraph = (Boolean) data.get("return-dot");
+		if(dotGraph != null) {
+			this.setToReturnDotGraph(dotGraph);
+		}
+
 	}
 }

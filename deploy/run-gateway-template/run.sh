@@ -3,7 +3,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # find the next free port
-export port=9000
+export port=6000
 while lsof -Pi :"$port" -sTCP:LISTEN -t >/dev/null ; do
     echo port "$port" is not open
     port=$((port + 1))

@@ -24,6 +24,14 @@ public class InstructionNode extends BaseNode {
 	private String context;
 	private boolean contextIsField;
 	private String method;
+
+	/**
+	 * Index of instruction output.
+	 * -1 means that the return value of the instruction is the output.
+	 * Any other value >= 0 will have the instruction return the ith parameter as output.
+	 */
+	private int outputIndex = -1;
+
 	/**
 	 * Parameters for method or constructor invocation. The order of the parameters
 	 * has to be kept unchanged. May either contain field-names referencing to data
@@ -154,6 +162,15 @@ public class InstructionNode extends BaseNode {
 
 	public void setParameterType(List<String> parameterTypes) {
 		this.parameterTypes = parameterTypes;
+	}
+
+
+	public void setOutputIndex(int paramIndex) {
+		outputIndex = paramIndex;
+	}
+
+	public int getOutputIndex() {
+		return outputIndex;
 	}
 
 	/**

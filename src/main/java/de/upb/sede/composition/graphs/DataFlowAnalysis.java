@@ -542,6 +542,7 @@ public class DataFlowAnalysis {
 				int paramIndex = methodInfo.indexOfNthStateMutatingParam(0);
 				typeClass = consumedParams[paramIndex].getTypeClass();
 				typeName = consumedParams[paramIndex].getTypeName();
+				instNode.setOutputIndex(paramIndex);
 			}
 			FieldType leftSideFieldType = new FieldType(instNode, leftsideFieldname, typeClass, typeName,
 					true);

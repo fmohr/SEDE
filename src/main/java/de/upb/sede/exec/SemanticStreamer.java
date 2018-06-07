@@ -61,7 +61,8 @@ public final class SemanticStreamer {
 		Method method = getMethodFor(caster, casterMethod);
 		try {
 			Object casterInstance = Class.forName(caster).getConstructor().newInstance();
-			SEDEObject sedeObject = (SEDEObject) method.invoke(casterInstance, is);
+			Object castedObject = method.invoke(casterInstance, is);;
+			SEDEObject sedeObject = new SEDEObject(targetRealTypeCp, castedObject);
 			return sedeObject;
 		} catch (ReflectiveOperationException ex){
 			throw new RuntimeException(ex);
@@ -105,7 +106,7 @@ public final class SemanticStreamer {
 		Method method = getMethodFor(caster, casterMethod);
 		try {
 			Object casterInstance = Class.forName(caster).getConstructor().newInstance();
-			method.invoke(casterInstance, os, content);
+			method.invoke(casterInstance, os, content.getObject());
 		} catch (ReflectiveOperationException ex){
 			throw new RuntimeException(ex);
 		}

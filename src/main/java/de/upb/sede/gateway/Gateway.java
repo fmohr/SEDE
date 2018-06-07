@@ -82,7 +82,15 @@ public class Gateway implements IGateway{
 		JSONObject jsonClientGraph = gjs.toJson(clientGraph);
 
 		GatewayResolution gatewayResolution = new GatewayResolution(jsonClientGraph.toJSONString(), returnFields);
-		
+//		if(resolveRequest.getPolicy().isToReturnDotGraph()) {
+//			try{
+//				String svg = GraphToDotNidi.getSVGForGC(gc);
+//				gatewayResolution.setDotSvg(svg);
+//			} catch(Exception ex) {
+//				logger.error("Error trying to calculate the dot from graph: ", ex);
+//			}
+//		}
+		logger.debug("Resolved graph. RequestId: {}", resolveRequest.getRequestID());
 		return gatewayResolution;
 	}
 

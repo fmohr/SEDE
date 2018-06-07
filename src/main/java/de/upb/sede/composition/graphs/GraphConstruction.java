@@ -88,4 +88,8 @@ public class GraphConstruction {
 	public List<String> getReturnFields() {
 		return dataFlow.getReturnFieldnames();
 	}
+
+	public DataFlowAnalysis getDataFlow() {
+		return dataFlow;
+	}
 }

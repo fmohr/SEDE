@@ -1,0 +1,6 @@
+{
+  "Catalano.Imaging.FastBitmap": {
+    "semantic_type": "Arr",
+    "onthological_caster": "de.upb.sede.casters.FastBitmapCaster"
+  }
+}

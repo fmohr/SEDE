@@ -29,6 +29,10 @@ import java.util.Map;
 public class ImagingTests {
 
 	static CoreClientHttpServer coreClient;
+
+	static String clientAddress = "localhost";
+	static int clientPort = 7000;
+
 	static String gatewayAddress = "localhost";
 	static int gatewayPort = 6000;
 
@@ -39,9 +43,10 @@ public class ImagingTests {
 	public static void startClient() {
 
 		gateway = new GatewayHttpServer(gatewayPort, getTestClassConfig(), getTestTypeConfig());
-
-		ExecutorConfiguration configuration = ExecutorConfiguration.getDefaultInstance();
-		coreClient = new CoreClientHttpServer(configuration, "localhost", 7000, gatewayAddress, gatewayPort);
+		ExecutorConfigurationCreator creator = new ExecutorConfigurationCreator();
+		creator.withExecutorId("Client");
+		ExecutorConfiguration configuration = ExecutorConfiguration.parseJSON(creator.toString());
+		coreClient = new CoreClientHttpServer(configuration, clientAddress, clientPort, gatewayAddress, gatewayPort);
 
 	}
 	@AfterClass
@@ -51,12 +56,12 @@ public class ImagingTests {
 
 	@Test
 	public void testImagingProcessing1() {
-		coreClient.getClientExecutor().getExecutorConfiguration().getSupportedServices().addAll(
-				Arrays.asList("Catalano.Imaging.Filters.Crop", "Catalano.Imaging.Filters.Resize")
-		);
-		String composition = "s1 = Catalano.Imaging.Filters.Crop::__construct({i1=200, i2=200, i3=100, i4=100});\n" +
+//		coreClient.getClientExecutor().getExecutorConfiguration().getSupportedServices().addAll(
+//				Arrays.asList("Catalano.Imaging.Filters.Crop", "Catalano.Imaging.Filters.Resize")
+//		);
+		String composition = "s1 = Catalano.Imaging.Filters.Crop::__construct({i1=5, i2=5, i3=10, i4=10});\n" +
 				"fb2 = s1::ApplyInPlace({i1=fb1});\n" +
-				"s2 = Catalano.Imaging.Filters.Resize::__construct({i1=250, i2=250});\n" +
+				"s2 = Catalano.Imaging.Filters.Resize::__construct({i1=20, i2=20});\n" +
 				"fb3 = s2::applyInPlace({i1=fb2});";
 
 		ResolvePolicy policy = new ResolvePolicy();
@@ -97,8 +102,6 @@ public class ImagingTests {
 			processedImage = (FastBitmap) result.getResultData().getObject();
 		}
 		JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
-
-
 	}
 
 

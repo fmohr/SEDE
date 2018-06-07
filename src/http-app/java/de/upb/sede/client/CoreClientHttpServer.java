@@ -27,7 +27,12 @@ public class CoreClientHttpServer extends CoreClient {
 		BasicClientRequest requestToGateway = new HTTPClientRequest(gatewayAddress, gatewayPort, "resolve");
 		String resolutionJsonString = requestToGateway.send(rr.toJsonString());
 		GatewayResolution gatewayResolution = new GatewayResolution();
-		gatewayResolution.fromJsonString(resolutionJsonString);
+		try {
+			gatewayResolution.fromJsonString(resolutionJsonString);
+		} catch(RuntimeException parseException){
+			throw new RuntimeException("Gateway didn't resolve the composition." +
+					" Returned exception:\n"+resolutionJsonString);
+		}
 		return gatewayResolution;
 	}
 
@@ -40,10 +45,4 @@ public class CoreClientHttpServer extends CoreClient {
 	public ExecutorHttpServer getClientExecutor() {
 		return (ExecutorHttpServer) super.getClientExecutor();
 	}
-
-	public static void main(String[] args) {
-		String gatewayHost = "localhost:6060";
-		String clientExecHost = "client server";
-	}
-
 }

@@ -1,5 +1,7 @@
 package de.upb.sede.exec;
 
+import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.gateway.GatewayServerStarter;
 import de.upb.sede.util.Streams;
 import de.upb.sede.webinterfaces.server.ServerCommandListener;
 import org.apache.logging.log4j.LogManager;
@@ -7,6 +9,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.*;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class ExecutorServerStarter {
 	private final static Logger logger = LogManager.getLogger();
@@ -35,6 +38,7 @@ public class ExecutorServerStarter {
 
 		commandListener = new ServerCommandListener(executor);
 		commandListener.addCommandHandle("register-to", new RegisterToGateway());
+		commandListener.addCommandHandle("list-services", new ListServices());
 		commandListener.listenEndlessly();
 	}
 
@@ -68,6 +72,17 @@ public class ExecutorServerStarter {
 			} catch(Exception ex) {
 				return "Registration to " + gatewayAddress + " failed.\nError: " + Streams.ErrToString(ex);
 			}
+		}
+	}
+
+
+	class ListServices implements Function<List<String>, String> {
+		@Override
+		public String apply(List<String> inputs) {
+			ExecutorConfiguration configuration = executor.getExecutorConfiguration();
+			String knownClasses = configuration.getSupportedServices().stream().sorted()
+					.collect(Collectors.joining("\n"));
+			return knownClasses;
 		}
 	}
 

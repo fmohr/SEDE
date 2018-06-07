@@ -25,6 +25,9 @@ public class ExecutorCoordinator {
 
 	public synchronized ExecutorHandle randomExecutorWithServiceClass(String ServiceClass) {
 		List<ExecutorHandle> executors = executorsSupportingServiceClass(ServiceClass);
+		if(executors.isEmpty()) {
+			throw new RuntimeException("No registered executor supports the given class: " + ServiceClass);
+		}
 		int randomIndex = (int) (executors.size() * Math.random());
 		return executors.get(randomIndex);
 	}

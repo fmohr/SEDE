@@ -4,11 +4,16 @@ import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.procedure.ParseConstantProcedure;
 import de.upb.sede.util.Streams;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.lang.reflect.Method;
 
 public final class SemanticStreamer {
+
+
+	private final static Logger logger = LogManager.getLogger();
 
 	public static SEDEObject readFrom(InputStream is, String type) {
 		Object data;
@@ -56,6 +61,7 @@ public final class SemanticStreamer {
 	}
 
 	public static SEDEObject readObjectFrom(InputStream is, String caster, String sourceSemanticType, String targetRealTypeCp) {
+		logger.debug("Casting from semantic type '{}' to '{}' using caster class: {}.", sourceSemanticType, targetRealTypeCp, caster);
 		String targetRealType = getSimpleNameFromClasspath(targetRealTypeCp);
 		String casterMethod = getCastMethod(sourceSemanticType, targetRealType, false);
 		Method method = getMethodFor(caster, casterMethod);
@@ -101,6 +107,7 @@ public final class SemanticStreamer {
 
 
 	public static void streamObjectInto(OutputStream os, SEDEObject content, String caster, String targetSemanticType) {
+		logger.debug("Casting from '{}' to semantic type '{}' using caster class: {}.", content.getType(), targetSemanticType, caster);
 		String sourceRealType = getSimpleNameFromClasspath(content.getType());
 		String casterMethod = getCastMethod(sourceRealType, targetSemanticType, true);
 		Method method = getMethodFor(caster, casterMethod);

@@ -16,6 +16,7 @@ import de.upb.sede.requests.RunRequest;
 import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.util.ExecutorConfigurationCreator;
+import de.upb.sede.util.WebUtil;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -30,7 +31,7 @@ public class ImagingTests {
 
 	static CoreClientHttpServer coreClient;
 
-	static String clientAddress = "localhost";
+	static String clientAddress = WebUtil.HostIpAddress();
 	static int clientPort = 7000;
 
 	static String gatewayAddress = "localhost";
@@ -78,8 +79,8 @@ public class ImagingTests {
 
 		RunRequest runRequest = new RunRequest(composition, policy, inputs);
 
-		ResolveRequest resolveRequest = coreClient.runToResolve(runRequest, "imaging");
-		IntegrationTest_Resolve.resolveToDot(resolveRequest, gateway, "testrsc/images/processing1");
+//		ResolveRequest resolveRequest = coreClient.runToResolve(runRequest, "imaging");
+//		IntegrationTest_Resolve.resolveToDot(resolveRequest, gateway, "testrsc/images/processing1");
 
 
 		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);

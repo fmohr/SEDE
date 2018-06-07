@@ -1,20 +1,20 @@
 package de.upb.sede.deployment;
 
-import java.util.List;
+import java.util.Collection;
 
 public class ServiceAssemblyAddress {
-	private final List<String> addressesOfServiceFiles;
+	private final Collection<String> addressesOfServiceFiles;
 	private final String addressOfClassConfiguration;
 	private final String addressOfTypeConfiguration;
 
-	public ServiceAssemblyAddress(List<String> addressesOfServiceFiles, String addressOfClassConfiguration,
+	public ServiceAssemblyAddress(Collection<String> addressesOfServiceFiles, String addressOfClassConfiguration,
 			String addressOfTypeConfiguration) {
 		this.addressesOfServiceFiles = addressesOfServiceFiles;
 		this.addressOfClassConfiguration = addressOfClassConfiguration;
 		this.addressOfTypeConfiguration = addressOfTypeConfiguration;
 	}
 
-	public List<String> getAddressesOfServiceFiles() {
+	public Collection<String> getAddressesOfServiceFiles() {
 		return addressesOfServiceFiles;
 	}
 

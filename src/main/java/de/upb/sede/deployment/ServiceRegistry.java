@@ -3,9 +3,11 @@ package de.upb.sede.deployment;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.cli.ParseException;
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import de.upb.sede.util.FileUtil;
@@ -22,7 +24,8 @@ public class ServiceRegistry {
 
 	public static void main(String[] args) throws ParseException {
 		ServiceRegistryConfig cmdConfiguration = new ServiceRegistryConfig(args);
-		cmdConfiguration.getParsedPathConfigFile().ifPresent(ServiceRegistry::readServiceAssemblyAddresses);
+		JSONObject configuration = cmdConfiguration.getParsedPathConfigFile().get();
+		Collection<ServiceAssemblyAddress> serviceAssemblyAddresses = readServiceAssemblyAddresses(configuration);
 
 		ConfigurationProvider configProvider = address -> {
 			return FileUtil.readFileAsString(address);
@@ -38,12 +41,27 @@ public class ServiceRegistry {
 			return content;
 		};
 
-		Collection<ServiceAssemblyAddress> tmp = null;
 		ServiceInventory inventory = new ServiceInventory(serviceFileProvider, configProvider, configProvider);
-		new ServiceRegistry(tmp, inventory);
+		new ServiceRegistry(serviceAssemblyAddresses, inventory);
 	}
 
-	private static void readServiceAssemblyAddresses(JSONObject serviceRegistryConfiguration) {
+	private static Collection<ServiceAssemblyAddress> readServiceAssemblyAddresses(
+			JSONObject serviceRegistryConfiguration) {
+		Collection<ServiceAssemblyAddress> serviceAssemblyAddresses = new ArrayList<>();
 
+		JSONArray assemblies = (JSONArray) serviceRegistryConfiguration.get("service_assemblies");
+		for (Object entryAssembly : assemblies) {
+			JSONObject assembly = (JSONObject) entryAssembly;
+			JSONArray addresses = (JSONArray) assembly.get("files");
+			Collection<String> fileAddresses = new ArrayList<>();
+			for (Object entryAddress : addresses) {
+				fileAddresses.add((String) entryAddress);
+			}
+			String typeConfigAddress = (String) assembly.get("typeconf");
+			String classConfigAddress = (String) assembly.get("classconf");
+			serviceAssemblyAddresses
+					.add(new ServiceAssemblyAddress(fileAddresses, classConfigAddress, typeConfigAddress));
+		}
+		return serviceAssemblyAddresses;
 	}
 }

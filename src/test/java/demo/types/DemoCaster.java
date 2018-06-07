@@ -11,24 +11,23 @@ import java.io.*;
 
 public class DemoCaster {
 
-	public SEDEObject cfs_Arr_NummerList(InputStream is) throws ParseException {
+	public NummerList cfs_Arr_NummerList(InputStream is) throws ParseException {
 		JSONParser parser = new JSONParser();
 		String content = Streams.InReadString(is);
 		JSONArray jsonArray = (JSONArray) parser.parse(content);
 		NummerList nummerList = new NummerList(jsonArray);
-		SEDEObject obj = new SEDEObject(NummerList.class.getName(), nummerList);
-		return obj;
+		return nummerList;
 	}
 
-	public void cts_NummerList_Arr(OutputStream os, SEDEObject field) throws IOException {
+	public void cts_NummerList_Arr(OutputStream os, NummerList nl) throws IOException {
 		JSONArray jsonArray = new JSONArray();
-		jsonArray.addAll((NummerList)field.getObject());
+		jsonArray.addAll(nl);
 		OutputStreamWriter writer = new OutputStreamWriter(os);
 		jsonArray.writeJSONString(writer);
 		writer.flush();
 	}
 
-	public SEDEObject cfs_Arr_Punkt(InputStream is) throws ParseException {
+	public Punkt cfs_Arr_Punkt(InputStream is) throws ParseException {
 		JSONParser parser = new JSONParser();
 		String content = Streams.InReadString(is);
 		JSONArray jsonArray = (JSONArray) parser.parse(content);
@@ -38,13 +37,12 @@ public class DemoCaster {
 		double x = ((Number)jsonArray.get(0)).doubleValue();
 		double y = ((Number)jsonArray.get(1)).doubleValue();
 		Punkt punkt = new Punkt(x, y);
-		SEDEObject sedeObject = new SEDEObject(Punkt.class.getName(), punkt);
-		return sedeObject;
+		return punkt;
 	}
-	public void cts_Punkt_Arr(OutputStream os, SEDEObject field) throws IOException {
+	public void cts_Punkt_Arr(OutputStream os, Punkt p) throws IOException {
 		JSONArray jsonArray = new JSONArray();
-		jsonArray.add(((Punkt)field.getObject()).x);
-		jsonArray.add(((Punkt)field.getObject()).y);
+		jsonArray.add(p.x);
+		jsonArray.add(p.y);
 		OutputStreamWriter writer = new OutputStreamWriter(os);
 		jsonArray.writeJSONString(writer);
 		writer.flush();

@@ -12,14 +12,18 @@ public class GatewayResolution implements JsonSerializable {
 
 	private Optional<String> compositionGraph;
 	private Optional<List<String>> returnFields;
+	private Optional<String> dotSvg;
 
 	public GatewayResolution(String compositionGraph, List<String> returnFields) {
 		this.compositionGraph = Optional.of(compositionGraph);
 		this.returnFields = Optional.of(returnFields);
+		this.dotSvg = Optional.empty();
 	}
 
 	public GatewayResolution() {
 		this.compositionGraph = Optional.empty();
+		this.returnFields = Optional.empty();
+		this.dotSvg = Optional.empty();
 	}
 
 	public final String getCompositionGraph() {
@@ -34,12 +38,20 @@ public class GatewayResolution implements JsonSerializable {
 		return returnFields.get();
 	}
 
+	public final void setDotSvg(String dotSvg) {
+		this.dotSvg = Optional.of(dotSvg);
+	}
+
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public JSONObject toJson() {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put("graph", getCompositionGraph());
 		jsonObject.put("return-fields", getReturnFields());
+		if(dotSvg.isPresent()){
+			jsonObject.put("dotsvg", dotSvg.get());
+		}
 		return jsonObject;
 	}
 
@@ -47,6 +59,9 @@ public class GatewayResolution implements JsonSerializable {
 	public void fromJson(Map<String, Object> data) {
 		this.compositionGraph = Optional.of((String) data.get("graph"));
 		this.returnFields = Optional.of((List<String>)data.get("return-fields"));
+		if(data.containsKey("dotsvg")){
+			this.dotSvg = Optional.of(dotSvg.get());
+		}
 	}
 
 }

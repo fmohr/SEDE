@@ -1,0 +1,2 @@
+#dont ignore jars in this directory
+!*.jar

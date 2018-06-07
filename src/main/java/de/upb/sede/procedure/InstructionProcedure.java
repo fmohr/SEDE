@@ -82,7 +82,8 @@ public class InstructionProcedure implements Procedure {
 		String contextType = getContextType(environment, nodeAttributes);
 		Class<?> contextClass = getContextClassForName(contextType);
 		// Get SEDEObjects of the parameters that the method is called with.
-		Map<String, SEDEObject> parameterObjects = getParameterObjectsInOrder(nodeAttributes.getParameters(),
+		List<String> parameterNames = nodeAttributes.getParameters();
+		List<SEDEObject> parameterObjects = getParameterObjectsInOrder(parameterNames,
 				environment);
 		// Get the class of the parameters.
 		List<String> parameterTypes = getParameterTypes(parameterObjects);
@@ -90,6 +91,7 @@ public class InstructionProcedure implements Procedure {
 		parameterClasses = getParameterClasses(parameterTypes, nodeAttributes, contextClass);
 		// Get the values of the parameters.
 		Object[] parameterValues = getParameterValues(parameterObjects);
+		castNumbers(parameterValues, parameterClasses, parameterTypes);
 		InvocationResult invocationResult;
 		// When the call is a constructor call the constructor is being reflected
 		// and called.
@@ -113,11 +115,53 @@ public class InstructionProcedure implements Procedure {
 		 * is put into the execution environment.
 		 */
 		if (nodeAttributes.getLeftsidefieldname() != null) {
-			SEDEObject outputSEDEObject = invocationResult.toSEDEObject();
+			int outputIndex = nodeAttributes.getOutputIndex();
+			SEDEObject outputSEDEObject;
+			if(outputIndex == -1) {
+				outputSEDEObject = invocationResult.toSEDEObject();
+			} else {
+				outputSEDEObject = environment.get(parameterNames.get(outputIndex));
+			}
 			String leftsideFieldname = nodeAttributes.getLeftsidefieldname();
 			environment.put(leftsideFieldname, outputSEDEObject);
+
 		}
 		task.setSucceeded();
+	}
+
+	private void castNumbers(Object[] parameterValues, Class<?>[] parameterClasses, List<String> parameterTypes) {
+		for(int i = 0, size = parameterClasses.length; i < size; i++) {
+			if(parameterTypes.get(i).equalsIgnoreCase("Number")) {
+				Class<?> exptectedClass = parameterClasses[i];
+				Object numberValue = parameterValues[i];
+				if(!(numberValue instanceof  Number)) {
+					throw new RuntimeException("Provided input is not a number: " + numberValue);
+				}
+				Number givenNmber = (Number) numberValue;
+				Number castedNumber;
+				if(exptectedClass == int.class || exptectedClass == Integer.class) {
+					castedNumber = givenNmber.intValue();
+				}
+				else if(exptectedClass == byte.class || exptectedClass == Byte.class) {
+					castedNumber = givenNmber.byteValue();
+				}
+				else if(exptectedClass == short.class || exptectedClass == Short.class) {
+					castedNumber = givenNmber.shortValue();
+				}
+				else if(exptectedClass == long.class || exptectedClass == Long.class) {
+					castedNumber = givenNmber.longValue();
+				}
+				else if(exptectedClass == float.class || exptectedClass == Float.class) {
+					castedNumber = givenNmber.floatValue();
+				}
+				else if(exptectedClass == double.class || exptectedClass == Double.class) {
+					castedNumber = givenNmber.doubleValue();
+				} else{
+					throw new RuntimeException("Cannot cast number to the expected class: " + exptectedClass);
+				}
+				parameterValues[i] = castedNumber;
+			}
+		}
 	}
 
 	/**
@@ -154,9 +198,9 @@ public class InstructionProcedure implements Procedure {
 		}
 	}
 
-	private Object[] getParameterValues(Map<String, SEDEObject> parameterObjects) {
+	private Object[] getParameterValues(List<SEDEObject> parameterObjects) {
 		List<Object> inOrderObjects = new ArrayList<>(parameterObjects.size());
-		for (SEDEObject sedeObject : parameterObjects.values()) {
+		for (SEDEObject sedeObject : parameterObjects) {
 			inOrderObjects.add(sedeObject.getObject());
 		}
 		Object[] parameterArray = new Object[inOrderObjects.size()];
@@ -170,7 +214,7 @@ public class InstructionProcedure implements Procedure {
 		Object newInstance;
 		try {
 			constructor = contextClass.getConstructor(parameterClasses);
-			newInstance = constructor.newInstance(parameterValues);
+ 			newInstance = constructor.newInstance(parameterValues);
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -226,9 +270,9 @@ public class InstructionProcedure implements Procedure {
 		return new InvocationResult(outputValue, outputType);
 	}
 
-	private List<String> getParameterTypes(Map<String, SEDEObject> parameterObjects) {
+	private List<String> getParameterTypes(List<SEDEObject> parameterObjects) {
 		List<String> paramTypes = new ArrayList<>();
-		parameterObjects.values().stream().forEach(sedeObj -> paramTypes.add(sedeObj.getType()));
+		parameterObjects.stream().forEach(sedeObj -> paramTypes.add(sedeObj.getType()));
 		return paramTypes;
 	}
 
@@ -243,11 +287,11 @@ public class InstructionProcedure implements Procedure {
 	 * @return Variable names and their corresponding object in order of the
 	 *         parameters
 	 */
-	private Map<String, SEDEObject> getParameterObjectsInOrder(List<String> parameters,
+	private List<SEDEObject> getParameterObjectsInOrder(List<String> parameters,
 			ExecutionEnvironment environment) {
-		Map<String, SEDEObject> result = new LinkedHashMap<>(parameters.size());
-		parameters.forEach(varName -> result.put(varName, environment.get(varName)));
-		return result;
+		List<SEDEObject> params = new ArrayList<>(parameters.size());
+		parameters.forEach(varName -> params.add(environment.get(varName)));
+		return params;
 	}
 
 	/**
@@ -497,6 +541,7 @@ public class InstructionProcedure implements Procedure {
 		private final String fmInstruction;
 		private final List<String> parameters;
 		private final String leftSideFieldType;
+		private final int outputIndex;
 
 		@SuppressWarnings("unchecked")
 		public InstructionNodeAttributes(Task task) {
@@ -510,6 +555,12 @@ public class InstructionProcedure implements Procedure {
 			this.fmInstruction = (String) parameters.get("fmInstruction");
 			this.parameters = (List<String>) parameters.get("params");
 			this.leftSideFieldType = (String) parameters.get("leftsidefieldtype");
+			Number outIndex = (Number) parameters.get("output-index");
+			if(outIndex == null) {
+				outputIndex = -1;
+			} else {
+				outputIndex = outIndex.intValue();
+			}
 		}
 
 		public String getLeftsidefieldType() {
@@ -546,6 +597,10 @@ public class InstructionProcedure implements Procedure {
 
 		public List<String> getParameters() {
 			return parameters;
+		}
+
+		public int getOutputIndex() {
+			return outputIndex;
 		}
 	}
 

@@ -1,0 +1,6 @@
+{
+    "capabilities": [],
+    "threadNumber": 2,
+    "services": ["Catalano.Imaging.Filters.Resize", "Catalano.Imaging.Filters.Crop"],
+    "serviceStoreLocation": "instances"
+}

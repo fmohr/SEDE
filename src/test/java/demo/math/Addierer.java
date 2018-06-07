@@ -12,7 +12,7 @@ public class Addierer implements Serializable {
 	private static final long serialVersionUID = 1L;
 	final double basisZahl;
 
-	public Addierer(double basisZahl) {
+	public Addierer(int basisZahl) {
 		this.basisZahl = basisZahl;
 	}
 

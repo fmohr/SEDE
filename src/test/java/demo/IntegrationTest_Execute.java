@@ -200,8 +200,8 @@ public class IntegrationTest_Execute {
 				RunRequest runRequest = new RunRequest();
 				runRequest.fromJsonString(jsonRunRequest);
 
-				ResolveRequest resolveRequest = cc.runToResolve(runRequest, "id123");
-				IntegrationTest_Resolve.resolveToDot(resolveRequest, gateway, pathToRequest);
+//				ResolveRequest resolveRequest = cc.runToResolve(runRequest, "id123");
+//				IntegrationTest_Resolve.resolveToDot(resolveRequest, gateway, pathToRequest);
 
 				String requestId = cc.run(runRequest, null);
 				cc.join(requestId, false);
@@ -222,7 +222,6 @@ public class IntegrationTest_Execute {
 	public void testHttpBenchmark() throws InterruptedException {
 		CoreClientHttpServer cc = getHttpClient();
 		runBenchmark(cc);
-		cc.getClientExecutor().shutdown();
 	}
 
 

@@ -4,19 +4,24 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.json.simple.parser.ParseException;
-
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.exec.ExecutorConfiguration;
 
-public abstract class ServiceInventory {
+public class ServiceInventory {
 
 	List<ServiceAssembly> serviceAssamblies;
 
 	ServiceFileProvider serviceFileProvider;
 	ConfigurationProvider classConfigProvider;
 	ConfigurationProvider typeConfigProvider;
+
+	public ServiceInventory(ServiceFileProvider serviceFileProvider, ConfigurationProvider classConfigProvider,
+			ConfigurationProvider typeConfigProvider) {
+		this.serviceFileProvider = serviceFileProvider;
+		this.classConfigProvider = classConfigProvider;
+		this.typeConfigProvider = typeConfigProvider;
+	}
 
 	public Collection<ServiceAssembly> getServiceAssembliesFor(ExecutorConfiguration execConfig) {
 		Collection<ServiceAssembly> neededAssemblies = serviceAssamblies.stream()

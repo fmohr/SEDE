@@ -10,7 +10,8 @@ public class ServiceAssembly {
 	private ClassesConfig classConfiguration;
 	private OnthologicalTypeConfig typeConfiguration;
 
-	public ServiceAssembly(Collection<byte[]> serviceFiles, ClassesConfig classConfig, OnthologicalTypeConfig typeConfig) {
+	public ServiceAssembly(Collection<byte[]> serviceFiles, ClassesConfig classConfig,
+			OnthologicalTypeConfig typeConfig) {
 		this.serviceFiles = serviceFiles;
 		this.classConfiguration = classConfig;
 		this.typeConfiguration = typeConfig;

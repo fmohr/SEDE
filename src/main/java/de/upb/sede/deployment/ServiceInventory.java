@@ -26,17 +26,16 @@ public abstract class ServiceInventory {
 		return neededAssemblies;
 	}
 
-	public void loadServices(Collection<ServiceAssemblyLoad> serviceAssemblyLoad) throws ParseException {
-		for (ServiceAssemblyLoad addressObject : serviceAssemblyLoad) {
-			Collection<byte[]> serviceFiles = addressObject.getAddressesOfServiceFiles().stream()
-					.map(address -> serviceFileProvider.provideFile(address)).collect(Collectors.toSet());
-			String classConfiguration = classConfigProvider.provideConfiuration(addressObject.getAddrOfTypeConfig());
-			String typeConfigJSON = typeConfigProvider.provideConfiuration(addressObject.getAddrOfTypeConfig());
-			ClassesConfig classConfig = new ClassesConfig();
-			classConfig.appendConfigFromJsonStrings(classConfiguration);
-			OnthologicalTypeConfig typeConfig = new OnthologicalTypeConfig();
-			typeConfig.appendConfigFromJsonStrings(typeConfigJSON);
-			serviceAssamblies.add(new ServiceAssembly(serviceFiles, classConfig, typeConfig));
-		}
+	public void loadServices(ServiceAssemblyAddress serviceAssemblyAddress) {
+		Collection<byte[]> serviceFiles = serviceAssemblyAddress.getAddressesOfServiceFiles().stream()
+				.map(address -> serviceFileProvider.provideFile(address)).collect(Collectors.toSet());
+		String classConfiguration = classConfigProvider
+				.provideConfiuration(serviceAssemblyAddress.getAddrOfTypeConfig());
+		String typeConfigJSON = typeConfigProvider.provideConfiuration(serviceAssemblyAddress.getAddrOfTypeConfig());
+		ClassesConfig classConfig = new ClassesConfig();
+		classConfig.appendConfigFromJsonStrings(classConfiguration);
+		OnthologicalTypeConfig typeConfig = new OnthologicalTypeConfig();
+		typeConfig.appendConfigFromJsonStrings(typeConfigJSON);
+		serviceAssamblies.add(new ServiceAssembly(serviceFiles, classConfig, typeConfig));
 	}
 }

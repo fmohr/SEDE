@@ -10,7 +10,7 @@ public class ServiceRegistry {
 	BasicServerResponse responseToExecutionStarter;
 	ServiceInventory inventory;
 
-	public ServiceRegistry(Collection<ServiceAssemblyLoad> serviceAssemblyLoadRequests) throws ParseException {
-		inventory.loadServices(serviceAssemblyLoadRequests);
+	public ServiceRegistry(Collection<ServiceAssemblyAddress> serviceAssemblyAddresses) {
+		serviceAssemblyAddresses.forEach(assemblyAddress -> inventory.loadServices(assemblyAddress));
 	}
 }

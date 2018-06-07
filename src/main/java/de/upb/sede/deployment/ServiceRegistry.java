@@ -17,11 +17,6 @@ public class ServiceRegistry {
 	BasicServerResponse responseToExecutionStarter;
 	ServiceInventory inventory;
 
-	public ServiceRegistry(Collection<ServiceAssemblyAddress> serviceAssemblyAddresses, ServiceInventory inventory) {
-		this.inventory = inventory;
-		serviceAssemblyAddresses.forEach(assemblyAddress -> inventory.loadServices(assemblyAddress));
-	}
-
 	public static void main(String[] args) throws ParseException {
 		ServiceRegistryConfig cmdConfiguration = new ServiceRegistryConfig(args);
 		JSONObject configuration = cmdConfiguration.getParsedPathConfigFile().get();
@@ -64,4 +59,10 @@ public class ServiceRegistry {
 		}
 		return serviceAssemblyAddresses;
 	}
+
+	public ServiceRegistry(Collection<ServiceAssemblyAddress> serviceAssemblyAddresses, ServiceInventory inventory) {
+		this.inventory = inventory;
+		serviceAssemblyAddresses.forEach(assemblyAddress -> inventory.loadServices(assemblyAddress));
+	}
+
 }

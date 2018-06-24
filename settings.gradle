@@ -8,11 +8,17 @@
  * in the user guide at https://docs.gradle.org/4.4/userguide/multi_project_builds.html
  */
 
+
+include 'SEDE.core'
+include 'SEDE.deployment'
+include 'SEDE.gateway'
+include 'SEDE.executor'
+include 'SEDE.http-apps'
+
 /*
-// To declare projects as part of a multi-project build use the 'include' method
-include 'shared'
-include 'api'
-include 'services:webservice'
-*/
+ * Projects offering services.
+ */
+include 'SEDE.services:demolib'
+include 'SEDE.services:imaging'
 
 rootProject.name = 'SEDE'

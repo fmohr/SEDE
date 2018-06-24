@@ -1,13 +1,1 @@
-{
-    "nodetype": "Instruction",
-    "param-types": [],
-    "leftsidefieldtype": "Number",
-    "method": "method1",
-    "is-service-construction": false,
-    "leftsidefieldname": "a",
-    "host": null,
-    "context": "some.service.Library",
-    "is-context-a-fieldname": false,
-    "params": [],
-    "fmInstruction": "a=some.service.Library::method1()"
-}
+{"nodetype":"Instruction","param-types":[],"output-index":-1,"leftsidefieldtype":"Number","method":"method1","is-service-construction":false,"leftsidefieldname":"a","host":null,"context":"some.service.Library","is-context-a-fieldname":false,"params":[],"fmInstruction":"a=some.service.Library::method1()"}

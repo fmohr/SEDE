@@ -1,0 +1,9 @@
+{
+	"service_assemblies": [
+		{
+			"files": ["File1.jar"],
+			"classconf": "service_classconfig.json",
+			"typeconf": "service_typeconfig.json"
+		}
+	]
+}

@@ -30,6 +30,10 @@ hs_err_pid*
 .settings/org.eclipse.jdt.core.prefs
 .settings/org.eclipse.buildship.core.prefs
 
+**/.project
+**/.settings/org.eclipse.jdt.core.prefs
+**/.settings/org.eclipse.buildship.core.prefs
+
 ##intellij ignores
 
 .idea/
@@ -39,6 +43,7 @@ hs_err_pid*
 
 .gradle
 /build/
+**/build/
 # Ignore Gradle GUI config
 gradle-app.setting
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
@@ -53,5 +58,5 @@ gradle-app.setting
 .classpath
 /testout/
 /instances/
-/out/
+**/out/
 SEDE.iml

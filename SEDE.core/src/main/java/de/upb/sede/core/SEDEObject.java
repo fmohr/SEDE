@@ -37,6 +37,12 @@ public class SEDEObject implements JsonSerializable {
 		// dont make this public. its only used by fromJson method.
 	}
 
+	/**
+	 * Base Constructor which is in turn used by all the other constructors.
+	 *
+	 * @param type Type of the data.
+	 * @param object data.
+	 */
 	public SEDEObject(String type, Object object) {
 		this.type = Objects.requireNonNull(type);
 		this.object = Objects.requireNonNull(object);
@@ -47,6 +53,15 @@ public class SEDEObject implements JsonSerializable {
 		if(isSemantic(type) && !this.isSemantic()){
 			throw new RuntimeException("BUG: given object is of semantic type but given data isn't a byte array: " + object.getClass());
 		}
+	}
+
+	/**
+	 * Constructor for primitve objects.
+	 * @param type primitve type
+	 * @param object data
+	 */
+	public SEDEObject(PrimitiveType type, Object object) {
+		this(type.name(), object);
 	}
 
 

@@ -72,7 +72,7 @@ public class ExecutionPool {
 		}
 	}
 
-	public synchronized  Execution getExecution(String requestId) {
-		return execMap.get(requestId);
+	public synchronized  Execution getExecution(String execId) {
+		return execMap.get(execId);
 	}
 }

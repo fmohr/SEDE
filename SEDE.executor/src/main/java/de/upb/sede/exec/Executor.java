@@ -57,12 +57,16 @@ public class Executor implements IExecutor{
 	}
 
 
-	public Execution getExecution(String requestId) {
-		return execPool.getExecution(requestId);
+	public Execution getExecution(String execId) {
+		return execPool.getExecution(execId);
 	}
 
-	public Execution getOrCreateExecution(String requestId) {
-		return execPool.getOrCreateExecution(requestId);
+	public Execution getOrCreateExecution(String execId) {
+		return execPool.getOrCreateExecution(execId);
+	}
+
+	public boolean execIdTaken(String execId) {
+		return execPool.hasExecution(execId);
 	}
 
 	public ExecutionPool getExecPool() {
@@ -89,6 +93,13 @@ public class Executor implements IExecutor{
 	public synchronized Execution exec(ExecRequest execRequest){
 		String execId = execRequest.getRequestID();
 
+		/* First check if execution id is taken: */
+		if(execIdTaken(execId)) {
+			/*
+				Throw exception signaling that the exec Id is already occupied:
+			 */
+			throw new RuntimeException("Execution Id was already taken: " + execId);
+		}
 		Execution exec = getOrCreateExecution(execRequest.getRequestID());
 		exec.getRunnableTasksObservable().observe(taskWorkerEnqueuer);
 

@@ -10,6 +10,7 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.jar.Attributes;
 
+import de.upb.sede.exceptions.DependecyTaskFailed;
 import de.upb.sede.exec.ServiceInstance;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -74,8 +75,26 @@ public class InstructionProcedure implements Procedure {
 
 	static Logger logger = LogManager.getLogger(InstructionProcedure.class);
 
+	/**
+	 * If there is a fieldname on the leftside of the instruction signal the execution-environment that the fieldname wont be available.
+	 * @param task
+	 */
+	public void processFail(Task task) {
+		InstructionNodeAttributes nodeAttributes = new InstructionNodeAttributes(task);
+		String fieldname = nodeAttributes.getLeftsidefieldname();
+		if(fieldname != null) {
+			logger.debug("Instruction {} failed. Marking field {} unavailable.", task.toDebugString(), fieldname);
+			task.getExecution().getEnvironment().remove(fieldname); // remove the field
+			task.getExecution().getEnvironment().markUnavailable(fieldname); // mark the field unavailable
+		}
+	}
+
+	/**
+	 * Processes the given task by carrying out the instruction using reflection.
+	 * @param task
+	 */
 	@Override
-	public void process(Task task) {
+	public void processTask(Task task) {
 		ExecutionEnvironment environment = task.getExecution().getEnvironment();
 		InstructionNodeAttributes nodeAttributes = new InstructionNodeAttributes(task);
 		// Get class to be called.

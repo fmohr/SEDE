@@ -46,6 +46,7 @@ public class ExecutionPool {
 
 	synchronized  void startExecution(String execId) {
 		Execution exec = execMap.get(execId);
+		exec.start();
 		if(exec!=null){
 			exec.getState().observe(executionObserver);
 		}

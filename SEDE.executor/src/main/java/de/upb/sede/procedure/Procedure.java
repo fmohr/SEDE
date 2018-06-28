@@ -4,11 +4,8 @@ import de.upb.sede.exec.Task;
 
 public interface Procedure {
 
+	void processTask(Task task);
 
-	public abstract void process(Task task);
+	default void processFail(Task task) {}
 
-
-	public default void processFail(Task task) {
-		// default implementation does nothing
-	}
 }

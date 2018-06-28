@@ -49,7 +49,7 @@ public class Executor implements IExecutor{
 		workerPool.bindProcedure("CastType", CastTypeProcedure::new);
 		workerPool.bindProcedure("DeleteField", null); // TODO
 		workerPool.bindProcedure("ServiceInstanceStorage", ServiceInstanceStorageProcedure::new);
-		// send graph and transmit data needs to be specified..
+		// send graph and transmit data needs to be bounded from outside because based on the type of this executor they require different of implementions.
 	}
 
 	public WorkerPool getWorkerPool() {
@@ -66,7 +66,7 @@ public class Executor implements IExecutor{
 	}
 
 	public boolean execIdTaken(String execId) {
-		return execPool.hasExecution(execId);
+		return execPool.getOrCreateExecution(execId).hasStarted();
 	}
 
 	public ExecutionPool getExecPool() {

@@ -153,13 +153,13 @@ public class IntegrationTest_Execute {
 	}
 
 
-//	@Test //TODO
+	@Test //TODO
 	public void testLocalFail() {
 		CoreClient cc = getLocalClient();
 		runFailInstruction(cc);
 	}
 
-//	@Test //TODO
+	@Test //TODO
 	public void testHttpFail() {
 		CoreClientHttpServer cc = getHttpClient();
 		runFailInstruction(cc);
@@ -220,6 +220,12 @@ public class IntegrationTest_Execute {
 	public void testHttpBenchmark() throws InterruptedException {
 		CoreClientHttpServer cc = getHttpClient();
 		runBenchmark(cc);
+		System.gc();
+		System.gc();
+		System.gc();
+		Thread.sleep(500);
+		Assert.assertEquals(0, executor1.getWorkerPool().futueListSize());
+
 	}
 
 
@@ -240,7 +246,7 @@ public class IntegrationTest_Execute {
 				logger.error("Error during parsing: " + pathToRequest + ":", ex);
 			}
 		}
-		int reruns = 100;
+		int reruns = 2000;
 
 		for (int i = 0; i < reruns; i++) {
 			for (String requestId : runRequests.keySet()) {

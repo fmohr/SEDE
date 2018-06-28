@@ -123,13 +123,12 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 	static class TransmitDataOverHttp extends TransmitDataProcedure {
 
 		@Override
-		public BasicClientRequest getPutDataRequest(Task task) {
+		public BasicClientRequest getPutDataRequest(Task task, boolean unavailable) {
 			Map<String, String> contactInfo = (Map<String, String>) task.getAttributes().get("contact-info");
 			String host = contactInfo.get("host-address");
 			String fieldname = (String) task.getAttributes().get("fieldname");
 			String semType = (String) task.getAttributes().get("semantic-type");
 			String executionId = task.getExecution().getExecutionId();
-			boolean failed = task.hasFailed();
 			if (semType == null) {
 				SEDEObject sedeObject = task.getExecution().getEnvironment().get(fieldname);
 				if (sedeObject.isReal()) {
@@ -141,14 +140,13 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 				}
 			}
 			String dataPutUrl = host + "/put/" + executionId + "/" + fieldname;
-			if(task.hasFailed()) {
+			if(unavailable) {
 				dataPutUrl += "/unavailable";
 			} else {
 				dataPutUrl += "/" + semType;
 			}
 			BasicClientRequest clientRequest = new HttpURLConnectionClientRequest(dataPutUrl);
 			return clientRequest;
-//			return createPutDataRequest(host, fieldname, semType, executionId, failed);
 		}
 	}
 

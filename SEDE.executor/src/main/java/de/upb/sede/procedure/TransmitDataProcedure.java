@@ -2,6 +2,7 @@ package de.upb.sede.procedure;
 
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.SemanticStreamer;
+import de.upb.sede.exceptions.DependecyTaskFailed;
 import de.upb.sede.exec.Task;
 import de.upb.sede.util.Streams;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
@@ -16,12 +17,12 @@ import java.io.UncheckedIOException;
 public abstract class TransmitDataProcedure implements Procedure{
 
 	@Override
-	public void process(Task task) {
+	public void processTask(Task task) {
 		String fieldname = (String) task.getAttributes().get("fieldname");
 		SEDEObject sedeObjectToSend = task.getExecution().getEnvironment().get(fieldname);
 
 
-		try (BasicClientRequest putDataRequest = getPutDataRequest(task)){
+		try (BasicClientRequest putDataRequest = getPutDataRequest(task, false)){
 			OutputStream outputStream = putDataRequest.send();
 			if(sedeObjectToSend.isReal()){
 				String casterClasspath = (String) task.getAttributes().get("caster");
@@ -44,7 +45,7 @@ public abstract class TransmitDataProcedure implements Procedure{
 	}
 
 	public void processFail(Task task) {
-		try (BasicClientRequest dataUnavailableNotice = getPutDataRequest(task)){
+		try (BasicClientRequest dataUnavailableNotice = getPutDataRequest(task, true)){
 			String response = dataUnavailableNotice.send(""); // TODO what do we put in the body?
 			if(!response.isEmpty()) {
 				throw new RuntimeException("Error giving unavailability notice to:\n\t" + task.getAttributes().get("contact-info").toString()+
@@ -62,6 +63,6 @@ public abstract class TransmitDataProcedure implements Procedure{
 	  * @param task Task that demands a data transmission.
 	  * @return A BasicClientRequest to use for communication.
 	  */
-	public abstract BasicClientRequest getPutDataRequest(Task task);
+	public abstract BasicClientRequest getPutDataRequest(Task task, boolean unavailable);
 
 }

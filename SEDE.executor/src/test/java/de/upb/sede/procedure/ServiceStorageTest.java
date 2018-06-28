@@ -52,7 +52,7 @@ public class ServiceStorageTest {
 	static void runTask(boolean isLoad, String id, String cp, String fieldname) {
 		Task task = createTask(isLoad,id,cp,fieldname);
 		ServiceInstanceStorageProcedure procedure = new ServiceInstanceStorageProcedure();
-		procedure.process(task);
+		procedure.processTask(task);
 	}
 
 	static Task createTask(boolean isLoad, String id, String cp, String fieldname) {

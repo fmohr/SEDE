@@ -28,7 +28,7 @@ public class InstructionProcedureTest {
 		Task task;
 		final String resultAddObject = "resultAddObject";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("addObject", resultAddObject));
-		new InstructionProcedure().process(task);
+		new InstructionProcedure().processTask(task);
 		Assert.assertTrue(execution.getEnvironment().get(resultAddObject) != null);
 		Assert.assertTrue(execution.getEnvironment().get(resultAddObject).getObject() instanceof Integer);
 		Integer addObject = (Integer) execution.getEnvironment().get(resultAddObject).getObject();
@@ -36,7 +36,7 @@ public class InstructionProcedureTest {
 
 		final String resultSubtractObject = "resultSubtractObject";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("subtractObject", resultSubtractObject));
-		new InstructionProcedure().process(task);
+		new InstructionProcedure().processTask(task);
 		Assert.assertTrue(execution.getEnvironment().get(resultSubtractObject) != null);
 		Assert.assertTrue(execution.getEnvironment().get(resultSubtractObject).getObject() instanceof Integer);
 		Integer subtractObject = (Integer) execution.getEnvironment().get(resultSubtractObject).getObject();
@@ -44,7 +44,7 @@ public class InstructionProcedureTest {
 
 		final String resultMultiplyObject = "resultMultiplyObject";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("multiplyObject", resultMultiplyObject));
-		new InstructionProcedure().process(task);
+		new InstructionProcedure().processTask(task);
 		Assert.assertTrue(execution.getEnvironment().get(resultMultiplyObject) != null);
 		Assert.assertTrue(execution.getEnvironment().get(resultMultiplyObject).getObject() instanceof Integer);
 		Integer multiplyObject = (Integer) execution.getEnvironment().get(resultMultiplyObject).getObject();
@@ -52,7 +52,7 @@ public class InstructionProcedureTest {
 
 		final String resultDivideObject = "resultDivideObject";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("divideObject", resultDivideObject));
-		new InstructionProcedure().process(task);
+		new InstructionProcedure().processTask(task);
 		Assert.assertTrue(execution.getEnvironment().get(resultDivideObject) != null);
 		Assert.assertTrue(execution.getEnvironment().get(resultDivideObject).getObject() instanceof Float);
 		Float divideObject = (Float) execution.getEnvironment().get(resultDivideObject).getObject();
@@ -60,7 +60,7 @@ public class InstructionProcedureTest {
 
 		final String resultAddPrimitive = "resultAddPrimitive";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("addPrimitive", resultAddPrimitive));
-		new InstructionProcedure().process(task);
+		new InstructionProcedure().processTask(task);
 		Assert.assertTrue(execution.getEnvironment().get(resultAddPrimitive) != null);
 		Assert.assertTrue(execution.getEnvironment().get(resultAddPrimitive).getObject() instanceof Integer);
 		Integer addPrimitive = (Integer) execution.getEnvironment().get(resultAddPrimitive).getObject();
@@ -69,7 +69,7 @@ public class InstructionProcedureTest {
 		final String resultSubtractPrimitive = "resultSubtractPrimitive";
 		task = new Task(execution, "testTask",
 				new TestTaskParametersNumber("subtractPrimitive", resultSubtractPrimitive));
-		new InstructionProcedure().process(task);
+		new InstructionProcedure().processTask(task);
 		Assert.assertTrue(execution.getEnvironment().get(resultSubtractPrimitive) != null);
 		Assert.assertTrue(
 				execution.getEnvironment().get(resultSubtractPrimitive).getObject() instanceof Integer);
@@ -80,7 +80,7 @@ public class InstructionProcedureTest {
 		final String resultMultiplyPrimitive = "resultMultiplyPrimitive";
 		task = new Task(execution, "testTask",
 				new TestTaskParametersNumber("multiplyPrimitive", resultMultiplyPrimitive));
-		new InstructionProcedure().process(task);
+		new InstructionProcedure().processTask(task);
 		Assert.assertTrue(execution.getEnvironment().get(resultMultiplyPrimitive) != null);
 		Assert.assertTrue(
 				execution.getEnvironment().get(resultMultiplyPrimitive).getObject() instanceof Integer);
@@ -90,7 +90,7 @@ public class InstructionProcedureTest {
 
 		final String resultDividePrimitive = "resultDividePrimitive";
 		task = new Task(execution, "testTask", new TestTaskParametersNumber("dividePrimitive", resultDividePrimitive));
-		new InstructionProcedure().process(task);
+		new InstructionProcedure().processTask(task);
 		Assert.assertTrue(execution.getEnvironment().get(resultDividePrimitive) != null);
 		Assert.assertTrue(execution.getEnvironment().get(resultDividePrimitive).getObject() instanceof Float);
 		Float dividePrimitive = (Float) execution.getEnvironment().get(resultDividePrimitive).getObject();
@@ -111,7 +111,7 @@ public class InstructionProcedureTest {
 				put("params", Arrays.asList("String_1"));
 			}
 		});
-		new InstructionProcedure().process(task);
+		new InstructionProcedure().processTask(task);
 		Assert.assertTrue(execution.getEnvironment().get(resultStringLength) != null);
 		Assert.assertTrue(execution.getEnvironment().get(resultStringLength).getObject() instanceof Integer);
 		Integer lengthString = (Integer) execution.getEnvironment().get(resultStringLength).getObject();
@@ -132,7 +132,7 @@ public class InstructionProcedureTest {
 				put("params", Arrays.asList("String_1", "String_2"));
 			}
 		});
-		new InstructionProcedure().process(task);
+		new InstructionProcedure().processTask(task);
 		Assert.assertTrue(execution.getEnvironment().get(resultConcat) != null);
 		Assert.assertTrue(execution.getEnvironment().get(resultConcat).getObject() instanceof String);
 		String concat = (String) execution.getEnvironment().get(resultConcat).getObject();
@@ -182,7 +182,7 @@ public class InstructionProcedureTest {
 				put("params", Arrays.asList("2"));
 			}
 		});
-		new InstructionProcedure().process(task);
+		new InstructionProcedure().processTask(task);
 		Assert.assertTrue(execution.getEnvironment().get(resultCalc) != null);
 		Assert.assertTrue(execution.getEnvironment().get(resultCalc).getObject() instanceof Punkt);
 		Punkt calc = (Punkt) execution.getEnvironment().get(resultCalc).getObject();
@@ -209,7 +209,7 @@ public class InstructionProcedureTest {
 				put("params", Arrays.asList("0", "1"));
 			}
 		});
-		new InstructionProcedure().process(task);
+		new InstructionProcedure().processTask(task);
 		SEDEObject newService = execution.getEnvironment().get(newInstance);
 		Assert.assertTrue(newService.isServiceInstance());
 		Assert.assertEquals(Gerade.class, newService.getServiceInstance().getClass());

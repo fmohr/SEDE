@@ -1,5 +1,6 @@
 package de.upb.sede.procedure;
 
+import de.upb.sede.exceptions.DependecyTaskFailed;
 import de.upb.sede.exceptions.ErrorInProcedureException;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.core.SEDEObject;
@@ -17,7 +18,8 @@ import java.util.Objects;
 public class ParseConstantProcedure implements Procedure {
 
 	@SuppressWarnings("unchecked")
-	public void process(Task task) {
+	public void processTask(Task task)
+	{
 		String constant = (String) task.getAttributes().get("constant");
 
 		SEDEObject.PrimitiveType type = typeFromAttributes((Map<String, Boolean>) task.getAttributes());

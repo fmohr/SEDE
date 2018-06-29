@@ -102,6 +102,10 @@ public class WorkerPool {
 		return executionFutureMap.size();
 	}
 
+	public void removeExecution(Execution exec) {
+		executionFutureMap.remove(exec);
+	}
+
 
 	private static class TaskRunner implements  Runnable {
 		private Task task;

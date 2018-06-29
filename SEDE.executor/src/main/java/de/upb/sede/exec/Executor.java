@@ -34,11 +34,18 @@ public class Executor implements IExecutor{
 
 	private final Observer<Task> taskWorkerEnqueuer;
 
+	private final Observer<Execution> executionGarbageCollector;
+
 	public Executor(ExecutorConfiguration execConfig) {
 		this.execPool = new ExecutionPool(execConfig);
 		this.config = execConfig;
 		this.workerPool = new WorkerPool(execConfig.getThreadNumber());
 		this.taskWorkerEnqueuer = Observer.lambda(t->true,  workerPool::processTask, t->false);
+		this.executionGarbageCollector = Observer.lambda(	Execution::hasExecutionFinished,  // when an execution is done, ..
+				exec -> {
+					execPool.removeExecution(exec);
+					workerPool.removeExecution(exec);
+				});
 		bindProcedureNames();
 	}
 
@@ -105,7 +112,9 @@ public class Executor implements IExecutor{
 
 		deserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
 
-		execPool.startExecution(execId);
+		exec.getState().observe(executionGarbageCollector);
+		exec.start();
+
 		logger.debug("Execution request {} started.", execRequest.getRequestID());
 		return exec;
 	}

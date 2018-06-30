@@ -41,11 +41,8 @@ public class Executor implements IExecutor{
 		this.config = execConfig;
 		this.workerPool = new WorkerPool(execConfig.getThreadNumber());
 		this.taskWorkerEnqueuer = Observer.lambda(t->true,  workerPool::processTask, t->false);
-		this.executionGarbageCollector = Observer.lambda(	Execution::hasExecutionFinished,  // when an execution is done, ..
-				exec -> {
-					execPool.removeExecution(exec);
-					workerPool.removeExecution(exec);
-				});
+		this.executionGarbageCollector = Observer.<Execution>lambda(Execution::hasExecutionFinished,  // when an execution is done, .
+				this::removeExecution);
 		bindProcedureNames();
 	}
 
@@ -78,6 +75,11 @@ public class Executor implements IExecutor{
 
 	public ExecutionPool getExecPool() {
 		return execPool;
+	}
+
+	public void removeExecution(Execution execution) {
+		execPool.removeExecution(execution);
+		workerPool.removeExecution(execution);
 	}
 
 	@Override

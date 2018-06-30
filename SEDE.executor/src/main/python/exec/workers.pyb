@@ -1,0 +1,282 @@
+import atexit
+from exec.execution import Task
+import itertools
+import queue
+import threading
+import weakref
+import os
+import inspect
+import ctypes
+import logging
+from weakref import WeakKeyDictionary
+
+# Workers are created as daemon threads. This is done to allow the interpreter
+# to exit when there are still idle threads in a ThreadPoolExecutor's thread
+# pool (i.e. shutdown() was not called). However, allowing workers to die with
+# the interpreter has two undesirable properties:
+#   - The workers would still be running during interpreter shutdown,
+#     meaning that they would fail in unpredictable ways.
+#   - The workers could be killed while evaluating a work item, which could
+#     be bad if the callable being evaluated has external side-effects e.g.
+#     writing to a file.
+#
+# To work around this problem, an exit handler is installed which tells the
+# workers to exit when their work queues are empty and then waits until the
+# threads finish.
+
+_threads_queues = weakref.WeakKeyDictionary()
+_shutdown = False
+
+def _python_exit():
+    global _shutdown
+    _shutdown = True
+    items = list(_threads_queues.items())
+    for t, q in items:
+        q.put(None)
+    for t, q in items:
+        t.join()
+         
+# install exit handler:
+atexit.register(_python_exit)
+
+
+
+class BrokenThreadPool(Exception):
+    """
+    Raised when a worker thread in a ThreadPoolExecutor failed initializing.
+    """
+
+class Interruption(Exception) :
+    """
+    Raised while working on a task whose execution has been interrupted.
+    """
+
+class _Future(object): 
+    def __init__(self):
+        self.canceled = False
+        self.workingThread = None
+
+    def cancel(self):
+        self.canceled = True
+        if self.workingThread is not None: 
+            self.workingThread.raiseExc(Interruption())
+
+    def startRun(self, wt):
+        self.workingThread = wt
+
+    def finishRun(self):
+        self.workingThread = None
+
+
+def _async_raise(tid, exctype):
+    '''Raises an exception in the threads with id tid'''
+    if not inspect.isclass(exctype):
+        raise TypeError("Only types can be raised (not instances)")
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid,
+                                                  ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        # "if it returns a number greater than one, you're in trouble,
+        # and you should call it again with exc=NULL to revert the effect"
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, 0)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+
+
+class ThreadWithExc(threading.Thread):
+    '''A thread class that supports raising exception in the thread from
+       another thread.
+    '''
+    def _set_tid(self, t_id) : 
+        self._thread_id = t_id
+
+    def _get_tid(self):
+        """determines this (self's) thread id
+
+        CAREFUL : this function is executed in the context of the caller
+        thread, to get the identity of the thread represented by this
+        instance.
+        """
+        if not self.isAlive():
+            raise threading.ThreadError("the thread is not active")
+
+        # do we have it cached?
+        if hasattr(self, "_thread_id"):
+            #pylint: disable=E0203
+            return self._thread_id
+
+        # no, look for it in the _active dict
+        for tid, tobj in threading._active.items():
+            if tobj is self:
+                self._thread_id = tid
+                return tid
+
+        
+        raise AssertionError("could not determine the thread's id")
+
+    def raiseExc(self, exctype):
+        """Raises the given exception type in the context of this thread.
+
+        If the thread is busy in a system call (time.sleep(),
+        socket.accept(), ...), the exception is simply ignored.
+
+        If you are sure that your exception should terminate the thread,
+        one way to ensure that it works is:
+
+            t = ThreadWithExc( ... )
+            ...
+            t.raiseExc( SomeException )
+            while t.isAlive():
+                time.sleep( 0.1 )
+                t.raiseExc( SomeException )
+
+        If the exception is to be caught by the thread, you need a way to
+        check that your thread has caught it.
+
+        CAREFUL : this function is executed in the context of the
+        caller thread, to raise an excpetion in the context of the
+        thread represented by this instance.
+        """
+        _async_raise(self._get_tid(), exctype)
+
+class _TaskRunner(object):
+    def __init__(self, future : _Future, task : Task):
+        self.task = task
+        self.future = future
+
+    def run(self):
+        try:
+            # TODO run task:
+            pass
+        except Exception as exc:
+            # TODO write exception into task
+            pass
+
+
+def _worker(executor_reference, task_queue):
+    thread_reference = threading.current_thread()
+    thread_reference._set_tid(thread_reference.ident())
+
+    try:
+        while True:
+            task_runner = task_queue.get(block=True)
+            if task_runner is not None:
+                future = task_runner.future
+                try:
+                    future.startRun(thread_reference)
+                    if not future.canceled:
+                        task_runner.run()
+                    task_runner.future.finishRun()
+                except Interruption:
+                    pass
+
+                # Delete references to object.
+                del task_runner
+                continue
+            executor = executor_reference()
+            # Exit if:
+            #   - The interpreter is shutting down OR
+            #   - The executor that owns the worker has been collected OR
+            #   - The executor that owns the worker has been shutdown.
+            if _shutdown or executor is None or executor._shutdown:
+                # Flag the executor as shutting down as early as possible if it
+                # is not gc-ed yet.
+                if executor is not None:
+                    executor._shutdown = True
+                # Notice other workers
+                task_queue.put(None)
+                return
+            del executor
+            
+    except BaseException:
+        logging.critical('Exception in worker', exc_info=True)
+
+
+class WorkerPool():
+
+    # Used to assign unique thread names
+    _counter = itertools.count().__next__
+
+    def __init__(self, max_workers=1):
+        """Initializes a new ThreadPoolExecutor instance.
+
+        Args:
+            max_workers: The maximum number of threads that can be used to
+                execute the given calls.
+        """
+        if max_workers <= 0:
+            raise ValueError("max_workers must be greater than 0")
+
+        self._max_workers = max_workers
+        self._work_queue = queue.Queue()
+        self._threads = set()
+        self._broken = False
+        self._shutdown = False
+        self._shutdown_lock = threading.Lock()
+        self._thread_name_prefix = ("WorkerPool-%d" % self._counter())
+        self.future_map = WeakKeyDictionary()
+
+    def submit(self, task: Task):
+        with self._shutdown_lock:
+            if self._broken:
+                raise BrokenThreadPool(self._broken)
+
+            if self._shutdown:
+                raise RuntimeError('cannot schedule new tasks after shutdown')
+
+            if _shutdown:
+                raise RuntimeError('cannot schedule new tasks after'
+                                   'interpreter shutdown')
+
+            f = _Future()
+            t = _TaskRunner(f, task)
+
+            self._work_queue.put(t)
+            self._adjust_thread_count()
+            # Put Task into a weak map:
+            if task.execution not in self.future_map:
+                self.future_map[task.execution] = list()
+            self.future_map[task.execution].append(f)
+
+
+    def _adjust_thread_count(self):
+        # When the executor gets lost, the weakref callback will wake up
+        # the worker threads.
+        def weakref_cb(_, q=self._work_queue):
+            q.put(None)
+        # TODO(bquinlan): Should avoid creating new threads if there are more
+        # idle threads than items in the work queue.
+        num_threads = len(self._threads)
+        if num_threads < self._max_workers:
+            thread_name = '%s_%d' % (self._thread_name_prefix or self,
+                                     num_threads)
+            t = ThreadWithExc(name=thread_name, target=_worker,
+                                 args=(weakref.ref(self, weakref_cb),
+                                       self._work_queue)
+            
+            t.daemon = True
+            t.start()
+            self._threads.add(t)
+            _threads_queues[t] = self._work_queue
+
+    def _initializer_failed(self):
+        with self._shutdown_lock:
+            self._broken = ('A thread initializer failed, the thread pool '
+                            'is not usable anymore')
+            # Drain work queue and mark pending futures failed
+            while True:
+                try:
+                    work_item = self._work_queue.get_nowait()
+                except queue.Empty:
+                    break
+                if work_item is not None:
+                    work_item.future.set_exception(BrokenThreadPool(self._broken))
+
+    def shutdown(self, wait=True):
+        with self._shutdown_lock:
+            self._shutdown = True
+            self._work_queue.put(None)
+        if wait:
+            for t in self._threads:
+                t.join()
+    shutdown.__doc__ = _base.Executor.shutdown.__doc__

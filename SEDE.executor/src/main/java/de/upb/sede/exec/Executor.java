@@ -122,7 +122,7 @@ public class Executor implements IExecutor{
 	}
 
 	@Override
-	public void interrupt(String executionId) {
+	public synchronized void interrupt(String executionId) {
 		if (execPool.hasExecution(executionId)) {
 			Execution toBeInterrupted = execPool.getExecution(executionId);
 			workerPool.interruptExec(toBeInterrupted);
@@ -155,15 +155,4 @@ public class Executor implements IExecutor{
 		return config;
 	}
 
-	/**
-	 * Supplier of execution instances. <p>
-	 * Given an execution-id this method creates a new Execution object without altering the state of the executor.
-	 *
-	 * @param executionId request id of the new execution.
-	 *
-	 * @return A fresh new execution object.
-	 */
-	public Execution provideWithExecution(String executionId) {
-		return new Execution(executionId, config);
-	}
 }

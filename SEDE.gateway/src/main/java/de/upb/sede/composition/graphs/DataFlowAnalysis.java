@@ -73,9 +73,9 @@ public class DataFlowAnalysis {
 				addFieldType(fieldType);
 			} else {
 				typeName = inputFields.getInputFieldType(inputFieldname);
-				if(SEDEObject.isPrimitive(typeName)) {
+				if(SEDEObject.isPrimitive(typeName)) { // is the input either Number String boolean or nul?
 					typeClass = TypeClass.PrimitiveType;
-				} else if(SEDEObject.isReal(typeName)) {
+				} else if(resolveInfo.getTypeConfig().hasOnthologicalType(typeName)) { // is the input real data type?
 					typeClass = TypeClass.RealDataType;
 				} else if(SEDEObject.isSemantic(typeName)){
 					typeClass = TypeClass.SemanticDataType;

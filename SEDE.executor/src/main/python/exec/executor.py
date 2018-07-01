@@ -44,10 +44,12 @@ class ExecutorConfig:
         config.executor_id = uuid.uuid4().hex[0:5]
         return config
 
-    pass
 
 
 class ExecutionPool:
+    
+    execMap: dict
+    
     def __init__(self, config):
         pass
 

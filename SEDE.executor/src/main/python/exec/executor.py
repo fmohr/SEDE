@@ -1,10 +1,12 @@
 import logging
 import json
 import uuid
-from exec.execution import Execution
+from exec.execution import Execution, ExecutionEnvironment
 from util.helpers import require_not_none
 from exec.workers import WorkerPool
 from util.observing import Observable, Observer
+from util.locking import synchronized_method as synchronized
+from exec import requests
 
 class ExecutorConfig:
     capabilities = []
@@ -69,9 +71,25 @@ class Executor :
         self.execPool.remove_execution(execution)
         self.worker_pool.remove_execution(execution)
 
+    @synchronized
+    def put(self, dataputrequest : requests.DataPutRequest):
+        execution = self.execPool.get_orcreate_execution(dataputrequest.requestId)
+        environment = execution.environment()
+        if dataputrequest.unavailable :
+            # The request indicates that the data is unavailable. (wont be delivered)
+            environment.mark_unavailable(dataputrequest.fieldname)
+        else:
+            # The request contains the data:
+            environment.put(dataputrequest.fieldname, dataputrequest.data)
+
+        
+
 class ExecutionPool:
     def __init__(self, config):
         pass
 
-    def remove_execution(self, execution: Execution):
+    def remove_execution(self, execution: Execution) -> Execution:
+        pass
+    
+    def get_orcreate_execution(self, execution_id: str) -> Execution:
         pass

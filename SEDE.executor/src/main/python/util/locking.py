@@ -1,7 +1,10 @@
+"""
+functions, methods and class decorators functioning the same way java keyword 'synchronized' works.
+"""
+
 import threading
 import types
 
-# functions, methods and class decorators functioning the same way java synchronized works.
 
 def synchronized_func(func):
 	

@@ -27,6 +27,13 @@ class TaskRunner:
         Exectues the task.
         """
         self.thread_id = threading.get_ident()
+        try:
+            pass
+            # TODO
+        except Interruption:
+            pass
+        except Exception as e:
+            pass # TODO
         
 def _async_raise(tid, exctype):
     """

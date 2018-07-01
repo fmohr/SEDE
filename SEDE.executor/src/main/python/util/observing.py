@@ -1,6 +1,7 @@
 import threading
 from util.locking import synchronized_method as synchronized
 
+
 class Observer:
     def __init__(self, condition_checker, notification_consumer, remove_checker=lambda task: True):
         self.condition_checker = condition_checker
@@ -27,9 +28,9 @@ class Observable:
     def __init__(self, observedInstance):
         self.observedInstace = observedInstance
         self.observers = list()
-    
+
     @synchronized
-    def observe(self, observer : Observer):
+    def observe(self, observer: Observer):
         self.observers.append(observer)
 
     def update(self):
@@ -40,8 +41,6 @@ class Observable:
                     observer.notification(self.observedInstace)
                 if(observer.remove_when_notified(self.observedInstace)):
                     remainingObservers.remove(observer)
-        
+
         # replace observer list by the remaining list:
         self.observers = remainingObservers
-
-

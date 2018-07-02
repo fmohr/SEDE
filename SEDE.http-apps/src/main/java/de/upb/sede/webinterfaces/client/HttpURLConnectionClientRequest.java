@@ -1,15 +1,14 @@
 package de.upb.sede.webinterfaces.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 public class HttpURLConnectionClientRequest implements BasicClientRequest {
 	private final URL url;
+	private final ByteArrayOutputStream payload = new ByteArrayOutputStream();
+
 	private HttpURLConnection httpConnection;
 
 
@@ -30,17 +29,30 @@ public class HttpURLConnectionClientRequest implements BasicClientRequest {
 
 	@Override
 	public OutputStream send() {
-		try {
-			return establishHTTPConnection().getOutputStream();
-		} catch (IOException e) {
-			throw new UncheckedIOException(e);
-		}
+//		try {
+//			return establishHTTPConnection().getOutputStream();
+//		} catch (IOException e) {
+//			throw new UncheckedIOException(e);
+//		}
+		return payload;
 	}
 
 	@Override
 	public InputStream receive() {
+//		try {
+//			return establishHTTPConnection().getInputStream();
+//		} catch (IOException e) {
+//			throw new UncheckedIOException(e);
+//		}
 		try {
-			return establishHTTPConnection().getInputStream();
+			httpConnection = (HttpURLConnection) url.openConnection();
+			httpConnection.setDoInput(true);
+			httpConnection.setDoOutput(true);
+			httpConnection.setFixedLengthStreamingMode(payload.size());
+			httpConnection.connect();
+
+			httpConnection.getOutputStream().write(payload.toByteArray());
+			return httpConnection.getInputStream();
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}

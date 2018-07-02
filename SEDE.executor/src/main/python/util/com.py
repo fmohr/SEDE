@@ -10,8 +10,12 @@ def out_write_string(wfile: IO, payload: str, close: bool = True) -> None:
     if close:
         wfile.close()
 
-def in_read_string(rfile: IO, close: bool = True) -> str:
-    content = rfile.read()
+def in_read_string(rfile: IO, content_length = None, close: bool = True) -> str:
+    print("Reading stream with content length {}".format(content_length))
+    if content_length is None:
+        content = rfile.read()
+    else:
+        content = rfile.read(content_length)
     if close:
         rfile.close()
     if isinstance(content, str):
@@ -83,10 +87,18 @@ class FileServerResoponse(BasicServerResponse):
         out_write_string(outputstream, filecontent)
 
 class StringServerResponse(BasicServerResponse):
-    def receive(self, inputstream: IO, outputstream: IO, **kwargs):
-        input_string = in_read_string(inputstream)
+    def __init__(self, response_function: callable(str) = None):
+        if response_function is not None:
+            self.receive_str = response_function
+
+
+    def receive(self, inputstream: IO, outputstream: IO, closeinput = True, content_length = None, closeoutput = False, **kwargs):
+        input_string = in_read_string(inputstream, close=closeinput, content_length=content_length)
+        print("Read input: {}".format(input_string))
         server_out = self.receive_str(input_string, **kwargs)
-        out_write_string(outputstream, server_out)
+        print("Going to write output: {}".format(server_out))
+        out_write_string(outputstream, server_out, close=closeoutput)
+        print("Writing to out is done.")
 
     def receive_str(self, input_string: str, **kwargs) -> str:
         pass
@@ -129,28 +141,45 @@ class HttpClientRequest(BasicClientRequest):
 
 class MultiContextHandler(object):
     context_handlers : list
-    def __init__(self, port: int):
+    def __init__(self):
         self.context_handlers = list()
 
-    def add_context(self, context_pattern: str, responder: callable) -> None:
+    def add_context(self, context_pattern: str, responder: callable, first=False) -> None:
         context_prog = re.compile(context_pattern)
-        self.context_handlers.append((context_prog, responder))
+        if first:
+            self.context_handlers.insert(0, (context_prog, responder))
+        else:
+            self.context_handlers.append((context_prog, responder))
 
-        
     class Handler(server.BaseHTTPRequestHandler):
         def __init__(self, context_handlers, *args, **kwargs):
-            super.__init__(*args, **kwargs)
             self.context_handlers = context_handlers
+            # print("Context handler is {} big.".format(len(self.context_handlers)))
+            super().__init__(*args, **kwargs)
+
+        def do_POST(self):
+            content_length = int(self.headers.get('Content-Length'))
+            self.serve(self.rfile, content_length)
+
         def do_GET(self):
+            self.serve(io.BytesIO())
+
+        def serve(self, inputstream, length=None):
             for context, responder in self.context_handlers:
                 matching = context.match(self.path)
                 if matching:
                     url_inputs = matching.groupdict()
-                    request_responder : BasicServerResponse = responder()
+
+                    if responder is callable:
+                        request_responder: BasicServerResponse = responder()
+                    else:
+                        request_responder: BasicServerResponse = responder
+                    self.send_response(200)
                     self.send_header("Content-type", "text/html")
                     self.end_headers()
-                    self.send_response(200)
-                    request_responder.receive(inputstream=self.rfile, outputstream=self.wfile, **url_inputs)
+                    request_responder.receive(inputstream=inputstream, outputstream=self.wfile, closeinput=False, closeoutput=False, content_length=length, **url_inputs)
+                    print("Sent out response")
+                    self.flush_headers()
                     return
 
             self.send_response(404)
@@ -160,3 +189,19 @@ class MultiContextHandler(object):
 
     def __call__(self, *args, **kwargs):
         return MultiContextHandler.Handler(self.context_handlers, *args, **kwargs)
+
+
+class BasicServerTest(object):
+    def __init__(self):
+        handler = MultiContextHandler()
+        helloResponse = StringServerResponse(lambda hello, **kwargs: "Hello to u too! You said '{}'.".format(hello))
+        handler.add_context("/hallo", helloResponse)
+        nameResponse = StringServerResponse(lambda hello, **kwargs: "Hello to u, {}! You said '{}'.".format(kwargs["name"],hello))
+        handler.add_context("/hallo/(?P<name>[A-Za-z]+)", nameResponse, first=True)
+        httpserver = server.HTTPServer(("", 8080), handler)
+        try:
+            httpserver.serve_forever()
+        except KeyboardInterrupt:
+            httpserver.shutdown()
+
+# BasicServerTest()

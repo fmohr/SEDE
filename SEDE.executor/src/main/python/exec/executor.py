@@ -1,12 +1,13 @@
-import logging
 import json
+import logging
 import uuid
-from exec.execution import Execution, ExecutionEnvironment
-from util.helpers import require_not_none
-from exec.workers import WorkerPool
-from util.observing import Observable, Observer
-from util.locking import synchronized_method as synchronized
+
 from exec import requests
+from exec.execution import Execution
+from exec.workers import WorkerPool
+from util.helpers import require_not_none
+from util.locking import synchronized_method as synchronized
+from util.observing import Observer
 
 
 class ExecutorConfig:
@@ -45,11 +46,9 @@ class ExecutorConfig:
         return config
 
 
-
 class ExecutionPool:
-    
     execMap: dict
-    
+
     def __init__(self, config):
         pass
 
@@ -115,14 +114,14 @@ class Executor:
         logging.debug("Execution request {} started.".format(execId))
 
     @synchronized
-    def interrupt(self, executionId:str):
-        if self.execPool.execIdTaken(executionId): 
+    def interrupt(self, executionId: str):
+        if self.execPool.execIdTaken(executionId):
             execution = self.execPool.get_orcreate_execution(executionId)
             self.worker_pool.interrupt(execution)
             execution.interrupt()
-        
+
     def contact_info(self):
-        return {"id":self.config.executor_id}
-    
+        return {"id": self.config.executor_id}
+
     def registration(self):
         return requests.ExecutorRegistration.from_config(self.contact_info, self.config)

@@ -44,7 +44,7 @@ public final class Task implements Observer<Task>{
 	{
 		/* enable trace of task */
 		if(logger.isTraceEnabled()) {
-			final Observer<Task> logObserver = Observer.lambda(t -> true, t -> logger.debug("{}: {} updated", t, t.toDebugString()), t->false);
+			final Observer<Task> logObserver = Observer.lambda(t -> true, t -> logger.debug("{}: {} updated", t, t.getDescription()), t->false);
 			taskState.observe(logObserver);
 		}
 	}
@@ -237,11 +237,11 @@ public final class Task implements Observer<Task>{
 	}
 
 
-	public String toDebugString() {
+	public String getDescription() {
 		if(attributes == null) {
 			return "attributes are null.";
 		}
-		return "TODO let the gateway send the debug string."; //TODO
+		return (String) attributes.get("description");
 	}
 
 }

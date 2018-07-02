@@ -40,7 +40,5 @@ public abstract class StringServerResponse implements HTTPServerResponse {
 	 *            content of a request
 	 * @return the response of the request from the server
 	 */
-	public String receive(String payload){
-		throw new RuntimeException("BUG: implement this method if it is to be used.");
-	}
+	public abstract String receive(String payload);
 }

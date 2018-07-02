@@ -76,6 +76,7 @@ public final class NodeJsonSerializer {
 		try {
 			serializeMethod = NodeJsonSerializer.class.getMethod(serializeMethodName, baseNode.getClass());
 			serializedJsonObject = (JSONObject) serializeMethod.invoke(this, baseNode);
+			serializedJsonObject.put("description", baseNode.toString());
 		} catch (NoSuchMethodException e) {
 			// Deserialization method not found.
 			throw new CompositionGraphSerializationException(

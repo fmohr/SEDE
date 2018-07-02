@@ -1,6 +1,5 @@
 package de.upb.sede.exec;
 
-import de.upb.sede.exceptions.DependecyTaskFailed;
 import de.upb.sede.procedure.Procedure;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,7 +34,7 @@ public class WorkerPool {
 
 	public synchronized void processTask(Task task){
 		if(logger.isTraceEnabled()) {
-			logger.trace("{} submitted: {}", task.toString(), task.toDebugString());
+			logger.trace("{} submitted: {}", task.toString(), task.getDescription());
 		}
 
 		Procedure procedure = procedureForTask(task.getTaskName());
@@ -120,7 +119,7 @@ public class WorkerPool {
 		}
 		public void run() {
 			if(logger.isTraceEnabled())
-				logger.trace("worker STARTED working on task: {}", task.toDebugString());
+				logger.trace("worker STARTED working on task: {}", task.getDescription());
 
 			task.setStarted();
 
@@ -135,13 +134,13 @@ public class WorkerPool {
 				procedure.processFail(task);
 				task.setError(ex);
 				task.setFailed();
-				logger.error("ERROR during {}:\n", task.toDebugString(), ex);
+				logger.error("ERROR during {}:\n", task.getDescription(), ex);
 			}
 			finally {
 				task.setDone();
 			}
 			if(logger.isTraceEnabled())
-				logger.trace("worker IS DONE working on task: {}", task.toDebugString());
+				logger.trace("worker IS DONE working on task: {}", task.getDescription());
 		}
 
 		public Task getTask() {

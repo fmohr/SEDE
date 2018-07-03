@@ -5,12 +5,12 @@ from http import server
 import requests
 import re
 
-def out_write_string(wfile: IO, payload: str, close: bool = True) -> None:
+def out_write_string(wfile: IO, payload: str, close: bool = False) -> None:
     wfile.write(payload.encode())
     if close:
         wfile.close()
 
-def in_read_string(rfile: IO, content_length = None, close: bool = True) -> str:
+def in_read_string(rfile: IO, content_length = None, close: bool = False) -> str:
     print("Reading stream with content length {}".format(content_length))
     if content_length is None:
         content = rfile.read()

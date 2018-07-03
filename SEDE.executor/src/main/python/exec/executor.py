@@ -47,19 +47,34 @@ class ExecutorConfig:
 
 
 class ExecutionPool:
-    execMap: dict
+    execMap: dict(str, Execution)
+    config: ExecutorConfig
 
-    def __init__(self, config):
+    def __init__(self, config:ExecutorConfig):
+        self.config = config
+        self.execMap = dict()
         pass
 
     def remove_execution(self, execution: Execution) -> Execution:
-        pass
+        if execution.exec_id in self.execMap:
+            del self.execMap
 
     def get_orcreate_execution(self, execution_id: str) -> Execution:
-        pass
+        if execution_id in self.execMap:
+            return self.execMap
+        else:
+            logging.debug("{} created a new execution: {}", self.config.executor_id, execution_id);
+            execution = Execution(execution_id, self.config)
+            self.execMap[execution_id] = execution
+            return execution
 
     def execIdTaken(self, execId) -> bool:
-        return False
+        if execId not in self.execMap:
+            return False
+        elif self.execMap[execId].has_graph:
+            return True
+        else:
+            return False
 
 
 class Executor:

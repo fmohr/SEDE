@@ -102,6 +102,18 @@ public class NodeSerializationTest {
 		ParseConstantNode constantNodeNumber = new ParseConstantNode("1e10");
 		ParseConstantNode constantNodeNull = new ParseConstantNode("null");
 
+
+
+		String path = getJSONResourcePath("constantNodeBool");
+		FileUtil.writeStringToFile(path, njs.toJSON(constantNodeBool).toJSONString());
+		path = getJSONResourcePath("constantNodeString");
+		FileUtil.writeStringToFile(path, njs.toJSON(constantNodeString).toJSONString());
+		path = getJSONResourcePath("constantNodeNumber");
+		FileUtil.writeStringToFile(path, njs.toJSON(constantNodeNumber).toJSONString());
+		path = getJSONResourcePath("constantNodeNull");
+		FileUtil.writeStringToFile(path, njs.toJSON(constantNodeNull).toJSONString());
+
+
 		JSONAssert.assertEquals(getJSONResource("constantNodeBool"), njs.toJSON(constantNodeBool).toJSONString(), true);
 		JSONAssert.assertEquals(getJSONResource("constantNodeString"), njs.toJSON(constantNodeString).toJSONString(),
 				true);
@@ -138,7 +150,7 @@ public class NodeSerializationTest {
 		TransmitDataNode sendDataNode = new TransmitDataNode("a", contactInfo, "caster1", "semtype1");
 
 		String path = getJSONResourcePath("transmitDataNode");
-//		FileUtil.writeStringToFile(path, njs.toJSON(sendDataNode).toJSONString());
+		FileUtil.writeStringToFile(path, njs.toJSON(sendDataNode).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("transmitDataNode"), njs.toJSON(sendDataNode).toJSONString(), true);
 
 		/*
@@ -157,7 +169,7 @@ public class NodeSerializationTest {
 		Map<String, String> contactInfo = basicContactInfo("id0", "10.10.10.10:100");
 		SendGraphNode sendGraphNode = new SendGraphNode("<graph serialization>", contactInfo);
 		String path = getJSONResourcePath("sendGraphNode");
-//		FileUtil.writeStringToFile(path, njs.toJSON(sendGraphNode).toJSONString());
+		FileUtil.writeStringToFile(path, njs.toJSON(sendGraphNode).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("sendGraphNode"), njs.toJSON(sendGraphNode).toJSONString(), true);
 
 		/*
@@ -175,6 +187,8 @@ public class NodeSerializationTest {
 		 * Test serialization
 		 */
 		AcceptDataNode receiveDataNode = new AcceptDataNode("a");
+		String path = getJSONResourcePath("acceptDataNode");
+		FileUtil.writeStringToFile(path, njs.toJSON(receiveDataNode).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("acceptDataNode"), njs.toJSON(receiveDataNode).toJSONString(), true);
 
 		/*
@@ -217,7 +231,7 @@ public class NodeSerializationTest {
 		 */
 		ServiceInstanceStorageNode serviceInstanceStorageNode = new ServiceInstanceStorageNode("id_123", "a",
 				"serviceClasspath.someLib.SomeServiceClass");
-//		FileUtil.writeStringToFile(getJSONResourcePath("serviceInstanceStorageNode"), njs.toJSON(serviceInstanceStorageNode).toJSONString());
+		FileUtil.writeStringToFile(getJSONResourcePath("serviceInstanceStorageNode"), njs.toJSON(serviceInstanceStorageNode).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("serviceInstanceStorageNode"),
 				njs.toJSON(serviceInstanceStorageNode).toJSONString(), true);
 

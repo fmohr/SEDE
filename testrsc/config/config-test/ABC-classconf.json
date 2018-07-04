@@ -1,54 +1,63 @@
 {
     "A": {
         "methods": {
-            "$construct" : {
-                "params" : ["t1"]
+            "$construct": {
+                "params": [
+                    "t1"
+                ]
             },
-            "m1" : {
-                "params" : [
-                    "t1", "t2"
+            "m1": {
+                "params": [
+                    "t1",
+                    "t2"
                 ],
-                "returntype" : "t1",
-                "statemutating" : true
+                "returntype": "t1",
+                "statemutating": true
             },
-            "m2" : {
-                "params" : [
-                    "t1", 
+            "m2": {
+                "params": [
+                    "t1",
                     {
-                        "type" : "t2"
-                    }, 
+                        "type": "t2"
+                    },
                     {
-                        "type" : "t3",
-                        "statemutating" : true
+                        "type": "t3",
+                        "statemutating": true
                     }
                 ],
-                "statemutating" : false
+                "statemutating": false
             },
-            "m3" : {
-                "statemutating" : true,
-                "static":true
+            "m3": {
+                "statemutating": true,
+                "static": true
             },
-            "m4" : {
-            }
+            "m4": {}
         },
-        "wrapper" : "D"
+        "wrapper": "D"
     },
-    "B" : {
-        "extends": ["A"]
+    "B": {
+        "extends": [
+            "A"
+        ]
     },
-    "C" : {
+    "C": {
         "methods": {
-            "$construct" : {
-                "params" : ["t3", "t2"]
+            "$construct": {
+                "params": [
+                    "t3",
+                    "t2"
+                ]
             },
-            "m1" : {
-                "params" : [
+            "m1": {
+                "params": [
                     "t3"
                 ],
-                "returntype" : "t2",
-                "statemutating" : false
+                "returntype": "t2",
+                "statemutating": false
             }
         },
-        "extends": ["A"]
+        "extends": [
+            "A"
+        ]
     }
 }

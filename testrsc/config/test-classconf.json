@@ -1,32 +1,37 @@
 {
     "testlib.A": {
-        "wrapper":"some.WrapperClass",
+        "wrapper": "some.WrapperClass",
         "methods": {
-            "$construct":{
+            "$construct": {
                 "paramtypes": []
             },
-            "m":{
-                "paramtypes": ["real.Type2", "real.Type3"],
-                "returntype" : "real.Type4"
+            "m": {
+                "paramtypes": [
+                    "real.Type2",
+                    "real.Type3"
+                ],
+                "returntype": "real.Type4"
             }
         }
-    }, 
+    },
     "testlib.B": {
         "methods": {
-            "$construct":{
-                "paramtypes": ["real.Type1"]
+            "$construct": {
+                "paramtypes": [
+                    "real.Type1"
+                ]
             },
-            "m":{
-                "paramtypes": ["real.Type3"],
-                "returntype" : "real.Type2"
+            "m": {
+                "paramtypes": [
+                    "real.Type3"
+                ],
+                "returntype": "real.Type2"
             }
         }
-    }, 
-    "some.WrapperClass":{
-        "methods":{
-            "m2":{
-                
-            }
+    },
+    "some.WrapperClass": {
+        "methods": {
+            "m2": {}
         }
     }
 }

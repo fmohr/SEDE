@@ -1,1 +1,23 @@
-{"nodetype":"Instruction","param-types":["Number","Bool","List"],"output-index":-1,"leftsidefieldtype":null,"method":"method1","is-service-construction":false,"leftsidefieldname":null,"host":null,"context":"some.service.Library","is-context-a-fieldname":false,"params":["1","true","b"],"fmInstruction":"some.service.Library::method1({1,true,b})"}
+{
+    "nodetype": "Instruction",
+    "param-types": [
+        "Number",
+        "Bool",
+        "List"
+    ],
+    "output-index": -1,
+    "method": "method1",
+    "description": "some.service.Library::method1([1, true, b])",
+    "params": [
+        "1",
+        "true",
+        "b"
+    ],
+    "leftsidefieldtype": null,
+    "is-service-construction": false,
+    "leftsidefieldname": null,
+    "host": null,
+    "context": "some.service.Library",
+    "is-context-a-fieldname": false,
+    "fmInstruction": "some.service.Library::method1({1,true,b})"
+}

@@ -1,42 +1,85 @@
 from util.locking import synchronized_method as synchronized
 from util.observing import Observable, Observer
 from exec.executor import ExecutorConfig
+import logging
+
 import json
 
 
-class ExecutionEnvironment:
+class ExecutionEnvironment(dict):
+    unavailables: set
+    state: Observable
+
+    def __init__(self, executor_id, execution_id, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.unavailables = set()
+        self.state = Observable(self)
+        self.executor_id = execution_id
+        self.execution_id = execution_id
+
+    @synchronized
+    def setitem__(self, key, value):
+        logging.debug("{}.{} field update: {}", self.executor_id, self.execution_id, key)
+        super().__setitem__(key, value)
+        self.state.update()
+
     @synchronized
     def mark_unavailable(self, fieldname: str):
-        pass
+        self.unavailables.add(fieldname)
+        self.state.update()
 
     @synchronized
-    def put(self, fieldname: str, data):
-        pass
-
+    def __contains__(self, item):
+        if item in self.unavailables:
+            return False
+        else:
+            return super().__contains__(item)
 
 class Execution:
 
-    runnable_tasks: Observable
-    state: Observable
-    has_graph: bool
     exec_id: str
+
+
+    env: ExecutionEnvironment
+
+    state: Observable
+    runnable_tasks: Observable
+
+    tasks_observer : Observer
+
+    has_graph: bool = False
+    interrupted : bool = False
+
     config: ExecutorConfig
+
     unfinished_tasks:set
     waiting_tasks:set
-    task_observer:Observer
+
 
     def __init__(self, exec_id, config):
         self.exec_id = exec_id
         self.config = config
         self.unfinished_tasks = set()
         self.waiting_tasks = set()
-        # TODO set other variables
+        self.tasks_observer = Observer(lambda task: True, self.task_update_event, lambda task: False)
+        self.env = ExecutionEnvironment()
+        self.state = Observable(self)
+        self.runnable_tasks= Observable(self)
 
+
+    @synchronized
+    def task_update_event(self, task: 'Task'):
+        if task.is_waiting():
+            self.waiting_tasks.add(task)
+            self.runnable_tasks.update(task)
+        if task.started:
+            self.waiting_tasks.remove(task)
+        if task.has_finished():
+            self.unfinished_tasks.remove(task)
+
+    @synchronized
     def has_execution_finished(self) -> bool:
-        return False
-
-    def environment(self) -> ExecutionEnvironment:
-        return None
+        return self.interrupted or len(self.unfinished_tasks) == 0
 
     def deserialize_graph(self, graph: str):
         g = json.loads(graph)
@@ -67,12 +110,12 @@ class Execution:
         if task not in self.unfinished_tasks:
             self.unfinished_tasks.add(task)
             self.waiting_tasks.add(task)
-            task.state.observe(self.task_observer)
-
-
+            task.state.observe(self.tasks_observer)
 
     def interrupt(self):
-        pass
+        self.interrupted = True
+        self.state.update()
+
 
 
 class Task:
@@ -126,6 +169,12 @@ class Task:
     def update_dependecy(self):
         if len(self.dependencies) == 0:
             self.set_resolved()
+
+    def is_waiting(self):
+        return self.resolved and not self.started
+
+    def has_finished(self):
+        return self.succeeded or self.failed
 
     @synchronized
     def set_resolved(self):

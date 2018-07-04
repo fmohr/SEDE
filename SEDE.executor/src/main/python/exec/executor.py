@@ -108,13 +108,13 @@ class Executor:
     def put(self, dataputrequest: requests.DataPutRequest):
         execution = self.execPool.get_orcreate_execution(
             dataputrequest.requestId)
-        environment = execution.environment()
+        environment = execution.env
         if dataputrequest.unavailable:
             # The request indicates that the data is unavailable. (wont be delivered)
             environment.mark_unavailable(dataputrequest.fieldname)
         else:
             # The request contains the data:
-            environment.put(dataputrequest.fieldname, dataputrequest.data)
+            environment[dataputrequest.fieldname] = dataputrequest.data
 
     @synchronized
     def execute(self, execrequest: requests.ExecRequest):

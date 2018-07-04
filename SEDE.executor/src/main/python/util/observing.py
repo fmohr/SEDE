@@ -25,7 +25,7 @@ class Observable:
     Using the update function it notifies its observers with the observed instance.
     """
 
-    def __init__(self, observedInstance):
+    def __init__(self, observedInstance=None):
         self.observedInstace = observedInstance
         self.observers = list()
 
@@ -33,13 +33,16 @@ class Observable:
     def observe(self, observer: Observer):
         self.observers.append(observer)
 
-    def update(self):
+    def update(self, instance=None):
+        if instance is None and self.observedInstace is not None:
+            instance = self.observedInstace
+
         remainingObservers = list(self.observers)
         for observer in self.observers:
             with observer.lock:
-                if(observer.notify_condition(self.observedInstace)):
-                    observer.notification(self.observedInstace)
-                if(observer.remove_when_notified(self.observedInstace)):
+                if observer.notify_condition(instance):
+                    observer.notification(instance)
+                if(observer.remove_when_notified(instance)):
                     remainingObservers.remove(observer)
 
         # replace observer list by the remaining list:

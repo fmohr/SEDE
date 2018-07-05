@@ -1,5 +1,5 @@
 from util.helpers import JsonSerializable
-from exec.executor import ExecutorConfig
+from exe.executor import ExecutorConfig
 
 class RequestIdMixin(JsonSerializable):
     requestId = None

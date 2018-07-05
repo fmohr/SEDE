@@ -1,6 +1,6 @@
 from util.locking import synchronized_method as synchronized
 from util.observing import Observable, Observer
-from exec.executor import ExecutorConfig
+from exe.executor import ExecutorConfig
 import logging
 
 import json

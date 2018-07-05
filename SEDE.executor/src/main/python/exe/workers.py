@@ -6,8 +6,8 @@ import ctypes
 from concurrent.futures.thread import ThreadPoolExecutor
 from weakref import WeakKeyDictionary
 from util.locking import synchronized_method as synchornized
-from exec.execution import Task
-from exec.execution import Execution
+from exe.execution import Task
+from exe.execution import Execution
 
 class Interruption(Exception) :
     """

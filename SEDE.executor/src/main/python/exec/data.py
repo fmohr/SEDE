@@ -1,3 +1,0 @@
-
-class SEDEObject(object):
-    pass

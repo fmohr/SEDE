@@ -17,7 +17,7 @@ public class SEDEObject implements JsonSerializable {
 					return type;
 				}
 			}
-			throw new RuntimeException("BUG: search name: " + searchName);
+			throw new RuntimeException("BUG: primitive type '" + searchName + "' not defined.");
 		}
 	}
 

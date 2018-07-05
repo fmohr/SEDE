@@ -2,9 +2,9 @@ import json
 import logging
 import uuid
 
-from exec import requests
-from exec.execution import Execution
-from exec.workers import WorkerPool
+from exe import requests
+from exe.execution import Execution
+from exe.workers import WorkerPool
 from util.helpers import require_not_none
 from util.locking import synchronized_method as synchronized
 from util.observing import Observer

@@ -25,7 +25,7 @@ class JsonSerializable:
             .
             .
         
-    In exec.requests you will see this in action.
+    In exe.requests you will see this in action.
     """
     def __init__(self, *args, **kwargs):
         pass

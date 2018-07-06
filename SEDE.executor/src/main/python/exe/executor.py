@@ -1,53 +1,15 @@
-import json
 import logging
-import uuid
 
 from exe import requests
 from exe.execution import Execution
 from exe.workers import WorkerPool
-from util.helpers import require_not_none
 from util.locking import synchronized_method as synchronized
 from util.observing import Observer
-
-
-class ExecutorConfig:
-    capabilities = []
-    services = []
-    gateways = []
-    thread_count = 2
-    executor_id = "NO_ID"
-    service_store_location = "instances"
-
-    @classmethod
-    def from_json_string(cls, json_string):
-        return cls.from_dict(json.loads(json_string))
-
-    @classmethod
-    def from_dict(cls, d):
-        config = ExecutorConfig()
-
-        config.executor_id = require_not_none(d["executorId"])
-        config.thread_count = require_not_none(d["threadNumber"])
-
-        if "capabilities" in d:
-            config.capabilities = d["capabilities"]
-        if "services" in d:
-            config.services = d["services"]
-        if "gateways" in d:
-            config.gateways = d["gateways"]
-        if "serviceStoreLocation" in d:
-            config.service_store_location = d["serviceStoreLocation"]
-        return config
-
-    @classmethod
-    def empty_config(cls):
-        config = ExecutorConfig()
-        config.executor_id = uuid.uuid4().hex[0:5]
-        return config
-
+from exe.config import ExecutorConfig
+from typing import Dict
 
 class ExecutionPool:
-    execMap: dict(str, Execution)
+    execMap: Dict[str, Execution]
     config: ExecutorConfig
 
     def __init__(self, config:ExecutorConfig):
@@ -105,7 +67,7 @@ class Executor:
         self.worker_pool.remove_execution(execution)
 
     @synchronized
-    def put(self, dataputrequest: requests.DataPutRequest):
+    def put(self, dataputrequest: 'requests.DataPutRequest'):
         execution = self.execPool.get_orcreate_execution(
             dataputrequest.requestId)
         environment = execution.env
@@ -117,7 +79,7 @@ class Executor:
             environment[dataputrequest.fieldname] = dataputrequest.data
 
     @synchronized
-    def execute(self, execrequest: requests.ExecRequest):
+    def execute(self, execrequest: 'requests.ExecRequest'):
         execId = execrequest.requestId
         # First check if execution id is taken:
         if self.execPool.execIdTaken(execId):

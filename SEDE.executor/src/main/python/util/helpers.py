@@ -1,4 +1,9 @@
-import json
+import logging
+try:
+    import ujson as json
+except ImportError:
+    logging.warn("Couldnt import ujson. using built in json module instead.")
+    import json
 
 def require_not_none(some_object):
     """
@@ -45,3 +50,9 @@ class JsonSerializable:
 
     def to_dict(self, d):
         pass
+
+    def __str__(self):
+        d = dict()
+        self.to_dict(d)
+        return self.__class__.__name__ + ":" + \
+               json.dumps()

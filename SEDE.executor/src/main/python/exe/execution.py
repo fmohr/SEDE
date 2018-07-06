@@ -1,9 +1,9 @@
-from util.locking import synchronized_method as synchronized
-from util.observing import Observable, Observer
-from exe.executor import ExecutorConfig
+import json
 import logging
 
-import json
+from exe.config import ExecutorConfig
+from util.locking import synchronized_method as synchronized
+from util.observing import Observable, Observer
 
 
 class ExecutionEnvironment(dict):
@@ -35,26 +35,25 @@ class ExecutionEnvironment(dict):
         else:
             return super().__contains__(item)
 
+
 class Execution:
-
     exec_id: str
-
 
     env: ExecutionEnvironment
 
     state: Observable
     runnable_tasks: Observable
 
-    tasks_observer : Observer
+    tasks_observer: Observer
 
     has_graph: bool = False
-    interrupted : bool = False
+    interrupted: bool = False
 
-    config: ExecutorConfig
 
-    unfinished_tasks:set
-    waiting_tasks:set
+    config: 'ExecutorConfig'
 
+    unfinished_tasks: set
+    waiting_tasks: set
 
     def __init__(self, exec_id, config):
         self.exec_id = exec_id
@@ -64,8 +63,7 @@ class Execution:
         self.tasks_observer = Observer(lambda task: True, self.task_update_event, lambda task: False)
         self.env = ExecutionEnvironment()
         self.state = Observable(self)
-        self.runnable_tasks= Observable(self)
-
+        self.runnable_tasks = Observable(self)
 
     @synchronized
     def task_update_event(self, task: 'Task'):
@@ -117,13 +115,12 @@ class Execution:
         self.state.update()
 
 
-
 class Task:
     execution: Execution
 
-    task_name:str
+    task_name: str
 
-    attributes:dict
+    attributes: dict
 
     resolved = False
     started = False

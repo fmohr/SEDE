@@ -1,12 +1,12 @@
 from util.helpers import JsonSerializable
-from exe.executor import ExecutorConfig
+from exe.config import ExecutorConfig
 
 class RequestIdMixin(JsonSerializable):
     requestId = None
 
-    def __init__(self, *args,**kwargs):
-        super.__init__(*args, **kwargs)
-        self.requestId = kwargs["requestId"]
+    def __init__(self, requestId, *args,**kwargs):
+        super().__init__(*args, **kwargs)
+        self.requestId = requestId
             
     def to_dict(self, d):
         super().to_dict(d)
@@ -14,9 +14,9 @@ class RequestIdMixin(JsonSerializable):
 
 class FieldnameMixin(JsonSerializable):
     fieldname = None
-    def __init__(self, *args,**kwargs):
-        super.__init__(*args, **kwargs)
-        self.fieldname = kwargs["fieldname"]
+    def __init__(self, fieldname, *args,**kwargs):
+        super().__init__(*args, **kwargs)
+        self.fieldname = fieldname
 
     def to_dict(self, d):
         super().to_dict(d)
@@ -24,9 +24,9 @@ class FieldnameMixin(JsonSerializable):
 
 class GraphMixin(JsonSerializable):
     graph = None
-    def __init__(self, *args,**kwargs):
-        super.__init__(*args, **kwargs)
-        self.graph = kwargs["graph"]
+    def __init__(self, graph, *args,**kwargs):
+        super().__init__(*args, **kwargs)
+        self.graph = graph
 
     def to_dict(self, d):
         super().to_dict(d)
@@ -34,9 +34,9 @@ class GraphMixin(JsonSerializable):
 
 class DataMixin(JsonSerializable):
     data = None
-    def __init__(self, *args,**kwargs):
-        super.__init__(*args, **kwargs)
-        self.data = kwargs.get("data")
+    def __init__(self, data=None, *args,**kwargs):
+        super().__init__(*args, **kwargs)
+        self.data = data
 
     def to_dict(self, d):
         super().to_dict(d)
@@ -46,9 +46,9 @@ class DataMixin(JsonSerializable):
 
 class CompositionMixin(JsonSerializable):
     composition = None
-    def __init__(self, *args,**kwargs):
-        super.__init__(*args, **kwargs)
-        self.composition = kwargs["composition"]
+    def __init__(self, composition, *args,**kwargs):
+        super().__init__(*args, **kwargs)
+        self.composition = composition
 
     def to_dict(self, d):
         super().to_dict(d)
@@ -61,7 +61,7 @@ class CompositionMixin(JsonSerializable):
 #     returnDotGraph = False
 
 #     def __init__(self, *args,**kwargs):
-#         super.__init__(*args, **kwargs)
+#         super().__init__(*args, **kwargs)
 #         self.returnPolicy = kwargs.get("return-policy", self.returnPolicy)
 #         self.servicePolicy = kwargs.get("service-policy", self.servicePolicy)
 #         self.blockTillFinished = kwargs.get("block-till-finished", self.blockTillFinished)
@@ -77,9 +77,16 @@ class CompositionMixin(JsonSerializable):
 
 class DataPutRequest(RequestIdMixin, FieldnameMixin, DataMixin):
     unavailable = False
-    def __init__(self, *args,**kwargs):
-        super.__init__(*args, **kwargs)
-        self.unavailable = kwargs.get("unavailable", False)
+    def __init__(self, unavailable=False, *args,**kwargs):
+        super().__init__(*args, **kwargs)
+        self.unavailable = unavailable
+        if self.unavailable != (self._data_present()): # Xor
+            raise ValueError("BUG: Unavailable is set to {} but data is {} given."
+                             .format(self.unavailable,
+                                "" if self._data_present() else "not"))
+
+    def _data_present(self) -> bool:
+        return self.data is not None
 
     def to_dict(self, d):
         super().to_dict(d)
@@ -95,7 +102,7 @@ class ExecutorRegistration(JsonSerializable):
     supported_services = None
 
     def __init__(self, *args,**kwargs):
-        super.__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.contact_information = kwargs.get("contact-info")
         self.capabilities = kwargs.get("capabilities")
         self.supported_services = kwargs.get("supported-services")
@@ -122,7 +129,7 @@ class RunRequest(RequestIdMixin, CompositionMixin):
     inputs = None # inputs dictionary
 
     def __init__(self, *args,**kwargs):
-        super.__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.policy = kwargs["policy"]
         self.inputs = kwargs["inputs"]
 

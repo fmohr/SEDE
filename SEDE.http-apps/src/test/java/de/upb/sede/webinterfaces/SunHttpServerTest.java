@@ -40,7 +40,7 @@ public class SunHttpServerTest {
 		String answer = request.send("123");
 		Assert.assertEquals(url, answer);
 	}
-	@Test
+	// @Test
 	public void testPythonServer() {
 		HttpURLConnectionClientRequest request = new HttpURLConnectionClientRequest("localhost", 8080, "hallo");
 		System.out.println(request.send("bluub"));

@@ -10,19 +10,28 @@ def out_write_string(wfile: IO, payload: str, close: bool = False) -> None:
     if close:
         wfile.close()
 
-def in_read_string(rfile: IO, content_length = None, close: bool = False) -> str:
-    print("Reading stream with content length {}".format(content_length))
+def in_read(rfile: IO, content_length = None, close: bool = False):
     if content_length is None:
         content = rfile.read()
     else:
         content = rfile.read(content_length)
     if close:
         rfile.close()
+    return content
+
+def in_read_string(*args, **kwargs) -> str:
+    content = in_read(*args, **kwargs)
     if isinstance(content, str):
         return content
     else:
         return content.decode()
 
+def in_read_bytes(*args, **kwargs) -> bytes:
+    content = in_read(*args, **kwargs)
+    if isinstance(content, str):
+        return content.encode()
+    else:
+        return bytearray(content)
 
 class BasicClientRequest(object):
 
@@ -94,11 +103,8 @@ class StringServerResponse(BasicServerResponse):
 
     def receive(self, inputstream: IO, outputstream: IO, closeinput = True, content_length = None, closeoutput = False, **kwargs):
         input_string = in_read_string(inputstream, close=closeinput, content_length=content_length)
-        print("Read input: {}".format(input_string))
         server_out = self.receive_str(input_string, **kwargs)
-        print("Going to write output: {}".format(server_out))
         out_write_string(outputstream, server_out, close=closeoutput)
-        print("Writing to out is done.")
 
     def receive_str(self, input_string: str, **kwargs) -> str:
         pass
@@ -159,12 +165,13 @@ class MultiContextHandler(object):
 
         def do_POST(self):
             content_length = int(self.headers.get('Content-Length'))
-            self.serve(self.rfile, content_length)
+            body = io.BytesIO(self.rfile.read(content_length))
+            self.serve(body)
 
         def do_GET(self):
             self.serve(io.BytesIO())
 
-        def serve(self, inputstream, length=None):
+        def serve(self, inputstream):
             for context, responder in self.context_handlers:
                 matching = context.match(self.path)
                 if matching:
@@ -177,8 +184,7 @@ class MultiContextHandler(object):
                     self.send_response(200)
                     self.send_header("Content-type", "text/html")
                     self.end_headers()
-                    request_responder.receive(inputstream=inputstream, outputstream=self.wfile, closeinput=False, closeoutput=False, content_length=length, **url_inputs)
-                    print("Sent out response")
+                    request_responder.receive(inputstream=inputstream, outputstream=self.wfile, closeinput=False, closeoutput=False, **url_inputs)
                     self.flush_headers()
                     return
 

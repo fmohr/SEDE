@@ -3,6 +3,7 @@
     "caster": "caster1",
     "nodetype": "TransmitData",
     "semantic-type": "semtype1",
+    "description": "transmit \"a\"->id0",
     "contact-info": {
         "id": "id0",
         "host-address": "10.10.10.10:100"

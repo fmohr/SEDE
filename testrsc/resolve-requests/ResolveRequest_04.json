@@ -1,7 +1,12 @@
 {
     "client-executor": {
-        "contact-info": { "id": "client executor" },
-        "supported-services" : ["demo.math.Addierer", "demo.math.Gerade"]
+        "contact-info": {
+            "id": "client executor"
+        },
+        "supported-services": [
+            "demo.math.Addierer",
+            "demo.math.Gerade"
+        ]
     },
     "composition": [
         "a = demo.math.Addierer::__construct({1})",
@@ -23,9 +28,7 @@
         "p1 = a::summierListe({p1, p2})",
         "bool2 = s2::liagtAufGerade({p2})"
     ],
-
     "requestId": "id",
-
     "input-fields": {
         "service-instance-map": {
             "s1": {
@@ -50,6 +53,8 @@
     },
     "policy": {
         "service-policy": [],
-        "return-policy": ["p1"]
+        "return-policy": [
+            "p1"
+        ]
     }
 }

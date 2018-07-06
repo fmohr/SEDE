@@ -31,8 +31,6 @@ public interface BasicClientRequest extends Closeable{
 	 * Wraps the send receive and send method by accepting string as payload,
 	 * writing it into the send output-stream and returning the string of the
 	 * receivestream as the answer.
-	 * 
-	 * @throws IOException
 	 */
 	public default String send(String payload) {
 		/*

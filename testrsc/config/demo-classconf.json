@@ -4,8 +4,8 @@
             "$construct": {
                 "params": [
                     {
-                        "type" : "Number",
-                        "statemutating" : true
+                        "type": "Number",
+                        "statemutating": true
                     }
                 ]
             },
@@ -17,14 +17,14 @@
                     "Number"
                 ],
                 "returntype": "Number",
-                "statemutating" : false
+                "statemutating": false
             },
             "addierListe": {
                 "params": [
                     "demo.types.NummerList"
                 ],
                 "returntype": "demo.types.NummerList",
-                "statemutating" : false
+                "statemutating": false
             },
             "summierListe": {
                 "params": [
@@ -32,24 +32,24 @@
                     "demo.types.NummerList"
                 ],
                 "returntype": "demo.types.NummerList",
-                "statemutating" : false,
-                "static" : true
+                "statemutating": false,
+                "static": true
             },
             "summier": {
                 "params": [
                     "demo.types.NummerList"
                 ],
                 "returntype": "Number",
-                "statemutating" : false
+                "statemutating": false
             },
             "fail": {
                 "params": [],
                 "returntype": "demo.types.NummerList",
-                "static" : true
+                "static": true
             },
-            "sleep":{
+            "sleep": {
                 "params": [],
-                "static" : true
+                "static": true
             }
         }
     },
@@ -66,24 +66,24 @@
                     "Number"
                 ],
                 "returntype": "demo.types.Punkt",
-                "statemutating" : true
+                "statemutating": true
             },
             "liagtAufGerade": {
                 "params": [
                     "demo.types.Punkt"
                 ],
                 "returntype": "Bool",
-                "statemutating" : false
+                "statemutating": false
             },
             "achsenabschnitt": {
                 "params": [],
                 "returntype": "demo.types.Punkt",
-                "statemutating" : false
+                "statemutating": false
             },
             "nullstelle": {
                 "params": [],
                 "returntype": "demo.types.Punkt",
-                "statemutating" : false
+                "statemutating": false
             }
         }
     }

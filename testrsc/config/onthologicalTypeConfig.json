@@ -1,38 +1,38 @@
 {
-	"java.util.ArrayList": {
-		"semantic_type": "StringList",
-		"onthological_caster": "ArrayListOntologySerializer"
-	},
-	"weka.core.DenseInstance": {
-		"semantic_type": "Instance",
-		"onthological_caster": "DenseInstanceOntologySerializer"
-	},
-	"Catalano.Imaging.FastBitmap": {
-		"semantic_type": "Instance",
-		"onthological_caster": "FastBitmapOntologySerializer"
-	},
-	"weka.core.Instance": {
-		"semantic_type": "Instance",
-		"onthological_caster": "InstanceOntologySerializer"
-	},
-	"weka.core.Instances": {
-		"semantic_type": "Instances",
-		"onthological_caster": "InstancesOntologySerializer"
-	},
-	"de.upb.crc901.services.core.ServiceHandle": {
-		"semantic_type": "ServiceHandle",
-		"onthological_caster": "ServiceHandleOntologySerializer"
-	},
-	"jaicore.ml.interfaces.Instance": {
-		"semantic_type": "Instance",
-		"onthological_caster": "SimpleInstanceImplOntologySerializer"
-	},
-	"jaicore.ml.interfaces.Instances": {
-		"semantic_type": "Instances",
-		"onthological_caster": "SimpleInstancesImplOntologySerializer"
-	},
-	"jaicore.ml.interfaces.LabeledInstances": {
-		"semantic_type": "LabeledInstances",
-		"onthological_caster": "SimpleLabeledInstancesImplOntologySerializer"
-	}
+    "java.util.ArrayList": {
+        "semantic_type": "StringList",
+        "onthological_caster": "ArrayListOntologySerializer"
+    },
+    "weka.core.DenseInstance": {
+        "semantic_type": "Instance",
+        "onthological_caster": "DenseInstanceOntologySerializer"
+    },
+    "Catalano.Imaging.FastBitmap": {
+        "semantic_type": "Instance",
+        "onthological_caster": "FastBitmapOntologySerializer"
+    },
+    "weka.core.Instance": {
+        "semantic_type": "Instance",
+        "onthological_caster": "InstanceOntologySerializer"
+    },
+    "weka.core.Instances": {
+        "semantic_type": "Instances",
+        "onthological_caster": "InstancesOntologySerializer"
+    },
+    "de.upb.crc901.services.core.ServiceHandle": {
+        "semantic_type": "ServiceHandle",
+        "onthological_caster": "ServiceHandleOntologySerializer"
+    },
+    "jaicore.ml.interfaces.Instance": {
+        "semantic_type": "Instance",
+        "onthological_caster": "SimpleInstanceImplOntologySerializer"
+    },
+    "jaicore.ml.interfaces.Instances": {
+        "semantic_type": "Instances",
+        "onthological_caster": "SimpleInstancesImplOntologySerializer"
+    },
+    "jaicore.ml.interfaces.LabeledInstances": {
+        "semantic_type": "LabeledInstances",
+        "onthological_caster": "SimpleLabeledInstancesImplOntologySerializer"
+    }
 }

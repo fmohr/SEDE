@@ -1,4 +1,5 @@
 {
     "fieldname": "a",
-    "nodetype": "AcceptData"
+    "nodetype": "AcceptData",
+    "description": "accept \"a\""
 }

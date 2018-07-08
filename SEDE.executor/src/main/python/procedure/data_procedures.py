@@ -135,8 +135,10 @@ class ServiceInstanceStorageProcedure(Procedure):
                 loadedSedeObject = data.SEDEObject.from_ServiceInstance(instanceHandle)
                 task.execution.env[fieldname] = loadedSedeObject
         else:
-            instanceHandle = task.execution.env[fieldname]
-            instanceHandle: data.ServiceInstance
+            field: data.SEDEObject = task.execution.env[fieldname]
+            assert field.is_service_instance()
+            instanceHandle: data.ServiceInstance = field.data
+            assert instanceHandle.service_instance is not None
             instance_id = instanceHandle.serviceId
             with self.get_store_request(task, instance_id, service_classpath) as store_request:
                 store_request : BasicClientRequest

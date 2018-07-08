@@ -89,9 +89,9 @@ class WorkerPool:
         """
         Submits the given task to the queue of executions.
         """
-        logging.debug("%s submitted: %s", task, task.debug_string())
+        logging.debug("submitted: %s", task)
         execution = task.execution
-        procedure = self.procedure_for_task(task.taskname)
+        procedure = self.procedure_for_task(task.task_name)
         runner = TaskRunner(procedure, task)
         future = self.workers.submit(TaskRunner.run, runner)
 
@@ -129,7 +129,7 @@ class WorkerPool:
         if task_name in self.procedure_supplier:
             return self.procedure_supplier[task_name]()
         else:
-            raise Exception("Task '{}' was not bound to a procedure supplier.".format(task_name))
+            raise Exception("Task '%s' was not bound to a procedure supplier.", task_name)
     
     @synchornized
     def remove_execution(self, execution: Execution):

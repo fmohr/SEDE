@@ -4,6 +4,7 @@ import io
 from http import server
 import requests
 import re
+import os
 
 def is_bytes(something)->bool:
     return isinstance(something, (bytes, bytearray))
@@ -71,7 +72,7 @@ class BasicClientRequest(object):
         return io.BytesIO()
 
     def __enter__(self):
-        pass 
+        return self
 
     def __exit__(self, exc_type, exc_value, traceback):
         pass
@@ -107,6 +108,9 @@ class WriteFileRequest(BasicClientRequest):
         self.filepath = filepath
 
     def send(self) -> IO:
+        directory = os.path.dirname(self.filepath)
+        if not os.path.exists(directory):
+            os.makedirs(directory)
         self.filep = open(self.filepath, "wb")
         return self.filep
 

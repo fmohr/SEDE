@@ -57,10 +57,11 @@ class ServiceInstance(ServiceInstanceHandle):
         return self.service_instance is not None
 
 
+SEMANTIC = "SEMANTIC".upper()
+
 class SEDEObject(object):
     type: str
     data: None
-    SEMANTIC = "SEMANTIC".upper()
 
     def __init__(self, type, data):
         if not isinstance(type, str):
@@ -85,7 +86,7 @@ class SEDEObject(object):
 
     @classmethod
     def from_Semantic(cls, byte_arr:bytes):
-        return SEDEObject(type = SEDEObject.SEMANTIC, data=byte_arr)
+        return SEDEObject(type = SEMANTIC, data=byte_arr)
 
 
     def is_service_instance(self)->bool:
@@ -109,7 +110,7 @@ class SEDEObject(object):
             type_str = self.type
         else:
             type_str = str(self)
-        if type_str.upper() == SEDEObject.SEMANTIC:
+        if type_str.upper() == SEMANTIC:
             if isinstance(self, SEDEObject):
                 assert is_bytes(self.data)
             return True
@@ -158,7 +159,7 @@ def decode(input, input_type = None, caster = None, target_real_classpath=None)-
         raise ValueError("Input is expected to be a SEDEObject or byte. Its '%s' instead." % str(input.__class__))
 
     if input_type is None:
-        input_type = SEDEObject.SEMANTIC
+        input_type = SEMANTIC
 
     return readfrom(input, input_type)
 

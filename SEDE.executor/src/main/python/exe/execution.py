@@ -14,12 +14,12 @@ class ExecutionEnvironment(dict):
         super().__init__(*args, **kwargs)
         self.unavailables = set()
         self.state = Observable(self)
-        self.executor_id = execution_id
+        self.executor_id = executor_id
         self.execution_id = execution_id
 
     @synchronized
     def __setitem__(self, key, value):
-        logging.debug("{}.{} field update: {}", self.executor_id, self.execution_id, key)
+        logging.debug("%s.%s field update: %s", self.executor_id, self.execution_id, key)
         super().__setitem__(key, value)
         self.state.update()
 
@@ -55,25 +55,26 @@ class Execution:
     unfinished_tasks: set
     waiting_tasks: set
 
-    def __init__(self, exec_id, config):
+    def __init__(self, exec_id, config:'ExecutorConfig'):
         self.exec_id = exec_id
         self.config = config
         self.unfinished_tasks = set()
         self.waiting_tasks = set()
         self.tasks_observer = Observer(lambda task: True, self.task_update_event, lambda task: False)
-        self.env = ExecutionEnvironment()
+        self.env = ExecutionEnvironment(config.executor_id, exec_id)
         self.state = Observable(self)
-        self.runnable_tasks = Observable(self)
+        self.runnable_tasks = Observable()
 
     @synchronized
     def task_update_event(self, task: 'Task'):
         if task.is_waiting():
-            self.waiting_tasks.add(task)
             self.runnable_tasks.update(task)
-        if task.started:
+        if task.started and task in self.waiting_tasks:
             self.waiting_tasks.remove(task)
-        if task.has_finished():
+            self.state.update()
+        if task.has_finished() and task in self.unfinished_tasks:
             self.unfinished_tasks.remove(task)
+            self.state.update()
 
     @synchronized
     def has_execution_finished(self) -> bool:
@@ -156,12 +157,12 @@ class Task:
         dependecy_task.state.observe(self.dependecies_observer)
 
     @synchronized
-    def dependecy_notification_condition(self, dependecy_task):
-        return dependecy_task.finished() and dependecy_task in self.dependencies
+    def dependecy_notification_condition(self, dependecy_task:'Task'):
+        return dependecy_task.has_finished() and dependecy_task in self.dependencies
 
     @synchronized
     def dependecy_notification(self, dependency_task):
-        if self.finished():
+        if self.has_finished():
             return
         self.dependencies.remove(dependency_task)
         if dependency_task.failed:
@@ -222,7 +223,7 @@ class Task:
 
     @synchronized
     def set_failed(self):
-        if not self.failed:
+        if not self.has_finished():
             self.resolved = True
             self.started = True
             self.doneRunning = True

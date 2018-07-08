@@ -32,14 +32,6 @@ public class PlainLibGraphs {
 	public static void setupGateway() {
 		gateway = new Gateway(getPlainlibClassConfig(), getPlainlibTypeConfig());
 
-		Map<String, String> contactInfo = new HashMap<>();
-		contactInfo.put("id", "python_executor");
-		List<String> supportedServices = new ArrayList<>();
-		supportedServices.addAll(getPlainlibClassConfig().classesKnown());
-		ExecutorRegistration registration1 = new ExecutorRegistration(contactInfo, Arrays.asList("python"),
-				supportedServices);
-		logger.info(registration1.toJsonString());
-		gateway.register(registration1);
 	}
 	@Test
 	public void simplegraph(){
@@ -57,9 +49,9 @@ public class PlainLibGraphs {
 		String pathPrefix= "testrsc/resolutions/plainlib/e_" + execNr;
 		FileUtil.writeStringToFile(pathPrefix + ".svg", resolution.getDotSvg());
 		String graphString = resolution.getCompositionGraph();
-		CompositionGraph graph = GJS.fromJsonString(graphString);
-		SendGraphNode sendGraphNode = (SendGraphNode) GraphTraversal.iterateNodesWithClassname(graph, "SendGraphNode").iterator().next();
-		graphString = sendGraphNode.getGraph();
+//		CompositionGraph graph = GJS.fromJsonString(graphString);
+//		SendGraphNode sendGraphNode = (SendGraphNode) GraphTraversal.iterateNodesWithClassname(graph, "SendGraphNode").iterator().next();
+//		graphString = sendGraphNode.getGraph();
 		ExecRequest execRequest = new ExecRequest("execution_" + execNr, graphString);
 		FileUtil.writeStringToFile(pathPrefix + ".json", execRequest.toJsonString());
 	}
@@ -77,7 +69,15 @@ public class PlainLibGraphs {
 	}
 
 	private static ExecutorRegistration getClientRegistration() {
-		return ExecutorRegistration.client_registration("client");
+
+		Map<String, String> contactInfo = new HashMap<>();
+		contactInfo.put("id", "python_executor");
+		List<String> supportedServices = new ArrayList<>();
+		supportedServices.addAll(getPlainlibClassConfig().classesKnown());
+		ExecutorRegistration registration1 = new ExecutorRegistration(contactInfo, Arrays.asList("python"),
+				supportedServices);
+//		logger.info(registration1.toJsonString());
+		return registration1;
 	}
 
 }

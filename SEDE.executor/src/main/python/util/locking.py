@@ -17,16 +17,15 @@ def synchronized_func(func):
     return synced_func
 
 def synchronized_method(method):
-    
     outer_lock = threading.RLock()
-    lock_name = "__lock__"
-    
+    lock_name = "__lock__method"
+
     def sync_method(self, *args, **kws):
         with outer_lock:
-            if not hasattr(self, lock_name): setattr(self, lock_name, threading.Lock())
+            if not hasattr(self, lock_name): setattr(self, lock_name, threading.RLock())
             lock = getattr(self, lock_name)
             with lock:
-                return method(self, *args, **kws)  
+                return method(self, *args, **kws)
     return sync_method
 
 def synchronized_with(lock):

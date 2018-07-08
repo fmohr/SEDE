@@ -4,6 +4,7 @@ from exe.execution import Task
 from procedure import Procedure
 from util import reflector
 from util.reflector import traverse_package as tp
+import uuid
 
 
 class InstructionProcedure(Procedure):
@@ -20,15 +21,21 @@ class InstructionProcedure(Procedure):
         result_type = task["leftsidefieldtype"]
         # to_call
         if task["is-service-construction"]:
-            assert task["is-context-a-fieldname"]
+            assert not task["is-context-a-fieldname"]
             classpath = task["context"]
-            result = reflector.construct(classpath, *input_fields)
+            instance = reflector.construct(classpath, *input_fields)
+            instance_id = uuid.uuid4().hex[0:10]
+            result = ServiceInstance(executorId=task.execution.config.executor_id, classpath=classpath, id=instance_id)
+            result.service_instance = instance
             result_type = ServiceInstanceHandle.__name__
+
         else:
             method = task["method"]
             if task["is-context-a-fieldname"]:
                 service_fieldname = task["context"]
-                serviceinstance: ServiceInstance = env[service_fieldname]
+                field:SEDEObject = env[service_fieldname]
+                assert field.is_service_instance()
+                serviceinstance: ServiceInstance = field.data
                 result = reflector.call(serviceinstance.service_instance, method, *input_fields)
             else:
                 classpath = task["context"]

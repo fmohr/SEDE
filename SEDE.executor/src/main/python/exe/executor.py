@@ -17,19 +17,22 @@ class ExecutionPool:
         self.execMap = dict()
         pass
 
+    @synchronized
     def remove_execution(self, execution: Execution) -> Execution:
         if execution.exec_id in self.execMap:
-            del self.execMap
+            del self.execMap[execution.exec_id]
 
+    @synchronized
     def get_orcreate_execution(self, execution_id: str) -> Execution:
         if execution_id in self.execMap:
             return self.execMap
         else:
-            logging.debug("{} created a new execution: {}", self.config.executor_id, execution_id);
+            logging.debug("%s created a new execution: %s", self.config.executor_id, execution_id);
             execution = Execution(execution_id, self.config)
             self.execMap[execution_id] = execution
             return execution
 
+    @synchronized
     def execIdTaken(self, execId) -> bool:
         if execId not in self.execMap:
             return False
@@ -74,7 +77,7 @@ class Executor:
         # send graph and transmit data needs to be bounded from outside because based
         # on the type of this executor they require different of implementations.
 
-        @synchronized
+    @synchronized
     def remove_execution(self, execution: Execution):
         self.execPool.remove_execution(execution)
         self.worker_pool.remove_execution(execution)
@@ -102,6 +105,7 @@ class Executor:
         execution.deserialize_graph(execrequest.graph)
         execution.state.observe(self.executor_garbage_collector)
         logging.info("Execution request {} started.".format(execId))
+        return execution
 
     @synchronized
     def interrupt(self, executionId: str):

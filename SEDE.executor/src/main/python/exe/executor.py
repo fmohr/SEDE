@@ -1,4 +1,5 @@
-import logging
+import exe
+logging = exe.logging
 
 from exe import requests
 from exe.execution import Execution
@@ -25,7 +26,7 @@ class ExecutionPool:
     @synchronized
     def get_orcreate_execution(self, execution_id: str) -> Execution:
         if execution_id in self.execMap:
-            return self.execMap
+            return self.execMap[execution_id]
         else:
             logging.debug("%s created a new execution: %s", self.config.executor_id, execution_id);
             execution = Execution(execution_id, self.config)

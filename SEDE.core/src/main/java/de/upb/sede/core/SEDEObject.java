@@ -133,7 +133,7 @@ public class SEDEObject implements JsonSerializable {
 	 * @return Service instance handle of this sede object.
 	 */
 	public ServiceInstanceHandle getServiceHandle() {
-		if(!isServiceInstance()) {
+		if(!isServiceInstanceHandle()) {
 			throw new RuntimeException("Trying to access a service instance although SEDEObject holds object of type: \"" + getType() + "\"");
 		} else {
 			return  ((ServiceInstanceHandle)object);

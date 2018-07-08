@@ -1,4 +1,5 @@
 import logging
+from logging import Logger
 try:
     import ujson as json
 except ImportError:
@@ -56,3 +57,27 @@ class JsonSerializable:
         self.to_dict(d)
         return self.__class__.__name__ + ":" + \
                json.dumps()
+
+DEBUG_LEVELV_NUM = 5
+logging.addLevelName(DEBUG_LEVELV_NUM, "TRACE")
+logging.TRACE = 4
+
+def trace(self, message, *args, **kws):
+    if self.isEnabledFor(DEBUG_LEVELV_NUM):
+        self._log(DEBUG_LEVELV_NUM, message, args, **kws)
+
+logging.Logger.trace = trace
+
+def getlogger(loggername):
+    #create logger
+    logger = logging.getLogger(loggername)
+    # create console handler and set level to debug
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.TRACE)
+    # create formatter
+    formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    # add formatter to ch
+    ch.setFormatter(formatter)
+    # add ch to logger
+    logger.addHandler(ch)
+    return logger

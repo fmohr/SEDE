@@ -435,7 +435,8 @@ public class DataFlowAnalysis {
 		 * Create a new fieldtype for each fieldname this instruction is writing onto
 		 * (producing).
 		 */
-		if (instNode.isContextAFieldname() && methodInfo.isStateMutating()) {
+		if (instNode.isContextAFieldname() //  && methodInfo.isStateMutating() // ignore state mutating. Execution needs to keep the order.
+				) {
 			/*
 			 * the instruction is changing the state of its serviceinstance (context).
 			 */

@@ -1,4 +1,6 @@
-import logging
+import exe
+logging = exe.logging
+
 import threading
 import inspect
 import ctypes
@@ -32,7 +34,7 @@ class TaskRunner:
         Exectues the task.
         """
         self.thread_id = threading.get_ident()
-        logging.debug("worker STARTED working on task: %s", self.task)
+        logging.trace("worker STARTED working on task: %s", self.task)
         try:
             self.task.set_started()
             if not self.task.dependecy_has_failed:
@@ -50,7 +52,7 @@ class TaskRunner:
         finally:
             self.task.set_done()
 
-        logging.debug("worker IS DONE working on task: %s", self.task)
+        logging.trace("worker IS DONE working on task: %s", self.task)
         
 def _async_raise(tid, exctype):
     """
@@ -89,7 +91,7 @@ class WorkerPool:
         """
         Submits the given task to the queue of executions.
         """
-        logging.debug("submitted: %s", task)
+        logging.trace("submitted: %s", task)
         execution = task.execution
         procedure = self.procedure_for_task(task.task_name)
         runner = TaskRunner(procedure, task)

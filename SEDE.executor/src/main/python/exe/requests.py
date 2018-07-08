@@ -80,10 +80,10 @@ class DataPutRequest(RequestIdMixin, FieldnameMixin, DataMixin):
     def __init__(self, unavailable=False, *args,**kwargs):
         super().__init__(*args, **kwargs)
         self.unavailable = unavailable
-        if self.unavailable != (self._data_present()): # Xor
-            raise ValueError("BUG: Unavailable is set to {} but data is {} given."
+        if self.unavailable == (self._data_present()): # Xor
+            raise ValueError("BUG: Unavailable is set to {} but data is {}given."
                              .format(self.unavailable,
-                                "" if self._data_present() else "not"))
+                                "" if self._data_present() else "not "))
 
     def _data_present(self) -> bool:
         return self.data is not None

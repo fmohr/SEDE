@@ -1,5 +1,6 @@
 import json
-import logging
+import exe
+logging = exe.logging
 
 from exe.config import ExecutorConfig
 from util.locking import synchronized_method as synchronized
@@ -19,7 +20,7 @@ class ExecutionEnvironment(dict):
 
     @synchronized
     def __setitem__(self, key, value):
-        logging.debug("%s.%s field update: %s", self.executor_id, self.execution_id, key)
+        logging.trace("%s.%s field update: %s", self.executor_id, self.execution_id, key)
         super().__setitem__(key, value)
         self.state.update()
 

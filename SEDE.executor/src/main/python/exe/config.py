@@ -2,6 +2,9 @@ import json
 import uuid
 from util.helpers import require_not_none
 
+import exe
+logging = exe.logging
+
 
 class ExecutorConfig:
     capabilities = []
@@ -34,8 +37,10 @@ class ExecutorConfig:
             config.service_store_location = d["serviceStoreLocation"]
         return config
 
+
     @classmethod
     def empty_config(cls):
         config = ExecutorConfig()
         config.executor_id = uuid.uuid4().hex[0:5]
+        logging.info("Generated a new executor id: %s", config.executor_id)
         return config

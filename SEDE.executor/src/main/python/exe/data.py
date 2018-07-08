@@ -8,6 +8,8 @@ from util.helpers import JsonSerializable, require_not_none
 from util.com import *
 from util.reflector import traverse_package as tp
 import re
+import exe
+logging = exe.logging
 
 class PrimitiveType(Enum):
     NULL = 0

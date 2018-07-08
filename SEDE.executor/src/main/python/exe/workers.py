@@ -8,18 +8,23 @@ from weakref import WeakKeyDictionary
 from util.locking import synchronized_method as synchornized
 from exe.execution import Task
 from exe.execution import Execution
+from procedure import Procedure
 
-class Interruption(Exception) :
+class Interruption(Exception):
     """
     Raised while working on a task whose execution has been interrupted.
     """
 
 class TaskRunner:
     """
-    Is given to the executor service to run a task.
+        Is given to the executor service to run a task.
     """
-    def __init__(self, procedure):
+    task: Task
+    procedure: Procedure
+
+    def __init__(self, procedure, task):
         self.procedure = procedure
+        self.task = task
         self.thread_id = None
 
     def run(self):
@@ -27,13 +32,25 @@ class TaskRunner:
         Exectues the task.
         """
         self.thread_id = threading.get_ident()
+        logging.debug("worker STARTED working on task: %s", self.task)
         try:
-            pass
-            # TODO
+            self.task.set_started()
+            if not self.task.dependecy_has_failed:
+                self.procedure.process_task(self.task)
+            else:
+                self.procedure.process_fail(self.task)
+                self.task.set_failed()
         except Interruption:
             pass
         except Exception as e:
-            pass # TODO
+            self.task.error = e
+            self.task.set_failed()
+            self.procedure.process_fail(self.task)
+            logging.exception("ERROR during: %s", self.task)
+        finally:
+            self.task.set_done()
+
+        logging.debug("worker IS DONE working on task: %s", self.task)
         
 def _async_raise(tid, exctype):
     """
@@ -75,7 +92,7 @@ class WorkerPool:
         logging.debug("%s submitted: %s", task, task.debug_string())
         execution = task.execution
         procedure = self.procedure_for_task(task.taskname)
-        runner = TaskRunner(procedure)
+        runner = TaskRunner(procedure, task)
         future = self.workers.submit(TaskRunner.run, runner)
 
         if not execution in self.executionFutureMap:

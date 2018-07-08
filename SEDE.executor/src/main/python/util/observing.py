@@ -58,4 +58,6 @@ class Observable:
         with observer.lock:
             if observer.notify_condition(instance):
                 observer.notification(instance)
-            return observer.remove_when_notified(instance)
+                return observer.remove_when_notified(instance)
+            else:
+                return False

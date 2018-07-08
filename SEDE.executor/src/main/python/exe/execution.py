@@ -148,7 +148,8 @@ class Task:
         self.execution = execution  # reference to its execution
         self.dependencies = set()
         self.state = Observable(self)
-        self.dependecies_observer = Observer()
+        self.dependecies_observer = Observer(self.dependecy_notification_condition,
+                                             self.dependecy_notification)
 
     def add_dependency(self, dependecy_task):
         self.dependencies.add(dependecy_task)
@@ -212,7 +213,7 @@ class Task:
 
     @synchronized
     def set_succeeded(self):
-        if not self.succeeded:
+        if not self.has_finished():
             self.resolved = True
             self.started = True
             self.doneRunning = True

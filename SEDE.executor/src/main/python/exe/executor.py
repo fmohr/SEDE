@@ -59,9 +59,22 @@ class Executor:
         self.bind_procedure_names()
 
     def bind_procedure_names(self):
-        pass  # TODO
+        from procedure.data_procedures import \
+            ParseConstatProcedure,\
+            AcceptDataProcedure, \
+            CastTypeProcedure, \
+            ServiceInstanceStorageProcedure
+        from procedure.inst_procedure import InstructionProcedure
 
-    @synchronized
+        self.worker_pool.bind_procedure("Instruction", InstructionProcedure)
+        self.worker_pool.bind_procedure("ParseConstant", ParseConstatProcedure)
+        self.worker_pool.bind_procedure("AcceptData", AcceptDataProcedure)
+        self.worker_pool.bind_procedure("CastType", CastTypeProcedure)
+        self.worker_pool.bind_procedure("ServiceInstanceStorage", ServiceInstanceStorageProcedure)
+        # send graph and transmit data needs to be bounded from outside because based
+        # on the type of this executor they require different of implementations.
+
+        @synchronized
     def remove_execution(self, execution: Execution):
         self.execPool.remove_execution(execution)
         self.worker_pool.remove_execution(execution)

@@ -1,0 +1,6 @@
+{
+    "plainlib.package1.b.Numbers": {
+        "semantic_type": "NumberList",
+        "onthological_caster": "plainlib.package1.b.Numbers"
+    }
+}

@@ -26,6 +26,12 @@ public class ExecutorRegistration implements JsonSerializable {
 		setSupportedServices(supportedServices);
 	}
 
+	public static ExecutorRegistration client_registration(String clientId) {
+		Map<String, String> contactInfo = new HashMap<>();
+		contactInfo.put("id", clientId);
+		return new ExecutorRegistration(contactInfo, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
+	}
+
 	/**
 	 * @return the executor host address
 	 */

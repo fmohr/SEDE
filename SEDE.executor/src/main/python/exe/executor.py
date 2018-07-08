@@ -88,11 +88,12 @@ class Executor:
         execution.runnable_tasks.observe(self.task_enqueuer)
         execution.deserialize_graph(execrequest.graph)
         execution.state.observe(self.executor_garbage_collector)
-        logging.debug("Execution request {} started.".format(execId))
+        logging.info("Execution request {} started.".format(execId))
 
     @synchronized
     def interrupt(self, executionId: str):
         if self.execPool.execIdTaken(executionId):
+            logging.info("")
             execution = self.execPool.get_orcreate_execution(executionId)
             self.worker_pool.interrupt(execution)
             execution.interrupt()
@@ -101,4 +102,4 @@ class Executor:
         return {"id": self.config.executor_id}
 
     def registration(self):
-        return requests.ExecutorRegistration.from_config(self.contact_info, self.config)
+        return requests.ExecutorRegistration.from_config(self.contact_info(), self.config)

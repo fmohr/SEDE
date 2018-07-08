@@ -18,7 +18,7 @@ class ExecutionEnvironment(dict):
         self.execution_id = execution_id
 
     @synchronized
-    def setitem__(self, key, value):
+    def __setitem__(self, key, value):
         logging.debug("{}.{} field update: {}", self.executor_id, self.execution_id, key)
         super().__setitem__(key, value)
         self.state.update()
@@ -110,9 +110,14 @@ class Execution:
             self.waiting_tasks.add(task)
             task.state.observe(self.tasks_observer)
 
+    @synchronized
     def interrupt(self):
         self.interrupted = True
         self.state.update()
+
+    @synchronized
+    def is_interrupted(self):
+        return self.interrupted
 
 
 class Task:
@@ -172,6 +177,17 @@ class Task:
 
     def has_finished(self):
         return self.succeeded or self.failed
+
+    def __str__(self):
+        return self["description"]
+
+    def __getitem__(self, key):
+        if key in self.attributes:
+            return self.attributes[key]
+        else:
+            raise ValueError("GATEWAY BUG: "
+                             "'%s' was queried by a procedure "
+                             "but was not defined in the task attributes." % key)
 
     @synchronized
     def set_resolved(self):

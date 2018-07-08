@@ -112,7 +112,7 @@ class ExecutorRegistration(JsonSerializable):
         return cls.from_dict({
             "contact-info" : contact_information,
             "capabilities" : executorConfig.capabilities,
-            "supported-servies": executorConfig.services})
+            "supported-services": executorConfig.services})
 
     def to_dict(self, d):
         super().to_dict(d)

@@ -5,10 +5,32 @@ from http import server
 import requests
 import re
 
-def out_write_string(wfile: IO, payload: str, close: bool = False) -> None:
-    wfile.write(payload.encode())
+def is_bytes(something)->bool:
+    return isinstance(something, (bytes, bytearray))
+
+def is_str(something)-> bool:
+    return isinstance(something, str)
+
+
+def out_write_string(wfile:IO, payload:str, *args, **kwargs) -> None:
+    if not is_str(payload):
+        raise ValueError("Unexpected type: " + str(payload.__class__) + ". Expected string.")
+    out_write_bytes(wfile, payload.encode(), *args, **kwargs)
+
+def out_write_bytes(wfile: IO, payload, close: bool = False) -> None:
+    if not is_bytes(payload):
+        raise ValueError("Unexpected type: " + str(payload.__class__) + ". Expected bytes-like.")
+    wfile.write(payload)
     if close:
         wfile.close()
+
+def out_write(wfile:IO, payload, *args, **kwargs) -> None:
+    if is_str(payload):
+        out_write_string(wfile, payload, *args, **kwargs)
+    elif is_bytes(payload):
+        out_write_bytes(wfile, payload, *args, **kwargs)
+    else:
+        raise ValueError("Unexpected type: " + str(payload.__class__))
 
 def in_read(rfile: IO, content_length = None, close: bool = False):
     if content_length is None:
@@ -21,24 +43,31 @@ def in_read(rfile: IO, content_length = None, close: bool = False):
 
 def in_read_string(*args, **kwargs) -> str:
     content = in_read(*args, **kwargs)
-    if isinstance(content, str):
+    if is_str(content):
         return content
-    else:
+    elif is_bytes(content):
         return content.decode()
+    else:
+        raise ValueError("Unexpected type: " + str(content.__class__) + ". Expected string.")
 
 def in_read_bytes(*args, **kwargs) -> bytes:
     content = in_read(*args, **kwargs)
-    if isinstance(content, str):
+    if is_str(content):
         return content.encode()
+    elif is_bytes(content):
+        return content
     else:
-        return bytearray(content)
+        raise ValueError("Unexpected type: " + str(content.__class__) + ". Expected bytes-like.")
 
 class BasicClientRequest(object):
 
-    def send(self) -> IO:
+    def write_bytes(self, bytes_payload:bytes, *args, **kwargs):
+        out_write(self.send(), bytes_payload, *args, **kwargs)
+
+    def send(self) -> bytes:
         return io.BytesIO()
 
-    def receive(self) -> IO:
+    def receive(self) -> bytes:
         return io.BytesIO()
 
     def __enter__(self):
@@ -47,11 +76,14 @@ class BasicClientRequest(object):
     def __exit__(self, exc_type, exc_value, traceback):
         pass
 
-    def send_receive(self, payload: str = None) -> str:
+    def send_receive_str(self, payload: str = None) -> str:
+
         with(self):
             if payload is not None:
-                out_write_string(self.send(), payload)
+                out_write(self.send(), payload, close=False)
             return in_read_string(self.receive())
+
+
 
 class ReadFileRequest(BasicClientRequest):
     filepath : str
@@ -92,14 +124,27 @@ class BasicServerResponse(object):
 class FileServerResoponse(BasicServerResponse):
     def receive(self, inputstream: IO, outputstream: IO, **kwargs):
         filepath = in_read_string(inputstream)
-        filecontent = ReadFileRequest(filepath).send_receive()
+        with ReadFileRequest(filepath) as filer:
+            filecontent = filer.send_receive_str()
         out_write_string(outputstream, filecontent)
 
+class ByteServerResponse(BasicServerResponse):
+    def __init__(self, response_function: callable = None):
+        if response_function is not None:
+            self.receive_bytes = response_function
+
+    def receive(self, inputstream: IO, outputstream: IO, closeinput = True, content_length = None, closeoutput = False, **kwargs):
+        input_bytes = in_read_bytes(inputstream, close=closeinput, content_length=content_length)
+        server_out = self.receive_bytes(input_bytes, **kwargs)
+        out_write(outputstream, server_out, close=closeoutput)
+
+    def receive_bytes(self, input_bytes: bytes, **kwargs) -> str:
+        pass
+
 class StringServerResponse(BasicServerResponse):
-    def __init__(self, response_function: callable(str) = None):
+    def __init__(self, response_function: callable = None):
         if response_function is not None:
             self.receive_str = response_function
-
 
     def receive(self, inputstream: IO, outputstream: IO, closeinput = True, content_length = None, closeoutput = False, **kwargs):
         input_string = in_read_string(inputstream, close=closeinput, content_length=content_length)
@@ -124,15 +169,29 @@ class HttpClientRequest(BasicClientRequest):
 
         self.payload = io.BytesIO()
 
+    def write_bytes(self, bytes_payload: bytes, *args, **kwargs):
+        if is_bytes(self.payload):
+            self.payload: bytes
+            self.payload += bytes_payload
+        else:
+            self.payload = bytes_payload
+
     def send(self) -> IO:
-        return self.payload
+        if is_bytes(self.payload):
+            raise("After writing bytes dont use send again.")
+        else:
+            return self.payload
 
     def receive(self) -> IO:
         return io.BytesIO(self._response_body())
         
     def _response_body(self) -> bytes:
         if self.method_is_post:
-            body = self.payload.getvalue()
+            if is_bytes(self.payload):
+                body = self.payload
+            else:
+                body = self.payload.getvalue()
+
             self.response = requests.request("POST", self.url, data=body)
         else:
             self.response = requests.request("GET", self.url) 
@@ -165,13 +224,13 @@ class MultiContextHandler(object):
 
         def do_POST(self):
             content_length = int(self.headers.get('Content-Length'))
-            body = io.BytesIO(self.rfile.read(content_length))
+            body = in_read_bytes(self.rfile, content_length=content_length)
             self.serve(body)
 
         def do_GET(self):
-            self.serve(io.BytesIO())
+            self.serve(bytes())
 
-        def serve(self, inputstream):
+        def serve(self, input_bytes):
             for context, responder in self.context_handlers:
                 matching = context.match(self.path)
                 if matching:
@@ -184,7 +243,12 @@ class MultiContextHandler(object):
                     self.send_response(200)
                     self.send_header("Content-type", "text/html")
                     self.end_headers()
-                    request_responder.receive(inputstream=inputstream, outputstream=self.wfile, closeinput=False, closeoutput=False, **url_inputs)
+                    if isinstance(request_responder, ByteServerResponse):
+                        server_out = request_responder.receive_bytes(input_bytes, **url_inputs)
+                        out_write(self.wfile, server_out, close=False)
+                    else:
+                        inputstream = io.BytesIO(input_bytes)
+                        request_responder.receive(inputstream=inputstream, outputstream=self.wfile, closeinput=False, closeoutput=False, **url_inputs)
                     self.flush_headers()
                     return
 

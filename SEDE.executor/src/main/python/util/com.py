@@ -240,7 +240,7 @@ class MultiContextHandler(object):
                 if matching:
                     url_inputs = matching.groupdict()
 
-                    if responder is callable:
+                    if callable(responder):
                         request_responder: BasicServerResponse = responder()
                     else:
                         request_responder: BasicServerResponse = responder
@@ -249,6 +249,9 @@ class MultiContextHandler(object):
                     self.end_headers()
                     if isinstance(request_responder, ByteServerResponse):
                         server_out = request_responder.receive_bytes(input_bytes, **url_inputs)
+                        out_write(self.wfile, server_out, close=False)
+                    elif isinstance(request_responder, StringServerResponse):
+                        server_out = request_responder.receive_str(input_bytes.decode(), **url_inputs)
                         out_write(self.wfile, server_out, close=False)
                     else:
                         inputstream = io.BytesIO(input_bytes)

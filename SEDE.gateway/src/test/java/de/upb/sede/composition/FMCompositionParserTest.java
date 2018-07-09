@@ -104,6 +104,7 @@ public class FMCompositionParserTest {
 		assertMatches("_", p, true);
 		assertMatches("_a", p, true);
 		assertMatches("_1", p, true);
+		assertMatches("&_&1", p, true);
 
 		assertMatches("1", p, false);
 		assertMatches("1a", p, false);

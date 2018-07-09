@@ -36,7 +36,7 @@ public final class FMCompositionParser {
 	final static String REGEX_inputSeperator = "[\\s]*,[\\s]*";
 
 	/** Regex for a field name. */
-	final static String REGEX_fieldname = "(?:[_a-zA-Z]\\w*+)";
+	final static String REGEX_fieldname = "(?:[&_a-zA-Z][&\\w]*+)";
 	final static Pattern PATTERN_fieldname = Pattern.compile(REGEX_fieldname);
 
 	/** Regex for class path. */

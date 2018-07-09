@@ -40,9 +40,9 @@ class DataMixin(JsonSerializable):
 
     def to_dict(self, d):
         super().to_dict(d)
+        from exe.data import encode
+        d.update("data", encode(self.data))
 
-        # TODO write data into dictionary
-    
 
 class CompositionMixin(JsonSerializable):
     composition = None
@@ -81,7 +81,7 @@ class DataPutRequest(RequestIdMixin, FieldnameMixin, DataMixin):
         super().__init__(*args, **kwargs)
         self.unavailable = unavailable
         if self.unavailable == (self._data_present()): # Xor
-            raise ValueError("BUG: Unavailable is set to {} but data is {}given."
+            raise ValueError("BUG: DataPutRequest: unavailable is set to {} but data is {}given."
                              .format(self.unavailable,
                                 "" if self._data_present() else "not "))
 

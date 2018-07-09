@@ -124,7 +124,7 @@ class SEDEObject(object):
 def readfrom(input_bytes:bytes, input_type:str)-> SEDEObject:
     if SEDEObject.is_primitive(input_type):
         primitive_string = input_bytes.decode()
-        return SEDEObject.from_primitive(PrimitiveType.from_ci_str(input_type, primitive_string))
+        return SEDEObject.from_primitive(PrimitiveType.from_ci_str(input_type), primitive_string)
     elif SEDEObject.is_si(input_type):
         json_string = input_bytes.decode()
         sih = ServiceInstanceHandle.from_json_string(json_string)

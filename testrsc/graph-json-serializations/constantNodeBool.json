@@ -4,5 +4,6 @@
     "isBool": true,
     "isNumber": false,
     "isNULL": false,
-    "isString": false
+    "isString": false,
+    "description": "parse Bool: True"
 }

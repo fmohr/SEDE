@@ -30,14 +30,21 @@ public final class Task implements Observer<Task>{
 					failed = false,			// failed: true an error has occured during execution.
 					succeeded = false;		// setSucceeded: true if done and the worker successfully carried out the task.
 
+	/**
+	 * Flag that indicates that at least of the dependency has failed.
+	 */
+	private boolean dependecyHasFailed = false;
 
+	/**
+	 *	Observable state which will be updated when state flags (resolve, .., succeeded) change.
+	 */
 	private Observable<Task> taskState = Observable.ofInstance(this);
 
 
 	{
 		/* enable trace of task */
 		if(logger.isTraceEnabled()) {
-			final Observer<Task> logObserver = Observer.lambda(t -> true, t -> logger.debug("{}: {} updated", t, t.toDebugString()), t->false);
+			final Observer<Task> logObserver = Observer.lambda(t -> true, t -> logger.debug("{}: {} updated", t, t.getDescription()), t->false);
 			taskState.observe(logObserver);
 		}
 	}
@@ -65,8 +72,6 @@ public final class Task implements Observer<Task>{
 		return (T) attributes.get(attrName);
 	}
 
-
-
 	public Observable<Task> getState(){
 		return taskState;
 	}
@@ -91,7 +96,7 @@ public final class Task implements Observer<Task>{
 	 */
 	@Override
 	public void notification(Task task) {
-		if(this.hasFailed()){
+		if(this.hasFinished()){
 			/* this task may have failed already if another dependency of this task has failed. */
 			return;
 		}
@@ -99,11 +104,10 @@ public final class Task implements Observer<Task>{
 		this.dependencies.remove(task);
 
 		if(task.hasFailed()){
-			setFailed();
+			dependecyHasFailed();
 		}
-		else {
-			updateDependendency();
-		}
+		updateDependendency();
+
 	}
 
 	public void updateDependendency(){
@@ -139,6 +143,9 @@ public final class Task implements Observer<Task>{
 
 	public boolean hasFailed(){
 		return failed;
+	}
+	public boolean hasDependencyFailed() {
+		return dependecyHasFailed;
 	}
 
 	public boolean hasSucceeded(){
@@ -200,6 +207,10 @@ public final class Task implements Observer<Task>{
 		}
 	}
 
+	private void dependecyHasFailed() {
+		dependecyHasFailed = true;
+	}
+
 	public void setError(Exception ex) {
 		error = Optional.of(ex);
 	}
@@ -226,10 +237,11 @@ public final class Task implements Observer<Task>{
 	}
 
 
-	public String toDebugString() {
+	public String getDescription() {
 		if(attributes == null) {
 			return "attributes are null.";
 		}
-		return getAttributes().toString();
+		return (String) attributes.get("description");
 	}
+
 }

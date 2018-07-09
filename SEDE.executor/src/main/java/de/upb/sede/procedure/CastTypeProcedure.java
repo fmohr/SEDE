@@ -2,6 +2,7 @@ package de.upb.sede.procedure;
 
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.SemanticStreamer;
+import de.upb.sede.exceptions.DependecyTaskFailed;
 import de.upb.sede.exec.Task;
 
 import java.io.ByteArrayInputStream;
@@ -10,7 +11,8 @@ import java.util.Map;
 
 public class CastTypeProcedure implements Procedure {
 	@Override
-	public void process(Task task) {
+	public void processTask(Task task) {
+
 		/* gather cast information */
 		/* example of the attribute map :
 		        "fieldname": "a",

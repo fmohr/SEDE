@@ -7,6 +7,7 @@ import java.io.UncheckedIOException;
 
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.ServiceInstanceHandle;
+import de.upb.sede.exceptions.DependecyTaskFailed;
 import de.upb.sede.exec.ServiceInstance;
 import de.upb.sede.exec.Task;
 import de.upb.sede.util.Streams;
@@ -20,7 +21,7 @@ import de.upb.sede.webinterfaces.client.WriteFileRequest;
 public class ServiceInstanceStorageProcedure implements Procedure {
 
 	@Override
-	public void process(Task task) {
+	public void processTask(Task task) {
 		/* gather information regarding load store operation */
 		boolean isLoadInstruction = (boolean) task.getAttributes().get("is-load-instruction");
 		String fieldname = (String) task.getAttributes().get("serviceinstance-fieldname");
@@ -34,7 +35,8 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 			SEDEObject loadedSedeObject;
 			try (ObjectInputStream objectIn = new ObjectInputStream(loadRequest.receive())) {
 				Object instanceObject = objectIn.readObject();
-				ServiceInstance serviceInstance = new ServiceInstance(task.getExecution().getExecutionId(),
+				ServiceInstance serviceInstance = new ServiceInstance(
+				        task.getExecution().getConfiguration().getExecutorId(),
 						serviceClasspath, instanceId, instanceObject);
 				loadedSedeObject = new SEDEObject(serviceInstance);
 			} catch (IOException e) {
@@ -63,7 +65,7 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 		}
 		task.setSucceeded();
 	}
-
+    // TODO treat fail
 	/**
 	 * Returns the path of storage for the requested instance.
 	 * 

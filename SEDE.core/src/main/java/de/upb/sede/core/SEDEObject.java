@@ -17,7 +17,7 @@ public class SEDEObject implements JsonSerializable {
 					return type;
 				}
 			}
-			throw new RuntimeException("BUG: search name: " + searchName);
+			throw new RuntimeException("BUG: primitive type '" + searchName + "' not defined.");
 		}
 	}
 
@@ -133,7 +133,7 @@ public class SEDEObject implements JsonSerializable {
 	 * @return Service instance handle of this sede object.
 	 */
 	public ServiceInstanceHandle getServiceHandle() {
-		if(!isServiceInstance()) {
+		if(!isServiceInstanceHandle()) {
 			throw new RuntimeException("Trying to access a service instance although SEDEObject holds object of type: \"" + getType() + "\"");
 		} else {
 			return  ((ServiceInstanceHandle)object);

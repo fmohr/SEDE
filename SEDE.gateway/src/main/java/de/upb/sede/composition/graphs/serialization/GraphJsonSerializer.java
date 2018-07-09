@@ -13,6 +13,8 @@ import de.upb.sede.composition.graphs.GraphTraversal;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.exceptions.CompositionGraphSerializationException;
 import de.upb.sede.util.Iterators;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  * Contains methods to serialize a graph into and from its JSON representation.
@@ -74,6 +76,15 @@ public class GraphJsonSerializer {
 		jsonGraphObject.put(JSON_FIELDNAME_NODES, nodearray);
 		jsonGraphObject.put(JSON_FIELDNAME_EDGES, edges);
 		return jsonGraphObject;
+	}
+
+
+	public CompositionGraph fromJsonString(String graph) {
+		try {
+			return fromJson((JSONObject) new JSONParser().parse(graph));
+		} catch (ParseException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**

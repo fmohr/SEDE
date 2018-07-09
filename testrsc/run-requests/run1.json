@@ -4,8 +4,7 @@
         "p =  gerade1::calc({1})"
     ],
     "requestId": "run1",
-    "inputs": {
-    },
+    "inputs": {},
     "policy": {
         "service-policy": "ALL",
         "return-policy": "ALL"

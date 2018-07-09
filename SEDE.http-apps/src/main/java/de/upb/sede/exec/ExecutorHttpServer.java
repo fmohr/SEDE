@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.core.SemanticStreamer;
@@ -40,6 +42,9 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 	private final String hostAddress;
 
 	private final HttpServer server;
+
+	private final Pattern PUT_DATA_URL_PATTERN = Pattern.compile("/put/(?<executionId>\\w+)/(?<fieldname>(?:[&_a-zA-Z][&\\w]*+))/(?<semtype>\\w+)");
+	private final Pattern INTERRUPT_URL_PATTERN = Pattern.compile("/interrupt/(?<executionId>\\w+)");
 
 	public ExecutorHttpServer(ExecutorConfiguration execConfig, String hostAddress, int port) {
 		super(execConfig);
@@ -123,13 +128,12 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 	static class TransmitDataOverHttp extends TransmitDataProcedure {
 
 		@Override
-		public BasicClientRequest getPutDataRequest(Task task) {
+		public BasicClientRequest getPutDataRequest(Task task, boolean unavailable) {
 			Map<String, String> contactInfo = (Map<String, String>) task.getAttributes().get("contact-info");
 			String host = contactInfo.get("host-address");
 			String fieldname = (String) task.getAttributes().get("fieldname");
 			String semType = (String) task.getAttributes().get("semantic-type");
 			String executionId = task.getExecution().getExecutionId();
-			boolean failed = task.hasFailed();
 			if (semType == null) {
 				SEDEObject sedeObject = task.getExecution().getEnvironment().get(fieldname);
 				if (sedeObject.isReal()) {
@@ -141,14 +145,13 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 				}
 			}
 			String dataPutUrl = host + "/put/" + executionId + "/" + fieldname;
-			if(task.hasFailed()) {
+			if(unavailable) {
 				dataPutUrl += "/unavailable";
 			} else {
 				dataPutUrl += "/" + semType;
 			}
 			BasicClientRequest clientRequest = new HttpURLConnectionClientRequest(dataPutUrl);
 			return clientRequest;
-//			return createPutDataRequest(host, fieldname, semType, executionId, failed);
 		}
 	}
 
@@ -185,11 +188,10 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 		public void handleInterrupt(Task task) {
 			Map<String, String> contactInfo = (Map<String, String>) task.getAttributes().get("contact-info");
 			String host = contactInfo.get("host-address");
-			String interruptUrl = host + "/interrupt";
+			String interruptUrl = host + "/interrupt/" + task.getExecution().getExecutionId();
 			BasicClientRequest interruptRequest = new HttpURLConnectionClientRequest(interruptUrl);
-			Request interruptData = new Request(task.getExecution().getExecutionId());
 			logger.debug("Interrupting remote execution: {}", contactInfo);
-			String response = interruptRequest.send(interruptData.toJsonString());
+			String response = interruptRequest.send("");
 			if(!response.isEmpty()) {
 				logger.error("Interrupting remote execution with an http request failed. The response is not empty: {}\nexec Id: {}\ncontact info: {}", response, task.getExecution().getExecutionId(), contactInfo.toString());
 			}
@@ -205,14 +207,16 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 				if (!url.isPresent()) {
 					throw new RuntimeException("Put data needs to specify URL with fieldname and execution handle");
 				}
-				String[] urlPaths = url.get().split("/");
-				int pathIndex = 1;
-				if (urlPaths.length < 5 || !urlPaths[pathIndex++].equalsIgnoreCase("put")) {
+
+				Matcher matcher = PUT_DATA_URL_PATTERN.matcher(url.get());
+				if(!matcher.matches()){
+					// pattern: put/(?<executionId>\w+)/(?<fieldname>\w+)/(?<semtype>\w+)
 					throw new RuntimeException("URL syntax error: " + url.get());
 				}
-				String execId = urlPaths[pathIndex++];
-				String fieldname = urlPaths[pathIndex++];
-				String semanticType = urlPaths[pathIndex++];
+				String execId = matcher.group("executionId");
+				String fieldname = matcher.group("fieldname");
+				String semanticType = matcher.group("semtype");
+
 				DataPutRequest putRequest;
 				if(semanticType.equals("unavailable")) {
 					putRequest = DataPutRequest.unavailableData(execId, fieldname);
@@ -243,17 +247,24 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 			}
 		}
 	}
-	class InterruptHandler extends StringServerResponse {
-
+	class InterruptHandler implements HTTPServerResponse {
 		@Override
-		public String receive(String payload) {
+		public void receive(Optional<String> url, InputStream payload, OutputStream answer) {
 			try {
-				Request intRequest = new Request();
-				intRequest.fromJsonString(payload);
-				ExecutorHttpServer.this.interrupt(intRequest.getRequestID());
-				return "";
+				if (!url.isPresent()) {
+					throw new RuntimeException("Put data needs to specify URL with fieldname and execution handle");
+				}
+				Streams.InReadString(payload);
+				Matcher matcher = INTERRUPT_URL_PATTERN.matcher(url.get());
+				if(!matcher.matches()){
+					// pattern: /interrupt/(?<executionId>\\w+)
+					throw new RuntimeException("URL syntax error: " + url.get());
+				}
+				String executionId = matcher.group("executionId");
+				ExecutorHttpServer.this.interrupt(executionId);
+				answer.close();
 			} catch (Exception ex) {
-				return ex.getMessage();
+				Streams.OutWriteString(answer, ex.getMessage(), true);
 			}
 		}
 	}

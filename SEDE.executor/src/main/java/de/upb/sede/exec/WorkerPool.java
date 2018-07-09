@@ -22,7 +22,7 @@ public class WorkerPool {
 	private final Map<String, Supplier<Procedure>> procedureSupplierMap = new HashMap<>();
 
 	/**
-	 * Comparator of runnable. Used by the 
+	 * Comparator of runnable.  
 	 */
 	private final Comparator<Runnable> taskScheduler = Comparator.comparing(r -> ((FutureWithTask)r).getTask(),
 			WorkerPool::lessRemainingTasks);
@@ -34,20 +34,11 @@ public class WorkerPool {
 
 	public synchronized void processTask(Task task){
 		if(logger.isTraceEnabled()) {
-			logger.trace("{} submitted: ", task.toString(), task.toDebugString());
+			logger.trace("{} submitted: {}", task.toString(), task.getDescription());
 		}
 
 		Procedure procedure = procedureForTask(task.getTaskName());
-		TaskRunner runner;
-		if(task.hasFailed()) {
-			runner = new OnFailRunner(task, procedure);
-		} else if(!task.hasStarted()) {
-			runner = new ProcedureRunner(task, procedure);
-		} else{
-			logger.error("Task {} has been submitted to run." +
-					" But it hasn't failed and has already started to run:\n{}", task.toString(), task.toDebugString());
-			return; // TODO what to do here?
-		}
+		TaskRunner runner = new TaskRunner(task, procedure);
 		Future future = workers.submit(runner);
 		addFuture(task.getExecution(), future);
 	}
@@ -98,6 +89,10 @@ public class WorkerPool {
 		//workers.shutdown();
 	}
 
+	/**
+	 * Returns true if the given execution is still running.
+	 * Should only be used by tests.
+	 */
 	public boolean isExecutionOngoing(Execution exec) {
 		if(executionFutureMap.containsKey(exec)) {
 			return !executionFutureMap.get(exec).isEmpty();
@@ -106,66 +101,54 @@ public class WorkerPool {
 		}
 	}
 
-	private interface TaskRunner extends   Runnable {
-		Task getTask();
+	public int futueListSize() {
+		return executionFutureMap.size();
 	}
 
-	private static class ProcedureRunner implements  TaskRunner {
+	public void removeExecution(Execution exec) {
+		executionFutureMap.remove(exec);
+	}
+
+
+	private static class TaskRunner implements  Runnable {
 		private Task task;
 		private Procedure procedure;
-		ProcedureRunner(Task task, Procedure procedure) {
+		TaskRunner(Task task, Procedure procedure) {
 			this.task = task;
 			this.procedure = procedure;
 		}
 		public void run() {
 			if(logger.isTraceEnabled())
-				logger.trace("worker STARTED working on task: {}", task.toDebugString());
+				logger.trace("worker STARTED working on task: {}", task.getDescription());
+
 			task.setStarted();
+
 			try{
-				procedure.process(task);
+				if(!task.hasDependencyFailed()) {
+					procedure.processTask(task);
+				} else {
+					procedure.processFail(task);
+					task.setFailed();
+				}
 			} catch(Exception ex) {
+				procedure.processFail(task);
 				task.setError(ex);
 				task.setFailed();
-				logger.error("ERROR during {}:\n", task.toDebugString(), ex);
+				logger.error("ERROR during {}:\n", task.getDescription(), ex);
 			}
 			finally {
-				task.isDoneRunning();
+				task.setDone();
 			}
 			if(logger.isTraceEnabled())
-				logger.trace("worker IS DONE working on task: {}", task.toDebugString());
+				logger.trace("worker IS DONE working on task: {}", task.getDescription());
 		}
 
-		@Override
 		public Task getTask() {
 			return task;
 		}
 	}
 
 
-	private static class OnFailRunner implements  TaskRunner {
-		private Task task;
-		private Procedure procedure;
-		OnFailRunner(Task task, Procedure procedure) {
-			this.task = task;
-			this.procedure = procedure;
-		}
-		@Override
-		public void run() {
-			if(!task.hasFailed()){
-				logger.error("BUG: fail run on not failed task");
-			}
-			try{
-				procedure.processFail(task);
-			} catch(Exception ex) {
-				logger.error("ERROR during process fail of {}:\n", task.toDebugString(), ex);
-			}
-		}
-
-		@Override
-		public Task getTask() {
-			return task;
-		}
-	}
 
 	/**
 	 * Defines a comparator for Tasks.

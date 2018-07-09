@@ -4,7 +4,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 /**
- * Implementations of this interface can be added to <tt>de.upb.sede.util.ObserverCollection</tt> objects with the same generic type.
+ * Implementations of this interface can be added to <tt>de.upb.sede.util.Observable</tt> objects with the same generic type.
  * When the state of the Observable object changes and <tt>notifyCondition</tt> returns true, the <tt>notification</tt> method will be invoked.<p>
  *
  * Additionally, after the notification method is called, the Observable object will check if the observer can be removed using the <tt>removeAfterNotification</tt> method.
@@ -54,7 +54,7 @@ public interface Observer<T>{
 	 * Defines whether or not the notifcation process should be synchronized.
 	 */
 	default boolean synchronizedNotification() {
-		return true;
+		return false;
 	}
 
 	/**

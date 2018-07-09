@@ -153,17 +153,16 @@ public class IntegrationTest_Execute {
 	}
 
 
-//	@Test //TODO
+	@Test //TODO
 	public void testLocalFail() {
 		CoreClient cc = getLocalClient();
 		runFailInstruction(cc);
 	}
 
-//	@Test //TODO
+	@Test //TODO
 	public void testHttpFail() {
 		CoreClientHttpServer cc = getHttpClient();
 		runFailInstruction(cc);
-		cc.getClientExecutor().shutdown();
 	}
 
 	public void runFailInstruction(CoreClient cc) {
@@ -220,6 +219,14 @@ public class IntegrationTest_Execute {
 	public void testHttpBenchmark() throws InterruptedException {
 		CoreClientHttpServer cc = getHttpClient();
 		runBenchmark(cc);
+		System.gc();
+		System.gc();
+		System.gc();
+		Thread.sleep(500);
+		Assert.assertEquals(0, httpClient.getClientExecutor().getWorkerPool().futueListSize());
+		Assert.assertEquals(0, executor2.getWorkerPool().futueListSize());
+		Assert.assertEquals(0, executor1.getWorkerPool().futueListSize());
+
 	}
 
 
@@ -251,6 +258,7 @@ public class IntegrationTest_Execute {
 					cc.run(runRequest, null);
 					runningRequestsIds.add(requestId);
 					logger.debug("Added request Id {}", requestId);
+					Thread.sleep(10);
 				} catch (Exception ex) {
 					logger.error("Error during execution"  + ": ", ex);
 				}

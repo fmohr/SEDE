@@ -32,6 +32,8 @@ public class Execution implements IExecution {
 	 */
 	private boolean interrupted = false;
 
+	private boolean started = false;
+
 	/**
 	 * Tasks that are resolved but haven't started processing yet.
 	 */
@@ -84,7 +86,7 @@ public class Execution implements IExecution {
 		this.executorConfiguration = executorConfiguration;
 	}
 
-	/**t
+	/**
 	 * Returns the execution-id of this execution.
 	 *
 	 * @return the execution-id
@@ -106,7 +108,7 @@ public class Execution implements IExecution {
 	/**
 	 * Returns the environment of this execution.
 	 *
-	 * @return the exeuction environment.
+	 * @return the execution environment.
 	 */
 	public ExecutionEnvironment getEnvironment() {
 		return environment;
@@ -114,12 +116,13 @@ public class Execution implements IExecution {
 
 	/*
 	 * private methods to allow synchronized access to the 2 set of tasks. Used by
-	 * the observers.
+	 * the observers and are called therefore automatically.
 	 */
 
 	private final void taskResolved(Task task) {
 		synchronized (this) {
 			waitingTasks.add(task);
+			/* notify observers about this new resolved task. */
 			runnableTasks.update(task);
 		}
 		state.update(this);
@@ -135,15 +138,8 @@ public class Execution implements IExecution {
 	private final void taskFinished(Task task) {
 		synchronized (this) {
 			unfinishedTasks.remove(task);
-			if(task.hasFailed()){
-				taskFailed(task);
-			}
 		}
 		state.update(this);
-	}
-
-	private final void taskFailed(Task task)  {
-		runnableTasks.update(task);
 	}
 
 	/**
@@ -255,6 +251,14 @@ public class Execution implements IExecution {
 
 	public ExecutorConfiguration getConfiguration() {
 		return executorConfiguration;
+	}
+
+	public synchronized void start() {
+		started = true;
+	}
+
+	public synchronized boolean hasStarted() {
+		return started;
 	}
 
 	static class ExecutionInv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {

@@ -1,5 +1,6 @@
 package de.upb.sede.procedure;
 
+import de.upb.sede.exceptions.DependecyTaskFailed;
 import de.upb.sede.exec.Execution;
 import de.upb.sede.exec.Task;
 import de.upb.sede.requests.ExecRequest;
@@ -15,7 +16,7 @@ import java.util.function.Consumer;
  */
 public abstract class SendGraphProcedure implements Procedure {
 	@Override
-	public void process(Task task) {
+	public void processTask(Task task) {
 		String graph = (String) task.getAttributes().get("graph");
 		String executionId = task.getExecution().getExecutionId();
 		ExecRequest request = new ExecRequest(executionId, graph);

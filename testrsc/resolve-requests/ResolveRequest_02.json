@@ -1,6 +1,8 @@
 {
     "client-executor": {
-        "contact-info": { "id": "client executor" }
+        "contact-info": {
+            "id": "client executor"
+        }
     },
     "composition": [
         "adder1 = demo.math.Addierer::__construct({100})",
@@ -12,9 +14,7 @@
         "p2 = s2::calc({n2})",
         "bool2 = s2::liagtAufGerade({p2})"
     ],
-
     "requestId": "id",
-
     "input-fields": {
         "service-instance-map": {
             "s1": {
@@ -38,7 +38,13 @@
         }
     },
     "policy": {
-        "service-policy": ["s1", "s2"],
-        "return-policy": ["bool1", "s2"]
+        "service-policy": [
+            "s1",
+            "s2"
+        ],
+        "return-policy": [
+            "bool1",
+            "s2"
+        ]
     }
 }

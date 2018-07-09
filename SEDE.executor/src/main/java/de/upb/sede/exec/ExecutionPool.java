@@ -26,10 +26,6 @@ public class ExecutionPool {
 		this.executorConfiguration = executorConfiguration;
 	}
 
-
-	private final Observer<Execution> executionObserver = Observer.lambda(	Execution::hasExecutionFinished,  // when an execution is done, ..
-			exec -> removeExecution(exec.getExecutionId())); // remove it.
-
 	synchronized Execution getOrCreateExecution(String execId) {
 		Execution exec = execMap.get(execId);
 		if(exec == null) {
@@ -44,20 +40,13 @@ public class ExecutionPool {
 		return exec;
 	}
 
-	synchronized  void startExecution(String execId) {
-		Execution exec = execMap.get(execId);
-		if(exec!=null){
-			exec.getState().observe(executionObserver);
-		}
-	}
-
 	public synchronized boolean hasExecution(String execId) {
 		return execMap.containsKey(execId);
 	}
 
-	public synchronized void removeExecution(String execId) {
-		if(hasExecution(execId)){
-			execMap.remove(execId);
+	public synchronized void removeExecution(Execution execution) {
+		if(hasExecution(execution.getExecutionId())){
+			execMap.remove(execution.getExecutionId());
 		}
 	}
 
@@ -72,7 +61,7 @@ public class ExecutionPool {
 		}
 	}
 
-	public synchronized  Execution getExecution(String requestId) {
-		return execMap.get(requestId);
+	public synchronized  Execution getExecution(String execId) {
+		return execMap.get(execId);
 	}
 }

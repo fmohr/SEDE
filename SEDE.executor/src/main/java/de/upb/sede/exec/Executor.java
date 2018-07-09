@@ -34,11 +34,15 @@ public class Executor implements IExecutor{
 
 	private final Observer<Task> taskWorkerEnqueuer;
 
+	private final Observer<Execution> executionGarbageCollector;
+
 	public Executor(ExecutorConfiguration execConfig) {
 		this.execPool = new ExecutionPool(execConfig);
 		this.config = execConfig;
 		this.workerPool = new WorkerPool(execConfig.getThreadNumber());
 		this.taskWorkerEnqueuer = Observer.lambda(t->true,  workerPool::processTask, t->false);
+		this.executionGarbageCollector = Observer.<Execution>lambda(Execution::hasExecutionFinished,  // when an execution is done, .
+				this::removeExecution);
 		bindProcedureNames();
 	}
 
@@ -49,7 +53,7 @@ public class Executor implements IExecutor{
 		workerPool.bindProcedure("CastType", CastTypeProcedure::new);
 		workerPool.bindProcedure("DeleteField", null); // TODO
 		workerPool.bindProcedure("ServiceInstanceStorage", ServiceInstanceStorageProcedure::new);
-		// send graph and transmit data needs to be specified..
+		// send graph and transmit data needs to be bounded from outside because based on the type of this executor they require different of implementions.
 	}
 
 	public WorkerPool getWorkerPool() {
@@ -57,16 +61,25 @@ public class Executor implements IExecutor{
 	}
 
 
-	public Execution getExecution(String requestId) {
-		return execPool.getExecution(requestId);
+	public Execution getExecution(String execId) {
+		return execPool.getExecution(execId);
 	}
 
-	public Execution getOrCreateExecution(String requestId) {
-		return execPool.getOrCreateExecution(requestId);
+	public Execution getOrCreateExecution(String execId) {
+		return execPool.getOrCreateExecution(execId);
+	}
+
+	public boolean execIdTaken(String execId) {
+		return execPool.getOrCreateExecution(execId).hasStarted();
 	}
 
 	public ExecutionPool getExecPool() {
 		return execPool;
+	}
+
+	public void removeExecution(Execution execution) {
+		execPool.removeExecution(execution);
+		workerPool.removeExecution(execution);
 	}
 
 	@Override
@@ -89,18 +102,27 @@ public class Executor implements IExecutor{
 	public synchronized Execution exec(ExecRequest execRequest){
 		String execId = execRequest.getRequestID();
 
+		/* First check if execution id is taken: */
+		if(execIdTaken(execId)) {
+			/*
+				Throw exception signaling that the exec Id is already occupied:
+			 */
+			throw new RuntimeException("Execution Id was already taken: " + execId);
+		}
 		Execution exec = getOrCreateExecution(execRequest.getRequestID());
 		exec.getRunnableTasksObservable().observe(taskWorkerEnqueuer);
 
 		deserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
 
-		execPool.startExecution(execId);
+		exec.getState().observe(executionGarbageCollector);
+		exec.start();
+
 		logger.debug("Execution request {} started.", execRequest.getRequestID());
 		return exec;
 	}
 
 	@Override
-	public void interrupt(String executionId) {
+	public synchronized void interrupt(String executionId) {
 		if (execPool.hasExecution(executionId)) {
 			Execution toBeInterrupted = execPool.getExecution(executionId);
 			workerPool.interruptExec(toBeInterrupted);
@@ -133,15 +155,4 @@ public class Executor implements IExecutor{
 		return config;
 	}
 
-	/**
-	 * Supplier of execution instances. <p>
-	 * Given an execution-id this method creates a new Execution object without altering the state of the executor.
-	 *
-	 * @param executionId request id of the new execution.
-	 *
-	 * @return A fresh new execution object.
-	 */
-	public Execution provideWithExecution(String executionId) {
-		return new Execution(executionId, config);
-	}
 }

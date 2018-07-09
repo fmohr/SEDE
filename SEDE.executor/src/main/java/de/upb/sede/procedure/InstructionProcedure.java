@@ -74,8 +74,26 @@ public class InstructionProcedure implements Procedure {
 
 	static Logger logger = LogManager.getLogger(InstructionProcedure.class);
 
+	/**
+	 * If there is a fieldname on the leftside of the instruction signal the execution-environment that the fieldname wont be available.
+	 * @param task
+	 */
+	public void processFail(Task task) {
+		InstructionNodeAttributes nodeAttributes = new InstructionNodeAttributes(task);
+		String fieldname = nodeAttributes.getLeftsidefieldname();
+		if(fieldname != null) {
+			logger.debug("Instruction {} failed. Marking field {} unavailable.", task.getDescription(), fieldname);
+			task.getExecution().getEnvironment().remove(fieldname); // remove the field
+			task.getExecution().getEnvironment().markUnavailable(fieldname); // mark the field unavailable
+		}
+	}
+
+	/**
+	 * Processes the given task by carrying out the instruction using reflection.
+	 * @param task
+	 */
 	@Override
-	public void process(Task task) {
+	public void processTask(Task task) {
 		ExecutionEnvironment environment = task.getExecution().getEnvironment();
 		InstructionNodeAttributes nodeAttributes = new InstructionNodeAttributes(task);
 		// Get class to be called.
@@ -107,7 +125,7 @@ public class InstructionProcedure implements Procedure {
 				invocationResult = callMethod(contextClass, contextType, parameterClasses, parameterValues, environment,
 						nodeAttributes);
 			} catch(RuntimeException ex) {
-				throw new RuntimeException("Error during invocation of method of instruction: " +  task.toDebugString(), ex);
+				throw new RuntimeException("Error during invocation of method of instruction: " +  task.getDescription(), ex);
 			}
 		}
 		/*

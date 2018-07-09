@@ -10,18 +10,16 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 
 public abstract class FinishProcedure implements Procedure {
+
 	@Override
-	public void process(Task task) {
+	public void processTask(Task task) {
 		finishNotice(task);
 	}
 
-	@Override
-	public void processFail(Task task) {
-		finishNotice(task);
-	}
+	public void processFail(Task task) { finishNotice(task); }
 
 	private void finishNotice(Task task) {
-		Boolean executionSuccess = !task.hasFailed();
+		Boolean executionSuccess = !task.hasDependencyFailed();
 		SEDEObject successObject = new SEDEObject(SEDEObject.PrimitiveType.Bool.name(), executionSuccess);
 		try(BasicClientRequest finishFlagRequest = getFinishFlagRequest(task)) {
 			SemanticStreamer.streamInto(finishFlagRequest.send(), successObject);

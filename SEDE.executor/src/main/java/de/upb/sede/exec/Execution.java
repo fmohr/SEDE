@@ -86,7 +86,7 @@ public class Execution implements IExecution {
 		this.executorConfiguration = executorConfiguration;
 	}
 
-	/**t
+	/**
 	 * Returns the execution-id of this execution.
 	 *
 	 * @return the execution-id
@@ -108,7 +108,7 @@ public class Execution implements IExecution {
 	/**
 	 * Returns the environment of this execution.
 	 *
-	 * @return the exeuction environment.
+	 * @return the execution environment.
 	 */
 	public ExecutionEnvironment getEnvironment() {
 		return environment;
@@ -116,7 +116,7 @@ public class Execution implements IExecution {
 
 	/*
 	 * private methods to allow synchronized access to the 2 set of tasks. Used by
-	 * the observers.
+	 * the observers and are called therefore automatically.
 	 */
 
 	private final void taskResolved(Task task) {

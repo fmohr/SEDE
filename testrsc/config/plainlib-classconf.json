@@ -1,0 +1,62 @@
+{
+    "plainlib.package1.b.B": {
+        "methods": {
+            "$construct": {
+                "params": [
+                    "Number", "Number"
+                ]
+            },
+            "calc": {
+                "params": [
+                     "Number"
+                ],
+                "returntype": "Number",
+                "statemutating": false
+            },
+            "calc_append_inplace": {
+                "params": [
+                    {
+                        "type": "plainlib.package1.b.Numbers",
+                        "statemutating": true
+                    },
+                    "Number"
+                ],
+                "statemutating": false
+            },
+            "calc_append": {
+                "params": [
+                    "plainlib.package1.b.Numbers", "Number"
+                ],
+                "returntype": "plainlib.package1.b.Numbers",
+                "statemutating": false
+            },
+            "set_a" : {
+                "params": [
+                    "Number"
+                ], 
+                "statemutating": true
+            },
+            "set_b" : {
+                "params": [
+                    "Number"
+                ], 
+                "statemutating": true
+            },
+            "upper":{
+                "params": [
+                    "String"
+                ], 
+                "returntype": "String",
+                "static": true
+            },
+            "__str__" :{
+                "returntype": "String",
+                "statemutating" : false
+            },
+            "random" :{
+                "returntype":"plainlib.package1.b.B",
+                "static": true
+            }
+        }
+    }
+}

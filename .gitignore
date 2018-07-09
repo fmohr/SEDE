@@ -60,3 +60,8 @@ gradle-app.setting
 /instances/
 **/out/
 SEDE.iml
+
+## python ignores
+
+*.pyc
+

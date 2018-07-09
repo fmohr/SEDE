@@ -107,16 +107,7 @@ public class CoreClient implements ICoreClient{
 		ExecutorRegistration registration = getClientExecutor().registration();
 
 		Map<String, SEDEObject> inputs = runRequest.getInputs();
-		Map<String, String> inputTypes = new HashMap<>();
-		Map<String, ServiceInstanceHandle> inputInstances = new HashMap<>();
-		for (String fieldname : inputs.keySet()) {
-			SEDEObject field = inputs.get(fieldname);
-			inputTypes.put(fieldname, field.getType());
-			if(field.isServiceInstanceHandle()) {
-				inputInstances.put(fieldname, field.getServiceHandle());
-			}
-		}
-		InputFields inputFields = new InputFields(inputTypes, inputInstances);
+		InputFields inputFields = InputFields.fromMap(inputs);
 
 		ResolveRequest resolveRequest = new ResolveRequest(resolveId, composition, policy, inputFields, registration);
 		return resolveRequest;

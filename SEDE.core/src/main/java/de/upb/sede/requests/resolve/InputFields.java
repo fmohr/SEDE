@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
+import de.upb.sede.core.SEDEObject;
 import org.json.simple.JSONObject;
 
 import de.upb.sede.core.ServiceInstanceHandle;
@@ -27,6 +28,20 @@ public class InputFields implements JsonSerializable {
 	public InputFields(Map<String, String> fieldTypes, Map<String, ServiceInstanceHandle> serviceInstanceMap) {
 		this.fieldTypes = fieldTypes;
 		this.serviceInstanceMap = serviceInstanceMap;
+	}
+
+	public static InputFields fromMap(Map<String, SEDEObject> inputs){
+		Map<String, String> inputTypes = new HashMap<>();
+		Map<String, ServiceInstanceHandle> inputInstances = new HashMap<>();
+		for (String fieldname : inputs.keySet()) {
+			SEDEObject field = inputs.get(fieldname);
+			inputTypes.put(fieldname, field.getType());
+			if(field.isServiceInstanceHandle()) {
+				inputInstances.put(fieldname, field.getServiceHandle());
+			}
+		}
+		InputFields inputFields = new InputFields(inputTypes, inputInstances);
+		return inputFields;
 	}
 
 	public boolean isInputField(String fieldname) {

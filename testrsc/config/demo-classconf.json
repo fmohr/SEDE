@@ -10,7 +10,8 @@
                 ]
             },
             "ZEHN_ADDIERER": {
-                "returntype": "demo.math.Addierer"
+                "returntype": "demo.math.Addierer",
+                "static":true
             },
             "addier": {
                 "params": [

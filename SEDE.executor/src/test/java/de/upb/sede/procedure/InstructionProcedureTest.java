@@ -3,6 +3,9 @@ package de.upb.sede.procedure;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import de.upb.sede.config.ExecutorConfiguration;
+import de.upb.sede.core.ServiceInstanceHandle;
+import de.upb.sede.util.ExecutorConfigurationCreator;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -190,8 +193,11 @@ public class InstructionProcedureTest {
 	}
 
 	@Test
-	public void testInstanciation() {
-		Execution execution = new Execution("testID", null);
+	public void testInstantiation() {
+		String executor_id = "Executor_id";
+		ExecutorConfiguration config = ExecutorConfiguration.parseJSON(
+				new ExecutorConfigurationCreator().withExecutorId(executor_id).toString());
+		Execution execution = new Execution("testID", config);
 		execution.getEnvironment().put("0", new SEDEObject("Number", 0));
 		execution.getEnvironment().put("1", new SEDEObject("Number", 1));
 		final String newInstance = "newInstance";
@@ -214,9 +220,33 @@ public class InstructionProcedureTest {
 		Assert.assertTrue(newService.isServiceInstance());
 		Assert.assertEquals(Gerade.class, newService.getServiceInstance().getClass());
 		Gerade gerade = newService.getServiceInstance();
+		Assert.assertEquals("demo.math.Gerade", newService.getServiceHandle().getClasspath());
+		Assert.assertEquals(executor_id, newService.getServiceHandle().getExecutorId());
 		Assert.assertEquals(0, gerade.achsenabschnitt().y, 0.0001);
 		Assert.assertEquals(0, gerade.nullstelle().x, 0.0001);
 
+
+		Task task_2 = new Task(execution, "testTask", new HashMap<String, Object>() {
+			{
+				put("nodetype", "Instruction");
+				put("method", "randomGerade");
+				put("is-service-construction", false);
+				put("host", null);
+				put("leftsidefieldname", "randomInstance");
+				put("context", "demo.math.Gerade");
+				put("is-context-a-fieldname", false);
+				put("fmInstruction", "demo.math.Gerade::randomGerade()");
+				put("leftsidefieldtype", "demo.math.Gerade");
+				put("leftsidefieldclass", "ServiceInstance");
+				put("params", Arrays.asList());
+			}
+		});
+		new InstructionProcedure().processTask(task_2);
+		SEDEObject randomService = execution.getEnvironment().get("randomInstance");
+		Assert.assertTrue(randomService.isServiceInstance());
+		Assert.assertEquals(ServiceInstanceHandle.class.getSimpleName(), randomService.getType());
+		Assert.assertEquals("demo.math.Gerade", randomService.getServiceHandle().getClasspath());
+		Assert.assertEquals(executor_id, randomService.getServiceHandle().getExecutorId());
 	}
 
 	class TestExecutionEnvironment extends HashMap<String, SEDEObject> implements ExecutionEnvironment {

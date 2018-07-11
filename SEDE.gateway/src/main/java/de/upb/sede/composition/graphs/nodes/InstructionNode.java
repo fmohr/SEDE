@@ -20,6 +20,7 @@ public class InstructionNode extends BaseNode {
 	private String fmInstruction;
 	private String leftsideFieldname;
 	private String leftsideFieldtype;
+	private String leftsideFieldclass;
 	private String host;
 	private String context;
 	private boolean contextIsField;
@@ -50,6 +51,7 @@ public class InstructionNode extends BaseNode {
 		this.fmInstruction = Objects.requireNonNull(basedOnInstruction);
 		leftsideFieldname = unassignedValue;
 		leftsideFieldtype = unassignedValue;
+		leftsideFieldclass = unassignedValue;
 		host = unassignedValue;
 		parameterFields = Collections.EMPTY_LIST;
 		parameterTypes = Collections.EMPTY_LIST;
@@ -102,6 +104,17 @@ public class InstructionNode extends BaseNode {
 	}
 
 
+	public String getLeftSideFieldclass() {
+		return leftsideFieldclass;
+	}
+
+	public void setLeftSideFieldclass(String name) {
+		leftsideFieldclass = name;
+	}
+
+	public boolean isAssignedLeftSideFieldclass() {
+		return leftsideFieldclass != unassignedValue;
+	}
 
 
 	public String getHost() {

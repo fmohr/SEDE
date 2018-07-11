@@ -11,7 +11,7 @@
             },
             "ZEHN_ADDIERER": {
                 "returntype": "demo.math.Addierer",
-                "static":true
+                "static": true
             },
             "addier": {
                 "params": [

@@ -18,6 +18,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -26,7 +27,10 @@ public class CoreClient implements ICoreClient{
 	protected static final Logger logger = LogManager.getLogger();
 
 	private final Executor executor;
+
 	private final Function<ResolveRequest, GatewayResolution> gatewayChannel;
+
+	private Optional<BiConsumer<String, String>> dotGraphConsumer = Optional.empty();
 
 	public CoreClient(Executor executor, Function<ResolveRequest, GatewayResolution> gatewayChannel)  {
 		this.executor = executor;
@@ -77,8 +81,18 @@ public class CoreClient implements ICoreClient{
 		/* make a resolve request from the run request */
 		ResolveRequest resolveRequest = runToResolve(runRequest, requestId);
 
+		/* If there is a consumer of the debug dot file make sure the gateway send the dot file back */
+		if(dotGraphConsumer.isPresent()){
+			resolveRequest.getPolicy().setToReturnDotGraph(true);
+		}
+
 		/* let a gateway resolve this request */
 		GatewayResolution resolution = resolve(resolveRequest);
+
+		/* Give the dot graph to the consumer */
+		if(dotGraphConsumer.isPresent()){
+			dotGraphConsumer.get().accept(requestId, resolution.getDotSvg());
+		}
 
 		/* Create a execution request from the resolution and run it on the client executor */
 		ExecRequest execRequest = resolutionToExec(requestId, resolution);
@@ -198,5 +212,9 @@ public class CoreClient implements ICoreClient{
 		public void accept(Result result) {
 			this.put(result.getFieldname(), result);
 		}
+	}
+
+	public void setDotGraphConsumer(BiConsumer<String, String> executionIdDotConsumer){
+		dotGraphConsumer = Optional.of(executionIdDotConsumer);
 	}
 }

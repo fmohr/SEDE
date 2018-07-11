@@ -1,0 +1,11 @@
+{
+    "executorId": "python executor",
+    "capabilities": [
+        "python"
+    ],
+    "threadNumber": 5,
+    "services": [
+        "plainlib.package1.b.B"
+    ],
+    "serviceStoreLocation": "instances"
+}

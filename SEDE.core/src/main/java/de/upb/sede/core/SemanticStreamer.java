@@ -204,7 +204,7 @@ public final class SemanticStreamer {
 			}
 			break;
 		case String:
-			data = constantStr.substring(1, constantStr.length() - 1);
+			data = constantStr;
 			break;
 		default:
 			throw new RuntimeException("All cases covered. " + "Default to have data initialized.");

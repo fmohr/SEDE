@@ -184,13 +184,16 @@ class Task:
     def __str__(self):
         return self["description"]
 
+    def __contains__(self, item):
+        return item in self.attributes
+
     def __getitem__(self, key):
         if key in self.attributes:
             return self.attributes[key]
         else:
-            raise ValueError("GATEWAY BUG: "
-                             "'%s' was queried by a procedure "
-                             "but was not defined in the task attributes." % key)
+            raise ValueError(("GATEWAY BUG: "
+                             "'{}' was queried by a procedure "
+                             "but was not defined in the task attributes.").format(key))
 
     @synchronized
     def set_resolved(self):

@@ -83,10 +83,15 @@ class TransmitDataOverHttp(TransmitDataProcedure):
     def get_put_request(self, task, unavailable:bool)->BasicClientRequest:
         host = task["contact-info"]["host-address"]
         fieldname = task["fieldname"]
-        semtype = task["semantic-type"]
+        if "semantic-type" in task:
+            semtype = task["semantic-type"]
+        else:
+            semtype = None
         executionId = task.execution.exec_id
         if semtype is None:
-            semtype = SEMANTIC
+            sedeObj:SEDEObject = task.execution.env[fieldname]
+            semtype = sedeObj.type
+        logging.trace("Execution '%s': Transmitting %s of type %s to %s.", executionId, fieldname, semtype, host)
         return create_put_request(host,fieldname,executionId,unavailable,semtype)
 
 
@@ -97,6 +102,7 @@ class FinishOverHttp(FinishProcedure):
         fieldname = task["fieldname"]
         semtype = PrimitiveType.Bool.name
         executionId = task.execution.exec_id
+        logging.trace("Execution '%s': Notifying %s with a finish flag.", executionId, host)
         return create_put_request(host, fieldname, executionId, unavailable=False, semtype=semtype)
 
 
@@ -109,7 +115,7 @@ class HTTPExecutor(Executor):
         self.port = port
         self.bind_http_procedure_names()
         self.request_handler = MultiContextHandler()
-        self.request_handler.add_context("/put/(?P<executionId>\w+)/(?P<fieldname>(?:[&_a-zA-Z][&\w]+))/(?P<semtype>\w+)",
+        self.request_handler.add_context("/put/(?P<executionId>\w+)/(?P<fieldname>(?:[&_a-zA-Z][&\w]*))/(?P<semtype>\w+)",
                                          self.handler_put_data)
         self.request_handler.add_context("/execute",
                                          self.handler_execute)
@@ -118,10 +124,6 @@ class HTTPExecutor(Executor):
 
         self.httpserver = server.HTTPServer(("", port), self.request_handler)
         logging.info("Starting Python executor http server: '%s'. host: %s port: %i", config.executor_id, host_address, port)
-        try:
-            self.httpserver.serve_forever()
-        except KeyboardInterrupt:
-            self.httpserver.shutdown()
 
 
     def bind_http_procedure_names(self):
@@ -137,5 +139,20 @@ class HTTPExecutor(Executor):
     def handler_interrupt(self):
         return InterruptHandler(self)
 
+    def contact_info(self):
+        d = super().contact_info();
+        d["host-address"] = self.host_address + ":" + str(self.port)
+        return d
 
-HTTPExecutor(ExecutorConfig.empty_config(), "localhost", 5000)
+    def start_listening(self):
+        try:
+            self.httpserver.serve_forever()
+        except KeyboardInterrupt:
+            self.httpserver.shutdown()
+
+
+if __name__ == "__main__":
+    executor = HTTPExecutor(ExecutorConfig.empty_config(), "localhost", 5000)
+    executor.start_listening()
+
+

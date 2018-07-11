@@ -131,10 +131,16 @@ public class WorkerPool {
 					task.setFailed();
 				}
 			} catch(Exception ex) {
-				procedure.processFail(task);
-				task.setError(ex);
-				task.setFailed();
 				logger.error("ERROR during {}:\n", task.getDescription(), ex);
+				task.setError(ex);
+				if(!task.hasFailed()){
+					try{
+						procedure.processFail(task);
+						task.setFailed();
+					} catch(Exception innerException){
+						logger.error("ERROR during fail processing of {}:\n", task.getDescription(), ex);
+					}
+				}
 			}
 			finally {
 				task.setDone();

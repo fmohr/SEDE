@@ -122,7 +122,7 @@ public class InstructionProcedure implements Procedure {
 		else {
 			try{
 
-				invocationResult = callMethod(contextClass, contextType, parameterClasses, parameterValues, environment,
+				invocationResult = callMethod(task, contextClass, contextType, parameterClasses, parameterValues, environment,
 						nodeAttributes);
 			} catch(RuntimeException ex) {
 				throw new RuntimeException("Error during invocation of method of instruction: " +  task.getDescription(), ex);
@@ -247,13 +247,13 @@ public class InstructionProcedure implements Procedure {
 	 */
 	private ServiceInstance createServiceInstanceHandle(Task task, Object newServiceInstance) {
 		String serviceInstanceId = UUID.randomUUID().toString();
-		String executorId = task.getExecution().getExecutionId();
+		String executorId = task.getExecution().getConfiguration().getExecutorId();
 		String classpath = newServiceInstance.getClass().getName();
 		ServiceInstance si = new ServiceInstance(executorId, classpath, serviceInstanceId, newServiceInstance);
 		return si;
 	}
 
-	private InvocationResult callMethod(Class<?> contextClass, String contextType, Class<?>[] parameterClasses,
+	private InvocationResult callMethod(Task task, Class<?> contextClass, String contextType, Class<?>[] parameterClasses,
 										Object[] parameterValues, ExecutionEnvironment environment, InstructionNodeAttributes nodeAttributes) {
 		Method methodToBeCalled;
 		try {
@@ -265,6 +265,7 @@ public class InstructionProcedure implements Procedure {
 			throw new RuntimeException("Method not found.");
 		}
 		String outputType = nodeAttributes.getLeftsidefieldType();
+
 		// If invoking a static method or a constructor the context instance is null.
 		Object contextInstance = null;
 		if (nodeAttributes.isContextAFieldname()) {
@@ -284,6 +285,14 @@ public class InstructionProcedure implements Procedure {
 			outputValue = methodToBeCalled.invoke(contextInstance, parameterValues);
 		} catch (ReflectiveOperationException e) {
 			throw new RuntimeException(e);
+		}
+		if(nodeAttributes.getLeftsidefieldClass().startsWith("ServiceInstance")){
+			/*
+				The method creates a new service instance:
+			 */
+			ServiceInstanceHandle serviceInstanceHandle = createServiceInstanceHandle(task, outputValue);
+			outputValue = serviceInstanceHandle;
+			outputType = ServiceInstanceHandle.class.getSimpleName();
 		}
 		return new InvocationResult(outputValue, outputType);
 	}
@@ -554,6 +563,7 @@ public class InstructionProcedure implements Procedure {
 		private final boolean isContextAFieldname;
 		private final String method;
 		private final String leftsidefieldname;
+		private final String leftsidefieldclass;
 		private final String host;
 		private final String context;
 		private final String fmInstruction;
@@ -568,6 +578,7 @@ public class InstructionProcedure implements Procedure {
 			this.isContextAFieldname = (boolean) parameters.get("is-context-a-fieldname");
 			this.method = (String) parameters.get("method");
 			this.leftsidefieldname = (String) parameters.get("leftsidefieldname");
+			this.leftsidefieldclass = (String) parameters.get("leftsidefieldclass");
 			this.host = (String) parameters.get("host");
 			this.context = (String) parameters.get("context");
 			this.fmInstruction = (String) parameters.get("fmInstruction");
@@ -619,6 +630,10 @@ public class InstructionProcedure implements Procedure {
 
 		public int getOutputIndex() {
 			return outputIndex;
+		}
+
+		public String getLeftsidefieldClass() {
+			return  leftsidefieldclass != null ? leftsidefieldclass : "";
 		}
 	}
 

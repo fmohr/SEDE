@@ -18,7 +18,7 @@ def out_write_string(wfile:IO, payload:str, *args, **kwargs) -> None:
         raise ValueError("Unexpected type: " + str(payload.__class__) + ". Expected string.")
     out_write_bytes(wfile, payload.encode(), *args, **kwargs)
 
-def out_write_bytes(wfile: IO, payload, close: bool = False) -> None:
+def out_write_bytes(wfile: IO, payload, close: bool = True) -> None:
     if not is_bytes(payload):
         raise ValueError("Unexpected type: " + str(payload.__class__) + ". Expected bytes-like.")
     wfile.write(payload)
@@ -33,7 +33,7 @@ def out_write(wfile:IO, payload, *args, **kwargs) -> None:
     else:
         raise ValueError("Unexpected type: " + str(payload.__class__))
 
-def in_read(rfile: IO, content_length = None, close: bool = False):
+def in_read(rfile: IO, content_length = None, close: bool = True):
     if content_length is None:
         content = rfile.read()
     else:
@@ -78,11 +78,16 @@ class BasicClientRequest(object):
         pass
 
     def send_receive_str(self, payload: str = None) -> str:
-
         with(self):
             if payload is not None:
                 out_write(self.send(), payload, close=False)
             return in_read_string(self.receive())
+
+    def send_receive_bytes(self, payload = None) -> str:
+        with(self):
+            if payload is not None:
+                out_write(self.send(), payload, close=False)
+            return in_read_bytes(self.receive())
 
 
 
@@ -255,7 +260,11 @@ class MultiContextHandler(object):
                         out_write(self.wfile, server_out, close=False)
                     else:
                         inputstream = io.BytesIO(input_bytes)
+                        # Change the close method of wfile in order to prevent 'close' being called.
+                        old_close = self.wfile.close
+                        self.wfile.close = lambda : None
                         request_responder.receive(inputstream=inputstream, outputstream=self.wfile, closeinput=False, closeoutput=False, **url_inputs)
+                        self.wfile.close = old_close
                     self.flush_headers()
                     return
 

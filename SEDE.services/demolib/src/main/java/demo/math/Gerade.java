@@ -12,6 +12,10 @@ public class Gerade implements Serializable {
 		this.steigung = steigung;
 	}
 
+	public static Gerade randomGerade(){
+		return new Gerade(Math.random(), Math.random());
+	}
+
 	public boolean liegtAufGerade(Punkt p) {
 		return calc(p.x).y == p.y;
 	}

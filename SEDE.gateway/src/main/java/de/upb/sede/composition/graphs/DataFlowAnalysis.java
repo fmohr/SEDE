@@ -525,7 +525,17 @@ public class DataFlowAnalysis {
 				if(SEDEObject.isPrimitive(typeName)) {
 					typeClass = TypeClass.PrimitiveType;
 				} else if(SEDEObject.isReal(typeName)) {
-					typeClass = TypeClass.RealDataType;
+					if( resolveInfo.getClassesConfiguration().classknown(typeName)) {
+						/* The method might return another service as its output.
+						 * Think of static factory methods for example.
+						 * So first check if the return type is known as a service name: */
+						typeClass = TypeClass.ServiceInstance;
+					} else{
+						/*
+						 * Just assume its an ordinary real data type.
+						 */
+						typeClass = TypeClass.RealDataType;
+					}
 				} else if(SEDEObject.isSemantic(typeName)){
 					typeClass = TypeClass.SemanticDataType;
 				} else{
@@ -541,14 +551,27 @@ public class DataFlowAnalysis {
 					This covers the case that some methods apply changes in place but the fm-composition treats it as if it has a return value:
 				 */
 				int paramIndex = methodInfo.indexOfNthStateMutatingParam(0);
-				typeClass = consumedParams[paramIndex].getTypeClass();
-				typeName = consumedParams[paramIndex].getTypeName();
-				instNode.setOutputIndex(paramIndex);
+				if(paramIndex >= 0) {
+					/*
+						paramIndex points to the first parameter which changes its state:
+					 */
+					typeClass = consumedParams[paramIndex].getTypeClass();
+					typeName = consumedParams[paramIndex].getTypeName();
+					instNode.setOutputIndex(paramIndex);
+				} else{
+					/*
+						No parameter changes its state.
+						Let the instruction return null:
+					 */
+					typeClass = TypeClass.PrimitiveType;
+					typeName = "Null";
+				}
 			}
 			FieldType leftSideFieldType = new FieldType(instNode, leftsideFieldname, typeClass, typeName,
 					true);
 			addFieldType(leftSideFieldType);
 			instNode.setLeftSideFieldtype(typeName);
+			instNode.setLeftSideFieldclass(typeClass.name());
 		}
 	}
 

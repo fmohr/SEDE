@@ -63,7 +63,7 @@ class FinishProcedure(Procedure):
 
         with self.get_finish_flag_request(task) as request:
             request : BasicClientRequest
-            result = request.send_receive_str(data.encode(success))
+            result = request.send_receive_str(data.encode(successObject))
 
         if result is not None and len(result) > 0:
             raise Exception("Finish notice to client failed. Answer was not empty: " + result)
@@ -136,6 +136,7 @@ class ServiceInstanceStorageProcedure(Procedure):
                 task.execution.env[fieldname] = loadedSedeObject
         else:
             field: data.SEDEObject = task.execution.env[fieldname]
+            # if not field.is_service_instance():
             assert field.is_service_instance()
             instanceHandle: data.ServiceInstance = field.data
             assert instanceHandle.service_instance is not None
@@ -168,7 +169,10 @@ class TransmitDataProcedure(Procedure):
         objToSend = task.execution.env[fieldname]
         with self.get_put_request(task, unavailable=False) as put_request:
             put_request : BasicClientRequest
-            caster = task["caster"]
+            if "caster" in task:
+                caster = task["caster"]
+            else:
+                caster = None
             put_request.write_bytes(data.encode(objToSend, caster=caster))
             answer = in_read_string(put_request.receive())
             if answer is not None and len(answer) > 0:

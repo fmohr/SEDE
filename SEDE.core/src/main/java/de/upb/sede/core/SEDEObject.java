@@ -34,7 +34,7 @@ public class SEDEObject implements JsonSerializable {
 	private Object object;
 
 	private SEDEObject() {
-		// dont make this public. its only used by fromJson method.
+		this(PrimitiveType.NULL, null);
 	}
 
 	/**
@@ -67,6 +67,26 @@ public class SEDEObject implements JsonSerializable {
 
 	public SEDEObject(ServiceInstanceHandle instanceHandle) {
 		this(SERVICE_INSTANCE_HANDLE_TYPE, instanceHandle);
+	}
+
+	public SEDEObject(Number number) {
+		this(PrimitiveType.Number, number);
+	}
+	public SEDEObject(Boolean bool) {
+		this(PrimitiveType.Bool, bool);
+	}
+	public SEDEObject(String charsequence) {
+		this(PrimitiveType.String, charsequence);
+	}
+
+	/**
+	 * Only use in tests, please.
+	 * Same as: SEDEObject(realData.getClass().getName(), realData)
+	 * @param realData some java object whose class name will be used as the type.
+	 *                 Note that in general the actual type doesnt have to correspond with the class name in java.
+	 */
+	public SEDEObject(Object realData){
+		this(realData.getClass().getName(), realData);
 	}
 
 	public Object getObject() {

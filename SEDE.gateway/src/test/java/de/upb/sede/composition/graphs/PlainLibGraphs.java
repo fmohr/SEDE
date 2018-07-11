@@ -1,6 +1,5 @@
 package de.upb.sede.composition.graphs;
 
-import de.upb.sede.composition.graphs.nodes.SendGraphNode;
 import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
@@ -16,7 +15,6 @@ import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.simple.parser.JSONParser;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -64,7 +62,7 @@ public class PlainLibGraphs {
 	public static void resolve_and_store(ResolveRequest rr, int execNr) {
 		rr.getPolicy().setToReturnDotGraph(true);
 		GatewayResolution resolution = gateway.resolve(rr);
-		String pathPrefix= "testrsc/resolutions/plainlib/e_" + execNr;
+		String pathPrefix= "testrsc/exec-requests/plainlib/e_" + execNr;
 		FileUtil.writeStringToFile(pathPrefix + ".svg", resolution.getDotSvg());
 		String graphString = resolution.getCompositionGraph();
 //		CompositionGraph graph = GJS.fromJsonString(graphString);

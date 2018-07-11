@@ -96,6 +96,8 @@ public final class NodeJsonSerializer {
 				instructionNode.isAssignedLeftSideFieldname() ? instructionNode.getLeftSideFieldname() : null);
 		jsonObject.put("leftsidefieldtype",
 				instructionNode.isAssignedLeftSideFieldtype() ? instructionNode.getLeftSideFieldtype() : null);
+		jsonObject.put("leftsidefieldclass",
+				instructionNode.isAssignedLeftSideFieldclass() ? instructionNode.getLeftSideFieldclass() : null);
 		jsonObject.put("host", instructionNode.isAssignedHost() ? instructionNode.getHost() : null);
 		jsonObject.put("context", instructionNode.getContext());
 		jsonObject.put("method", instructionNode.getMethod());
@@ -113,6 +115,7 @@ public final class NodeJsonSerializer {
 		String fmInstruction = (String) node.get("fmInstruction");
 		String leftsidefieldname = (String) node.get("leftsidefieldname");
 		String leftsidefieldtype = (String) node.get("leftsidefieldtype");
+		String leftsidefieldclass = (String) node.get("leftsidefieldclass");
 		String host = (String) node.get("host");
 		String context = (String) node.get("context");
 		boolean contextisfield = (Boolean) node.get("is-context-a-fieldname");
@@ -128,6 +131,9 @@ public final class NodeJsonSerializer {
 		}
 		if(leftsidefieldtype != null) {
 			instructionNode.setLeftSideFieldtype(leftsidefieldtype);
+		}
+		if(leftsidefieldclass != null) {
+			instructionNode.setLeftSideFieldclass(leftsidefieldclass);
 		}
 		if (host != null) {
 			instructionNode.setHost(host);

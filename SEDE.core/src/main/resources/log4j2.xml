@@ -21,11 +21,11 @@
   </Appenders>
  
   <Loggers>
-    <Logger name="de.upb.sede.gateway" level="info" additivity="true">
+    <Logger name="de.upb.sede.gateway" level="debug" additivity="true">
       <AppenderRef ref="defaultfile"/>
     </Logger>
 
-    <Root level="info">
+    <Root level="debug">
       <AppenderRef ref="STDOUT"/>
     </Root>
   </Loggers>

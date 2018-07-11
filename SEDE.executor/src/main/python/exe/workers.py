@@ -34,21 +34,26 @@ class TaskRunner:
         Exectues the task.
         """
         self.thread_id = threading.get_ident()
-        logging.trace("worker STARTED working on task: %s", self.task)
         try:
             self.task.set_started()
             if not self.task.dependecy_has_failed:
+                logging.trace("worker STARTED working on task: %s", self.task)
                 self.procedure.process_task(self.task)
             else:
-                self.procedure.process_fail(self.task)
+                logging.trace("worker STARTED working on fail processing of task: %s", self.task)
                 self.task.set_failed()
+                self.procedure.process_fail(self.task)
         except Interruption:
             pass
         except Exception as e:
             self.task.error = e
-            self.task.set_failed()
-            self.procedure.process_fail(self.task)
             logging.exception("ERROR during: %s", self.task)
+            if not self.task.failed:
+                try:
+                    self.procedure.process_fail(self.task)
+                except Exception as e:
+                    logging.exception("ERROR during processing fail: %s", self.task)
+                self.task.set_failed()
         finally:
             self.task.set_done()
 

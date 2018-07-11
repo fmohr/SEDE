@@ -405,7 +405,8 @@ public class ClassesConfig extends Configuration {
 					}
 				}
 			}
-			throw new RuntimeException("The " + nth + "th state mutating parameter does not exist.");
+//			throw new RuntimeException("The " + nth + "th state mutating parameter does not exist.");
+			return -1;
 		}
 
 		public static MethodInfo emptyConstructor(String classpath) {

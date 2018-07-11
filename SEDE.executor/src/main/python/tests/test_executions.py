@@ -8,13 +8,17 @@ from exe.data import ServiceInstanceHandle
 from time import sleep
 
 
-with open("testresources/config.json", "r") as configfile:
+with open("testrsc/deployment/config.json", "r") as configfile:
     config = ExecutorConfig.from_json_string(configfile.read())
 
 executor = Executor(config)
 
-with open("testresources/e_1.json", "r") as executefile:
-    exec_1 = ExecRequest.from_json_string(executefile.read())
+root_executions = "testrsc/exec-requests/plainlib/"
+def read_resource(filename)->str:
+    with open(root_executions + filename, "r") as executefile:
+        return executefile.read()
+
+exec_1 = ExecRequest.from_json_string(read_resource("e_1.json"))
 
 execution_1 = executor.execute(exec_1)
 
@@ -25,10 +29,9 @@ print("done execution 1")
 assert "b" in execution_1.env
 b: ServiceInstanceHandle = execution_1.env["b"].data
 
-with open("testresources/e_2.json", "r") as executefile:
-    json_string = executefile.read()
-    json_string = json_string.replace("$INSTANCE_ID b", b.serviceId)
-    exec_2 = ExecRequest.from_json_string(json_string)
+json_string = read_resource("e_2.json")
+json_string = json_string.replace("$INSTANCE_ID b", b.serviceId)
+exec_2 = ExecRequest.from_json_string(json_string)
 
 execution_2 = executor.execute(exec_2)
 

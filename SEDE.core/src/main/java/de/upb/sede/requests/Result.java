@@ -2,6 +2,7 @@ package de.upb.sede.requests;
 
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.SemanticStreamer;
+import de.upb.sede.core.ServiceInstanceHandle;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -41,6 +42,13 @@ public class Result extends Request{
 		return resultData.get();
 	}
 
+	public ServiceInstanceHandle getServiceInstanceHandle(){
+		return resultData.get().getServiceHandle();
+	}
+
+	/**
+	 * Only use for testing.
+	 */
 	public SEDEObject castResultData(Class expectedType, Class caster) {
 		if(expectedType.isInstance(getResultData().getObject())) {
 			/*
@@ -51,7 +59,7 @@ public class Result extends Request{
 			throw new RuntimeException("Caster is null but data doesn;t match expected type: " + getResultData().toString());
 		} else {
 			return SemanticStreamer.readObjectFrom(getResultData(),
-					caster.getName(), "Arr", expectedType.getName());
+					caster.getName(), getResultData().getType(), expectedType.getName());
 		}
 	}
 

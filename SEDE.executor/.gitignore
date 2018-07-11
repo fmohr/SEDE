@@ -1,4 +1,4 @@
 **/*.json
 **/*.svg
-*/instances
+**/instances
 !src/testresources/*conf*

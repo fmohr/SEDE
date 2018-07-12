@@ -441,7 +441,12 @@ public class ClassesConfig extends Configuration {
 		}
 
 		public String returnType() {
-			return (String) configuration.get("returntype");
+			if(hasReturnType()){
+				return (String) configuration.get("returntype");
+			}
+			else {
+				return "NULL";
+			}
 		}
 
 		public boolean isStatic()  {

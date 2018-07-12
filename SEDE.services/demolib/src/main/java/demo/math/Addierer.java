@@ -1,6 +1,8 @@
 package demo.math;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import demo.types.NummerList;
 import org.apache.logging.log4j.LogManager;
@@ -45,6 +47,12 @@ public class Addierer implements Serializable {
 			sumList.add(nl1.get(i) + nl2.get(i));
 		}
 		return sumList;
+	}
+
+	public static List<Number> addierBuiltIn(List<Number> liste, double delta) {
+		List<Number> addedList = new ArrayList<>();
+		liste.forEach(elem -> addedList.add(elem.doubleValue() + delta));
+		return addedList;
 	}
 
 	/**

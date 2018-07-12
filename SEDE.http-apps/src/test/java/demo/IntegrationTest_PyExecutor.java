@@ -18,6 +18,7 @@ import de.upb.sede.requests.RunRequest;
 import de.upb.sede.requests.resolve.InputFields;
 import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.requests.resolve.ResolveRequest;
+import de.upb.sede.util.BuiltinCaster;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
 import demo.types.DemoCaster;
@@ -29,10 +30,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class IntegrationTest_PyExecutor {
 
@@ -49,10 +47,12 @@ public class IntegrationTest_PyExecutor {
 
 	private static final String[] classconfFiles = {
 			"testrsc/config/plainlib-classconf.json",
-			"testrsc/config/demo-classconf.json"};
+			"testrsc/config/demo-classconf.json",
+			"testrsc/config/builtin-classconf.json"};
 	private static final String[] typecongFiles  = {
 			"testrsc/config/plainlib-typeconf.json",
-			"testrsc/config/demo-typeconf.json"};
+			"testrsc/config/demo-typeconf.json",
+			"testrsc/config/builtin-typeconf.json"};
 	@BeforeClass
 	public static void setupGateway() {
 		gateway = new Gateway(new ClassesConfig(), new OnthologicalTypeConfig());
@@ -125,7 +125,7 @@ public class IntegrationTest_PyExecutor {
 		resultMap = client.blockingRun(rr);
 		String state_before = (String) resultMap.get("state_before").getResultData().getObject();
 		String state_after = (String) resultMap.get("state_after").getResultData().getObject();
-		NummerList n2 = (NummerList) resultMap.get("n2").castResultData(NummerList.class, DemoCaster.class).getObject();
+		NummerList n2 = (NummerList) resultMap.get("n2").castResultData("NummerList", DemoCaster.class).getObject();
 
 		Assert.assertNotEquals(state_before, state_after);
 		Assert.assertEquals("a = 0 b = 1", state_before);
@@ -192,13 +192,13 @@ public class IntegrationTest_PyExecutor {
 		rr = createRR(execNr, composition, inputs);
 		resultMap = client.blockingRun(rr);
 		NummerList n3 = (NummerList) resultMap.get("n3")
-				.castResultData(NummerList.class, DemoCaster.class)
+				.castResultData("NummerList", DemoCaster.class)
 				.getObject();
 		NummerList n4 = (NummerList) resultMap.get("n4")
-				.castResultData(NummerList.class, DemoCaster.class)
+				.castResultData("NummerList", DemoCaster.class)
 				.getObject();
 		NummerList n5 = (NummerList) resultMap.get("n5")
-				.castResultData(NummerList.class, DemoCaster.class)
+				.castResultData("NummerList", DemoCaster.class)
 				.getObject();
 		Boolean bool1 = (Boolean) resultMap.get("bool1").getResultData().getObject();
 
@@ -210,8 +210,29 @@ public class IntegrationTest_PyExecutor {
 
 	}
 
+	@Test
+	public void test_builtins(){
+		client.setDotGraphConsumer((executionId, svgString) -> {
+			String pathToDotGraph = "testrsc/exec-requests/builtins/" + executionId + ".resolution.svg";
+			FileUtil.writeStringToFile(pathToDotGraph, svgString);
+		});
+		int execNr = 1;
+		String composition =
+				"l2 = demo.math.Addierer::addierBuiltIn({l1,2});";
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		inputs.put("l1", new SEDEObject("java.util.List", Arrays.asList(0,1,2)));
+		RunRequest rr = createRR(execNr, composition, inputs);
+
+		Map<String, Result> resultMap = client.blockingRun(rr);
+		List<Double> l2 = (List<Double>) resultMap.get("l2").
+				castResultData("java.util.List", BuiltinCaster.class).getObject();
+		Assert.assertEquals(Arrays.asList(2.,3.,4.) ,l2);
+
+	}
+
 	private static RunRequest createRR(int execNr, String composition, Map<String, SEDEObject> inputs) {
 		return  new RunRequest("execution_" + execNr, composition, new ResolvePolicy(), inputs);
+
 	}
 
 

@@ -49,8 +49,9 @@ public class Result extends Request{
 	/**
 	 * Only use for testing.
 	 */
-	public SEDEObject castResultData(Class expectedType, Class caster) {
-		if(expectedType.isInstance(getResultData().getObject())) {
+	public SEDEObject castResultData(String expectedType, Class caster) {
+
+		if(expectedType.equals(getResultData().getType())) {
 			/*
 				Type already matches:
 			 */
@@ -59,7 +60,7 @@ public class Result extends Request{
 			throw new RuntimeException("Caster is null but data doesn;t match expected type: " + getResultData().toString());
 		} else {
 			return SemanticStreamer.readObjectFrom(getResultData(),
-					caster.getName(), getResultData().getType(), expectedType.getName());
+					caster.getName(), getResultData().getType(), expectedType);
 		}
 	}
 

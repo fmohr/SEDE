@@ -213,6 +213,7 @@ public class InstructionProcedureTest {
 				put("fmInstruction", "demo.math.Gerade::demo.math.Gerade(0,1)");
 				put("leftsidefieldtype", "demo.math.Gerade");
 				put("params", Arrays.asList("0", "1"));
+				put("leftsidefieldclass", "ServiceInstanceHandle");
 			}
 		});
 		new InstructionProcedure().processTask(task);

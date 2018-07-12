@@ -1,3 +1,12 @@
+project.ext {
+    /*
+        Set global properties like folder paths and so on:
+     */
+    resources = "${project.rootDir}/rsc/"
+    testresources ="${project.rootDir}/testrsc/"
+    libraries ="${project.rootDir}/libs/"
+}
+
 subprojects {
     /*
         configuration for all sub projects.
@@ -16,7 +25,7 @@ subprojects {
 
         // libraries we only have jar's from:
         flatDir {
-            dirs "${project.rootDir}/libs"
+            dirs project.libraries
         }
 
         /*// python repos:
@@ -39,7 +48,7 @@ subprojects {
     sourceSets {
         test {
             resources {
-                srcDir "${project.rootDir}/testrsc"
+                srcDir project.testresources
             }
         }
     }
@@ -47,6 +56,7 @@ subprojects {
     /* Set working directory of tests to root folder: */
     test{
         workingDir = new File("${project.rootDir}")
+        ignoreFailures = true
     }
 }
 /*
@@ -85,6 +95,9 @@ project(':SEDE.gateway') {
 project(':SEDE.executor') {
     dependencies {
         testCompile project(':SEDE.services:demolib')
+
+        // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+        compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
         compile project(':SEDE.core')
         compile project(':SEDE.gateway')
     }
@@ -98,4 +111,56 @@ project(':SEDE.http-apps') {
         compile project(':SEDE.gateway')
         compile project(':SEDE.executor')
     }
+}
+/*
+    configure resources by copying them into specific folders:
+ */
+task copyrsc {
+    /*
+        Copy all files from each subproject resources folder into the project global testresources folder:
+     */
+    doFirst {
+        println "Copying resources:"
+
+        copy {
+            println "Copy resources into testrsc folder."
+            from getresources()
+            into project.testresources
+        }
+    }
+}
+task prettyrsc {
+    /*
+        Run a python script which prettifies the json resources:
+     */
+    doLast {
+        exec{
+            println "Run a json-prettifier python script on all the testresources files."
+            commandLine 'python3', 'SEDE.core/src/main/python/json_rsc_prettifier.py'
+            commandLine 'python', 'SEDE.core/src/main/python/json_rsc_prettifier.py'
+//            standardOutput = new ByteArrayOutputStream()
+            workingDir project.rootDir
+        }
+    }
+}
+
+
+/*
+    Some utility functions:
+ */
+
+/**
+ * Returns all files in 'resources' folders within sub projects.
+ * @return FileCollection of all resources files.
+ */
+def getresources(){
+    FileCollection resources = project.files([])
+    new File('.').traverse(
+            type: groovy.io.FileType.DIRECTORIES,
+            nameFilter   : ~/resources/,
+            preDir       : { if (it.name == 'build') return groovy.io.FileVisitResult.SKIP_SUBTREE },
+    ) {
+        resources = project.files(resources, fileTree(it))
+    }
+    return resources
 }

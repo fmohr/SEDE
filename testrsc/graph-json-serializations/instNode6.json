@@ -5,6 +5,7 @@
     "method": "method1",
     "description": "someFieldname::method1([])",
     "params": [],
+    "leftsidefieldclass": null,
     "leftsidefieldtype": null,
     "is-service-construction": false,
     "leftsidefieldname": null,

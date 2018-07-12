@@ -147,7 +147,7 @@ public class IntegrationTest_Execute {
 
 		Assert.assertTrue(results.containsKey("c"));
 		Assert.assertFalse(results.get("c").hasFailed());
-		NummerList c = (NummerList) results.get("c").castResultData(NummerList.class, DemoCaster.class).getObject();
+		NummerList c = (NummerList) results.get("c").castResultData("NummerList", DemoCaster.class).getObject();
 
 		Assert.assertEquals(Addierer.summierListe(a,b), c);
 	}

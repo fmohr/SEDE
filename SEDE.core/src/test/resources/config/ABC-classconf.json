@@ -1,0 +1,63 @@
+{
+    "A": {
+        "methods": {
+            "$construct": {
+                "params": [
+                    "t1"
+                ]
+            },
+            "m1": {
+                "params": [
+                    "t1",
+                    "t2"
+                ],
+                "returntype": "t1",
+                "statemutating": true
+            },
+            "m2": {
+                "params": [
+                    "t1",
+                    {
+                        "type": "t2"
+                    },
+                    {
+                        "type": "t3",
+                        "statemutating": true
+                    }
+                ],
+                "statemutating": false
+            },
+            "m3": {
+                "statemutating": true,
+                "static": true
+            },
+            "m4": {}
+        },
+        "wrapper": "D"
+    },
+    "B": {
+        "extends": [
+            "A"
+        ]
+    },
+    "C": {
+        "methods": {
+            "$construct": {
+                "params": [
+                    "t3",
+                    "t2"
+                ]
+            },
+            "m1": {
+                "params": [
+                    "t3"
+                ],
+                "returntype": "t2",
+                "statemutating": false
+            }
+        },
+        "extends": [
+            "A"
+        ]
+    }
+}

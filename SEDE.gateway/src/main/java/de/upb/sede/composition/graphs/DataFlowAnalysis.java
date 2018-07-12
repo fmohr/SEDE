@@ -54,6 +54,7 @@ public class DataFlowAnalysis {
 		if(resolveInfo.getResolvePolicy().isBlockTillFinished()) {
 			addFinishingNodes();
 		}
+
 	}
 
 	private void addInputNodesFieldTypes() {

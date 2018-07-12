@@ -32,7 +32,7 @@ public class GraphToDotSerializerTest {
 		String dot = GraphToDot.graphToDotString(graph);
 		String svg = GraphToDot.graphToSVGString(graph);
 
-		FileUtil.writeStringToFile("testrsc/dot-files /testGraph.dot", dot);
-		FileUtil.writeStringToFile("testrsc/dot-files/testGraph.svg", svg);
+		FileUtil.writeStringToFile("testrsc/temp/dot-files/testGraph.dot", dot);
+		FileUtil.writeStringToFile("testrsc/temp/dot-files/testGraph.svg", svg);
 	}
 }

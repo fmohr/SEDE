@@ -9,7 +9,7 @@ import java.io.*;
 
 public class DemoCaster {
 
-	public NummerList cfs_Arr_NummerList(InputStream is) throws ParseException, IOException {
+	public NummerList cfs_NummerList(InputStream is) throws ParseException, IOException {
 		JSONParser parser = new JSONParser();
 		Reader jsonReader = new InputStreamReader(is);
 		JSONArray jsonArray = (JSONArray) parser.parse(jsonReader);
@@ -17,7 +17,7 @@ public class DemoCaster {
 		return nummerList;
 	}
 
-	public void cts_NummerList_Arr(OutputStream os, NummerList nl) throws IOException {
+	public void cts_NummerList(OutputStream os, NummerList nl) throws IOException {
 		JSONArray jsonArray = new JSONArray();
 		jsonArray.addAll(nl);
 		OutputStreamWriter writer = new OutputStreamWriter(os);
@@ -25,7 +25,7 @@ public class DemoCaster {
 		writer.flush();
 	}
 
-	public Punkt cfs_Arr_Punkt(InputStream is) throws ParseException, IOException {
+	public Punkt cfs_Punkt(InputStream is) throws ParseException, IOException {
 		JSONParser parser = new JSONParser();
 		Reader jsonReader = new InputStreamReader(is);
 		JSONArray jsonArray = (JSONArray) parser.parse(jsonReader);
@@ -37,7 +37,7 @@ public class DemoCaster {
 		Punkt punkt = new Punkt(x, y);
 		return punkt;
 	}
-	public void cts_Punkt_Arr(OutputStream os, Punkt p) throws IOException {
+	public void cts_Punkt(OutputStream os, Punkt p) throws IOException {
 		JSONArray jsonArray = new JSONArray();
 		jsonArray.add(p.x);
 		jsonArray.add(p.y);

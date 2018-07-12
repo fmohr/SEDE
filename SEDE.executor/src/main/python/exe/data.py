@@ -200,7 +200,7 @@ def get_cast_methodname(realtype:str, to_semantic:bool)-> str:
     return methodname
 
 
-classname_regex = re.compile("[a-zA-Z_0-9\.]+\.(?P<classpath>[a-zA-Z_]\w*)$")
+classname_regex = re.compile("([a-zA-Z_0-9\.]+\.)*(?P<classpath>[a-zA-Z_]\w*)$")
 def simplename_from_classpath(classpath:str)->str:
     m = classname_regex.match(classpath)
     if m is None:

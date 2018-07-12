@@ -5,6 +5,7 @@
     "method": "method1",
     "description": "a = some.service.Library::method1([])",
     "params": [],
+    "leftsidefieldclass": null,
     "leftsidefieldtype": "Number",
     "is-service-construction": false,
     "leftsidefieldname": "a",

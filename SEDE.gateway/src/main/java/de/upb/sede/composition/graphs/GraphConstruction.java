@@ -3,6 +3,7 @@ package de.upb.sede.composition.graphs;
 import java.util.*;
 
 import de.upb.sede.composition.FMCompositionParser;
+import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.graphs.nodes.SendGraphNode;
 import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
@@ -25,22 +26,15 @@ public class GraphConstruction {
 		}
 		GraphConstruction gc = new GraphConstruction(resolveInformation, Collections.unmodifiableList(instructionList));
 		
-		gc.calcResolvedClientGraph();
 		return gc;
 	}
 
 	private void calcResolvedClientGraph() {
 		CompositionGraph resolvedClientGraph = dataFlow.getClientExecPlan().getGraph();
-//		/*
-//		 * prioritize executions on the client node:
-//		 */
-//		List<BaseNode> sortedNodes = GraphTraversal.topologicalSort(resolvedClientGraph);
-//		for(int i = 0, size = sortedNodes.size(); i < size-1; i++) {
-//			resolvedClientGraph.connectNodes(sortedNodes.get(i), sortedNodes.get(i+1));
-//		}
 		/*
-		 * Add send graph nodes to the client graph and returns it:
+		 * Create sendgraph nodes from the serialization of the other execution graphs:
 		 */
+		List<BaseNode> sendGraphNodes = new ArrayList<>();
 		GraphJsonSerializer gjs = new GraphJsonSerializer();
 		for (ExecPlan exec : dataFlow.getInvolvedExecutions()) {
 			if(exec == dataFlow.getClientExecPlan()) {
@@ -48,8 +42,13 @@ public class GraphConstruction {
 			}
 			String jsonGraph = gjs.toJson(exec.getGraph()).toJSONString();
 			SendGraphNode sendGraph = new SendGraphNode(jsonGraph, exec.getExecutor().getContactInfo());
-			resolvedClientGraph.addNode(sendGraph);
+			sendGraphNodes.add(sendGraph);
 		}
+		/*
+			 Let the send graph node execute first all the others:
+		 */
+		resolvedClientGraph.executeFirst(sendGraphNodes);
+
 //		for(DependencyEdge transmitEdge : GraphTraversal.iterateEdges(getTransmissionGraph())) {
 //			if(resolvedClientGraph.contains(transmitEdge.getFrom())) {
 //				resolvedClientGraph.connectNodes(oldNode, transmitEdge.getFrom());
@@ -68,6 +67,7 @@ public class GraphConstruction {
 	
 	private GraphConstruction(ResolveInfo resolveInfo, List<InstructionNode> instructions) {
 		this.dataFlow = new DataFlowAnalysis(resolveInfo, instructions);
+		calcResolvedClientGraph();
 	}
 
 

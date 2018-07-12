@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class SEDEObject implements JsonSerializable {
 
-	public static enum PrimitiveType {
+	public enum PrimitiveType {
 		NULL, String, Number, Bool;
 
 		public static PrimitiveType insensitiveValueOf(String searchName){
@@ -45,7 +45,10 @@ public class SEDEObject implements JsonSerializable {
 	 */
 	public SEDEObject(String type, Object object) {
 		this.type = Objects.requireNonNull(type);
-		this.object = Objects.requireNonNull(object);
+		this.object = object;
+		if(!type.equalsIgnoreCase("null")) {
+			Objects.requireNonNull(object);
+		}
 
 		if(object instanceof ServiceInstanceHandle && !type.equalsIgnoreCase(SERVICE_INSTANCE_HANDLE_TYPE)){
 			throw new RuntimeException("BUG: given object is service instance handle but t givenype is: " + type);
@@ -75,6 +78,7 @@ public class SEDEObject implements JsonSerializable {
 	public SEDEObject(Boolean bool) {
 		this(PrimitiveType.Bool, bool);
 	}
+
 	public SEDEObject(String charsequence) {
 		this(PrimitiveType.String, charsequence);
 	}
@@ -111,6 +115,10 @@ public class SEDEObject implements JsonSerializable {
 
 	public boolean isPrimitive(){
 		return isPrimitive(getType());
+	}
+
+	public boolean isNumeric() {
+		return isPrimitive() && getType().equalsIgnoreCase(PrimitiveType.Number.name());
 	}
 
 	public static boolean isServiceInstanceHandle(String type){

@@ -1,0 +1,42 @@
+{
+    "Catalano.Imaging.Filters.Crop": {
+        "methods": {
+            "$construct": {
+                "params": [
+                    "Number",
+                    "Number",
+                    "Number",
+                    "Number"
+                ]
+            },
+            "ApplyInPlace": {
+                "params": [
+                    {
+                        "type": "Catalano.Imaging.FastBitmap",
+                        "statemutating": true
+                    }
+                ],
+                "statemutating": false
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.Resize": {
+        "methods": {
+            "$construct": {
+                "params": [
+                    "Number",
+                    "Number"
+                ]
+            },
+            "applyInPlace": {
+                "params": [
+                    {
+                        "type": "Catalano.Imaging.FastBitmap",
+                        "statemutating": true
+                    }
+                ],
+                "statemutating": false
+            }
+        }
+    }
+}

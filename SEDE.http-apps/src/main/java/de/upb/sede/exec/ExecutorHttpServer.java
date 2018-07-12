@@ -134,7 +134,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 			String fieldname = (String) task.getAttributes().get("fieldname");
 			String semType = (String) task.getAttributes().get("semantic-type");
 			String executionId = task.getExecution().getExecutionId();
-			if (semType == null) {
+			if (!unavailable && semType == null) {
 				SEDEObject sedeObject = task.getExecution().getEnvironment().get(fieldname);
 				if (sedeObject.isReal()) {
 					throw new RuntimeException("The task doesn't contain the 'semantic-type' field "

@@ -22,7 +22,7 @@ public class ClassesConfigTest {
 	}
 
 	String getConfPath(String name) {
-		return "testrsc/config/config-test/" + name + "-classconf.json";
+		return "testrsc/config/" + name + "-classconf.json";
 	}
 
 	@Test

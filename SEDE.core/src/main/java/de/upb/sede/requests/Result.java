@@ -50,7 +50,6 @@ public class Result extends Request{
 	 * Only use for testing.
 	 */
 	public SEDEObject castResultData(String expectedType, Class caster) {
-
 		if(expectedType.equals(getResultData().getType())) {
 			/*
 				Type already matches:

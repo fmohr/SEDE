@@ -151,7 +151,7 @@ public class SEDEObject implements JsonSerializable {
 	}
 
 	public String toString(){
-		return getType() + " - " + object == null ? "null" : object.getClass().getSimpleName();
+		return "{" + getType() + " - " + (object == null ? "null" : object.getClass().getSimpleName()) + "}";
 	}
 
 

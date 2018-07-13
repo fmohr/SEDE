@@ -1,10 +1,10 @@
 {
-  "java.util.List": {
+  "builtin.List": {
     "semantic_type": "jsonlist",
-    "onthological_caster": "de.upb.sede.util.BuiltinCaster"
+    "onthological_caster": "de.upb.sede.BuiltinCaster"
   },
-  "java.util.Map": {
+  "builtin.Dict": {
     "semantic_type": "jsonobj",
-    "onthological_caster": "de.upb.sede.util.BuiltinCaster"
+    "onthological_caster": "de.upb.sede.BuiltinCaster"
   }
 }

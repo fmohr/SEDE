@@ -137,31 +137,49 @@ public class InstructionProcedure implements Procedure {
 
 		/*
 		 * If the left side of the call is not null, then the result of the invocation
-		 * is put into the execution environment.
+		 * has to be put into the execution environment.
 		 */
 		if (attr.getLeftsidefieldname() != null) {
-			/*
-			If output is a service wrap it into a handle:
-		 	*/
-			SEDEObject resultfield;
-			if(attr.getLeftsidefieldClass().startsWith("ServiceInstance")){
-			/*
-				The method creates a new service instance:
-			 */
-				ServiceInstanceHandle handle = createServiceInstanceHandle(task, outputValue);
-				resultfield = new SEDEObject(handle);
-			} else {
-				resultfield = new SEDEObject(attr.getLeftsidefieldType(), outputValue);
-			}
-			int outputIndex = attr.getOutputIndex();
+
 			SEDEObject outputSEDEObject;
+			/*
+			 * If the outputindex is 0 or above, treat the outputindex'th parameter as the output.
+			 * This is when a method doesn't return anything but applies changes to the parameters themselves.
+			 * If the client defines a leftsidefield then treat the changed parameter as the return value:
+			 */
+			int outputIndex = attr.getOutputIndex();
 			if(outputIndex == -1) {
+				/*
+				 * construct new sede object:
+				 */
+				SEDEObject resultfield;
+				if(attr.getLeftsidefieldClass().startsWith("ServiceInstance")){
+					/*
+						The method creates a new service instance.
+						so wrap it into a handle:
+					 */
+					ServiceInstanceHandle handle = createServiceInstanceHandle(task, outputValue);
+					resultfield = new SEDEObject(handle);
+				} else {
+					/*
+						This is the default case where the method returns values:
+					 */
+					resultfield = new SEDEObject(attr.getLeftsidefieldType(), outputValue);
+				}
 				outputSEDEObject = resultfield;
 			} else {
-				outputSEDEObject = environment.get(paramValues[outputIndex]);
+				/*
+				 * Method applies in place:
+				 */
+				SEDEObject changedParameter = environment.get(attr.getParameters().get(outputIndex));
+				outputSEDEObject = changedParameter;
 			}
+			/*
+				Put field into environment:
+			 */
 			String leftsideFieldname = attr.getLeftsidefieldname();
 			environment.put(leftsideFieldname, outputSEDEObject);
+
 		}
 		task.setSucceeded();
 	}

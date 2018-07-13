@@ -4,6 +4,7 @@ import java.util.*;
 
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.graphs.nodes.*;
+import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.ClassesConfig.MethodInfo;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.ServiceInstanceHandle;
@@ -27,7 +28,8 @@ public class DataFlowAnalysis {
 	private final CompositionGraph dataTransmissionGraph;
 
 	private final DefaultMap<BaseNode, List<FieldType>> nodeConsumingFields = new DefaultMap<>(ArrayList::new);
-	private final DefaultMap<FieldType, List<BaseNode>> fieldProducers = new DefaultMap<>(ArrayList::new);
+
+//	private final DefaultMap<FieldType, List<BaseNode>> fieldProducers = new DefaultMap<>(ArrayList::new);
 
 	private final Map<BaseNode, ExecPlan> nodeExecutionAssignment = new HashMap<>();
 
@@ -214,16 +216,24 @@ public class DataFlowAnalysis {
 		 * of this instruction node.
 		 */
 		String methodname = instNode.getMethod();
-		List<String> instParamFieldnames = instNode.getParameterFields();
+		List<String> instParamFieldnames = new ArrayList<>(instNode.getParameterFields());
 		MethodInfo methodInfo;
+		ClassesConfig.ClassInfo contextClassInfo = resolveInfo.getClassesConfiguration().classInfo(contextClasspath);
 		if (instNode.isServiceConstruct()) {
-			methodInfo = resolveInfo.getClassesConfiguration().classInfo(contextClasspath).constructInfo();
+			methodInfo = contextClassInfo.constructInfo();
 		} else {
-			methodInfo = resolveInfo.getClassesConfiguration().classInfo(contextClasspath).methodInfo(methodname);
+			methodInfo = contextClassInfo.methodInfo(methodname);
 			if(!instNode.isContextAFieldname() && !methodInfo.isStatic()) {
 				throw new CompositionSemanticException("Method \"" + methodname + "\" is not static but it is tried to access it in a static manner: " + instNode.toString());
 			}
 		}
+		/*
+		 * Some methods do define fixed constants.
+		 * Insert them into the parameter list and act like they are all given by the client:
+		 */
+		methodInfo.insertFixedConstants(instParamFieldnames);
+		instNode.setParameterFields(instParamFieldnames);
+
 		List<String> requiredParamTypes = methodInfo.paramTypes();
 		instNode.setParameterType(requiredParamTypes);
 
@@ -428,7 +438,7 @@ public class DataFlowAnalysis {
 			}
 			if(methodInfo.isParamStateMutating(index) && !consumedParam.isPrimitive()){ // primitive parameters are ignored.
 				FieldType mutatedParameter = consumedParam.clone(instNode, true);
-				nodeProducesField(instNode, mutatedParameter);
+				addFieldType(mutatedParameter);
 			}
 		}
 
@@ -573,6 +583,21 @@ public class DataFlowAnalysis {
 			addFieldType(leftSideFieldType);
 			instNode.setLeftSideFieldtype(typeName);
 			instNode.setLeftSideFieldclass(typeClass.name());
+			/*
+			 * End of if(has leftside field) body.
+			 */
+		}
+		/*
+	     * Finally if the instruction is a construction of a wrapped service,
+	     * replace the context of the instruction (Whose instance is created) by the classpath of the wrapper:
+	     *
+	     * Note that the leftsidefieldtype is still the actual wrapped service classpath but this is intentional,
+	     * because when the service is created a new service handle is constructed.
+	     * This service handle needs to contain the same name that was requested
+	     * by the client in order to be recognized as such in later graph constructions.
+		 */
+		if(instNode.isServiceConstruct() && contextClassInfo.isWrapped()) {
+			instNode.setContext(contextClassInfo.classpath());
 		}
 	}
 
@@ -724,7 +749,13 @@ public class DataFlowAnalysis {
 			fieldnameTypeResult.put(fieldType.getFieldname(), new ArrayList<>());
 		}
 		fieldnameTypeResult.get(fieldType.getFieldname()).add(fieldType);
-		nodeProducesField(fieldType.getProducer(), fieldType);
+		/*
+			Add producer:
+			(Not needed)
+		 */
+//		if (!fieldProducers.get(fieldType).contains(fieldType.getProducer())) {
+//			fieldProducers.get(fieldType).add(fieldType.getProducer());
+//		}
 	}
 
 	private AcceptDataNode clientAcceptInput(String fieldname) {
@@ -777,9 +808,7 @@ public class DataFlowAnalysis {
 	}
 
 	private void nodeProducesField(BaseNode node, FieldType fieldType) {
-		if (!fieldProducers.get(fieldType).contains(node)) {
-			fieldProducers.get(fieldType).add(node);
-		}
+
 	}
 
 	private void assignNodeToExec(BaseNode node, ExecPlan exec) {
@@ -801,9 +830,12 @@ public class DataFlowAnalysis {
 		return nodeExecutionAssignment.containsKey(node);
 	}
 
-	List<BaseNode> getProducers(FieldType fieldType) {
-		return Collections.unmodifiableList(fieldProducers.get(fieldType));
-	}
+	/*
+		(Not needed)
+	 */
+//	List<BaseNode> getProducers(FieldType fieldType) {
+//		return Collections.unmodifiableList(fieldProducers.get(fieldType));
+//	}
 
 	private List<FieldType> resolveFieldname(String fieldname) {
 		if (!this.fieldnameTypeResult.containsKey(fieldname)) {

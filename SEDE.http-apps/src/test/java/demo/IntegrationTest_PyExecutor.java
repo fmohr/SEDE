@@ -18,7 +18,7 @@ import de.upb.sede.requests.RunRequest;
 import de.upb.sede.requests.resolve.InputFields;
 import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.requests.resolve.ResolveRequest;
-import de.upb.sede.util.BuiltinCaster;
+import de.upb.sede.BuiltinCaster;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
 import demo.types.DemoCaster;
@@ -220,12 +220,12 @@ public class IntegrationTest_PyExecutor {
 		String composition =
 				"l2 = demo.math.Addierer::addierBuiltIn({l1,2});";
 		Map<String, SEDEObject> inputs = new HashMap<>();
-		inputs.put("l1", new SEDEObject("java.util.List", Arrays.asList(0,1,2)));
+		inputs.put("l1", new SEDEObject("builtin.List", Arrays.asList(0,1,2)));
 		RunRequest rr = createRR(execNr, composition, inputs);
 
 		Map<String, Result> resultMap = client.blockingRun(rr);
 		List<Double> l2 = (List<Double>) resultMap.get("l2").
-				castResultData("java.util.List", BuiltinCaster.class).getObject();
+				castResultData("builtin.List", BuiltinCaster.class).getObject();
 		Assert.assertEquals(Arrays.asList(2.,3.,4.) ,l2);
 
 	}

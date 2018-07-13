@@ -11,6 +11,7 @@ import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.InputFields;
 import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.requests.resolve.ResolveRequest;
+import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.Observer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -159,6 +160,7 @@ public class CoreClient implements ICoreClient{
 	}
 
 
+
 	static class ResultObserver implements Observer<ExecutionEnvironment> {
 		private final String reqId;
 		private final List<String> remainingResults;
@@ -216,5 +218,14 @@ public class CoreClient implements ICoreClient{
 
 	public void setDotGraphConsumer(BiConsumer<String, String> executionIdDotConsumer){
 		dotGraphConsumer = Optional.of(executionIdDotConsumer);
+	}
+
+	public void writeDotGraphToDir(final String directoryPath) {
+		boolean needsSlash = !directoryPath.endsWith("/");
+		this.setDotGraphConsumer((executionId, svgString) -> {
+			String pathToDotGraph = directoryPath + (needsSlash ? "/" : "")
+					+ executionId + ".resolution.svg";
+			FileUtil.writeStringToFile(pathToDotGraph, svgString);
+		});
 	}
 }

@@ -38,5 +38,25 @@
                 "statemutating": false
             }
         }
+    },
+    "Catalano.Imaging.sede.CropFrom0" : {
+        "wrapper" : "Catalano.Imaging.Filters.Crop",
+        "methods": {
+            "$construct": {
+                "params": [
+                    {
+                        "type":"Number",
+                        "fixed": "0"
+                    },
+                    {
+                        "type":"Number",
+                        "fixed": "0"
+                    },
+                    "Number",
+                    "Number"
+                ]
+            }
+        }
     }
+
 }

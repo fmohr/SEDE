@@ -1,4 +1,4 @@
-package de.upb.sede.util;
+package de.upb.sede;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -21,7 +21,7 @@ public class BuiltinCaster {
 		return list;
 	}
 
-	public void cts_NummerList(OutputStream os, List list) throws IOException {
+	public void cts_List(OutputStream os, List list) throws IOException {
 		JSONArray jsonArray = new JSONArray();
 		jsonArray.addAll(list);
 		OutputStreamWriter writer = new OutputStreamWriter(os);
@@ -29,7 +29,7 @@ public class BuiltinCaster {
 		writer.flush();
 	}
 
-	public Map cfs_Map(InputStream is) throws ParseException, IOException {
+	public Map cfs_Dict(InputStream is) throws ParseException, IOException {
 		JSONParser parser = new JSONParser();
 		Reader jsonReader = new InputStreamReader(is);
 		JSONObject jsonObject = (JSONObject) parser.parse(jsonReader);
@@ -37,7 +37,7 @@ public class BuiltinCaster {
 		return map;
 	}
 
-	public void cts_Map(OutputStream os, Map map) throws IOException {
+	public void cts_Dict(OutputStream os, Map map) throws IOException {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.putAll(map);
 		OutputStreamWriter writer = new OutputStreamWriter(os);

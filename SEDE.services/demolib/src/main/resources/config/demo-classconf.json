@@ -53,8 +53,8 @@
                 "static": true
             },
             "addierBuiltIn":{
-                "params":["java.util.List", "Number"],
-                "returntype":"java.util.List",
+                "params":["builtin.List", "Number"],
+                "returntype":"builtin.List",
                 "static" : true
             }
         }

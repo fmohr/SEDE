@@ -114,13 +114,22 @@ public class ResolvePolicy implements JsonSerializable {
 	}
 
 	public void setReturnFieldnames(List<String> returnFieldnames) {
-		this.returnFieldnames = Objects.requireNonNull(returnFieldnames);
-		this.returnPolicy = listed;
+		if(returnFieldnames.isEmpty()){
+			setServicePolicy(none);
+		} else{
+			this.returnFieldnames = Objects.requireNonNull(returnFieldnames);
+			this.returnPolicy = listed;
+		}
 	}
 
 	public void setPersistentServices(List<String> persistentServices) {
-		this.servicePolicy = listed;
-		this.persistentServices = Objects.requireNonNull(persistentServices);
+		if(persistentServices.isEmpty()){
+			setServicePolicy(none);
+		}
+		else{
+			this.persistentServices = Objects.requireNonNull(persistentServices);
+			this.servicePolicy = listed;
+		}
 	}
 
 	public boolean clientsideExecutionAllowed() {

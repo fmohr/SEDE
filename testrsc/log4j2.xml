@@ -6,7 +6,7 @@
  
   <Appenders>
     <Console name="STDOUT">
-      <PatternLayout pattern="%d %p %C{1.} [%t] %m%n"/>
+      <PatternLayout pattern="%7.5r %p %C{2.} [%t] %m%n"/>
     </Console>
     <File name="defaultfile" fileName="${basePath}/sede-1.log">
       <PatternLayout>
@@ -15,7 +15,7 @@
     </File>
     <File name="defaultfile2" fileName="${basePath}/sede.log">
             <PatternLayout>
-                <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%t] %c{1} - %msg%n</pattern>
+                <pattern>%d{dd-MM HH:mm:ss.SSS} [%-5level] [%t] %c{1} - %msg%n</pattern>
             </PatternLayout>
     </File>
   </Appenders>

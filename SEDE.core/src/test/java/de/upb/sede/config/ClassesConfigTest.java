@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
@@ -22,7 +23,7 @@ public class ClassesConfigTest {
 	}
 
 	String getConfPath(String name) {
-		return "testrsc/config/config-test/" + name + "-classconf.json";
+		return "testrsc/config/" + name + "-classconf.json";
 	}
 
 	@Test
@@ -84,20 +85,22 @@ public class ClassesConfigTest {
 
 	@Test
 	public void isWrapped() {
-		assertTrue(cc.isWrapped("A"));
-		assertTrue(cc.isWrapped("B"));
-		assertTrue(cc.isWrapped("C"));
+		assertFalse(cc.classInfo("A").isWrapped());
+		assertTrue(cc.classInfo("B").isWrapped());
+		assertFalse(cc.classInfo("C").isWrapped());
 	}
 
 	@Test
-	public void getWrapperClasspath() {
-		assertEquals("D", cc.getWrapperClasspath("A"));
+	public void classpath() {
+		assertEquals("A", cc.classInfo("A").classpath());
+		assertEquals("A", cc.classInfo("B").classpath());
+
 	}
 
 	@Test
 	public void methodKnown() {
-		assertTrue(cc.methodKnown("A", "m1"));
-		assertFalse(cc.methodKnown("A", "a1"));
+		assertTrue(cc.classInfo("A").hasMethod("m1"));
+		assertFalse(cc.classInfo("A").hasMethod("a1"));
 	}
 
 	@Test
@@ -184,6 +187,39 @@ public class ClassesConfigTest {
 		assertFalse(m2.isStateMutating());
 		assertFalse(m2.isStatic());
 		assertEquals(2, m2.indexOfNthStateMutatingParam(0));
+
+	}
+
+	@Test
+	public void testFixedParams() {
+		ClassesConfig.ClassInfo B = cc.classInfo("B");
+		ClassesConfig.MethodInfo m2 = B.methodInfo("m2");
+		assertEquals(3, m2.paramCount());
+		assertEquals(Arrays.asList("t1", "t2", "t3"), m2.paramTypes());
+		ArrayList<String> inputs = new ArrayList<>();
+		inputs.add("Some Parameter");
+		m2.insertFixedConstants(inputs);
+		assertEquals(Arrays.asList("constant1", "Some Parameter", "constant3"), inputs);
+
+		inputs.clear();
+		inputs.add("TOo many inputs.");
+		inputs.add("This is too much.");
+		Exception thrownException = null;
+		try{
+			m2.insertFixedConstants(inputs);
+		} catch(Exception ex) {
+			thrownException = ex;
+		}
+		assertNotNull(thrownException);
+
+		inputs.clear();
+		thrownException = null;
+		try{
+			m2.insertFixedConstants(inputs);
+		} catch(Exception ex) {
+			thrownException = ex;
+		}
+		assertNotNull(thrownException);
 
 	}
 

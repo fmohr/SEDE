@@ -5,6 +5,8 @@ import java.util.function.Function;
 
 
 import de.upb.sede.util.FilteredIterator;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Encapsulated configuration about classes, like wrappers names.
@@ -18,6 +20,8 @@ public class ClassesConfig extends Configuration {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+
+	private final static Logger logger = LogManager.getLogger();
 
 	/**
 	 * Reads the configuration files from configPaths and appends them into itself..
@@ -108,34 +112,79 @@ public class ClassesConfig extends Configuration {
 				Iterator<String> fieldNames = superConfig.keySet().iterator();
 				while (fieldNames.hasNext()) {
 					String attributeName = fieldNames.next();
-					if (attributeName.equals("extends")) {
-						// don't want to change inheritance or else funny things happen when calling
-						// resolveInheritances twice.
-						continue;
-					}
-					Object superAttribute = superConfig.get(attributeName);
-					boolean extended = false; // flag that indicates that attribute has been extended.
-					if (classconfig.containsKey(attributeName)) {
-						// first try to add the value to the array or dictionary
-						Object baseAttribute = classconfig.get(attributeName);
-						if (baseAttribute instanceof List && superAttribute instanceof List) {
-							((List) baseAttribute).addAll((List) superAttribute);
-							extended = true;
-						} else if (baseAttribute instanceof Map && baseAttribute instanceof Map) {
-							Map<String, Object> newAttrMap = new HashMap<>((Map) superAttribute);
-							newAttrMap.putAll((Map) baseAttribute);
-							classconfig.put(attributeName, newAttrMap);
-							extended = true;
-						} else {
-//							System.err.println("CONFIG: Attribute " + attributeName
-//									+ " is being replaced by an incompatible type from: " + superClasspath);
-						}
-					}
-					if (!extended) {
-						// couldnt add attribute, so just replace it
-						(classconfig).put(attributeName, superAttribute);
-					}
+					inheritFromRoot(classconfig, superConfig, attributeName);
 				}
+			}
+		}
+	}
+
+	void inheritFromRoot(Map<String, Object> baseConfig, Map<String, Object> superConfig, String attributeName) {
+		Object superAttribute = superConfig.get(attributeName);
+		boolean extended = false; // flag that indicates that attribute has been extended.
+		if (attributeName.equals("extends")) {
+			// don't want to change inheritance or else funny things happen when calling
+			// resolveInheritances twice.
+		}
+		else if(attributeName.equals("wrapper")) {
+			/*
+				Wrapper is replaced.
+			 */
+			baseConfig.put("wrapper", superAttribute);
+		}
+		else if(attributeName.equals("methods")) {
+			/*
+				Let method-inheritance be done by the specific method:
+			 */
+			Map<String, Object> baseMethods = (Map<String, Object>) baseConfig.get("methods");
+			Map<String, Object> superMethods = Collections.unmodifiableMap((Map<String, Object>) superAttribute);
+			if(baseMethods==null) {
+				baseMethods = new HashMap<String, Object>();
+				baseConfig.put("methods", baseMethods);
+			}
+			if(superMethods == null){
+				superMethods = Collections.EMPTY_MAP;
+			}
+
+			inheritMethods(baseMethods, superMethods);
+		} else if(attributeName.equals("abstract")) {
+			// abstraction flag is not inherited
+		} else {
+			logger.warn("Super configuration has some unknown attributes {} which can't be inherited.",
+					attributeName);
+		}
+
+		/*
+			Old inheritance behaviour:
+		 */
+//		if (baseConfig.containsKey(attributeName)) {
+//			// first try to add the value to the array or dictionary
+//			Object baseAttribute = baseConfig.get(attributeName);
+//
+//			if (baseAttribute instanceof List && superAttribute instanceof List) {
+//				((List) baseAttribute).addAll((List) superAttribute);
+//				extended = true;
+//			} else if (baseAttribute instanceof Map && baseAttribute instanceof Map) {
+//				Map<String, Object> newAttrMap = new HashMap<>((Map) superAttribute);
+//				newAttrMap.putAll((Map) baseAttribute);
+//				baseConfig.put(attributeName, newAttrMap);
+//				extended = true;
+//			}
+//		}
+//		if (!extended) {
+//			// couldnt add attribute, so just replace it
+//			(baseConfig).put(attributeName, superAttribute);
+//		}
+	}
+
+	void inheritMethods(Map<String, Object> baseMethods, Map<String, Object> superMethods) {
+		/*
+			Only overwrite methods which aren't defined by the base class:
+		 */
+		for(String methodname : superMethods.keySet()){
+			if(baseMethods.containsKey(methodname)) {
+				continue;
+			} else{
+				baseMethods.put(methodname, superMethods.get(methodname));
 			}
 		}
 	}
@@ -195,78 +244,6 @@ public class ClassesConfig extends Configuration {
 	}
 
 	/**
-	 * Returns true if in the configuration the given classpath entry has an wrapper
-	 * entry.
-	 */
-	public boolean isWrapped(String classpath) {
-		return classknown(classpath) && getClassConfiguration(classpath).containsKey("wrapper");
-	}
-
-	/**
-	 * Returns the classpath of wrapper which the given classpath was assigned onto.
-	 */
-	public String getWrapperClasspath(String classpath) {
-		return this.getClassConfiguration(classpath).get("wrapper").toString();
-	}
-
-	/**
-	 * Returns true if the given method is defined within the given class scope in
-	 * the classes.json configuration.
-	 * 
-	 * @param classpath
-	 *            fully qualified class name.
-	 * @param methodName
-	 *            method name to check
-	 * @return true if the configuration defines the method unter the classpath.
-	 */
-	@SuppressWarnings("unchecked")
-	public boolean methodKnown(String classpath, String methodName) {
-		if (!classknown(classpath)) {
-			return false;
-		}
-		if ("__construct".equals(methodName)) {
-			// constructor is known.
-			return true;
-		}
-		if (isWrapped(classpath)) {
-			// first look at the wrapper
-			String wrapperPath = getWrapperClasspath(classpath);
-			if (methodKnown(wrapperPath, methodName)) {
-				// method overrides it
-				return true;
-			}
-		}
-		Map<String, Object> classConfig = getClassConfiguration(classpath);
-		if (classConfig.containsKey("methods")) {
-			// if the 'methods' fields is defined:
-			Object methods = classConfig.get("methods");
-			if (methods instanceof List) {
-				List<Object> methodList = (List<Object>) methods;
-				// traverse array
-				for (Object method : methodList) {
-					if(method instanceof String && method.toString().equals(methodName)) {
-					// simple string entry for method
-						return true;
-					} else if(method instanceof Map) {
-						return ((Map)method).get("name").equals(methodName);
-					} else{
-						throw new RuntimeException("Faulty configuration..");
-					}
-				}
-				// method definition not found
-				return false;
-			} else {
-				// object node. use the has method
-				return ((Map<String, Object>) methods).containsKey(methodName);
-			}
-		} else {
-			// the 'methods' fields is not defined.
-			// So return false.
-			return false;
-		}
-	}
-
-	/**
 	 * Returns an Iterable of all the subconfigurations of the given baseConfig. For
 	 * every classpath in the iterable it holds that it extends baseConfing.
 	 * 
@@ -287,7 +264,14 @@ public class ClassesConfig extends Configuration {
 
 	public ClassInfo classInfo(String classpath) {
 		if (containsKey(classpath)) {
-			return new ClassInfo(classpath, (Map<String, Object>) get(classpath));
+			Map<String, Object> config = (Map<String, Object>) get(classpath);
+			if(config.containsKey("wrapper")) {
+				ClassInfo ci = this.classInfo((String) config.get("wrapper"));
+				return new ClassInfo(classpath, config, ci);
+			}
+			else {
+				return new ClassInfo(classpath, config);
+			}
 		} else {
 			throw new RuntimeException("Class " + classpath + " not found.");
 		}
@@ -295,15 +279,23 @@ public class ClassesConfig extends Configuration {
 
 
 	public static class ClassInfo {
+
 		private final Map<String, Object> configuration;
+		private final Optional<ClassInfo> wrapper;
 		private final String cp;
 
 		private ClassInfo(String classpath, Map<String, Object> config) {
+			this(classpath, config, null);
+		}
+
+		private ClassInfo(String classpath, Map<String, Object> config, ClassInfo wrapper) {
 			cp = classpath;
-			configuration = config;
+			this.configuration = config;
+			this.wrapper = Optional.ofNullable(wrapper);
 		}
 
 		private Map<String, Object> getMethods() {
+
 			if (configuration.containsKey("methods")) {
 				return (Map<String, Object>) configuration.get("methods");
 			} else {
@@ -311,7 +303,7 @@ public class ClassesConfig extends Configuration {
 			}
 		}
 
-		public boolean hasMethod(String methodname) {
+		boolean hasMethod(String methodname) {
 			return getMethods().containsKey(methodname);
 		}
 
@@ -319,26 +311,51 @@ public class ClassesConfig extends Configuration {
 			if (hasMethod("$construct")) {
 				 Map<String, Object> constructMap = MethodInfo.emptyConstructor(cp).configuration;
 				constructMap.putAll((Map<String, Object>) getMethods().get("$construct"));
-				return new MethodInfo(constructMap);
+				return new MethodInfo("$construct", constructMap);
+			} else if(wrapper.isPresent()){
+				return wrapper.get().constructInfo();
 			} else {
 				return MethodInfo.emptyConstructor(cp);
 			}
 		}
 
-		public MethodInfo methodInfo(String methodname) {
-			if (hasMethod(methodname)) {
-				return new MethodInfo((Map<String, Object>) getMethods().get(methodname));
+		public boolean isAbstract() {
+			if(configuration.containsKey("abstract")){
+				return (Boolean) configuration.get("abstract");
+			}
+			return false;
+		}
+
+		public boolean isWrapped() {
+			return wrapper.isPresent();
+		}
+
+		public String classpath() {
+			if(isWrapped()) {
+				return wrapper.get().classpath();
 			} else {
-				throw new RuntimeException("Method " + methodname + " not found in: "  + cp);
+				return cp;
 			}
 		}
 
+		public MethodInfo methodInfo(String methodname) {
+
+			if (hasMethod(methodname)) {
+				return new MethodInfo(methodname, (Map<String, Object>) getMethods().get(methodname));
+			} else if(isWrapped()) {
+				return wrapper.get().methodInfo(methodname);
+			}else{
+				throw new RuntimeException("Method " + methodname + " not found in: "  + cp);
+			}
+		}
 	}
 
 	public static class MethodInfo {
 		private final Map<String, Object> configuration;
+		private final String methodname;
 
-		private MethodInfo(Map<String, Object> config) {
+		private MethodInfo(String methodname, Map<String, Object> config) {
+			this.methodname = methodname;
 			configuration = config;
 		}
 
@@ -383,6 +400,24 @@ public class ClassesConfig extends Configuration {
 			return (String) Objects.requireNonNull(getParameter(paramIndex).get("type"));
 		}
 
+		public void insertFixedConstants(List<String> inputs) {
+			int givenInputSize = inputs.size();
+			for (int i = 0, paramCount = paramCount(); i < paramCount; i++) {
+				Map parameter = getParameter(i);
+				if(parameter.containsKey("fixed")) {
+					String fixedConstant = (String) parameter.get("fixed");
+					inputs.add(i, fixedConstant);
+				} else {
+					givenInputSize--;
+				}
+			}
+			if(givenInputSize!= 0) {
+				throw new RuntimeException("Too few or too many inputs for method: " + methodname +
+						". Over/underflow: " + givenInputSize);
+			}
+		}
+
+
 		public boolean isParamStateMutating(int paramIndex) {
 			Map parameter = getParameter(paramIndex);
 			if(parameter.containsKey("statemutating")) {
@@ -405,7 +440,8 @@ public class ClassesConfig extends Configuration {
 					}
 				}
 			}
-			throw new RuntimeException("The " + nth + "th state mutating parameter does not exist.");
+//			throw new RuntimeException("The " + nth + "th state mutating parameter does not exist.");
+			return -1;
 		}
 
 		public static MethodInfo emptyConstructor(String classpath) {
@@ -413,23 +449,27 @@ public class ClassesConfig extends Configuration {
 			emptyConstructConfig.put("params", Collections.EMPTY_LIST);
 			emptyConstructConfig.put("returntype", classpath);
 			emptyConstructConfig.put("static", true);
-			return new MethodInfo(emptyConstructConfig);
+			return new MethodInfo("$construct", emptyConstructConfig);
 		}
 
 		@SuppressWarnings("unchecked")
 		public List<String> paramTypes() {
-			if(configuration.containsKey("params")) {
-				List<String> paramTypes = new ArrayList<>();
-				for(Object param : (List<Object>) configuration.get("params")){
-					if(param instanceof String) {
-						paramTypes.add((String) param);
-					} else if(param instanceof Map){
-						paramTypes.add(Objects.requireNonNull((String) ((Map)param).get("type")));
-					} else{
-						throw new RuntimeException("Faulty configuration: " + param);
-					}
+			List<String> paramTypes = new ArrayList<>();
+			for(Object param : getParams()){
+				if(param instanceof String) {
+					paramTypes.add((String) param);
+				} else if(param instanceof Map){
+					paramTypes.add(Objects.requireNonNull((String) ((Map)param).get("type")));
+				} else{
+					throw new RuntimeException("Faulty configuration: " + param);
 				}
-				return paramTypes;
+			}
+			return paramTypes;
+		}
+
+		private List<Object> getParams() {
+			if(configuration.containsKey("params")) {
+				return (List<Object>) configuration.get("params");
 			} else {
 				return Collections.EMPTY_LIST;
 			}
@@ -440,7 +480,12 @@ public class ClassesConfig extends Configuration {
 		}
 
 		public String returnType() {
-			return (String) configuration.get("returntype");
+			if(hasReturnType()){
+				return (String) configuration.get("returntype");
+			}
+			else {
+				return "NULL";
+			}
 		}
 
 		public boolean isStatic()  {

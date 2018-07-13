@@ -12,8 +12,12 @@ import java.text.NumberFormat;
 import java.text.ParseException;
 
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class SemanticStreamer {
+
+	private static final Pattern REALTYPE_PATTERN = Pattern.compile("([a-zA-Z_0-9\\.]+\\.)*(?<classpath>[a-zA-Z_]\\w*)$");
 
 	private final static Logger logger = LogManager.getLogger();
 
@@ -58,14 +62,14 @@ public final class SemanticStreamer {
 			ByteArrayInputStream inputStream = new ByteArrayInputStream((byte[]) semanticObject.getObject());
 			return readObjectFrom(inputStream, caster, sourceSemanticType, targetRealTypeCp);
 		} else{
-			throw new RuntimeException("The given SEDEObject\n" + semanticObject.toString() + "\n is not semantic.");
+			throw new RuntimeException("The given SEDEObject " + semanticObject.toString() + " is not semantic.");
 		}
 	}
 
 	public static SEDEObject readObjectFrom(InputStream is, String caster, String sourceSemanticType, String targetRealTypeCp) {
 		logger.debug("Casting from semantic type '{}' to '{}' using caster class: {}.", sourceSemanticType, targetRealTypeCp, caster);
 		String targetRealType = getSimpleNameFromClasspath(targetRealTypeCp);
-		String casterMethod = getCastMethod(sourceSemanticType, targetRealType, false);
+		String casterMethod = getCastMethod(targetRealType, false);
 		Method method = getMethodFor(caster, casterMethod);
 		try {
 			Object casterInstance = Class.forName(caster).getConstructor().newInstance();
@@ -111,7 +115,7 @@ public final class SemanticStreamer {
 	public static void streamObjectInto(OutputStream os, SEDEObject content, String caster, String targetSemanticType) {
 		logger.debug("Casting from '{}' to semantic type '{}' using caster class: {}.", content.getType(), targetSemanticType, caster);
 		String sourceRealType = getSimpleNameFromClasspath(content.getType());
-		String casterMethod = getCastMethod(sourceRealType, targetSemanticType, true);
+		String casterMethod = getCastMethod(sourceRealType, true);
 		Method method = getMethodFor(caster, casterMethod);
 		try {
 			Object casterInstance = Class.forName(caster).getConstructor().newInstance();
@@ -121,14 +125,14 @@ public final class SemanticStreamer {
 		}
 	}
 
-	public static String getCastMethod(String sourceType, String targetType, boolean toSemantic) {
+	public static String getCastMethod(String realType, boolean toSemantic) {
 		String methodName;
 		if(toSemantic) {
 			methodName = "cts_";
 		} else {
 			methodName = "cfs_";
 		}
-		methodName += sourceType + "_" + targetType;
+		methodName += realType;
 		return methodName;
 	}
 
@@ -149,10 +153,12 @@ public final class SemanticStreamer {
 	}
 
 	public static String getSimpleNameFromClasspath(String classpath){
-		try {
-			return Class.forName(classpath).getSimpleName();
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e);
+		Matcher m = REALTYPE_PATTERN.matcher(classpath);
+		if(!m.matches()) {
+			throw new RuntimeException("classpath " + classpath + " is not legal.");
+		}
+		else{
+			return m.group("classpath");
 		}
 	}
 
@@ -204,7 +210,7 @@ public final class SemanticStreamer {
 			}
 			break;
 		case String:
-			data = constantStr.substring(1, constantStr.length() - 1);
+			data = constantStr;
 			break;
 		default:
 			throw new RuntimeException("All cases covered. " + "Default to have data initialized.");

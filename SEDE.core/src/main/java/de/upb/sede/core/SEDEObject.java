@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 
 public class SEDEObject implements JsonSerializable {
 
-	public static enum PrimitiveType {
+	public enum PrimitiveType {
 		NULL, String, Number, Bool;
 
 		public static PrimitiveType insensitiveValueOf(String searchName){
@@ -34,7 +34,7 @@ public class SEDEObject implements JsonSerializable {
 	private Object object;
 
 	private SEDEObject() {
-		// dont make this public. its only used by fromJson method.
+		this(PrimitiveType.NULL, null);
 	}
 
 	/**
@@ -45,7 +45,10 @@ public class SEDEObject implements JsonSerializable {
 	 */
 	public SEDEObject(String type, Object object) {
 		this.type = Objects.requireNonNull(type);
-		this.object = Objects.requireNonNull(object);
+		this.object = object;
+		if(!type.equalsIgnoreCase("null")) {
+			Objects.requireNonNull(object);
+		}
 
 		if(object instanceof ServiceInstanceHandle && !type.equalsIgnoreCase(SERVICE_INSTANCE_HANDLE_TYPE)){
 			throw new RuntimeException("BUG: given object is service instance handle but t givenype is: " + type);
@@ -67,6 +70,27 @@ public class SEDEObject implements JsonSerializable {
 
 	public SEDEObject(ServiceInstanceHandle instanceHandle) {
 		this(SERVICE_INSTANCE_HANDLE_TYPE, instanceHandle);
+	}
+
+	public SEDEObject(Number number) {
+		this(PrimitiveType.Number, number);
+	}
+	public SEDEObject(Boolean bool) {
+		this(PrimitiveType.Bool, bool);
+	}
+
+	public SEDEObject(String charsequence) {
+		this(PrimitiveType.String, charsequence);
+	}
+
+	/**
+	 * Only use in tests, please.
+	 * Same as: SEDEObject(realData.getClass().getName(), realData)
+	 * @param realData some java object whose class name will be used as the type.
+	 *                 Note that in general the actual type doesnt have to correspond with the class name in java.
+	 */
+	public SEDEObject(Object realData){
+		this(realData.getClass().getName(), realData);
 	}
 
 	public Object getObject() {
@@ -91,6 +115,10 @@ public class SEDEObject implements JsonSerializable {
 
 	public boolean isPrimitive(){
 		return isPrimitive(getType());
+	}
+
+	public boolean isNumeric() {
+		return isPrimitive() && getType().equalsIgnoreCase(PrimitiveType.Number.name());
 	}
 
 	public static boolean isServiceInstanceHandle(String type){
@@ -123,7 +151,7 @@ public class SEDEObject implements JsonSerializable {
 	}
 
 	public String toString(){
-		return getType() + " - " + object == null ? "null" : object.getClass().getSimpleName();
+		return "{" + getType() + " - " + (object == null ? "null" : object.getClass().getSimpleName()) + "}";
 	}
 
 

@@ -1,0 +1,198 @@
+{
+  "$base_classifier_config$":{
+    "abstract" : true
+  },
+  "de.upb.sede.services.jsml.wrappers.WrapBaseClassifier" : {
+    "extends": ["$base_classifier_config$"],
+    "methods": {
+      "$construct": {
+        "params": [
+          "String"
+        ]
+      },
+      "fit": {
+        "params": [
+          "weka.core.Instances"
+        ]
+      },
+      "predict": {
+        "params":[
+          "Bool",
+          "weka.core.Instances"
+        ],
+        "returntype":"java.util.List"
+      },
+      "set_options": {
+        "params":[
+          "builtin.List"
+        ]
+      }
+    }
+  },
+
+  "weka.classifiers.bayes.BayesNet" : {
+    "wrapper" : "$base_weka_classifier_config$",
+    "methods": {
+      "$construct": {
+        "params": [
+          {
+            "fixed": "\"weka.classifiers.bayes.BayesNet\"",
+            "type": "String"
+          }
+        ]
+      },
+      "predict": {
+        "params":[
+          {
+            "fixed" : "TRUE",
+            "type": "Bool"
+          },
+          "weka.core.Instances"
+        ],
+        "returntype":"java.util.List"
+      }
+    }
+  },
+  "weka.classifiers.bayes.NaiveBayes" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.bayes.NaiveBayesMultinomial" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.functions.GaussianProcesses" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.functions.LinearRegression" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.functions.Logistic" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.functions.MultilayerPerceptron" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.functions.SGD" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.functions.LibSVM" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.functions.SimpleLinearRegression" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.functions.SimpleLogistic" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.functions.SMO" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.functions.SMOreg" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.functions.VotedPerceptron" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.lazy.IBk" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.lazy.KStar" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.rules.DecisionTable" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.rules.JRip" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.rules.M5Rules" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.rules.OneR" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.rules.PART" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.rules.ZeroR" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.trees.DecisionStump" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.trees.J48" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.trees.LMT" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.trees.M5P" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.trees.RandomForest" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.trees.RandomTree" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.trees.REPTree" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+
+
+  "weka.classifiers.meta.nestedDichotomies.ND" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.nestedDichotomies.RandomPairND" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.nestedDichotomies.ClassBalancedND" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.nestedDichotomies.DataNearBalancedND" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.nestedDichotomies.FurthestCentroidND" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+
+
+  "weka.classifiers.lazy.LWL" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.AdditiveRegression" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.AdaBoostM1" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.AttributeSelectedClassifier" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.Bagging" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.ClassificationViaRegression" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.LogitBoost" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.MultiClassClassifier" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.RandomCommittee" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.RandomSubSpace" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.Vote" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.Stacking" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  },
+  "weka.classifiers.meta.MultiBoostAB" : {
+    "wrapper" : ["$base_weka_classifier_config$"]
+  }
+}

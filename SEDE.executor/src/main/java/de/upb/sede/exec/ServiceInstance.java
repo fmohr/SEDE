@@ -2,6 +2,7 @@ package de.upb.sede.exec;
 
 import de.upb.sede.core.ServiceInstanceHandle;
 
+import java.util.Objects;
 import java.util.Optional;
 
 public class ServiceInstance extends ServiceInstanceHandle{
@@ -13,7 +14,7 @@ public class ServiceInstance extends ServiceInstanceHandle{
 
 	public ServiceInstance(final String executorId, final String classpath, final String id, Object serviceInstance) {
 		super(executorId, classpath, id);
-		this.serviceInstance = serviceInstance;
+		this.serviceInstance = Objects.requireNonNull(serviceInstance);
 	}
 
 	public Optional<Object> getServiceInstance() {

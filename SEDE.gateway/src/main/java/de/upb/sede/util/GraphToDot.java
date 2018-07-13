@@ -27,6 +27,8 @@ public class GraphToDot {
 			PATH_TO_DOT = System.getenv().get(System.getenv().get("DOT_PATH"));
 		} else {
 			PATH_TO_DOT = "/usr/local/bin/dot";
+			logger.info("Environment variable 'DOT_PATH' isn't defined.");
+			logger.info("Using {} as default path to dot. Change default in: GraphToDot.java");
 		}
 
 		if(! new File(PATH_TO_DOT).exists()) {

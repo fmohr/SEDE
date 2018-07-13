@@ -125,7 +125,7 @@ def readfrom(input_bytes:bytes, input_type:str)-> SEDEObject:
     if SEDEObject.is_primitive(input_type):
         primitive_string = input_bytes.decode()
         return SEDEObject.from_primitive(PrimitiveType.from_ci_str(input_type), primitive_string)
-    elif SEDEObject.is_si(input_type):
+    elif SEDEObject.is_service_instance(input_type):
         json_string = input_bytes.decode()
         sih = ServiceInstanceHandle.from_json_string(json_string)
         return SEDEObject.from_ServiceInstance(sih)
@@ -180,7 +180,7 @@ def encode(content:SEDEObject, caster: str = None)->bytes:
             raise ValueError("Cannot encode the given sedeobject of type %s "
                              "without a specified caster." %content.type)
         logging.debug("Casting from '%s' to semantic type using caster class: %s.",
-                      content.getType(), caster);
+                      content.type, caster);
 
         source_real_type = simplename_from_classpath(content.type)
         caster_methodname = get_cast_methodname(source_real_type, True)
@@ -200,7 +200,7 @@ def get_cast_methodname(realtype:str, to_semantic:bool)-> str:
     return methodname
 
 
-classname_regex = re.compile("\.(?P<classpath>[a-zA-Z_]\w*)$")
+classname_regex = re.compile("([a-zA-Z_0-9\.]+\.)*(?P<classpath>[a-zA-Z_]\w*)$")
 def simplename_from_classpath(classpath:str)->str:
     m = classname_regex.match(classpath)
     if m is None:

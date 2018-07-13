@@ -20,7 +20,7 @@ class B:
         numbers.ns.append(self.calc(c))
 
     def calc_append(self, numbers, c):
-        return Numbers(numbers.ns + [self.calc(c)])
+        return Numbers(*(numbers.ns + [self.calc(c)]))
     
     def set_a(self, a):
         self.a = a
@@ -53,15 +53,31 @@ class Numbers:
     def __init__(self, *args):
         self.ns = list(args)
 
-    @staticmethod
-    def cts_Numbers(numbers:'Numbers'):
-        format_string = "!i" + "!d" * len(numbers.ns)
-        return struct.pack(format_string, *[len(numbers.ns), numbers.ns])
+
+    def cts_Numbers(self:'Numbers'):
+        length = len(self.ns)
+        format_string = "!i" + ("i" * length)
+        return struct.pack(format_string, *[length, *self.ns])
 
     @staticmethod
     def cfs_Numbers(byte_arr: bytes):
         integer_byte_size = struct.calcsize("!i")
         length = struct.unpack("!i", byte_arr[:integer_byte_size])
-        format_string = "!d" * length
+        if isinstance(length, list) or isinstance(length, tuple):
+            length = length[0]
+
+        format_string = "!" + ("i" * length)
         ns = list(struct.unpack(format_string, byte_arr[integer_byte_size:]))
         return Numbers(*ns)
+
+class NumbersCaster1:
+    @staticmethod
+    def cts_Numbers(numbers:'Numbers')->bytes:
+        import json
+        return json.dumps(numbers.ns).encode()
+
+    @staticmethod
+    def cfs_Numbers(byte_arr: bytes)->Numbers:
+        import json
+        return Numbers(*json.loads(byte_arr.decode()))
+

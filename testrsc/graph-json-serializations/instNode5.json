@@ -5,6 +5,7 @@
     "method": "__construct",
     "description": "some.service.Library::__construct([])",
     "params": [],
+    "leftsidefieldclass": null,
     "leftsidefieldtype": null,
     "is-service-construction": true,
     "leftsidefieldname": null,

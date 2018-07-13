@@ -1,0 +1,34 @@
+{
+  "$id": "https://github.com/fmohr/SEDE/tree/master/SEDE.core/src/main/resources/json-schema/requests/ResolveRequests.schema.json",
+  "type": "object",
+  "$schema": "http://json-schema.org/draft-06/schema#",
+  "properties": {
+    "composition": {
+      "$ref" : "SequentialComposition.schema.json"
+    },
+    "requestId": {
+      "type": "string",
+      "examples": [
+        "exec-id-0"
+      ]
+    },
+    "input-fields": {
+      "type": "object",
+      "properties": {
+        "service-instance-map": {
+          "type": "object"
+        },
+        "field-types": {
+          "type": "object"
+        }
+      }
+    },
+    "client-executor": {
+      "$ref" : "ExecutorRegistration.schema.json"
+    },
+    "policy": {
+      "$ref" : "ResolvePolicy.schema.json"
+    }
+  }
+}
+

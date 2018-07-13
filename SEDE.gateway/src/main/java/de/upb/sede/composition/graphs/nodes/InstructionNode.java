@@ -1,5 +1,6 @@
 package de.upb.sede.composition.graphs.nodes;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -20,6 +21,7 @@ public class InstructionNode extends BaseNode {
 	private String fmInstruction;
 	private String leftsideFieldname;
 	private String leftsideFieldtype;
+	private String leftsideFieldclass;
 	private String host;
 	private String context;
 	private boolean contextIsField;
@@ -50,8 +52,9 @@ public class InstructionNode extends BaseNode {
 		this.fmInstruction = Objects.requireNonNull(basedOnInstruction);
 		leftsideFieldname = unassignedValue;
 		leftsideFieldtype = unassignedValue;
+		leftsideFieldclass = unassignedValue;
 		host = unassignedValue;
-		parameterFields = Collections.EMPTY_LIST;
+		parameterFields = new ArrayList<>();
 		parameterTypes = Collections.EMPTY_LIST;
 		this.context = Objects.requireNonNull(context);
 		this.method = Objects.requireNonNull(method);
@@ -102,6 +105,17 @@ public class InstructionNode extends BaseNode {
 	}
 
 
+	public String getLeftSideFieldclass() {
+		return leftsideFieldclass;
+	}
+
+	public void setLeftSideFieldclass(String name) {
+		leftsideFieldclass = name;
+	}
+
+	public boolean isAssignedLeftSideFieldclass() {
+		return leftsideFieldclass != unassignedValue;
+	}
 
 
 	public String getHost() {
@@ -124,6 +138,10 @@ public class InstructionNode extends BaseNode {
 			throw new UnassignedFieldException(this, "context");
 		}
 		return context;
+	}
+
+	public void setContext(String newContext) {
+		this.context = Objects.requireNonNull(newContext);
 	}
 
 	public boolean isAssignedContext() {
@@ -177,12 +195,7 @@ public class InstructionNode extends BaseNode {
 	 * Sets the parameter field
 	 */
 	public void setParameterFields(List<String> parameterFields) {
-		if (parameterFields.getClass().getName().equals("java.util.Collections$UnmodifiableRandomAccessList")
-				|| parameterFields.getClass().getName().equals("java.util.Collections$EmptyList")) {
-			this.parameterFields = parameterFields;
-		} else {
-			this.parameterFields = Collections.unmodifiableList(parameterFields);
-		}
+		this.parameterFields = Objects.requireNonNull(parameterFields);
 	}
 
 	/**

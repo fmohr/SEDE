@@ -12,7 +12,6 @@ import de.upb.sede.gateway.GatewayHttpServer;
 import de.upb.sede.requests.Result;
 import de.upb.sede.requests.RunRequest;
 import de.upb.sede.requests.resolve.ResolvePolicy;
-import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.WebUtil;
 import org.junit.AfterClass;
@@ -35,6 +34,8 @@ public class ImagingTests {
 	static String gatewayAddress = "localhost";
 	static int gatewayPort = 6000;
 
+	static FastBitmap frog;
+
 
 	static GatewayHttpServer gateway;
 
@@ -46,7 +47,25 @@ public class ImagingTests {
 		creator.withExecutorId("Client");
 		ExecutorConfiguration configuration = ExecutorConfiguration.parseJSON(creator.toString());
 		coreClient = new CoreClientHttpServer(configuration, clientAddress, clientPort, gatewayAddress, gatewayPort);
+		/*
+			Disable if you will have an executor register to the gateway:
+		 */
+		coreClient.getClientExecutor().getExecutorConfiguration().getSupportedServices().addAll(
+				Arrays.asList("Catalano.Imaging.Filters.Crop",
+						"Catalano.Imaging.Filters.Resize",
+						"Catalano.Imaging.sede.CropFrom0")
+		);
+		/*
+			Disabled if you dont have dot installed.
 
+		 */
+		coreClient.writeDotGraphToDir("testrsc/images");
+
+	}
+
+	@BeforeClass
+	public static void loadImages() {
+		 frog = new FastBitmap("testrsc/images/red-eyed.jpg");
 	}
 	@AfterClass
 	public static  void shutdownClient() {
@@ -54,53 +73,71 @@ public class ImagingTests {
 	}
 
 	@Test
-	public void testImagingProcessing1() {
-		coreClient.getClientExecutor().getExecutorConfiguration().getSupportedServices().addAll(
-				Arrays.asList("Catalano.Imaging.Filters.Crop", "Catalano.Imaging.Filters.Resize")
-		);
+	public void testImageProcessing1() {
 		String composition =
 				"s1 = Catalano.Imaging.Filters.Crop::__construct({i1=5, i2=5, i3=300, i4=300});\n" +
-				"fb2 = s1::ApplyInPlace({i1=fb1});\n" +
+				"s1::ApplyInPlace({i1=imageIn});\n" +
 				"s2 = Catalano.Imaging.Filters.Resize::__construct({i1=200, i2=200});\n" +
-				"fb3 = s2::applyInPlace({i1=fb2});";
+				"imageOut = s2::applyInPlace({i1=imageIn});";
 
 		ResolvePolicy policy = new ResolvePolicy();
 		policy.setServicePolicy("None");
-		policy.setReturnFieldnames(Arrays.asList("fb2"));
+		policy.setReturnFieldnames(Arrays.asList("imageOut"));
 
-		FastBitmap fb1 = new FastBitmap("testrsc/images/red-eyed.jpg");
-		SEDEObject inputObject_fb1 = new SEDEObject(FastBitmap.class.getName(), fb1);
+		SEDEObject inputObject_fb1 = new SEDEObject(FastBitmap.class.getName(), frog);
 
 		Map<String, SEDEObject> inputs = new HashMap<>();
-		inputs.put("fb1", inputObject_fb1);
+		inputs.put("imageIn", inputObject_fb1);
 
-		JOptionPane.showMessageDialog(null, fb1.toIcon(), "Original image", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, frog.toIcon(), "Original image", JOptionPane.PLAIN_MESSAGE);
 
-		RunRequest runRequest = new RunRequest(composition, policy, inputs);
-
-		ResolveRequest resolveRequest = coreClient.runToResolve(runRequest, "imaging");
-		IntegrationTest_Resolve.resolveToDot(resolveRequest, gateway, "testrsc/images/processing1");
-
+		RunRequest runRequest = new RunRequest("processing1", composition, policy, inputs);
 
 		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
-		Result result = resultMap.get("fb2");
+		Result result = resultMap.get("imageOut");
 		if(result == null || result.hasFailed()) {
-			Assert.fail("Result failed.");
+			Assert.fail("Result missing...");
 		}
-		FastBitmap processedImage;
-		if(result.getResultData().isSemantic()) {
-			/*
-				Cast it to bitmap:
-			 */
-			processedImage = (FastBitmap) SemanticStreamer.readObjectFrom(result.getResultData(),
-					FastBitmapCaster.class.getName(), "Arr", FastBitmap.class.getName())
-					.getObject();
-		} else{
-			/*
-				Result already in bitmap format:
-			 */
-			processedImage = (FastBitmap) result.getResultData().getObject();
+		/*
+			Cast it to bitmap:
+		 */
+		FastBitmap processedImage = (FastBitmap) result.castResultData(
+				FastBitmap.class.getName(), FastBitmapCaster.class).getObject();
+		JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
+	}
+
+	@Test
+	public void testImageProcessing2() {
+		/*
+			Tests fixed parameters:
+		 */
+		String composition =
+				"s1  = Catalano.Imaging.sede.CropFrom0::__construct({100,100});\n" +
+				"imageOut = s1::ApplyInPlace({i1=imageIn});";
+
+		ResolvePolicy policy = new ResolvePolicy();
+		policy.setServicePolicy("None");
+		policy.setReturnFieldnames(Arrays.asList("imageOut"));
+
+		SEDEObject inputObject_fb1 = new SEDEObject(FastBitmap.class.getName(), frog);
+
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		inputs.put("imageIn", inputObject_fb1);
+
+		JOptionPane.showMessageDialog(null, frog.toIcon(), "Original image", JOptionPane.PLAIN_MESSAGE);
+
+		RunRequest runRequest = new RunRequest("processing2", composition, policy, inputs);
+
+		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
+		Result result = resultMap.get("imageOut");
+		if(result == null || result.hasFailed()) {
+			Assert.fail("Result missing...");
 		}
+		/*
+			Cast it to bitmap:
+		 */
+		FastBitmap processedImage = (FastBitmap) result.castResultData(
+				FastBitmap.class.getName(), FastBitmapCaster.class).getObject();
 		JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
 	}
 

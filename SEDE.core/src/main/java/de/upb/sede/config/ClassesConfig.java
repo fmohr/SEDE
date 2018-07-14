@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Encapsulated configuration about classes, like wrappers names.
+ * Encapsulated configuration about classes, like services names.
  * 
  * @author aminfaez
  *

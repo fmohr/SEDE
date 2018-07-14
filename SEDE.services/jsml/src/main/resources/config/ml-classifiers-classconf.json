@@ -1,0 +1,205 @@
+{
+  "$base_classifier_config$":{
+    "abstract" : true,
+    "methods" :{
+      "fit" : {},
+      "predict" : {},
+      "set_options" : {}
+    }
+  },
+  "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper" : {
+    "extends": ["$base_classifier_config$"],
+    "methods": {
+      "$construct": {
+        "params": [
+          "String"
+        ]
+      },
+      "fit": {
+        "params": [
+          "weka.core.Instances"
+        ]
+      },
+      "predict": {
+        "params":[
+          "Bool",
+          "weka.core.Instances"
+        ],
+        "returntype":"java.util.List",
+        "statemutating":false
+      },
+      "set_options": {
+        "params":[
+          "builtin.List"
+        ]
+      }
+    }
+  },
+
+  "weka.classifiers.bayes.BayesNet" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper",
+    "methods": {
+      "$construct": {
+        "params": [
+          {
+            "fixed": "\"weka.classifiers.bayes.BayesNet\"",
+            "type": "String"
+          }
+        ]
+      },
+      "predict": {
+        "params":[
+          {
+            "fixed" : "TRUE",
+            "type": "Bool"
+          },
+          "weka.core.Instances"
+        ],
+        "returntype":"java.util.List",
+        "statemutating":false
+      }
+    }
+  },
+  "weka.classifiers.bayes.NaiveBayes" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.bayes.NaiveBayesMultinomial" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.functions.GaussianProcesses" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.functions.LinearRegression" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.functions.Logistic" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.functions.MultilayerPerceptron" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.functions.SGD" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.functions.LibSVM" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.functions.SimpleLinearRegression" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.functions.SimpleLogistic" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.functions.SMO" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.functions.SMOreg" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.functions.VotedPerceptron" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.lazy.IBk" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.lazy.KStar" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.rules.DecisionTable" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.rules.JRip" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.rules.M5Rules" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.rules.OneR" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.rules.PART" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.rules.ZeroR" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.trees.DecisionStump" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.trees.J48" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.trees.LMT" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.trees.M5P" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.trees.RandomForest" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.trees.RandomTree" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.trees.REPTree" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+
+
+  "weka.classifiers.meta.nestedDichotomies.ND" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.nestedDichotomies.RandomPairND" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.nestedDichotomies.ClassBalancedND" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.nestedDichotomies.DataNearBalancedND" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.nestedDichotomies.FurthestCentroidND" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+
+
+  "weka.classifiers.lazy.LWL" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.AdditiveRegression" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.AdaBoostM1" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.AttributeSelectedClassifier" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.Bagging" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.ClassificationViaRegression" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.LogitBoost" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.MultiClassClassifier" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.RandomCommittee" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.RandomSubSpace" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.Vote" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.Stacking" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  },
+  "weka.classifiers.meta.MultiBoostAB" : {
+    "wrapper" : "de.upb.sede.services.jsml.wrappers.WekaBClassifierWrapper"
+  }
+}

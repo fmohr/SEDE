@@ -1,19 +1,28 @@
-package de.upb.sede.services.jsml.wrappers;
+package de.upb.sede.services.jsml.services;
 
+import de.upb.sede.services.jsml.util.Options;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.OptionHandler;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Wrapper for Weka-base classifier.
  */
-public class WrapBaseClassifier {
+public class WekaBClassifierWrapper implements Serializable {
+
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = 1L;
 
 	private static final Logger logger = LogManager.getLogger("JSML");
 
@@ -23,7 +32,7 @@ public class WrapBaseClassifier {
 	/**
 	 * Default constructor of the wrapper.
 	 */
-	public WrapBaseClassifier(String classifierName) throws ClassNotFoundException {
+	public WekaBClassifierWrapper(String classifierName) throws ClassNotFoundException {
 		logger.trace("Wrapper for classifier '{}' created.", classifierName);
 		this.classifierName = classifierName;
 		// make sure the given classname is a classifier:
@@ -56,17 +65,52 @@ public class WrapBaseClassifier {
 	/**
 	 * Uses the trained model to do prediction based on the given data.
 	 * @param data input data
+	 * @param useDistribution if true, it will use the distributionForInstance method of the classifier.
 	 * @return predicted class index
 	 * @throws Exception throw during invocation of 'classifyInstance'
 	 */
-	public List<Double> predict(Instances data) throws Exception {
+	public List<Double> predict(boolean useDistribution, Instances data) throws Exception {
 		if(classifier== null) {
 			throw new RuntimeException("First fit the model.");
 		}
 		List<Double> predictions = new ArrayList<>(data.size());
 		for(Instance instance : data) {
-			predictions.add(classifier.classifyInstance(instance));
+			Double prediction;
+			if(useDistribution) {
+				double[] distribution = classifier.distributionForInstance(instance);
+				/*
+					Calculate index with maximum distribution:
+				 */
+				double maximumDis = distribution[0];
+				prediction = 0.;
+				for (int i = 1; i < distribution.length; i++) {
+					if(distribution[i] > maximumDis) {
+						maximumDis = distribution[i];
+						prediction = Double.valueOf(i);
+					}
+				}
+			} else{
+				prediction = classifier.classifyInstance(instance);
+			}
+			predictions.add(prediction);
 		}
 		return predictions;
+	}
+
+	/**
+	 * If the classifier is a OptionalHandler tries to invoke setOptions on it using the given list of options.
+	 * Each string in the given list is split by whitespace
+	 * @param options
+	 * @throws Exception
+	 */
+	public void set_options(List options) throws Exception {
+		if(classifier instanceof OptionHandler) {
+			String[] optArr = Options.splitStringIntoArr(options);
+			logger.debug("Set option of {} to: {}.", classifierName, Arrays.toString(optArr));
+			((OptionHandler) classifier).setOptions(optArr);
+		}
+		 else {
+			logger.error("Cannot to set options of {}. Options:\n{}", classifierName, options.toString());
+		}
 	}
 }

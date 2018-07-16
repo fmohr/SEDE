@@ -1,4 +1,4 @@
-package de.upb.sede.services.jsml.services;
+package de.upb.sede.services.jsml;
 
 import java.io.Serializable;
 import java.util.List;

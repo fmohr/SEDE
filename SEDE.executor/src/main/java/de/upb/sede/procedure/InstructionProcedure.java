@@ -12,6 +12,7 @@ import java.util.Map.Entry;
 import java.util.jar.Attributes;
 
 import de.upb.sede.exec.ServiceInstance;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.logging.log4j.LogManager;
@@ -214,7 +215,11 @@ public class InstructionProcedure implements Procedure {
 					return exec;
 				}
 			}
-			throw new RuntimeException("No matching method found: " + attr.getContext() + "::" + attr.getMethod());
+			throw new RuntimeException("No matching method found for signature:\n\t"
+					+ context.getName() + "::" + attr.getMethod()
+					+ "(" + Arrays.toString(ClassUtils.toClass(parameterValues))+ ")");
+
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -227,7 +232,7 @@ public class InstructionProcedure implements Procedure {
 		boolean fail = false;
 		for (int i = 0; i < parameterValues.length; i++) {
 			Object param = parameterValues[i];
-			if(!(param instanceof  Number) && !executable.getParameterTypes()[i].isAssignableFrom(param.getClass())) {
+			if(!(param instanceof  Number)&& !(param instanceof Boolean) && !executable.getParameterTypes()[i].isAssignableFrom(param.getClass())) {
 				fail = true;
 				break;
 			}

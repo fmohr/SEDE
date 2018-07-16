@@ -147,7 +147,7 @@ public class IntegrationTest_Execute {
 
 		Assert.assertTrue(results.containsKey("c"));
 		Assert.assertFalse(results.get("c").hasFailed());
-		NummerList c = (NummerList) results.get("c").castResultData("NummerList", DemoCaster.class).getObject();
+		NummerList c = (NummerList) results.get("c").castResultData("demo.types.NummerList", DemoCaster.class).getObject();
 
 		Assert.assertEquals(Addierer.summierListe(a,b), c);
 	}
@@ -223,6 +223,9 @@ public class IntegrationTest_Execute {
 		System.gc();
 		System.gc();
 		Thread.sleep(500);
+		/*
+			Check for potential memory leak:
+		 */
 		Assert.assertEquals(0, httpClient.getClientExecutor().getWorkerPool().futueListSize());
 		Assert.assertEquals(0, executor2.getWorkerPool().futueListSize());
 		Assert.assertEquals(0, executor1.getWorkerPool().futueListSize());

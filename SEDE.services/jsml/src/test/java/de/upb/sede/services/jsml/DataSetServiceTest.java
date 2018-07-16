@@ -1,4 +1,4 @@
-package de.upb.sede.services.jsml.services;
+package de.upb.sede.services.jsml;
 
 import de.upb.sede.services.jsml.util.MLDataSets;
 import org.junit.After;

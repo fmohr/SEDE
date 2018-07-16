@@ -4,7 +4,6 @@ import de.upb.o4.tinyjavadot.DotNode;
 import de.upb.o4.tinyjavadot.DotGraph;
 import de.upb.sede.composition.graphs.*;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.util.ShellUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -50,7 +49,7 @@ public class GraphToDot {
 		}
 		for (BaseNode baseNode : GraphTraversal.iterateNodes(compGraph)) {
 			DotNode dotNode = nodeMap.get(baseNode);
-			for(BaseNode neighbor : GraphTraversal.neighbors(compGraph, baseNode)) {
+			for(BaseNode neighbor : GraphTraversal.targetingNodes(compGraph, baseNode)) {
 				DotNode dotNeighbor = nodeMap.get(neighbor);
 				graph.connect(dotNode, dotNeighbor).style(dotted?DotGraph.EdgeStyle.dotted : DotGraph.EdgeStyle.filled);
 			}

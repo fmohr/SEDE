@@ -41,7 +41,7 @@ public class GraphConstruction {
 				continue;
 			}
 			String jsonGraph = gjs.toJson(exec.getGraph()).toJSONString();
-			SendGraphNode sendGraph = new SendGraphNode(jsonGraph, exec.getExecutor().getContactInfo());
+			SendGraphNode sendGraph = new SendGraphNode(jsonGraph, exec.getTarget().getContactInfo());
 			sendGraphNodes.add(sendGraph);
 		}
 		/*
@@ -89,13 +89,13 @@ public class GraphConstruction {
 
 	public Map<String, CompositionGraph> getInvolvedExecutions() {
 		Map<String, CompositionGraph> comps = new HashMap<>();
-		String clientId = dataFlow.getClientExecPlan().getExecutor().getExecutorId();
+		String clientId = dataFlow.getClientExecPlan().getTarget().getExecutorId();
 		comps.put(clientId, dataFlow.getClientExecPlan().getGraph());
 		for(ExecPlan exec : getExecutions()) {
-			if(exec.getExecutor().getExecutorId().equals(clientId)) {
+			if(exec.getTarget().getExecutorId().equals(clientId)) {
 				continue;
 			}
-			comps.put(exec.getExecutor().getExecutorId(), exec.getGraph());
+			comps.put(exec.getTarget().getExecutorId(), exec.getGraph());
 		}
 		return comps;
 	}

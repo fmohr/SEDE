@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.xml.soap.Node;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -104,36 +102,36 @@ public class GraphTraversalTest {
 	public void testNeighbors() {
 		List<BaseNode> neighbors = new ArrayList<>();
 		// Next neighborhood
-		GraphTraversal.neighbors(graph1, a).forEach(node -> neighbors.add(node));
+		GraphTraversal.targetingNodes(graph1, a).forEach(node -> neighbors.add(node));
 		Assert.assertTrue(neighbors.size() == 2);
 		Assert.assertTrue(neighbors.contains(b));
 		Assert.assertTrue(neighbors.contains(c));
 		// Next neighborhood
 		neighbors.clear();
-		GraphTraversal.neighbors(graph1, b).forEach(node -> neighbors.add(node));
+		GraphTraversal.targetingNodes(graph1, b).forEach(node -> neighbors.add(node));
 		Assert.assertTrue(neighbors.size() == 0);
 		// Next neighborhood
 		neighbors.clear();
-		GraphTraversal.neighbors(graph1, c).forEach(node -> neighbors.add(node));
+		GraphTraversal.targetingNodes(graph1, c).forEach(node -> neighbors.add(node));
 		Assert.assertTrue(neighbors.size() == 2);
 		Assert.assertTrue(neighbors.contains(d));
 		Assert.assertTrue(neighbors.contains(e));
 		// Next neighborhood
 		neighbors.clear();
-		GraphTraversal.neighbors(graph1, d).forEach(node -> neighbors.add(node));
+		GraphTraversal.targetingNodes(graph1, d).forEach(node -> neighbors.add(node));
 		Assert.assertTrue(neighbors.size() == 1);
 		Assert.assertTrue(neighbors.contains(f));
 		// Next neighborhood
 		neighbors.clear();
-		GraphTraversal.neighbors(graph1, e).forEach(node -> neighbors.add(node));
+		GraphTraversal.targetingNodes(graph1, e).forEach(node -> neighbors.add(node));
 		Assert.assertTrue(neighbors.size() == 0);
 		// Next neighborhood
 		neighbors.clear();
-		GraphTraversal.neighbors(graph1, f).forEach(node -> neighbors.add(node));
+		GraphTraversal.targetingNodes(graph1, f).forEach(node -> neighbors.add(node));
 		Assert.assertTrue(neighbors.size() == 0);
 		// Next neighborhood
 		neighbors.clear();
-		GraphTraversal.neighbors(graph1, g).forEach(node -> neighbors.add(node));
+		GraphTraversal.targetingNodes(graph1, g).forEach(node -> neighbors.add(node));
 		Assert.assertTrue(neighbors.size() == 1);
 		Assert.assertTrue(neighbors.contains(c));
 	}

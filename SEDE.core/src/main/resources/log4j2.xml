@@ -6,7 +6,7 @@
  
   <Appenders>
     <Console name="STDOUT">
-      <PatternLayout pattern="%7.5r %p %C{2.} [%t] %m%n"/>
+      <PatternLayout pattern="%rms %p %C{2.} [%t] %m%n"/>
     </Console>
     <File name="defaultfile" fileName="${basePath}/sede-1.log">
       <PatternLayout>

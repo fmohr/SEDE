@@ -1,13 +1,11 @@
-package de.upb.sede.services.jsml.services;
+package de.upb.sede.services.jsml;
 
-import de.upb.sede.services.jsml.casters.InstancesCaster;
 import de.upb.sede.services.jsml.util.MLDataSets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import weka.core.Instance;
 import weka.core.Instances;
 
-import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
@@ -80,6 +78,7 @@ public class DataSetService implements Serializable {
 		}
 		return Objects.requireNonNull(DataSetCache.cache.get(this.dataSetPath));
 	}
+
 	/**
 	 * Retreives the data set from cache and returns it as an Instances object.
 	 * The returned instances object has the given class index. Use -1 for last attribute.
@@ -95,10 +94,11 @@ public class DataSetService implements Serializable {
 		return dataSet;
 	}
 
-	public Instances fromIndices(List<Number> indices) {
+	public Instances fromIndices(List indices) {
 		Instances originalDataSet = all();
 		Instances clonedDataSet = new Instances(originalDataSet, indices.size());
-		for(Number number : indices){
+		for(Object o : indices){
+			Number number = (Number)o;
 			int index = number.intValue();
 			Instance instance = (Instance) originalDataSet.get(index).copy();
 			instance.setDataset(clonedDataSet);
@@ -107,7 +107,7 @@ public class DataSetService implements Serializable {
 		return clonedDataSet;
 	}
 
-	public Instances fromIndicesLabeled(final List<Number> indices, final int classIndex) {
+	public Instances fromIndicesLabeled(final List indices, final int classIndex) {
 		Instances dataSet = fromIndices(indices);
 		MLDataSets.setClassIndex(dataSet, classIndex);
 		return dataSet;

@@ -294,8 +294,10 @@ public class ClassesConfig extends Configuration {
 			this.wrapper = Optional.ofNullable(wrapper);
 		}
 
-		private Map<String, Object> getMethods() {
-
+		/**
+		 * 	Returns the "methods" json object from the classinfo root.
+		 */
+		private Map<String, Object> getInternalMethods() {
 			if (configuration.containsKey("methods")) {
 				return (Map<String, Object>) configuration.get("methods");
 			} else {
@@ -303,14 +305,14 @@ public class ClassesConfig extends Configuration {
 			}
 		}
 
-		boolean hasMethod(String methodname) {
-			return getMethods().containsKey(methodname);
+		private boolean hasMethod(String methodname) {
+			return getInternalMethods().containsKey(methodname);
 		}
 
 		public MethodInfo constructInfo() {
 			if (hasMethod("$construct")) {
-				 Map<String, Object> constructMap = MethodInfo.emptyConstructor(cp).configuration;
-				constructMap.putAll((Map<String, Object>) getMethods().get("$construct"));
+				Map<String, Object> constructMap = MethodInfo.emptyConstructor(cp).configuration;
+				constructMap.putAll((Map<String, Object>) getInternalMethods().get("$construct"));
 				return new MethodInfo("$construct", constructMap);
 			} else if(wrapper.isPresent()){
 				return wrapper.get().constructInfo();
@@ -339,9 +341,8 @@ public class ClassesConfig extends Configuration {
 		}
 
 		public MethodInfo methodInfo(String methodname) {
-
 			if (hasMethod(methodname)) {
-				return new MethodInfo(methodname, (Map<String, Object>) getMethods().get(methodname));
+				return new MethodInfo(methodname, (Map<String, Object>) getInternalMethods().get(methodname));
 			} else if(isWrapped()) {
 				return wrapper.get().methodInfo(methodname);
 			}else{

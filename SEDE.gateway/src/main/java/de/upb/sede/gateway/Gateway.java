@@ -2,6 +2,7 @@ package de.upb.sede.gateway;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import de.upb.sede.util.GraphToDot;
 import org.apache.logging.log4j.LogManager;
@@ -104,7 +105,11 @@ public class Gateway implements IGateway{
 		 * this gateway:
 		 */
 		List<String> supportedServices = new ArrayList<>(execRegister.getSupportedServices());
-		supportedServices.removeIf(classesConfig::classunknown);
+		if(supportedServices.stream().anyMatch(classesConfig::classunknown)) {
+			logger.warn("Executor registered with services that are unknown to the gateway. These services will be ignored:\n\t{}",
+					supportedServices.stream().filter(classesConfig::classunknown).collect(Collectors.joining("\n\t")));
+			supportedServices.removeIf(classesConfig::classunknown);
+		}
 		execHandle.getExecutionerCapabilities().addAllServiceClasses(supportedServices.toArray(new String[0]));
 		return execHandle;
 	}
@@ -127,7 +132,7 @@ public class Gateway implements IGateway{
 			/*
 			 * dont accept double registration.
 			 */
-			logger.warn("ExecutorRegistration with a host that has already been registered: {}",  execHandle.getExecutorId());
+			logger.warn("ExecutorRegistration with an id that has already been registered: {}",  execHandle.getExecutorId());
 			return false;
 		} else {
 			execCoordinator.addExecutor(execHandle);

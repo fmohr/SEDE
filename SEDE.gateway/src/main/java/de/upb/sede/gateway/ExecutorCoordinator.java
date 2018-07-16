@@ -23,7 +23,7 @@ public class ExecutorCoordinator {
 		return capableExecutors;
 	}
 
-	public synchronized ExecutorHandle randomExecutorWithServiceClass(String ServiceClass) {
+	public synchronized ExecutorHandle executorsWithServiceClass(String ServiceClass) {
 		List<ExecutorHandle> executors = executorsSupportingServiceClass(ServiceClass);
 		if(executors.isEmpty()) {
 			throw new RuntimeException("No registered executor supports the given class: " + ServiceClass);

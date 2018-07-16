@@ -1,6 +1,7 @@
 package de.upb.sede.composition.graphs;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.graphs.nodes.*;
@@ -51,13 +52,17 @@ public class DataFlowAnalysis {
 			resolveExecution(instNode);
 			analyzeDataFlow(instNode);
 		}
+		determineExecutors();
 		resolveResults();
+		fillinContactInforamtions();
 		connectDependencyEdges();
 		if(resolveInfo.getResolvePolicy().isBlockTillFinished()) {
 			addFinishingNodes();
 		}
 
 	}
+
+
 
 	private void addInputNodesFieldTypes() {
 		InputFields inputFields = resolveInfo.getInputFields();
@@ -131,11 +136,30 @@ public class DataFlowAnalysis {
 			String serviceClasspath = instNode.getContext();
 			boolean found = false;
 			for (ExecPlan exec : execPlans) {
-				ExecutorHandle executor = exec.getExecutor();
-				if (executor.getExecutionerCapabilities().supportsServiceClass(serviceClasspath)) {
-					found = true;
-					resolvedExecPlan = exec;
-					break;
+				if(exec.targetDetermined()) {
+					ExecutorHandle executor = exec.getTarget();
+					if (executor.getExecutionerCapabilities().supportsServiceClass(serviceClasspath)) {
+						found = true;
+						resolvedExecPlan = exec;
+						break;
+					}
+				} else {
+					/*
+						The execPlan can be assigned to a number of executors.
+					 */
+					Predicate<ExecutorHandle> supportsService = candidate ->
+							candidate.getExecutionerCapabilities().supportsServiceClass(serviceClasspath);
+					boolean execSupportsService = exec.candidates().stream().anyMatch(supportsService);
+					if(execSupportsService) {
+						/*
+							There is at least one executor that supports the service..
+							remove the candidates who dont:
+						 */
+						exec.removeCandidates(supportsService.negate());
+						found = true;
+						resolvedExecPlan = exec;
+						break;
+					}
 				}
 			}
 			if (!found) {
@@ -143,9 +167,12 @@ public class DataFlowAnalysis {
 				 * no execution in the list supports the required service. find a new executor
 				 * that supports the service and add it to the exections.
 				 */
-				ExecutorHandle newExecutor = resolveInfo.getExecutorCoordinator()
-						.randomExecutorWithServiceClass(serviceClasspath);
-				resolvedExecPlan = new ExecPlan(newExecutor);
+				List<ExecutorHandle> executors = resolveInfo.getExecutorCoordinator()
+						.executorsSupportingServiceClass(serviceClasspath);
+				if(executors.size()==0) {
+					throw new RuntimeException("No registered execution supports the requested service: " + serviceClasspath);
+				}
+				resolvedExecPlan = new ExecPlan(executors);
 				execPlans.add(resolvedExecPlan);
 			}
 		}
@@ -328,24 +355,24 @@ public class DataFlowAnalysis {
 				}
 				if (!found) {
 					/*
-					 * the field was not found on the instExec. Transmit the data from another
-					 * executor first:
+					 * the field was not found on the instExec.
+					 * The required data is available on sourceExec:
 					 */
-					for (FieldType paramType : paramFieldTypes) {
-						if (paramType.isSemanticData()) {
-							found = true;
-							requiredData = paramType;
-							break;
-						}
-					}
-					if (!found) {
-						/*
-						 * no semantic data found for the field. use any other field for transmission:
-						 */
-						requiredData = paramFieldTypes.get(0);
-					}
-					/* transmit data to instExec: */
+					requiredData = paramFieldTypes.get(0);
 					ExecPlan sourceExec = getAssignedExec(requiredData.getProducer());
+					/*
+					 * Now instead of creating a transmission, we check
+					 * if we can move the execution that produces the required data onto this executor.
+					 * This might save a transmission:
+					 */
+//					if(canMoveOntoExecutor(requiredData, instExec)){
+//
+//					}
+
+					/*
+					 *	Transmit the data from the source executor:
+					 */
+
 					// the return value of createTransmission is the datafield which is present on
 					// instExec:
 					requiredData = createTransmission(sourceExec, instExec, requiredData);
@@ -394,7 +421,7 @@ public class DataFlowAnalysis {
 				 * semantic type:
 				 */
 				if (!requiredData.isSemanticData()) {
-					throw new RuntimeException("Coding error: " + requiredData.toString());
+					throw new RuntimeException("Coding error: " + requiredData.toString() + ". Expected semantic type.");
 				}
 
 				/*
@@ -601,6 +628,7 @@ public class DataFlowAnalysis {
 		}
 	}
 
+	// TODO to be implemented.
 //	private void removeUnusedInputs() {
 //		/*
 //			Remove every input from the client that was not used:
@@ -624,6 +652,53 @@ public class DataFlowAnalysis {
 //			nodeConsumesField(deleteField, );
 //		}
 //	}
+
+
+	/**
+	 * Determin an executor for each plan:
+	 * Current implementation just selects one by random.
+	 * This follows the idea that if all requests and executors are homogeneous,
+	 * assigning executors by random would divide the load onto all of them evenly.
+	 * TODO Strong assumptions though, so consider implementing a feedback system off to help distribute the load more intelligently.
+	 */
+	private void determineExecutors() {
+		for(ExecPlan plan: execPlans) {
+			if(!plan.targetDetermined()) {
+				List<ExecutorHandle> executors = plan.candidates();
+				int randomIndex = (int) (executors.size() * Math.random());
+				ExecutorHandle chosedTarget = executors.get(randomIndex);
+				/*
+					Remove every other executor:
+				 */
+				plan.removeCandidates(candidate->candidate!=chosedTarget);
+			}
+		}
+	}
+
+	/**
+	 * This method fills in his contact information to all concerned transmission nodes.
+	 * Background:
+	 * Transmission nodes up until now dont yet have the concrete contact information.
+	 * That is because the execPlan hold candidates of executors.
+	 * Before this method is invoked 'determineExecutors' should have been invoked.
+	 * Thus at the time of the invocation of this method every exec plan now has a specific target executor.
+	 */
+	private void fillinContactInforamtions() {
+		for(ExecPlan execPlan : execPlans){
+			assert execPlan.targetDetermined();
+			/*
+				For every accept data node in the graph:
+				fill in the contact information to the corresponding transmission node.
+			 */
+			Map<String, String> contactInformation = execPlan.getTarget().getContactInfo();
+			for(BaseNode node : GraphTraversal.iterateNodesWithClassname(execPlan.getGraph(),
+					AcceptDataNode.class.getSimpleName())) {
+				AcceptDataNode accepter = (AcceptDataNode) node;
+				getCorrespondingSender(accepter).getContactInfo().putAll(contactInformation);
+
+			}
+		}
+	}
 
 	private void resolveResults() {
 		/*
@@ -703,8 +778,8 @@ public class DataFlowAnalysis {
 			/*
 				Add node that indicate that the execution is done:
 		 	*/
-			String flagname = ("&finished&" + exec.getExecutor().getExecutorId());
-			FinishNode finishNode = new FinishNode(getClientExecPlan().getExecutor().getContactInfo(), flagname);
+			String flagname = ("&finished&" + exec.getTarget().getExecutorId());
+			FinishNode finishNode = new FinishNode(getClientExecPlan().getTarget().getContactInfo(), flagname);
 			exec.getGraph().executeLast(Arrays.asList(finishNode));
 
 			/*
@@ -719,16 +794,31 @@ public class DataFlowAnalysis {
 		}
 	}
 
-	private ExecPlan getOrCreateExecutionForId(String executorId) {
+	private ExecPlan getOrCreateExecutionForId(final String executorId) {
 		/*
 		 * First search the list of already involved executors to look for it:
 		 */
+		Predicate<ExecutorHandle> executorWithId = handle ->  handle.getExecutorId().equals(executorId);
 		for (ExecPlan exec : execPlans) {
-			if (exec.getExecutor().getExecutorId().equals(executorId)) {
-				return exec;
+			if(exec.targetDetermined()) {
+				if (executorWithId.test(exec.getTarget())) {
+					return exec;
+				}
+			} else {
+				boolean executorWithIdFound = exec.candidates().stream().anyMatch(executorWithId);
+				if(executorWithIdFound) {
+					/*
+						Remove all other executor:
+					 */
+					exec.removeCandidates(executorWithId.negate());
+					return exec;
+				}
 			}
 		}
-
+		/*
+		 * No involved executor has the given id.
+		 * Search in the registered executors list:
+		 */
 		if (resolveInfo.getExecutorCoordinator().hasExecutor(executorId)) {
 			ExecutorHandle executor = resolveInfo.getExecutorCoordinator().getExecutorFor(executorId);
 
@@ -761,10 +851,10 @@ public class DataFlowAnalysis {
 	private AcceptDataNode clientAcceptInput(String fieldname) {
 		AcceptDataNode accept = new AcceptDataNode(fieldname);
 		assignNodeToExec(accept, clientExecPlan);
-		Map<String, String> clientContactInfo = clientExecPlan.getExecutor().getContactInfo();
+		Map<String, String> clientContactInfo = clientExecPlan.getTarget().getContactInfo();
 		TransmitDataNode transmit = new TransmitDataNode(fieldname, clientContactInfo);
 
-		addTransmission(transmit, accept);
+		addToTransGraph(transmit, accept);
 
 		return accept;
 	}
@@ -773,7 +863,14 @@ public class DataFlowAnalysis {
 		String fieldname = datafield.getFieldname();
 		AcceptDataNode accept = new AcceptDataNode(fieldname);
 		assignNodeToExec(accept, targetExec);
-		Map<String, String> contactInfo = targetExec.getExecutor().getContactInfo();
+		/*
+		 * The exec plan might still have multiple execution candidates.
+		 * So there is no specific contact information to choose yet.
+		 * Instead use an empty map. Later down the line when the target executor is clear,
+		 * fill this map with the actual contact information of the chosen executors.
+		 * This happens in fillContactInformation method. (See above)
+		 */
+		Map<String, String> contactInfo = new HashMap<>();
 		TransmitDataNode transmit;
 		if(datafield.isRealData()) {
 			String caster = resolveInfo.getTypeConfig().getOnthologicalCaster(datafield.getTypeName());
@@ -786,14 +883,13 @@ public class DataFlowAnalysis {
 
 		assignNodeToExec(transmit, sourceExec);
 		nodeConsumesField(transmit, datafield);
-		addTransmission(transmit, accept);
+		addToTransGraph(transmit, accept);
 
 		FieldType inputField;
 		if (datafield.isRealData()) {
 			TypeClass inputTypeClass = TypeClass.SemanticDataType;
 			String typeName = resolveInfo.getTypeConfig().getOnthologicalType(datafield.getTypeName());
 			inputField = new FieldType(accept, fieldname, inputTypeClass, typeName, false);
-
 		} else  {
 			inputField = datafield.clone(accept, false);
 		}
@@ -801,14 +897,17 @@ public class DataFlowAnalysis {
 		return inputField;
 	}
 
-	private void addTransmission(TransmitDataNode transmit, AcceptDataNode accept) {
+	private void addToTransGraph(TransmitDataNode transmit, AcceptDataNode accept) {
 		dataTransmissionGraph.addNode(transmit);
 		dataTransmissionGraph.addNode(accept);
 		dataTransmissionGraph.connectNodes(transmit, accept);
 	}
 
-	private void nodeProducesField(BaseNode node, FieldType fieldType) {
-
+	private TransmitDataNode getCorrespondingSender(AcceptDataNode accepter) {
+		/*
+		 * Find the transmission node which sends the data that is in turn accepted by the given accepter:
+		 */
+		return (TransmitDataNode) GraphTraversal.sourceNodes(dataTransmissionGraph, accepter).iterator().next();
 	}
 
 	private void assignNodeToExec(BaseNode node, ExecPlan exec) {
@@ -888,6 +987,56 @@ public class DataFlowAnalysis {
 		}
 		throw new RuntimeException("Field " + fieldname + " doens't contain any original fieldtype.");
 	}
+
+	/**
+	 * Returns true if the field can be moved to the executor.
+	 */
+	private boolean canMoveOntoExecutor(FieldType field, ExecPlan execution) {
+		BaseNode bn = field.getProducer();
+		for(BaseNode consumerNodes : getConsumersOfField(field)){
+			/*
+				if there is a node that needs this field which isn't on the execution  outside from the target execution we cannot move the field
+			 */
+			if(!canMoveOntoExecutor(consumerNodes, execution)){
+
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Returns true if the node can be moved to the execution.
+	 */
+	private boolean canMoveOntoExecutor(BaseNode node, ExecPlan execution) {
+		if(node instanceof InstructionNode) {
+			InstructionNode instruction = (InstructionNode) node;
+			if(instruction.isContextAFieldname()){
+				if(!isResolvable(instruction.getContext())){
+					/*
+						The context of the instruction cannot be resolved.
+						That means this instruction cannot be moved:
+					 */
+					return false;
+				} else{
+					FieldType serviceInstance = resolveFieldname(instruction.getContext()).get(0);
+					String serviceName = serviceInstance.getTypeName();
+					/*
+						We can only move the service instance to the executor if it supports the service:
+					 */
+					if(!execution.getTarget().getExecutionerCapabilities().supportsServiceClass(serviceName)) {
+						return false;
+					}
+
+				}
+			}
+
+			/*
+				See if the executor supports the service:
+			 */
+		}
+		return false;
+	}
+
 
 	public ExecPlan getClientExecPlan() {
 		return clientExecPlan;

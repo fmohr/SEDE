@@ -24,8 +24,8 @@ public class ResolvePolicy implements JsonSerializable {
 	/*
 	 * list flags
 	 */
-	private static final String all = "ALL";
-	private static final String none = "None";
+	public static final String all = "ALL";
+	public static final String none = "None";
 	private static final String listed = "Listed";
 
 	private String returnPolicy;

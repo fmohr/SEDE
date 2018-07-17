@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 public class ExecutionPool {
@@ -61,7 +62,7 @@ public class ExecutionPool {
 		}
 	}
 
-	public synchronized  Execution getExecution(String execId) {
-		return execMap.get(execId);
+	public synchronized Optional<Execution> getExecution(String execId) {
+		return Optional.ofNullable(execMap.get(execId));
 	}
 }

@@ -6,7 +6,7 @@
       "train":{}
     }
   },
-  "de.upb.crc901.services.wrappers.WekaFilterWrapper" : {
+  "de.upb.sede.services.jsml.WekaFilterWrapper" : {
     "extends":["$base_preprocessor_config$"],
     "methods" : {
       "$construct": {
@@ -58,7 +58,7 @@
       }
     }
   },
-  "de.upb.crc901.services.wrappers.WekaAttributeSelectionWrapper":{
+  "de.upb.sede.services.jsml.WekaASWrapper":{
     "methods" : {
       "$construct": {
         "params": [
@@ -81,6 +81,6 @@
     }
   },
   "weka.attributeSelection.AttributeSelection" : {
-    "wrapper" : "de.upb.crc901.services.wrappers.WekaAttributeSelectionWrapper"
+    "wrapper" : "de.upb.sede.services.jsml.WekaASWrapper"
   }
 }

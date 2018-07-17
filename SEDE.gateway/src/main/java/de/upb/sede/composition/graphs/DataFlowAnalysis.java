@@ -222,7 +222,7 @@ public class DataFlowAnalysis {
 				ServiceInstanceHandle serviceInstanceHandle = resolveInfo.getInputFields()
 						.getServiceInstanceHandle(serviceInstanceFieldname);
 				ServiceInstanceStorageNode loadService = new ServiceInstanceStorageNode(serviceInstanceHandle.getId(), serviceInstanceFieldname,
-						contextClasspath);
+						serviceInstance.getTypeName());
 				assignNodeToExec(loadService, instExec);
 
 				nodeConsumesField(loadService, serviceInstance);
@@ -709,9 +709,6 @@ public class DataFlowAnalysis {
 			if (FMCompositionParser.isConstant(resultFieldname)) {
 				continue; // no need to send back constants
 			}
-			if(resolveInfo.getInputFields().isInputField(resultFieldname)) {
-				continue;
-			}
 			FieldType resultFieldType = resultFieldtype(resultFieldname);
 			// Node that last produced the result:
 			BaseNode resultProducer = resultFieldType.getProducer();
@@ -729,6 +726,12 @@ public class DataFlowAnalysis {
 						resultFieldType.getTypeName());
 				assignNodeToExec(store, resultExecPlan);
 				nodeConsumesField(store, resultFieldType);
+			}
+			/*
+				If it comped from the client then dont return it:
+			 */
+			if(resolveInfo.getInputFields().isInputField(resultFieldname)) {
+				continue;
 			}
 
 			if (toBeReturned) {

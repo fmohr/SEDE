@@ -2,6 +2,7 @@ package de.upb.sede.exec;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import de.upb.sede.config.ExecutorConfiguration;
 import org.apache.logging.log4j.LogManager;
@@ -62,7 +63,7 @@ public class Executor implements IExecutor{
 
 
 	public Execution getExecution(String execId) {
-		return execPool.getExecution(execId);
+		return execPool.getExecution(execId).get();
 	}
 
 	public Execution getOrCreateExecution(String execId) {
@@ -124,9 +125,12 @@ public class Executor implements IExecutor{
 	@Override
 	public synchronized void interrupt(String executionId) {
 		if (execPool.hasExecution(executionId)) {
-			Execution toBeInterrupted = execPool.getExecution(executionId);
-			workerPool.interruptExec(toBeInterrupted);
-			toBeInterrupted.interrupt();
+			Optional<Execution> toBeInterrupted = execPool.getExecution(executionId);
+			if(toBeInterrupted.isPresent()){
+				Execution target = toBeInterrupted.get();
+				workerPool.interruptExec(target);
+				target.interrupt();
+			}
 		}
 	}
 

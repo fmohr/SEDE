@@ -43,7 +43,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 
 	private final HttpServer server;
 
-	private final Pattern PUT_DATA_URL_PATTERN = Pattern.compile("/put/(?<executionId>\\w+)/(?<fieldname>(?:[&_a-zA-Z][&\\w]*+))/(?<semtype>\\w+)");
+	private final Pattern PUT_DATA_URL_PATTERN = Pattern.compile("/put/(?<executionId>[-\\w]+)/(?<fieldname>(?:[&_a-zA-Z][&\\w]*+))/(?<semtype>\\w+)");
 	private final Pattern INTERRUPT_URL_PATTERN = Pattern.compile("/interrupt/(?<executionId>\\w+)");
 
 	public ExecutorHttpServer(ExecutorConfiguration execConfig, String hostAddress, int port) {

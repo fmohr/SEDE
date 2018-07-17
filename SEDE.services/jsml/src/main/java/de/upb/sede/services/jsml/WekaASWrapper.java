@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 
 import de.upb.sede.services.jsml.util.Options;
+import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import weka.attributeSelection.ASEvaluation;
@@ -12,6 +13,7 @@ import weka.attributeSelection.AttributeSelection;
 import weka.core.Attribute;
 import weka.core.Instance;
 import weka.core.Instances;
+import weka.core.OptionHandler;
 
 public class WekaASWrapper implements Serializable {
 
@@ -45,29 +47,29 @@ public class WekaASWrapper implements Serializable {
 
 	private void construct() throws Exception {
 		attributeSelection = new AttributeSelection();
-		attributeSelection.setSearch(ASSearch.forName(asSearcherName, searcherOptions));
-		attributeSelection.setEvaluator(ASEvaluation.forName(asEvaluatorName, evalOptions));
+		ASSearch searcher = (ASSearch) ConstructorUtils.invokeConstructor(Class.forName(asSearcherName));
+		if(searcher instanceof OptionHandler) {
+			((OptionHandler) searcher).setOptions(searcherOptions);
+		}
+		ASEvaluation eval = (ASEvaluation) ConstructorUtils.invokeConstructor(Class.forName(asEvaluatorName));
+		if(eval instanceof OptionHandler) {
+			((OptionHandler) eval).setOptions(evalOptions);
+		}
+		attributeSelection.setSearch(searcher);
+		attributeSelection.setEvaluator(eval);
 	}
 
 	public void train(Instances instances) throws Exception {
 		if(trained){
 			construct();
 		}
-		if(cachedClassAttribute==null) {
-			cachedClassAttribute = instances.classAttribute();
-			cachedInstances = new Instances(instances, 0);
-		}
+		System.out.println("SELECTING ATTRs");
 		attributeSelection.SelectAttributes(instances);
 		trained = true;
 	}
 
 	public Instances preprocess(Instances instances) throws Exception {
-		if(cachedInstances==null) {
-			throw new RuntimeException("First call SelectAttribute");
-		}
-		for(Instance instance : instances) {
-			instance.setDataset(cachedInstances);
-		}
+		System.out.println("REDUCING DEMS");
 		return attributeSelection.reduceDimensionality(instances);
 	}
 }

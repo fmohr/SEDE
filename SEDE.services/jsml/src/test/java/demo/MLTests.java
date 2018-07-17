@@ -64,8 +64,8 @@ public class MLTests {
 		creator.withExecutorId("executor2");
 		creator.withSupportedServices(DataSetService.class.getName(), "weka.classifiers.bayes.NaiveBayes");
 		configuration = ExecutorConfiguration.parseJSON(creator.toString());
-		executor1 = new ExecutorHttpServer(configuration, "localhost",  9001);
-		gateway.register(executor1.registration());
+		executor2 = new ExecutorHttpServer(configuration, "localhost",  9001);
+		gateway.register(executor2.registration());
 
 
 
@@ -97,6 +97,7 @@ public class MLTests {
 	@AfterClass
 	public static  void shutdownClient() {
 		executor1.shutdown();
+		executor2.shutdown();
 		coreClient.getClientExecutor().shutdown();
 		gateway.shutdown();
 	}
@@ -192,8 +193,6 @@ public class MLTests {
 		}
 		logger.info("{}/{} correct predictions.", (int) correctPredictions, prediction.size());
 	}
-
-
 
 
 	private static ClassesConfig getTestClassConfig() {

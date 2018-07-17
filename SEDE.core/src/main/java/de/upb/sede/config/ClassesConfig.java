@@ -313,7 +313,7 @@ public class ClassesConfig extends Configuration {
 			if (hasMethod("$construct")) {
 				Map<String, Object> constructMap = MethodInfo.emptyConstructor(cp).configuration;
 				constructMap.putAll((Map<String, Object>) getInternalMethods().get("$construct"));
-				return new MethodInfo("$construct", constructMap);
+				return new MethodInfo(cp, "$construct", constructMap);
 			} else if(wrapper.isPresent()){
 				return wrapper.get().constructInfo();
 			} else {
@@ -342,7 +342,7 @@ public class ClassesConfig extends Configuration {
 
 		public MethodInfo methodInfo(String methodname) {
 			if (hasMethod(methodname)) {
-				return new MethodInfo(methodname, (Map<String, Object>) getInternalMethods().get(methodname));
+				return new MethodInfo(cp, methodname, (Map<String, Object>) getInternalMethods().get(methodname));
 			} else if(isWrapped()) {
 				return wrapper.get().methodInfo(methodname);
 			}else{
@@ -353,9 +353,11 @@ public class ClassesConfig extends Configuration {
 
 	public static class MethodInfo {
 		private final Map<String, Object> configuration;
+		private final String classname;
 		private final String methodname;
 
-		private MethodInfo(String methodname, Map<String, Object> config) {
+		private MethodInfo(String classname, String methodname, Map<String, Object> config) {
+			this.classname = classname;
 			this.methodname = methodname;
 			configuration = config;
 		}
@@ -413,8 +415,8 @@ public class ClassesConfig extends Configuration {
 				}
 			}
 			if(givenInputSize!= 0) {
-				throw new RuntimeException("Too few or too many inputs for method: " + methodname +
-						". Over/underflow: " + givenInputSize);
+				throw new RuntimeException("Too few or too many inputs for method. " + classname + ":" + methodname +
+						". Over/underflow: " + givenInputSize + " given inputs: " + inputs);
 			}
 		}
 
@@ -450,7 +452,7 @@ public class ClassesConfig extends Configuration {
 			emptyConstructConfig.put("params", Collections.EMPTY_LIST);
 			emptyConstructConfig.put("returntype", classpath);
 			emptyConstructConfig.put("static", true);
-			return new MethodInfo("$construct", emptyConstructConfig);
+			return new MethodInfo(classpath, "$construct", emptyConstructConfig);
 		}
 
 		@SuppressWarnings("unchecked")

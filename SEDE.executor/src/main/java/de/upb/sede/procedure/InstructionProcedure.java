@@ -159,7 +159,7 @@ public class InstructionProcedure implements Procedure {
 						The method creates a new service instance.
 						so wrap it into a handle:
 					 */
-					ServiceInstanceHandle handle = createServiceInstanceHandle(task, outputValue);
+					ServiceInstanceHandle handle = createServiceInstanceHandle(task, attr, outputValue);
 					resultfield = new SEDEObject(handle);
 				} else {
 					/*
@@ -280,10 +280,10 @@ public class InstructionProcedure implements Procedure {
 	 *
 	 * @return a new ServiceInstanceHandle
 	 */
-	private ServiceInstance createServiceInstanceHandle(Task task, Object newServiceInstance) {
+	private ServiceInstance createServiceInstanceHandle(Task task, InstructionNodeAttributes attr, Object newServiceInstance) {
 		String serviceInstanceId = UUID.randomUUID().toString();
 		String executorId = task.getExecution().getConfiguration().getExecutorId();
-		String classpath = newServiceInstance.getClass().getName();
+		String classpath = attr.getLeftsidefieldType();
 		ServiceInstance si = new ServiceInstance(executorId, classpath, serviceInstanceId, newServiceInstance);
 		return si;
 	}

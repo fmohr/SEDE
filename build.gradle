@@ -45,13 +45,13 @@ subprojects {
     }
 
     /* mark testrec as resources to be loaded during tests */
-//    sourceSets {
-//        test {
-//            resources {
-//                srcDir project.testresources
-//            }
-//        }
-//    }
+    sourceSets {
+        test {
+            resources {
+                srcDir project.testresources
+            }
+        }
+    }
 
     /* Set working directory of tests to root folder: */
     test{

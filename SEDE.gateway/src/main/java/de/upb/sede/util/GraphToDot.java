@@ -17,13 +17,14 @@ public class GraphToDot {
 	private final static Logger logger = LogManager.getLogger();
 	
 	private static final String PATH_TO_DOT;
-
+	
 	static {
 		/*
 		 * Read the path to dot from environment variable: 'DOT_PATH'
 		 */
-		if(System.getenv().containsKey("DOT_PATH")) {
-			PATH_TO_DOT = System.getenv().get(System.getenv().get("DOT_PATH"));
+		if(System.getenv().containsKey("DOT_PATH") && System.getenv().get("DOT_PATH") != null) {
+			PATH_TO_DOT = System.getenv().get("DOT_PATH");
+			
 		} else {
 			PATH_TO_DOT = "/usr/local/bin/dot";
 			logger.info("Environment variable 'DOT_PATH' isn't defined.");

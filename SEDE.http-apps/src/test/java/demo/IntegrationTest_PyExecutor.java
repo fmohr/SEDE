@@ -31,6 +31,8 @@ import org.junit.Test;
 
 import java.lang.reflect.Array;
 import java.util.*;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 public class IntegrationTest_PyExecutor {
 
@@ -55,6 +57,7 @@ public class IntegrationTest_PyExecutor {
 			"testrsc/config/builtin-typeconf.json"};
 	@BeforeClass
 	public static void setupGateway() {
+		System.out.println(System.getProperty("user.dir"));
 		gateway = new Gateway(new ClassesConfig(), new OnthologicalTypeConfig());
 		gateway.getClassesConfig().appendConfigFromFiles(classconfFiles);
 		gateway.getTypeConfig().appendConfigFromFiles(typecongFiles);
@@ -126,8 +129,8 @@ public class IntegrationTest_PyExecutor {
 		String state_before = (String) resultMap.get("state_before").getResultData().getObject();
 		String state_after = (String) resultMap.get("state_after").getResultData().getObject();
 		NummerList n2 = (NummerList) resultMap.get("n2").castResultData("NummerList", DemoCaster.class).getObject();
-
-		Assert.assertNotEquals(state_before, state_after);
+		
+		assertThat(state_after, not(equalTo(state_before)));
 		Assert.assertEquals("a = 0 b = 1", state_before);
 		Assert.assertEquals("a = 0 b = 2", state_after);
 		Assert.assertEquals(Arrays.asList(1.,2.,3.,4.), n2);

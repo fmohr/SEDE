@@ -11,6 +11,7 @@ import java.util.Objects;
  *
  */
 public class ExecutorCoordinator {
+
 	private final List<ExecutorHandle> executors = new ArrayList<>();
 
 	public synchronized List<ExecutorHandle> executorsSupportingServiceClass(String ServiceClass) {
@@ -47,5 +48,9 @@ public class ExecutorCoordinator {
 
 	public synchronized void addExecutor(ExecutorHandle eh) {
 		this.executors.add(Objects.requireNonNull(eh));
+	}
+
+	public List<ExecutorHandle> getExecutors() {
+		return executors;
 	}
 }

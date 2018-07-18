@@ -1,0 +1,67 @@
+plugins {
+    id 'java'
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+configurations {
+    provided
+    compile.extendsFrom provided
+}
+
+
+dependencies {
+    provided project(":SEDE.core")
+
+    // https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka/weka-stable
+    compile group: 'nz.ac.waikato.cms.weka', name: 'weka-stable', version: '3.8.0'
+
+    // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+
+    provided project(":SEDE.http-apps")
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+// build Jar:
+task buildJar(type: Jar) {
+    manifest {
+        attributes 'Implementation-Title': 'SEDE-mls',
+                'Implementation-Version': version
+    }
+    destinationDir = file("$rootDir")
+    baseName = project.name
+    from { (configurations.runtime - configurations.provided).collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+task jarjar(type: Jar){
+    manifest {
+        attributes 'Implementation-Title': 'SEDE-mls',
+                'Implementation-Version': version
+    }
+    destinationDir = file("$rootDir/deploy/run-executor-$project.name/services")
+    baseName = project.name
+    with jar
+}
+task exportDep(type: Copy) {
+    destinationDir = file("$rootDir/deploy/run-executor-$project.name/services")
+    from configurations.runtime - configurations.provided
+}
+task deploy (type: GradleBuild) {
+    doFirst {
+        copy {
+            from "$rootDir/deploy/run-executor-template"
+            into "$rootDir/deploy/run-executor-$project.name"
+            rename('run-executor-template', "run-executor-$project.name")
+            eachFile {
+                if (it.relativePath.getFile(destinationDir).exists()) {
+                    it.exclude()
+                }
+            }
+        }
+    }
+    tasks = ['jarjar', 'exportDep']
+}

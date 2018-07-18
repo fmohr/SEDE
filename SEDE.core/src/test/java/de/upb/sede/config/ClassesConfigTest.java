@@ -97,20 +97,6 @@ public class ClassesConfigTest {
 
 	}
 
-	@Test
-	public void methodKnown() {
-		assertTrue(cc.classInfo("A").hasMethod("m1"));
-		assertFalse(cc.classInfo("A").hasMethod("a1"));
-	}
-
-	@Test
-	public void classInfo() {
-		ClassesConfig.ClassInfo A = cc.classInfo("A");
-		assertTrue(A.hasMethod("m1"));
-		assertFalse(A.hasMethod("a1"));
-		assertNotNull(A.methodInfo("m1"));
-		assertNotNull(A.constructInfo());
-	}
 
 	@Test
 	public void testMethodsA() {

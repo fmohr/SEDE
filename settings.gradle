@@ -20,7 +20,7 @@ include 'SEDE.http-apps'
  */
 include 'SEDE.services:demolib'
 include 'SEDE.services:imaging'
-include 'SEDE.services:jsml'
+include 'SEDE.services:mls'
 
 rootProject.name = 'SEDE'
 

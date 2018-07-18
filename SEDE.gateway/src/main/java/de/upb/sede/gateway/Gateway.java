@@ -174,4 +174,8 @@ public class Gateway implements IGateway{
 		return typeConfig;
 	}
 
+	public final ExecutorCoordinator getExecutorCoord() {
+		return execCoordinator;
+	}
+
 }

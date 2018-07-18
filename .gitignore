@@ -55,5 +55,11 @@ gradle-app.setting
 .classpath
 /testout/
 /instances/
-/out/
+**/out/
 SEDE.iml
+/deploy/**/*.pom
+
+## python ignores
+
+*.pyc
+

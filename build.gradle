@@ -58,6 +58,8 @@ subprojects {
         workingDir = new File("${project.rootDir}")
         ignoreFailures = true
     }
+
+    // build Jar:
 }
 /*
     configurations for each sub project.
@@ -110,6 +112,16 @@ project(':SEDE.http-apps') {
         compile project(':SEDE.core')
         compile project(':SEDE.gateway')
         compile project(':SEDE.executor')
+    }
+    task buildJar(type: Jar) {
+        manifest {
+            attributes 'Implementation-Title': 'SEDE-http',
+                    'Implementation-Version': version
+        }
+        destinationDir = file("$rootDir/deploy")
+        baseName = project.name
+        from { (configurations.runtime).collect { it.isDirectory() ? it : zipTree(it) } }
+        with jar
     }
 }
 /*

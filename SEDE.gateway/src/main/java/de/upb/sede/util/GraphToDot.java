@@ -17,6 +17,8 @@ public class GraphToDot {
 	private final static Logger logger = LogManager.getLogger();
 	
 	private static final String PATH_TO_DOT;
+
+	private static final boolean DISABLED;
 	
 	static {
 		/*
@@ -24,7 +26,7 @@ public class GraphToDot {
 		 */
 		if(System.getenv().containsKey("DOT_PATH") && System.getenv().get("DOT_PATH") != null) {
 			PATH_TO_DOT = System.getenv().get("DOT_PATH");
-			
+			logger.info("DOT_PATH: {}", PATH_TO_DOT);
 		} else {
 			PATH_TO_DOT = "/usr/local/bin/dot";
 			logger.info("Environment variable 'DOT_PATH' isn't defined.");
@@ -32,9 +34,10 @@ public class GraphToDot {
 		}
 
 		if(! new File(PATH_TO_DOT).exists()) {
-			logger.warn("Dot doesn't exist on the specified path: {}", PATH_TO_DOT);
+			logger.warn("Dot doesn't exist on the specified path: {}. DISABLED GraphToDot.java", PATH_TO_DOT);
+			DISABLED = true;
 		} else {
-			logger.info("Path to dot: {}", PATH_TO_DOT);
+			DISABLED = false;
 		}
 	}
 
@@ -99,7 +102,12 @@ public class GraphToDot {
 	}
 
 	private static String formatDot(String dot, String format) {
-		return ShellUtil.sh(new String[]{PATH_TO_DOT, "-T" + format}, dot);
+		if(DISABLED){
+			return "";
+		}
+		else {
+			return ShellUtil.sh(new String[]{PATH_TO_DOT, "-T" + format}, dot);
+		}
 	}
 	
 	private static String formatDotToSVG(String dot) {

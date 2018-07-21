@@ -1,14 +1,12 @@
 package de.upb.sede.services.mls.casters;
 
-import de.upb.sede.util.Streams;
-import org.w3c.dom.Attr;
 import weka.core.Attribute;
-import weka.core.Instance;
 import weka.core.Instances;
-import weka.core.WekaEnumeration;
+import weka.core.Utils;
 import weka.core.converters.ConverterUtils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.Optional;
 
@@ -34,8 +32,36 @@ public class InstancesCaster {
 	 */
 	public void cts_Instances(OutputStream os, Instances dataSet) throws IOException {
 		addLabelToClassAttr(dataSet);
-		Streams.OutWriteString(os, dataSet.toString(), false);
+		OutputStreamWriter writer = new OutputStreamWriter(os);
+		writeInstancesAsArff(writer, dataSet);
 		removeLabelFromClassAttr(dataSet);
+	}
+
+	/**
+	 * The same implementation of {@link Instances#toString() Intances.toString()} method
+	 * but instead writes to the given writer.<br>
+	 * Use this instead of writer.write(dataset.toString()).
+	 * @throws IOException thrown by the writer's write method.
+	 */
+	public void writeInstancesAsArff(Writer writer, Instances dataset) throws IOException{
+		writer.write(Instances.ARFF_RELATION);
+		writer.write(" ");
+		writer.write(Utils.quote(dataset.relationName()));
+		writer.write("\n\n");
+		for (int i = 0; i < dataset.numAttributes(); i++) {
+			writer.write(dataset.attribute(i).toString());
+			writer.write("\n");
+		}
+		writer.append("\n").append(Instances.ARFF_DATA).append("\n");
+
+		int numInstances = dataset.numInstances();
+		for (int i = 0; i < numInstances; i++) {
+			writer.write(dataset.instance(i).toString());
+			if (i < numInstances - 1) {
+				writer.write('\n');
+			}
+		}
+		writer.flush();
 	}
 
 	private Optional<Attribute> getClassAttribute(Instances dataSet) {

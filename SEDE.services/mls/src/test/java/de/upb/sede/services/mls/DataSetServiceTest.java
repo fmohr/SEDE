@@ -85,6 +85,8 @@ public class DataSetServiceTest {
 		assertEquals(85., instances.get(1).value(1), 0.);
 		assertEquals(68., instances.get(2).value(1), 0.);
 		assertEquals(70., instances.get(3).value(1), 0.);
+
+		instances.remove(instances.firstInstance());
 	}
 
 	@Test

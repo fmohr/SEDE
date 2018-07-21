@@ -18,4 +18,4 @@ echo Port: "$port"
 config="$DIR"/config.json
 echo Configuration file: "$config"
 
-java -cp "$DIR"/../SEDE.http-apps-1.0.jar:"$DIR"/services/* de.upb.sede.exec.ExecutorServerStarter "$config" "$ip" "$port"
+java -cp "$DIR"/../SEDE/*:"$DIR"/services/* de.upb.sede.exec.ExecutorServerStarter "$config" "$ip" "$port"

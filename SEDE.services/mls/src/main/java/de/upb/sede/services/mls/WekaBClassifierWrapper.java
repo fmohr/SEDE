@@ -32,13 +32,14 @@ public class WekaBClassifierWrapper implements Serializable {
 	/**
 	 * Default constructor of the wrapper.
 	 */
-	public WekaBClassifierWrapper(String classifierName) throws ClassNotFoundException {
+	public WekaBClassifierWrapper(String classifierName) throws Exception {
 		logger.trace("Wrapper for classifier '{}' created.", classifierName);
 		this.classifierName = classifierName;
 		// make sure the given classname is a classifier:
 		if(!Classifier.class.isAssignableFrom(Class.forName(classifierName))){
 			throw new RuntimeException("The specified classname is not a classifier: " + classifierName);
 		}
+		construct();
 	}
 
 	/**
@@ -58,7 +59,6 @@ public class WekaBClassifierWrapper implements Serializable {
 	public void train(Instances data) throws Exception {
 		/* Recreate the classifier object.
 		 * to allow warm start move this invocation to the constructor. */
-		construct();
 		classifier.buildClassifier(data);
 	}
 
@@ -110,7 +110,7 @@ public class WekaBClassifierWrapper implements Serializable {
 			((OptionHandler) classifier).setOptions(optArr);
 		}
 		 else {
-			logger.error("Cannot to set options of {}. Options:\n{}", classifierName, options.toString());
+			logger.error("Cannot set options of {}. Options to be set:\n{}", classifierName, options.toString());
 		}
 	}
 }

@@ -24,12 +24,14 @@ public class WekaFilterWrapper implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public WekaFilterWrapper(String filterName) throws ClassNotFoundException {
+	public WekaFilterWrapper(String filterName) throws Exception {
 		logger.debug("Created wrapper for filter '{}'.", filterName);
 		this.filterName = filterName;
 		// make sure the given classname is a filter:
 		if(!Filter.class.isAssignableFrom(Class.forName(filterName))){
 			throw new RuntimeException("The specified classname is not a filter: " + filterName);
+		} else {
+			construct();
 		}
 	}
 

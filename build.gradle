@@ -14,7 +14,12 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
     group = 'de.upb.sede'
-    version = '1.0'
+    version = '0.0.1'
+
+    configurations {
+        provided
+        compile.extendsFrom provided
+    }
 
     repositories {
         jcenter()
@@ -60,6 +65,24 @@ subprojects {
     }
 
     // build Jar:
+    task jarjar(type: Jar) {
+        manifest {
+            attributes 'Implementation-Title': "${project.name}",
+                    'Implementation-Version': version
+        }
+        destinationDir = file("$rootDir/deploy/SEDE")
+        baseName = project.name
+        from {
+            (configurations.runtime - configurations.provided)
+                .findAll {
+                !it.name.endsWith(".pom")
+            }
+                .collect {
+                zipTree(it)
+            }
+        }
+        with jar
+    }
 }
 /*
     configurations for each sub project.
@@ -74,8 +97,8 @@ project(':SEDE.core') {
 
 project(':SEDE.deployment') {
     dependencies {
-        compile project(':SEDE.core')
-        compile project(':SEDE.http-apps')
+        provided project(':SEDE.core')
+        provided project(':SEDE.http-apps')
         // https://mvnrepository.com/artifact/commons-cli/commons-cli
         compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
         // https://mvnrepository.com/artifact/commons-io/commons-io
@@ -85,43 +108,38 @@ project(':SEDE.deployment') {
 
 project(':SEDE.gateway') {
     dependencies {
-        compile project(':SEDE.core')
+        provided project(':SEDE.core')
 
         // https://mvnrepository.com/artifact/org.skyscreamer/jsonassert
         testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
 
-        implementation 'com.github.aminfa:TinyJavaDot:v1.3'
+        compile 'com.github.aminfa:TinyJavaDot:v1.3'
     }
 }
 
 project(':SEDE.executor') {
     dependencies {
-        testCompile project(':SEDE.services:demolib')
+        testCompile project(':demolib')
 
         // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
-        compile project(':SEDE.core')
-        compile project(':SEDE.gateway')
+
+        provided project(':SEDE.core')
+        provided project(':SEDE.gateway')
     }
 }
 
 project(':SEDE.http-apps') {
     dependencies {
-        testCompile project(':SEDE.services:demolib')
-        testCompile project(':SEDE.services:imaging')
-        compile project(':SEDE.core')
-        compile project(':SEDE.gateway')
-        compile project(':SEDE.executor')
-    }
-    task buildJar(type: Jar) {
-        manifest {
-            attributes 'Implementation-Title': 'SEDE-http',
-                    'Implementation-Version': version
-        }
-        destinationDir = file("$rootDir/deploy")
-        baseName = project.name
-        from { (configurations.runtime).collect { it.isDirectory() ? it : zipTree(it) } }
-        with jar
+        // https://mvnrepository.com/artifact/com.google.guava/guava
+//        compile group: 'com.google.guava', name: 'guava', version: '25.1-jre'
+
+        testCompile project(':demolib')
+        testCompile project(':imaging')
+
+        provided project(':SEDE.core')
+        provided project(':SEDE.gateway')
+        provided project(':SEDE.executor')
     }
 }
 /*

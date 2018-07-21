@@ -44,7 +44,7 @@ public final class SemanticStreamer {
 			/*
 			 * Read the content from the stream into a byte array:
 			 */
-			data = Streams.InReadByteArr(is);
+			data = is;
 		} else {
 			throw new RuntimeException("BUG: use read object from method to read real type data.");
 		}

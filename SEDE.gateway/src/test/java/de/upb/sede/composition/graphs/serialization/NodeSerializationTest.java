@@ -14,7 +14,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
-import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.util.FileUtil;
 
 /**
@@ -190,13 +189,23 @@ public class NodeSerializationTest {
 		String path = getJSONResourcePath("acceptDataNode");
 		FileUtil.writeStringToFile(path, njs.toJSON(receiveDataNode).toJSONString());
 		JSONAssert.assertEquals(getJSONResource("acceptDataNode"), njs.toJSON(receiveDataNode).toJSONString(), true);
+		/*
+		 * Test with inplace casting:
+		 */
+		CastTypeNode castType = new CastTypeNode("b", "some.Lib", "semanticType1", false, "casters.Caster1");
+		AcceptDataNode receiveDataNode1 = new AcceptDataNode("b");
+		receiveDataNode1.setCastInPlace(castType);
+		path = getJSONResourcePath("acceptDataNode_castInPlace");
+		FileUtil.writeStringToFile(path, njs.toJSON(receiveDataNode1).toJSONString());
+		JSONAssert.assertEquals(getJSONResource("acceptDataNode_castInPlace"), njs.toJSON(receiveDataNode1).toJSONString(), true);
 
 		/*
 		 * Test deserialization
 		 */
 		AcceptDataNode receiveDataNode_ = (AcceptDataNode) njs.fromJSON(getJSONResourceAsObject("acceptDataNode"));
 		assertEquals(receiveDataNode, receiveDataNode_);
-
+		AcceptDataNode receiveDataNode1_ = (AcceptDataNode) njs.fromJSON(getJSONResourceAsObject("acceptDataNode_castInPlace"));
+		assertEquals(receiveDataNode1, receiveDataNode1_);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -275,6 +284,7 @@ public class NodeSerializationTest {
 
 	public void assertEquals(AcceptDataNode expected, AcceptDataNode actual) {
 		Assert.assertEquals(expected.getReceivingFieldname(), actual.getReceivingFieldname());
+		Assert.assertEquals(expected.getCastInPlace(), expected.getCastInPlace());
 	}
 
 	public void assertEquals(TransmitDataNode expected, TransmitDataNode actual) {

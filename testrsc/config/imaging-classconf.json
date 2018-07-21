@@ -39,17 +39,17 @@
             }
         }
     },
-    "Catalano.Imaging.sede.CropFrom0" : {
-        "wrapper" : "Catalano.Imaging.Filters.Crop",
+    "Catalano.Imaging.sede.CropFrom0": {
+        "wrapper": "Catalano.Imaging.Filters.Crop",
         "methods": {
             "$construct": {
                 "params": [
                     {
-                        "type":"Number",
+                        "type": "Number",
                         "fixed": "0"
                     },
                     {
-                        "type":"Number",
+                        "type": "Number",
                         "fixed": "0"
                     },
                     "Number",
@@ -58,5 +58,4 @@
             }
         }
     }
-
 }

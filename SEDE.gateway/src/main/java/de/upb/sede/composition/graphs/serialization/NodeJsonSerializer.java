@@ -155,13 +155,22 @@ public final class NodeJsonSerializer {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(NODETYPE, NODETYPE_ACCEPT_DATA);
 		jsonObject.put("fieldname", receiveNode.getReceivingFieldname());
+		JSONObject castInPlace = null;
+		if(receiveNode.getCastInPlace().isPresent()){
+			castInPlace = CastTypeNodeToJSON(receiveNode.getCastInPlace().get());
+		}
+		jsonObject.put(NODETYPE_CAST_TYPE, castInPlace);
 		return jsonObject;
 	}
 
 	public AcceptDataNode AcceptDataNodeFromJSON(Map<Object, Object> node) {
 		assert node.get(NODETYPE).equals(NODETYPE_ACCEPT_DATA);
 		String fieldname = (String) node.get("fieldname");
+		JSONObject castInPlace = (JSONObject) node.get(NODETYPE_CAST_TYPE);
 		AcceptDataNode n = new AcceptDataNode(fieldname);
+		if(castInPlace != null) {
+			n.setCastInPlace(CastTypeNodeFromJSON(castInPlace));
+		}
 		return n;
 	}
 

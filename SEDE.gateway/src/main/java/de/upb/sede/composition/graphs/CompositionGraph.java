@@ -2,6 +2,7 @@ package de.upb.sede.composition.graphs;
 
 import java.util.*;
 
+import com.sun.xml.internal.rngom.parse.host.Base;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.util.Iterators;
 
@@ -171,6 +172,21 @@ public class CompositionGraph {
 
 	public boolean isEmpty() {
 		return getNodes().isEmpty();
+	}
+
+	/**
+	 * This method connects node1 to every target node of node2.
+	 * Basically:
+	 * <pre>
+	 * for(BaseNode bn : GraphTraversal.targetingNodes(this, node2)) {
+	 * 		connectNodes(node1, bn);
+	 * }
+	 * </pre>
+	 */
+	public void connectToItsTargets(BaseNode node1, BaseNode node2) {
+		for(BaseNode bn : GraphTraversal.targetingNodes(this, node2)) {
+			connectNodes(node1, bn);
+		}
 	}
 
 	/**

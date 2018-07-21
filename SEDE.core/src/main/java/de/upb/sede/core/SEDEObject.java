@@ -3,6 +3,7 @@ package de.upb.sede.core;
 import de.upb.sede.util.JsonSerializable;
 import org.json.simple.JSONObject;
 
+import java.io.InputStream;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -147,7 +148,7 @@ public class SEDEObject implements JsonSerializable {
 	}
 
 	public boolean isSemantic(){
-		return isSemantic(getType()) && object instanceof byte[];
+		return isSemantic(getType()) && (object instanceof InputStream);
 	}
 
 	public String toString(){

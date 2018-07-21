@@ -51,7 +51,7 @@ public class HttpURLConnectionClientRequest implements BasicClientRequest {
 			httpConnection.setFixedLengthStreamingMode(payload.size());
 			httpConnection.connect();
 
-			httpConnection.getOutputStream().write(payload.toByteArray());
+			payload.writeTo(httpConnection.getOutputStream());
 			return httpConnection.getInputStream();
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);

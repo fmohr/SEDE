@@ -207,10 +207,10 @@ public final class GraphTraversal {
 		return graph.getNodes();
 	}
 
-	public static Iterable<BaseNode> iterateNodesWithClassname(final CompositionGraph graph,
-			final String simpleNodeClassName) {
-		return () -> new FilteredIterator<>(iterateNodes(graph).iterator(),
-				n -> (n.getClass().getSimpleName().equals(simpleNodeClassName)));
+	public static <T>Iterable<T> iterateNodesWithClass(final CompositionGraph graph,
+													   final Class<T> nodeClass) {
+		return () -> new FilteredIterator<T>(((Iterator<T>)iterateNodes(graph).iterator()),
+				n -> nodeClass.isInstance(n));
 	}
 
 }

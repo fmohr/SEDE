@@ -125,7 +125,7 @@ project(':SEDE.executor') {
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
 
         provided project(':SEDE.core')
-        provided project(':SEDE.gateway')
+//        provided project(':SEDE.gateway')
     }
 }
 

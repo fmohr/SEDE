@@ -32,8 +32,8 @@ public class SunHttpHandler implements HttpHandler {
 		} catch(RuntimeException ex) {
 			String requester = httpExchange.getRemoteAddress().getHostName();
 			String port = "" + httpExchange.getRemoteAddress().getPort();
-			logger.error("Error handle of request from entity: " + requester + ":" +  port, ex);
-			throw ex;
+			String url = httpExchange.getRequestURI().getPath();
+			logger.error("Error handle of request " + url + " from entity "+ requester  + ":" +  port + "\n", ex);
 		}
 	}
 

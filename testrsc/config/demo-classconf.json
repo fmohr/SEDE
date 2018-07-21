@@ -52,10 +52,13 @@
                 "params": [],
                 "static": true
             },
-            "addierBuiltIn":{
-                "params":["builtin.List", "Number"],
-                "returntype":"builtin.List",
-                "static" : true
+            "addierBuiltIn": {
+                "params": [
+                    "builtin.List",
+                    "Number"
+                ],
+                "returntype": "builtin.List",
+                "static": true
             }
         }
     },

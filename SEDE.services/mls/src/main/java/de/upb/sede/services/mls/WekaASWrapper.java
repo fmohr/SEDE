@@ -33,7 +33,6 @@ public class WekaASWrapper implements Serializable {
 	private Attribute cachedClassAttribute;
 	private Instances cachedInstances;
 
-	private boolean trained = false;
 
 	public WekaASWrapper(String asSearcherName, String asEvaluatorName, List searcherOptions, List evalOptions) throws Exception {
 		logger.debug("Created wrapper for AS: {}/{}", asSearcherName, asEvaluatorName);
@@ -60,12 +59,8 @@ public class WekaASWrapper implements Serializable {
 	}
 
 	public void train(Instances instances) throws Exception {
-		if(trained){
-			construct();
-		}
 		System.out.println("SELECTING ATTRs");
 		attributeSelection.SelectAttributes(instances);
-		trained = true;
 	}
 
 	public Instances preprocess(Instances instances) throws Exception {

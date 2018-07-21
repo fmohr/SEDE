@@ -66,7 +66,7 @@ public class MLDataSets {
 	 */
 	public static Instances getClassifiedDataSet(String relativeFilePath, int classIndex) {
 		Instances dataset = getDataSet(relativeFilePath);
-		setClassIndex(dataset, classIndex);
+		setModuloClassIndex(dataset, classIndex);
 		return dataset;
 	}
 
@@ -109,7 +109,10 @@ public class MLDataSets {
 		return new File(DATASET_PATH + relativeFilePath).getAbsolutePath();
 	}
 
-	public static void setClassIndex(Instances dataset, int classIndex) {
+	/*
+	 * same as setClassIndex but e.g. -1 would be resolved to the last attribute.
+	 */
+	public static void setModuloClassIndex(Instances dataset, int classIndex) {
 		int dataAttrCount = dataset.numAttributes();
 		/*
 			modulo enforces classIndex to be in bound.
@@ -158,5 +161,26 @@ public class MLDataSets {
 			lists.get(lists.size()-1).add(baseLists.get(i));
 		}
 		return lists;
+	}
+
+
+
+	public static List<Integer> isInRange(List<Integer> list, int beginInclusive, int endExclusive) {
+		for (Number item : list) {
+			int currentItem = item.intValue();
+			if (currentItem < beginInclusive || currentItem >= endExclusive) {
+				throw new IndexOutOfBoundsException
+						(currentItem + " not in: [" + beginInclusive + ", " + (endExclusive - 1) + "]");
+			}
+		}
+		return list;
+	}
+
+	public static int isInRange(int item, int beginInclusive, int endExclusive) {
+		if(item < beginInclusive || item >= endExclusive) {
+			throw new IndexOutOfBoundsException
+					(item + " not in: [" + beginInclusive + ", " + (endExclusive-1) + "]");
+		}
+		return item;
 	}
 }

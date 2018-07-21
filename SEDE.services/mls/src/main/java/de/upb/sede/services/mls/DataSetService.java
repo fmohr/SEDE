@@ -3,15 +3,11 @@ package de.upb.sede.services.mls;
 import de.upb.sede.services.mls.util.MLDataSets;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import weka.core.Instance;
 import weka.core.Instances;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DataSetService implements Serializable {
@@ -90,26 +86,29 @@ public class DataSetService implements Serializable {
 	 */
 	public Instances allLabeled(int classIndex) {
 		Instances dataSet = all();
-		MLDataSets.setClassIndex(dataSet, classIndex);
+		MLDataSets.setModuloClassIndex(dataSet, classIndex);
 		return dataSet;
 	}
 
-	public Instances fromIndices(List indices) {
+	/**
+	 *
+	 * @param indices
+	 * @return
+	 */
+	public Instances fromIndices(List<Number> indices) {
+		/*
+			Parse to ints:
+		 */
+		List<Integer> intIndices = new ArrayList<>();
+		indices.forEach(n -> intIndices.add(n.intValue()));
 		Instances originalDataSet = all();
-		Instances clonedDataSet = new Instances(originalDataSet, indices.size());
-		for(Object o : indices){
-			Number number = (Number)o;
-			int index = number.intValue();
-			Instance instance = (Instance) originalDataSet.get(index).copy();
-			instance.setDataset(clonedDataSet);
-			clonedDataSet.add(instance);
-		}
-		return clonedDataSet;
+		IndexedInstances ii = new IndexedInstances(originalDataSet, dataSetPath, intIndices);
+		return ii;
 	}
 
 	public Instances fromIndicesLabeled(final List indices, final int classIndex) {
 		Instances dataSet = fromIndices(indices);
-		MLDataSets.setClassIndex(dataSet, classIndex);
+		MLDataSets.setModuloClassIndex(dataSet, classIndex);
 		return dataSet;
 	}
 

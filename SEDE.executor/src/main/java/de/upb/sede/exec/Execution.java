@@ -1,19 +1,13 @@
 package de.upb.sede.exec;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
 
 import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.interfaces.IExecution;
 import de.upb.sede.core.SEDEObject;
-import de.upb.sede.procedure.AcceptDataProcedure;
-import de.upb.sede.util.DefaultMap;
 import de.upb.sede.util.Observable;
 import de.upb.sede.util.Observer;
-import de.upb.sede.util.Streams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -269,33 +263,18 @@ public class Execution implements IExecution {
 
 	static class ExecutionInv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
 
-		private DefaultMap<String, Consumer<SEDEObject>> accepters = new DefaultMap<>();
-
-
-
 		private Set<String> unavailableFields = new HashSet<>();
 
 		final Observable<ExecutionEnvironment> state = Observable.ofInstance(this);
 		@Override
-		public synchronized SEDEObject put(String key, SEDEObject value) {
-			Optional<AcceptDataProcedure> accepter = registeredAccepter(key);
-			if(accepter.isPresent()){
-				SEDEObject prevValue = super.put(key, value);
-				state.update(this);
-				return prevValue;
-			} else {
-				/*
-				 * accepter is not defined.
-				 * Conver input stream into ArrayInputStream:
-				 */
-				if(value.isSemantic() && !(value.getObject() instanceof ByteArrayOutputStream)){
-
-				}
-			}
+		public SEDEObject put(String key, SEDEObject value) {
+			SEDEObject prevValue = super.put(key, value);
+			state.update(this);
+			return prevValue;
 		}
 
 		@Override
-		public synchronized boolean containsKey(Object fieldname) {
+		public boolean containsKey(Object fieldname) {
 			if(isUnavailable(fieldname)) {
 				return false;
 			} else {
@@ -304,7 +283,7 @@ public class Execution implements IExecution {
 		}
 
 		@Override
-		public synchronized boolean isUnavailable(Object fieldname) {
+		public boolean isUnavailable(Object fieldname) {
 			return this.unavailableFields.contains(fieldname);
 		}
 
@@ -313,40 +292,10 @@ public class Execution implements IExecution {
 			return state;
 		}
 
-		/**
-		 * Registers to the execution environment that the given accepter is
-		 * waiting for the data bounded to the given fieldname.
-		 */
-		public synchronized void register(final String fieldname, AcceptDataProcedure accepter, Observer<ExecutionEnvironment> observer) {
-			registeredAccepters.put(fieldname, accepter);
-			getState().observe(observer);
-		}
-
-		public synchronized Optional<AcceptDataProcedure> registeredAccepter(String fieldname) {
-			if(registeredAccepters.containsKey(fieldname)) {
-				return Optional.ofNullable(registeredAccepters.get(fieldname));
-			} else {
-				return Optional.empty();
-			}
-		}
-
 		@Override
-		public synchronized void markUnavailable(String fieldname) {
+		public void markUnavailable(String fieldname) {
 			unavailableFields.add(fieldname);
 			state.update(this);
-		}
-
-		static class InputStreamAccepter implements Consumer<SEDEObject> {
-			@Override
-			public void accept(SEDEObject value) {
-				if(value.isSemantic() && !(value.getObject() instanceof ByteArrayInputStream)){
-					/*
-					 * Cache the data into a bytearrayinputstream
-					 */
-					ByteArrayInputStream inputStream =
-							new ByteArrayInputStream();
-				}
-			}
 		}
 	}
 

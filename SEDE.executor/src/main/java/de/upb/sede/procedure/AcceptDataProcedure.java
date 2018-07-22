@@ -1,6 +1,5 @@
 package de.upb.sede.procedure;
 
-import de.upb.sede.core.SEDEObject;
 import de.upb.sede.exceptions.DependecyTaskFailed;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
@@ -23,10 +22,6 @@ public class AcceptDataProcedure implements Procedure {
 
 		ExecutionEnvironment environment = task.getExecution().getEnvironment();
 		environment.getState().observe(envObserver);
-	}
-
-	public void wakeUp(ExecutionEnvironment env){
-
 	}
 
 }

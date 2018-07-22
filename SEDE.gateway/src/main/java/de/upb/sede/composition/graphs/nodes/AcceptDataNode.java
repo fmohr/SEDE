@@ -31,7 +31,8 @@ public class AcceptDataNode extends BaseNode {
 	}
 
 	public String toString() {
-		return "accept \"" + getReceivingFieldname() + "\" " + (castInPlace.isPresent()? castInPlace.get().toString() : " store bytes" );
+		return "accept \"" + getReceivingFieldname() + "\" " + (castInPlace.isPresent()? castInPlace.get().toString() :
+				" as is" );
 	}
 
 }

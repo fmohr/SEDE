@@ -1,11 +1,14 @@
 package de.upb.sede.exec;
 
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.interfaces.IExecution;
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.util.DefaultMap;
 import de.upb.sede.util.Observable;
 import de.upb.sede.util.Observer;
 import org.apache.logging.log4j.LogManager;
@@ -15,6 +18,7 @@ import org.apache.logging.log4j.Logger;
  * Represents one execution.
  */
 public class Execution implements IExecution {
+
 	private static final Logger logger = LogManager.getLogger();
 
 	private final ExecutionEnvironment environment;
@@ -26,6 +30,7 @@ public class Execution implements IExecution {
 	private final Observable<Task> runnableTasks = new Observable<Task>();
 
 	private final ExecutorConfiguration executorConfiguration;
+
 
 	/**
 	 * Flag that indicates that the execution has been interrupted.

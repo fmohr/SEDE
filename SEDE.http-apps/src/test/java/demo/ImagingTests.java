@@ -8,6 +8,8 @@ import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.core.SemanticStreamer;
+import de.upb.sede.exec.Executor;
+import de.upb.sede.exec.ExecutorHttpServer;
 import de.upb.sede.gateway.GatewayHttpServer;
 import de.upb.sede.requests.Result;
 import de.upb.sede.requests.RunRequest;
@@ -36,6 +38,8 @@ public class ImagingTests {
 
 	static FastBitmap frog;
 
+	static String executor1Address = WebUtil.HostIpAddress();
+	static int executorPort = 9000;
 
 	static GatewayHttpServer gateway;
 
@@ -50,14 +54,25 @@ public class ImagingTests {
 		/*
 			Disable if you will have an executor register to the gateway:
 		 */
-		coreClient.getClientExecutor().getExecutorConfiguration().getSupportedServices().addAll(
+//		coreClient.getClientExecutor().getExecutorConfiguration().getSupportedServices().addAll(
+//				Arrays.asList("Catalano.Imaging.Filters.Crop",
+//						"Catalano.Imaging.Filters.Resize",
+//						"Catalano.Imaging.sede.CropFrom0")
+//		);
+		/*
+			Disable if you dont want to have a local executor do the imaging:
+		 */
+		creator = new ExecutorConfigurationCreator();
+		creator.withExecutorId("executor");
+		Executor executor = new ExecutorHttpServer(ExecutorConfiguration.parseJSON(creator.toString()), executor1Address, executorPort);
+		executor.getExecutorConfiguration().getSupportedServices().addAll(
 				Arrays.asList("Catalano.Imaging.Filters.Crop",
 						"Catalano.Imaging.Filters.Resize",
 						"Catalano.Imaging.sede.CropFrom0")
 		);
+		gateway.register(executor.registration());
 		/*
 			Disabled if you dont have dot installed.
-
 		 */
 		coreClient.writeDotGraphToDir("testrsc/images");
 

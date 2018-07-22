@@ -57,9 +57,9 @@ public class DataFlowAnalysis {
 		}
 		determineExecutors();
 		resolveResults();
+		connectDependencyEdges();
 		mergeAcceptAndCasts();
 		fillinContactInforamtions();
-		connectDependencyEdges();
 		if(resolveInfo.getResolvePolicy().isBlockTillFinished()) {
 			addFinishingNodes();
 		}

@@ -27,7 +27,7 @@ public class MLDataSets {
 		if(System.getenv().containsKey("DATASET_PATH") && System.getenv().get("DATASET_PATH")!=null) {
 			DATASET_PATH = System.getenv().get("DATASET_PATH").toString();
 		} else {
-			DATASET_PATH = "testrsc/ml/datasets/";
+			DATASET_PATH = "../datasets/";
 			logger.info("Environment variable 'DATASET_PATH' isn't defined.");
 			logger.info("Using {} as default path to data sets. Change default in: MLDataSets.java",
 					DATASET_PATH);

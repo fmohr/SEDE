@@ -18,7 +18,6 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.upb.sede.composition.graphs.nodes.ParseConstantNode.ConstantType;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutionEnvironment;

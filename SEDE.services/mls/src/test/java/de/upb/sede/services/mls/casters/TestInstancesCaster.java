@@ -1,5 +1,6 @@
 package de.upb.sede.services.mls.casters;
 
+import de.upb.sede.core.ObjectDataField;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.SemanticStreamer;
 import de.upb.sede.services.mls.util.MLDataSets;
@@ -22,14 +23,14 @@ public class TestInstancesCaster {
 	public void testCasting() {
 		Instances weather = MLDataSets.getDataSetWithLastIndexClass("weather.arff");
 		ByteArrayOutputStream semanticRepr = new ByteArrayOutputStream();
-		SemanticStreamer.streamObjectInto(semanticRepr, new SEDEObject(Instances.class.getName(), weather),
+		SemanticStreamer.streamObjectInto(semanticRepr, new ObjectDataField(Instances.class.getName(), weather),
 				InstancesCaster.class.getName(), "dataset");
 		String arffData = semanticRepr.toString();
 		assertTrue(arffData.contains(InstancesCaster.classAttributePrefix));
 		ByteArrayInputStream semanticData = new ByteArrayInputStream(arffData.getBytes());
 		Instances fromSemantic = (Instances) SemanticStreamer.
 				readObjectFrom(semanticData, InstancesCaster.class.getName(),
-				"dataset", Instances.class.getName()).getObject();
+				"dataset", Instances.class.getName()).getDataField();
 		assertEquals(weather.classIndex(), fromSemantic.classIndex());
 		assertEquals(weather.toString().trim(), fromSemantic.toString().trim());
 	}
@@ -41,7 +42,7 @@ public class TestInstancesCaster {
 
 		ByteArrayOutputStream semanticRepr = new ByteArrayOutputStream();
 		stop = System.currentTimeMillis();
-		SemanticStreamer.streamObjectInto(semanticRepr, new SEDEObject(Instances.class.getName(), cifar),
+		SemanticStreamer.streamObjectInto(semanticRepr, new ObjectDataField(Instances.class.getName(), cifar),
 				InstancesCaster.class.getName(), "dataset");
 		long toSemanticTime = System.currentTimeMillis() - stop;
 		byte[] semanticData = semanticRepr.toByteArray();
@@ -50,7 +51,7 @@ public class TestInstancesCaster {
 		stop = System.currentTimeMillis();
 		Instances fromSemantic = (Instances) SemanticStreamer.
 				readObjectFrom(semanticInput, InstancesCaster.class.getName(),
-						"dataset", Instances.class.getName()).getObject();
+						"dataset", Instances.class.getName()).getDataField();
 		long fromSemanticTime = System.currentTimeMillis() - stop;
 
 		logger.info("loading cifar.arff took: {}ms.", loadTime);

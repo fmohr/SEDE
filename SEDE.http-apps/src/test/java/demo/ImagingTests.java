@@ -5,9 +5,9 @@ import de.upb.sede.casters.FastBitmapCaster;
 import de.upb.sede.client.CoreClientHttpServer;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
+import de.upb.sede.core.ObjectDataField;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.config.ExecutorConfiguration;
-import de.upb.sede.core.SemanticStreamer;
 import de.upb.sede.exec.Executor;
 import de.upb.sede.exec.ExecutorHttpServer;
 import de.upb.sede.gateway.GatewayHttpServer;
@@ -99,7 +99,7 @@ public class ImagingTests {
 		policy.setServicePolicy("None");
 		policy.setReturnFieldnames(Arrays.asList("imageOut"));
 
-		SEDEObject inputObject_fb1 = new SEDEObject(FastBitmap.class.getName(), frog);
+		SEDEObject inputObject_fb1 = new ObjectDataField(FastBitmap.class.getName(), frog);
 
 		Map<String, SEDEObject> inputs = new HashMap<>();
 		inputs.put("imageIn", inputObject_fb1);
@@ -117,7 +117,7 @@ public class ImagingTests {
 			Cast it to bitmap:
 		 */
 		FastBitmap processedImage = (FastBitmap) result.castResultData(
-				FastBitmap.class.getName(), FastBitmapCaster.class).getObject();
+				FastBitmap.class.getName(), FastBitmapCaster.class).getDataField();
 		JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
 	}
 
@@ -134,7 +134,7 @@ public class ImagingTests {
 		policy.setServicePolicy("None");
 		policy.setReturnFieldnames(Arrays.asList("imageOut"));
 
-		SEDEObject inputObject_fb1 = new SEDEObject(FastBitmap.class.getName(), frog);
+		SEDEObject inputObject_fb1 = new ObjectDataField(FastBitmap.class.getName(), frog);
 
 		Map<String, SEDEObject> inputs = new HashMap<>();
 		inputs.put("imageIn", inputObject_fb1);
@@ -152,7 +152,7 @@ public class ImagingTests {
 			Cast it to bitmap:
 		 */
 		FastBitmap processedImage = (FastBitmap) result.castResultData(
-				FastBitmap.class.getName(), FastBitmapCaster.class).getObject();
+				FastBitmap.class.getName(), FastBitmapCaster.class).getDataField();
 		JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
 	}
 

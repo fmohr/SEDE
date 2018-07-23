@@ -73,6 +73,7 @@ public class DataFlowAnalysis {
 	private void mergeAcceptAndCasts() {
 		for(ExecPlan execPlan : getInvolvedExecutions()) {
 			CompositionGraph g = execPlan.getGraph();
+			Set<CastTypeNode> toBeRemovedNodes = new HashSet<>();
 			for(AcceptDataNode acceptDataNode :
 					GraphTraversal.iterateNodesWithClass(g, AcceptDataNode.class)) {
 				/*
@@ -98,9 +99,13 @@ public class DataFlowAnalysis {
 					 * remove caster from the graph but keep its dependecies:
 					 */
 					g.connectToItsTargets(acceptDataNode, caster);
-					g.removeNode(caster);
+					toBeRemovedNodes.add(caster);
 				}
 			}
+			/*
+			 * Remove merged casters:
+			 */
+			toBeRemovedNodes.forEach(g::removeNode);
 		}
 	}
 

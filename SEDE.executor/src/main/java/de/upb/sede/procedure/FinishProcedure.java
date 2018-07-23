@@ -1,5 +1,6 @@
 package de.upb.sede.procedure;
 
+import de.upb.sede.core.PrimitiveDataField;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.SemanticStreamer;
 import de.upb.sede.exec.Task;
@@ -20,7 +21,7 @@ public abstract class FinishProcedure implements Procedure {
 
 	private void finishNotice(Task task) {
 		Boolean executionSuccess = !task.hasDependencyFailed();
-		SEDEObject successObject = new SEDEObject(SEDEObject.PrimitiveType.Bool.name(), executionSuccess);
+		SEDEObject successObject = new PrimitiveDataField(executionSuccess);
 		try(BasicClientRequest finishFlagRequest = getFinishFlagRequest(task)) {
 			SemanticStreamer.streamInto(finishFlagRequest.send(), successObject);
 			String result = Streams.InReadString(finishFlagRequest.receive());

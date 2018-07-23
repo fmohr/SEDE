@@ -1,7 +1,9 @@
 package de.upb.sede.client;
 
 
+import de.upb.sede.core.ObjectDataField;
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.ServiceInstanceField;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.Execution;
 import de.upb.sede.requests.Result;
@@ -151,7 +153,7 @@ public final class EasyClient {
 	public EasyClient withServices(final Map<String, ServiceInstanceHandle> services) {
 		for(String fieldname : services.keySet()) {
 			ServiceInstanceHandle serviceInstanceHandle = services.get(fieldname);
-			withArgument(fieldname, new SEDEObject(serviceInstanceHandle));
+			withArgument(fieldname, new ServiceInstanceField(serviceInstanceHandle));
 		}
 		return this;
 	}
@@ -180,7 +182,7 @@ public final class EasyClient {
 	public EasyClient withArgument_StringList(final String keyword, final List<String> argValues) {
 		Objects.requireNonNull(keyword);
 		Objects.requireNonNull(argValues);
-		SEDEObject sedeObject = new SEDEObject("builtin.List", argValues);
+		SEDEObject sedeObject = new ObjectDataField("builtin.List", argValues);
 		return this.withArgument(keyword, sedeObject);
 	}
 

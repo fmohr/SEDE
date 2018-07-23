@@ -1,9 +1,12 @@
 package de.upb.sede.exec;
 
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.SemanticDataField;
+import de.upb.sede.procedure.AcceptDataProcedure;
 import de.upb.sede.util.Observable;
 
 import java.util.Map;
+import java.util.function.Function;
 
 public interface ExecutionEnvironment extends Map<String, SEDEObject> {
 	public Observable<ExecutionEnvironment> getState();
@@ -22,4 +25,7 @@ public interface ExecutionEnvironment extends Map<String, SEDEObject> {
 	 * @return true if the given fieldname has been marked unavailable.
 	 */
 	public boolean isUnavailable(Object fieldname);
+
+
+	void registerCacher(String fieldname,  Function<SemanticDataField, SEDEObject> cacher);
 }

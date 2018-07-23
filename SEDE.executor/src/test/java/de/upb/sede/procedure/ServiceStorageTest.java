@@ -2,6 +2,7 @@ package de.upb.sede.procedure;
 
 import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.ServiceInstanceField;
 import de.upb.sede.exec.Execution;
 import de.upb.sede.exec.ServiceInstance;
 import de.upb.sede.exec.Task;
@@ -33,7 +34,7 @@ public class ServiceStorageTest {
 	@Test public void testGeradeInstances() {
 		Gerade gerade1 = new Gerade(10,10);
 		ServiceInstance serviceInstance = new ServiceInstance("", "demo.math.Gerade", "0", gerade1);
-		SEDEObject sedeObject = new SEDEObject(serviceInstance);
+		SEDEObject sedeObject = new ServiceInstanceField(serviceInstance);
 		dummyExec.getEnvironment().put("gerade1", sedeObject);
 
 

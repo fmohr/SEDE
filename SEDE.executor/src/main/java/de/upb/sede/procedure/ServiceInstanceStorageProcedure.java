@@ -6,6 +6,7 @@ import java.io.ObjectOutputStream;
 import java.io.UncheckedIOException;
 
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.ServiceInstanceField;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exceptions.DependecyTaskFailed;
 import de.upb.sede.exec.ServiceInstance;
@@ -38,7 +39,7 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 				ServiceInstance serviceInstance = new ServiceInstance(
 				        task.getExecution().getConfiguration().getExecutorId(),
 						serviceClasspath, instanceId, instanceObject);
-				loadedSedeObject = new SEDEObject(serviceInstance);
+				loadedSedeObject = new ServiceInstanceField(serviceInstance);
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
 			} catch (ClassNotFoundException e) {

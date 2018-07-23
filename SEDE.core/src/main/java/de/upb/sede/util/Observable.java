@@ -12,6 +12,9 @@ import java.util.List;
  */
 public class Observable<T> {
 
+
+	private boolean updateInProcess = false;
+
 	public Observable(){
 
 	}
@@ -23,6 +26,9 @@ public class Observable<T> {
 	 * @param observer observer which will be notified.
 	 */
 	public synchronized void observe(Observer<T> observer){
+		if(updateInProcess) {
+			throw new RuntimeException("Cannot add observers while update is in process.");
+		}
 		this.observers.add(observer);
 	}
 
@@ -30,7 +36,12 @@ public class Observable<T> {
 	 * Invoke when the state of the observerved object changes.
 	 */
 	public synchronized void update(T updatedInstance) {
+		if(updateInProcess) {
+			throw new RuntimeException("Cannot update again while update is in process.");
+		}
 		Iterator<Observer<T>> observerIterator = this.observers.iterator();
+		List<Observer<T>> observersToBeRemoved = new ArrayList<>();
+		updateInProcess = true;
 		while(observerIterator.hasNext()) {
 			Observer<T> observer = observerIterator.next();
 			try{
@@ -53,13 +64,15 @@ public class Observable<T> {
 					 * remove this observer from the list of observers.
 					 */
 					observerIterator.remove();
+//					observersToBeRemoved.add(observer);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
 				throw new RuntimeException(ex);
 			}
-
 		}
+		updateInProcess = false;
+//		this.observers.removeAll(observersToBeRemoved);
 	}
 
 	/**
@@ -72,7 +85,6 @@ public class Observable<T> {
 		if(observer.notifyCondition(t)){
 			observer.notification(t);
 			return observer.removeAfterNotification(t);
-
 		}
 		return false;
 	}

@@ -1,8 +1,9 @@
 package de.upb.sede.procedure;
 
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.SemanticDataField;
 import de.upb.sede.core.SemanticStreamer;
-import de.upb.sede.exceptions.DependecyTaskFailed;
+import de.upb.sede.exec.Execution;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
 import de.upb.sede.util.Observer;
@@ -13,8 +14,9 @@ import org.json.simple.JSONObject;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Map;
+import java.util.function.Function;
 
-public class AcceptDataProcedure implements Procedure {
+public class AcceptDataProcedure implements Procedure, Function<SemanticDataField, SEDEObject> {
 	private final static Logger logger = LogManager.getLogger();
 	private String fieldname;
 	private JSONObject castType;
@@ -25,12 +27,22 @@ public class AcceptDataProcedure implements Procedure {
 		fieldname = task.getAttribute("fieldname");
 		castType = task.getAttribute("CastType");
 		this.task = task;
-		Observer<ExecutionEnvironment> envObserver = Observer
-				.<ExecutionEnvironment>lambda(env -> env.isUnavailable(fieldname) || env.containsKey(fieldname) ,
-						this::eventHandler);
-
+//		try {
+////			Thread.sleep(1000);
+//		} catch (InterruptedException e) {
+//			e.printStackTrace();
+//		}
 		ExecutionEnvironment environment = task.getExecution().getEnvironment();
-		environment.getState().observe(envObserver);
+		/*
+		 * Add an observer to the environment to be notified when the field is there
+		 */
+		Observer<ExecutionEnvironment> fieldObserver = Observer.lambda(
+				env -> env.containsKey(fieldname) || env.isUnavailable(fieldname),
+				this::eventHandler);
+		environment.getState().observe(fieldObserver);
+		if(castType != null) {
+			environment.registerCacher(fieldname, this);
+		}
 	}
 
 	private void eventHandler(ExecutionEnvironment env) {
@@ -43,9 +55,7 @@ public class AcceptDataProcedure implements Procedure {
 				 */
 				SEDEObject rawField = env.get(fieldname);
 				if(rawField.isSemantic()) {
-					ByteArrayInputStream rawDataInput =
-							new ByteArrayInputStream((byte[])rawField.getObject());
-					SEDEObject castedField = castInPlace(rawDataInput);
+					SEDEObject castedField = castInPlace((SemanticDataField) rawField);
 					env.put(fieldname, castedField);
 				} else {
 					logger.trace("AcceptDataNode didn't need to cast {} in place. " +
@@ -59,15 +69,16 @@ public class AcceptDataProcedure implements Procedure {
 		}
 	}
 
-	public SEDEObject castInPlace(InputStream dataInput) {
-		Map<String, Object> parameters = (Map<String, Object>) castType;
-
-		String casterClasspath = (String) parameters.get("caster-classpath");
-		String originalType = (String) parameters.get("original-type");
-		String targetType = (String) parameters.get("target-type");
-
+	public SEDEObject castInPlace(SemanticDataField dataInput) {
+		String casterClasspath = (String) castType.get("caster-classpath");
+		String originalType = (String) castType.get("original-type");
+		String targetType = (String) castType.get("target-type");
 		return SemanticStreamer.readObjectFrom(dataInput, casterClasspath, originalType, targetType);
-
 	}
 
+	@Override
+	public SEDEObject apply(SemanticDataField dataField) {
+		logger.debug("Casting semantic data in place as a cacher.");
+		return castInPlace(dataField);
+	}
 }

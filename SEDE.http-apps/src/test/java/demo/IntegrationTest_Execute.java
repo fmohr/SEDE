@@ -3,9 +3,10 @@ package demo;
 import java.util.*;
 
 import de.upb.sede.config.ExecutorConfiguration;
+import de.upb.sede.core.ObjectDataField;
+import de.upb.sede.core.PrimitiveDataField;
 import de.upb.sede.exec.*;
 import de.upb.sede.requests.Result;
-import de.upb.sede.requests.resolve.ResolveRequest;
 import demo.math.Addierer;
 import demo.types.DemoCaster;
 import demo.types.NummerList;
@@ -131,8 +132,8 @@ public class IntegrationTest_Execute {
 		Map<String, SEDEObject> inputs = new HashMap<>();
 		NummerList a = new NummerList(Arrays.asList(1,2,3));
 		NummerList b = new NummerList(Arrays.asList(3,2,1));
-		SEDEObject inputA = new SEDEObject(NummerList.class.getName(), a);
-		SEDEObject inputB = new SEDEObject(NummerList.class.getName(), b);
+		SEDEObject inputA = new ObjectDataField(NummerList.class.getName(), a);
+		SEDEObject inputB = new ObjectDataField(NummerList.class.getName(), b);
 		inputs.put("a", inputA);
 		inputs.put("b", inputB);
 
@@ -147,7 +148,7 @@ public class IntegrationTest_Execute {
 
 		Assert.assertTrue(results.containsKey("c"));
 		Assert.assertFalse(results.get("c").hasFailed());
-		NummerList c = (NummerList) results.get("c").castResultData("demo.types.NummerList", DemoCaster.class).getObject();
+		NummerList c = (NummerList) results.get("c").castResultData("demo.types.NummerList", DemoCaster.class).getDataField();
 
 		Assert.assertEquals(Addierer.summierListe(a,b), c);
 	}
@@ -283,7 +284,7 @@ public class IntegrationTest_Execute {
 
 	public void test() {
 		HashMap<String, SEDEObject> inputs = new HashMap<>();
-		inputs.put("a", new SEDEObject("Number", 10));
+		inputs.put("a", new PrimitiveDataField(10));
 		RunRequest runRequest = new RunRequest("rId", "composition blabla", new ResolvePolicy(), inputs);
 		System.out.println(runRequest.toJsonString());
 	}

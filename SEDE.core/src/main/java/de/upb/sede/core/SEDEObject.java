@@ -1,109 +1,43 @@
 package de.upb.sede.core;
 
 import de.upb.sede.util.JsonSerializable;
+import de.upb.sede.util.Streams;
 import org.json.simple.JSONObject;
 
 import java.util.*;
 import java.util.regex.Pattern;
 
-public class SEDEObject implements JsonSerializable {
-
-	public enum PrimitiveType {
-		NULL, String, Number, Bool;
-
-		public static PrimitiveType insensitiveValueOf(String searchName){
-			for(PrimitiveType type : PrimitiveType.values()){
-				if(type.name().equalsIgnoreCase(searchName)){
-					return type;
-				}
-			}
-			throw new RuntimeException("BUG: primitive type '" + searchName + "' not defined.");
-		}
-	}
-
-	public final static String SERVICE_INSTANCE_HANDLE_TYPE = ServiceInstanceHandle.class.getSimpleName();
+public abstract class SEDEObject implements JsonSerializable {
 
 
-	/** Regex for a class path. */
+	/**
+	 * Regex for a class path.
+	 */
 	private final static String REGEX_real_type = "^(?:(?:(?:[_a-zA-Z]\\w*+)\\.)++(?:(?:[_a-zA-Z]\\w*+)))$";
 	private final static Pattern PATTERN_real_type = Pattern.compile(REGEX_real_type);
 
 
 	private String type;
 
-	private Object object;
-
-	private SEDEObject() {
-		this(PrimitiveType.NULL, null);
-	}
-
 	/**
 	 * Base Constructor which is in turn used by all the other constructors.
 	 *
-	 * @param type Type of the data.
-	 * @param object data.
+	 * @param type   Type of the data.
 	 */
-	public SEDEObject(String type, Object object) {
+	public SEDEObject(String type) {
 		this.type = Objects.requireNonNull(type);
-		this.object = object;
-		if(!type.equalsIgnoreCase("null")) {
-			Objects.requireNonNull(object);
-		}
-
-		if(object instanceof ServiceInstanceHandle && !type.equalsIgnoreCase(SERVICE_INSTANCE_HANDLE_TYPE)){
-			throw new RuntimeException("BUG: given object is service instance handle but t givenype is: " + type);
-		}
-		if(isSemantic(type) && !this.isSemantic()){
-			throw new RuntimeException("BUG: given object is of semantic type but given data isn't a byte array: " + object.getClass());
-		}
-	}
-
-	/**
-	 * Constructor for primitve objects.
-	 * @param type primitve type
-	 * @param object data
-	 */
-	public SEDEObject(PrimitiveType type, Object object) {
-		this(type.name(), object);
 	}
 
 
-	public SEDEObject(ServiceInstanceHandle instanceHandle) {
-		this(SERVICE_INSTANCE_HANDLE_TYPE, instanceHandle);
-	}
-
-	public SEDEObject(Number number) {
-		this(PrimitiveType.Number, number);
-	}
-	public SEDEObject(Boolean bool) {
-		this(PrimitiveType.Bool, bool);
-	}
-
-	public SEDEObject(String charsequence) {
-		this(PrimitiveType.String, charsequence);
-	}
-
-	/**
-	 * Only use in tests, please.
-	 * Same as: SEDEObject(realData.getClass().getName(), realData)
-	 * @param realData some java object whose class name will be used as the type.
-	 *                 Note that in general the actual type doesnt have to correspond with the class name in java.
-	 */
-	public SEDEObject(Object realData){
-		this(realData.getClass().getName(), realData);
-	}
-
-	public Object getObject() {
-		return object;
-	}
+	public abstract <T> T getDataField();
 
 	public String getType() {
 		return type;
 	}
 
-	public static boolean isPrimitive(String type){
-		for(PrimitiveType primitivType : PrimitiveType.values()){
-			if(type.equalsIgnoreCase(primitivType.toString())){
+	public static boolean isPrimitive(String type) {
+		for (PrimitiveDataField.PrimitiveType primitivType : PrimitiveDataField.PrimitiveType.values()) {
+			if (type.equalsIgnoreCase(primitivType.toString())) {
 				return true;
 			}
 		}
@@ -113,58 +47,76 @@ public class SEDEObject implements JsonSerializable {
 		return false;
 	}
 
-	public boolean isPrimitive(){
-		return isPrimitive(getType());
+	public static boolean isServiceInstanceHandle(String type) {
+		return type.toLowerCase().startsWith("serviceinstance");
 	}
 
-	public boolean isNumeric() {
-		return isPrimitive() && getType().equalsIgnoreCase(PrimitiveType.Number.name());
-	}
-
-	public static boolean isServiceInstanceHandle(String type){
-		return type.equalsIgnoreCase(SERVICE_INSTANCE_HANDLE_TYPE);
-	}
-
-
-	public  boolean isServiceInstanceHandle(){
-		return isServiceInstanceHandle(getType());
-	}
-
-	public boolean isServiceInstance(){
-		return isServiceInstanceHandle() && ((ServiceInstanceHandle)object).getServiceInstance().isPresent();
-	}
-
-	public static boolean isReal(String type){
+	public static boolean isReal(String type) {
 		return PATTERN_real_type.matcher(type).matches();
 	}
 
-	public boolean isReal(){
-		return isReal(getType());
-	}
-
-	public static boolean isSemantic(String type){
+	public static boolean isSemantic(String type) {
 		return !isPrimitive(type) && !isServiceInstanceHandle(type) && !isReal(type);
 	}
 
-	public boolean isSemantic(){
-		return isSemantic(getType()) && object instanceof byte[];
+	/**
+	 * @return True if the sede object is primitive typed.
+	 */
+	public boolean isPrimitive() {
+		return false;
 	}
 
-	public String toString(){
-		return "{" + getType() + " - " + (object == null ? "null" : object.getClass().getSimpleName()) + "}";
+	/**
+	 * @return True if the sede object contains complex data as real java objects.
+	 */
+	public boolean isReal() {
+		return false;
+	}
+
+	/**
+	 * @return True if the sede object is a service instance handle.
+	 * If so {@link SEDEObject#getServiceHandle()}  can be used.
+	 *
+	 */
+	public boolean isServiceInstanceHandle() {
+		return false;
+	}
+
+	/**
+	 * @return True if the sede object is a service instance handle that actually contains a service instance object.
+	 * If so {@link SEDEObject#getServiceInstance()} can be used.
+	 */
+	public boolean isServiceInstance() {
+		return false;
+	}
+
+	/**
+	 *
+	 * @return True if the sede object is of semantic type, which means that it encapsulates an inputstream of bytes.
+	 */
+	public boolean isSemantic() {
+		return false;
+	}
+
+	/**
+	 * @return String representation of this Sede object.
+	 */
+	public String toString() {
+		return getType() + " - ";
 	}
 
 
 	/**
 	 * Returns the serviceinstancehandle if the sede object holds one.
 	 * Else it will throw an exception.
+	 *
 	 * @return Service instance handle of this sede object.
 	 */
 	public ServiceInstanceHandle getServiceHandle() {
-		if(!isServiceInstanceHandle()) {
+		if (!isServiceInstanceHandle()) {
 			throw new RuntimeException("Trying to access a service instance although SEDEObject holds object of type: \"" + getType() + "\"");
 		} else {
-			return  ((ServiceInstanceHandle)object);
+			return ((ServiceInstanceField)this).getDataField();
 		}
 	}
 
@@ -174,56 +126,38 @@ public class SEDEObject implements JsonSerializable {
 	 * @param <T> Type of the inner service.
 	 * @return Service instance.
 	 */
-	public <T>T getServiceInstance() {
+	public <T> T getServiceInstance() {
 		return (T) (getServiceHandle().getServiceInstance().get());
 	}
 
 
 	@Override
 	public JSONObject toJson() {
-		Object data;
-		if(isServiceInstanceHandle()) {
-			data = getServiceHandle().toJson();
-		}
-		else if(isSemantic()) {
-			byte[] byteArr = (byte[]) getObject();
-			String stringData = new String(byteArr);
-			data = stringData;
-		} else if(isPrimitive()) {
-			data = getObject();
-		} else {
-			throw new RuntimeException("cannot parse real data to json. Use semantic streamer instead: " + toString());
-		}
 		JSONObject jsonResult = new JSONObject();
 		jsonResult.put("type", getType());
-		jsonResult.put("data", data);
 		return jsonResult;
 	}
-
 
 	@Override
 	public void fromJson(Map<String, Object> jsonData) {
 		this.type = (String) jsonData.get("type");
+	}
+
+	public static SEDEObject constructFromJson(Map<String, Object> jsonData) {
+		String type = Objects.requireNonNull((String) jsonData.get("type"));
 		Object data = jsonData.get("data");
-		if(isServiceInstanceHandle(type)) {
+		if(isPrimitive(type)) {
+			return new PrimitiveDataField(type, data);
+		} else if(isServiceInstanceHandle(type)) {
 			ServiceInstanceHandle serviceInstanceHandle = new ServiceInstanceHandle();
 			serviceInstanceHandle.fromJson((Map<String, Object>) data);
-			this.object = serviceInstanceHandle;
-		}
-		else if(isSemantic(type)) {
-			String stringData = (String) data;
-			this.object = stringData.getBytes();
-		} else if(isPrimitive()) {
-			this.object = data;
+			return new ServiceInstanceField(serviceInstanceHandle);
+		} else if(isSemantic(type)) {
+			SemanticDataField dataField = new SemanticDataField(type, Streams.EmptyInStream(), true);
+			dataField.fromJson(jsonData);
+			return dataField;
 		} else {
 			throw new RuntimeException("cannot parse real data from json. Use semantic streamer instead: " + type);
 		}
 	}
-
-	public static SEDEObject constructFromJson(Map<String, Object> jsonData) {
-		SEDEObject sedeObject = new SEDEObject();
-		sedeObject.fromJson(jsonData);
-		return sedeObject;
-	}
-
 }

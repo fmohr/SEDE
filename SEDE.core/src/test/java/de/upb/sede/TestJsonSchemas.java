@@ -1,5 +1,6 @@
 package de.upb.sede;
 
+import de.upb.sede.core.PrimitiveDataField;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.requests.DataPutRequest;
 import de.upb.sede.requests.ExecRequest;
@@ -37,7 +38,7 @@ public class TestJsonSchemas {
 
 	@Test
 	public void test_DataPutRequest() {
-		DataPutRequest request = new DataPutRequest("exec-id-1", "field-1", new SEDEObject(SEDEObject.PrimitiveType.Number, 10));
+		DataPutRequest request = new DataPutRequest("exec-id-1", "field-1", new PrimitiveDataField(10));
 		System.out.println(request.toJson());
 		String schema = getSchemaForRequest(DataPutRequest.class);
 		// TODO verify against json schema

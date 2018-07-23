@@ -107,7 +107,7 @@ public class Streams {
 
 	/**
 	 * Returns an output stream. Writing into the given output stream will discard the the input.
-	 * write method of the stream doens't do anything.
+	 * write method of the stream doesn't do anything.
 	 *
 	 * @return outputstream which discards the input.
 	 */

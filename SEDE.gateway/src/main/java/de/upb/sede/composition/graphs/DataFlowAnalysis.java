@@ -22,6 +22,9 @@ public class DataFlowAnalysis {
 
 	private final Map<String, List<FieldType>> fieldnameTypeResult = new HashMap<>();
 
+	/**
+	 * Node: the client executor is part of this list.
+	 */
 	private final List<ExecPlan> execPlans;
 
 	private final ExecPlan clientExecPlan;
@@ -54,14 +57,61 @@ public class DataFlowAnalysis {
 		}
 		determineExecutors();
 		resolveResults();
-		fillinContactInforamtions();
 		connectDependencyEdges();
+		mergeAcceptAndCasts();
+		fillinContactInforamtions();
 		if(resolveInfo.getResolvePolicy().isBlockTillFinished()) {
 			addFinishingNodes();
 		}
-
 	}
 
+	/**
+	 * Merges a subset of {@link AcceptDataNode AcceptDataNodes} and their following {@link CastTypeNode CastTypeNodes} on every executor
+	 * removing the casttypenode and only using the acceptdatanode to do the casting in place.
+	 * Acceptdatanodes that have more than one cast type following nodes are ignored.
+	 * ExecPlans which don't have cast in place enabled are also ignored.
+	 */
+	private void mergeAcceptAndCasts() {
+		for(ExecPlan execPlan : getInvolvedExecutions()) {
+			if(!execPlan.getTarget().getExecutionerCapabilities().canCastInPlace()) {
+				continue;
+			}
+			CompositionGraph g = execPlan.getGraph();
+			Set<CastTypeNode> toBeRemovedNodes = new HashSet<>();
+			for(AcceptDataNode acceptDataNode :
+					GraphTraversal.iterateNodesWithClass(g, AcceptDataNode.class)) {
+				/*
+				 * iterate nodes the accepter points towards.
+				 * If there are more than 1 caster ignore the accepter
+				 */
+				CastTypeNode caster = null;
+				boolean tooManyCasters = false;
+				for( BaseNode target : GraphTraversal.targetingNodes(g, acceptDataNode) ) {
+					if(CastTypeNode.class.isInstance(target)) {
+						if(caster == null) {
+							caster = (CastTypeNode) target;
+						} else {
+							tooManyCasters = true;
+						}
+					}
+				}
+				if(tooManyCasters) {
+					continue; // skip to accept data node
+				} else if(caster != null) {
+					acceptDataNode.setCastInPlace(caster);
+					/*
+					 * remove caster from the graph but keep its dependecies:
+					 */
+					g.connectToItsTargets(acceptDataNode, caster);
+					toBeRemovedNodes.add(caster);
+				}
+			}
+			/*
+			 * Remove merged casters:
+			 */
+			toBeRemovedNodes.forEach(g::removeNode);
+		}
+	}
 
 
 	private void addInputNodesFieldTypes() {
@@ -691,9 +741,8 @@ public class DataFlowAnalysis {
 				fill in the contact information to the corresponding transmission node.
 			 */
 			Map<String, String> contactInformation = execPlan.getTarget().getContactInfo();
-			for(BaseNode node : GraphTraversal.iterateNodesWithClassname(execPlan.getGraph(),
-					AcceptDataNode.class.getSimpleName())) {
-				AcceptDataNode accepter = (AcceptDataNode) node;
+			for(AcceptDataNode accepter : GraphTraversal.iterateNodesWithClass(execPlan.getGraph(),
+					AcceptDataNode.class)) {
 				getCorrespondingSender(accepter).getContactInfo().putAll(contactInformation);
 
 			}

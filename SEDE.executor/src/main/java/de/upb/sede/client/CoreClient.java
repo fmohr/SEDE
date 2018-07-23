@@ -56,8 +56,8 @@ public class CoreClient implements ICoreClient{
 
 	@Override
 	public void join(String requestId, boolean interruptExecution, long timeout, TimeUnit timeUnit) {
-		Execution execution = executor.getExecution(requestId);
-		if(execution == null) {
+		Optional<Execution> execution = executor.getExecution(requestId);
+		if(!execution.isPresent()) {
 			return;
 		}
 		final Semaphore executionIsFinished = new Semaphore(0);
@@ -67,7 +67,7 @@ public class CoreClient implements ICoreClient{
 			executionIsFinished.release();
 		});
 
-		execution.getState().observe(executionDoneObserver);
+		execution.get().getState().observe(executionDoneObserver);
 		try {
 			if(timeout > 0 )
 				executionIsFinished.tryAcquire(timeout, timeUnit);
@@ -119,7 +119,7 @@ public class CoreClient implements ICoreClient{
 		List<String> resultFields = resolution.getReturnFields();
 		logger.debug("waiting for {}", resultFields);
 		ResultObserver resultObserver = new ResultObserver(requestId, resultFields, resultConsumer);
-		execution.getEnvironment().getState().observe(resultObserver);
+		execution.getEnvironment().observe(resultObserver);
 
 		logger.debug("Run-Request {} started.", requestId);
 		return requestId;

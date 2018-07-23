@@ -4,6 +4,7 @@ import de.upb.sede.BuiltinCaster;
 import de.upb.sede.client.CoreClientHttpServer;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
+import de.upb.sede.core.ObjectDataField;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.exec.ExecutorHttpServer;
@@ -142,8 +143,8 @@ public class MLTests {
 		policy.setPersistentServices(Arrays.asList("s1"));
 		policy.setReturnFieldnames(Arrays.asList("predictions"));
 
-		SEDEObject trainset = new SEDEObject(Instances.class.getName(), weatherTrainSet);
-		SEDEObject testset = new SEDEObject(Instances.class.getName(), weatherTestSet);
+		SEDEObject trainset = new ObjectDataField(Instances.class.getName(), weatherTrainSet);
+		SEDEObject testset = new ObjectDataField(Instances.class.getName(), weatherTestSet);
 
 		Map<String, SEDEObject> inputs = new HashMap<>();
 		inputs.put("trainset", trainset);
@@ -160,7 +161,7 @@ public class MLTests {
 			Cast it to List:
 		 */
 		 List prediction = (List) result.castResultData(
-				"builtin.List", BuiltinCaster.class).getObject();
+				"builtin.List", BuiltinCaster.class).getDataField();
 		 double correctPredictions = 0.;
 		for (int i = 0; i < prediction.size(); i++) {
 			Instance testInstance = weatherTestSet.get(i);
@@ -192,8 +193,8 @@ public class MLTests {
 
 
 		Map<String, SEDEObject> inputs = new HashMap<>();
-		inputs.put("indices_train", new SEDEObject("builtin.List", splits.get(0)));
-		inputs.put("indices_test", new SEDEObject("builtin.List", splits.get(1)));
+		inputs.put("indices_train", new ObjectDataField("builtin.List", splits.get(0)));
+		inputs.put("indices_test", new ObjectDataField("builtin.List", splits.get(1)));
 
 		RunRequest runRequest = new RunRequest("classification2", composition, policy, inputs);
 
@@ -207,8 +208,8 @@ public class MLTests {
 			Cast it to List:
 		 */
 		List prediction = (List) result.castResultData(
-				"builtin.List", BuiltinCaster.class).getObject();
-		Instances testDataFromExecutor = (Instances) resultMap.get("testset").castResultData("weka.core.Instances", InstancesCaster.class).getObject();
+				"builtin.List", BuiltinCaster.class).getDataField();
+		Instances testDataFromExecutor = (Instances) resultMap.get("testset").castResultData("weka.core.Instances", InstancesCaster.class).getDataField();
 		double correctPredictions = 0.;
 		Instances weatherTestSet = new DataSetService("weather.arff").fromIndicesLabeled(splits.get(1), -1);
 		Assert.assertEquals(weatherTestSet.toString().trim(), testDataFromExecutor.toString().trim());

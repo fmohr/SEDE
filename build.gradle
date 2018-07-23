@@ -14,7 +14,7 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
     group = 'de.upb.sede'
-    version = '0.0.1'
+    version = '0.0.2'
 
     configurations {
         provided
@@ -125,7 +125,7 @@ project(':SEDE.executor') {
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
 
         provided project(':SEDE.core')
-        provided project(':SEDE.gateway')
+//        provided project(':SEDE.gateway')
     }
 }
 

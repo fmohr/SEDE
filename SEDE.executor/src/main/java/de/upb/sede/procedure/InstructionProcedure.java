@@ -1,16 +1,10 @@
 package de.upb.sede.procedure;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.JarURLConnection;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.jar.Attributes;
 
+import de.upb.sede.core.*;
 import de.upb.sede.exec.ServiceInstance;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
@@ -18,9 +12,6 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.upb.sede.composition.graphs.nodes.ParseConstantNode.ConstantType;
-import de.upb.sede.core.SEDEObject;
-import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
 
@@ -69,7 +60,7 @@ public class InstructionProcedure implements Procedure {
 			if(field.isServiceInstance()) {
 				fieldValue = field.getServiceInstance();
 			} else {
-				fieldValue = field.getObject();
+				fieldValue = field.getDataField();
 			}
 			paramValues[paramIndex] = fieldValue;
 		}
@@ -86,8 +77,8 @@ public class InstructionProcedure implements Procedure {
 			 */
 			SEDEObject field = environment.get(attr.getContext());
 			if (!field.isServiceInstance()) {
-				throw new RuntimeException("BUG: trying to operate on service instance fieldtype," +
-						" instead the fieldtype is " + field.getType());
+				throw new RuntimeException("BUG: trying to operate on a service instance from the environment," +
+						" instead the fieldtype is only a handle: " + field.toString());
 			}
 			contextInstance = field.getServiceInstance();
 			if(contextInstance==null) {
@@ -154,18 +145,24 @@ public class InstructionProcedure implements Procedure {
 				 * construct new sede object:
 				 */
 				SEDEObject resultfield;
-				if(attr.getLeftsidefieldClass().startsWith("ServiceInstance")){
+				String type = attr.getLeftsidefieldType();
+				if(SEDEObject.isServiceInstanceHandle(attr.getLeftsidefieldClass())){
 					/*
 						The method creates a new service instance.
 						so wrap it into a handle:
 					 */
 					ServiceInstanceHandle handle = createServiceInstanceHandle(task, attr, outputValue);
-					resultfield = new SEDEObject(handle);
+					resultfield = new ServiceInstanceField(handle);
+				} else if(SEDEObject.isPrimitive(type)){
+					/*
+						The type is primitive:
+					 */
+					resultfield = new PrimitiveDataField(type, outputValue);
 				} else {
 					/*
-						This is the default case where the method returns values:
+						Default case where some object is returned:
 					 */
-					resultfield = new SEDEObject(attr.getLeftsidefieldType(), outputValue);
+					resultfield = new ObjectDataField(type, outputValue);
 				}
 				outputSEDEObject = resultfield;
 			} else {

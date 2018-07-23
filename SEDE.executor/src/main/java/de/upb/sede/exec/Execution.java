@@ -1,13 +1,19 @@
 package de.upb.sede.exec;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Function;
 
 import de.upb.sede.config.ExecutorConfiguration;
+import de.upb.sede.core.SemanticDataField;
 import de.upb.sede.interfaces.IExecution;
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.util.DefaultMap;
 import de.upb.sede.util.Observable;
 import de.upb.sede.util.Observer;
+import de.upb.sede.util.Streams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -15,9 +21,10 @@ import org.apache.logging.log4j.Logger;
  * Represents one execution.
  */
 public class Execution implements IExecution {
+
 	private static final Logger logger = LogManager.getLogger();
 
-	private final ExecutionEnvironment environment;
+	private final ExecutionEnv environment;
 
 	private final String execId;
 
@@ -26,6 +33,7 @@ public class Execution implements IExecution {
 	private final Observable<Task> runnableTasks = new Observable<Task>();
 
 	private final ExecutorConfiguration executorConfiguration;
+
 
 	/**
 	 * Flag that indicates that the execution has been interrupted.
@@ -81,7 +89,7 @@ public class Execution implements IExecution {
 	public Execution(String execId, ExecutorConfiguration executorConfiguration) {
 		Objects.requireNonNull(execId);
 		this.execId = execId;
-		this.environment = new ExecutionInv();
+		this.environment = new ExecutionEnv();
 		this.state = Observable.ofInstance(this);
 		this.executorConfiguration = executorConfiguration;
 	}
@@ -261,20 +269,33 @@ public class Execution implements IExecution {
 		return started;
 	}
 
-	static class ExecutionInv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
+
+	 private class ExecutionEnv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
+
+		 /**
+		  * This map exists because for accept data procedures can register themselves
+		  * as a cacher of semantic data and do conversation in place:
+		  */
+		private DefaultMap<String, Function<SemanticDataField, SEDEObject>> cachers = new DefaultMap<>(() -> this::cache);
 
 		private Set<String> unavailableFields = new HashSet<>();
 
 		final Observable<ExecutionEnvironment> state = Observable.ofInstance(this);
 		@Override
-		public SEDEObject put(String key, SEDEObject value) {
+		public synchronized SEDEObject put(String key, SEDEObject value) {
+			if(value.isSemantic()){
+				/*
+				 * Semantic data forward to a cacher (Like Accept data procedure which may cast in place):
+				 */
+				value = cachers.get(key).apply((SemanticDataField) value);
+			}
 			SEDEObject prevValue = super.put(key, value);
 			state.update(this);
 			return prevValue;
 		}
 
 		@Override
-		public boolean containsKey(Object fieldname) {
+		public synchronized boolean containsKey(Object fieldname) {
 			if(isUnavailable(fieldname)) {
 				return false;
 			} else {
@@ -283,20 +304,39 @@ public class Execution implements IExecution {
 		}
 
 		@Override
-		public boolean isUnavailable(Object fieldname) {
+		public synchronized boolean isUnavailable(Object fieldname) {
 			return this.unavailableFields.contains(fieldname);
 		}
 
-		@Override
-		public Observable<ExecutionEnvironment> getState() {
-			return state;
-		}
 
-		@Override
-		public void markUnavailable(String fieldname) {
+		 @Override
+		 public synchronized void observe(Observer<ExecutionEnvironment> observer) {
+			 this.state.observe(observer);
+		 }
+
+		 @Override
+		public synchronized void markUnavailable(String fieldname) {
 			unavailableFields.add(fieldname);
 			state.update(this);
 		}
-	}
 
-}
+		public synchronized void registerCacher(String fieldname, Function<SemanticDataField, SEDEObject> cacher) {
+			cachers.put(fieldname, cacher);
+		}
+
+		public synchronized SEDEObject cache(SemanticDataField value) {
+			if(!value.isPersistent()) {
+				logger.debug("Semantic data isn't persistent. It will be cache before putting it in the environment: " + value.toString());
+				byte[] cachedData = Streams.InReadByteArr(((SemanticDataField) value).getDataField());
+				InputStream inputStream = new ByteArrayInputStream(cachedData);
+				SemanticDataField cachedSemanticData = new SemanticDataField(value.getType(), inputStream, true);
+				return cachedSemanticData;
+			} else {
+				/*
+				 * no need to cache as it is persistent anyway:
+				 */
+				return value;
+			}
+		}
+	}
+ }

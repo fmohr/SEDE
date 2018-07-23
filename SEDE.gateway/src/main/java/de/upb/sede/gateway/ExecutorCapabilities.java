@@ -40,4 +40,7 @@ public class ExecutorCapabilities {
 		return executorCapabilities.contains(capability);
 	}
 
+	public boolean canCastInPlace() {
+		return isCapableOf("cast_in_place");
+	}
 }

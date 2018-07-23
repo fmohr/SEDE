@@ -1,6 +1,6 @@
 {
     "fieldname": "a",
     "nodetype": "AcceptData",
-    "description": "accept \"a\"  store bytes",
+    "description": "accept \"a\"  as is",
     "CastType": null
 }

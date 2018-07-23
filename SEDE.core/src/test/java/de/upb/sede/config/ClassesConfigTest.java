@@ -104,7 +104,7 @@ public class ClassesConfigTest {
 		testMethodsA(A);
 	}
 
-	@Test
+//	@Test
 	public void testMethodsB() {
 		ClassesConfig.ClassInfo B = cc.classInfo("B");
 		testMethodsA(B);

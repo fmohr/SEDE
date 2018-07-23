@@ -2,7 +2,6 @@ package de.upb.sede.composition.graphs;
 
 import java.util.*;
 
-import com.sun.xml.internal.rngom.parse.host.Base;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.util.Iterators;
 

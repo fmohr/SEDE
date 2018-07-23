@@ -34,7 +34,8 @@ public class TestInstancesCaster {
 		assertEquals(weather.classIndex(), fromSemantic.classIndex());
 		assertEquals(weather.toString().trim(), fromSemantic.toString().trim());
 	}
-	@Test
+
+//	@Test
 	public void benchmarkCasting() {
 		long stop = System.currentTimeMillis();
 		Instances cifar = MLDataSets.getDataSetWithLastIndexClass("cifar.arff");

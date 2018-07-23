@@ -308,12 +308,13 @@ public class Execution implements IExecution {
 			return this.unavailableFields.contains(fieldname);
 		}
 
-		@Override
-		public synchronized Observable<ExecutionEnvironment> getState() {
-			return state;
-		}
 
-		@Override
+		 @Override
+		 public synchronized void observe(Observer<ExecutionEnvironment> observer) {
+			 this.state.observe(observer);
+		 }
+
+		 @Override
 		public synchronized void markUnavailable(String fieldname) {
 			unavailableFields.add(fieldname);
 			state.update(this);

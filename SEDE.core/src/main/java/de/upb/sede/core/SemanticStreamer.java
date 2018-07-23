@@ -1,7 +1,6 @@
 package de.upb.sede.core;
 
 import de.upb.sede.util.Streams;
-import jdk.internal.util.xml.impl.Input;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -40,6 +40,7 @@ public class ImagingTests {
 
 	static String executor1Address = WebUtil.HostIpAddress();
 	static int executorPort = 9000;
+	static ExecutorHttpServer executor1;
 
 	static GatewayHttpServer gateway;
 
@@ -64,18 +65,27 @@ public class ImagingTests {
 		 */
 		creator = new ExecutorConfigurationCreator();
 		creator.withExecutorId("executor");
-		Executor executor = new ExecutorHttpServer(ExecutorConfiguration.parseJSON(creator.toString()), executor1Address, executorPort);
-		executor.getExecutorConfiguration().getSupportedServices().addAll(
+		executor1 = new ExecutorHttpServer(ExecutorConfiguration.parseJSON(creator.toString()), executor1Address, executorPort);
+		executor1.getExecutorConfiguration().getSupportedServices().addAll(
 				Arrays.asList("Catalano.Imaging.Filters.Crop",
 						"Catalano.Imaging.Filters.Resize",
 						"Catalano.Imaging.sede.CropFrom0")
 		);
-		gateway.register(executor.registration());
+		gateway.register(executor1.registration());
 		/*
 			Disabled if you dont have dot installed.
 		 */
 		coreClient.writeDotGraphToDir("testrsc/images");
 
+	}
+
+
+
+	@AfterClass
+	public static void shutdown() {
+		gateway.shutdown();
+		executor1.shutdown();
+		coreClient.getClientExecutor().shutdown();
 	}
 
 	@BeforeClass

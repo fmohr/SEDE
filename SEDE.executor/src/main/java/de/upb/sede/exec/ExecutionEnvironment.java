@@ -2,14 +2,13 @@ package de.upb.sede.exec;
 
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.SemanticDataField;
-import de.upb.sede.procedure.AcceptDataProcedure;
-import de.upb.sede.util.Observable;
+import de.upb.sede.util.Observer;
 
 import java.util.Map;
 import java.util.function.Function;
 
 public interface ExecutionEnvironment extends Map<String, SEDEObject> {
-	public Observable<ExecutionEnvironment> getState();
+	public void observe(Observer<ExecutionEnvironment> observer);
 
 	/**
 	 * Marks the fieldname unavailable, suggesting that it won't be delivered.

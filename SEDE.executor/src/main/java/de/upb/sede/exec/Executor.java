@@ -18,6 +18,8 @@ import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.util.Observer;
 
+import javax.swing.text.html.Option;
+
 public class Executor implements IExecutor{
 
 
@@ -67,8 +69,8 @@ public class Executor implements IExecutor{
 	}
 
 
-	public Execution getExecution(String execId) {
-		return execPool.getExecution(execId).get();
+	public Optional<Execution> getExecution(String execId) {
+		return execPool.getExecution(execId);
 	}
 
 	public Execution getOrCreateExecution(String execId) {

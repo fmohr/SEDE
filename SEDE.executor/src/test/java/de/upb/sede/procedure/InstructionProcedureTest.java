@@ -2,16 +2,15 @@ package de.upb.sede.procedure;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.function.Function;
 
 import de.upb.sede.config.ExecutorConfiguration;
-import de.upb.sede.core.PrimitiveDataField;
-import de.upb.sede.core.ServiceInstanceField;
-import de.upb.sede.core.ServiceInstanceHandle;
+import de.upb.sede.core.*;
 import de.upb.sede.util.ExecutorConfigurationCreator;
+import de.upb.sede.util.Observer;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.upb.sede.core.SEDEObject;
 import de.upb.sede.exec.Execution;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.ServiceInstance;
@@ -260,6 +259,11 @@ public class InstructionProcedureTest {
 		}
 
 		@Override
+		public void observe(Observer<ExecutionEnvironment> observer) {
+
+		}
+
+		@Override
 		public void markUnavailable(String fieldname) {
 
 		}
@@ -267,6 +271,11 @@ public class InstructionProcedureTest {
 		@Override
 		public boolean isUnavailable(Object fieldname) {
 			return false;
+		}
+
+		@Override
+		public void registerCacher(String fieldname, Function<SemanticDataField, SEDEObject> cacher) {
+
 		}
 	}
 }

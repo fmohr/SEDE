@@ -13,6 +13,9 @@ import java.util.List;
 public class Observable<T> {
 
 
+	/**
+	 * A flag that helps prevent bugs.
+	 */
 	private boolean updateInProcess = false;
 
 	public Observable(){

@@ -69,9 +69,13 @@ public class DataFlowAnalysis {
 	 * Merges a subset of {@link AcceptDataNode AcceptDataNodes} and their following {@link CastTypeNode CastTypeNodes} on every executor
 	 * removing the casttypenode and only using the acceptdatanode to do the casting in place.
 	 * Acceptdatanodes that have more than one cast type following nodes are ignored.
+	 * ExecPlans which don't have cast in place enabled are also ignored.
 	 */
 	private void mergeAcceptAndCasts() {
 		for(ExecPlan execPlan : getInvolvedExecutions()) {
+			if(!execPlan.getTarget().getExecutionerCapabilities().canCastInPlace()) {
+				continue;
+			}
 			CompositionGraph g = execPlan.getGraph();
 			Set<CastTypeNode> toBeRemovedNodes = new HashSet<>();
 			for(AcceptDataNode acceptDataNode :

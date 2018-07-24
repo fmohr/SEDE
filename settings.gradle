@@ -25,8 +25,8 @@ project(':demolib').projectDir = new File(serivcePredix, "demolib")
 include 'imaging'
 project(':imaging').projectDir = new File(serivcePredix, "imaging")
 
-include 'mls'
-project(':mls').projectDir = new File(serivcePredix, "mls")
+//include 'mls'
+//project(':mls').projectDir = new File(serivcePredix, "mls")
 
 rootProject.name = 'SEDE'
 

@@ -1,3 +1,7 @@
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 project.ext {
     /*
         Set global properties like folder paths and so on:
@@ -57,6 +61,26 @@ subprojects {
             }
         }
     }
+
+    /*
+     * create a symbolic link to the testrsc folder in each subproject's root folder.
+     * Do this because eclipse while runnning runs tests, set the working directory to the sub project root directory.
+     *
+     */
+    task link_testrsc {
+        //println "${rootProject.projectDir}"
+        def p = Paths.get("${projectDir}/testrsc")
+        if(Files.notExists(p)) {
+            def target = Paths.get("${rootProject.projectDir}/testrsc/")
+            println "${p} does not exist. Creating symbolic link to ${target}."
+            Files.createSymbolicLink(p,  target)
+        } else {
+            println "${p.toAbsolutePath()} already exists."
+        }
+
+    }
+    eclipseProject.dependsOn link_testrsc
+
 
     /* Set working directory of tests to root folder: */
     test{

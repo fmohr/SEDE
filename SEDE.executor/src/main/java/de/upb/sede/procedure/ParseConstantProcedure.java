@@ -1,6 +1,6 @@
 package de.upb.sede.procedure;
 
-import de.upb.sede.exceptions.DependecyTaskFailed;
+import de.upb.sede.core.PrimitiveDataField;
 import de.upb.sede.exceptions.ErrorInProcedureException;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.core.SEDEObject;
@@ -22,7 +22,7 @@ public class ParseConstantProcedure implements Procedure {
 	{
 		String constant = (String) task.getAttributes().get("constant");
 
-		SEDEObject.PrimitiveType type = typeFromAttributes((Map<String, Boolean>) task.getAttributes());
+		PrimitiveDataField.PrimitiveType type = typeFromAttributes((Map<String, Boolean>) task.getAttributes());
 
 		SEDEObject sedeObject = parsePrimitive(constant, type);
 
@@ -33,23 +33,23 @@ public class ParseConstantProcedure implements Procedure {
 		task.setSucceeded();
 	}
 
-	private static SEDEObject.PrimitiveType typeFromAttributes(Map<String, Boolean> attributes) {
+	private static PrimitiveDataField.PrimitiveType typeFromAttributes(Map<String, Boolean> attributes) {
 		if (attributes.get("isBool")) {
-			return SEDEObject.PrimitiveType.Bool;
+			return PrimitiveDataField.PrimitiveType.Bool;
 		}
 		if (attributes.get("isNumber")) {
-			return SEDEObject.PrimitiveType.Number;
+			return PrimitiveDataField.PrimitiveType.Number;
 		}
 		if (attributes.get("isNULL")) {
-			return SEDEObject.PrimitiveType.NULL;
+			return PrimitiveDataField.PrimitiveType.NULL;
 		}
 		if (attributes.get("isString")) {
-			return SEDEObject.PrimitiveType.String;
+			return PrimitiveDataField.PrimitiveType.String;
 		}
 		throw new ErrorInProcedureException("None of the flags in the constant node were true.");
 	}
 
-	public static SEDEObject parsePrimitive(String constantStr, SEDEObject.PrimitiveType primitiveType) {
+	public static SEDEObject parsePrimitive(String constantStr, PrimitiveDataField.PrimitiveType primitiveType) {
 		Object data;
 		switch (Objects.requireNonNull(primitiveType)) {
 		case NULL:
@@ -71,6 +71,6 @@ public class ParseConstantProcedure implements Procedure {
 		default:
 			throw new RuntimeException("All cases covered. " + "Default to have data initialized.");
 		}
-		return new SEDEObject(primitiveType.name(), data);
+		return new PrimitiveDataField(primitiveType.name(), data);
 	}
 }

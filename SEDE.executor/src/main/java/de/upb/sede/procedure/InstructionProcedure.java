@@ -1,25 +1,17 @@
 package de.upb.sede.procedure;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Executable;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.JarURLConnection;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.*;
-import java.util.Map.Entry;
-import java.util.jar.Attributes;
 
+import de.upb.sede.core.*;
 import de.upb.sede.exec.ServiceInstance;
+import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import de.upb.sede.composition.graphs.nodes.ParseConstantNode.ConstantType;
-import de.upb.sede.core.SEDEObject;
-import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
 
@@ -68,7 +60,7 @@ public class InstructionProcedure implements Procedure {
 			if(field.isServiceInstance()) {
 				fieldValue = field.getServiceInstance();
 			} else {
-				fieldValue = field.getObject();
+				fieldValue = field.getDataField();
 			}
 			paramValues[paramIndex] = fieldValue;
 		}
@@ -85,8 +77,8 @@ public class InstructionProcedure implements Procedure {
 			 */
 			SEDEObject field = environment.get(attr.getContext());
 			if (!field.isServiceInstance()) {
-				throw new RuntimeException("BUG: trying to operate on service instance fieldtype," +
-						" instead the fieldtype is " + field.getType());
+				throw new RuntimeException("BUG: trying to operate on a service instance from the environment," +
+						" instead the fieldtype is only a handle: " + field.toString());
 			}
 			contextInstance = field.getServiceInstance();
 			if(contextInstance==null) {
@@ -153,18 +145,24 @@ public class InstructionProcedure implements Procedure {
 				 * construct new sede object:
 				 */
 				SEDEObject resultfield;
-				if(attr.getLeftsidefieldClass().startsWith("ServiceInstance")){
+				String type = attr.getLeftsidefieldType();
+				if(SEDEObject.isServiceInstanceHandle(attr.getLeftsidefieldClass())){
 					/*
 						The method creates a new service instance.
 						so wrap it into a handle:
 					 */
-					ServiceInstanceHandle handle = createServiceInstanceHandle(task, outputValue);
-					resultfield = new SEDEObject(handle);
+					ServiceInstanceHandle handle = createServiceInstanceHandle(task, attr, outputValue);
+					resultfield = new ServiceInstanceField(handle);
+				} else if(SEDEObject.isPrimitive(type)){
+					/*
+						The type is primitive:
+					 */
+					resultfield = new PrimitiveDataField(type, outputValue);
 				} else {
 					/*
-						This is the default case where the method returns values:
+						Default case where some object is returned:
 					 */
-					resultfield = new SEDEObject(attr.getLeftsidefieldType(), outputValue);
+					resultfield = new ObjectDataField(type, outputValue);
 				}
 				outputSEDEObject = resultfield;
 			} else {
@@ -214,7 +212,11 @@ public class InstructionProcedure implements Procedure {
 					return exec;
 				}
 			}
-			throw new RuntimeException("No matching method found: " + attr.getContext() + "::" + attr.getMethod());
+			throw new RuntimeException("No matching method found for signature:\n\t"
+					+ context.getName() + "::" + attr.getMethod()
+					+ "(" + Arrays.toString(ClassUtils.toClass(parameterValues))+ ")");
+
+
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
@@ -227,7 +229,7 @@ public class InstructionProcedure implements Procedure {
 		boolean fail = false;
 		for (int i = 0; i < parameterValues.length; i++) {
 			Object param = parameterValues[i];
-			if(!(param instanceof  Number) && !executable.getParameterTypes()[i].isAssignableFrom(param.getClass())) {
+			if(!(param instanceof  Number)&& !(param instanceof Boolean) && !executable.getParameterTypes()[i].isAssignableFrom(param.getClass())) {
 				fail = true;
 				break;
 			}
@@ -275,10 +277,10 @@ public class InstructionProcedure implements Procedure {
 	 *
 	 * @return a new ServiceInstanceHandle
 	 */
-	private ServiceInstance createServiceInstanceHandle(Task task, Object newServiceInstance) {
+	private ServiceInstance createServiceInstanceHandle(Task task, InstructionNodeAttributes attr, Object newServiceInstance) {
 		String serviceInstanceId = UUID.randomUUID().toString();
 		String executorId = task.getExecution().getConfiguration().getExecutorId();
-		String classpath = newServiceInstance.getClass().getName();
+		String classpath = attr.getLeftsidefieldType();
 		ServiceInstance si = new ServiceInstance(executorId, classpath, serviceInstanceId, newServiceInstance);
 		return si;
 	}

@@ -1,12 +1,11 @@
 package de.upb.sede.procedure;
 
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.SemanticDataField;
 import de.upb.sede.core.SemanticStreamer;
-import de.upb.sede.exceptions.DependecyTaskFailed;
 import de.upb.sede.exec.Task;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import java.io.*;
 import java.util.Map;
 
 public class CastTypeProcedure implements Procedure {
@@ -32,13 +31,21 @@ public class CastTypeProcedure implements Procedure {
 		SEDEObject field = task.getExecution().getEnvironment().get(fieldname);
 		SEDEObject castedField;
 		if(castToSemantic) {
-			ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-			SemanticStreamer.streamObjectInto(byteStream, field, casterClasspath, targetType);
-			byte[] semanticData = byteStream.toByteArray();
-			castedField = new SEDEObject(targetType, semanticData);
+			PipedInputStream byteInputSteam = new PipedInputStream();
+			PipedOutputStream byteOutputStream = null;
+			try {
+				byteOutputStream = new PipedOutputStream(byteInputSteam);
+			} catch (IOException e) {
+				throw new RuntimeException("This exception shouldn't have been thrown..");
+			}
+			/*
+			 * TODO if there is a need to read the input byte multiple times change this behaviour to ByteArrayInputStream instead.
+			 * (Which offers seek)
+			 */
+			SemanticStreamer.streamObjectInto(byteOutputStream, field, casterClasspath, targetType);
+			castedField = new SemanticDataField(targetType, byteInputSteam, true);
 		} else if(field.isSemantic()){
-			byte[] semanticData = (byte[]) field.getObject();
-			ByteArrayInputStream byteStream = new ByteArrayInputStream(semanticData);
+			ByteArrayInputStream byteStream = field.getDataField();
 			castedField = SemanticStreamer.readObjectFrom(byteStream, casterClasspath, originalType, targetType);
 		} else {
 			throw new RuntimeException("Task states to cast \"" + fieldname + "\" to  semantic " +

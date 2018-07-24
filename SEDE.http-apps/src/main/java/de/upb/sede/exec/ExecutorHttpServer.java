@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.upb.sede.config.ExecutorConfiguration;
+import de.upb.sede.core.PrimitiveDataField;
 import de.upb.sede.core.SemanticStreamer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -26,7 +27,6 @@ import de.upb.sede.procedure.TransmitDataProcedure;
 import de.upb.sede.requests.DataPutRequest;
 import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.requests.ExecutorRegistration;
-import de.upb.sede.requests.Request;
 import de.upb.sede.util.Streams;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
 import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
@@ -43,7 +43,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 
 	private final HttpServer server;
 
-	private final Pattern PUT_DATA_URL_PATTERN = Pattern.compile("/put/(?<executionId>\\w+)/(?<fieldname>(?:[&_a-zA-Z][&\\w]*+))/(?<semtype>\\w+)");
+	private final Pattern PUT_DATA_URL_PATTERN = Pattern.compile("/put/(?<executionId>[-\\w]+)/(?<fieldname>(?:[&_a-zA-Z][&\\w]*+))/(?<semtype>\\w+)");
 	private final Pattern INTERRUPT_URL_PATTERN = Pattern.compile("/interrupt/(?<executionId>\\w+)");
 
 	public ExecutorHttpServer(ExecutorConfiguration execConfig, String hostAddress, int port) {
@@ -162,7 +162,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 			Map<String, String> contactInfo = (Map<String, String>) task.getAttributes().get("contact-info");
 			String host = contactInfo.get("host-address");
 			String fieldname = (String) task.getAttributes().get("fieldname");
-			String semType = SEDEObject.PrimitiveType.Bool.name();
+			String semType = PrimitiveDataField.PrimitiveType.Bool.name();
 			String executionId = task.getExecution().getExecutionId();
 			boolean failed = false;
 			return createPutDataRequest(host, fieldname, semType, executionId, failed);

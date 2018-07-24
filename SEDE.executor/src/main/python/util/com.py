@@ -115,7 +115,7 @@ class WriteFileRequest(BasicClientRequest):
     def send(self) -> IO:
         directory = os.path.dirname(self.filepath)
         if not os.path.exists(directory):
-            os.makedirs(directory)
+            os.makedirs(directory, exist_ok=True)
         self.filep = open(self.filepath, "wb")
         return self.filep
 

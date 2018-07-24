@@ -1,3 +1,7 @@
+
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 project.ext {
     /*
         Set global properties like folder paths and so on:
@@ -14,7 +18,12 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
     group = 'de.upb.sede'
-    version = '1.0'
+    version = '0.0.2'
+
+    configurations {
+        provided
+        compile.extendsFrom provided
+    }
 
     repositories {
         jcenter()
@@ -53,10 +62,50 @@ subprojects {
         }
     }
 
+    /*
+     * create a symbolic link to the testrsc folder in each subproject's root folder.
+     * Do this because eclipse while runnning runs tests, set the working directory to the sub project root directory.
+     *
+     */
+    task link_testrsc {
+        //println "${rootProject.projectDir}"
+        def p = Paths.get("${projectDir}/testrsc")
+        if(Files.notExists(p)) {
+            def target = Paths.get("${rootProject.projectDir}/testrsc/")
+            println "${p} does not exist. Creating symbolic link to ${target}."
+            Files.createSymbolicLink(p,  target)
+        } else {
+            println "${p.toAbsolutePath()} already exists."
+        }
+
+    }
+    eclipseProject.dependsOn link_testrsc
+
+
     /* Set working directory of tests to root folder: */
     test{
         workingDir = new File("${project.rootDir}")
         ignoreFailures = true
+    }
+
+    // build Jar:
+    task jarjar(type: Jar) {
+        manifest {
+            attributes 'Implementation-Title': "${project.name}",
+                    'Implementation-Version': version
+        }
+        destinationDir = file("$rootDir/deploy/SEDE")
+        baseName = project.name
+        from {
+            (configurations.runtime - configurations.provided)
+                .findAll {
+                !it.name.endsWith(".pom")
+            }
+                .collect {
+                zipTree(it)
+            }
+        }
+        with jar
     }
 }
 /*
@@ -72,8 +121,8 @@ project(':SEDE.core') {
 
 project(':SEDE.deployment') {
     dependencies {
-        compile project(':SEDE.core')
-        compile project(':SEDE.http-apps')
+        provided project(':SEDE.core')
+        provided project(':SEDE.http-apps')
         // https://mvnrepository.com/artifact/commons-cli/commons-cli
         compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
         // https://mvnrepository.com/artifact/commons-io/commons-io
@@ -83,33 +132,38 @@ project(':SEDE.deployment') {
 
 project(':SEDE.gateway') {
     dependencies {
-        compile project(':SEDE.core')
+        provided project(':SEDE.core')
 
         // https://mvnrepository.com/artifact/org.skyscreamer/jsonassert
         testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
 
-        implementation 'com.github.aminfa:TinyJavaDot:v1.3'
+        compile 'com.github.aminfa:TinyJavaDot:v1.3'
     }
 }
 
 project(':SEDE.executor') {
     dependencies {
-        testCompile project(':SEDE.services:demolib')
+        testCompile project(':demolib')
 
         // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
-        compile project(':SEDE.core')
-        compile project(':SEDE.gateway')
+
+        provided project(':SEDE.core')
+//        provided project(':SEDE.gateway')
     }
 }
 
 project(':SEDE.http-apps') {
     dependencies {
-        testCompile project(':SEDE.services:demolib')
-        testCompile project(':SEDE.services:imaging')
-        compile project(':SEDE.core')
-        compile project(':SEDE.gateway')
-        compile project(':SEDE.executor')
+        // https://mvnrepository.com/artifact/com.google.guava/guava
+//        compile group: 'com.google.guava', name: 'guava', version: '25.1-jre'
+
+        testCompile project(':demolib')
+        testCompile project(':imaging')
+
+        provided project(':SEDE.core')
+        provided project(':SEDE.gateway')
+        provided project(':SEDE.executor')
     }
 }
 /*

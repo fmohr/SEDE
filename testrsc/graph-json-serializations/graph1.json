@@ -1,9 +1,44 @@
 {
     "nodes": [
         {
+            "fieldname": "d",
+            "caster": "caster1",
+            "nodetype": "TransmitData",
+            "semantic-type": "semtype1",
+            "description": "transmit \"d\"->id0",
+            "contact-info": {
+                "id": "id0",
+                "host-address": "some.host:1000"
+            }
+        },
+        {
+            "nodetype": "ParseConstant",
+            "constant": "100",
+            "isBool": false,
+            "isNumber": true,
+            "isNULL": false,
+            "isString": false,
+            "description": "parse Number: 100"
+        },
+        {
+            "fieldname": "a",
+            "nodetype": "AcceptData",
+            "description": "accept \"a\"  as is",
+            "CastType": null
+        },
+        {
             "fieldname": "b",
             "nodetype": "AcceptData",
-            "description": "accept \"b\""
+            "description": "accept \"b\"  as is",
+            "CastType": null
+        },
+        {
+            "nodetype": "ServiceInstanceStorage",
+            "is-load-instruction": true,
+            "instance-id": "id123",
+            "description": "load \"c\"",
+            "service-classpath": "de.upb.SEDE.testlib.A",
+            "serviceinstance-fieldname": "c"
         },
         {
             "nodetype": "Instruction",
@@ -25,23 +60,6 @@
             "fmInstruction": "c=de.upb.SEDE.testlib.A::__construct({100})"
         },
         {
-            "nodetype": "ServiceInstanceStorage",
-            "is-load-instruction": true,
-            "instance-id": "id123",
-            "description": "load \"c\"",
-            "service-classpath": "de.upb.SEDE.testlib.A",
-            "serviceinstance-fieldname": "c"
-        },
-        {
-            "nodetype": "ParseConstant",
-            "constant": "100",
-            "isBool": false,
-            "isNumber": true,
-            "isNULL": false,
-            "isString": false,
-            "description": "parse Number: 100"
-        },
-        {
             "nodetype": "Instruction",
             "param-types": [],
             "output-index": -1,
@@ -56,40 +74,24 @@
             "context": "a",
             "is-context-a-fieldname": false,
             "fmInstruction": "d=c::add({a,b})"
-        },
-        {
-            "fieldname": "a",
-            "nodetype": "AcceptData",
-            "description": "accept \"a\""
-        },
-        {
-            "fieldname": "d",
-            "caster": "caster1",
-            "nodetype": "TransmitData",
-            "semantic-type": "semtype1",
-            "description": "transmit \"d\"->id0",
-            "contact-info": {
-                "id": "id0",
-                "host-address": "some.host:1000"
-            }
         }
     ],
     "edges": {
-        "0": [
-            4
-        ],
         "1": [
-            4
+            5
+        ],
+        "2": [
+            6
         ],
         "3": [
-            1
-        ],
-        "4": [
-            2,
             6
         ],
         "5": [
-            4
+            6
+        ],
+        "6": [
+            4,
+            0
         ]
     }
 }

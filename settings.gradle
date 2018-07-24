@@ -18,9 +18,15 @@ include 'SEDE.http-apps'
 /*
  * Projects offering services.
  */
-include 'SEDE.services:demolib'
-include 'SEDE.services:imaging'
-include 'SEDE.services:jsml'
+def serivcePredix = 'SEDE.services/'
+include 'demolib'
+project(':demolib').projectDir = new File(serivcePredix, "demolib")
+
+include 'imaging'
+project(':imaging').projectDir = new File(serivcePredix, "imaging")
+
+//include 'mls'
+//project(':mls').projectDir = new File(serivcePredix, "mls")
 
 rootProject.name = 'SEDE'
 

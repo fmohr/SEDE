@@ -4,6 +4,7 @@ import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.ServiceInstanceField;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.gateway.Gateway;
 import de.upb.sede.requests.ExecRequest;
@@ -49,7 +50,7 @@ public class PlainLibGraphs {
 				"b::set_b({-1});" +
 				"state2 = b::__str__();";
 		ServiceInstanceHandle instanceHandle = new ServiceInstanceHandle(getClientRegistration().getId(), "plainlib.package1.b.B", "$INSTANCE_ID b");
-		SEDEObject b = new SEDEObject(instanceHandle);
+		SEDEObject b = new ServiceInstanceField(instanceHandle);
 		Map<String, SEDEObject> inputs = new HashMap<>();
 		inputs.put("b", b);
 		InputFields inputFields = InputFields.fromMap(inputs);

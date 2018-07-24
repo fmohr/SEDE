@@ -5,9 +5,11 @@ import de.upb.sede.casters.FastBitmapCaster;
 import de.upb.sede.client.CoreClientHttpServer;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
+import de.upb.sede.core.ObjectDataField;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.config.ExecutorConfiguration;
-import de.upb.sede.core.SemanticStreamer;
+import de.upb.sede.exec.Executor;
+import de.upb.sede.exec.ExecutorHttpServer;
 import de.upb.sede.gateway.GatewayHttpServer;
 import de.upb.sede.requests.Result;
 import de.upb.sede.requests.RunRequest;
@@ -36,6 +38,9 @@ public class ImagingTests {
 
 	static FastBitmap frog;
 
+	static String executor1Address = WebUtil.HostIpAddress();
+	static int executorPort = 9000;
+	static ExecutorHttpServer executor1;
 
 	static GatewayHttpServer gateway;
 
@@ -50,17 +55,37 @@ public class ImagingTests {
 		/*
 			Disable if you will have an executor register to the gateway:
 		 */
-		coreClient.getClientExecutor().getExecutorConfiguration().getSupportedServices().addAll(
+//		coreClient.getClientExecutor().getExecutorConfiguration().getSupportedServices().addAll(
+//				Arrays.asList("Catalano.Imaging.Filters.Crop",
+//						"Catalano.Imaging.Filters.Resize",
+//						"Catalano.Imaging.sede.CropFrom0")
+//		);
+		/*
+			Disable if you dont want to have a local executor do the imaging:
+		 */
+		creator = new ExecutorConfigurationCreator();
+		creator.withExecutorId("executor");
+		executor1 = new ExecutorHttpServer(ExecutorConfiguration.parseJSON(creator.toString()), executor1Address, executorPort);
+		executor1.getExecutorConfiguration().getSupportedServices().addAll(
 				Arrays.asList("Catalano.Imaging.Filters.Crop",
 						"Catalano.Imaging.Filters.Resize",
 						"Catalano.Imaging.sede.CropFrom0")
 		);
+		gateway.register(executor1.registration());
 		/*
 			Disabled if you dont have dot installed.
-
 		 */
 		coreClient.writeDotGraphToDir("testrsc/images");
 
+	}
+
+
+
+	@AfterClass
+	public static void shutdown() {
+		gateway.shutdown();
+		executor1.shutdown();
+		coreClient.getClientExecutor().shutdown();
 	}
 
 	@BeforeClass
@@ -84,7 +109,7 @@ public class ImagingTests {
 		policy.setServicePolicy("None");
 		policy.setReturnFieldnames(Arrays.asList("imageOut"));
 
-		SEDEObject inputObject_fb1 = new SEDEObject(FastBitmap.class.getName(), frog);
+		SEDEObject inputObject_fb1 = new ObjectDataField(FastBitmap.class.getName(), frog);
 
 		Map<String, SEDEObject> inputs = new HashMap<>();
 		inputs.put("imageIn", inputObject_fb1);
@@ -102,7 +127,7 @@ public class ImagingTests {
 			Cast it to bitmap:
 		 */
 		FastBitmap processedImage = (FastBitmap) result.castResultData(
-				FastBitmap.class.getName(), FastBitmapCaster.class).getObject();
+				FastBitmap.class.getName(), FastBitmapCaster.class).getDataField();
 		JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
 	}
 
@@ -119,7 +144,7 @@ public class ImagingTests {
 		policy.setServicePolicy("None");
 		policy.setReturnFieldnames(Arrays.asList("imageOut"));
 
-		SEDEObject inputObject_fb1 = new SEDEObject(FastBitmap.class.getName(), frog);
+		SEDEObject inputObject_fb1 = new ObjectDataField(FastBitmap.class.getName(), frog);
 
 		Map<String, SEDEObject> inputs = new HashMap<>();
 		inputs.put("imageIn", inputObject_fb1);
@@ -137,7 +162,7 @@ public class ImagingTests {
 			Cast it to bitmap:
 		 */
 		FastBitmap processedImage = (FastBitmap) result.castResultData(
-				FastBitmap.class.getName(), FastBitmapCaster.class).getObject();
+				FastBitmap.class.getName(), FastBitmapCaster.class).getDataField();
 		JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
 	}
 

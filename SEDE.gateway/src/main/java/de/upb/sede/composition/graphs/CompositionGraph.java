@@ -174,6 +174,21 @@ public class CompositionGraph {
 	}
 
 	/**
+	 * This method connects node1 to every target node of node2.
+	 * Basically:
+	 * <pre>
+	 * for(BaseNode bn : GraphTraversal.targetingNodes(this, node2)) {
+	 * 		connectNodes(node1, bn);
+	 * }
+	 * </pre>
+	 */
+	public void connectToItsTargets(BaseNode node1, BaseNode node2) {
+		for(BaseNode bn : GraphTraversal.targetingNodes(this, node2)) {
+			connectNodes(node1, bn);
+		}
+	}
+
+	/**
 	 * Removes the given node and its the edges from the graph.
 	 */
 	public void removeNode(BaseNode nodeToRemove) {

@@ -39,8 +39,8 @@
             "m2": {
                 "params": [
                     {
-                        "type":"t1",
-                        "fixed":"constant1"
+                        "type": "t1",
+                        "fixed": "constant1"
                     },
                     {
                         "type": "t2"
@@ -52,7 +52,7 @@
                 ]
             }
         },
-        "wrapper" : "A"
+        "wrapper": "A"
     },
     "C": {
         "methods": {

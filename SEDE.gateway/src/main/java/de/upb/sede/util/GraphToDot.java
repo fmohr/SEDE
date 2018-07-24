@@ -4,7 +4,6 @@ import de.upb.o4.tinyjavadot.DotNode;
 import de.upb.o4.tinyjavadot.DotGraph;
 import de.upb.sede.composition.graphs.*;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.util.ShellUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,22 +18,26 @@ public class GraphToDot {
 	
 	private static final String PATH_TO_DOT;
 
+	private static final boolean DISABLED;
+	
 	static {
 		/*
 		 * Read the path to dot from environment variable: 'DOT_PATH'
 		 */
-		if(System.getenv().containsKey("DOT_PATH")) {
-			PATH_TO_DOT = System.getenv().get(System.getenv().get("DOT_PATH"));
+		if(System.getenv().containsKey("DOT_PATH") && System.getenv().get("DOT_PATH") != null) {
+			PATH_TO_DOT = System.getenv().get("DOT_PATH");
+			logger.info("DOT_PATH: {}", PATH_TO_DOT);
 		} else {
 			PATH_TO_DOT = "/usr/local/bin/dot";
 			logger.info("Environment variable 'DOT_PATH' isn't defined.");
-			logger.info("Using {} as default path to dot. Change default in: GraphToDot.java");
+			logger.info("Using {} as default path to dot. Change default in: GraphToDot.java", PATH_TO_DOT);
 		}
 
 		if(! new File(PATH_TO_DOT).exists()) {
-			logger.warn("Dot doesn't exist on the specified path: {}", PATH_TO_DOT);
+			logger.warn("Dot doesn't exist on the specified path: {}. DISABLED GraphToDot.java", PATH_TO_DOT);
+			DISABLED = true;
 		} else {
-			logger.info("Path to dot: {}", PATH_TO_DOT);
+			DISABLED = false;
 		}
 	}
 
@@ -50,7 +53,7 @@ public class GraphToDot {
 		}
 		for (BaseNode baseNode : GraphTraversal.iterateNodes(compGraph)) {
 			DotNode dotNode = nodeMap.get(baseNode);
-			for(BaseNode neighbor : GraphTraversal.neighbors(compGraph, baseNode)) {
+			for(BaseNode neighbor : GraphTraversal.targetingNodes(compGraph, baseNode)) {
 				DotNode dotNeighbor = nodeMap.get(neighbor);
 				graph.connect(dotNode, dotNeighbor).style(dotted?DotGraph.EdgeStyle.dotted : DotGraph.EdgeStyle.filled);
 			}
@@ -99,7 +102,12 @@ public class GraphToDot {
 	}
 
 	private static String formatDot(String dot, String format) {
-		return ShellUtil.sh(new String[]{PATH_TO_DOT, "-T" + format}, dot);
+		if(DISABLED){
+			return "";
+		}
+		else {
+			return ShellUtil.sh(new String[]{PATH_TO_DOT, "-T" + format}, dot);
+		}
 	}
 	
 	private static String formatDotToSVG(String dot) {

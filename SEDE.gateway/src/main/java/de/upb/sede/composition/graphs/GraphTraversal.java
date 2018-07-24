@@ -2,18 +2,14 @@ package de.upb.sede.composition.graphs;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.exceptions.GraphFormException;
-import de.upb.sede.gateway.ResolveInfo;
-import de.upb.sede.util.ChainedIterator;
 import de.upb.sede.util.FilteredIterator;
 import de.upb.sede.util.Iterators;
 
@@ -76,7 +72,7 @@ public final class GraphTraversal {
 				private void findNext() {
 					next = fifoQueue.poll();
 					if (next != null) {
-						for (BaseNode neighbor : GraphTraversal.neighbors(clonedGraph, next)) {
+						for (BaseNode neighbor : GraphTraversal.targetingNodes(clonedGraph, next)) {
 							if (!visitedSet.contains(neighbor)) {
 								visitedSet.add(neighbor);
 								fifoQueue.addLast(neighbor);
@@ -90,18 +86,18 @@ public final class GraphTraversal {
 	}
 
 	/**
-	 * returns a collections of all the neighbors from the given node.
+	 * returns an iterable of all the neighbors from the given node.
 	 */
-	public static Iterable<BaseNode> neighbors(final CompositionGraph graph, final BaseNode node) {
+	public static Iterable<BaseNode> targetingNodes(final CompositionGraph graph, final BaseNode node) {
 		return () -> new FilteredIterator<BaseNode>(graph.getNodes().iterator(),
 				otherNode -> (node != otherNode && graph.containsEdge(node, otherNode)));
 	}
 
 	/**
-	 * returns a collections of all the nodes from the given graph that have an edge targeting the given node. 
+	 * returns an iterable of all the nodes from the given graph that have an edge targeting the given node.
 	 * Thus the given node is the neighbor of all iterated nodes.
 	 */
-	public static Iterable<BaseNode> neighborOf(final CompositionGraph graph, final BaseNode node) {
+	public static Iterable<BaseNode> sourceNodes(final CompositionGraph graph, final BaseNode node) {
 		return () -> new FilteredIterator<BaseNode>(graph.getNodes().iterator(),
 				otherNode -> (node != otherNode && graph.containsEdge(otherNode, node)));
 	}
@@ -211,10 +207,10 @@ public final class GraphTraversal {
 		return graph.getNodes();
 	}
 
-	public static Iterable<BaseNode> iterateNodesWithClassname(final CompositionGraph graph,
-			final String simpleNodeClassName) {
-		return () -> new FilteredIterator<>(iterateNodes(graph).iterator(),
-				n -> (n.getClass().getSimpleName().equals(simpleNodeClassName)));
+	public static <T>Iterable<T> iterateNodesWithClass(final CompositionGraph graph,
+													   final Class<T> nodeClass) {
+		return () -> new FilteredIterator<T>(((Iterator<T>)iterateNodes(graph).iterator()),
+				n -> nodeClass.isInstance(n));
 	}
 
 }

@@ -22,15 +22,15 @@ public final class SemanticStreamer {
 	private final static Logger logger = LogManager.getLogger();
 
 	public static SEDEObject readFrom(InputStream is, String type) {
-		Object data;
+		SEDEObject parsedObject;
 		if(SEDEObject.isPrimitive(type)){
 			/*
 			 * parse the primitive data:
 			 * data could be: Integer Double String Boolean or null
 			 */
 			String primitiveStr = Streams.InReadString(is);
-			data = castStringToPrimitive(primitiveStr, type).getObject();
-
+			Object data = castStringToPrimitive(primitiveStr, type).getDataField();
+			parsedObject = new PrimitiveDataField(type, data);
 		} else if(SEDEObject.isServiceInstanceHandle(type)){
 			/*
 			 * Parse service instance handle from json string:
@@ -39,27 +39,27 @@ public final class SemanticStreamer {
 			String jsonString = Streams.InReadString(is);
 			ServiceInstanceHandle serviceInstanceHandle = new ServiceInstanceHandle();
 			serviceInstanceHandle.fromJsonString(jsonString);
-			data = serviceInstanceHandle;
+			parsedObject = new ServiceInstanceField(serviceInstanceHandle);
 		} else if(SEDEObject.isSemantic(type)){
 			/*
-			 * Read the content from the stream into a byte array:
+			 * We don't know if the stream is persistent or not.
+			 * So we assume the worst case.
 			 */
-			data = Streams.InReadByteArr(is);
+			parsedObject = new SemanticDataField(type, is, false);
 		} else {
 			throw new RuntimeException("BUG: use read object from method to read real type data.");
 		}
-		SEDEObject parsedObject = new SEDEObject(type, data);
 		return parsedObject;
 	}
 
 	private static SEDEObject castStringToPrimitive(String data, String type){
-		SEDEObject.PrimitiveType enumType = SEDEObject.PrimitiveType.insensitiveValueOf(type);
+		PrimitiveDataField.PrimitiveType enumType = PrimitiveDataField.PrimitiveType.insensitiveValueOf(type);
 		return parsePrimitive(data, enumType);
 	}
 
 	public static SEDEObject readObjectFrom(SEDEObject semanticObject, String caster, String sourceSemanticType, String targetRealTypeCp) {
 		if(semanticObject.isSemantic()){
-			ByteArrayInputStream inputStream = new ByteArrayInputStream((byte[]) semanticObject.getObject());
+			InputStream inputStream = semanticObject.getDataField();
 			return readObjectFrom(inputStream, caster, sourceSemanticType, targetRealTypeCp);
 		} else{
 			throw new RuntimeException("The given SEDEObject " + semanticObject.toString() + " is not semantic.");
@@ -74,7 +74,7 @@ public final class SemanticStreamer {
 		try {
 			Object casterInstance = Class.forName(caster).getConstructor().newInstance();
 			Object castedObject = method.invoke(casterInstance, is);
-			SEDEObject sedeObject = new SEDEObject(targetRealTypeCp, castedObject);
+			SEDEObject sedeObject = new ObjectDataField(targetRealTypeCp, castedObject);
 			return sedeObject;
 		} catch (ReflectiveOperationException ex){
 			throw new RuntimeException(ex);
@@ -87,17 +87,18 @@ public final class SemanticStreamer {
 				/*
 				 * semnatic data can be written as string:
 				 */
-				String stringEncoded = castPrimitiveToString(content.getObject());
+				String stringEncoded = castPrimitiveToString(content.getDataField());
 				byte [] encodedData = stringEncoded.getBytes();
 				os.write(encodedData);
 			} else if(content.isSemantic()){
 				/**
 				 * Semnatic objects hold byte arrray as object:
 				 */
-				byte [] encodedData = (byte[])content.getObject();
-				os.write(encodedData);
+				InputStream encodedData = content.getDataField();
+				Streams.InReadChunked(encodedData).writeTo(os);
+				os.flush();
 			} else if(content.isServiceInstanceHandle()) {
-				ServiceInstanceHandle instanceHandle = (ServiceInstanceHandle) content.getObject();
+				ServiceInstanceHandle instanceHandle = (ServiceInstanceHandle) content.getDataField();
 				OutputStreamWriter osWriter = new OutputStreamWriter(os);
 				instanceHandle.toJson().writeJSONString(osWriter);
 				osWriter.flush();
@@ -119,7 +120,7 @@ public final class SemanticStreamer {
 		Method method = getMethodFor(caster, casterMethod);
 		try {
 			Object casterInstance = Class.forName(caster).getConstructor().newInstance();
-			method.invoke(casterInstance, os, content.getObject());
+			method.invoke(casterInstance, os, content.getDataField());
 		} catch (ReflectiveOperationException ex){
 			throw new RuntimeException(ex);
 		}
@@ -193,8 +194,8 @@ public final class SemanticStreamer {
 		}
 	}
 
-	public static SEDEObject parsePrimitive(String constantStr, SEDEObject.PrimitiveType primitiveType) {
-		Object data;
+	public static SEDEObject parsePrimitive(final String constantStr, final PrimitiveDataField.PrimitiveType primitiveType) {
+		final Object data;
 		switch (Objects.requireNonNull(primitiveType)) {
 		case NULL:
 			data = null;
@@ -213,8 +214,8 @@ public final class SemanticStreamer {
 			data = constantStr;
 			break;
 		default:
-			throw new RuntimeException("All cases covered. " + "Default to have data initialized.");
+			throw new RuntimeException("All cases covered. Add default to have 'data' initialized.");
 		}
-		return new SEDEObject(primitiveType.name(), data);
+		return new PrimitiveDataField(primitiveType.name(), data);
 	}
 }

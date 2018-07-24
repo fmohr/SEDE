@@ -1,23 +1,20 @@
 package demo;
 
 import de.upb.sede.client.CoreClient;
-import de.upb.sede.client.CoreClientHttpServer;
 import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.config.OnthologicalTypeConfig;
+import de.upb.sede.core.ObjectDataField;
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.ServiceInstanceField;
 import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.exec.Executor;
 import de.upb.sede.exec.ExecutorHttpServer;
-import de.upb.sede.exec.ServiceInstance;
 import de.upb.sede.gateway.Gateway;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.requests.Result;
 import de.upb.sede.requests.RunRequest;
-import de.upb.sede.requests.resolve.InputFields;
 import de.upb.sede.requests.resolve.ResolvePolicy;
-import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.BuiltinCaster;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
@@ -29,8 +26,9 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.lang.reflect.Array;
 import java.util.*;
+import static org.junit.Assert.*;
+import static org.hamcrest.CoreMatchers.*;
 
 public class IntegrationTest_PyExecutor {
 
@@ -55,6 +53,7 @@ public class IntegrationTest_PyExecutor {
 			"testrsc/config/builtin-typeconf.json"};
 	@BeforeClass
 	public static void setupGateway() {
+		System.out.println(System.getProperty("user.dir"));
 		gateway = new Gateway(new ClassesConfig(), new OnthologicalTypeConfig());
 		gateway.getClassesConfig().appendConfigFromFiles(classconfFiles);
 		gateway.getTypeConfig().appendConfigFromFiles(typecongFiles);
@@ -102,7 +101,7 @@ public class IntegrationTest_PyExecutor {
 		RunRequest rr = createRR(execNr, composition, inputs);
 
 		Map<String, Result> resultMap = client.blockingRun(rr);
-		Number erg = (Number) resultMap.get("erg").getResultData().getObject();
+		Number erg = (Number) resultMap.get("erg").getResultData().getDataField();
 		ServiceInstanceHandle b = resultMap.get("b").getServiceInstanceHandle();
 
 		Assert.assertEquals(erg.intValue(), 3);
@@ -118,16 +117,16 @@ public class IntegrationTest_PyExecutor {
 				"n2 = b::calc_append_inplace({n1, 2});";
 
 		inputs.clear();
-		inputs.put("b", new SEDEObject(b));
-		inputs.put("n1", new SEDEObject(new NummerList(1,2,3)));
+		inputs.put("b", new ServiceInstanceField(b));
+		inputs.put("n1", new ObjectDataField(NummerList.class.getName(), new NummerList(1,2,3)));
 		rr = createRR(execNr, composition, inputs);
 
 		resultMap = client.blockingRun(rr);
-		String state_before = (String) resultMap.get("state_before").getResultData().getObject();
-		String state_after = (String) resultMap.get("state_after").getResultData().getObject();
-		NummerList n2 = (NummerList) resultMap.get("n2").castResultData("NummerList", DemoCaster.class).getObject();
-
-		Assert.assertNotEquals(state_before, state_after);
+		String state_before = (String) resultMap.get("state_before").getResultData().getDataField();
+		String state_after = (String) resultMap.get("state_after").getResultData().getDataField();
+		NummerList n2 = (NummerList) resultMap.get("n2").castResultData("NummerList", DemoCaster.class).getDataField();
+		
+		assertThat(state_after, not(equalTo(state_before)));
 		Assert.assertEquals("a = 0 b = 1", state_before);
 		Assert.assertEquals("a = 0 b = 2", state_after);
 		Assert.assertEquals(Arrays.asList(1.,2.,3.,4.), n2);
@@ -143,7 +142,7 @@ public class IntegrationTest_PyExecutor {
 		rr = createRR(execNr, composition, inputs);;
 		resultMap = client.blockingRun(rr);
 		ServiceInstanceHandle b2 = resultMap.get("b2").getServiceInstanceHandle();
-		String textUpper = (String) resultMap.get("textUpper").getResultData().getObject();
+		String textUpper = (String) resultMap.get("textUpper").getResultData().getDataField();
 		Assert.assertEquals("ABCD", textUpper);
 
 		Assert.assertEquals(pyExecutorId, b2.getExecutorId());
@@ -185,22 +184,22 @@ public class IntegrationTest_PyExecutor {
 				"n4 = demo.math.Addierer::summierListe({n3, n2});" +
 				"n5 = b::calc_append({n4, 5});";
 		inputs.clear();
-		inputs.put("n1", new SEDEObject(new NummerList(3)));
-		inputs.put("n2", new SEDEObject(new NummerList(3, 7)));
-		inputs.put("b", new SEDEObject(b));
-		inputs.put("g", new SEDEObject(g));
+		inputs.put("n1", new ObjectDataField(NummerList.class.getName(), new NummerList(3)));
+		inputs.put("n2", new ObjectDataField(NummerList.class.getName(), new NummerList(3, 7)));
+		inputs.put("b", new ServiceInstanceField(b));
+		inputs.put("g", new ServiceInstanceField(g));
 		rr = createRR(execNr, composition, inputs);
 		resultMap = client.blockingRun(rr);
 		NummerList n3 = (NummerList) resultMap.get("n3")
 				.castResultData("NummerList", DemoCaster.class)
-				.getObject();
+				.getDataField();
 		NummerList n4 = (NummerList) resultMap.get("n4")
 				.castResultData("NummerList", DemoCaster.class)
-				.getObject();
+				.getDataField();
 		NummerList n5 = (NummerList) resultMap.get("n5")
 				.castResultData("NummerList", DemoCaster.class)
-				.getObject();
-		Boolean bool1 = (Boolean) resultMap.get("bool1").getResultData().getObject();
+				.getDataField();
+		Boolean bool1 = (Boolean) resultMap.get("bool1").getResultData().getDataField();
 
 
 		Assert.assertTrue(bool1);
@@ -220,12 +219,12 @@ public class IntegrationTest_PyExecutor {
 		String composition =
 				"l2 = demo.math.Addierer::addierBuiltIn({l1,2});";
 		Map<String, SEDEObject> inputs = new HashMap<>();
-		inputs.put("l1", new SEDEObject("builtin.List", Arrays.asList(0,1,2)));
+		inputs.put("l1", new ObjectDataField("builtin.List", Arrays.asList(0,1,2)));
 		RunRequest rr = createRR(execNr, composition, inputs);
 
 		Map<String, Result> resultMap = client.blockingRun(rr);
 		List<Double> l2 = (List<Double>) resultMap.get("l2").
-				castResultData("builtin.List", BuiltinCaster.class).getObject();
+				castResultData("builtin.List", BuiltinCaster.class).getDataField();
 		Assert.assertEquals(Arrays.asList(2.,3.,4.) ,l2);
 
 	}

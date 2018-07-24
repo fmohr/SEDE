@@ -1,0 +1,6 @@
+{
+  "weka.core.Instances": {
+    "semantic_type": "dataset",
+    "onthological_caster": "de.upb.sede.services.mls.casters.InstancesCaster"
+  }
+}

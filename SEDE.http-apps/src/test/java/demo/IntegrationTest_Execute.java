@@ -3,9 +3,10 @@ package demo;
 import java.util.*;
 
 import de.upb.sede.config.ExecutorConfiguration;
+import de.upb.sede.core.ObjectDataField;
+import de.upb.sede.core.PrimitiveDataField;
 import de.upb.sede.exec.*;
 import de.upb.sede.requests.Result;
-import de.upb.sede.requests.resolve.ResolveRequest;
 import demo.math.Addierer;
 import demo.types.DemoCaster;
 import demo.types.NummerList;
@@ -50,17 +51,17 @@ public class IntegrationTest_Execute {
 		String exec1Config = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Executor_1")
 				.withSupportedServices("demo.math.Addierer").toString();
 		ExecutorConfiguration config = ExecutorConfiguration.parseJSON(exec1Config);
-		executor1 = new ExecutorHttpServer(config, "localhost", 9001);
+		executor1 = new ExecutorHttpServer(config, "localhost", 9010);
 
 		String exec2Config = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Executor_2")
 				.withSupportedServices("demo.math.Gerade").toString();
 		config = ExecutorConfiguration.parseJSON(exec2Config);
 		executor2 = new ExecutorHttpServer(config, "localhost", 9002);
 
-		gateway = new GatewayHttpServer(9000, getTestClassConfig(), getTestTypeConfig());
+		gateway = new GatewayHttpServer(9100, getTestClassConfig(), getTestTypeConfig());
 
-		executor1.registerToGateway("localhost:9000");
-		executor2.registerToGateway("localhost:9000");
+		executor1.registerToGateway("localhost:9100");
+		executor2.registerToGateway("localhost:9100");
 
 		String clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core_Client_Services")
 				.withSupportedServices("demo.math.Addierer", "demo.math.Gerade").toString();
@@ -72,7 +73,7 @@ public class IntegrationTest_Execute {
 		clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core_Client")
 				.toString();
 		config = ExecutorConfiguration.parseJSON(clientConfig);
-		httpClient = new CoreClientHttpServer(config, "localhost", 9003, "localhost", 9000);
+		httpClient = new CoreClientHttpServer(config, "localhost", 9003, "localhost", 9100);
 	}
 
 	@AfterClass
@@ -80,28 +81,27 @@ public class IntegrationTest_Execute {
 		gateway.shutdown();
 		executor1.shutdown();
 		executor2.shutdown();
+		httpClient.getClientExecutor().shutdown();
 	}
 
 	@Test
 	public void testHttpInterrupt() throws InterruptedException {
 		CoreClient cc = getHttpClient();
 		testInterruptExecution(cc);
-
-
-		Execution exec = cc.getClientExecutor().getExecution("SleepRequest");
+		Execution exec = cc.getClientExecutor().getExecution("SleepRequest").orElse(null);
 		if(exec!=null) {
 			Assert.assertTrue(exec.hasExecutionFinished());
 			Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(exec));
 			logger.info("Execution has beed interrupted.");
 		}
-		exec = executor1.getExecution("SleepRequest");
+		exec = executor1.getExecution("SleepRequest").orElse(null);
 		if(exec!=null) {
 			Assert.assertTrue(exec.hasExecutionFinished());
 			Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(exec));
 			logger.info("Execution has beed interrupted.");
 		}
 
-		exec = executor2.getExecution("SleepRequest");
+		exec = executor2.getExecution("SleepRequest").orElse(null);
 		if(exec!=null) {
 			Assert.assertTrue(exec.hasExecutionFinished());
 			Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(exec));
@@ -114,13 +114,14 @@ public class IntegrationTest_Execute {
 	public void testLocalInterrupt() throws InterruptedException {
 		CoreClient cc = getLocalClient();
 		testInterruptExecution(cc);
-		Execution clientExec = cc.getClientExecutor().getExecution("SleepRequest");
-		if(clientExec!=null) {
-			Assert.assertTrue(clientExec.hasExecutionFinished());
-			Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(clientExec));
-			logger.info("Execution has beed interrupted.");
+		if(cc.getClientExecutor().getExecPool().hasExecution("SleepRequest")) {
+			Execution clientExec = cc.getClientExecutor().getExecution("SleepRequest").orElse(null);
+			if (clientExec != null) {
+				Assert.assertTrue(clientExec.hasExecutionFinished());
+				Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(clientExec));
+				logger.info("Execution has beed interrupted.");
+			}
 		}
-
 	}
 
 
@@ -131,8 +132,8 @@ public class IntegrationTest_Execute {
 		Map<String, SEDEObject> inputs = new HashMap<>();
 		NummerList a = new NummerList(Arrays.asList(1,2,3));
 		NummerList b = new NummerList(Arrays.asList(3,2,1));
-		SEDEObject inputA = new SEDEObject(NummerList.class.getName(), a);
-		SEDEObject inputB = new SEDEObject(NummerList.class.getName(), b);
+		SEDEObject inputA = new ObjectDataField(NummerList.class.getName(), a);
+		SEDEObject inputB = new ObjectDataField(NummerList.class.getName(), b);
 		inputs.put("a", inputA);
 		inputs.put("b", inputB);
 
@@ -147,7 +148,7 @@ public class IntegrationTest_Execute {
 
 		Assert.assertTrue(results.containsKey("c"));
 		Assert.assertFalse(results.get("c").hasFailed());
-		NummerList c = (NummerList) results.get("c").castResultData("NummerList", DemoCaster.class).getObject();
+		NummerList c = (NummerList) results.get("c").castResultData("demo.types.NummerList", DemoCaster.class).getDataField();
 
 		Assert.assertEquals(Addierer.summierListe(a,b), c);
 	}
@@ -215,7 +216,7 @@ public class IntegrationTest_Execute {
 		runBenchmark(cc);
 	}
 
-	@Test
+//	@Test
 	public void testHttpBenchmark() throws InterruptedException {
 		CoreClientHttpServer cc = getHttpClient();
 		runBenchmark(cc);
@@ -223,6 +224,9 @@ public class IntegrationTest_Execute {
 		System.gc();
 		System.gc();
 		Thread.sleep(500);
+		/*
+			Check for potential memory leak:
+		 */
 		Assert.assertEquals(0, httpClient.getClientExecutor().getWorkerPool().futueListSize());
 		Assert.assertEquals(0, executor2.getWorkerPool().futueListSize());
 		Assert.assertEquals(0, executor1.getWorkerPool().futueListSize());
@@ -280,7 +284,7 @@ public class IntegrationTest_Execute {
 
 	public void test() {
 		HashMap<String, SEDEObject> inputs = new HashMap<>();
-		inputs.put("a", new SEDEObject("Number", 10));
+		inputs.put("a", new PrimitiveDataField(10));
 		RunRequest runRequest = new RunRequest("rId", "composition blabla", new ResolvePolicy(), inputs);
 		System.out.println(runRequest.toJsonString());
 	}

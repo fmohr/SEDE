@@ -7,7 +7,10 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ExecutionPool {
 
@@ -22,8 +25,11 @@ public class ExecutionPool {
 
 	private final ExecutorConfiguration executorConfiguration;
 
+	private Function<String, Execution> executionSupplier;
+
 	ExecutionPool(ExecutorConfiguration executorConfiguration){
 		this.executorConfiguration = executorConfiguration;
+		setExecutionSupplier(this::createExecution);
 	}
 
 	synchronized Execution getOrCreateExecution(String execId) {
@@ -34,7 +40,7 @@ public class ExecutionPool {
 			 * The given id doesn't have any execution assigned to it.
 			 * Create a new Execution for the given request id:
 			 */
-			exec = createExecution(execId);
+			exec = executionSupplier.apply(execId);
 			execMap.put(execId, exec);
 		}
 		return exec;
@@ -61,7 +67,11 @@ public class ExecutionPool {
 		}
 	}
 
-	public synchronized  Execution getExecution(String execId) {
-		return execMap.get(execId);
+	public synchronized Optional<Execution> getExecution(String execId) {
+		return Optional.ofNullable(execMap.get(execId));
+	}
+
+	public void setExecutionSupplier(Function<String, Execution> executionForIdSupplier) {
+		this.executionSupplier = executionForIdSupplier;
 	}
 }

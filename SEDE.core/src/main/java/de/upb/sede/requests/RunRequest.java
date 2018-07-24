@@ -13,7 +13,6 @@ public class RunRequest extends Request {
 
 	private Optional<String> composition;
 	private Optional<ResolvePolicy> policy;
-
 	private Optional<Map<String, SEDEObject>> inputs;
 
 	public RunRequest() {

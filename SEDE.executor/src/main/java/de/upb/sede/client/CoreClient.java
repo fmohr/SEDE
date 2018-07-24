@@ -19,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -49,8 +50,14 @@ public class CoreClient implements ICoreClient{
 
 	@Override
 	public void join(String requestId, boolean interruptExecution) {
-		Execution execution = executor.getExecution(requestId);
-		if(execution == null) {
+		// only uses timeout when its above 0.
+		this.join(requestId, interruptExecution, -1, TimeUnit.DAYS);
+	}
+
+	@Override
+	public void join(String requestId, boolean interruptExecution, long timeout, TimeUnit timeUnit) {
+		Optional<Execution> execution = executor.getExecution(requestId);
+		if(!execution.isPresent()) {
 			return;
 		}
 		final Semaphore executionIsFinished = new Semaphore(0);
@@ -60,9 +67,12 @@ public class CoreClient implements ICoreClient{
 			executionIsFinished.release();
 		});
 
-		execution.getState().observe(executionDoneObserver);
+		execution.get().getState().observe(executionDoneObserver);
 		try {
-			executionIsFinished.acquire();
+			if(timeout > 0 )
+				executionIsFinished.tryAcquire(timeout, timeUnit);
+			else
+				executionIsFinished.acquire();
 		} catch (InterruptedException e) {
 			if (interruptExecution) {
 				interrupt(requestId);
@@ -70,11 +80,16 @@ public class CoreClient implements ICoreClient{
 		}
 	}
 
+
 	@Override
 	public String run(RunRequest runRequest, Consumer<Result> resultConsumer) {
 		if(resultConsumer == null) {
+			/*
+				In case of null just log the results.
+			 */
 			resultConsumer = CoreClient::logResult;
-		} else if(logger.isDebugEnabled()) {
+		}
+		 else if(logger.isDebugEnabled()) {
 			resultConsumer = resultConsumer.andThen(CoreClient::logResult);
 		}
 		String requestId = runRequest.getRequestID();
@@ -104,7 +119,7 @@ public class CoreClient implements ICoreClient{
 		List<String> resultFields = resolution.getReturnFields();
 		logger.debug("waiting for {}", resultFields);
 		ResultObserver resultObserver = new ResultObserver(requestId, resultFields, resultConsumer);
-		execution.getEnvironment().getState().observe(resultObserver);
+		execution.getEnvironment().observe(resultObserver);
 
 		logger.debug("Run-Request {} started.", requestId);
 		return requestId;
@@ -149,7 +164,7 @@ public class CoreClient implements ICoreClient{
 
 	public static void logResult(Result result) {
 		if(!result.hasFailed())
-			logger.debug("Received Result {}: {}: {}", result.getFieldname(), result.getResultData(), result.getResultData().getObject());
+			logger.debug("Received Result {}: {}", result.getFieldname(), result.getResultData());
 		else
 			logger.debug("Result unavailable {}", result.getFieldname());
 	}

@@ -64,7 +64,7 @@ subprojects {
 
     /*
      * create a symbolic link to the testrsc folder in each subproject's root folder.
-     * Do this because eclipse while runnning runs tests, set the working directory to the sub project root directory.
+     * Do this because eclipse uses the subproject root folder as  the working directory when it runs tests
      *
      */
     task link_testrsc {

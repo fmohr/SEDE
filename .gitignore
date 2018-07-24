@@ -61,7 +61,8 @@ gradle-app.setting
 **/out/
 SEDE.iml
 /deploy/**/*.pom
-
+**/testrsc
+!/testrsc/
 ## python ignores
 
 *.pyc

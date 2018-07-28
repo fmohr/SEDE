@@ -1,4 +1,3 @@
-
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -73,9 +72,17 @@ subprojects {
         if(Files.notExists(p)) {
             def target = Paths.get("${rootProject.projectDir}/testrsc/")
             println "${p} does not exist. Creating symbolic link to ${target}."
-            Files.createSymbolicLink(p,  target)
+            try {
+                Files.createSymbolicLink(p,  target)
+            } catch (java.nio.file.FileSystemException e) {
+                println "Cannot create symbolic link. Instead copying the entire testrsc folder.."
+                copy {
+                    from fileTree("${rootProject.projectDir}/testrsc/")
+                    into "${projectDir}/testrsc"
+                }
+            }
         } else {
-            println "${p.toAbsolutePath()} already exists."
+            // println "${p.toAbsolutePath()} already exists."
         }
 
     }
@@ -99,6 +106,7 @@ subprojects {
         from {
             (configurations.runtime - configurations.provided)
                 .findAll {
+
                 !it.name.endsWith(".pom")
             }
                 .collect {

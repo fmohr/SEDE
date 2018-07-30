@@ -13,20 +13,26 @@ include 'SEDE.core'
 include 'SEDE.deployment'
 include 'SEDE.gateway'
 include 'SEDE.executor'
-include 'SEDE.http-apps'
+
+/*
+ * Plugin Projects.
+ */
+def pluginFolder = 'SEDE.plugins/'
+include 'SEDE.http'
+project(':SEDE.http').projectDir = new File(pluginFolder, "SEDE.http")
 
 /*
  * Projects offering services.
  */
-def serivcePredix = 'SEDE.services/'
+def serivceFolder = 'SEDE.services/'
 include 'demolib'
-project(':demolib').projectDir = new File(serivcePredix, "demolib")
+project(':demolib').projectDir = new File(serivceFolder, "demolib")
 
 include 'imaging'
-project(':imaging').projectDir = new File(serivcePredix, "imaging")
+project(':imaging').projectDir = new File(serivceFolder, "imaging")
 
-//include 'mls'
-//project(':mls').projectDir = new File(serivcePredix, "mls")
+include 'mls'
+project(':mls').projectDir = new File(serivceFolder, "mls")
 
 rootProject.name = 'SEDE'
 

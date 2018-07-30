@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 
+import de.upb.sede.util.FileUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.BeforeClass;
@@ -24,19 +25,13 @@ public class Rudimentary {
 	}
 
 	@Test
-	public void testStaticReflection() {
-		logger.info("hello {}!", 1);
-		for (Method m : A.class.getDeclaredMethods()) {
-			System.out.println(m.getName());
-		}
+	public void readResources() {
+		System.out.println(FileUtil.readResourceAsString("config/A-classconf.json"));
 	}
 
-}
-class A {
-	public  int a(int a, int b){
-		return a+b;
+	@Test
+	public void testLogging() {
+		logger.info("• • •   − − −   • • •  ");
 	}
-	public double a(double a, double b){
-		return a-b;
-	}
+
 }

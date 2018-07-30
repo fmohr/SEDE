@@ -43,7 +43,6 @@ public class Observable<T> {
 			throw new RuntimeException("Cannot update again while update is in process.");
 		}
 		Iterator<Observer<T>> observerIterator = this.observers.iterator();
-		List<Observer<T>> observersToBeRemoved = new ArrayList<>();
 		updateInProcess = true;
 		while(observerIterator.hasNext()) {
 			Observer<T> observer = observerIterator.next();
@@ -67,7 +66,6 @@ public class Observable<T> {
 					 * remove this observer from the list of observers.
 					 */
 					observerIterator.remove();
-//					observersToBeRemoved.add(observer);
 				}
 			} catch (Exception ex) {
 				ex.printStackTrace();
@@ -75,7 +73,6 @@ public class Observable<T> {
 			}
 		}
 		updateInProcess = false;
-//		this.observers.removeAll(observersToBeRemoved);
 	}
 
 	/**

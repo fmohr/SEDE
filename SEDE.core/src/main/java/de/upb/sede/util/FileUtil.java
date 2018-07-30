@@ -1,13 +1,17 @@
 package de.upb.sede.util;
 
 import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Scanner;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import de.upb.sede.webinterfaces.client.WriteFileRequest;
 import org.apache.logging.log4j.LogManager;
@@ -40,6 +44,37 @@ public class FileUtil {
 			encoded = Files.readAllBytes(Paths.get(Objects.requireNonNull(filePath)));
 			String fileContent = new String(encoded, Charset.defaultCharset());
 			return fileContent.replaceAll("\r\n", "\n");
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		}
+	}
+
+	private static File getResourceFile(String resourceFilePath) {
+		File resourceFile;
+		ClassLoader classLoader = FileUtil.class.getClassLoader();
+		try{
+			resourceFile = new File(classLoader.getResource(resourceFilePath).getFile());
+		} catch(NullPointerException ex) {
+			throw new RuntimeException("Resource not found: " + resourceFilePath);
+		}
+		return resourceFile;
+	}
+
+	public static String getPathOfResource(String resourceFilePath) {
+		String path = getResourceFile(resourceFilePath).getPath();
+		if(resourceFilePath.endsWith("/") && !path.endsWith("/")) {
+			return path + "/";
+		} else {
+			return path;
+		}
+	}
+
+	public static String readResourceAsString(String resourceFilePath) {
+		//Get file from resources folder
+		File file = getResourceFile(resourceFilePath);
+
+		try (InputStream inputStream = new FileInputStream(file)) {
+			return Streams.InReadString(inputStream);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}

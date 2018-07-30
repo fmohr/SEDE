@@ -17,6 +17,7 @@ import de.upb.sede.services.mls.casters.InstancesCaster;
 import de.upb.sede.services.mls.DataSetService;
 import de.upb.sede.services.mls.util.MLDataSets;
 import de.upb.sede.util.ExecutorConfigurationCreator;
+import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.WebUtil;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -48,9 +49,11 @@ public class MLTests {
 
 	static GatewayHttpServer gateway;
 
-	static Instances weather;
+	static Instances dataset;
 	static Instances weatherTrainSet;
 	static Instances weatherTestSet;
+
+	private static final String datasetRef = "semeion.arff";
 
 	@BeforeClass
 	public static void startClient() {
@@ -111,16 +114,16 @@ public class MLTests {
 
 	@BeforeClass
 	public static void loadDataSet() throws Exception {
-		weather = MLDataSets.getDataSetWithLastIndexClass("weather.arff");
+		dataset = MLDataSets.getDataSetWithLastIndexClass(datasetRef);
 		RemovePercentage splitter = new RemovePercentage();
-		splitter.setInputFormat(weather);
+		splitter.setInputFormat(dataset);
 		splitter.setPercentage(50);
 
-		weatherTrainSet = Filter.useFilter(weather, splitter);
+		weatherTrainSet = Filter.useFilter(dataset, splitter);
 
-		splitter.setInputFormat(weather);
+		splitter.setInputFormat(dataset);
 		splitter.setInvertSelection(true);
-		weatherTestSet = Filter.useFilter(weather, splitter);
+		weatherTestSet = Filter.useFilter(dataset, splitter);
 	}
 	@AfterClass
 	public static  void shutdownClient() {
@@ -176,7 +179,7 @@ public class MLTests {
 	@Test
 	public void testClassification2() {
 		String composition =
-				"dataset = de.upb.sede.services.mls.DataSetService::__construct({\"weather.arff\"});" +
+				"dataset = de.upb.sede.services.mls.DataSetService::__construct({\"" +datasetRef + "\"});" +
 				"trainset = dataset::fromIndicesLabeled({indices_train, -1});" +
 				"testset  = dataset::fromIndicesLabeled({indices_test, -1});" +
 				"s1 = weka.classifiers.bayes.BayesNet::__construct();" +
@@ -189,7 +192,7 @@ public class MLTests {
 		policy.setPersistentServices(Arrays.asList("s1"));
 		policy.setReturnPolicy(ResolvePolicy.all);
 
-		List<List<Integer>> splits = MLDataSets.split(MLDataSets.intRange(0, weather.size()),0.8);
+		List<List<Integer>> splits = MLDataSets.split(MLDataSets.intRange(0, dataset.size()),0.5);
 
 
 		Map<String, SEDEObject> inputs = new HashMap<>();
@@ -211,7 +214,7 @@ public class MLTests {
 				"builtin.List", BuiltinCaster.class).getDataField();
 		Instances testDataFromExecutor = (Instances) resultMap.get("testset").castResultData("weka.core.Instances", InstancesCaster.class).getDataField();
 		double correctPredictions = 0.;
-		Instances weatherTestSet = new DataSetService("weather.arff").fromIndicesLabeled(splits.get(1), -1);
+		Instances weatherTestSet = new DataSetService(datasetRef).fromIndicesLabeled(splits.get(1), -1);
 		Assert.assertEquals(weatherTestSet.toString().trim(), testDataFromExecutor.toString().trim());
 		for (int i = 0; i < prediction.size(); i++) {
 			Instance testInstance = weatherTestSet.get(i);
@@ -224,10 +227,14 @@ public class MLTests {
 
 
 	private static ClassesConfig getTestClassConfig() {
-		return new ClassesConfig("testrsc/config/ml-classifiers-classconf.json");
+		return new ClassesConfig(FileUtil.getPathOfResource("config/ml-classifiers-classconf.json"));
 	}
 
 	private static OnthologicalTypeConfig getTestTypeConfig() {
-		return new OnthologicalTypeConfig("testrsc/config/builtin-typeconf.json","testrsc/config/ml-typeconf.json");
+		OnthologicalTypeConfig conf = new OnthologicalTypeConfig();
+
+		conf.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/builtin-typeconf.json"),
+				FileUtil.readResourceAsString("config/ml-typeconf.json"));
+		return conf;
 	}
 }

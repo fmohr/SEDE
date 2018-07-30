@@ -28,17 +28,16 @@ public class TestInstancesCaster {
 		String arffData = semanticRepr.toString();
 		assertTrue(arffData.contains(InstancesCaster.classAttributePrefix));
 		ByteArrayInputStream semanticData = new ByteArrayInputStream(arffData.getBytes());
-		Instances fromSemantic = (Instances) SemanticStreamer.
+		Instances fromSemantic = SemanticStreamer.
 				readObjectFrom(semanticData, InstancesCaster.class.getName(),
 				"dataset", Instances.class.getName()).getDataField();
 		assertEquals(weather.classIndex(), fromSemantic.classIndex());
 		assertEquals(weather.toString().trim(), fromSemantic.toString().trim());
 	}
-
-//	@Test
+	@Test
 	public void benchmarkCasting() {
 		long stop = System.currentTimeMillis();
-		Instances cifar = MLDataSets.getDataSetWithLastIndexClass("cifar.arff");
+		Instances cifar = MLDataSets.getDataSetWithLastIndexClass("cifar_0.arff");
 		long loadTime = System.currentTimeMillis() - stop;
 
 		ByteArrayOutputStream semanticRepr = new ByteArrayOutputStream();
@@ -50,7 +49,7 @@ public class TestInstancesCaster {
 		logger.info("Semantic data size: {} bytes", semanticData.length);
 		ByteArrayInputStream semanticInput = new ByteArrayInputStream(semanticData);
 		stop = System.currentTimeMillis();
-		Instances fromSemantic = (Instances) SemanticStreamer.
+		Instances fromSemantic = SemanticStreamer.
 				readObjectFrom(semanticInput, InstancesCaster.class.getName(),
 						"dataset", Instances.class.getName()).getDataField();
 		long fromSemanticTime = System.currentTimeMillis() - stop;

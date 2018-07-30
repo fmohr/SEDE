@@ -60,6 +60,7 @@ SEDE.iml
 /deploy/**/*.pom
 **/testrsc
 !/testrsc/
+/*.temp/
 ## python ignores
 
 *.pyc

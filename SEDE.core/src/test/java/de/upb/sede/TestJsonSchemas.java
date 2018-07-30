@@ -16,7 +16,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.junit.Test;
 
-import java.io.File;
 
 public class TestJsonSchemas {
 
@@ -26,14 +25,7 @@ public class TestJsonSchemas {
 	private String getSchemaForRequest(Class<? extends JsonSerializable> requestClass) {
 		//Get file from resources folderL
 		String pathToSchema = "json-schema/requests/" + requestClass.getSimpleName() + ".schema.json";
-		ClassLoader classLoader = getClass().getClassLoader();
-		File resourceFile;
-		try{
-			resourceFile = new File(classLoader.getResource(pathToSchema).getFile());
-		} catch(NullPointerException  ex) {
-			throw new RuntimeException("Resource not found: " + pathToSchema);
-		}
-		return FileUtil.readFileAsString(resourceFile.getPath());
+		return FileUtil.readResourceAsString(pathToSchema);
 	}
 
 	@Test

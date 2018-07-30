@@ -45,7 +45,7 @@ public class CastTypeProcedure implements Procedure {
 			SemanticStreamer.streamObjectInto(byteOutputStream, field, casterClasspath, targetType);
 			castedField = new SemanticDataField(targetType, byteInputSteam, true);
 		} else if(field.isSemantic()){
-			ByteArrayInputStream byteStream = field.getDataField();
+			InputStream byteStream = field.getDataField();
 			castedField = SemanticStreamer.readObjectFrom(byteStream, casterClasspath, originalType, targetType);
 		} else {
 			throw new RuntimeException("Task states to cast \"" + fieldname + "\" to  semantic " +

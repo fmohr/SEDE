@@ -129,7 +129,7 @@ public class Execution implements IExecution {
 
 	private final void taskResolved(Task task) {
 		synchronized (this) {
-			waitingTasks.add(task);
+
 			/* notify observers about this new resolved task. */
 			runnableTasks.update(task);
 		}
@@ -227,7 +227,7 @@ public class Execution implements IExecution {
 	 *
 	 * @return set of unfinished tasks
 	 */
-	synchronized Set<Task> getUnfinishedTasks() {
+	public synchronized Set<Task> getUnfinishedTasks() {
 		if (hasExecutionFinished()) {
 			return Collections.EMPTY_SET;
 		} else {

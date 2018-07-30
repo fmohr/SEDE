@@ -1,9 +1,0 @@
-{
-    "nodetype": "SendGraph",
-    "description": "send graph",
-    "contact-info": {
-        "id": "id0",
-        "host-address": "10.10.10.10:100"
-    },
-    "graph": "<graph serialization>"
-}

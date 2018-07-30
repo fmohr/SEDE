@@ -78,11 +78,11 @@ public class PlainLibGraphs {
 
 
 	private static ClassesConfig getPlainlibClassConfig() {
-		return new ClassesConfig("testrsc/config/plainlib-classconf.json");
+		return new ClassesConfig(FileUtil.getPathOfResource("config/plainlib-classconf.json"));
 	}
 
 	private static OnthologicalTypeConfig getPlainlibTypeConfig() {
-		return new OnthologicalTypeConfig("testrsc/config/plainlib-typeconf.json");
+		return new OnthologicalTypeConfig(FileUtil.getPathOfResource("config/plainlib-typeconf.json"));
 	}
 
 	private static ExecutorRegistration getClientRegistration() {

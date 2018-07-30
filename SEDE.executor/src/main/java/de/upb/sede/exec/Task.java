@@ -44,7 +44,7 @@ public final class Task implements Observer<Task>{
 	{
 		/* enable trace of task */
 		if(logger.isTraceEnabled()) {
-			final Observer<Task> logObserver = Observer.lambda(t -> true, t -> logger.debug("{}: {} updated", t, t.getDescription()), t->false);
+			final Observer<Task> logObserver = Observer.lambda(t -> true, t -> logger.debug("{}\n\tUPDATE: {}", t, t.getDescription()), t->false);
 			taskState.observe(logObserver);
 		}
 	}
@@ -83,7 +83,7 @@ public final class Task implements Observer<Task>{
 
 	/**
 	 * @param task  task with updated state
-	 * @return true if the task is done and the dependency contains this task.
+	 * @return true if the3 task is done and the dependency contains this task.
 	 */
 	@Override
 	public boolean notifyCondition(Task task) {
@@ -225,13 +225,13 @@ public final class Task implements Observer<Task>{
 
 	@Override
 	public String toString() {
-		return "Task{" +
-				"taskName='" + taskName + '\'' +
-				", resolved=" + resolved +
-				", started=" + started +
-				", doneRunning=" + doneRunning +
-				", failed=" + failed +
-				", succeeded=" + succeeded +
+		return "Task {" +
+				"'" + taskName + '\'' +
+				(resolved ? ", resolved " : "") +
+				(started ? ", started "  : "") +
+				(doneRunning ? ", doneRunning "   : "") +
+				(failed ? ", failed " : "") +
+				(succeeded ? ", succeeded "  : "") +
 				//", \nattr:" + attributes.toString() +
 				"}";
 	}

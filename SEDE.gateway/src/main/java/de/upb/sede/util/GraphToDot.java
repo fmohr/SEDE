@@ -24,6 +24,7 @@ public class GraphToDot {
 		/*
 		 * Read the path to dot from environment variable: 'DOT_PATH'
 		 */
+		Map<String, String> env = System.getenv();
 		if(System.getenv().containsKey("DOT_PATH") && System.getenv().get("DOT_PATH") != null) {
 			PATH_TO_DOT = System.getenv().get("DOT_PATH");
 			logger.info("DOT_PATH: {}", PATH_TO_DOT);

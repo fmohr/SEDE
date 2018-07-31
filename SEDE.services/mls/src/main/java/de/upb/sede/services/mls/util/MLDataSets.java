@@ -25,7 +25,11 @@ public class MLDataSets {
 		 * Read the path of data set folder from environment variable: 'DATASET_PATH'
 		 */
 		if(System.getenv().containsKey("DATASET_PATH") && System.getenv().get("DATASET_PATH")!=null) {
-			DATASET_PATH = System.getenv().get("DATASET_PATH").toString();
+			String environmentDatasetPath = System.getenv().get("DATASET_PATH");
+			if(!environmentDatasetPath.endsWith("/")) {
+				environmentDatasetPath += "/";
+			}
+			DATASET_PATH = environmentDatasetPath;
 		} else {
 			DATASET_PATH = "../datasets/";
 			logger.info("Environment variable 'DATASET_PATH' isn't defined.");

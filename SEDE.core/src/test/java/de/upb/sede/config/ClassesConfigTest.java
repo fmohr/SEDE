@@ -1,5 +1,6 @@
 package de.upb.sede.config;
 
+import de.upb.sede.util.FileUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,7 +24,7 @@ public class ClassesConfigTest {
 	}
 
 	String getConfPath(String name) {
-		return "testrsc/config/" + name + "-classconf.json";
+		return FileUtil.getPathOfResource("config/" + name + "-classconf.json");
 	}
 
 	@Test

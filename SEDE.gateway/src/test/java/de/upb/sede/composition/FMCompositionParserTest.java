@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import de.upb.sede.util.FileUtil;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 /*
@@ -33,12 +34,8 @@ public class FMCompositionParserTest {
 
 	@BeforeClass
 	public static void setupComposition() throws IOException {
-
-		String compositionFile = "testrsc/composition.txt";
-		compositionString = "";
-		try (Stream<String> stream = Files.lines(Paths.get(compositionFile))) {
-			compositionString = stream.collect(Collectors.joining());
-		}
+		String compositionFile = "parser/composition.txt";
+		compositionString = FileUtil.readResourceAsString(compositionFile);
 	}
 
 	@Test

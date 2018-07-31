@@ -1,9 +1,0 @@
-{
-    "nodetype": "ParseConstant",
-    "constant": "1e10",
-    "isBool": false,
-    "isNumber": true,
-    "isNULL": false,
-    "isString": false,
-    "description": "parse Number: 1e10"
-}

@@ -1,6 +1,5 @@
 version = '1.0'
 
-
 dependencies {
     // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
@@ -8,16 +7,6 @@ dependencies {
     compile name: 'Catalano.Image'
     compile name: 'Catalano.Math'
     compile name: 'Catalano.Statistics'
-}
 
-// build Jar:
-task buildJar(type: Jar) {
-    manifest {
-        attributes 'Implementation-Title': 'SEDE-imaging',
-                'Implementation-Version': version
-    }
-    destinationDir = file("$rootDir")
-    baseName = project.name
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
+    testCompile project(":SEDE.http")
 }

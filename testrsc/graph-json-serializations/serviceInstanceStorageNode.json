@@ -1,8 +1,0 @@
-{
-    "nodetype": "ServiceInstanceStorage",
-    "is-load-instruction": true,
-    "instance-id": "id_123",
-    "description": "load \"a\"",
-    "service-classpath": "serviceClasspath.someLib.SomeServiceClass",
-    "serviceinstance-fieldname": "a"
-}

@@ -31,24 +31,25 @@ public class CastTypeProcedure implements Procedure {
 		SEDEObject field = task.getExecution().getEnvironment().get(fieldname);
 		SEDEObject castedField;
 		if(castToSemantic) {
-			PipedInputStream byteInputSteam = new PipedInputStream();
-			PipedOutputStream byteOutputStream = null;
-			try {
-				byteOutputStream = new PipedOutputStream(byteInputSteam);
-			} catch (IOException e) {
-				throw new RuntimeException("This exception shouldn't have been thrown..");
-			}
 			/*
 			 * TODO if there is a need to read the input byte multiple times change this behaviour to ByteArrayInputStream instead.
 			 * (Which offers seek)
 			 */
-			SemanticStreamer.streamObjectInto(byteOutputStream, field, casterClasspath, targetType);
-			castedField = new SemanticDataField(targetType, byteInputSteam, true);
+			PipedInputStream byteInputSteam = new PipedInputStream();
+			PipedOutputStream byteOutputStream = null;
+			try {
+				byteOutputStream = new PipedOutputStream(byteInputSteam);
+				SemanticStreamer.streamObjectInto(byteOutputStream, field, casterClasspath, targetType);
+				castedField = new SemanticDataField(targetType, byteInputSteam, true);
+				byteOutputStream.close();
+			} catch (IOException e) {
+				throw new RuntimeException("This exception shouldn't have been thrown..");
+			}
 		} else if(field.isSemantic()){
-			ByteArrayInputStream byteStream = field.getDataField();
+			InputStream byteStream = field.getDataField();
 			castedField = SemanticStreamer.readObjectFrom(byteStream, casterClasspath, originalType, targetType);
 		} else {
-			throw new RuntimeException("Task states to cast \"" + fieldname + "\" to  semantic " +
+			throw new RuntimeException("Task states to cast \"" + fieldname + "\" to  real data type " +
 					"but the field is not semantic: \n" + field.toString());
 		}
 		task.getExecution().getEnvironment().put(fieldname, castedField);

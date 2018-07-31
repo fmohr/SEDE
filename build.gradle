@@ -47,51 +47,17 @@ subprojects {
         }*/
     }
     dependencies {
-        testCompile "junit:junit:4.12"
         compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
         compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'
+
+        // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all
+        testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+        testCompile "junit:junit:4.12"
     }
-
-    /* mark testrec as resources to be loaded during tests */
-    sourceSets {
-        test {
-            resources {
-                srcDir project.testresources
-            }
-        }
-    }
-
-    /*
-     * create a symbolic link to the testrsc folder in each subproject's root folder.
-     * Do this because eclipse uses the subproject root folder as  the working directory when it runs tests
-     *
-     */
-    task link_testrsc {
-        //println "${rootProject.projectDir}"
-        def p = Paths.get("${projectDir}/testrsc")
-        if(Files.notExists(p)) {
-            def target = Paths.get("${rootProject.projectDir}/testrsc/")
-            println "${p} does not exist. Creating symbolic link to ${target}."
-            try {
-                Files.createSymbolicLink(p,  target)
-            } catch (java.nio.file.FileSystemException e) {
-                println "Cannot create symbolic link. Instead copying the entire testrsc folder.."
-                copy {
-                    from fileTree("${rootProject.projectDir}/testrsc/")
-                    into "${projectDir}/testrsc"
-                }
-            }
-        } else {
-            // println "${p.toAbsolutePath()} already exists."
-        }
-
-    }
-    eclipseProject.dependsOn link_testrsc
-
 
     /* Set working directory of tests to root folder: */
     test{
-        workingDir = new File("${project.rootDir}")
+        workingDir = new File("${projectDir}")
         ignoreFailures = true
     }
 
@@ -106,15 +72,22 @@ subprojects {
         from {
             (configurations.runtime - configurations.provided)
                 .findAll {
-
                 !it.name.endsWith(".pom")
             }
                 .collect {
                 zipTree(it)
             }
         }
+        from sourceSets.main.allSource
         with jar
     }
+
+    clean.doFirst {
+        delete "${projectDir}/testrsc"
+        delete "${projectDir}/out"
+        delete "${projectDir}/instances"
+    }
+
 }
 /*
     configurations for each sub project.
@@ -130,7 +103,7 @@ project(':SEDE.core') {
 project(':SEDE.deployment') {
     dependencies {
         provided project(':SEDE.core')
-        provided project(':SEDE.http-apps')
+        provided project(':SEDE.http')
         // https://mvnrepository.com/artifact/commons-cli/commons-cli
         compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
         // https://mvnrepository.com/artifact/commons-io/commons-io
@@ -161,34 +134,18 @@ project(':SEDE.executor') {
     }
 }
 
-project(':SEDE.http-apps') {
+project(':SEDE.http') {
     dependencies {
         // https://mvnrepository.com/artifact/com.google.guava/guava
 //        compile group: 'com.google.guava', name: 'guava', version: '25.1-jre'
 
-        testCompile project(':demolib')
-        testCompile project(':imaging')
+        testImplementation project(':demolib')
+        testImplementation project(':imaging')
+        testImplementation project(':SEDE.gateway')
 
         provided project(':SEDE.core')
         provided project(':SEDE.gateway')
         provided project(':SEDE.executor')
-    }
-}
-/*
-    configure resources by copying them into specific folders:
- */
-task copyrsc {
-    /*
-        Copy all files from each subproject resources folder into the project global testresources folder:
-     */
-    doFirst {
-        println "Copying resources:"
-
-        copy {
-            println "Copy resources into testrsc folder."
-            from getresources()
-            into project.testresources
-        }
     }
 }
 task prettyrsc {
@@ -204,25 +161,4 @@ task prettyrsc {
             workingDir project.rootDir
         }
     }
-}
-
-
-/*
-    Some utility functions:
- */
-
-/**
- * Returns all files in 'resources' folders within sub projects.
- * @return FileCollection of all resources files.
- */
-def getresources(){
-    FileCollection resources = project.files([])
-    new File('.').traverse(
-            type: groovy.io.FileType.DIRECTORIES,
-            nameFilter   : ~/resources/,
-            preDir       : { if (it.name == 'build') return groovy.io.FileVisitResult.SKIP_SUBTREE },
-    ) {
-        resources = project.files(resources, fileTree(it))
-    }
-    return resources
 }

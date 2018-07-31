@@ -78,6 +78,7 @@ subprojects {
                 zipTree(it)
             }
         }
+        from sourceSets.main.allSource
         with jar
     }
 
@@ -140,6 +141,7 @@ project(':SEDE.http') {
 
         testImplementation project(':demolib')
         testImplementation project(':imaging')
+        testImplementation project(':SEDE.gateway')
 
         provided project(':SEDE.core')
         provided project(':SEDE.gateway')

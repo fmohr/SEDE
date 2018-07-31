@@ -410,14 +410,6 @@ public class DataFlowAnalysis {
 					 */
 					requiredData = paramFieldTypes.get(0);
 					ExecPlan sourceExec = getAssignedExec(requiredData.getProducer());
-					/*
-					 * Now instead of creating a transmission, we check
-					 * if we can move the execution that produces the required data onto this executor.
-					 * This might save a transmission:
-					 */
-//					if(canMoveOntoExecutor(requiredData, instExec)){
-//
-//					}
 
 					/*
 					 *	Transmit the data from the source executor:
@@ -784,8 +776,17 @@ public class DataFlowAnalysis {
 			}
 
 			if (toBeReturned) {
+				/*
+				 * First check if the data is already available:
+				 */
+				boolean resultFoundOnClient = false;
+				for(FieldType field : resolveFieldname(resultFieldname)) {
+					if(getAssignedExec(field.getProducer()) == clientExecPlan) {
+						resultFoundOnClient = true;
+					}
+				}
 
-				if (clientExecPlan != resultExecPlan) {
+				if (!resultFoundOnClient) {
 					/*
 					 * return result to client
 					 */

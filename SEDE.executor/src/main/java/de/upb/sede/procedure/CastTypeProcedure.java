@@ -49,7 +49,7 @@ public class CastTypeProcedure implements Procedure {
 			InputStream byteStream = field.getDataField();
 			castedField = SemanticStreamer.readObjectFrom(byteStream, casterClasspath, originalType, targetType);
 		} else {
-			throw new RuntimeException("Task states to cast \"" + fieldname + "\" to  semantic " +
+			throw new RuntimeException("Task states to cast \"" + fieldname + "\" to  real data type " +
 					"but the field is not semantic: \n" + field.toString());
 		}
 		task.getExecution().getEnvironment().put(fieldname, castedField);

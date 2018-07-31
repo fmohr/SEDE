@@ -27,7 +27,7 @@ import de.upb.sede.util.FileUtil;
 public class IntegrationTest_Resolve {
 
 	
-	private static final String rscPath = "testrsc/resolve-requests/"; 
+	private static final String rscPath = FileUtil.getPathOfResource("resolve-requests/");
 	
 	private static Gateway gateway;
 	private static final GraphJsonSerializer GJS = new GraphJsonSerializer();
@@ -58,11 +58,13 @@ public class IntegrationTest_Resolve {
 	}
 
 	private static ClassesConfig getTestClassConfig() {
-		return new ClassesConfig("testrsc/config/demo-classconf.json");
+		return new ClassesConfig(
+				FileUtil.getPathOfResource("config/demo-classconf.json"));
 	}
 
 	private static OnthologicalTypeConfig getTestTypeConfig() {
-		return new OnthologicalTypeConfig("testrsc/config/demo-typeconf.json");
+		return new OnthologicalTypeConfig(
+				FileUtil.getPathOfResource("config/demo-typeconf.json"));
 	}
 
 	@SuppressWarnings("unchecked")

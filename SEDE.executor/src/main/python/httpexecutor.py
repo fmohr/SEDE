@@ -152,7 +152,35 @@ class HTTPExecutor(Executor):
 
 
 if __name__ == "__main__":
-    executor = HTTPExecutor(ExecutorConfig.empty_config(), "localhost", 5000)
+    import sys
+    import json
+    logging.info("Number of CLI arguments: %d.", len(sys.argv))
+    logging.debug("CLI List: %s.",  str(sys.argv))
+    # remove the module from the top of the list:
+    sys.argv.pop(0)
+    # first argument is the executor configuration path:
+    if sys.argv:
+        with open(sys.argv.pop(0)) as fp:
+            config_dict = json.load(fp)
+            logging.trace("configuration %s", config_dict)
+        executorConfig = ExecutorConfig.from_dict(config_dict)
+    else :
+        executorConfig = ExecutorConfig.empty_config()
+
+    # second argument is the local host address.
+    # Like an ip address or 'localhost'
+    if sys.argv:
+        host_address = str(sys.argv.pop(0))
+    else:
+        host_address = "localhost"
+
+    # third argument is the port which should be opened by the http executor:
+    if sys.argv:
+        port = int(sys.argv.pop(0))
+    else:
+        port = 5000
+
+    executor = HTTPExecutor(executorConfig, host_address, port)
     executor.start_listening()
 
 

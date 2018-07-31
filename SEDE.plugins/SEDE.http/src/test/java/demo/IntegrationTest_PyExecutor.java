@@ -20,6 +20,7 @@ import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
 import demo.types.DemoCaster;
 import demo.types.NummerList;
+import demo.types.Punkt;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Assert;
@@ -44,13 +45,14 @@ public class IntegrationTest_PyExecutor {
 	private static final Logger logger = LogManager.getLogger();
 
 	private static final String[] classconfFiles = {
-			"testrsc/config/plainlib-classconf.json",
-			"testrsc/config/demo-classconf.json",
-			"testrsc/config/builtin-classconf.json"};
+			FileUtil.getPathOfResource("config/demo-classconf.json"),
+			FileUtil.getPathOfResource("config/plainlib-classconf.json"),
+			FileUtil.getPathOfResource("config/builtin-classconf.json")};
 	private static final String[] typecongFiles  = {
-			"testrsc/config/plainlib-typeconf.json",
-			"testrsc/config/demo-typeconf.json",
-			"testrsc/config/builtin-typeconf.json"};
+			FileUtil.getPathOfResource("config/demo-typeconf.json"),
+			FileUtil.getPathOfResource("config/plainlib-typeconf.json"),
+			FileUtil.getPathOfResource("config/builtin-typeconf.json")};
+
 	@BeforeClass
 	public static void setupGateway() {
 		System.out.println(System.getProperty("user.dir"));
@@ -180,8 +182,9 @@ public class IntegrationTest_PyExecutor {
 
 		execNr = 2;
 		composition = "n3 = b::calc_append({n1, 3});" +
+				"n3_ = b::calc_append({n1, 4});" +
 				"bool1 = g::liagtAufGerade({n3});" +
-				"n4 = demo.math.Addierer::summierListe({n3, n2});" +
+				"n4 = demo.math.Addierer::summierListe({n3_, n2});" +
 				"n5 = b::calc_append({n4, 5});";
 		inputs.clear();
 		inputs.put("n1", new ObjectDataField(NummerList.class.getName(), new NummerList(3)));
@@ -190,22 +193,22 @@ public class IntegrationTest_PyExecutor {
 		inputs.put("g", new ServiceInstanceField(g));
 		rr = createRR(execNr, composition, inputs);
 		resultMap = client.blockingRun(rr);
-		NummerList n3 = (NummerList) resultMap.get("n3")
-				.castResultData("NummerList", DemoCaster.class)
+		Punkt n3 = resultMap.get("n3")
+				.castResultData("demo.types.Punkt", DemoCaster.class)
 				.getDataField();
-		NummerList n4 = (NummerList) resultMap.get("n4")
-				.castResultData("NummerList", DemoCaster.class)
+		NummerList n4 = resultMap.get("n4")
+				.castResultData("demo.types.NummerList", DemoCaster.class)
 				.getDataField();
-		NummerList n5 = (NummerList) resultMap.get("n5")
-				.castResultData("NummerList", DemoCaster.class)
+		NummerList n5 = resultMap.get("n5")
+				.castResultData("demo.types.NummerList", DemoCaster.class)
 				.getDataField();
 		Boolean bool1 = (Boolean) resultMap.get("bool1").getResultData().getDataField();
 
 
 		Assert.assertTrue(bool1);
-		Assert.assertEquals(Arrays.asList(3., 7.), n3);
-		Assert.assertEquals(Arrays.asList(6., 14.), n4);
-		Assert.assertEquals(Arrays.asList(6., 14., 11.), n5);
+		Assert.assertEquals(new Punkt(3., 7.), n3);
+		Assert.assertEquals(Arrays.asList(6., 16.), n4);
+		Assert.assertEquals(Arrays.asList(6., 16., 11.), n5);
 
 	}
 

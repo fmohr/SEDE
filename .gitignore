@@ -58,6 +58,7 @@ gradle-app.setting
 **/out/
 SEDE.iml
 /deploy/**/*.pom
+/deploy/SEDE/
 **/testrsc
 /*.temp/
 ## python ignores

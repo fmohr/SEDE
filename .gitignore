@@ -57,7 +57,7 @@ gradle-app.setting
 !.gitignore
 .classpath
 /testout/
-/instances/
+**/instances/
 **/out/
 SEDE.iml
 /deploy/**/*.pom

@@ -17,10 +17,12 @@ import de.upb.sede.requests.DataPutRequest;
 import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.util.Observer;
+import de.upb.sede.util.Observable;
 
-import javax.swing.text.html.Option;
-
-public class Executor implements IExecutor{
+/**
+ * Core implementation of an executor.
+ */
+public class Executor implements IExecutor {
 
 
 	private static final Logger logger = LogManager.getLogger();
@@ -37,6 +39,30 @@ public class Executor implements IExecutor{
 
 	private final Observer<Execution> executionGarbageCollector;
 
+	/**
+	 * Contact info map.
+	 * It is sent to the gateway and used to contact this executor.
+	 * Can be modified by plugins.
+	 */
+	private final Map<String, Object> contactInfo = new HashMap<>();
+
+	/*
+	 * Hooks of the executor:
+	 * These hooks are used by plugins who need to add functionality for certain events.
+	 */
+
+	/**
+	 * This hook triggers when the executor has received a shutdown command. <br>
+	 * The notification item is 'this' Executor.
+	 */
+	public final Observable<Executor> shutdownHook = new Observable<>();
+
+	/**
+	 * This hook triggers when a new Execution has been created through an {@link this#exec} invocation.<br>
+	 * The notification item is the new Execution object.
+	 */
+	public final Observable<Execution> newExecutionHook = new Observable<>();
+
 	public Executor(ExecutorConfiguration execConfig) {
 		this.execPool = new ExecutionPool(execConfig);
 		this.config = execConfig;
@@ -44,6 +70,7 @@ public class Executor implements IExecutor{
 		this.taskWorkerEnqueuer = Observer.lambda(t->true,  workerPool::processTask, t->false);
 		this.executionGarbageCollector = Observer.<Execution>lambda(Execution::hasExecutionFinished,  // when an execution is done, .
 				this::removeExecution);
+		contactInfo.put("id", getExecutorConfiguration().getExecutorId());
 		bindProcedureNames();
 		logger.info("Executor with id '{}' created.\n" +
 				"Capabilities: {}\n" +
@@ -124,7 +151,10 @@ public class Executor implements IExecutor{
 
 		exec.getState().observe(executionGarbageCollector);
 		exec.start();
-
+		/*
+		  	Notify hooks:
+		 */
+		newExecutionHook.update(exec);
 		logger.debug("Execution request {} started.", execRequest.getRequestID());
 		return exec;
 	}
@@ -140,6 +170,7 @@ public class Executor implements IExecutor{
 			}
 		}
 	}
+
 
 
 	public void interruptAll() {
@@ -172,18 +203,20 @@ public class Executor implements IExecutor{
 		return services;
 	}
 
-	@Override
-	public Map<String, String> contactInfo() {
-		JSONObject contactInfo = new JSONObject();
-		contactInfo.put("id", getExecutorConfiguration().getExecutorId());
+	public Map<String, Object> getModifiableContactInfo() {
 		return contactInfo;
+	}
+
+	@Override
+	public Map<String, Object> contactInfo() {
+		return Collections.unmodifiableMap(contactInfo);
 	}
 
 	@Override
 	public ExecutorRegistration registration() {
 		List<String> capibilities = new ArrayList<>(capabilities());
 		List<String> supportedServices = new ArrayList<>(supportedServices());
-		Map<String, String> contactInfo = contactInfo();
+		Map<String, Object> contactInfo = contactInfo();
 		ExecutorRegistration registration = new ExecutorRegistration
 				(contactInfo, capibilities, supportedServices);
 		return registration;
@@ -192,6 +225,13 @@ public class Executor implements IExecutor{
 
 	public ExecutorConfiguration getExecutorConfiguration() {
 		return config;
+	}
+
+	@Override
+	public void shutdown() {
+		interruptAll();
+		getWorkerPool().shutdown();
+		shutdownHook.update(this);
 	}
 
 }

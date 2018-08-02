@@ -2,13 +2,13 @@ package demo;
 
 import Catalano.Imaging.FastBitmap;
 import de.upb.sede.casters.FastBitmapCaster;
-import de.upb.sede.client.CoreClientHttpServer;
+import de.upb.sede.client.CoreClient;
+import de.upb.sede.client.HttpCoreClient;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.core.ObjectDataField;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.config.ExecutorConfiguration;
-import de.upb.sede.exec.Executor;
 import de.upb.sede.exec.ExecutorHttpServer;
 import de.upb.sede.gateway.GatewayHttpServer;
 import de.upb.sede.requests.Result;
@@ -29,7 +29,7 @@ import java.util.Map;
 
 public class ImagingTests {
 
-	static CoreClientHttpServer coreClient;
+	static CoreClient coreClient;
 
 	static String clientAddress = WebUtil.HostIpAddress();
 	static int clientPort = 7000;
@@ -52,7 +52,7 @@ public class ImagingTests {
 		ExecutorConfigurationCreator creator = new ExecutorConfigurationCreator();
 		creator.withExecutorId("Client");
 		ExecutorConfiguration configuration = ExecutorConfiguration.parseJSON(creator.toString());
-		coreClient = new CoreClientHttpServer(configuration, clientAddress, clientPort, gatewayAddress, gatewayPort);
+		coreClient = HttpCoreClient.createNew(configuration, clientAddress, clientPort, gatewayAddress, gatewayPort);
 		/*
 			Disable if you will have an executor register to the gateway:
 		 */
@@ -67,12 +67,12 @@ public class ImagingTests {
 		creator = new ExecutorConfigurationCreator();
 		creator.withExecutorId("executor");
 		executor1 = new ExecutorHttpServer(ExecutorConfiguration.parseJSON(creator.toString()), executor1Address, executorPort);
-		executor1.getExecutorConfiguration().getSupportedServices().addAll(
+		executor1.getBasisExecutor().getExecutorConfiguration().getSupportedServices().addAll(
 				Arrays.asList("Catalano.Imaging.Filters.Crop",
 						"Catalano.Imaging.Filters.Resize",
 						"Catalano.Imaging.sede.CropFrom0")
 		);
-		gateway.register(executor1.registration());
+		gateway.register(executor1.getBasisExecutor().registration());
 		/*
 			Disabled if you dont have dot installed.
 		 */

@@ -64,14 +64,14 @@ public class IntegrationTest_PyExecutor {
 				.withSupportedServices("demo.math.Addierer", "demo.math.Gerade").toString();
 		ExecutorConfiguration config = ExecutorConfiguration.parseJSON(exec1Config);
 		ExecutorHttpServer clientExec = new ExecutorHttpServer(config, "localhost", 9001);
-		client = new CoreClient(clientExec, gateway::resolve);
+		client = new CoreClient(clientExec.getBasisExecutor(), gateway::resolve);
 
 
 		// register the python executor
 		String pythonExecutorConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId(pyExecutorId)
 				.withCapabilities("python").withSupportedServices("plainlib.package1.b.B").toString();
 		ExecutorConfiguration pythonExecConfig = ExecutorConfiguration.parseJSON(pythonExecutorConfig);
-		Map<String, String> pythonExecutorContactInfo = new HashMap<>();
+		Map<String, Object> pythonExecutorContactInfo = new HashMap<>();
 		pythonExecutorContactInfo.put("id", pyExecutorId);
 		pythonExecutorContactInfo.put("host-address", "localhost:5000");
 

@@ -14,7 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.*;
 
-import de.upb.sede.client.CoreClientHttpServer;
+import de.upb.sede.client.HttpCoreClient;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.client.CoreClient;
@@ -42,7 +42,7 @@ public class IntegrationTest_Execute {
 	static ExecutorHttpServer executor2;
 
 	static CoreClient localClient;
-	static CoreClientHttpServer httpClient;
+	static CoreClient httpClient;
 
 	static GatewayHttpServer gateway;
 
@@ -74,7 +74,7 @@ public class IntegrationTest_Execute {
 		clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core_Client")
 				.toString();
 		config = ExecutorConfiguration.parseJSON(clientConfig);
-		httpClient = new CoreClientHttpServer(config, "localhost", 9003, "localhost", 9100);
+		httpClient =  HttpCoreClient.createNew(config, "localhost", 9003, "localhost", 9100);
 		httpClient.writeDotGraphToDir("testrsc/graphs/http-exec");
 
 	}
@@ -97,14 +97,14 @@ public class IntegrationTest_Execute {
 			Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(exec));
 			logger.info("Execution has beed interrupted.");
 		}
-		exec = executor1.getExecution("SleepRequest").orElse(null);
+		exec = executor1.getBasisExecutor().getExecution("SleepRequest").orElse(null);
 		if(exec!=null) {
 			Assert.assertTrue(exec.hasExecutionFinished());
 			Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(exec));
 			logger.info("Execution has beed interrupted.");
 		}
 
-		exec = executor2.getExecution("SleepRequest").orElse(null);
+		exec = executor2.getBasisExecutor().getExecution("SleepRequest").orElse(null);
 		if(exec!=null) {
 			Assert.assertTrue(exec.hasExecutionFinished());
 			Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(exec));
@@ -165,7 +165,7 @@ public class IntegrationTest_Execute {
 
 	@Test
 	public void testHttpFail() {
-		CoreClientHttpServer cc = getHttpClient();
+		CoreClient cc = getHttpClient();
 		runFailInstruction(cc);
 	}
 
@@ -186,7 +186,7 @@ public class IntegrationTest_Execute {
 
 	@Test
 	public void  testHttpRun() {
-		CoreClientHttpServer cc = getHttpClient();
+		CoreClient cc = getHttpClient();
 		runAllOnce(cc);
 		//cc.getClientExecutor().shutdown();
 	}
@@ -218,7 +218,7 @@ public class IntegrationTest_Execute {
 
 //	@Test
 	public void testHttpBenchmark() throws InterruptedException {
-		CoreClientHttpServer cc = getHttpClient();
+		CoreClient cc = getHttpClient();
 		runBenchmark(cc);
 		System.gc();
 		System.gc();
@@ -228,8 +228,8 @@ public class IntegrationTest_Execute {
 			Check for potential memory leak:
 		 */
 		Assert.assertEquals(0, httpClient.getClientExecutor().getWorkerPool().futueListSize());
-		Assert.assertEquals(0, executor2.getWorkerPool().futueListSize());
-		Assert.assertEquals(0, executor1.getWorkerPool().futueListSize());
+		Assert.assertEquals(0, executor2.getBasisExecutor().getWorkerPool().futueListSize());
+		Assert.assertEquals(0, executor1.getBasisExecutor().getWorkerPool().futueListSize());
 
 	}
 
@@ -306,7 +306,7 @@ public class IntegrationTest_Execute {
 		return localClient;
 	}
 
-	private static CoreClientHttpServer getHttpClient() {
+	private static CoreClient getHttpClient() {
 		return httpClient;
 	}
 }

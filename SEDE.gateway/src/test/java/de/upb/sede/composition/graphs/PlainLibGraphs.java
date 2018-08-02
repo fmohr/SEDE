@@ -87,7 +87,7 @@ public class PlainLibGraphs {
 
 	private static ExecutorRegistration getClientRegistration() {
 
-		Map<String, String> contactInfo = new HashMap<>();
+		Map<String, Object> contactInfo = new HashMap<>();
 		contactInfo.put("id", "python_executor");
 		List<String> supportedServices = new ArrayList<>();
 		supportedServices.addAll(getPlainlibClassConfig().classesKnown());

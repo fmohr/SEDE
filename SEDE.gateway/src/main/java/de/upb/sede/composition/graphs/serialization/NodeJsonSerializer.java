@@ -212,7 +212,7 @@ public final class NodeJsonSerializer {
 
 	public TransmitDataNode TransmitDataNodeFromJSON(Map<Object, Object> node) {
 		assert node.get(NODETYPE).equals(NODETYPE_TRANSMIT_DATA);
-		Map<String, String> contactInfo = (Map<String, String>) node.get("contact-info");
+		Map<String, Object> contactInfo = (Map<String, Object>) node.get("contact-info");
 		String fieldname = (String) node.get("fieldname");
 
 		String caster = (String) node.get("caster");
@@ -274,7 +274,7 @@ public final class NodeJsonSerializer {
 		Object contactInfo = (Object) node.get("contact-info");
 		String fieldname = (String) node.get("fieldname");
 
-		FinishNode n = new FinishNode((Map<String, String>) contactInfo, fieldname);
+		FinishNode n = new FinishNode((Map<String, Object>) contactInfo, fieldname);
 		return n;
 	}
 

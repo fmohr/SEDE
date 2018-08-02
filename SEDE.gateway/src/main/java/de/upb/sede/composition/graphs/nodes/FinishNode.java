@@ -4,16 +4,16 @@ import java.util.Map;
 
 public class FinishNode extends BaseNode{
 
-	private final Map<String, String> contactInfo;
+	private final Map<String, Object> contactInfo;
 
 	private final String fieldname;
 
-	public FinishNode(Map<String, String> contactInfo, String fieldname) {
+	public FinishNode(Map<String, Object> contactInfo, String fieldname) {
 		this.contactInfo = contactInfo;
 		this.fieldname = fieldname;
 	}
 
-	public Map<String, String> getContactInfo() {
+	public Map<String, Object> getContactInfo() {
 		return contactInfo;
 	}
 

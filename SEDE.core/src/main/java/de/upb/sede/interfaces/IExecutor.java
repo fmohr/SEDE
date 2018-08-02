@@ -15,7 +15,9 @@ public interface IExecutor {
 
 	public void interrupt(String executionId);
 
-	public Map<String, String> contactInfo();
+	public void shutdown();
+
+	public Map<String, Object> contactInfo();
 
 	public ExecutorRegistration registration();
 }

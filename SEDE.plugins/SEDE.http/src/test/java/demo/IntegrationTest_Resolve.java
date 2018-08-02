@@ -40,7 +40,7 @@ public class IntegrationTest_Resolve {
 	public static void setupGateway() {
 		gateway = new Gateway(getTestClassConfig(), getTestTypeConfig());
 
-		Map<String, String> contactInfo = new HashMap<>();
+		Map<String, Object> contactInfo = new HashMap<>();
 		contactInfo.put("id", "exec_1");
 		ExecutorRegistration registration1 = new ExecutorRegistration(contactInfo, Arrays.asList("java"),
 				Arrays.asList("demo.math.Addierer"));

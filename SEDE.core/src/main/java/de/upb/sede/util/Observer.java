@@ -58,6 +58,20 @@ public interface Observer<T>{
 	}
 
 	/**
+	 * Same as {@link Observer#lambda(Function, Consumer)} but with t->true as the notification condition (1st argument).
+	 */
+	public static <T> Observer<T> alwaysNotify(Consumer<T> notification) {
+		return lambda(t-> true, notification);
+	}
+
+	/**
+	 * Same as {@link Observer#lambda(Function, Consumer, Function)} but with t->true as the notification condition (1st argument).
+	 */
+	public static <T> Observer<T> alwaysNotify(Consumer<T> notification, Function<T, Boolean> removeCondition){
+		return lambda(t-> true, notification, removeCondition);
+	}
+
+	/**
 	 * Helper function that creates observer with the help of lambda expressions. For example: <p>
 	 *
 	 *     <tt>Observer.lambda(t->true, System.out::println)</tt>
@@ -71,6 +85,7 @@ public interface Observer<T>{
 		return lambda(condition, notification, t -> true);
 	}
 	/**
+	 * Creates observer like {@link Observer#lambda(Function, Consumer)} but with the given remove condition function.
 	 */
 	public static <T>Observer<T> lambda(Function<T, Boolean> condition, Consumer<T> notification, Function<T, Boolean> removeCondition){
 		return new Observer<T>() {

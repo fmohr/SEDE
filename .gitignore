@@ -54,7 +54,7 @@ gradle-app.setting
 !.md
 .classpath
 /testout/
-/instances/
+**/instances/
 **/out/
 SEDE.iml
 /deploy/**/*.pom

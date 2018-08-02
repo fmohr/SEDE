@@ -15,6 +15,7 @@ import java.util.regex.Pattern;
 import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.core.PrimitiveDataField;
 import de.upb.sede.core.SemanticStreamer;
+import de.upb.sede.util.Observer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,10 +36,11 @@ import de.upb.sede.webinterfaces.server.ImServer;
 import de.upb.sede.webinterfaces.server.StringServerResponse;
 import de.upb.sede.webinterfaces.server.SunHttpHandler;
 
-public class ExecutorHttpServer extends Executor implements ImServer {
+public class ExecutorHttpServer implements ImServer {
 
 	private static final Logger logger = LogManager.getLogger();
 
+	private final Executor basis;
 	private final String hostAddress;
 
 	private final HttpServer server;
@@ -46,10 +48,9 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 	private final Pattern PUT_DATA_URL_PATTERN = Pattern.compile("/put/(?<executionId>[-\\w]+)/(?<fieldname>(?:[&_a-zA-Z][&\\w]*+))/(?<semtype>\\w+)");
 	private final Pattern INTERRUPT_URL_PATTERN = Pattern.compile("/interrupt/(?<executionId>\\w+)");
 
-	public ExecutorHttpServer(ExecutorConfiguration execConfig, String hostAddress, int port) {
-		super(execConfig);
+	public ExecutorHttpServer(Executor basis, String hostAddress, int port) {
+		this.basis = basis;
 		this.hostAddress = hostAddress + ":" + port;
-		bindHttpProcedures();
 
 		try {
 			server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -63,26 +64,30 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 
 		server.setExecutor(null); // creates a default executor
 		server.start();
+
+		basis.getModifiableContactInfo().put("host-address", this.hostAddress);
+		bindHttpProcedures();
+
+		/*
+		 *  Shutdown the http server if the base executor is being shutdown.
+		 */
+		basis.shutdownHook.observe(Observer.alwaysNotify(executor -> this.shutdown()));
 	}
 
-	public ExecutorHttpServer(String pathToExecutionConfig, String hostAddress, int port) {
-		this(ExecutorConfiguration.parseJSONFromFile(pathToExecutionConfig), hostAddress, port);
+	public ExecutorHttpServer(ExecutorConfiguration execConfig, String hostAddress, int port) {
+		this(new Executor(execConfig), hostAddress, port);
+	}
+
+	public Executor getBasisExecutor() {
+		return basis;
 	}
 
 	public void addHandle(String context, Supplier<HTTPServerResponse> serverResponder) {
 		server.createContext(context, new SunHttpHandler(serverResponder));
 	}
 
-	public Map<String, String> contactInfo() {
-		Map<String, String> contactInfo = super.contactInfo();
-		contactInfo.put("host-address", this.hostAddress);
-		return contactInfo;
-	}
-
 	public void registerToGateway(String gatewayHost) {
-		List<String> capibilities = getExecutorConfiguration().getExecutorCapabilities();
-		List<String> supportedServices = getExecutorConfiguration().getSupportedServices();
-		ExecutorRegistration registration = new ExecutorRegistration(contactInfo(), capibilities, supportedServices);
+		ExecutorRegistration registration = basis.registration();
 
 		HttpURLConnectionClientRequest httpRegistration = new HttpURLConnectionClientRequest(gatewayHost + "/register");
 
@@ -91,12 +96,14 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 			throw new RuntimeException("Registration to gateway \"" + gatewayHost
 					+ "\" failed with non empty return message:\n" + registrationAnswer);
 		}
-		getExecutorConfiguration().getGateways().add(gatewayHost);
+		if(!basis.getExecutorConfiguration().getGateways().contains(gatewayHost)) {
+			basis.getExecutorConfiguration().getGateways().add(gatewayHost);
+		}
 		logger.debug("Registered to gateway: " + gatewayHost);
 	}
 
 	private void bindHttpProcedures() {
-		WorkerPool wp = super.getWorkerPool();
+		WorkerPool wp = basis.getWorkerPool();
 		wp.bindProcedure("TransmitData", TransmitDataOverHttp::new);
 		wp.bindProcedure("SendGraph", SendGraphOverHttp::new);
 		wp.bindProcedure("Finish", FinishOverHttp::new);
@@ -104,8 +111,6 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 
 	@Override
 	public void shutdown() {
-		interruptAll();
-		getWorkerPool().shutdown();
 		server.stop(1);
 	}
 
@@ -224,7 +229,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 					SEDEObject inputObject = SemanticStreamer.readFrom(payload, semanticType);
 					putRequest = new DataPutRequest(execId, fieldname, inputObject);
 				}
-				ExecutorHttpServer.this.put(putRequest);
+				basis.put(putRequest);
 				response = "";
 			} catch (Exception ex) {
 				logger.error("Error at put request: {}\n", url.get(), ex);
@@ -240,13 +245,14 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 			try {
 				ExecRequest request = new ExecRequest();
 				request.fromJsonString(payload);
-				exec(request);
+				basis.exec(request);
 				return "";
 			} catch (Exception ex) {
 				return ex.getMessage();
 			}
 		}
 	}
+
 	class InterruptHandler implements HTTPServerResponse {
 		@Override
 		public void receive(Optional<String> url, InputStream payload, OutputStream answer) {
@@ -261,7 +267,7 @@ public class ExecutorHttpServer extends Executor implements ImServer {
 					throw new RuntimeException("URL syntax error: " + url.get());
 				}
 				String executionId = matcher.group("executionId");
-				ExecutorHttpServer.this.interrupt(executionId);
+				basis.interrupt(executionId);
 				answer.close();
 			} catch (Exception ex) {
 				Streams.OutWriteString(answer, ex.getMessage(), true);

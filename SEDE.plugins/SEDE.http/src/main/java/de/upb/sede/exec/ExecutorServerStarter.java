@@ -78,7 +78,7 @@ public class ExecutorServerStarter {
 	class ListServices implements Function<List<String>, String> {
 		@Override
 		public String apply(List<String> inputs) {
-			ExecutorConfiguration configuration = executor.getExecutorConfiguration();
+			ExecutorConfiguration configuration = executor.getBasisExecutor().getExecutorConfiguration();
 			String knownClasses = configuration.getSupportedServices().stream().sorted()
 					.collect(Collectors.joining("\n"));
 			return knownClasses;

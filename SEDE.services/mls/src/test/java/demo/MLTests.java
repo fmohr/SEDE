@@ -1,7 +1,8 @@
 package demo;
 
 import de.upb.sede.BuiltinCaster;
-import de.upb.sede.client.CoreClientHttpServer;
+import de.upb.sede.client.CoreClient;
+import de.upb.sede.client.HttpCoreClient;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.core.ObjectDataField;
@@ -36,7 +37,7 @@ import java.util.*;
 public class MLTests {
 	private final static Logger logger = LogManager.getLogger();
 
-	static CoreClientHttpServer coreClient;
+	static CoreClient coreClient;
 
 	static String clientAddress = WebUtil.HostIpAddress();
 	static int clientPort = 7000;
@@ -64,21 +65,21 @@ public class MLTests {
 		creator.withSupportedServices(DataSetService.class.getName(), "weka.classifiers.bayes.BayesNet");
 		ExecutorConfiguration configuration = ExecutorConfiguration.parseJSON(creator.toString());
 		executor1 = new ExecutorHttpServer(configuration, "localhost",  9000);
-		gateway.register(executor1.registration());
+		gateway.register(executor1.getBasisExecutor().registration());
 
 		creator = new ExecutorConfigurationCreator();
 		creator.withExecutorId("executor2");
 		creator.withSupportedServices(DataSetService.class.getName(), "weka.classifiers.bayes.NaiveBayes");
 		configuration = ExecutorConfiguration.parseJSON(creator.toString());
 		executor2 = new ExecutorHttpServer(configuration, "localhost",  9001);
-		gateway.register(executor2.registration());
+		gateway.register(executor2.getBasisExecutor().registration());
 
 
 
 		creator = new ExecutorConfigurationCreator();
 		creator.withExecutorId("Client");
 		configuration = ExecutorConfiguration.parseJSON(creator.toString());
-		coreClient = new CoreClientHttpServer(configuration, clientAddress, clientPort, gatewayAddress, gatewayPort);
+		coreClient = HttpCoreClient.createNew(configuration, clientAddress, clientPort, gatewayAddress, gatewayPort);
 		/*
 			Disabled if you dont have dot installed.
 

@@ -145,7 +145,7 @@ public class NodeSerializationTest {
 		/*
 		 * Test serialization
 		 */
-		Map<String, String> contactInfo = basicContactInfo("id0", "10.10.10.10:100");
+		Map<String, Object> contactInfo = basicContactInfo("id0", "10.10.10.10:100");
 		TransmitDataNode sendDataNode = new TransmitDataNode("a", contactInfo, "caster1", "semtype1");
 
 		String path = getJSONResourcePath("transmitDataNode");
@@ -165,7 +165,7 @@ public class NodeSerializationTest {
 		/*
 		 * Test serialization
 		 */
-		Map<String, String> contactInfo = basicContactInfo("id0", "10.10.10.10:100");
+		Map<String, Object> contactInfo = basicContactInfo("id0", "10.10.10.10:100");
 		SendGraphNode sendGraphNode = new SendGraphNode("<graph serialization>", contactInfo);
 		String path = getJSONResourcePath("sendGraphNode");
 		FileUtil.writeStringToFile(path, njs.toJSON(sendGraphNode).toJSONString());
@@ -325,8 +325,8 @@ public class NodeSerializationTest {
 		return FileUtil.readFileAsString(path);
 	}
 
-	private Map<String, String> basicContactInfo (String id, String host){
-		Map<String, String> contactInfo = new HashMap<>();
+	private Map<String, Object> basicContactInfo (String id, String host){
+		Map<String, Object> contactInfo = new HashMap<>();
 		contactInfo.put("id", id);
 		contactInfo.put("host-address", host);
 		return contactInfo;

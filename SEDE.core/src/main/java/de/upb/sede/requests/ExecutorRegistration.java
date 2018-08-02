@@ -9,7 +9,7 @@ import de.upb.sede.util.JsonSerializable;
 
 public class ExecutorRegistration implements JsonSerializable {
 
-	private Optional<Map<String, String>> contactInformation = Optional.empty();
+	private Optional<Map<String, Object>> contactInformation = Optional.empty();
 
 
 	private Optional<List<String>> capabilities = Optional.empty();
@@ -19,7 +19,7 @@ public class ExecutorRegistration implements JsonSerializable {
 	public ExecutorRegistration() {
 	}
 
-	public ExecutorRegistration(Map<String, String> contactInfo, List<String> capabilities, List<String> supportedServices) {
+	public ExecutorRegistration(Map<String, Object> contactInfo, List<String> capabilities, List<String> supportedServices) {
 		super();
 		setContactInformation(contactInfo);
 		setCapabilities(capabilities);
@@ -27,7 +27,7 @@ public class ExecutorRegistration implements JsonSerializable {
 	}
 
 	public static ExecutorRegistration client_registration(String clientId) {
-		Map<String, String> contactInfo = new HashMap<>();
+		Map<String, Object> contactInfo = new HashMap<>();
 		contactInfo.put("id", clientId);
 		return new ExecutorRegistration(contactInfo, Collections.EMPTY_LIST, Collections.EMPTY_LIST);
 	}
@@ -36,13 +36,13 @@ public class ExecutorRegistration implements JsonSerializable {
 	 * @return the executor host address
 	 */
 	public String getId() {
-		return contactInformation.get().get("id");
+		return (String) contactInformation.get().get("id");
 	}
 
 	/**
 	 * @return the executor contact information.
 	 */
-	public Map<String, String> getContactInfo() {
+	public Map<String, Object> getContactInfo() {
 		return contactInformation.get();
 	}
 
@@ -62,7 +62,7 @@ public class ExecutorRegistration implements JsonSerializable {
 
 
 
-	public void setContactInformation(Map<String, String> contactInformation) {
+	public void setContactInformation(Map<String, Object> contactInformation) {
 		this.contactInformation = Optional.of(contactInformation);
 	}
 
@@ -86,7 +86,7 @@ public class ExecutorRegistration implements JsonSerializable {
 
 	@Override
 	public void fromJson(Map<String, Object> data) {
-		setContactInformation((Map<String, String> )data.get("contact-info"));
+		setContactInformation((Map<String, Object>)data.get("contact-info"));
 		setCapabilities((List<String>) data.get("capabilities"));
 		setSupportedServices((List<String>) data.get("supported-services"));
 	}

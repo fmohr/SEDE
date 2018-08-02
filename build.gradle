@@ -17,7 +17,7 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
     group = 'de.upb.sede'
-    version = '0.0.2'
+    version = '0.0.3'
 
     configurations {
         provided

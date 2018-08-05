@@ -63,6 +63,7 @@ SEDE.iml
 /deploy/**/*.pom
 /deploy/SEDE/
 **/testrsc
+**/servicespec/
 /*.temp/
 ## python ignores
 

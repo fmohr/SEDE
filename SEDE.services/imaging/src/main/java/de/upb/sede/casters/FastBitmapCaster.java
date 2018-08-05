@@ -39,16 +39,27 @@ public class FastBitmapCaster {
 	 */
 	public void cts_FastBitmap(OutputStream os, FastBitmap fb) throws IOException {
 		JSONArray arr = new JSONArray();
-		int[][][] image = fb.toMatrixRGBAsInt();
 		arr.add(new Double(fb.getWidth()));
-		arr.add(1.0); // code for rgb images
-		for (int i = 0; i < image.length; i++) {
-			for (int j = 0; j < image[i].length; j++) {
-				for (int k = 0; k < image[i][j].length; k++) {
-					arr.add(new Double(image[i][j][k]));
+		if(fb.isGrayscale()){
+			arr.add(0.); // code for grayscale images
+			int[][] image = fb.toMatrixGrayAsInt();
+			for (int i = 0; i < image.length; i++) {
+				for (int j = 0; j < image[i].length; j++) {
+					arr.add(new Double(image[i][j]));
+				}
+			}
+		} else {
+			arr.add(1.); // code for rgb images
+			int[][][] image = fb.toMatrixRGBAsInt();
+			for (int i = 0; i < image.length; i++) {
+				for (int j = 0; j < image[i].length; j++) {
+					for (int k = 0; k < image[i][j].length; k++) {
+						arr.add(new Double(image[i][j][k]));
+					}
 				}
 			}
 		}
+
 		OutputStreamWriter writer = new OutputStreamWriter(os);
 		arr.writeJSONString(writer);
 		writer.flush();

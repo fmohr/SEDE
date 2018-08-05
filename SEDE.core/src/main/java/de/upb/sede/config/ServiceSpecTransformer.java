@@ -20,6 +20,10 @@ public class ServiceSpecTransformer {
 
 	private String classConfPath;
 	private String exportDir;
+	/*
+	 * flag that determines if swing gui should be used.
+	 */
+	private boolean gui;
 
 
 
@@ -30,9 +34,11 @@ public class ServiceSpecTransformer {
 		System.out.println("Passed arguments: " + Arrays.toString(args));
 
 		if(args.length == 2) {
+			transformer.gui = false;
 			transformer.classConfPath = args[0];
 			transformer.exportDir = args[1];
 		} else {
+			transformer.gui = true;
 			EventQueue.invokeAndWait(() -> {
 				JFileChooser jfc = new JFileChooser(workingDir);
 				jfc.setDialogTitle("Select a class configuration:");
@@ -67,20 +73,40 @@ public class ServiceSpecTransformer {
 		System.out.println("Class config file path: " + transformer.classConfPath);
 		System.out.println("Export directory: " + new File(transformer.exportDir).getAbsolutePath());
 
-		transformer.transform();
-
-		if(args.length != 2) {
-			/*
-			 * JFileChooser was shown. Now notify end message per gui:
-			 */
-			EventQueue.invokeAndWait(() ->
-				JOptionPane.showMessageDialog(null,"Transformation has finished.")
-			);
-		} else {
-			/*
-			 * Just print the end message to console:
-			 */
-			System.out.println("Transformation has finished.");
+		try{
+			transformer.transform();
+			if(transformer.gui) {
+				/*
+				 * JFileChooser was shown. Now notify end message per gui:
+				 */
+				EventQueue.invokeAndWait(() ->
+						JOptionPane.showMessageDialog(null,"Transformation has finished.")
+				);
+			} else {
+				/*
+				 * Just print the end message to console:
+				 */
+				System.out.println("Transformation has finished.");
+			}
+		} catch(Exception e) {
+			if(transformer.gui) {
+				StringBuilder sb = new StringBuilder(e.toString());
+				for (StackTraceElement ste : e.getStackTrace()) {
+					sb.append("\n\tat ");
+					sb.append(ste);
+				}
+				JTextArea jta = new JTextArea(sb.toString());
+				JScrollPane jsp = new JScrollPane(jta){
+					@Override
+					public Dimension getPreferredSize() {
+						return new Dimension(480, 320);
+					}
+				};
+				JOptionPane.showMessageDialog(
+						null, jsp, "Error", JOptionPane.ERROR_MESSAGE);
+			} else {
+				e.printStackTrace(System.err);
+			}
 		}
 	}
 

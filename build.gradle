@@ -1,13 +1,9 @@
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 project.ext {
     /*
         Set global properties like folder paths and so on:
      */
-    resources = "${project.rootDir}/rsc/"
-    testresources ="${project.rootDir}/testrsc/"
-    libraries ="${project.rootDir}/libs/"
+
 }
 
 subprojects {
@@ -31,9 +27,11 @@ subprojects {
         // we use jitpack in order to add dependecy to github projects:
         maven { url 'https://jitpack.io' }
 
-        // libraries we only have jar's from:
+        /*
+         * local imaging libraries:
+         */
         flatDir {
-            dirs project.libraries
+            dirs "${project(':imaging').projectDir}/libs"
         }
 
         /*// python repos:
@@ -88,6 +86,13 @@ subprojects {
         delete "${projectDir}/instances"
     }
 
+    task serviceSpec(type: JavaExec, dependsOn: assemble) {
+        classpath = sourceSets.main.runtimeClasspath
+        main = 'de.upb.sede.config.ServiceSpecTransformer'
+        // arguments to pass to the application
+        args sourceSets.main.resources.srcDirs.getAt(0).toString() + "/config/"
+        args "servicespec/"
+    }
 }
 /*
     configurations for each sub project.

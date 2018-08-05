@@ -305,6 +305,19 @@ public class ClassesConfig extends Configuration {
 			}
 		}
 
+		/**
+		 * Returns list of method names that are accessible.
+		 */
+		public Set<String> getAccessibleMethods() {
+			Set<String> methods = new HashSet<>();
+			methods.addAll(getInternalMethods().keySet());
+			if(wrapper.isPresent()) {
+				methods.addAll(wrapper.get().getAccessibleMethods());
+			}
+			return methods;
+		}
+
+
 		private boolean hasMethod(String methodname) {
 			return getInternalMethods().containsKey(methodname);
 		}
@@ -325,6 +338,9 @@ public class ClassesConfig extends Configuration {
 			if(configuration.containsKey("abstract")){
 				return (Boolean) configuration.get("abstract");
 			}
+			if(className().startsWith("$") && className().endsWith("$")) {
+				return true;
+			}
 			return false;
 		}
 
@@ -341,13 +357,19 @@ public class ClassesConfig extends Configuration {
 		}
 
 		public MethodInfo methodInfo(String methodname) {
-			if (hasMethod(methodname)) {
+			if(methodname.equals("$construct")) {
+				return constructInfo();
+			}else if (hasMethod(methodname)) {
 				return new MethodInfo(cp, methodname, (Map<String, Object>) getInternalMethods().get(methodname));
 			} else if(isWrapped()) {
 				return wrapper.get().methodInfo(methodname);
 			}else{
 				throw new RuntimeException("Method " + methodname + " not found in: "  + cp);
 			}
+		}
+
+		public String className() {
+			return cp;
 		}
 	}
 
@@ -420,7 +442,6 @@ public class ClassesConfig extends Configuration {
 			}
 		}
 
-
 		public boolean isParamStateMutating(int paramIndex) {
 			Map parameter = getParameter(paramIndex);
 			if(parameter.containsKey("statemutating")) {
@@ -428,6 +449,11 @@ public class ClassesConfig extends Configuration {
 			} else {
 				return false;
 			}
+		}
+
+		public boolean isParamFixed(int paramIndex) {
+			Map parameter = getParameter(paramIndex);
+			return parameter.containsKey("fixed");
 		}
 
 		/**
@@ -447,7 +473,7 @@ public class ClassesConfig extends Configuration {
 			return -1;
 		}
 
-		public static MethodInfo emptyConstructor(String classpath) {
+		private static MethodInfo emptyConstructor(String classpath) {
 			HashMap<String, Object> emptyConstructConfig = new HashMap<>();
 			emptyConstructConfig.put("params", Collections.EMPTY_LIST);
 			emptyConstructConfig.put("returntype", classpath);
@@ -496,6 +522,10 @@ public class ClassesConfig extends Configuration {
 				return (boolean) configuration.get("static");
 			else
 				return false;
+		}
+
+		public String methodName() {
+			return methodname;
 		}
 	}
 

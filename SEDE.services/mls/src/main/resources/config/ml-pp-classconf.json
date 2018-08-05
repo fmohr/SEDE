@@ -33,7 +33,7 @@
     }
   },
   "weka.filters.unsupervised.attribute.Normalize" : {
-    "wrapper" : "de.upb.crc901.services.wrappers.WekaFilterWrapper",
+    "wrapper" : "de.upb.sede.services.mls.WekaFilterWrapper",
     "methods" : {
       "$construct": {
         "params": [
@@ -46,7 +46,7 @@
     }
   },
   "weka.filters.unsupervised.attribute.Standardize":{
-    "wrapper" : "de.upb.crc901.services.wrappers.WekaFilterWrapper",
+    "wrapper" : "de.upb.sede.services.mls.WekaFilterWrapper",
     "methods" : {
       "$construct": {
         "params": [

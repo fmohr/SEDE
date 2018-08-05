@@ -60,7 +60,7 @@ subprojects {
     }
 
     // build Jar:
-    task jarjar(type: Jar) {
+    task jarjar(type: Jar, dependsOn: assemble) {
         manifest {
             attributes 'Implementation-Title': "${project.name}",
                     'Implementation-Version': version
@@ -101,6 +101,15 @@ project(':SEDE.core') {
     dependencies {
         // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
         compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    }
+
+    task jarTransformer(type: Jar, dependsOn: assemble) {
+        manifest {
+            attributes 'Main-Class': 'de.upb.sede.config.ServiceSpecTransformer'
+        }
+        destinationDir = file("$rootDir")
+        baseName = 'ServiceSpecTransfomer'
+        with jar
     }
 }
 

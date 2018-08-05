@@ -84,6 +84,7 @@ subprojects {
         delete "${projectDir}/testrsc"
         delete "${projectDir}/out"
         delete "${projectDir}/instances"
+        delete "${projectDir}/servicespec"
     }
 
     task serviceSpec(type: JavaExec, dependsOn: assemble) {

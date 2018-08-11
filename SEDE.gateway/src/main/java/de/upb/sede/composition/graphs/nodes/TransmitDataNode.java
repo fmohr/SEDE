@@ -6,28 +6,28 @@ public class TransmitDataNode extends BaseNode {
 
 	private final String fieldname;
 
-	private final Map<String, String> contactInfo;
+	private final Map<String, Object> contactInfo;
 
 	private final Optional<String> caster;
 
 	private final Optional<String> semanticTypename;
 
-	public TransmitDataNode(String fieldname, Map<String, String>  contactInfo, String caster, String semanticTypename) {
+	public TransmitDataNode(String fieldname, Map<String, Object>  contactInfo, String caster, String semanticTypename) {
 		this.fieldname = Objects.requireNonNull(fieldname);
-		this.contactInfo = Objects.requireNonNull(contactInfo);
+		this.contactInfo = new HashMap<String, Object> (Objects.requireNonNull(contactInfo));
 		this.caster = Optional.of(caster);
 		this.semanticTypename = Optional.of(semanticTypename);
 	}
 
 
-	public TransmitDataNode(String fieldname, Map<String, String>  contactInfo){
+	public TransmitDataNode(String fieldname, Map<String, Object> contactInfo){
 		this.fieldname = Objects.requireNonNull(fieldname);
-		this.contactInfo = Objects.requireNonNull(contactInfo);
+		this.contactInfo =  new HashMap<String, Object> (Objects.requireNonNull(contactInfo));
 		this.caster = Optional.empty();
 		this.semanticTypename = Optional.empty();
 	}
 
-	public Map<String, String>  getContactInfo() {
+	public Map<String, Object>  getContactInfo() {
 		return contactInfo;
 	}
 

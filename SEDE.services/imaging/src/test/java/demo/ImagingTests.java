@@ -1,14 +1,17 @@
 package demo;
 
 import Catalano.Imaging.FastBitmap;
+import Catalano.Imaging.Tools.ImageHistogram;
+import Catalano.Statistics.Histogram;
 import de.upb.sede.casters.FastBitmapCaster;
-import de.upb.sede.client.CoreClientHttpServer;
+import de.upb.sede.casters.ImageHistogramCaster;
+import de.upb.sede.client.CoreClient;
+import de.upb.sede.client.HttpCoreClient;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.core.ObjectDataField;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.config.ExecutorConfiguration;
-import de.upb.sede.exec.Executor;
 import de.upb.sede.exec.ExecutorHttpServer;
 import de.upb.sede.gateway.GatewayHttpServer;
 import de.upb.sede.requests.Result;
@@ -23,13 +26,18 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import javax.swing.*;
+import java.awt.*;
+import java.lang.ref.PhantomReference;
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ImagingTests {
 
-	static CoreClientHttpServer coreClient;
+	static CoreClient coreClient;
 
 	static String clientAddress = WebUtil.HostIpAddress();
 	static int clientPort = 7000;
@@ -52,7 +60,7 @@ public class ImagingTests {
 		ExecutorConfigurationCreator creator = new ExecutorConfigurationCreator();
 		creator.withExecutorId("Client");
 		ExecutorConfiguration configuration = ExecutorConfiguration.parseJSON(creator.toString());
-		coreClient = new CoreClientHttpServer(configuration, clientAddress, clientPort, gatewayAddress, gatewayPort);
+		coreClient = HttpCoreClient.createNew(configuration, clientAddress, clientPort, gatewayAddress, gatewayPort);
 		/*
 			Disable if you will have an executor register to the gateway:
 		 */
@@ -67,12 +75,25 @@ public class ImagingTests {
 		creator = new ExecutorConfigurationCreator();
 		creator.withExecutorId("executor");
 		executor1 = new ExecutorHttpServer(ExecutorConfiguration.parseJSON(creator.toString()), executor1Address, executorPort);
-		executor1.getExecutorConfiguration().getSupportedServices().addAll(
+		executor1.getBasisExecutor().getExecutorConfiguration().getSupportedServices().addAll(
 				Arrays.asList("Catalano.Imaging.Filters.Crop",
 						"Catalano.Imaging.Filters.Resize",
-						"Catalano.Imaging.sede.CropFrom0")
+						"Catalano.Imaging.sede.CropFrom0",
+						"Catalano.Imaging.Filters.CannyEdgeDetector",
+						"Catalano.Imaging.Filters.CannyEdgeDetectorFactory",
+						"Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern",
+						"Catalano.Imaging.Filters.GrayScale",
+						"Catalano.Imaging.Filters.GrayScaleFactory",
+						"Catalano.Imaging.Filters.GrayScale_Lightness",
+						"Catalano.Imaging.Filters.GrayScale_Average",
+						"Catalano.Imaging.Filters.GrayScale_GeometricMean",
+						"Catalano.Imaging.Filters.GrayScale_Luminosity",
+						"Catalano.Imaging.Filters.GrayScale_MinimumDecomposition",
+						"Catalano.Imaging.Filters.GrayScale_MaximumDecomposition"
+						)
 		);
-		gateway.register(executor1.registration());
+		System.out.println(executor1.getBasisExecutor().getExecutorConfiguration().toJsonString());
+		gateway.register(executor1.getBasisExecutor().registration());
 		/*
 			Disabled if you dont have dot installed.
 		 */
@@ -93,10 +114,6 @@ public class ImagingTests {
 	public static void loadImages() {
 		 frog = new FastBitmap(FileUtil.getPathOfResource("images/red-eyed.jpg"));
 		 assert frog != null;
-	}
-	@AfterClass
-	public static  void shutdownClient() {
-		coreClient.getClientExecutor().shutdown();
 	}
 
 	@Test
@@ -140,7 +157,7 @@ public class ImagingTests {
 		 */
 		String composition =
 				"s1  = Catalano.Imaging.sede.CropFrom0::__construct({100,100});\n" +
-				"imageOut = s1::ApplyInPlace({i1=imageIn});";
+						"imageOut = s1::ApplyInPlace({i1=imageIn});";
 
 		ResolvePolicy policy = new ResolvePolicy();
 		policy.setServicePolicy("None");
@@ -166,6 +183,57 @@ public class ImagingTests {
 		FastBitmap processedImage = (FastBitmap) result.castResultData(
 				FastBitmap.class.getName(), FastBitmapCaster.class).getDataField();
 		JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
+	}
+
+	@Test
+	public void testImageProcessingGrayScaleEdgeDetection() throws InvocationTargetException, InterruptedException {
+		/*
+			Tests fixed parameters:
+		 */
+		String composition =
+				"s1 = Catalano.Imaging.Filters.GrayScaleFactory::withMethodname({\"Luminosity\"});\n" +
+				"i1 = s1::applyInPlace({i0});\n" +
+				"s2 = Catalano.Imaging.Filters.CannyEdgeDetector::__construct();\n" +
+				"i2 = s1::applyInPlace({i1});\n" +
+				"s3 = Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern::__construct();\n" +
+				"histogram = s3::ComputeFeatures({i2});";
+
+		ResolvePolicy policy = new ResolvePolicy();
+
+		policy.setServicePolicy("None");
+		policy.setReturnFieldnames(Arrays.asList("i1", "i2", "histogram"));
+
+		SEDEObject inputObject_fb1 = new ObjectDataField(FastBitmap.class.getName(), frog);
+
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		inputs.put("i0", inputObject_fb1);
+
+		EventQueue.invokeAndWait(() -> JOptionPane.showMessageDialog(null, frog.toIcon(), "Original image", JOptionPane.PLAIN_MESSAGE));
+
+		RunRequest runRequest = new RunRequest("processing3", composition, policy, inputs);
+
+		Map<String, ImageHistogram> resultMap = new HashMap<>();
+
+		coreClient.run(runRequest, result -> {
+			if(result.getFieldname().equals("histogram")) {
+				ImageHistogram histogram = result.
+						castResultData(ImageHistogram.class.getName(), ImageHistogramCaster.class).getDataField();
+				resultMap.put(result.getFieldname(), histogram);
+			} else {
+				FastBitmap processedImage = result.castResultData(
+						FastBitmap.class.getName(), FastBitmapCaster.class).getDataField();
+				EventQueue.invokeLater(() ->{
+						JOptionPane.showMessageDialog(null,
+								processedImage.toIcon(),  "Image " + result.getFieldname(), JOptionPane.PLAIN_MESSAGE);
+						}
+					);
+			}
+		});
+		coreClient.join("processing3", true);
+		ImageHistogram histogram = resultMap.get("histogram");
+		System.out.println("Histogram: " + Arrays.toString(histogram.getValues()));
+		System.out.println("Mean: " + histogram.getMean());
+
 	}
 
 

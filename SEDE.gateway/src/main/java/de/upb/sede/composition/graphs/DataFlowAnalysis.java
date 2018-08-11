@@ -732,7 +732,7 @@ public class DataFlowAnalysis {
 				For every accept data node in the graph:
 				fill in the contact information to the corresponding transmission node.
 			 */
-			Map<String, String> contactInformation = execPlan.getTarget().getContactInfo();
+			Map<String, Object> contactInformation = execPlan.getTarget().getContactInfo();
 			for(AcceptDataNode accepter : GraphTraversal.iterateNodesWithClass(execPlan.getGraph(),
 					AcceptDataNode.class)) {
 				getCorrespondingSender(accepter).getContactInfo().putAll(contactInformation);
@@ -904,7 +904,7 @@ public class DataFlowAnalysis {
 	private AcceptDataNode clientAcceptInput(String fieldname) {
 		AcceptDataNode accept = new AcceptDataNode(fieldname);
 		assignNodeToExec(accept, clientExecPlan);
-		Map<String, String> clientContactInfo = clientExecPlan.getTarget().getContactInfo();
+		Map<String, Object> clientContactInfo = clientExecPlan.getTarget().getContactInfo();
 		TransmitDataNode transmit = new TransmitDataNode(fieldname, clientContactInfo);
 
 		addToTransGraph(transmit, accept);
@@ -923,7 +923,7 @@ public class DataFlowAnalysis {
 		 * fill this map with the actual contact information of the chosen executors.
 		 * This happens in fillContactInformation method. (See above)
 		 */
-		Map<String, String> contactInfo = new HashMap<>();
+		Map<String, Object> contactInfo = new HashMap<>();
 		TransmitDataNode transmit;
 		if(datafield.isRealData()) {
 			String caster = resolveInfo.getTypeConfig().getOnthologicalCaster(datafield.getTypeName());

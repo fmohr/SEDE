@@ -85,8 +85,8 @@ public class GraphSerializationTest {
 		return FileUtil.readFileAsString(path);
 	}
 
-	private Map<String, String> basicContactInfo (String id, String host){
-		Map<String, String> contactInfo = new HashMap<>();
+	private Map<String, Object> basicContactInfo (String id, String host){
+		Map<String, Object> contactInfo = new HashMap<>();
 		contactInfo.put("id", id);
 		contactInfo.put("host-address", host);
 		return contactInfo;

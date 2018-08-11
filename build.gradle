@@ -1,13 +1,9 @@
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 project.ext {
     /*
         Set global properties like folder paths and so on:
      */
-    resources = "${project.rootDir}/rsc/"
-    testresources ="${project.rootDir}/testrsc/"
-    libraries ="${project.rootDir}/libs/"
+
 }
 
 subprojects {
@@ -17,7 +13,7 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
     group = 'de.upb.sede'
-    version = '0.0.2'
+    version = '0.0.3'
 
     configurations {
         provided
@@ -31,9 +27,11 @@ subprojects {
         // we use jitpack in order to add dependecy to github projects:
         maven { url 'https://jitpack.io' }
 
-        // libraries we only have jar's from:
+        /*
+         * local imaging libraries:
+         */
         flatDir {
-            dirs project.libraries
+            dirs "${project(':imaging').projectDir}/libs"
         }
 
         /*// python repos:
@@ -62,32 +60,38 @@ subprojects {
     }
 
     // build Jar:
-    task jarjar(type: Jar) {
+    task jarjar(type: Jar, dependsOn: assemble) {
         manifest {
             attributes 'Implementation-Title': "${project.name}",
                     'Implementation-Version': version
         }
         destinationDir = file("$rootDir/deploy/SEDE")
         baseName = project.name
-        from {
-            (configurations.runtime - configurations.provided)
-                .findAll {
-                !it.name.endsWith(".pom")
-            }
-                .collect {
-                zipTree(it)
-            }
-        }
+        from { ((configurations.compile - configurations.provided) - configurations.testCompile)
+                .findAll { it.name.endsWith('jar') }
+                .collect { zipTree(it) } }
         from sourceSets.main.allSource
         with jar
     }
 
     clean.doFirst {
+        delete fileTree("$rootDir") {
+            include '*.jar'
+        }
         delete "${projectDir}/testrsc"
         delete "${projectDir}/out"
         delete "${projectDir}/instances"
+        delete "${projectDir}/servicespec"
+        delete "${rootDir}/deploy/SEDE"
     }
 
+    task serviceSpec(type: JavaExec, dependsOn: assemble) {
+        classpath = sourceSets.main.runtimeClasspath
+        main = 'de.upb.sede.config.ServiceSpecTransformer'
+        // arguments to pass to the application
+        args sourceSets.main.resources.srcDirs.getAt(0).toString() + "/config/"
+        args "servicespec/"
+    }
 }
 /*
     configurations for each sub project.
@@ -96,6 +100,17 @@ project(':SEDE.core') {
     dependencies {
         // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
         compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+    }
+
+    task jarTransformer(type: Jar, dependsOn: assemble) {
+        manifest {
+            attributes 'Main-Class': 'de.upb.sede.config.ServiceSpecTransformer'
+        }
+        destinationDir = file("$rootDir")
+        baseName = 'ServiceSpecTransfomer'
+        from { (configurations.compile - configurations.testCompile)
+                .collect { it.isDirectory() ? it : zipTree(it) } }
+        with jar
     }
 }
 
@@ -132,6 +147,13 @@ project(':SEDE.executor') {
         provided project(':SEDE.core')
 //        provided project(':SEDE.gateway')
     }
+
+    task buildPython(type: Copy) {
+        from "${projectDir}/src/main/python/"
+        include "**/*.py"
+        into "${rootDir}/deploy/SEDE/pyExecutor/"
+    }
+    jarjar.dependsOn(buildPython)
 }
 
 project(':SEDE.http') {
@@ -147,18 +169,17 @@ project(':SEDE.http') {
         provided project(':SEDE.gateway')
         provided project(':SEDE.executor')
     }
-}
-task prettyrsc {
-    /*
-        Run a python script which prettifies the json resources:
-     */
-    doLast {
-        exec{
-            println "Run a json-prettifier python script on all the testresources files."
-            commandLine 'python3', 'SEDE.core/src/main/python/json_rsc_prettifier.py'
-            commandLine 'python', 'SEDE.core/src/main/python/json_rsc_prettifier.py'
-//            standardOutput = new ByteArrayOutputStream()
-            workingDir project.rootDir
+
+    task jarExecutor(type: Jar, dependsOn: assemble) {
+        manifest {
+            attributes 'Main-Class': 'de.upb.sede.exec.SimpleHttpExecutorStarter'
         }
+        destinationDir = file("$rootDir")
+        baseName = 'JavaHttpExecutor'
+        from sourceSets.main.output
+        from (configurations.compile - configurations.testCompile).
+                findAll { it.name.endsWith('jar') }.
+                collect { zipTree(it) }
+        with jar
     }
 }

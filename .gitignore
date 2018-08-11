@@ -57,12 +57,13 @@ gradle-app.setting
 !.gitignore
 .classpath
 /testout/
-/instances/
+**/instances/
 **/out/
 SEDE.iml
 /deploy/**/*.pom
 /deploy/SEDE/
 **/testrsc
+**/servicespec/
 /*.temp/
 ## python ignores
 

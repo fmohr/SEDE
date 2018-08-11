@@ -5,11 +5,11 @@ import java.util.Objects;
 
 public class ExecutorHandle {
 
-	private final Map<String, String>  contactInfo;
+	private final Map<String, Object>  contactInfo;
 	private final String executorId;
 	private final ExecutorCapabilities capabilities;
 
-	public ExecutorHandle(String executorId, Map<String, String>  contactInfo, String... executorCapabilities) {
+	public ExecutorHandle(String executorId, Map<String, Object>  contactInfo, String... executorCapabilities) {
 		this.executorId = Objects.requireNonNull(executorId);
 		this.contactInfo = Objects.requireNonNull(contactInfo);
 		this.capabilities = new ExecutorCapabilities(executorCapabilities);
@@ -28,7 +28,7 @@ public class ExecutorHandle {
 		return  executorId;
 	}
 
-	public Map<String, String> getContactInfo(){
+	public Map<String, Object> getContactInfo(){
 		return contactInfo;
 	}
 

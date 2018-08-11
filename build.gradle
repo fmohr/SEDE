@@ -67,24 +67,22 @@ subprojects {
         }
         destinationDir = file("$rootDir/deploy/SEDE")
         baseName = project.name
-        from {
-            (configurations.runtime - configurations.provided)
-                .findAll {
-                !it.name.endsWith(".pom")
-            }
-                .collect {
-                zipTree(it)
-            }
-        }
+        from { ((configurations.compile - configurations.provided) - configurations.testCompile)
+                .findAll { it.name.endsWith('jar') }
+                .collect { zipTree(it) } }
         from sourceSets.main.allSource
         with jar
     }
 
     clean.doFirst {
+        delete fileTree("$rootDir") {
+            include '*.jar'
+        }
         delete "${projectDir}/testrsc"
         delete "${projectDir}/out"
         delete "${projectDir}/instances"
         delete "${projectDir}/servicespec"
+        delete "${rootDir}/deploy/SEDE"
     }
 
     task serviceSpec(type: JavaExec, dependsOn: assemble) {
@@ -110,6 +108,8 @@ project(':SEDE.core') {
         }
         destinationDir = file("$rootDir")
         baseName = 'ServiceSpecTransfomer'
+        from { (configurations.compile - configurations.testCompile)
+                .collect { it.isDirectory() ? it : zipTree(it) } }
         with jar
     }
 }
@@ -147,6 +147,13 @@ project(':SEDE.executor') {
         provided project(':SEDE.core')
 //        provided project(':SEDE.gateway')
     }
+
+    task buildPython(type: Copy) {
+        from "${projectDir}/src/main/python/"
+        include "**/*.py"
+        into "${rootDir}/deploy/SEDE/pyExecutor/"
+    }
+    jarjar.dependsOn(buildPython)
 }
 
 project(':SEDE.http') {
@@ -162,18 +169,17 @@ project(':SEDE.http') {
         provided project(':SEDE.gateway')
         provided project(':SEDE.executor')
     }
-}
-task prettyrsc {
-    /*
-        Run a python script which prettifies the json resources:
-     */
-    doLast {
-        exec{
-            println "Run a json-prettifier python script on all the testresources files."
-            commandLine 'python3', 'SEDE.core/src/main/python/json_rsc_prettifier.py'
-            commandLine 'python', 'SEDE.core/src/main/python/json_rsc_prettifier.py'
-//            standardOutput = new ByteArrayOutputStream()
-            workingDir project.rootDir
+
+    task jarExecutor(type: Jar, dependsOn: assemble) {
+        manifest {
+            attributes 'Main-Class': 'de.upb.sede.exec.SimpleHttpExecutorStarter'
         }
+        destinationDir = file("$rootDir")
+        baseName = 'JavaHttpExecutor'
+        from sourceSets.main.output
+        from (configurations.compile - configurations.testCompile).
+                findAll { it.name.endsWith('jar') }.
+                collect { zipTree(it) }
+        with jar
     }
 }

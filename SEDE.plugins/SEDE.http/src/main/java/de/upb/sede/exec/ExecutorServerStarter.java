@@ -18,26 +18,16 @@ public class ExecutorServerStarter {
 
 	private ExecutorServerStarter(String configPath, String serverHostAddress, int serverPort) throws InterruptedException {
 		ExecutorConfiguration executorConfiguration = ExecutorConfiguration.parseJSONFromFile(configPath);
-		List<String> gatewaysToBeRegistered = new ArrayList<>(executorConfiguration.getGateways());
 
 		executor = new ExecutorHttpServer(executorConfiguration, serverHostAddress, serverPort);
 
-		/*
-		 * Register to every gateway stated by the config.
-		 */
-		for(String gatewayAddress : gatewaysToBeRegistered) {
-			try{
-				executor.registerToGateway(gatewayAddress);
-				logger.info("Registered executor to gateway: {}", gatewayAddress);
-			}
-			catch(Exception ex) {
-				logger.error("Error during registration to gateway: {}", gatewayAddress, ex);
-			}
-		}
+
 
 		commandListener = new ServerCommandListener(executor);
 		commandListener.addCommandHandle("register-to", new RegisterToGateway());
 		commandListener.addCommandHandle("list-services", new ListServices());
+		commandListener.addCommandHandle("change-address", new ChangeAddress());
+		commandListener.addCommandHandle("reregister", new Reregister());
 		commandListener.listenEndlessly();
 	}
 
@@ -65,7 +55,12 @@ public class ExecutorServerStarter {
 			}
 			String gatewayAddress = inputs.get(0);
 			logger.info("Received command to register to gateway with address: {}.", gatewayAddress);
+
 			try{
+				/*
+					Add gateway to the list of gateways:
+				 */
+				executor.getBasisExecutor().getExecutorConfiguration().getGateways().add(gatewayAddress);
 				executor.registerToGateway(gatewayAddress);
 				return "Successfully registered to " + gatewayAddress;
 			} catch(Exception ex) {
@@ -85,4 +80,36 @@ public class ExecutorServerStarter {
 		}
 	}
 
+	class ChangeAddress implements Function<List<String>, String> {
+		@Override
+		public String apply(List<String> inputs) {
+			logger.debug("The host address is set to be changed. Given inputs: {}", inputs);
+			String newAddress;
+			if(inputs.size() == 0) {
+				return "Input list is empty. Provide the new address as an input.";
+			} else if(inputs.size() == 1) {
+				newAddress = inputs.get(0);
+			} else if(inputs.size() == 2) {
+				newAddress = inputs.get(0) + ":" + inputs.get(1);
+			} else {
+				return "Error: Input list for address change contains more than 2 elements: " + inputs.toString();
+			}
+			/*
+			 	First change the address in the contact info map:
+			 */
+			executor.setHostAddress(newAddress);
+			executor.registerToEveryGateway();
+			return "Changed the address to '" + newAddress + "'.";
+		}
+	}
+
+	class Reregister implements Function<List<String>, String> {
+		@Override
+		public String apply(List<String> inputs) {
+			String listOfGateways = executor.getBasisExecutor().getExecutorConfiguration().getGateways().toString();
+			logger.debug("Reregistering to every gateway: {}", listOfGateways);
+			executor.registerToEveryGateway();
+			return "Registered to every gateway in this list:\n\t" + listOfGateways;
+		}
+	}
 }

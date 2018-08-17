@@ -10,4 +10,4 @@ while lsof -Pi :"$port" -sTCP:LISTEN -t >/dev/null ; do
 done
 echo Port: "$port"
 
-java -cp "$DIR"/../SEDE/* de.upb.sede.gateway.GatewayServerStarter "$port" "$DIR"/configs/*
+java -cp "$DIR"/../SEDE/'*':"$DIR"  de.upb.sede.gateway.GatewayServerStarter "$port" "$DIR"/configs/*

@@ -117,11 +117,19 @@ public class Gateway implements IGateway{
 
 
 	@Override
-	public final boolean register(ExecutorRegistration execRegister) {
-		/*
-		 * TODO load services onto the executor.
-		 */
+	public synchronized final boolean register(ExecutorRegistration execRegister) {
+		if(execCoordinator.hasExecutor(execRegister.getId())) {
+			/*
+			 * Update the internal data for the executorId.
+			 * An executor may have changed some its informations
+			 * like a new address in contact info map or has dropped support for a service.
+			 * Delete the internal representation of the executor.
+			 */
+			logger.warn("ExecutorRegistration with an id that has already been registered: {} \nReplacing executor handle.",  execRegister.getId());
+			execCoordinator.removeExecutor(execRegister.getId());
+		}
 		ExecutorHandle execHandle = createExecHandle(execRegister);
+
 		if(execHandle.getExecutionerCapabilities().supportedServices().isEmpty()) {
 			/*
 			 * as this implementation doesn't support loading services onto the executor, registration with empty services are denied.
@@ -129,13 +137,7 @@ public class Gateway implements IGateway{
 			logger.warn("Executor tried to register with 0 amount of supported services. Denied registration. Executors host: {}", execHandle.getExecutorId());
 			return false;
 
-		} if(execCoordinator.hasExecutor(execHandle.getExecutorId())) {
-			/*
-			 * dont accept double registration.
-			 */
-			logger.warn("ExecutorRegistration with an id that has already been registered: {}",  execHandle.getExecutorId());
-			return false;
-		} else {
+		}  else {
 			execCoordinator.addExecutor(execHandle);
 			logger.info("Executor registered successfully with {} services. Executor's id: {}", execHandle.getExecutionerCapabilities().supportedServices().size(), execRegister.getId());
 			logger.trace("Supported service of executor with id {} are {}.", execRegister.getId(), execHandle.getExecutionerCapabilities().supportedServices());

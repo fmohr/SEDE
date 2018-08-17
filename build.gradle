@@ -58,16 +58,43 @@ subprojects {
         workingDir = new File("${projectDir}")
         ignoreFailures = true
     }
+//    print "compile - provided: " + (configurations.compile - configurations.provided)
+//    print "compile - provided: " + configurations.compile - configurations.provided
 
+    task dep {
+        doLast {
+            println "runtime: "
+            (configurations.runtime).collect { println "\t" + it.toString()}
+            println ""
+            print "provided: "
+            (configurations.provided).collect { println "\t" + it.toString()  }
+            println ""
+            println "testCompile: "
+            (configurations.testCompile).collect { println "\t" + it.toString() }
+            println ""
+
+
+            println "testCompile - compile: "
+            (configurations.testCompile- configurations.compile).collect { println "\t" + it.toString() }
+            println ""
+
+
+            println "runtime - provided: "
+            (configurations.runtime - configurations.provided).collect { println "\t" + it.toString()  }
+            println ""
+        }
+    }
     // build Jar:
     task jarjar(type: Jar, dependsOn: assemble) {
+
         manifest {
             attributes 'Implementation-Title': "${project.name}",
                     'Implementation-Version': version
         }
         destinationDir = file("$rootDir/deploy/SEDE")
         baseName = project.name
-        from { ((configurations.compile - configurations.provided) - configurations.testCompile)
+
+        from { ((configurations.compile - configurations.provided))
                 .findAll { it.name.endsWith('jar') }
                 .collect { zipTree(it) } }
         from sourceSets.main.allSource
@@ -108,7 +135,7 @@ project(':SEDE.core') {
         }
         destinationDir = file("$rootDir")
         baseName = 'ServiceSpecTransfomer'
-        from { (configurations.compile - configurations.testCompile)
+        from { (configurations.compile)
                 .collect { it.isDirectory() ? it : zipTree(it) } }
         with jar
     }
@@ -177,7 +204,7 @@ project(':SEDE.http') {
         destinationDir = file("$rootDir")
         baseName = 'JavaHttpExecutor'
         from sourceSets.main.output
-        from (configurations.compile - configurations.testCompile).
+        from ((configurations.compile - configurations.provided) - configurations.testCompile).
                 findAll { it.name.endsWith('jar') }.
                 collect { zipTree(it) }
         with jar

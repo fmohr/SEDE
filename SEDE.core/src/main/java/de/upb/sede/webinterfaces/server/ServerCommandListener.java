@@ -33,8 +33,8 @@ public final class ServerCommandListener {
 	}
 
 
-	public void addCommandHandle(String commandname, final Function<List<String>, String> command) {
-		this.addCommandHandle(commandname, () -> new ServerCommandHandle(command));
+	public void addCommandHandle(String commandname, final Function<List<String>, String> handle) {
+		this.addCommandHandle(commandname, () -> new ServerCommandHandle(handle));
 	}
 
 	public void listenEndlessly() {
@@ -61,10 +61,10 @@ public final class ServerCommandListener {
 
 	static class ServerCommandHandle implements HTTPServerResponse {
 
-		private final Function<List<String>, String> command;
+		private final Function<List<String>, String> handle;
 
-		ServerCommandHandle(Function<List<String>, String> command) {
-			this.command = command;
+		ServerCommandHandle(Function<List<String>, String> handle) {
+			this.handle = handle;
 		}
 
 		@Override
@@ -72,15 +72,15 @@ public final class ServerCommandListener {
 			Streams.InReadString(payload);
 			String returnMessage;
 			if(url.isPresent()) {
-				logger.info("Processing command. url: {}", url.get());
+				logger.info("Processing handle. url: {}", url.get());
 				List<String> inputItems = new ArrayList<>(Arrays.asList(url.get().split("/")));
 				if(inputItems.size() < 2) {
-					returnMessage = "url contains no command: " + url;
+					returnMessage = "url contains no handle: " + url;
 				} else {
 					inputItems.remove(0); // first one is empty.
-					inputItems.remove(0); // the second one is the command name
-					logger.trace("Delegating list to command: {}", inputItems);
-					returnMessage = command.apply(inputItems);
+					inputItems.remove(0); // the second one is the handle name
+					logger.trace("Delegating list to handle: {}", inputItems);
+					returnMessage = handle.apply(inputItems);
 				}
 			} else {
 				returnMessage = "url is empty.";

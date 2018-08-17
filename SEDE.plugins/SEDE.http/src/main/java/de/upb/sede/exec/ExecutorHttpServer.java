@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -41,7 +42,7 @@ public class ExecutorHttpServer implements ImServer {
 	private static final Logger logger = LogManager.getLogger();
 
 	private final Executor basis;
-	private final String hostAddress;
+	private String hostAddress;
 
 	private final HttpServer server;
 
@@ -50,7 +51,7 @@ public class ExecutorHttpServer implements ImServer {
 
 	public ExecutorHttpServer(Executor basis, String hostAddress, int port) {
 		this.basis = basis;
-		this.hostAddress = hostAddress + ":" + port;
+		setHostAddress(hostAddress + ":" + port);
 
 		try {
 			server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -65,13 +66,41 @@ public class ExecutorHttpServer implements ImServer {
 		server.setExecutor(null); // creates a default executor
 		server.start();
 
-		basis.getModifiableContactInfo().put("host-address", this.hostAddress);
 		bindHttpProcedures();
 
 		/*
 		 *  Shutdown the http server if the base executor is being shutdown.
 		 */
 		basis.shutdownHook.observe(Observer.alwaysNotify(executor -> this.shutdown()));
+		registerToEveryGateway();
+	}
+
+
+	/**
+	 * Register to every gateway stated by the config.
+	 */
+	public void registerToEveryGateway() {
+		List<String> gatewaysToBeRegistered = new ArrayList<>(basis.getExecutorConfiguration().getGateways());
+		for(String gatewayAddress : gatewaysToBeRegistered) {
+			try{
+				registerToGateway(gatewayAddress);
+			}
+			catch(Exception ex) {
+				logger.error("Error during registration to gateway: {}", gatewayAddress, ex);
+			}
+		}
+	}
+
+	/**
+	 * Changes the host address of this executor http server.
+	 * The host address is put into the contact info map which is shared with executors
+	 * who use the contact info map to reach this executor.
+	 * It is thus important to set hostAddress to the external http address of this executor.
+	 * @param hostAddress the new host address.
+	 */
+	public void setHostAddress(String hostAddress) {
+		this.hostAddress = hostAddress;
+		basis.getModifiableContactInfo().put("host-address", this.hostAddress);
 	}
 
 	public ExecutorHttpServer(ExecutorConfiguration execConfig, String hostAddress, int port) {

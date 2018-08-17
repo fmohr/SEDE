@@ -1,6 +1,7 @@
 package de.upb.sede.gateway;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -52,5 +53,14 @@ public class ExecutorCoordinator {
 
 	public List<ExecutorHandle> getExecutors() {
 		return executors;
+	}
+
+	public synchronized void removeExecutor(String executorId) {
+		for(Iterator<ExecutorHandle> iterator = executors.iterator(); iterator.hasNext();) {
+			ExecutorHandle handle = iterator.next();
+			if(handle.getExecutorId().equals(executorId)) {
+				iterator.remove();
+			}
+		}
 	}
 }

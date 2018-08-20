@@ -21,15 +21,13 @@ import java.util.concurrent.TimeoutException;
  * A client that makes requesting Server invocations 'easy'. The general idea is to do all service
  * calls via compositions.
  *
- * EasyClient offers 'with...' methods that allow building a request through chaining. E.g.:
+ * EasyClient offers 'with...' methods that allow building a request through chaining.
  *
- * new EasyClient().withBody(body).withHost("localhost:80")
  *
  * After the desired request is built, use the 'dispatch' method to do a general purpose request.
- * For 'dispatch' a composition text has to be explicitly created.
  *
  * Alternatively EasyClient also offers methods that generate composition texts before making a
- * service request. E.g.: createService and invokeOneLineOperation.
+ * service request. E.g.: createOneService and invokeOneLineOperation.
  */
 public final class EasyClient {
 

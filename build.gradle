@@ -28,10 +28,10 @@ subprojects {
         maven { url 'https://jitpack.io' }
 
         /*
-         * local imaging libraries:
+         * local catalano image libraries:
          */
         flatDir {
-            dirs "${project(':imaging').projectDir}/libs"
+            dirs "${project(':catalano.image').projectDir}/libs"
         }
 
         /*// python repos:
@@ -189,7 +189,6 @@ project(':SEDE.http') {
 //        compile group: 'com.google.guava', name: 'guava', version: '25.1-jre'
 
         testImplementation project(':demolib')
-        testImplementation project(':imaging')
         testImplementation project(':SEDE.gateway')
 
         provided project(':SEDE.core')

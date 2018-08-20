@@ -180,7 +180,7 @@ public class ImagingTests {
 		/*
 			Cast it to bitmap:
 		 */
-		FastBitmap processedImage = (FastBitmap) result.castResultData(
+		FastBitmap processedImage = result.castResultData(
 				FastBitmap.class.getName(), FastBitmapCaster.class).getDataField();
 		JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
 	}

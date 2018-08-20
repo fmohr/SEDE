@@ -235,7 +235,7 @@ public class MLTests {
 		OnthologicalTypeConfig conf = new OnthologicalTypeConfig();
 
 		conf.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/builtin-typeconf.json"),
-				FileUtil.readResourceAsString("config/ml-typeconf.json"));
+				FileUtil.readResourceAsString("config/weka-ml-typeconf.json"));
 		return conf;
 	}
 }

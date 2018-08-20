@@ -6,17 +6,25 @@ import numpy as np
 
 class NeuralNet:
     """ Implements a tensorflow graph.  
-    Args: 
-        log: a nnhandler.logger.Logger instance. Messages will be written in it. see log function below. Note that the messages written to log will be saved in a models.Result instance and can be accessed through http get requests.
+    Args:
+        layers_count: amount of hidden layer plus 1. e.g. 2 would create a neural net with only an input and an output layer.
+        in_size: input dimension
+        out_size: output dimension
+        log: a logger.
     Instance Attributes:
+        layers_count: amount of hidden layer plus 1. e.g. 2 would create a neural net with only an input and an output layer.
+        in_size: input dimension
+        out_size: output dimension
+        _log: logger that will be used during training.
+
         x: tensorflow matrix variable representing the input layer of the net.
         y_: tensorflow matrix variable representing the output layer of the net.
-        y: represents actual data outcome. taken from arff file. Used in training.
+        y: represents labels of training set.
+
         cross_entropy: Tensorflow Neural Network Cross Entropy Error. Used for backpropagation when training.
         weights_biases_list: list of tensorflow variables to store the variables needed to use for checkpoints.
-        _log: points to a Logger instance. Writes information about constrcution, training and prediction into the log.
     """
-    def __init__(self, layers_count, in_size=0, out_size=0 , log = None):
+    def __init__(self, layers_count, in_size=0, out_size=0 , log = logging):
         self._log = log
         self.in_size = in_size
         self.out_size = out_size
@@ -184,16 +192,8 @@ class NeuralNet:
         """ Appends the message string to the log. If there is no log instance, prints the retult.
         """
         if self._log is not None :
-            self._log.append(message)
-        else :
-            logging.debug(message)
-    def setlog(self, message):
-        """ Replaces logs text with the message string. If there is no log instance, prints the retult.
-        """
-        if self._log is not None :
-            self._log.replace(message)
-        else :
-            logging.debug(message)
+            self._log.debug(message)
+
         
 def nodes_count_formula(layers_count, in_count, out_count, layer_index):
     """This function is called when constructing the neural net graph to calculate the amount of nodes in one layer with the index 'layer_index'.

@@ -119,7 +119,7 @@ class ExecutorRegistration(JsonSerializable):
         d.update({
             "contact-info":self.contact_information,
             "capabilities":self.capabilities,
-            "supported-servies":self.supported_services})
+            "supported-services":self.supported_services})
 
 class Result(RequestIdMixin, FieldnameMixin, DataMixin):
     pass

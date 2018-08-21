@@ -1,9 +1,7 @@
 """ Wraps tensorflow library in tflib """
 
-from wrappers import wrappercore
-import pase.marshal
+from util import wrapping
 from pase.pase_dataobject import PASEDataObject
-import jsonpickle
 import jsonpickle.handlers
 from tflib.neuralnet import NeuralNet
 from tflib.arffcontainer import ArffStructure
@@ -37,7 +35,7 @@ class NeuralNetHandler(jsonpickle.handlers.BaseHandler):
 # Register this handler for the class
 jsonpickle.handlers.registry.register(NeuralNet, NeuralNetHandler)
 
-class WrappedNeuralNet(wrappercore.BaseClassifierMixin, wrappercore.BaseOptionsSetterMixin):
+class WrappedNeuralNet(wrapping.BaseClassifierMixin, wrapping.BaseOptionsSetterMixin):
     """ Wrapper for neuralnet module in tflib.
     Offers our standard methods: declare_classes, train and predict
     declare_classes has the signature: declare_classes(LabeledInstances)::void
@@ -54,7 +52,7 @@ class WrappedNeuralNet(wrappercore.BaseClassifierMixin, wrappercore.BaseOptionsS
         # wrappedinstance  = wrappedclass_module(**kwargs) 
         # initialize the DelegateFunctionsMixin with the created wrapped object.
 
-        wrappercore.BaseOptionsSetterMixin.optionsFromDict(self, kwargs)
+        wrapping.BaseOptionsSetterMixin.optionsFromDict(self, kwargs)
         self.trained = False
             
     def get_params(self):

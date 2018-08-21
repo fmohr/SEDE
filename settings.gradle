@@ -34,5 +34,8 @@ project(':catalano.image').projectDir = new File(serivceFolder, "catalano.image"
 include 'weka.ml'
 project(':weka.ml').projectDir = new File(serivceFolder, "weka.ml")
 
+include 'scikit.ml'
+project(':scikit.ml').projectDir = new File(serivceFolder, "scikit.ml")
+
 rootProject.name = 'SEDE'
 

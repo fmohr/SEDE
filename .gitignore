@@ -62,6 +62,7 @@ gradle-app.setting
 SEDE.iml
 /deploy/**/*.pom
 /deploy/SEDE/
+/deploy/SEDE_Python/
 **/testrsc
 **/servicespec/
 /*.temp/

@@ -6,6 +6,7 @@ project.ext {
 
 }
 
+
 subprojects {
     /*
         configuration for all sub projects.
@@ -44,6 +45,7 @@ subprojects {
             }
         }*/
     }
+
     dependencies {
         compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
         compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'
@@ -58,8 +60,6 @@ subprojects {
         workingDir = new File("${projectDir}")
         ignoreFailures = true
     }
-//    print "compile - provided: " + (configurations.compile - configurations.provided)
-//    print "compile - provided: " + configurations.compile - configurations.provided
 
     task dep {
         doLast {
@@ -84,6 +84,7 @@ subprojects {
             println ""
         }
     }
+
     // build Jar:
     task jarjar(type: Jar, dependsOn: assemble) {
 
@@ -101,6 +102,12 @@ subprojects {
         with jar
     }
 
+    task buildPython(type: Copy) {
+        from "${projectDir}/src/main/python/"
+        include "**/*.py"
+        into "${rootDir}/deploy/SEDE_python/${project.name}"
+    }
+
     clean.doFirst {
         delete fileTree("$rootDir") {
             include '*.jar'
@@ -110,15 +117,9 @@ subprojects {
         delete "${projectDir}/instances"
         delete "${projectDir}/servicespec"
         delete "${rootDir}/deploy/SEDE"
+        delete "${rootDir}/deploy/SEDE_Python"
     }
 
-    task serviceSpec(type: JavaExec, dependsOn: assemble) {
-        classpath = sourceSets.main.runtimeClasspath
-        main = 'de.upb.sede.config.ServiceSpecTransformer'
-        // arguments to pass to the application
-        args sourceSets.main.resources.srcDirs.getAt(0).toString() + "/config/"
-        args "servicespec/"
-    }
 }
 /*
     configurations for each sub project.
@@ -172,15 +173,7 @@ project(':SEDE.executor') {
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
 
         provided project(':SEDE.core')
-//        provided project(':SEDE.gateway')
     }
-
-    task buildPython(type: Copy) {
-        from "${projectDir}/src/main/python/"
-        include "**/*.py"
-        into "${rootDir}/deploy/SEDE/pyExecutor/"
-    }
-    jarjar.dependsOn(buildPython)
 }
 
 project(':SEDE.http') {
@@ -196,16 +189,14 @@ project(':SEDE.http') {
         provided project(':SEDE.executor')
     }
 
-    task jarExecutor(type: Jar, dependsOn: assemble) {
+    task jarExecutor(type: Jar, dependsOn: jarjar) {
         manifest {
             attributes 'Main-Class': 'de.upb.sede.exec.SimpleHttpExecutorStarter'
         }
         destinationDir = file("$rootDir")
         baseName = 'JavaHttpExecutor'
-        from sourceSets.main.output
-        from ((configurations.compile - configurations.provided) - configurations.testCompile).
-                findAll { it.name.endsWith('jar') }.
-                collect { zipTree(it) }
+        from { (configurations.compile)
+                .collect { it.isDirectory() ? it : zipTree(it) } }
         with jar
     }
 }

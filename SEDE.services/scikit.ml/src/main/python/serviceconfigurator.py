@@ -23,10 +23,9 @@ def configureWekaClassifier(classconfig) :
 def configureSKClassifier(classconfig) :
     for cls in classconfig:
         cls: str
-        if cls.startswith("weka.classifiers"):
-            classconfig[cls] = {
-                "extends": ["$Basic_Weka_Index_Classifier$"],
-                "methods": {
+        if cls.startswith("sklearn"):
+            print("\"" + cls + "\",")
+            classconfig[cls]["methods"] = {
                     "$construct": {
                         "params": [
                             {
@@ -35,16 +34,16 @@ def configureSKClassifier(classconfig) :
                             }
                         ]
                     }
-                }
+
             }
 
 
-with open("../resources/config/ml-classifiers-classconf.json", "r") as fp:
+with open("../resources/config/sl-ml-classifiers-classconf.json", "r") as fp:
     classconfig = json.load(fp)
 
 # configureWekaClassifier(classconfig)
 
 configureSKClassifier(classconfig)
 
-with open("../resources/config/ml-classifiers-classconf.json", "w") as fp:
-    json.dump(classconfig, fp, indent=4)
+# with open("../resources/config/ml-classifiers-classconf.json", "w") as fp:
+#     json.dump(classconfig, fp, indent=4)

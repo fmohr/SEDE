@@ -2,6 +2,7 @@ import os
 import os.path
 import exe
 import numpy as np
+from numpy import ndarray
 from ml import larff
 from collections import UserList
 
@@ -92,6 +93,25 @@ def set_classindex(dataset:dict, classindex = None):
 def has_classindex(dataset:dict)-> bool:
     return "classindex" in dataset and dataset["classindex"] is not None
 
+def onehot_attr(attribute):
+    attribute_type = attribute[1]
+    if attribute_type == 'REAL':
+        # already numeric attribute. Add attribute as it is:
+        return [attribute]
+    elif isinstance(attribute_type, list):
+        # attribute is categorical:
+        if len(attribute_type) == 0:
+            raise ValueError("Categorical attribute has no categories defined: " + str(attribute))
+        attribute_name = attribute[0]
+        onehotted = list()
+        for category_index in range(0, len(attribute_type)):
+            hot_attr = (attribute_name + "_" + attribute_type[category_index] + "_" +str(category_index), 'REAL')
+            onehotted.append(hot_attr)
+        return onehotted
+    else:
+        raise ValueError("Cannot handle attribute type: " + str(attribute))
+
+
 def onehot_and_splitXY(dataset:dict) -> dict:
     """
     onehottes the data section of the given data set and splits inputs and output data into two separate arrays.
@@ -125,27 +145,16 @@ def onehot_and_splitXY(dataset:dict) -> dict:
         if attribute_index == classindex:
             continue # skipp the class index
         attribute: tuple = attr[attribute_index]
-        attribute_type = attribute[1]
-        if attribute_type == 'REAL':
-            # already numeric attribute. Add attribute as it is:
-            n_attr.append(attribute)
-        elif isinstance(attribute_type, list):
-            # attribute is categorical:
-            if len(attribute_type) == 0:
-                raise ValueError("Categorical attribute has no categories defined: " + str(attribute))
-            attribute_name = attribute[0]
-            for category_index in range(0, len(attribute_type)):
-                hot_attr = (attribute_name + "_" + attribute_type[category_index] + "_" +str(category_index), 'REAL')
-                n_attr.append(hot_attr)
-        else:
-            raise ValueError("Cannot handle attribute type: " + str(attribute))
+        onehotted = onehot_attr(attribute)
+        n_attr.extend(onehotted)
 
-    # add the class index at the end the way it is:
+    # add the class index at the end.
     if classindex >= 0:
         n_attr.append(attr[classindex])
         n_dataset["classindex"] = len(n_attr) - 1
     else:
         n_dataset["classindex"] = None
+
 
 
     for datapoint in data:
@@ -187,7 +196,7 @@ def mergeXY(dataset:dict) -> dict:
     else:
         raise ValueError("Dataset format not recognized. No dataset_x and dataset_y entry.")
 
-class NumericDataset:
+class NumericDatasetCaster:
     @staticmethod
     def cts_NumericDataset(dataset:'dict')->bytes:
         dataset = mergeXY(dataset)
@@ -198,3 +207,18 @@ class NumericDataset:
         arffstring = byte_arr.decode()
         dataset = larff.loads(arffstring)
         return onehot_and_splitXY(dataset)
+
+class NdArrayCaster:
+    @staticmethod
+    def cts_ndarray(arr: ndarray) -> bytes:
+        if len(arr.shape) > 1:
+            raise ValueError("Cannot cast a ndarray with more than 1 dimension to a list. array shape: " + str(ndarray.shape))
+        list_ = arr.tolist()
+        from de.upb.sede import BuiltinCaster
+        return BuiltinCaster.cts_List(list_)
+
+    @staticmethod
+    def cfs_ndarray(byte_arr: bytes) -> ndarray:
+        from de.upb.sede import BuiltinCaster
+        list_ = BuiltinCaster.cfs_List(bytes)
+        return np.asanyarray(list_)

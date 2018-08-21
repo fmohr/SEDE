@@ -123,8 +123,9 @@ class HTTPExecutor(Executor):
                                          self.handler_interrupt)
 
         self.httpserver = server.HTTPServer(("", port), self.request_handler)
-        logging.info("Starting Python executor http server: '%s'. host: %s port: %i", config.executor_id, host_address, port)
 
+        logging.info("Starting Python executor http server: '%s'. host: %s port: %i", config.executor_id, host_address, port)
+        self.register_toall()
 
     def bind_http_procedure_names(self):
         self.worker_pool.bind_procedure("TransmitData", TransmitDataOverHttp)
@@ -149,6 +150,27 @@ class HTTPExecutor(Executor):
             self.httpserver.serve_forever()
         except KeyboardInterrupt:
             self.httpserver.shutdown()
+
+    def register_toall(self):
+        logging.debug("Registering to every gateway stated by the config: %s", self.config.gateways)
+        for gatewayaddress in self.config.gateways:
+            url = gatewayaddress + "/register"
+            try:
+                self.register_perhttp(url)
+            except Exception as registrationException:
+                # logging.exception(registrationException)
+                logging.warn("Couldn't register to %s, because:\n%s", gatewayaddress, str(registrationException))
+
+
+    def register_perhttp(self, gatewayaddress):
+        registration_str = self.registration().to_json_string()
+        registration_req = HttpClientRequest(gatewayaddress)
+        answer:str = registration_req.send_receive_str(registration_str)
+        answer = answer.strip()
+        if answer is not None and len(answer) == 0:
+            logging.info("Successfully registered to %s.", gatewayaddress)
+        else:
+            raise RuntimeError("the returned answer was: " + answer)
 
 
 if __name__ == "__main__":

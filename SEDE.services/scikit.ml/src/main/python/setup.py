@@ -1,17 +1,17 @@
 import setuptools
 
 dependencies = [
-      'ujson',
-      'requests'
+      'scikit-learn',
+      'NumPy >= 1.8.2',
+      'SciPy >= 0.13.3'
 ]
 
-setuptools.setup(name='SEDE-executor',
-      version='0.0.3',
-      description='SEDE python executor',
+setuptools.setup(name='SEDE-scikit.ml',
+      version='0.1',
+      description='SEDE service scikitlearn and tensorflow',
       url='http://github.com/fmohr/SEDE',
       author='Amin Faez',
       author_email='aminfaez@mail.upb.de',
       license='GNU',
-      long_description_content_type="text/markdown",
       packages=setuptools.find_packages(),
       install_requires=dependencies)

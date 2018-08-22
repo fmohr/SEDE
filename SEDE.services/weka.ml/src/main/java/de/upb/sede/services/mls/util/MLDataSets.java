@@ -1,6 +1,6 @@
 package de.upb.sede.services.mls.util;
 
-import de.upb.sede.services.mls.casters.InstancesCaster;
+import ml.data.LabeledInstancesCaster;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import weka.core.Instances;
@@ -105,7 +105,7 @@ public class MLDataSets {
 			throw new RuntimeException("Illegal path:" + dataSetFile.getAbsolutePath());
 		}
 		try(OutputStream out = new FileOutputStream(dataSetFile)) {
-			new InstancesCaster().cts_Instances(out, instances);
+			new LabeledInstancesCaster().cts_LabeledInstances(out, instances);
 		}
 	}
 

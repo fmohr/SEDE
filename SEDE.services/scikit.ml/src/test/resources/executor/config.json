@@ -1,4 +1,5 @@
 {
+    "executorId": "PY-Scikit-Executor",
     "capabilities": [],
     "threadNumber": 4,
     "services": [

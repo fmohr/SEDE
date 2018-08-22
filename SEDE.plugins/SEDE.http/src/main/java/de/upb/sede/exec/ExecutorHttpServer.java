@@ -46,8 +46,8 @@ public class ExecutorHttpServer implements ImServer {
 
 	private final HttpServer server;
 
-	private final Pattern PUT_DATA_URL_PATTERN = Pattern.compile("/put/(?<executionId>[-\\w]+)/(?<fieldname>(?:[&_a-zA-Z][&\\w]*+))/(?<semtype>\\w+)");
-	private final Pattern INTERRUPT_URL_PATTERN = Pattern.compile("/interrupt/(?<executionId>\\w+)");
+	private final Pattern PUT_DATA_URL_PATTERN = Pattern.compile("/put/(?<executionId>[\\-\\w]+)/(?<fieldname>(?:[&_a-zA-Z][&\\-\\w]*+))/(?<semtype>[\\-\\w]+)");
+	private final Pattern INTERRUPT_URL_PATTERN = Pattern.compile("/interrupt/(?<executionId>[\\-\\w]+)");
 
 	public ExecutorHttpServer(Executor basis, String hostAddress, int port) {
 		this.basis = basis;
@@ -171,9 +171,10 @@ public class ExecutorHttpServer implements ImServer {
 			if (!unavailable && semType == null) {
 				SEDEObject sedeObject = task.getExecution().getEnvironment().get(fieldname);
 				if (sedeObject.isReal()) {
-					throw new RuntimeException("The task doesn't contain the 'semantic-type' field "
-							+ "but when transmitting real data the semantic type needs to be defined. \n" + "task: "
-							+ task.getAttributes().toString() + "\nfield to be sent: " + sedeObject.toString());
+//					throw new RuntimeException("The task doesn't contain the 'semantic-type' field "
+//							+ "but when transmitting real data the semantic type needs to be defined. \n" + "task: "
+//							+ task.getAttributes().toString() + "\nfield to be sent: " + sedeObject.toString());
+					semType = "SemanticType";
 				} else {
 					semType = sedeObject.getType();
 				}

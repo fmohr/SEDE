@@ -11,10 +11,11 @@ import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.exec.ExecutorHttpServer;
 import de.upb.sede.gateway.ExecutorHandle;
 import de.upb.sede.gateway.GatewayHttpServer;
+import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.requests.Result;
 import de.upb.sede.requests.RunRequest;
 import de.upb.sede.requests.resolve.ResolvePolicy;
-import de.upb.sede.services.mls.casters.InstancesCaster;
+import ml.data.LabeledInstancesCaster;
 import de.upb.sede.services.mls.DataSetService;
 import de.upb.sede.services.mls.util.MLDataSets;
 import de.upb.sede.util.ExecutorConfigurationCreator;
@@ -54,39 +55,61 @@ public class MLTests {
 	static Instances weatherTrainSet;
 	static Instances weatherTestSet;
 
-	private static final String datasetRef = "semeion.arff";
+	private static final String datasetRef = "cifar_0.arff";
 
 	@BeforeClass
 	public static void startClient() {
 		gateway = new GatewayHttpServer(gatewayPort, getTestClassConfig(), getTestTypeConfig());
 
 		ExecutorConfigurationCreator creator = new ExecutorConfigurationCreator();
-		creator.withExecutorId("executor1");
+		creator.withExecutorId("executor-weka-bayesnet");
 		creator.withSupportedServices(DataSetService.class.getName(), "weka.classifiers.bayes.BayesNet");
 		ExecutorConfiguration configuration = ExecutorConfiguration.parseJSON(creator.toString());
 		executor1 = new ExecutorHttpServer(configuration, "localhost",  9000);
 		gateway.register(executor1.getBasisExecutor().registration());
 
 		creator = new ExecutorConfigurationCreator();
-		creator.withExecutorId("executor2");
+		creator.withExecutorId("executor-weka-naivebayes");
 		creator.withSupportedServices(DataSetService.class.getName(), "weka.classifiers.bayes.NaiveBayes");
 		configuration = ExecutorConfiguration.parseJSON(creator.toString());
 		executor2 = new ExecutorHttpServer(configuration, "localhost",  9001);
 		gateway.register(executor2.getBasisExecutor().registration());
-
-
 
 		creator = new ExecutorConfigurationCreator();
 		creator.withExecutorId("Client");
 		configuration = ExecutorConfiguration.parseJSON(creator.toString());
 		coreClient = HttpCoreClient.createNew(configuration, clientAddress, clientPort, gatewayAddress, gatewayPort);
 		/*
-			Disabled if you dont have dot installed.
-
+			Disable if you dont have dot installed.
 		 */
 		coreClient.writeDotGraphToDir("testrsc/ml");
 
 
+	}
+
+	/*
+	 * Comment the annotation out if you dont have a python executor running on 'localhost:5000'.
+	 */
+	@BeforeClass
+	public static void registerScikitExecutor() {
+		// register the python executor
+		String pyExecutorId = "PY-Scikit-Executor";
+		String pythonExecutorConfig = ExecutorConfigurationCreator.newConfigFile()
+				.withExecutorId(pyExecutorId)
+				.withCapabilities("python")
+				.withSupportedServices("sklearn.ensemble.RandomForestClassifier",
+						"sklearn.gaussian_process.GaussianProcessClassifier")
+				.withThreadNumberId(4).toString();
+		ExecutorConfiguration pythonExecConfig = ExecutorConfiguration.parseJSON(pythonExecutorConfig);
+		Map<String, Object> pythonExecutorContactInfo = new HashMap<>();
+		pythonExecutorContactInfo.put("id", pyExecutorId);
+		pythonExecutorContactInfo.put("host-address", "localhost:5000");
+
+		ExecutorRegistration pythonExecutorRegistration = new ExecutorRegistration(pythonExecutorContactInfo,
+				pythonExecConfig.getExecutorCapabilities(),
+				pythonExecConfig.getSupportedServices());
+
+		gateway.register(pythonExecutorRegistration);
 	}
 
 //	@BeforeClass
@@ -147,8 +170,8 @@ public class MLTests {
 		policy.setPersistentServices(Arrays.asList("s1"));
 		policy.setReturnFieldnames(Arrays.asList("predictions"));
 
-		SEDEObject trainset = new ObjectDataField(Instances.class.getName(), weatherTrainSet);
-		SEDEObject testset = new ObjectDataField(Instances.class.getName(), weatherTestSet);
+		SEDEObject trainset = getDataField( weatherTrainSet);
+		SEDEObject testset = getDataField( weatherTestSet);
 
 		Map<String, SEDEObject> inputs = new HashMap<>();
 		inputs.put("trainset", trainset);
@@ -178,6 +201,10 @@ public class MLTests {
 
 
 	@Test
+	/**
+	 * This test assumes that a python executor is running on 'localhost:5000'.
+	 * Comment the annotation out if you cant satisfy that.
+	 */
 	public void testClassification2() {
 		String composition =
 				"dataset = de.upb.sede.services.mls.DataSetService::__construct({\"" +datasetRef + "\"});" +
@@ -213,7 +240,7 @@ public class MLTests {
 		 */
 		List prediction = (List) result.castResultData(
 				"builtin.List", BuiltinCaster.class).getDataField();
-		Instances testDataFromExecutor = (Instances) resultMap.get("testset").castResultData("weka.core.Instances", InstancesCaster.class).getDataField();
+		Instances testDataFromExecutor = resultMap.get("testset").castResultData("LabeledInstances", LabeledInstancesCaster.class).getDataField();
 		double correctPredictions = 0.;
 		Instances weatherTestSet = new DataSetService(datasetRef).fromIndicesLabeled(splits.get(1), -1);
 		Assert.assertEquals(weatherTestSet.toString().trim(), testDataFromExecutor.toString().trim());
@@ -227,15 +254,64 @@ public class MLTests {
 	}
 
 
+	@Test
+	public void testClassificationScikit1() {
+		String composition =
+				"s1 = sklearn.ensemble.RandomForestClassifier::__construct();\n" +
+						"s1::train({trainset});\n" +
+						"predictions = s1::predict({testset});\n";
+
+		logger.info("Test classification with composition: \n" + composition);
+
+		ResolvePolicy policy = new ResolvePolicy();
+		policy.setPersistentServices(Arrays.asList("s1"));
+		policy.setReturnFieldnames(Arrays.asList("predictions"));
+
+		SEDEObject trainset = getDataField(weatherTrainSet);
+		SEDEObject testset = getDataField(weatherTestSet);
+
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		inputs.put("trainset", trainset);
+		inputs.put("testset", testset);
+
+		RunRequest runRequest = new RunRequest("scikit-classification", composition, policy, inputs);
+
+		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
+		Result result = resultMap.get("predictions");
+		if(result == null || result.hasFailed()) {
+			Assert.fail("Result missing...");
+		}
+		/*
+			Cast it to List:
+		 */
+		List prediction = (List) result.castResultData(
+				"builtin.List", BuiltinCaster.class).getDataField();
+		double correctPredictions = 0.;
+		for (int i = 0; i < prediction.size(); i++) {
+			Instance testInstance = weatherTestSet.get(i);
+			String value = weatherTestSet.classAttribute().value((int)testInstance.classValue());
+			if(value.equals(prediction.get(i).toString())) {
+				correctPredictions++;
+			}
+		}
+		logger.info("{}/{} correct predictions.", (int) correctPredictions, prediction.size());
+	}
+
+
 	private static ClassesConfig getTestClassConfig() {
-		return new ClassesConfig(FileUtil.getPathOfResource("config/ml-classifiers-classconf.json"));
+		return new ClassesConfig(FileUtil.getPathOfResource("config/weka-ml-classifiers-classconf.json"),
+				FileUtil.getPathOfResource("config/sl-ml-classifiers-classconf.json"));
 	}
 
 	private static OnthologicalTypeConfig getTestTypeConfig() {
 		OnthologicalTypeConfig conf = new OnthologicalTypeConfig();
 
 		conf.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/builtin-typeconf.json"),
-				FileUtil.readResourceAsString("config/weka-ml-typeconf.json"));
+				FileUtil.readResourceAsString("config/weka-ml-typeconf.json"),
+				FileUtil.readResourceAsString("config/sl-ml-typeconf.json"));
 		return conf;
+	}
+	private static SEDEObject getDataField(Instances dataSet) {
+		return new ObjectDataField("LabeledInstances", dataSet);
 	}
 }

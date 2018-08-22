@@ -28,13 +28,6 @@ subprojects {
         // we use jitpack in order to add dependecy to github projects:
         maven { url 'https://jitpack.io' }
 
-        /*
-         * local catalano image libraries:
-         */
-        flatDir {
-            dirs "${project(':catalano.image').projectDir}/libs"
-        }
-
         /*// python repos:
         pyGradlePyPi()
         ivy{
@@ -63,25 +56,20 @@ subprojects {
 
     task dep {
         doLast {
-            println "runtime: "
-            (configurations.runtime).collect { println "\t" + it.toString()}
-            println ""
-            print "provided: "
+            println "compile: "
+            (configurations.compile).collect { println "\t" + it.toString()}
+            println "\nprovided: "
             (configurations.provided).collect { println "\t" + it.toString()  }
-            println ""
-            println "testCompile: "
+            println "\ntestCompile: "
             (configurations.testCompile).collect { println "\t" + it.toString() }
-            println ""
 
 
-            println "testCompile - compile: "
+            println "\ntestCompile - compile: "
             (configurations.testCompile- configurations.compile).collect { println "\t" + it.toString() }
-            println ""
 
 
-            println "runtime - provided: "
-            (configurations.runtime - configurations.provided).collect { println "\t" + it.toString()  }
-            println ""
+            println "\ncompile - provided: "
+            (configurations.compile - configurations.provided).collect { println "\t" + it.toString()  }
         }
     }
 
@@ -127,7 +115,10 @@ subprojects {
 project(':SEDE.core') {
     dependencies {
         // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
-        compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+        compile (group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1') {
+            exclude module: 'junit'
+            exclude group: 'org.hamcrest'
+        }
     }
 
     task jarTransformer(type: Jar, dependsOn: assemble) {

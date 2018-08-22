@@ -1,9 +1,9 @@
 package de.upb.sede.services.mls.casters;
 
 import de.upb.sede.core.ObjectDataField;
-import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.SemanticStreamer;
 import de.upb.sede.services.mls.util.MLDataSets;
+import ml.data.LabeledInstancesCaster;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.Test;
@@ -15,7 +15,7 @@ import java.io.ByteArrayOutputStream;
 import static org.junit.Assert.*;
 
 
-public class TestInstancesCaster {
+public class TestLabeledInstancesCaster {
 
 	private final static Logger logger = LogManager.getLogger();
 
@@ -24,12 +24,12 @@ public class TestInstancesCaster {
 		Instances weather = MLDataSets.getDataSetWithLastIndexClass("weather.arff");
 		ByteArrayOutputStream semanticRepr = new ByteArrayOutputStream();
 		SemanticStreamer.streamObjectInto(semanticRepr, new ObjectDataField(Instances.class.getName(), weather),
-				InstancesCaster.class.getName(), "dataset");
+				LabeledInstancesCaster.class.getName(), "dataset");
 		String arffData = semanticRepr.toString();
-		assertTrue(arffData.contains(InstancesCaster.classAttributePrefix));
+		assertTrue(arffData.contains(LabeledInstancesCaster.classAttributePrefix));
 		ByteArrayInputStream semanticData = new ByteArrayInputStream(arffData.getBytes());
 		Instances fromSemantic = SemanticStreamer.
-				readObjectFrom(semanticData, InstancesCaster.class.getName(),
+				readObjectFrom(semanticData, LabeledInstancesCaster.class.getName(),
 				"dataset", Instances.class.getName()).getDataField();
 		assertEquals(weather.classIndex(), fromSemantic.classIndex());
 		assertEquals(weather.toString().trim(), fromSemantic.toString().trim());
@@ -43,14 +43,14 @@ public class TestInstancesCaster {
 		ByteArrayOutputStream semanticRepr = new ByteArrayOutputStream();
 		stop = System.currentTimeMillis();
 		SemanticStreamer.streamObjectInto(semanticRepr, new ObjectDataField(Instances.class.getName(), cifar),
-				InstancesCaster.class.getName(), "dataset");
+				LabeledInstancesCaster.class.getName(), "dataset");
 		long toSemanticTime = System.currentTimeMillis() - stop;
 		byte[] semanticData = semanticRepr.toByteArray();
 		logger.info("Semantic data size: {} bytes", semanticData.length);
 		ByteArrayInputStream semanticInput = new ByteArrayInputStream(semanticData);
 		stop = System.currentTimeMillis();
 		Instances fromSemantic = SemanticStreamer.
-				readObjectFrom(semanticInput, InstancesCaster.class.getName(),
+				readObjectFrom(semanticInput, LabeledInstancesCaster.class.getName(),
 						"dataset", Instances.class.getName()).getDataField();
 		long fromSemanticTime = System.currentTimeMillis() - stop;
 

@@ -38,6 +38,29 @@ def load_dataset(relative_path:str, classindex = None)->dict:
     set_classindex(dataset, classindex)
     return dataset
 
+def split_dataset(dataset, splitratio):
+    splitindex: int
+    if splitratio > 0 and splitratio < 1:
+        splitindex = int(splitratio * get_dataset_size(dataset))
+    else:
+        raise ValueError()
+
+    dataset2 = dict(dataset)
+    if "data" in dataset:
+        dataset["data"] = dataset["data"][:splitindex]
+        dataset2["data"] = dataset2["data"][splitindex:]
+    else:
+        dataset["data_x"] = dataset["data_x"][:splitindex]
+        dataset2["data_x"] = dataset2["data_x"][splitindex:]
+        dataset["data_y"] = dataset["data_y"][:splitindex]
+        dataset2["data_y"] = dataset2["data_y"][splitindex:]
+    return dataset, dataset2
+
+def get_dataset_size(dataset):
+    if "data" in dataset:
+        return len(dataset["data"])
+    else:
+        return len(dataset["data_x"])
 
 def store_dataset(dataset:dict, relative_path:str):
     dataset_path = dataset_abspath(relative_path)

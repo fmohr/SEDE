@@ -63,7 +63,9 @@ SEDE.iml
 **/testrsc
 **/servicespec/
 /*.temp/
+
+
 ## python ignores
 
 *.pyc
-
+*.egg-info

@@ -62,11 +62,10 @@ class BaseClassifierMixin(object):
         y_pred = self.predict(X)
         y_true = X["data_y"]
         score = 0
-        if isinstance(y_pred, list):
-            # count matches
-            for i in range(len(y_pred)):
-                if y_pred[i] == y_true[i]:
-                    score += 1
+        # count matches
+        for i in range(len(y_pred)):
+            if y_pred[i] == y_true[i]:
+                score += 1
 
         if normalize:
             score = float(score) / len(y_pred)  # normalize if needed.

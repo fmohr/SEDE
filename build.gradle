@@ -106,6 +106,9 @@ subprojects {
         delete "${projectDir}/servicespec"
         delete "${rootDir}/deploy/SEDE"
         delete "${rootDir}/deploy/SEDE_Python"
+        delete 'docker/gateway/bin'
+        delete 'docker/java-executor/bin'
+        delete 'delete/python-executor/bin'
     }
 
 }
@@ -131,6 +134,7 @@ project(':SEDE.core') {
                 .collect { it.isDirectory() ? it : zipTree(it) } }
         with jar
     }
+    buildPython.enabled = false
 }
 
 
@@ -189,5 +193,23 @@ project(':SEDE.http') {
         from { (configurations.compile)
                 .collect { it.isDirectory() ? it : zipTree(it) } }
         with jar
+    }
+}
+
+
+task setupDocker {
+    dependsOn getTasksByName('jarjar', true)
+    dependsOn getTasksByName('buildPython', true)
+    copy {
+        from 'deploy/SEDE'
+        into 'docker/gateway/bin'
+    }
+    copy {
+        from 'deploy/SEDE'
+        into 'docker/java-executor/bin'
+    }
+    copy {
+        from 'deploy/SEDE_Python'
+        into 'docker/python-executor/bin'
     }
 }

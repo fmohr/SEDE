@@ -1,0 +1,15 @@
+# **/*.jar
+
+# **/*.py
+# python-executor/src
+
+gateway/bin
+!gateway/Dockerfile
+
+java-executor/bin
+!java-executor/Dockerfile
+
+python-executor/bin
+!python-executor/Dockerfile
+
+!.gitignore

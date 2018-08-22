@@ -1,4 +1,4 @@
-from httpexecutor import HTTPExecutor
+from exe.httpexecutor import HTTPExecutor
 from exe.config import ExecutorConfig
 
 

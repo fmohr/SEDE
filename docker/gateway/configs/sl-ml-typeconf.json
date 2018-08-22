@@ -1,0 +1,11 @@
+{
+  "weka.core.Instances": {
+    "semantic_type": "dataset",
+    "onthological_caster": "de.upb.sede.services.mls.casters.InstancesCaster"
+  },
+  "numpy.ndarray" : {
+    "semantic_type":"list",
+    "onthological_caster": "ml.data.NdArrayCaster"
+  }
+
+}

@@ -98,8 +98,9 @@ public class MLTests {
 				.withExecutorId(pyExecutorId)
 				.withCapabilities("python")
 				.withSupportedServices("sklearn.ensemble.RandomForestClassifier",
-						"sklearn.gaussian_process.GaussianProcessClassifier")
-				.withThreadNumberId(4).toString();
+						"sklearn.gaussian_process.GaussianProcessClassifier",
+						"sklearn.naive_bayes.GaussianNB")
+				.withThreadNumberId(1).toString();
 		ExecutorConfiguration pythonExecConfig = ExecutorConfiguration.parseJSON(pythonExecutorConfig);
 		Map<String, Object> pythonExecutorContactInfo = new HashMap<>();
 		pythonExecutorContactInfo.put("id", pyExecutorId);
@@ -257,7 +258,7 @@ public class MLTests {
 	@Test
 	public void testClassificationScikit1() {
 		String composition =
-				"s1 = sklearn.ensemble.RandomForestClassifier::__construct();\n" +
+				"s1 = sklearn.naive_bayes.GaussianNB::__construct();\n" +
 						"s1::train({trainset});\n" +
 						"predictions = s1::predict({testset});\n";
 

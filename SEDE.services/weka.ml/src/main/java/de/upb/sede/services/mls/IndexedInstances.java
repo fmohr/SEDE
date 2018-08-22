@@ -360,17 +360,17 @@ public class IndexedInstances extends Instances {
 	}
 
 	@Override
-	public void deleteWithMissing(int attIndex) {
+	public void deleteWithMissing(int attIndex) throws InterruptedException {
 		super.deleteWithMissing(attIndex);
 	}
 
 	@Override
-	public void deleteWithMissing(Attribute att) {
+	public void deleteWithMissing(Attribute att) throws InterruptedException {
 		super.deleteWithMissing(att);
 	}
 
 	@Override
-	public void deleteWithMissingClass() {
+	public void deleteWithMissingClass() throws InterruptedException {
 		super.deleteWithMissingClass();
 	}
 

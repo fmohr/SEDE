@@ -173,12 +173,11 @@ class HTTPExecutor(Executor):
         else:
             raise RuntimeError("the returned answer was: " + answer)
 
-
-if __name__ == "__main__":
+def main():
     import sys
     import json
     logging.info("Number of CLI arguments: %d.", len(sys.argv))
-    logging.debug("CLI List: %s.",  str(sys.argv))
+    logging.debug("CLI List: %s.", str(sys.argv))
     # remove the module from the top of the list:
     sys.argv.pop(0)
     # first argument is the executor configuration path:
@@ -187,7 +186,7 @@ if __name__ == "__main__":
             config_dict = json.load(fp)
             logging.trace("configuration %s", config_dict)
         executorConfig = ExecutorConfig.from_dict(config_dict)
-    else :
+    else:
         executorConfig = ExecutorConfig.empty_config()
 
     # second argument is the local host address.
@@ -206,4 +205,7 @@ if __name__ == "__main__":
     executor = HTTPExecutor(executorConfig, host_address, port)
     executor.start_listening()
 
+
+if __name__ == "__main__":
+    main()
 

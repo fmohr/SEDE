@@ -1,6 +1,5 @@
 package de.upb.sede.core;
 
-import com.sun.swing.internal.plaf.metal.resources.metal;
 import de.upb.sede.util.Streams;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

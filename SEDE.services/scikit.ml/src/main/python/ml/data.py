@@ -10,6 +10,8 @@ logging = exe.getlogger("SL.ML")
 
 # Read the path of data set folder from environment variable: 'DATASET_PATH'
 
+classattr_prefix ="$class$"
+
 if "DATASET_PATH" in os.environ:
     DATASET_PATH = os.environ["DATASET_PATH"]
     if DATASET_PATH[-1] is not '/':
@@ -33,38 +35,8 @@ def load_dataset(relative_path:str, classindex = None)->dict:
     with open(dataset_path, "r") as fp:
         dataset = larff.load(fp)
 
-    prepare_dataset(dataset, classindex)
-    return dataset
-
-def create_dataset(arff:str, classindex = None)->dict:
-    dataset = larff.loads(arff)
-    prepare_dataset(dataset, classindex)
-    return dataset
-
-def prepare_dataset(dataset:dict, classindex = None):
     set_classindex(dataset, classindex)
-
-
-def get_attr_dtype(dataset:dict) -> str:
-    dtype = ""
-    for attr in dataset["attributes"]:
-        type_ = attr[1]
-        if isinstance(type_, list):
-            dtype += "U"
-            length = 0
-            for classname in type_:
-                if len(classname) > length:
-                    length = len(classname)
-            dtype += str(length)
-        elif isinstance(type_, str) and type_.upper() == "REAL":
-            dtype += "f8"
-        else:
-            dtype += "O"
-        # TODO other classes
-
-        dtype +=", "
-    return dtype[:-2]
-
+    return dataset
 
 
 def store_dataset(dataset:dict, relative_path:str):
@@ -90,12 +62,40 @@ def set_classindex(dataset:dict, classindex = None):
     else:
         dataset["classindex"] = None
 
+def classindex_set_attributename(dataset:dict) :
+    """
+    """
+    if "classindex" in dataset:
+        # prepend the class attribute prefix to the class attribute name:
+        classindex = dataset["classindex"]
+        clsattr = dataset["attributes"][classindex]
+        clsname:str = clsattr[0]
+        if not clsname.startswith(classattr_prefix):
+            new_clsattr = (classattr_prefix + clsname, clsattr[1])
+            dataset["attributes"][classindex] = new_clsattr
+    else:
+        # try to set classindex from the attribute names:
+        classindex = 0
+        for attr in dataset["attributes"]:
+            attrname: str = attr[0]
+            if attrname.startswith(classattr_prefix):
+                break
+            else:
+                classindex += 1
+        if classindex == len(dataset["attributes"]):
+            # no classindex found:
+            classindex = None
+        dataset["classindex"] = classindex
+
+
+
+
 def has_classindex(dataset:dict)-> bool:
     return "classindex" in dataset and dataset["classindex"] is not None
 
 def onehot_attr(attribute):
     attribute_type = attribute[1]
-    if attribute_type == 'REAL':
+    if attribute_type == 'REAL' or attribute_type == 'NUMERIC':
         # already numeric attribute. Add attribute as it is:
         return [attribute]
     elif isinstance(attribute_type, list):
@@ -196,16 +196,17 @@ def mergeXY(dataset:dict) -> dict:
     else:
         raise ValueError("Dataset format not recognized. No dataset_x and dataset_y entry.")
 
-class NumericDatasetCaster:
+class LabeledInstancesCaster:
     @staticmethod
-    def cts_NumericDataset(dataset:'dict')->bytes:
+    def cts_LabeledInstances(dataset:'dict')->bytes:
         dataset = mergeXY(dataset)
         return larff.dumps(dataset).encode()
 
     @staticmethod
-    def cfs_NumericDataset(byte_arr: bytes)->dict:
+    def cfs_LabeledInstances(byte_arr: bytes)->dict:
         arffstring = byte_arr.decode()
         dataset = larff.loads(arffstring)
+        classindex_set_attributename(dataset)
         return onehot_and_splitXY(dataset)
 
 class NdArrayCaster:

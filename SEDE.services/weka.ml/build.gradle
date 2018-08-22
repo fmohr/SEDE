@@ -9,6 +9,16 @@ repositories {
     mavenCentral()
 }
 
+sourceSets {
+    main {
+        resources {
+            srcDirs += [
+                    project(":scikit.ml").sourceSets.main.resources
+            ]
+        }
+    }
+}
+
 
 dependencies {
 

@@ -1,19 +1,14 @@
 version = '1.0'
 
-repositories {
-    // libraries we only have jar's from:
-    flatDir {
-        dirs 'libs'
-    }
-}
 dependencies {
     // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
     provided project(":SEDE.core")
 
-    compile name: 'Catalano.Image'
-    compile name: 'Catalano.Math'
-    compile name: 'Catalano.Statistics'
+    compile files(
+            'libs/Catalano.Image.jar',
+            'libs/Catalano.Math.jar',
+            'libs/Catalano.Statistics.jar')
 
     testCompile project(":SEDE.http")
 }

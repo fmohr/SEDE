@@ -28,6 +28,10 @@ public abstract class TransmitDataProcedure implements Procedure{
 				String casterClasspath = (String) task.getAttributes().get("caster");
 				String semanticType = (String) task.getAttributes().get("semantic-type");
 
+				if(casterClasspath == null) {
+					throw new RuntimeException("Caster was not defined in task: " + task.getDescription());
+				}
+
 				SemanticStreamer.streamObjectInto(outputStream, sedeObjectToSend, casterClasspath, semanticType);
 			} else {
 				SemanticStreamer.streamInto(outputStream, sedeObjectToSend);

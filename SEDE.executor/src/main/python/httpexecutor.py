@@ -83,16 +83,18 @@ class TransmitDataOverHttp(TransmitDataProcedure):
     def get_put_request(self, task, unavailable:bool)->BasicClientRequest:
         host = task["contact-info"]["host-address"]
         fieldname = task["fieldname"]
-        if "semantic-type" in task:
-            semtype = task["semantic-type"]
-        else:
-            semtype = None
         executionId = task.execution.exec_id
-        if semtype is None:
-            sedeObj:SEDEObject = task.execution.env[fieldname]
-            semtype = sedeObj.type
-        logging.trace("Execution '%s': Transmitting %s of type %s to %s.", executionId, fieldname, semtype, host)
-        return create_put_request(host,fieldname,executionId,unavailable,semtype)
+        logging.trace("Execution '%s': Transmitting %s to %s. (%available)", executionId, fieldname, host,
+                      "un" if unavailable else "")
+        if unavailable:
+            return create_put_request(host, fieldname, executionId, unavailable=True)
+        else:
+            if "semantic-type" in task:
+                semtype = task["semantic-type"]
+            else:
+                sedeObj:SEDEObject = task.execution.env[fieldname]
+                semtype = sedeObj.type
+            return create_put_request(host, fieldname, executionId, unavailable=False, semtype=semtype)
 
 
 class FinishOverHttp(FinishProcedure):
@@ -115,7 +117,7 @@ class HTTPExecutor(Executor):
         self.port = port
         self.bind_http_procedure_names()
         self.request_handler = MultiContextHandler()
-        self.request_handler.add_context("/put/(?P<executionId>\w+)/(?P<fieldname>(?:[&_a-zA-Z][&\w]*))/(?P<semtype>\w+)",
+        self.request_handler.add_context("/put/(?P<executionId>[\w-]+)/(?P<fieldname>(?:[&_a-zA-Z][&\w]*))/(?P<semtype>\w+)",
                                          self.handler_put_data)
         self.request_handler.add_context("/execute",
                                          self.handler_execute)
@@ -154,17 +156,16 @@ class HTTPExecutor(Executor):
     def register_toall(self):
         logging.debug("Registering to every gateway stated by the config: %s", self.config.gateways)
         for gatewayaddress in self.config.gateways:
-            url = gatewayaddress + "/register"
             try:
-                self.register_perhttp(url)
+                self.register_perhttp(gatewayaddress)
             except Exception as registrationException:
                 # logging.exception(registrationException)
                 logging.warn("Couldn't register to %s, because:\n%s", gatewayaddress, str(registrationException))
 
-
-    def register_perhttp(self, gatewayaddress):
+    def register_perhttp(self, gatewayaddress: str):
+        url = gatewayaddress + "/register"
         registration_str = self.registration().to_json_string()
-        registration_req = HttpClientRequest(gatewayaddress)
+        registration_req = HttpClientRequest(url)
         answer:str = registration_req.send_receive_str(registration_str)
         answer = answer.strip()
         if answer is not None and len(answer) == 0:

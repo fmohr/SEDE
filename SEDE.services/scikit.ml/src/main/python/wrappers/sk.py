@@ -86,7 +86,7 @@ class WrappedClassifier(wrapping.WrappedClassMixin,
     Classifiers can deal with classes as strings themselves.
     """
     def __init__(self, classifier_classpath):
-        wrapping.WrappedClassMixin.__init__(classifier_classpath)
+        wrapping.WrappedClassMixin.__init__(self, classifier_classpath)
         wrapping.DelegateFunctionsMixin.__init__(self, delegate=self.wrapped_obj)
 
     def train(self, dataset:dict):
@@ -117,7 +117,7 @@ class WrappedClassifier(wrapping.WrappedClassMixin,
 
 # TODO Preprocessing and Imputer from scikit
 
-class SkPPWrapper(wrapping.DelegateFunctionsMixin, wrapping.BaseOptionsSetterMixin):
+class SkPPWrapper(wrapping.DelegateFunctionsMixin, BaseOptionsSetterMixin):
     """ Wraps the feature selection classes in scikit.
     """
     def __init__(self, wrappedclass_module, kwargs):
@@ -145,7 +145,7 @@ class SkPPWrapper(wrapping.DelegateFunctionsMixin, wrapping.BaseOptionsSetterMix
     def preprocess(self, X):
         return self.transform(X)
 
-class ImputerWrapper(wrapping.DelegateFunctionsMixin, wrapping.BaseOptionsSetterMixin):
+class ImputerWrapper(wrapping.DelegateFunctionsMixin, BaseOptionsSetterMixin):
     """ Wraps the imputer from sk.
     """
     def __init__(self, wrappedclass_module, kwargs):

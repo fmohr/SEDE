@@ -8,14 +8,14 @@
             },
             "createUnique": {
                 "params": [
-                    "weka.core.Instances"
+                    "LabeledInstances"
                 ],
                 "static": true,
                 "returntype": "de.upb.sede.services.mls.DataSetService"
             },
             "createNamed": {
                 "params": [
-                    "weka.core.Instances",
+                    "LabeledInstances",
                     "String"
                 ],
                 "static": true,
@@ -23,21 +23,21 @@
             },
             "all": {
                 "statemutating": false,
-                "returntype": "weka.core.Instances"
+                "returntype": "LabeledInstances"
             },
             "allLabeled": {
                 "params": [
                     "Number"
                 ],
                 "statemutating": false,
-                "returntype": "weka.core.Instances"
+                "returntype": "LabeledInstances"
             },
             "fromIndices": {
                 "params": [
                     "builtin.List"
                 ],
                 "statemutating": false,
-                "returntype": "weka.core.Instances"
+                "returntype": "LabeledInstances"
             },
             "fromIndicesLabeled": {
                 "params": [
@@ -45,7 +45,7 @@
                     "Number"
                 ],
                 "statemutating": false,
-                "returntype": "weka.core.Instances"
+                "returntype": "LabeledInstances"
             }
         }
     },
@@ -69,13 +69,13 @@
             },
             "train": {
                 "params": [
-                    "weka.core.Instances"
+                    "LabeledInstances"
                 ]
             },
             "predict": {
                 "params": [
                     "Bool",
-                    "weka.core.Instances"
+                    "LabeledInstances"
                 ],
                 "returntype": "builtin.List",
                 "statemutating": false
@@ -96,7 +96,7 @@
                         "fixed": "TRUE",
                         "type": "Bool"
                     },
-                    "weka.core.Instances"
+                    "LabeledInstances"
                 ],
                 "returntype": "builtin.List",
                 "statemutating": false
@@ -112,7 +112,7 @@
                         "fixed": "FALSE",
                         "type": "Bool"
                     },
-                    "weka.core.Instances"
+                    "LabeledInstances"
                 ],
                 "returntype": "builtin.List",
                 "statemutating": false

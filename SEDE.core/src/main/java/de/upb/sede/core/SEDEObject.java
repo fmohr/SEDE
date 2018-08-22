@@ -13,8 +13,8 @@ public abstract class SEDEObject implements JsonSerializable {
 	/**
 	 * Regex for a class path.
 	 */
-	private final static String REGEX_real_type = "^(?:(?:(?:[_a-zA-Z]\\w*+)\\.)++(?:(?:[_a-zA-Z]\\w*+)))$";
-	private final static Pattern PATTERN_real_type = Pattern.compile(REGEX_real_type);
+//	private final static String REGEX_real_type = "^(?:(?:(?:[_a-zA-Z]\\w*+)\\.)++(?:(?:[_a-zA-Z]\\w*+)))$";
+//	private final static Pattern PATTERN_real_type = Pattern.compile(REGEX_real_type);
 
 
 	private String type;
@@ -49,14 +49,6 @@ public abstract class SEDEObject implements JsonSerializable {
 
 	public static boolean isServiceInstanceHandle(String type) {
 		return type.toLowerCase().startsWith("serviceinstance");
-	}
-
-	public static boolean isReal(String type) {
-		return PATTERN_real_type.matcher(type).matches();
-	}
-
-	public static boolean isSemantic(String type) {
-		return !isPrimitive(type) && !isServiceInstanceHandle(type) && !isReal(type);
 	}
 
 	/**
@@ -152,12 +144,12 @@ public abstract class SEDEObject implements JsonSerializable {
 			ServiceInstanceHandle serviceInstanceHandle = new ServiceInstanceHandle();
 			serviceInstanceHandle.fromJson((Map<String, Object>) data);
 			return new ServiceInstanceField(serviceInstanceHandle);
-		} else if(isSemantic(type)) {
-			SemanticDataField dataField = new SemanticDataField(type, Streams.EmptyInStream(), true);
-			dataField.fromJson(jsonData);
-			return dataField;
+//		} else if(isSemantic(type)) {
+//			SemanticDataField dataField = new SemanticDataField(type, Streams.EmptyInStream(), true);
+//			dataField.fromJson(jsonData);
+//			return dataField;
 		} else {
-			throw new RuntimeException("cannot parse real data from json. Use semantic streamer instead: " + type);
+			throw new RuntimeException("cannot parse real or semantic data from json. Use semantic streamer instead: " + type);
 		}
 	}
 }

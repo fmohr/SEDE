@@ -88,6 +88,7 @@ public class HttpURLConnectionClientRequest implements BasicClientRequest {
 
 	@Override
 	public void close() throws IOException {
-		httpConnection.disconnect();
+		if(httpConnection != null)
+			httpConnection.disconnect();
 	}
 }

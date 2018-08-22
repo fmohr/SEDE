@@ -135,11 +135,8 @@ public class DataFlowAnalysis {
 					typeClass = TypeClass.PrimitiveType;
 				} else if(resolveInfo.getTypeConfig().hasOnthologicalType(typeName)) { // is the input real data type?
 					typeClass = TypeClass.RealDataType;
-				} else if(SEDEObject.isSemantic(typeName)){
+				} else {
 					typeClass = TypeClass.SemanticDataType;
-				} else{
-					throw new RuntimeException("BUG: The type of the given input field cannot be reolved to a type class, "
-							+ inputFieldname + ":" + typeName);
 				}
 				FieldType fieldType = new FieldType(acceptNode, inputFieldname, typeClass, typeName, true);
 				addFieldType(fieldType);
@@ -604,23 +601,16 @@ public class DataFlowAnalysis {
 				typeName = methodInfo.returnType();
 				if(SEDEObject.isPrimitive(typeName)) {
 					typeClass = TypeClass.PrimitiveType;
-				} else if(SEDEObject.isReal(typeName)) {
-					if( resolveInfo.getClassesConfiguration().classknown(typeName)) {
-						/* The method might return another service as its output.
-						 * Think of static factory methods for example.
-						 * So first check if the return type is known as a service name: */
-						typeClass = TypeClass.ServiceInstance;
-					} else{
-						/*
-						 * Just assume its an ordinary real data type.
-						 */
-						typeClass = TypeClass.RealDataType;
-					}
-				} else if(SEDEObject.isSemantic(typeName)){
+				} else if( resolveInfo.getClassesConfiguration().classknown(typeName)) {
+					/* The method might return another service as its output.
+					 * Think of static factory methods for example.
+					 * So first check if the return type is known as a service name: */
+					typeClass = TypeClass.ServiceInstance;
+				} else if( resolveInfo.getTypeConfig().hasOnthologicalType(typeName)){
+					typeClass = TypeClass.RealDataType;
+
+				} else {
 					typeClass = TypeClass.SemanticDataType;
-				} else{
-					throw new RuntimeException("BUG: The return type of the instruction " +  instNode.toString() +" cannot be reolved to a type class, "
-							+ typeName);
 				}
 			} else {
 				/*

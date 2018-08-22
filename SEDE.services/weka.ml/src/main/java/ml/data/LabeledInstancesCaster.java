@@ -1,4 +1,4 @@
-package de.upb.sede.services.mls.casters;
+package ml.data;
 
 import weka.core.Attribute;
 import weka.core.Instances;
@@ -13,14 +13,14 @@ import java.util.Optional;
 /**
  * Provides casting methods for: Instances <-> arff
  */
-public class InstancesCaster {
+public class LabeledInstancesCaster {
 
 	public static final String classAttributePrefix ="$class$";
 
 	/**
 	 * Reads the arff data from the inputstream and creates a instances object.
 	 */
-	public Instances cfs_Instances(InputStream is) throws Exception {
+	public Instances cfs_LabeledInstances(InputStream is) throws Exception {
 		ConverterUtils.DataSource source = new ConverterUtils.DataSource(is);
 		Instances loadedInstaces = (Instances) source.getDataSet();
 		removeLabelFromClassAttr(loadedInstaces);
@@ -30,7 +30,7 @@ public class InstancesCaster {
 	/**
 	 * Writes the arff representation of the given dataset into the output stream.
 	 */
-	public void cts_Instances(OutputStream os, Instances dataSet) throws IOException {
+	public void cts_LabeledInstances(OutputStream os, Instances dataSet) throws IOException {
 		addLabelToClassAttr(dataSet);
 		OutputStreamWriter writer = new OutputStreamWriter(os);
 		writeInstancesAsArff(writer, dataSet);

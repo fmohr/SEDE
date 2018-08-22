@@ -186,7 +186,7 @@ def encode(content:SEDEObject, caster: str = None)->bytes:
         caster_methodname = get_cast_methodname(source_real_type, True)
 
         cast_methodpath = caster + "." + caster_methodname
-        logging.debug("cast method: " + cast_methodpath)
+        logging.trace("cast method: " + cast_methodpath)
         method = tp(cast_methodpath)
         encoded_bytes: bytes = method(content.data)
         return encoded_bytes

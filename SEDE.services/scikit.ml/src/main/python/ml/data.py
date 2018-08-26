@@ -116,12 +116,18 @@ def classindex_set_attributename(dataset:dict) :
 def has_classindex(dataset:dict)-> bool:
     return "classindex" in dataset and dataset["classindex"] is not None
 
+def is_attrtype_numeric(attrtype):
+    return attrtype == 'REAL' or attrtype == 'NUMERIC'
+
+def is_attrtype_categorical(attrtype):
+    return isinstance(attrtype, list)
+
 def onehot_attr(attribute):
     attribute_type = attribute[1]
-    if attribute_type == 'REAL' or attribute_type == 'NUMERIC':
+    if is_attrtype_numeric(attribute_type):
         # already numeric attribute. Add attribute as it is:
         return [attribute]
-    elif isinstance(attribute_type, list):
+    elif is_attrtype_categorical(attribute_type):
         # attribute is categorical:
         if len(attribute_type) == 0:
             raise ValueError("Categorical attribute has no categories defined: " + str(attribute))
@@ -184,20 +190,29 @@ def onehot_and_splitXY(dataset:dict) -> dict:
         n_datapoint = list()
 
         for attr_index in attr_range:
-            if attr_index == classindex:
-                n_data_y.append(datapoint[attr_index])
-
             attribute_type = attr[attr_index][1]
+            if attr_index == classindex:
+                if is_attrtype_numeric(attribute_type):
+                    n_data_y.append(datapoint[attr_index])
+                elif is_attrtype_categorical(attribute_type):
+                    y_index = attribute_type.index(datapoint[attr_index])
+                    n_data_y.append(y_index)
+                else:
+                    raise ValueError("cannot handle attribute: " + attribute_type)
+                continue
 
-            if attribute_type == 'REAL':
+
+            if is_attrtype_numeric(attribute_type):
                 n_datapoint.append(datapoint[attr_index])
 
-            elif isinstance(attribute_type, list):
+            elif is_attrtype_categorical(attribute_type):
                 for category in attribute_type:
                     if datapoint[attr_index] == category:
                         n_datapoint.append(1.)
                     else:
                         n_datapoint.append(0.)
+            else:
+                raise ValueError("cannot handle attribute: " + attribute_type)
 
         n_data_x.append(n_datapoint)
 

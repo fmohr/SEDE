@@ -8,7 +8,10 @@ import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.core.ObjectDataField;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.config.ExecutorConfiguration;
+import de.upb.sede.core.ServiceInstanceField;
+import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutorHttpServer;
+import de.upb.sede.exec.ServiceInstance;
 import de.upb.sede.gateway.ExecutorHandle;
 import de.upb.sede.gateway.GatewayHttpServer;
 import de.upb.sede.requests.ExecutorRegistration;
@@ -30,6 +33,7 @@ import org.junit.Test;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
 import javax.swing.*;
@@ -55,7 +59,9 @@ public class MLTests {
 	static Instances weatherTrainSet;
 	static Instances weatherTestSet;
 
-	private static final String datasetRef = "cifar_0.arff";
+	private static final String datasetRef = "secom.arff";
+
+	private static final String pyExecutorId = "PY-Scikit-Executor";
 
 	@BeforeClass
 	public static void startClient() {
@@ -93,13 +99,13 @@ public class MLTests {
 	@BeforeClass
 	public static void registerScikitExecutor() {
 		// register the python executor
-		String pyExecutorId = "PY-Scikit-Executor";
 		String pythonExecutorConfig = ExecutorConfigurationCreator.newConfigFile()
 				.withExecutorId(pyExecutorId)
 				.withCapabilities("python")
 				.withSupportedServices("sklearn.ensemble.RandomForestClassifier",
 						"sklearn.gaussian_process.GaussianProcessClassifier",
-						"sklearn.naive_bayes.GaussianNB")
+						"sklearn.naive_bayes.GaussianNB",
+						"tflib.NeuralNet")
 				.withThreadNumberId(1).toString();
 		ExecutorConfiguration pythonExecConfig = ExecutorConfiguration.parseJSON(pythonExecutorConfig);
 		Map<String, Object> pythonExecutorContactInfo = new HashMap<>();
@@ -140,10 +146,15 @@ public class MLTests {
 	@BeforeClass
 	public static void loadDataSet() throws Exception {
 		dataset = MLDataSets.getDataSetWithLastIndexClass(datasetRef);
-		RemovePercentage splitter = new RemovePercentage();
-		splitter.setInputFormat(dataset);
-		splitter.setPercentage(50);
 
+		Filter imputer = new ReplaceMissingValues();
+		imputer.setInputFormat(dataset);
+		dataset = Filter.useFilter(dataset, imputer);
+
+		RemovePercentage splitter = new RemovePercentage();
+
+		splitter.setInputFormat(dataset);
+		splitter.setPercentage(90);
 		weatherTrainSet = Filter.useFilter(dataset, splitter);
 
 		splitter.setInputFormat(dataset);
@@ -258,7 +269,7 @@ public class MLTests {
 	@Test
 	public void testClassificationScikit1() {
 		String composition =
-				"s1 = sklearn.naive_bayes.GaussianNB::__construct();\n" +
+				"s1 = sklearn.ensemble.RandomForestClassifier::__construct();\n" +
 						"s1::train({trainset});\n" +
 						"predictions = s1::predict({testset});\n";
 
@@ -287,14 +298,70 @@ public class MLTests {
 		 */
 		List prediction = (List) result.castResultData(
 				"builtin.List", BuiltinCaster.class).getDataField();
-		double correctPredictions = 0.;
-		for (int i = 0; i < prediction.size(); i++) {
-			Instance testInstance = weatherTestSet.get(i);
-			String value = weatherTestSet.classAttribute().value((int)testInstance.classValue());
-			if(value.equals(prediction.get(i).toString())) {
-				correctPredictions++;
-			}
+		int correctPredictions = MLDataSets.countMatchPredictions(prediction, weatherTestSet);
+		logger.info("{}/{} correct predictions.", (int) correctPredictions, prediction.size());
+	}
+
+	@Test
+	public void test_TensorflowNeuralNet() {
+		String trainComposition =
+				"s1 = tflib.NeuralNet::__construct();\n" +
+						"s1::set_options({options});\n" +
+						"s1::train({trainset});\n";
+		String predictComposition =
+						"predictions = s1::predict({testset});\n";
+
+		logger.info("Test classification with compositions: \n {}and: \n{}", trainComposition,
+				predictComposition);
+
+		ResolvePolicy policy = new ResolvePolicy();
+		policy.setPersistentServices(Arrays.asList("s1"));
+
+		SEDEObject trainset = getDataField(weatherTrainSet);
+
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		inputs.put("trainset", trainset);
+
+		inputs.put("options", new ObjectDataField("builtin.List",
+				Arrays.asList("epochs", "5000",
+						"learning_rate", "0.05",
+						"deviation", "0.95",
+						"batch_size", "100",
+						"log_device_placement", "false",
+						"device", "/CPU:0")));
+
+		RunRequest trainRequest = new RunRequest("neuralnet-train", trainComposition, policy, inputs);
+
+		Map<String, Result> resultMap = coreClient.blockingRun(trainRequest);
+		Result result = resultMap.get("s1");
+		if(result == null || result.hasFailed()) {
+			Assert.fail("Service missing...");
 		}
+		ServiceInstanceHandle neuralnetService = result.getServiceInstanceHandle();
+		Assert.assertEquals("tflib.NeuralNet", neuralnetService.getClasspath());
+		neuralnetService = new ServiceInstanceHandle(pyExecutorId, "tflib.NeuralNet", neuralnetService.getId());
+		policy = new ResolvePolicy();
+		policy.setReturnFieldnames(Arrays.asList("predictions"));
+
+		SEDEObject testset = getDataField(weatherTestSet);
+
+		inputs = new HashMap<>();
+		inputs.put("testset", testset);
+		inputs.put("s1", new ServiceInstanceField(neuralnetService));
+
+		RunRequest predictRequest = new RunRequest("neuralnet-predict", predictComposition, policy, inputs);
+
+		resultMap = coreClient.blockingRun(predictRequest);
+		result = resultMap.get("predictions");
+		if(result == null || result.hasFailed()) {
+			Assert.fail("Result missing...");
+		}
+		/*
+			Cast it to List:
+		 */
+		List prediction = (List) result.castResultData(
+				"builtin.List", BuiltinCaster.class).getDataField();
+		int correctPredictions = MLDataSets.countMatchPredictions(prediction, weatherTestSet);
 		logger.info("{}/{} correct predictions.", (int) correctPredictions, prediction.size());
 	}
 

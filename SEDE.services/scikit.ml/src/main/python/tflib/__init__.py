@@ -5,4 +5,4 @@
     logger.py: Encapsulates a Result instance to make neural network operations visible for the client. For example: while training, the client can poll the result page over and over to watch the process.
     neuralnet.py: Contains the logic to setup, train and get predicitons from a neural net using the tensorflow framework.
 """
-from .neuralnet import NeuralNet
+from tflib.neuralnet import NeuralNet

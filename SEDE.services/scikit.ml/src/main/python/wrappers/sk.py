@@ -20,7 +20,7 @@ class BaseOptionsSetterMixin(object):
     """ Mixin for setting options.
     The wrapper inheriting this mixin can either wrap a object that has 'get_params' and 'set_params' methods or specify it by itself.
     """
-    def setOptions(self, stringlist:list):
+    def set_options(self, stringlist:list):
         """ iterates over the string list and parses each given option and invokes setOption.
         """
         logging.debug("Setting options of %s to: " + str(stringlist), self.name)
@@ -28,7 +28,7 @@ class BaseOptionsSetterMixin(object):
         optionlist = list(stringlist)
         # we create an option dictionary  from the option list.
         optiondict = dict()
-        while len(optionlist) > 2:
+        while len(optionlist) >= 2:
             # we take 2 options a, b from the beginning of the list and treat them as the mapping a: b
             field = optionlist.pop(0)
             value = optionlist.pop(0)

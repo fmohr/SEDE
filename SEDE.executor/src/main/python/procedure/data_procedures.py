@@ -5,7 +5,7 @@ from exe.execution import Execution
 from util.observing import Observer
 from exe import data
 from util.com import BasicClientRequest, in_read_string, out_write_bytes, WriteFileRequest, ReadFileRequest
-from exe import requests
+from exe import req as requests
 from os import path
 import pickle
 

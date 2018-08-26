@@ -1,7 +1,7 @@
 import exe
 logging = exe.logging
 
-from exe import requests
+from exe import req as requests
 from exe.execution import Execution
 from exe.workers import WorkerPool
 from util.locking import synchronized_method as synchronized

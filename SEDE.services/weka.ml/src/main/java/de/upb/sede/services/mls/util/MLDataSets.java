@@ -1,8 +1,11 @@
 package de.upb.sede.services.mls.util;
 
+import de.upb.sede.core.ObjectDataField;
 import ml.data.LabeledInstancesCaster;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import weka.core.Attribute;
+import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.converters.ConverterUtils;
 
@@ -12,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class MLDataSets {
@@ -186,5 +190,49 @@ public class MLDataSets {
 					(item + " not in: [" + beginInclusive + ", " + (endExclusive-1) + "]");
 		}
 		return item;
+	}
+
+	/**
+	 * Given a list of predicted classes this method returns a list that contains the indices of the classified labels.
+	 * The given list can either already contain class indices which are objects of type java.lang.Number. In this case the list is just copied into a new list.
+	 * Or it may also contain Strings which indicate categorical labels of the class feature. The returned list is will contain the index of each predicted category.
+	 */
+	public static List<Integer> toClassIndexPredictions(List servicePredictions, Attribute classAttribute) {
+		Objects.requireNonNull(servicePredictions);
+		List<Integer> indices = new ArrayList<>();
+		if(servicePredictions.isEmpty()) {
+			return  indices;
+		}
+		else {
+			for(Object prediction : servicePredictions) {
+				if(prediction instanceof  Number) {
+					indices.add(((Number) prediction).intValue());
+				} else if(prediction instanceof String) {
+					int classIndex = classAttribute.indexOfValue((String) prediction);
+					indices.add(classIndex);
+				} else {
+					throw new RuntimeException("Cannot handle predictions of type: " + prediction.getClass().getName());
+				}
+			}
+			return indices;
+		}
+	}
+
+	public static int countMatchPredictions(List servicePredicitions, Instances testset) {
+		Objects.requireNonNull(servicePredicitions);
+		Objects.requireNonNull(testset);
+		if(testset.size() != servicePredicitions.size()){
+			throw new RuntimeException("Dimension mismatch: " + servicePredicitions.size() + " predictions, " + testset.size() + " testset size.");
+		}
+		List<Integer> indices = toClassIndexPredictions(servicePredicitions, testset.classAttribute());
+		int correctPredictions = 0;
+		for (int i = 0; i < testset.size(); i++) {
+			Instance testInstance = testset.get(i);
+			int actualIndex = (int)testInstance.classValue();
+			if(actualIndex == indices.get(i)) {
+				correctPredictions++;
+			}
+		}
+		return correctPredictions;
 	}
 }

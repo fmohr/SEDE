@@ -3,7 +3,8 @@ import setuptools
 dependencies = [
       'scikit-learn',
       'NumPy >= 1.8.2',
-      'SciPy >= 0.13.3'
+      'SciPy >= 0.13.3',
+      'tensorflow'
 ]
 
 setuptools.setup(name='SEDE-scikit.ml',

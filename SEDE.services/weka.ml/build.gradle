@@ -30,6 +30,10 @@ dependencies {
     compile group: 'de.upb.isys', name: 'meka', version: '0.0.1'
     compile group: 'de.upb.isys', name: 'interruptable-weka', version: '0.0.1'
 
+    // https://mvnrepository.com/artifact/nz.ac.waikato.cms.weka.thirdparty/bounce
+    compile group: 'nz.ac.waikato.cms.weka.thirdparty', name: 'bounce', version: '0.18'
+
+
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
     provided project(":SEDE.core")

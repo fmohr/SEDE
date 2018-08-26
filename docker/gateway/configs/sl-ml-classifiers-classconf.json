@@ -8,14 +8,14 @@
             },
             "createUnique": {
                 "params": [
-                    "weka.core.Instances"
+                    "LabeledInstances"
                 ],
                 "static": true,
                 "returntype": "de.upb.sede.services.mls.DataSetService"
             },
             "createNamed": {
                 "params": [
-                    "weka.core.Instances",
+                    "LabeledInstances",
                     "String"
                 ],
                 "static": true,
@@ -23,21 +23,21 @@
             },
             "all": {
                 "statemutating": false,
-                "returntype": "weka.core.Instances"
+                "returntype": "LabeledInstances"
             },
             "allLabeled": {
                 "params": [
                     "Number"
                 ],
                 "statemutating": false,
-                "returntype": "weka.core.Instances"
+                "returntype": "LabeledInstances"
             },
             "fromIndices": {
                 "params": [
                     "builtin.List"
                 ],
                 "statemutating": false,
-                "returntype": "weka.core.Instances"
+                "returntype": "LabeledInstances"
             },
             "fromIndicesLabeled": {
                 "params": [
@@ -45,7 +45,7 @@
                     "Number"
                 ],
                 "statemutating": false,
-                "returntype": "weka.core.Instances"
+                "returntype": "LabeledInstances"
             }
         }
     },
@@ -69,12 +69,12 @@
             },
             "train": {
                 "params": [
-                    "weka.core.Instances"
+                    "LabeledInstances"
                 ]
             },
             "predict": {
                 "params": [
-                    "weka.core.Instances"
+                    "LabeledInstances"
                 ],
                 "returntype": "numpy.ndarray",
                 "statemutating": false
@@ -518,13 +518,22 @@
             }
         }
     },
-    "wrappers.tf.WrappedNeuralNet": {
+    "tflib.neuralnet.NeuralNet": {
         "extends": [
             "$Basic_sk_classifier$"
         ],
-        "abstract": true
-    },
+        "methods": {
+            "$construct": {
+                "params": [
+                    {
+                        "fixed": "\"tflib.NeuralNet\"",
+                        "type": "String"
+                    }
+                ]
+            }
+        }
+    }, 
     "tflib.NeuralNet": {
-        "wrapper": "wrappers.tf.WrappedNeuralNet"
+        "wrapper" : "tflib.neuralnet.NeuralNet"
     }
 }

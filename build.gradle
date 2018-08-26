@@ -106,11 +106,10 @@ subprojects {
         delete "${projectDir}/servicespec"
         delete "${rootDir}/deploy/SEDE"
         delete "${rootDir}/deploy/SEDE_Python"
-        delete 'docker/gateway/bin'
-        delete 'docker/java-executor/bin'
-        delete 'delete/python-executor/bin'
+        delete "${rootDir}/docker/gateway/bin"
+        delete "${rootDir}/docker/java-executor/bin"
+        delete "${rootDir}/docker/python-executor/bin"
     }
-
 }
 /*
     configurations for each sub project.

@@ -518,13 +518,22 @@
             }
         }
     },
-    "wrappers.tf.WrappedNeuralNet": {
+    "tflib.neuralnet.NeuralNet": {
         "extends": [
             "$Basic_sk_classifier$"
         ],
-        "abstract": true
+        "methods": {
+            "$construct": {
+                "params": [
+                    {
+                        "fixed": "\"tflib.NeuralNet\"",
+                        "type": "String"
+                    }
+                ]
+            }
+        }
     },
     "tflib.NeuralNet": {
-        "wrapper": "wrappers.tf.WrappedNeuralNet"
+        "wrapper" : "tflib.neuralnet.NeuralNet"
     }
 }

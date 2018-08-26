@@ -6,13 +6,13 @@ from exe.config import ExecutorConfig
 from http import server
 
 from util.com import MultiContextHandler, StringServerResponse,\
-    BasicClientRequest, HttpClientRequest, ByteServerResponse
+    BasicClientRequest, HttpClientRequest, ByteServerResponse, ThreadHTTPServer
 
 from procedure.data_procedures import TransmitDataProcedure, FinishProcedure
 from exe.data import SEDEObject, SEMANTIC, PrimitiveType
 from exe import data
 
-from exe.requests import DataPutRequest, ExecRequest
+from exe.req import DataPutRequest, ExecRequest
 
 
 def create_put_request(host, fieldname, executionId, unavailable:bool=True, semtype=SEMANTIC) -> BasicClientRequest:
@@ -124,7 +124,7 @@ class HTTPExecutor(Executor):
         self.request_handler.add_context("/interrupt/(?P<executionId>\w+)",
                                          self.handler_interrupt)
 
-        self.httpserver = server.HTTPServer(("", port), self.request_handler)
+        self.httpserver = ThreadHTTPServer(("", port), self.request_handler)
 
         logging.info("Starting Python executor http server: '%s'. host: %s port: %i", config.executor_id, host_address, port)
         self.register_toall()
@@ -179,7 +179,7 @@ def main():
     logging.info("Number of CLI arguments: %d.", len(sys.argv))
     logging.debug("CLI List: %s.", str(sys.argv))
     # remove the module from the top of the list:
-    sys.argv.pop(0)
+    program = sys.argv.pop(0)
     # first argument is the executor configuration path:
     if sys.argv:
         with open(sys.argv.pop(0)) as fp:
@@ -201,6 +201,8 @@ def main():
         port = int(sys.argv.pop(0))
     else:
         port = 5000
+    # restore the first argument:
+    sys.argv.insert(0, program)
 
     executor = HTTPExecutor(executorConfig, host_address, port)
     executor.start_listening()

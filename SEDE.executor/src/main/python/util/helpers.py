@@ -71,6 +71,7 @@ logging.Logger.trace = trace
 def getlogger(loggername):
     #create logger
     logger = logging.getLogger(loggername)
+    logger.setLevel(logging.DEBUG)
     # create console handler and set level to debug
     ch = logging.StreamHandler()
     ch.setLevel(logging.TRACE)

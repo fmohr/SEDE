@@ -27,7 +27,10 @@ public class WriteFileRequest implements BasicClientRequest {
 		/*
 		 * Create directories up to the file.
 		 */
-		file.getParentFile().mkdirs();
+		File parentFile = file.getParentFile();
+		if(parentFile != null) {
+			parentFile.mkdirs();
+		}
 
 		/*
 		 * return output stream

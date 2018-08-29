@@ -52,7 +52,7 @@ public class ExecutorCoordinator {
 	}
 
 	public List<ExecutorHandle> getExecutors() {
-		return executors;
+		return new ArrayList<>(executors);
 	}
 
 	public synchronized void removeExecutor(String executorId) {

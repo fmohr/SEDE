@@ -1,0 +1,46 @@
+dependencies {
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+//        compile group: 'com.google.guava', name: 'guava', version: '25.1-jre'
+
+    provided project(':SEDE.core')
+    provided project(':SEDE.gateway')
+    provided project(':SEDE.executor')
+
+    // plugins:
+    provided project(':SEDE.http')
+    provided project(':SEDE.terminal')
+    provided project(':SEDE.frontend')
+
+}
+
+task jarSimpleExecutor(type: Jar, dependsOn: jarjar) {
+    manifest {
+        attributes 'Main-Class': 'de.upb.sede.exec.SimpleHttpExecutorStarter'
+    }
+    destinationDir = file("$rootDir")
+    baseName = 'JavaSimpleHttpExecutor'
+    from { (configurations.compile)
+            .collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+task jarExecutor(type: Jar, dependsOn: jarjar) {
+    manifest {
+        attributes 'Main-Class': 'de.upb.sede.exec.ExecutorServerStarter'
+    }
+    destinationDir = file("$rootDir")
+    baseName = 'JavaHttpExecutor'
+    from { (configurations.compile)
+            .collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+task jarGateway(type: Jar, dependsOn: jarjar) {
+    manifest {
+        attributes 'Main-Class': 'de.upb.sede.gateway.GatewayServerStarter'
+    }
+    destinationDir = file("$rootDir")
+    baseName = 'JavaHttpGateway'
+    from { (configurations.compile)
+            .collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}

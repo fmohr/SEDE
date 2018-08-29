@@ -72,14 +72,14 @@ public class MLTests {
 		creator.withSupportedServices(DataSetService.class.getName(), "weka.classifiers.bayes.BayesNet");
 		ExecutorConfiguration configuration = ExecutorConfiguration.parseJSON(creator.toString());
 		executor1 = new ExecutorHttpServer(configuration, "localhost",  9000);
-		gateway.register(executor1.getBasisExecutor().registration());
+		gateway.getBasis().register(executor1.getBasisExecutor().registration());
 
 		creator = new ExecutorConfigurationCreator();
 		creator.withExecutorId("executor-weka-naivebayes");
 		creator.withSupportedServices(DataSetService.class.getName(), "weka.classifiers.bayes.NaiveBayes");
 		configuration = ExecutorConfiguration.parseJSON(creator.toString());
 		executor2 = new ExecutorHttpServer(configuration, "localhost",  9001);
-		gateway.register(executor2.getBasisExecutor().registration());
+		gateway.getBasis().register(executor2.getBasisExecutor().registration());
 
 		creator = new ExecutorConfigurationCreator();
 		creator.withExecutorId("Client");
@@ -110,13 +110,13 @@ public class MLTests {
 		ExecutorConfiguration pythonExecConfig = ExecutorConfiguration.parseJSON(pythonExecutorConfig);
 		Map<String, Object> pythonExecutorContactInfo = new HashMap<>();
 		pythonExecutorContactInfo.put("id", pyExecutorId);
-		pythonExecutorContactInfo.put("host-address", "localhost:5000");
+		pythonExecutorContactInfo.put("host-address", "192.168.0.103:5000");
 
 		ExecutorRegistration pythonExecutorRegistration = new ExecutorRegistration(pythonExecutorContactInfo,
 				pythonExecConfig.getExecutorCapabilities(),
 				pythonExecConfig.getSupportedServices());
 
-		gateway.register(pythonExecutorRegistration);
+		gateway.getBasis().register(pythonExecutorRegistration);
 	}
 
 //	@BeforeClass
@@ -126,7 +126,7 @@ public class MLTests {
 			Object[] choices = {"Continue", "Refresh", "Cancel"};
 			Object defaultChoice = choices[1];
 			String registeredExecutors = "";
-			for(ExecutorHandle executorHandle : gateway.getExecutorCoord().getExecutors()) {
+			for(ExecutorHandle executorHandle : gateway.getBasis().getExecutorCoord().getExecutors()) {
 				registeredExecutors += "\n" + executorHandle.getContactInfo().toString();
 			}
 			confirmation = JOptionPane.showOptionDialog(null,

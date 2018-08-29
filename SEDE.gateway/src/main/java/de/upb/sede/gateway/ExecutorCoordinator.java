@@ -51,6 +51,6 @@ public class ExecutorCoordinator {
 	}
 
 	public List<ExecutorHandle> getExecutors() {
-		return executors;
+		return new ArrayList<>(executors);
 	}
 }

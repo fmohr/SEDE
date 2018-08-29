@@ -93,7 +93,7 @@ public class ImagingTests {
 						)
 		);
 		System.out.println(executor1.getBasisExecutor().getExecutorConfiguration().toJsonString());
-		gateway.register(executor1.getBasisExecutor().registration());
+		gateway.getBasis().register(executor1.getBasisExecutor().registration());
 		/*
 			Disabled if you dont have dot installed.
 		 */

@@ -3,7 +3,6 @@ project.ext {
     /*
         Set global properties like folder paths and so on:
      */
-
 }
 
 
@@ -137,16 +136,6 @@ project(':SEDE.core') {
 }
 
 
-project(':SEDE.deployment') {
-    dependencies {
-        provided project(':SEDE.core')
-        provided project(':SEDE.http')
-        // https://mvnrepository.com/artifact/commons-cli/commons-cli
-        compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
-        // https://mvnrepository.com/artifact/commons-io/commons-io
-        compile group: 'commons-io', name: 'commons-io', version: '2.6'
-    }
-}
 
 project(':SEDE.gateway') {
     dependencies {

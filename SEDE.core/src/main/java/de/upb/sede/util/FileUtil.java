@@ -143,6 +143,10 @@ public class FileUtil {
 		return listedFiles;
 	}
 
+	public static String getDirPath(String dir) {
+		return dir.endsWith("/")? dir.substring(0, dir.length()-1) : dir;
+	}
+
 
 
 

@@ -1,11 +1,9 @@
-FROM openjdk:8
+FROM sede:java
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    graphviz \
+    ttf-freefont
 
 COPY ./configs /configs
-COPY ./log4j2.xml /log4j2.xml
-COPY ./bin /SEDE
 
-ARG port
-ENV port=6000
-EXPOSE ${port}/tcp
-
-CMD exec java -cp SEDE/'*':.  de.upb.sede.gateway.GatewayServerStarter "$port" /configs/*
+ENV configfiles = /configs

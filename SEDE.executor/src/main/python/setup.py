@@ -1,7 +1,7 @@
 import setuptools
 
 dependencies = [
-      'ujson',
+      #'ujson',
       'requests'
 ]
 

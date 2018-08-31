@@ -159,21 +159,4 @@ project(':SEDE.executor') {
     }
 }
 
-
-
-task setupDocker {
-    dependsOn getTasksByName('jarjar', true)
-    dependsOn getTasksByName('buildPython', true)
-    copy {
-        from 'deploy/SEDE'
-        into 'docker/gateway/bin'
-    }
-    copy {
-        from 'deploy/SEDE'
-        into 'docker/java-executor/bin'
-    }
-    copy {
-        from 'deploy/SEDE_Python'
-        into 'docker/python-executor/bin'
-    }
-}
+apply from: 'docker/docker.gradle'

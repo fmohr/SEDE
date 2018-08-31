@@ -3,6 +3,7 @@ package de.upb.sede.gateway;
 import de.upb.sede.PluginUtil;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
+import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.Terminals;
 import de.upb.sede.util.WebUtil;
 import de.upb.sede.util.server.TerminalCommandListener;
@@ -13,6 +14,7 @@ import org.apache.logging.log4j.Logger;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -90,7 +92,18 @@ public class GatewayServerStarter {
 					logger.error("Problem loading type configuration from {}:\n", configuration, ex);
 				}
 			} else{
-				logger.error("Config file '{}' doesn't end with classconf.json or typeconf.json. Cannot add it to the configurations.");
+				logger.info("Config file '{}' doesn't end with classconf.json or typeconf.json.", configuration);
+				if(new File(configuration).isDirectory()) {
+					/*
+					 * load every class conf file  from the given folder:
+					 */
+					logger.info("Loading configurations from '{}'.", configuration);
+					String configFolder = FileUtil.getDirPath(configuration);
+					List<String> additionalConfigs = FileUtil.listAllFilesInDir(configFolder, "(.*?)\\.json$")
+							.stream().map(s-> configFolder+"/"+s) // prepend the folder:
+							.collect(Collectors.toList());
+					loadDefaultConfigs(classesConfig, typeConfig, additionalConfigs);
+				}
 			}
 		}
 	}

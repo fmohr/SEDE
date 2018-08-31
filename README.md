@@ -93,7 +93,7 @@ pip install deploy/SEDE_python/SEDE.executor/
 After this the console command `pyexecutor` is ready. This command takes 3 arguments:
 
 1. Path to the executor configuration file, like this one: [config.json](https://github.com/fmohr/SEDE/blob/develop/SEDE.services/scikit.ml/src/test/resources/executor/config.json)
-2. The host machine's address the executor is running on. It is important other executors reach this machine with using this address.
+2. The host machine's address the executor is running on. It is important to note that other executors need to reach this executor when they use this address.
 3. The tcp-port that is opened by the http server.
 
 An example:
@@ -106,6 +106,53 @@ The following will install the `scikit.ml` project in addition to its dependenci
 ``` sh
 pip install deploy/SEDE_python/scikit.ml/
 ``` 
+
+### Docker
+
+To create Docker SEDE images execute: `./gradlew buildDocker`. This gradle task assumes that the `dockerd` daemon is running because it runs `docker build` commands.
+
+After completion run `docker images` to confirm the newly created images:
+
+``` sh
+REPOSITORY          TAG                 IMAGE ID
+sede                Gateway             35a6812ee54b
+sede                pyExecutor          c58e0aecc278
+sede                jExecutor           e89adb7b7a10
+sede                java                4593ff808896
+openjdk             8                   ba56d4f23853
+python              3.6-stretch         d49c41b6e6c4
+```
+
+You can now run the start-up commands from above to run a SEDE component inside a container. The following example illustrates this for the gateway server:
+
+``` sh
+$ ./gradlew buildDocker
+# -p 6000:8080 Publish the gateway᾿s port 8080 to the host's port 6000.
+# -p 6001:2200 Publish the telnet server port 2200 to host's port 6001.
+# -dt detach (run container in background) and tty (Allocate a pseudo-TTY)
+$ docker run \
+    -p 6000:8080 \
+    -p 6001:2200 \
+    -dt sede:Gateway \
+    java \
+        -cp SEDE/'*':. \
+        de.upb.sede.gateway.GatewayServerStarter \
+        8080 \
+        /configs # class and type configuration files.
+>> ed9720a1d7c86bf1c47097d3169eea04e1e523917ca105a9e955ba49ff69cc84
+# connect to the gateway command shell with telnet:
+$ telnet 127.0.0.1 6001
+>> Enter command: services ls
+>> Known services are:
+>> Catalano.Imaging.Filters.CannyEdgeDetector
+>> Catalano.Imaging.Filters.CannyEdgeDetectorFactory
+>> Catalano.Imaging.Filters.Crop
+>> Catalano.Imaging.Filters.GrayScale
+>> Catalano.Imaging.Filters.GrayScaleFactory 
+>> ...
+>> Enter command: exit session
+>> Closing session...
+```
 
 ## Usage example
 

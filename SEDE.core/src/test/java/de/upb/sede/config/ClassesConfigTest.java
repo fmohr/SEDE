@@ -93,8 +93,8 @@ public class ClassesConfigTest {
 
 	@Test
 	public void classpath() {
-		assertEquals("A", cc.classInfo("A").classpath());
-		assertEquals("A", cc.classInfo("B").classpath());
+		assertEquals("A", cc.classInfo("A").actualClasspath());
+		assertEquals("A", cc.classInfo("B").actualClasspath());
 
 	}
 

@@ -174,7 +174,7 @@ Import the gradle project:
 3. Choose the path to your `SEDE_ROOT_DIRECTORY` as the _Project root directory_
 4. Finish
 
-There is a set of errors are due to cyclic dependencies between gradle sub-projects. In reality SEDE only contains cyclic dependencies between test modules of sub-projects, so this error is easily fixed by configuring Eclipse:
+There is now a set of errors due to cyclic dependencies between gradle sub-projects. In reality SEDE only contains cyclic dependencies between test modules of sub-projects, so this error is easily fixed by configuring Eclipse:
 
 1. Preferences
 2. Java > Compiler > Building

@@ -1,4 +1,4 @@
-FROM openjdk:8
+FROM openjdk:8-jre-alpine3.8
 
 COPY ./log4j2.xml /log4j2.xml
 COPY ./bin /SEDE

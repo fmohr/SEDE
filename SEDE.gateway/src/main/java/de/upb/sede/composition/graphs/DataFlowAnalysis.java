@@ -656,7 +656,7 @@ public class DataFlowAnalysis {
 	     * by the client in order to be recognized as such in later graph constructions.
 		 */
 		if(instNode.isServiceConstruct() && contextClassInfo.isWrapped()) {
-			instNode.setContext(contextClassInfo.classpath());
+			instNode.setContext(contextClassInfo.actualClasspath());
 		}
 	}
 

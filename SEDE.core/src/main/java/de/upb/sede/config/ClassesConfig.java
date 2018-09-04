@@ -9,7 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Encapsulated configuration about classes, like services names.
+ * Encapsulated configuration about classes, like service names and their methods.
  * 
  * @author aminfaez
  *
@@ -82,11 +82,6 @@ public class ClassesConfig extends Configuration {
 	 * dependency. After one recursion steps, resolveInheritance(C, {A, B}, {}) will
 	 * be called. Then because 'C' extends a class from the unresolved set a runtime
 	 * exception will be thrown.
-	 * 
-	 * @inheritSet Set of classes that are inheriting from this classes
-	 *             configuration. If the given classconfig inherits from one of the
-	 *             classes in this set a RuntimeException will be thrown to indicate
-	 *             that a circled dependency has occurred.
 	 */
 	@SuppressWarnings("unchecked")
 	private void resolveInheritance(Map<String, Object> classconfig, Set<String> unresolved, Set<String> resolved) {
@@ -109,16 +104,19 @@ public class ClassesConfig extends Configuration {
 					unresolved.remove(superClasspath);
 				}
 				// now add everything from superConfig to classconfig
-				Iterator<String> fieldNames = superConfig.keySet().iterator();
-				while (fieldNames.hasNext()) {
-					String attributeName = fieldNames.next();
+				for (String attributeName : superConfig.keySet()) {
 					inheritFromRoot(classconfig, superConfig, attributeName);
 				}
 			}
 		}
 	}
 
-	void inheritFromRoot(Map<String, Object> baseConfig, Map<String, Object> superConfig, String attributeName) {
+	/**
+	 * This method realises inheritance between two classes.
+	 * Given a super config and its attributeName it adds the attribute to the base configuration.
+	 *
+	 */
+	private void inheritFromRoot(Map<String, Object> baseConfig, Map<String, Object> superConfig, String attributeName) {
 		Object superAttribute = superConfig.get(attributeName);
 		boolean extended = false; // flag that indicates that attribute has been extended.
 		if (attributeName.equals("extends")) {
@@ -152,31 +150,12 @@ public class ClassesConfig extends Configuration {
 			logger.warn("Super configuration has some unknown attributes {} which can't be inherited.",
 					attributeName);
 		}
-
-		/*
-			Old inheritance behaviour:
-		 */
-//		if (baseConfig.containsKey(attributeName)) {
-//			// first try to add the value to the array or dictionary
-//			Object baseAttribute = baseConfig.get(attributeName);
-//
-//			if (baseAttribute instanceof List && superAttribute instanceof List) {
-//				((List) baseAttribute).addAll((List) superAttribute);
-//				extended = true;
-//			} else if (baseAttribute instanceof Map && baseAttribute instanceof Map) {
-//				Map<String, Object> newAttrMap = new HashMap<>((Map) superAttribute);
-//				newAttrMap.putAll((Map) baseAttribute);
-//				baseConfig.put(attributeName, newAttrMap);
-//				extended = true;
-//			}
-//		}
-//		if (!extended) {
-//			// couldnt add attribute, so just replace it
-//			(baseConfig).put(attributeName, superAttribute);
-//		}
 	}
 
-	void inheritMethods(Map<String, Object> baseMethods, Map<String, Object> superMethods) {
+	/**
+	 * Inherit methods from super configuration.
+	 */
+	private void inheritMethods(Map<String, Object> baseMethods, Map<String, Object> superMethods) {
 		/*
 			Only overwrite methods which aren't defined by the base class:
 		 */
@@ -262,6 +241,9 @@ public class ClassesConfig extends Configuration {
 		return () -> new FilteredIterator<>(keySet().iterator(), inheritanceFilter);
 	}
 
+	/**
+	 * Returns a ClassInfo instance regarding the given classpath.
+	 */
 	public ClassInfo classInfo(String classpath) {
 		if (containsKey(classpath)) {
 			Map<String, Object> config = (Map<String, Object>) get(classpath);
@@ -277,17 +259,28 @@ public class ClassesConfig extends Configuration {
 		}
 	}
 
-
+	/**
+	 * Class information like wrapper and methods.
+	 */
 	public static class ClassInfo {
 
 		private final Map<String, Object> configuration;
 		private final Optional<ClassInfo> wrapper;
 		private final String cp;
 
+		/**
+		 * Creates a classinfo without a wrapper.
+		 */
 		private ClassInfo(String classpath, Map<String, Object> config) {
 			this(classpath, config, null);
 		}
 
+		/**
+		 * Creates a classinfo with the given wrapper. The given wrapper is itself another ClassInfo instance.
+		 * @param classpath
+		 * @param config
+		 * @param wrapper
+		 */
 		private ClassInfo(String classpath, Map<String, Object> config, ClassInfo wrapper) {
 			cp = classpath;
 			this.configuration = config;
@@ -317,11 +310,16 @@ public class ClassesConfig extends Configuration {
 			return methods;
 		}
 
-
+		/**
+		 * @return true if this class offers the given method by name.
+		 */
 		private boolean hasMethod(String methodname) {
 			return getInternalMethods().containsKey(methodname);
 		}
 
+		/**
+		 * @return constructor method info
+		 */
 		public MethodInfo constructInfo() {
 			if (hasMethod("$construct")) {
 				Map<String, Object> constructMap = MethodInfo.emptyConstructor(cp).configuration;
@@ -334,6 +332,10 @@ public class ClassesConfig extends Configuration {
 			}
 		}
 
+		/**
+		 *
+		 * @return true if the class is marked abstract. (cannot be instantiated)
+		 */
 		public boolean isAbstract() {
 			if(configuration.containsKey("abstract")){
 				return (Boolean) configuration.get("abstract");
@@ -344,18 +346,29 @@ public class ClassesConfig extends Configuration {
 			return false;
 		}
 
+		/**
+		 * @return true if a wrapper was defined.
+		 * If a class is wrapped it is the wrapper class that is instantiated instead of the class itself.
+		 * If true the class might not even exist.
+		 */
 		public boolean isWrapped() {
 			return wrapper.isPresent();
 		}
 
-		public String classpath() {
+		/**
+		 * @return class path of this class that will be instantiated.
+		 */
+		public String actualClasspath() {
 			if(isWrapped()) {
-				return wrapper.get().classpath();
+				return wrapper.get().actualClasspath();
 			} else {
 				return cp;
 			}
 		}
 
+		/**
+		 * Returns the corresponding method info to the given name.
+		 */
 		public MethodInfo methodInfo(String methodname) {
 			if(methodname.equals("$construct")) {
 				return constructInfo();

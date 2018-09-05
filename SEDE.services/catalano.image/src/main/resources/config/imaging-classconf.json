@@ -1,0 +1,246 @@
+{
+    "$In_Place_Applier$": {
+        "abstract" : true,
+        "methods": {
+            "applyInPlace": {
+                "params": [
+                    {
+                        "type": "Catalano.Imaging.FastBitmap",
+                        "statemutating": true
+                    }
+                ],
+                "statemutating": false
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.Crop": {
+        "methods": {
+            "$construct": {
+                "params": [
+                    "Number",
+                    "Number",
+                    "Number",
+                    "Number"
+                ]
+            },
+            "ApplyInPlace": {
+                "params": [
+                    {
+                        "type": "Catalano.Imaging.FastBitmap",
+                        "statemutating": true
+                    }
+                ],
+                "statemutating": false
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.Resize": {
+        "extends" : ["$In_Place_Applier$"],
+        "methods": {
+            "$construct": {
+                "params": [
+                    "Number",
+                    "Number"
+                ]
+            }
+        }
+    },
+    "Catalano.Imaging.sede.CropFrom0" : {
+        "wrapper" : "Catalano.Imaging.Filters.Crop",
+        "methods": {
+            "$construct": {
+                "params": [
+                    {
+                        "type":"Number",
+                        "fixed": "0"
+                    },
+                    {
+                        "type":"Number",
+                        "fixed": "0"
+                    },
+                    "Number",
+                    "Number"
+                ]
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.CannyEdgeDetector" : {
+        "extends" : ["$In_Place_Applier$"],
+        "methods": {
+            "$construct" : {}
+        }
+    },
+    "Catalano.Imaging.Filters.CannyEdgeDetectorFactory" : {
+        "methods": {
+            "withDefaults" : {
+                "returntype" : "Catalano.Imaging.Filters.CannyEdgeDetector",
+                "static" : true
+            },
+            "withThresholds" : {
+                "params": [
+                    "Number",
+                    "Number"
+                ],
+                "returntype" : "Catalano.Imaging.Filters.CannyEdgeDetector",
+                "static" : true
+            },
+            "withThresholds_Sigma" : {
+                "params": [
+                    "Number",
+                    "Number",
+                    "Number"
+                ],
+                "returntype" : "Catalano.Imaging.Filters.CannyEdgeDetector",
+                "static" : true
+            },
+            "withThresholds_Sigma_Size" : {
+                "params": [
+                    "Number",
+                    "Number",
+                    "Number",
+                    "Number"
+                ],
+                "returntype" : "Catalano.Imaging.Filters.CannyEdgeDetector",
+                "static" : true
+            }
+        }
+    },
+    "Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern" : {
+        "methods" : {
+            "$construct" :{},
+            "ComputeFeatures" : {
+                "params": [
+                    {
+                        "type": "Catalano.Imaging.FastBitmap"
+                    }
+                ],
+                "returntype": "Catalano.Imaging.Tools.ImageHistogram",
+                "statemutating": false
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.GrayScale" : {
+        "extends" : ["$In_Place_Applier$"],
+        "methods": {
+            "$construct": {
+                "params": [
+                    "Number",
+                    "Number",
+                    "Number"
+                ]
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.GrayScaleFactory" : {
+        "methods": {
+            "withMethodname": {
+                "params": [
+                    "String"
+                ],
+                "returntype": "Catalano.Imaging.Filters.GrayScale",
+                "static": true
+            },
+            "withRGB" : {
+                "params": [
+                    "Number",
+                    "Number",
+                    "Number"
+                ],
+                "returntype": "Catalano.Imaging.Filters.GrayScale",
+                "static": true
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.GrayScale_Lightness" : {
+        "wrapper" : "Catalano.Imaging.Filters.GrayScaleFactory",
+        "methods": {
+            "withMethodname": {
+                "params": [
+                    {
+                        "type":"String",
+                        "fixed": "\"Lightness\""
+                    }
+                ],
+                "returntype": "Catalano.Imaging.Filters.GrayScale",
+                "static": true
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.GrayScale_Average" : {
+        "wrapper" : "Catalano.Imaging.Filters.GrayScaleFactory",
+        "methods": {
+            "withMethodname": {
+                "params": [
+                    {
+                        "type":"String",
+                        "fixed": "\"Average\""
+                    }
+                ],
+                "returntype": "Catalano.Imaging.Filters.GrayScale",
+                "static": true
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.GrayScale_GeometricMean" : {
+        "wrapper" : "Catalano.Imaging.Filters.GrayScaleFactory",
+        "methods": {
+            "withMethodname": {
+                "params": [
+                    {
+                        "type":"String",
+                        "fixed": "\"GeometricMean\""
+                    }
+                ],
+                "returntype": "Catalano.Imaging.Filters.GrayScale",
+                "static": true
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.GrayScale_Luminosity" : {
+        "wrapper" : "Catalano.Imaging.Filters.GrayScaleFactory",
+        "methods": {
+            "withMethodname": {
+                "params": [
+                    {
+                        "type":"String",
+                        "fixed": "\"Luminosity\""
+                    }
+                ],
+                "returntype": "Catalano.Imaging.Filters.GrayScale",
+                "static": true
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.GrayScale_MinimumDecomposition" : {
+        "wrapper" : "Catalano.Imaging.Filters.GrayScaleFactory",
+        "methods": {
+            "withMethodname": {
+                "params": [
+                    {
+                        "type":"String",
+                        "fixed": "\"MinimumDecomposition\""
+                    }
+                ],
+                "returntype": "Catalano.Imaging.Filters.GrayScale",
+                "static": true
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.GrayScale_MaximumDecomposition" : {
+        "wrapper" : "Catalano.Imaging.Filters.GrayScaleFactory",
+        "methods": {
+            "withMethodname": {
+                "params": [
+                    {
+                        "type":"String",
+                        "fixed": "\"MaximumDecomposition\""
+                    }
+                ],
+                "returntype": "Catalano.Imaging.Filters.GrayScale",
+                "static": true
+            }
+        }
+    }
+
+
+}

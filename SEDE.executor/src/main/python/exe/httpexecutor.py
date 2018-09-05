@@ -6,13 +6,13 @@ from exe.config import ExecutorConfig
 from http import server
 
 from util.com import MultiContextHandler, StringServerResponse,\
-    BasicClientRequest, HttpClientRequest, ByteServerResponse
+    BasicClientRequest, HttpClientRequest, ByteServerResponse, ThreadHTTPServer
 
 from procedure.data_procedures import TransmitDataProcedure, FinishProcedure
 from exe.data import SEDEObject, SEMANTIC, PrimitiveType
 from exe import data
 
-from exe.requests import DataPutRequest, ExecRequest
+from exe.req import DataPutRequest, ExecRequest
 
 
 def create_put_request(host, fieldname, executionId, unavailable:bool=True, semtype=SEMANTIC) -> BasicClientRequest:
@@ -83,16 +83,18 @@ class TransmitDataOverHttp(TransmitDataProcedure):
     def get_put_request(self, task, unavailable:bool)->BasicClientRequest:
         host = task["contact-info"]["host-address"]
         fieldname = task["fieldname"]
-        if "semantic-type" in task:
-            semtype = task["semantic-type"]
-        else:
-            semtype = None
         executionId = task.execution.exec_id
-        if semtype is None:
-            sedeObj:SEDEObject = task.execution.env[fieldname]
-            semtype = sedeObj.type
-        logging.trace("Execution '%s': Transmitting %s of type %s to %s.", executionId, fieldname, semtype, host)
-        return create_put_request(host,fieldname,executionId,unavailable,semtype)
+        logging.trace("Execution '%s': Transmitting %s to %s. (%available)", executionId, fieldname, host,
+                      "un" if unavailable else "")
+        if unavailable:
+            return create_put_request(host, fieldname, executionId, unavailable=True)
+        else:
+            if "semantic-type" in task:
+                semtype = task["semantic-type"]
+            else:
+                sedeObj:SEDEObject = task.execution.env[fieldname]
+                semtype = sedeObj.type
+            return create_put_request(host, fieldname, executionId, unavailable=False, semtype=semtype)
 
 
 class FinishOverHttp(FinishProcedure):
@@ -115,16 +117,17 @@ class HTTPExecutor(Executor):
         self.port = port
         self.bind_http_procedure_names()
         self.request_handler = MultiContextHandler()
-        self.request_handler.add_context("/put/(?P<executionId>\w+)/(?P<fieldname>(?:[&_a-zA-Z][&\w]*))/(?P<semtype>\w+)",
+        self.request_handler.add_context("/put/(?P<executionId>[\w-]+)/(?P<fieldname>(?:[&_a-zA-Z][&\w]*))/(?P<semtype>\w+)",
                                          self.handler_put_data)
         self.request_handler.add_context("/execute",
                                          self.handler_execute)
         self.request_handler.add_context("/interrupt/(?P<executionId>\w+)",
                                          self.handler_interrupt)
 
-        self.httpserver = server.HTTPServer(("", port), self.request_handler)
-        logging.info("Starting Python executor http server: '%s'. host: %s port: %i", config.executor_id, host_address, port)
+        self.httpserver = ThreadHTTPServer(("", port), self.request_handler)
 
+        logging.info("Starting Python executor http server: '%s'. host: %s port: %i", config.executor_id, host_address, port)
+        self.register_toall()
 
     def bind_http_procedure_names(self):
         self.worker_pool.bind_procedure("TransmitData", TransmitDataOverHttp)
@@ -150,21 +153,40 @@ class HTTPExecutor(Executor):
         except KeyboardInterrupt:
             self.httpserver.shutdown()
 
+    def register_toall(self):
+        logging.debug("Registering to every gateway stated by the config: %s", self.config.gateways)
+        for gatewayaddress in self.config.gateways:
+            try:
+                self.register_perhttp(gatewayaddress)
+            except Exception as registrationException:
+                # logging.exception(registrationException)
+                logging.warn("Couldn't register to %s, because:\n%s", gatewayaddress, str(registrationException))
 
-if __name__ == "__main__":
+    def register_perhttp(self, gatewayaddress: str):
+        url = gatewayaddress + "/register"
+        registration_str = self.registration().to_json_string()
+        registration_req = HttpClientRequest(url)
+        answer:str = registration_req.send_receive_str(registration_str)
+        answer = answer.strip()
+        if answer is not None and len(answer) == 0:
+            logging.info("Successfully registered to %s.", gatewayaddress)
+        else:
+            raise RuntimeError("the returned answer was: " + answer)
+
+def main():
     import sys
     import json
     logging.info("Number of CLI arguments: %d.", len(sys.argv))
-    logging.debug("CLI List: %s.",  str(sys.argv))
+    logging.debug("CLI List: %s.", str(sys.argv))
     # remove the module from the top of the list:
-    sys.argv.pop(0)
+    program = sys.argv.pop(0)
     # first argument is the executor configuration path:
     if sys.argv:
         with open(sys.argv.pop(0)) as fp:
             config_dict = json.load(fp)
             logging.trace("configuration %s", config_dict)
         executorConfig = ExecutorConfig.from_dict(config_dict)
-    else :
+    else:
         executorConfig = ExecutorConfig.empty_config()
 
     # second argument is the local host address.
@@ -179,8 +201,13 @@ if __name__ == "__main__":
         port = int(sys.argv.pop(0))
     else:
         port = 5000
+    # restore the first argument:
+    sys.argv.insert(0, program)
 
     executor = HTTPExecutor(executorConfig, host_address, port)
     executor.start_listening()
 
+
+if __name__ == "__main__":
+    main()
 

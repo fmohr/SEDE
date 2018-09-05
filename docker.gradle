@@ -1,0 +1,25 @@
+task setupDocker {
+    dependsOn getTasksByName('jarjar', true)
+    dependsOn getTasksByName('buildPython', true)
+}
+task buildDocker {
+    dependsOn getTasksByName('setupDocker', true)
+    doLast {
+        exec {
+            workingDir 'deploy'
+            commandLine 'docker', 'build', '-t', 'sede:java', '-f', 'Dockerfile_Java_Base' , '.'
+        }
+        exec {
+            workingDir 'deploy'
+            commandLine 'docker', 'build', '-t', 'sede:Gateway', '-f', 'Dockerfile_Gateway', '.'
+        }
+        exec {
+            workingDir 'deploy'
+            commandLine 'docker', 'build', '-t', 'sede:jExecutor', '-f', 'Dockerfile_Java_Executor', '.'
+        }
+        exec {
+            workingDir 'deploy'
+            commandLine 'docker', 'build', '-t', 'sede:pyExecutor', '-f', 'Dockerfile_Python_Executor', '.'
+        }
+    }
+}

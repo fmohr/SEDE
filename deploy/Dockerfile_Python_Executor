@@ -1,0 +1,5 @@
+FROM python:3.6-stretch
+COPY ./SEDE_python /src
+RUN find /src -maxdepth 1 -mindepth 1 -type d -exec pip install {} \;
+
+COPY executor_configs/sl_tf_config.json config.json

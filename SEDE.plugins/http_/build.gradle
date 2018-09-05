@@ -1,0 +1,24 @@
+import org.gradle.plugins.ide.eclipse.model.AccessRule
+dependencies {
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+//        compile group: 'com.google.guava', name: 'guava', version: '25.1-jre'
+
+    testImplementation project(':demolib')
+
+    provided project(':SEDE.core')
+    provided project(':SEDE.gateway')
+    provided project(':SEDE.executor')
+}
+
+/*
+ * Allow access rule to sede http.
+ */
+eclipse.classpath {
+    file.whenMerged {
+        entries.each { source ->
+            if (source.kind == 'con' && source.path.startsWith('org.eclipse.jdt.launching.JRE_CONTAINER')) {
+                source.accessRules.add(new AccessRule('0', 'com/sun/net/httpserver/**'))
+            }
+        }
+    }
+}

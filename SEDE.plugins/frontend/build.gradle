@@ -1,0 +1,10 @@
+dependencies {
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+//        compile group: 'com.google.guava', name: 'guava', version: '25.1-jre'
+
+
+    provided project(':SEDE.core')
+    provided project(':SEDE.gateway')
+    provided project(':SEDE.executor')
+    provided project(':SEDE.http')
+}

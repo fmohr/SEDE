@@ -3,6 +3,8 @@ package de.upb.sede.config;
 import java.util.*;
 
 import de.upb.sede.util.Maps;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
@@ -11,6 +13,7 @@ import de.upb.sede.util.FileUtil;
 public class Configuration extends HashMap<String, Object> {
 	private static final long serialVersionUID = 22870752590407834L;
 	private Map<String, Object> rawConfiguration = new HashMap<>();
+	private final static Logger logger = LogManager.getLogger();
 
 	/**
 	 * Appends class configurations from files to the existing ones.
@@ -59,7 +62,9 @@ public class Configuration extends HashMap<String, Object> {
 		for(Map<String, Object> jsonMap : jsonMaps) {
 			Set intersection = Maps.keyIntersection(jsonMap, rawConfiguration);
 			if(!intersection.isEmpty()) {
-				throw new RuntimeException("Cannot redefine Classes:\n" + intersection.toString());
+//				throw new RuntimeException("Cannot redefine Classes:\n" + intersection.toString());
+				logger.warn("Redefining configurations: {}", intersection);
+
 			}
 			rawConfiguration.putAll(jsonMap);
 		}

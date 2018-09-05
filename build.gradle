@@ -3,8 +3,8 @@ project.ext {
     /*
         Set global properties like folder paths and so on:
      */
-
 }
+
 
 subprojects {
     /*
@@ -27,13 +27,6 @@ subprojects {
         // we use jitpack in order to add dependecy to github projects:
         maven { url 'https://jitpack.io' }
 
-        /*
-         * local imaging libraries:
-         */
-        flatDir {
-            dirs "${project(':imaging').projectDir}/libs"
-        }
-
         /*// python repos:
         pyGradlePyPi()
         ivy{
@@ -44,6 +37,7 @@ subprojects {
             }
         }*/
     }
+
     dependencies {
         compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
         compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'
@@ -58,32 +52,26 @@ subprojects {
         workingDir = new File("${projectDir}")
         ignoreFailures = true
     }
-//    print "compile - provided: " + (configurations.compile - configurations.provided)
-//    print "compile - provided: " + configurations.compile - configurations.provided
 
     task dep {
         doLast {
-            println "runtime: "
-            (configurations.runtime).collect { println "\t" + it.toString()}
-            println ""
-            print "provided: "
+            println "compile: "
+            (configurations.compile).collect { println "\t" + it.toString()}
+            println "\nprovided: "
             (configurations.provided).collect { println "\t" + it.toString()  }
-            println ""
-            println "testCompile: "
+            println "\ntestCompile: "
             (configurations.testCompile).collect { println "\t" + it.toString() }
-            println ""
 
 
-            println "testCompile - compile: "
+            println "\ntestCompile - compile: "
             (configurations.testCompile- configurations.compile).collect { println "\t" + it.toString() }
-            println ""
 
 
-            println "runtime - provided: "
-            (configurations.runtime - configurations.provided).collect { println "\t" + it.toString()  }
-            println ""
+            println "\ncompile - provided: "
+            (configurations.compile - configurations.provided).collect { println "\t" + it.toString()  }
         }
     }
+
     // build Jar:
     task jarjar(type: Jar, dependsOn: assemble) {
 
@@ -101,6 +89,12 @@ subprojects {
         with jar
     }
 
+    task buildPython(type: Copy) {
+        from "${projectDir}/src/main/python/"
+        include "**/*.py"
+        into "${rootDir}/deploy/SEDE_python/${project.name}"
+    }
+
     clean.doFirst {
         delete fileTree("$rootDir") {
             include '*.jar'
@@ -110,14 +104,7 @@ subprojects {
         delete "${projectDir}/instances"
         delete "${projectDir}/servicespec"
         delete "${rootDir}/deploy/SEDE"
-    }
-
-    task serviceSpec(type: JavaExec, dependsOn: assemble) {
-        classpath = sourceSets.main.runtimeClasspath
-        main = 'de.upb.sede.config.ServiceSpecTransformer'
-        // arguments to pass to the application
-        args sourceSets.main.resources.srcDirs.getAt(0).toString() + "/config/"
-        args "servicespec/"
+        delete "${rootDir}/deploy/SEDE_Python"
     }
 }
 /*
@@ -126,7 +113,10 @@ subprojects {
 project(':SEDE.core') {
     dependencies {
         // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
-        compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
+        compile (group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1') {
+            exclude module: 'junit'
+            exclude group: 'org.hamcrest'
+        }
     }
 
     task jarTransformer(type: Jar, dependsOn: assemble) {
@@ -139,19 +129,10 @@ project(':SEDE.core') {
                 .collect { it.isDirectory() ? it : zipTree(it) } }
         with jar
     }
+    buildPython.enabled = false
 }
 
 
-project(':SEDE.deployment') {
-    dependencies {
-        provided project(':SEDE.core')
-        provided project(':SEDE.http')
-        // https://mvnrepository.com/artifact/commons-cli/commons-cli
-        compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
-        // https://mvnrepository.com/artifact/commons-io/commons-io
-        compile group: 'commons-io', name: 'commons-io', version: '2.6'
-    }
-}
 
 project(':SEDE.gateway') {
     dependencies {
@@ -172,41 +153,7 @@ project(':SEDE.executor') {
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
 
         provided project(':SEDE.core')
-//        provided project(':SEDE.gateway')
-    }
-
-    task buildPython(type: Copy) {
-        from "${projectDir}/src/main/python/"
-        include "**/*.py"
-        into "${rootDir}/deploy/SEDE/pyExecutor/"
-    }
-    jarjar.dependsOn(buildPython)
-}
-
-project(':SEDE.http') {
-    dependencies {
-        // https://mvnrepository.com/artifact/com.google.guava/guava
-//        compile group: 'com.google.guava', name: 'guava', version: '25.1-jre'
-
-        testImplementation project(':demolib')
-        testImplementation project(':imaging')
-        testImplementation project(':SEDE.gateway')
-
-        provided project(':SEDE.core')
-        provided project(':SEDE.gateway')
-        provided project(':SEDE.executor')
-    }
-
-    task jarExecutor(type: Jar, dependsOn: assemble) {
-        manifest {
-            attributes 'Main-Class': 'de.upb.sede.exec.SimpleHttpExecutorStarter'
-        }
-        destinationDir = file("$rootDir")
-        baseName = 'JavaHttpExecutor'
-        from sourceSets.main.output
-        from ((configurations.compile - configurations.provided) - configurations.testCompile).
-                findAll { it.name.endsWith('jar') }.
-                collect { zipTree(it) }
-        with jar
     }
 }
+
+apply from: 'docker.gradle'

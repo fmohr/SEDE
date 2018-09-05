@@ -40,14 +40,12 @@ public final class SemanticStreamer {
 			ServiceInstanceHandle serviceInstanceHandle = new ServiceInstanceHandle();
 			serviceInstanceHandle.fromJsonString(jsonString);
 			parsedObject = new ServiceInstanceField(serviceInstanceHandle);
-		} else if(SEDEObject.isSemantic(type)){
+		} else {
 			/*
 			 * We don't know if the stream is persistent or not.
 			 * So we assume the worst case.
 			 */
 			parsedObject = new SemanticDataField(type, is, false);
-		} else {
-			throw new RuntimeException("BUG: use read object from method to read real type data.");
 		}
 		return parsedObject;
 	}
@@ -115,6 +113,12 @@ public final class SemanticStreamer {
 
 	public static void streamObjectInto(OutputStream os, SEDEObject content, String caster, String targetSemanticType) {
 		logger.debug("Casting from '{}' to semantic type '{}' using caster class: {}.", content.getType(), targetSemanticType, caster);
+
+		Objects.requireNonNull(os);
+		Objects.requireNonNull(content);
+		Objects.requireNonNull(caster);
+		Objects.requireNonNull(targetSemanticType);
+
 		String sourceRealType = getSimpleNameFromClasspath(content.getType());
 		String casterMethod = getCastMethod(sourceRealType, true);
 		Method method = getMethodFor(caster, casterMethod);
@@ -138,7 +142,10 @@ public final class SemanticStreamer {
 	}
 
 	private static Method getMethodFor(String caster, String methodName) {
+		Objects.requireNonNull(caster);
+		Objects.requireNonNull(methodName);
 		try {
+			logger.info("Using method {} in caster {}.", methodName, caster);
 			Class casterClass = Class.forName(caster);
 			Method[] allDefinedMethods = casterClass.getMethods();
 			for(Method method : allDefinedMethods){

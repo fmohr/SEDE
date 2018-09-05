@@ -1,10 +1,14 @@
 from typing import IO
-import logging
+import exe
+logging = exe.getlogger("COM_LOGS")
+logging.setLevel("TRACE")
 import io
 from http import server
-import requests
+import socketserver
+import requests as httprequests
 import re
 import os
+
 
 def is_bytes(something)->bool:
     return isinstance(something, (bytes, bytearray))
@@ -38,6 +42,7 @@ def in_read(rfile: IO, content_length = None, close: bool = True):
         content = rfile.read()
     else:
         content = rfile.read(content_length)
+        logging.trace("Finished reading %d bytes from input stream. ", content_length)
     if close:
         rfile.close()
     return content
@@ -88,7 +93,6 @@ class BasicClientRequest(object):
             if payload is not None:
                 out_write(self.send(), payload, close=False)
             return in_read_bytes(self.receive())
-
 
 
 class ReadFileRequest(BasicClientRequest):
@@ -201,9 +205,9 @@ class HttpClientRequest(BasicClientRequest):
             else:
                 body = self.payload.getvalue()
 
-            self.response = requests.request("POST", self.url, data=body)
+            self.response = httprequests.request("POST", self.url, data=body)
         else:
-            self.response = requests.request("GET", self.url) 
+            self.response = httprequests.request("GET", self.url)
         return self.response.content
         
     def __exit__(self, exc_type, exc_value, traceback):
@@ -275,6 +279,10 @@ class MultiContextHandler(object):
 
     def __call__(self, *args, **kwargs):
         return MultiContextHandler.Handler(self.context_handlers, *args, **kwargs)
+
+
+class ThreadHTTPServer(socketserver.ThreadingMixIn, server.HTTPServer):
+    pass
 
 
 class BasicServerTest(object):

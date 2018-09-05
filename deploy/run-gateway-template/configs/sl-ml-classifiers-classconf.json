@@ -518,7 +518,7 @@
             }
         }
     },
-    "tflib.NeuralNet": {
+    "tflib.neuralnet.NeuralNet": {
         "extends": [
             "$Basic_sk_classifier$"
         ],
@@ -532,5 +532,8 @@
                 ]
             }
         }
+    }, 
+    "tflib.NeuralNet": {
+        "wrapper" : "tflib.neuralnet.NeuralNet"
     }
 }

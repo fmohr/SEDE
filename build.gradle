@@ -105,9 +105,6 @@ subprojects {
         delete "${projectDir}/servicespec"
         delete "${rootDir}/deploy/SEDE"
         delete "${rootDir}/deploy/SEDE_Python"
-        delete "${rootDir}/docker/gateway/bin"
-        delete "${rootDir}/docker/java-executor/bin"
-        delete "${rootDir}/docker/python-executor/bin"
     }
 }
 /*
@@ -159,4 +156,4 @@ project(':SEDE.executor') {
     }
 }
 
-apply from: 'docker/docker.gradle'
+apply from: 'docker.gradle'

@@ -10,4 +10,4 @@ RUN apk update && apk add \
 
 RUN export DOT_PATH=$(which dot)
 
-COPY ./configs /configs
+COPY ./run-gateway-template/configs /configs

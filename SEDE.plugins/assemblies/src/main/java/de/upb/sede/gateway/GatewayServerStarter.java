@@ -9,6 +9,7 @@ import de.upb.sede.util.WebUtil;
 import de.upb.sede.util.server.TerminalCommandListener;
 import de.upb.sede.webinterfaces.server.ImServerCommandListener;
 import de.upb.sede.webinterfaces.server.ServerCommandListeners;
+import de.upb.sede.webinterfaces.server.StdShellCommands;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jline.terminal.Terminal;
@@ -60,6 +61,7 @@ public class GatewayServerStarter {
 		scl.addListener(terminalListener);
 
 		GatewayCommands.enablePlugin(gateway, scl);
+		StdShellCommands.enablePlugin(scl);
 
 		/*
 		 * Terminals:

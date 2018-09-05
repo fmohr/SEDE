@@ -13,7 +13,7 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
     group = 'de.upb.sede'
-    version = '0.0.3'
+    version = '0.0.4'
 
     configurations {
         provided

@@ -1,0 +1,3 @@
+FROM sede:java
+
+COPY ./executor_configs/weka_config.json /config.json

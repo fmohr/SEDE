@@ -7,6 +7,7 @@ import de.upb.sede.util.WebUtil;
 import de.upb.sede.util.server.TerminalCommandListener;
 import de.upb.sede.webinterfaces.server.ImServerCommandListener;
 import de.upb.sede.webinterfaces.server.ServerCommandListeners;
+import de.upb.sede.webinterfaces.server.StdShellCommands;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jline.terminal.Terminal;
@@ -50,7 +51,7 @@ public class ExecutorServerStarter {
 
 		ExecutorCommands.enablePlugin(executor, scl);
 		HttpExecutorCommands.enablePlugin(httpExecutor, scl);
-
+		StdShellCommands.enablePlugin(scl);
 
 		/*
 		 * Terminals:

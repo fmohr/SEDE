@@ -21,10 +21,6 @@
   </Appenders>
  
   <Loggers>
-    <Logger name="de.upb.sede.gateway" level="info" additivity="true">
-      <AppenderRef ref="defaultfile"/>
-    </Logger>
-
     <Root level="debug">
       <AppenderRef ref="STDOUT"/>
       <AppenderRef ref="defaultfile"/>

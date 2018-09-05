@@ -105,7 +105,9 @@ public class GatewayCommands {
 		if(typeConfig.isEmpty()) {
 			return "Gateway supports no types yet.";
 		}
-		String knownTypes = typeConfig.knownTypes().stream().sorted()
+		String knownTypes = typeConfig.knownTypes()
+				.stream().sorted()
+				.map(type -> type + " <-> " + typeConfig.getOnthologicalType(type))
 				.collect(Collectors.joining("\n"));
 		return "Known types are: \n" + knownTypes;
 	}

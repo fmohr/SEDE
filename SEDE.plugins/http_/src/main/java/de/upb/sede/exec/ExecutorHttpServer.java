@@ -44,6 +44,7 @@ public class ExecutorHttpServer implements ImServer {
 	private final String hostAddress;
 
 	private final HttpServer server;
+	private final int port;
 
 	private final Pattern PUT_DATA_URL_PATTERN = Pattern.compile("/put/(?<executionId>[\\-\\w]+)/(?<fieldname>(?:[&_a-zA-Z][&\\-\\w]*+))/(?<semtype>[\\-\\w]+)");
 	private final Pattern INTERRUPT_URL_PATTERN = Pattern.compile("/interrupt/(?<executionId>[\\-\\w]+)");
@@ -54,7 +55,8 @@ public class ExecutorHttpServer implements ImServer {
 
 	public ExecutorHttpServer(Executor basis, String hostAddress, int port) {
 		this.basis = basis;
-		this.hostAddress = hostAddress + ":" + port;
+		this.port = port;
+		setHostAddress(hostAddress + ":" + port);
 
 		try {
 			server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -114,6 +116,10 @@ public class ExecutorHttpServer implements ImServer {
 
 	public Executor getBasisExecutor() {
 		return basis;
+	}
+
+	public int getServerTCPPort() {
+		return port;
 	}
 
 	public void addHandle(String context, Supplier<HTTPServerResponse> serverResponder) {

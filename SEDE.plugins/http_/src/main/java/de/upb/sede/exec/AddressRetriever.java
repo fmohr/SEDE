@@ -39,7 +39,7 @@ public class AddressRetriever {
 			logger.warn("Couldn't determine the address of this executor by asking gateways.");
 		}
 		else {
-			String myAddress = myAddresses.get(0); // TODO not sure how to select my address
+			String myAddress = myAddresses.get(0) +":"+ executor.getServerTCPPort(); // TODO not sure how to select my address
 			logger.info("Changing the address of this executor to {}", myAddress);
 			executor.setHostAddress(myAddress);
 			executor.registerToEveryGateway();

@@ -33,7 +33,7 @@ public class WhatIsMyAddressHandler extends SunHttpHandler {
 			if(remoteAddress.getHostString()==null){
 				throw new RuntimeException("Couldnt Resolve remote address.");
 			}
-			address = remoteAddress.getHostString() + ":" + remoteAddress.getPort();
+			address = remoteAddress.getHostString();
 			httpExchange.sendResponseHeaders(200, 0);
 			logger.info("Client's address: " + address);
 			Streams.OutWriteString(httpExchange.getResponseBody(), address, true);

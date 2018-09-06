@@ -76,6 +76,7 @@ public class ExecutorHttpServer implements ImServer {
 		 *  Shutdown the http server if the base executor is being shutdown.
 		 */
 		basis.shutdownHook.observe(Observer.alwaysNotify(executor -> this.shutdown()));
+
 		registerToEveryGateway();
 	}
 

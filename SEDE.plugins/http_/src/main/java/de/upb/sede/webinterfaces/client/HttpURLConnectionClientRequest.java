@@ -10,7 +10,7 @@ public class HttpURLConnectionClientRequest implements BasicClientRequest {
 	private final ByteArrayOutputStream payload = new ByteArrayOutputStream();
 
 	private HttpURLConnection httpConnection;
-
+	private int timeoutInMs = 1000;
 
 	public HttpURLConnectionClientRequest(String ipAddress, int port, String url) {
 		this(ipAddress + ":" + port + (url.startsWith("/")? "" : "/")  + url);
@@ -37,6 +37,10 @@ public class HttpURLConnectionClientRequest implements BasicClientRequest {
 		return payload;
 	}
 
+	public void setTimeout(int milliseconds) {
+		timeoutInMs = milliseconds;
+	}
+
 	@Override
 	public InputStream receive() {
 //		try {
@@ -49,7 +53,7 @@ public class HttpURLConnectionClientRequest implements BasicClientRequest {
 			httpConnection.setDoInput(true);
 			httpConnection.setDoOutput(true);
 			httpConnection.setFixedLengthStreamingMode(payload.size());
-			httpConnection.setConnectTimeout(8000);
+			httpConnection.setConnectTimeout(timeoutInMs);
 			httpConnection.connect();
 
 			payload.writeTo(httpConnection.getOutputStream());

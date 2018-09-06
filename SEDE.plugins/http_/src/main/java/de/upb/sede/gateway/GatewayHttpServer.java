@@ -2,9 +2,12 @@ package de.upb.sede.gateway;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.Optional;
 import java.util.function.Supplier;
 
+import com.sun.net.httpserver.HttpExchange;
 import de.upb.sede.exec.Executor;
 import de.upb.sede.exec.ExecutorHttpServer;
 import de.upb.sede.util.Streams;
@@ -90,6 +93,10 @@ public final class GatewayHttpServer implements ImServer {
 		server.createContext(context, new SunHttpHandler(serverResponder));
 	}
 
+	public void addHandle(String context, SunHttpHandler serverHandler) {
+		server.createContext(context, serverHandler);
+	}
+
 	class ExecutorRegistrationHandler extends StringServerResponse {
 
 		@SuppressWarnings("unchecked")
@@ -163,5 +170,4 @@ public final class GatewayHttpServer implements ImServer {
 			}
 		}
 	}
-
 }

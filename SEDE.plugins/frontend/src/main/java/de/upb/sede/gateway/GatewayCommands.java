@@ -85,7 +85,7 @@ public class GatewayCommands {
 		scl.addCommandHandle(heartbeat);
 	}
 
-	private synchronized String listServices() {
+	private String listServices() {
 		ClassesConfig classesConfig = gateway.getClassesConfig();
 		if(classesConfig.isEmpty()) {
 			return "Gateway supports no services yet.";
@@ -95,12 +95,12 @@ public class GatewayCommands {
 		return "Known services are: \n" + knownClasses;
 	}
 
-	private synchronized String loadServices(String configPath) {
+	private String loadServices(String configPath) {
 		gateway.getClassesConfig().appendConfigFromFiles(configPath);
 		return "Loaded service configurations from " + configPath;
 	}
 
-	private synchronized String listTypes() {
+	private String listTypes() {
 		OnthologicalTypeConfig typeConfig = gateway.getTypeConfig();
 		if(typeConfig.isEmpty()) {
 			return "Gateway supports no types yet.";
@@ -112,13 +112,13 @@ public class GatewayCommands {
 		return "Known types are: \n" + knownTypes;
 	}
 
-	private synchronized String listExecutors(Function<ExecutorHandle, String> mapFunction){
+	private String listExecutors(Function<ExecutorHandle, String> mapFunction){
 		return "Registered executors: \n\t" +
 				gateway.getExecutorCoord().getExecutors().stream().map(mapFunction).collect(Collectors.joining("\n\t"));
 	}
 
 
-	private synchronized String loadTypes(String configPath) {
+	private String loadTypes(String configPath) {
 		gateway.getTypeConfig().appendConfigFromFiles(configPath);
 		return "Loaded types configurations from " + configPath;
 	}
@@ -132,6 +132,7 @@ public class GatewayCommands {
 				String address =(String) contactInfo.get("host-address");
 				String heartbeatUrl = address + "/cmd/heartbeat";
 				HttpURLConnectionClientRequest requestHeartbeat = new HttpURLConnectionClientRequest(heartbeatUrl);
+				requestHeartbeat.setTimeout(200);
 				boolean executoraintalive = false;
 				try {
 					String response = requestHeartbeat.send("");
@@ -156,4 +157,5 @@ public class GatewayCommands {
 		}
 		return removedExecutors;
 	}
+
 }

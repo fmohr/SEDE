@@ -52,6 +52,8 @@ public class GatewayServerStarter {
 		 * Enable plugins:
 		 */
 
+		WhatIsMyAddressHandler.enablePlugin(httpGateway);
+
 		ImServerCommandListener httpListener = new ImServerCommandListener(httpGateway);
 		TerminalCommandListener terminalListener = new TerminalCommandListener();
 

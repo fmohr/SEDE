@@ -58,6 +58,6 @@
         "weka.filters.unsupervised.attribute.Standardize",
         "wrappers.sk.WrappedClassifier"
     ],
-    "gateways": [],
+    "gateways": ["http://sfb-k8node-1.cs.uni-paderborn.de:30370"],
     "serviceStoreLocation": "instances"
 }

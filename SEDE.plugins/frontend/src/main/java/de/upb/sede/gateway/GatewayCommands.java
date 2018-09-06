@@ -147,8 +147,8 @@ public class GatewayCommands {
 					executoraintalive = true;
 				}
 				if(executoraintalive) {
-					gateway.getExecutorCoord().removeExecutor(executorHandle.getExecutorId());
 					removedExecutors += "\n" + executorHandle.getExecutorId();
+					gateway.getExecutorCoord().removeExecutor(executorHandle.getExecutorId());
 				}
 			} else {
 				logger.warn("Gateway is performing HEARTBEAT. Cannot contact executor with id: {}. His contact information is: {}.",

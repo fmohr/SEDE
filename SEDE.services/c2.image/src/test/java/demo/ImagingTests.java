@@ -20,6 +20,8 @@ import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.WebUtil;
+import C2Data.C2Image;
+import C2Data.C2ImageManager;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -31,6 +33,7 @@ import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,7 +48,12 @@ public class ImagingTests {
 	static String gatewayAddress = "localhost";
 	static int gatewayPort = 6000;
 
+	// Catalano image type.
 	static FastBitmap frog;
+
+	// C2 image type.
+	static C2ImageManager im_lenna;
+	static C2Image lenna;
 
 	static String executor1Address = WebUtil.HostIpAddress();
 	static int executorPort = 9000;
@@ -108,12 +116,35 @@ public class ImagingTests {
 		gateway.shutdown();
 		executor1.shutdown();
 		coreClient.getClientExecutor().shutdown();
+		im_lenna.environmentDown();
 	}
 
 	@BeforeClass
 	public static void loadImages() {
-		 frog = new FastBitmap(FileUtil.getPathOfResource("images/red-eyed.jpg"));
-		 assert frog != null;
+		// Load Catalano image.
+		frog = new FastBitmap(FileUtil.getPathOfResource("images/red-eyed.jpg"));
+		assert frog != null;
+
+		// Load C2 image.
+		ArrayList<String> file_src = new ArrayList<String>();
+		ArrayList<String> file_dest = new ArrayList<String>();
+		file_src.add(FileUtil.getPathOfResource("images/lenna.tiff"));
+		im_lenna = new C2ImageManager(file_src, file_dest);
+		im_lenna.environmentUp();
+		im_lenna.readImages();
+		lenna = im_lenna.getSourceImages().get(0);
+		assert lenna != null;
+	}
+
+	@BeforeClass
+	public static void loadMagickLibrary() {
+		try {
+			// Load image library bridge. The bridge comes from the demonstrator in
+			//   sfb901_demonstrator/service_caller
+			System.load(FileUtil.getPathOfResource("shared_libs/libimagemagick.so"));
+		} catch (UnsatisfiedLinkError error) {
+			System.out.println(error.getMessage());
+		}
 	}
 
 	@Test
@@ -234,6 +265,18 @@ public class ImagingTests {
 		System.out.println("Histogram: " + Arrays.toString(histogram.getValues()));
 		System.out.println("Mean: " + histogram.getMean());
 
+	}
+
+	@Test
+	public void testLoadImageMagick() {
+		System.out.printf("Image \"lenna\" loaded. %dx%d", lenna.getRows(), lenna.getColumns());
+
+		/*SEDEObject inputObject_fb1 = new ObjectDataField(FastBitmap.class.getName(), frog);
+
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		inputs.put("imageIn", inputObject_fb1);
+
+		JOptionPane.showMessageDialog(null, frog.toIcon(), "Original image", JOptionPane.PLAIN_MESSAGE); */
 	}
 
 

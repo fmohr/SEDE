@@ -32,6 +32,9 @@ project(':demolib').projectDir = new File(serivceFolder, "demolib")
 include 'catalano.image'
 project(':catalano.image').projectDir = new File(serivceFolder, "catalano.image")
 
+include 'c2.image'
+project(':c2.image').projectDir = new File(serivceFolder, "c2.image")
+
 include 'weka.ml'
 project(':weka.ml').projectDir = new File(serivceFolder, "weka.ml")
 

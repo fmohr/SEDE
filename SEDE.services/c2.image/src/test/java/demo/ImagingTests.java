@@ -29,6 +29,7 @@ import org.junit.Test;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
@@ -268,15 +269,16 @@ public class ImagingTests {
 	}
 
 	@Test
-	public void testLoadImageMagick() {
-		System.out.printf("Image \"lenna\" loaded. %dx%d", lenna.getRows(), lenna.getColumns());
+	public void testConvertMagickImage() {
+		System.out.printf("Magick/JNI load \"lenna\". %dx%d \n", lenna.getRows(), lenna.getColumns());
 
-		/*SEDEObject inputObject_fb1 = new ObjectDataField(FastBitmap.class.getName(), frog);
+		// Convert to BufferedImage.
+		BufferedImage buf_lenna = im_lenna.convertToBufferedImage(lenna);
+		System.out.printf("Converted to BufferedImage. %dx%d \n", buf_lenna.getHeight(), buf_lenna.getWidth());
 
-		Map<String, SEDEObject> inputs = new HashMap<>();
-		inputs.put("imageIn", inputObject_fb1);
-
-		JOptionPane.showMessageDialog(null, frog.toIcon(), "Original image", JOptionPane.PLAIN_MESSAGE); */
+		// Convert to FastBitmap.
+		FastBitmap fast_lenna = new FastBitmap(buf_lenna);
+		System.out.printf("Converted to FastBitmap. %dx%d \n", fast_lenna.getHeight(), fast_lenna.getWidth());
 	}
 
 

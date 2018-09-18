@@ -52,10 +52,6 @@ public class ImagingTests {
 	// Catalano image type.
 	static FastBitmap frog;
 
-	// C2 image type.
-	static C2ImageManager im_lenna;
-	static C2Image lenna;
-
 	static String executor1Address = WebUtil.HostIpAddress();
 	static int executorPort = 9000;
 	static ExecutorHttpServer executor1;
@@ -117,7 +113,6 @@ public class ImagingTests {
 		gateway.shutdown();
 		executor1.shutdown();
 		coreClient.getClientExecutor().shutdown();
-		im_lenna.environmentDown();
 	}
 
 	@BeforeClass
@@ -125,16 +120,6 @@ public class ImagingTests {
 		// Load Catalano image.
 		frog = new FastBitmap(FileUtil.getPathOfResource("images/red-eyed.jpg"));
 		assert frog != null;
-
-		// Load C2 image.
-		ArrayList<String> file_src = new ArrayList<String>();
-		ArrayList<String> file_dest = new ArrayList<String>();
-		file_src.add(FileUtil.getPathOfResource("images/lenna.tiff"));
-		im_lenna = new C2ImageManager(file_src, file_dest);
-		im_lenna.environmentUp();
-		im_lenna.readImages();
-		lenna = im_lenna.getSourceImages().get(0);
-		assert lenna != null;
 	}
 
 	@BeforeClass
@@ -270,6 +255,20 @@ public class ImagingTests {
 
 	@Test
 	public void testConvertMagickImage() {
+		// C2 image type.
+		C2ImageManager im_lenna;
+		C2Image lenna;
+
+		// Load C2 image.
+		ArrayList<String> file_src = new ArrayList<String>();
+		ArrayList<String> file_dest = new ArrayList<String>();
+		file_src.add(FileUtil.getPathOfResource("images/lenna.tiff"));
+		im_lenna = new C2ImageManager(file_src, file_dest);
+		im_lenna.environmentUp();
+		im_lenna.readImages();
+		lenna = im_lenna.getSourceImages().get(0);
+		assert lenna != null;
+
 		System.out.printf("Magick/JNI load \"lenna\". %dx%d \n", lenna.getRows(), lenna.getColumns());
 
 		// Convert to BufferedImage.
@@ -279,6 +278,8 @@ public class ImagingTests {
 		// Convert to FastBitmap.
 		FastBitmap fast_lenna = new FastBitmap(buf_lenna);
 		System.out.printf("Converted to FastBitmap. %dx%d \n", fast_lenna.getHeight(), fast_lenna.getWidth());
+
+		im_lenna.environmentDown();
 	}
 
 

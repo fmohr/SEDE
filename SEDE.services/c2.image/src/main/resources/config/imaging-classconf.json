@@ -240,6 +240,22 @@
                 "static": true
             }
         }
+    },
+    "C2Services.C2AddTwoNumbers": {
+        "methods": {
+            "$construct": {
+                "params": [
+                    "Number"
+                ]
+            },
+            "compute": {
+                "params": [
+                    "Number",
+                    "Number"
+                ],
+                "returntype": "Number"
+            }
+        }
     }
 
 

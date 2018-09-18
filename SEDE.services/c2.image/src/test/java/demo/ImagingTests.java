@@ -94,7 +94,8 @@ public class ImagingTests {
 						"Catalano.Imaging.Filters.GrayScale_GeometricMean",
 						"Catalano.Imaging.Filters.GrayScale_Luminosity",
 						"Catalano.Imaging.Filters.GrayScale_MinimumDecomposition",
-						"Catalano.Imaging.Filters.GrayScale_MaximumDecomposition"
+						"Catalano.Imaging.Filters.GrayScale_MaximumDecomposition",
+						"C2Services.C2AddTwoNumbers"
 						)
 		);
 		System.out.println(executor1.getBasisExecutor().getExecutorConfiguration().toJsonString());
@@ -282,6 +283,29 @@ public class ImagingTests {
 		im_lenna.environmentDown();
 	}
 
+	@Test
+	public void testC2CServicesAddTwoNumbers() throws InvocationTargetException, InterruptedException {
+		/*
+			Tests fixed parameters:
+		 */
+		String composition =
+				"s1 = C2Services.C2AddTwoNumbers::__construct({11});\n" +
+						"i1 = s1::compute({22,33});";
+
+		ResolvePolicy policy = new ResolvePolicy();
+
+		policy.setServicePolicy("None");
+		policy.setReturnFieldnames(Arrays.asList("i1"));
+
+		Map<String, SEDEObject> inputs = new HashMap<>();
+
+		RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
+
+		coreClient.run(runRequest, result -> {
+			System.out.println(result.getFieldname());
+		});
+		coreClient.join("proc_cservices", true);
+	}
 
 	private static ClassesConfig getTestClassConfig() {
 		ClassesConfig classesConfig = new ClassesConfig();

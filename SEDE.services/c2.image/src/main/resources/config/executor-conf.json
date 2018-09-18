@@ -16,7 +16,8 @@
     "Catalano.Imaging.Filters.GrayScale_GeometricMean",
     "Catalano.Imaging.Filters.GrayScale_Luminosity",
     "Catalano.Imaging.Filters.GrayScale_MinimumDecomposition",
-    "Catalano.Imaging.Filters.GrayScale_MaximumDecomposition"
+    "Catalano.Imaging.Filters.GrayScale_MaximumDecomposition",
+    "C2Services.C2AddTwoNumbers"
   ],
   "serviceStoreLocation": "instances"
 }

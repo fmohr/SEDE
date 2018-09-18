@@ -6,5 +6,9 @@
     "Catalano.Imaging.Tools.ImageHistogram" : {
         "semantic_type": "Arr",
         "onthological_caster": "de.upb.sede.casters.ImageHistogramCaster"
+    },
+    "C2Data.C2Image": {
+        "semantic_type": "Arr",
+        "onthological_caster": "de.upb.sede.casters.FastBitmapCaster"
     }
 }

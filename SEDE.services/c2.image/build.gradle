@@ -8,7 +8,9 @@ dependencies {
     compile files(
             'libs/Catalano.Image.jar',
             'libs/Catalano.Math.jar',
-            'libs/Catalano.Statistics.jar')
+            'libs/Catalano.Statistics.jar',
+            'libs/CServices.jar'
+    )
 
     testCompile project(":SEDE.http")
 }

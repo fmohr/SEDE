@@ -125,12 +125,15 @@ public class ImagingTests {
 	}
 
 	@BeforeClass
-	public static void loadImages() {
+	public static void loadBefore() {
 		// Load Catalano image.
 		frog = new FastBitmap(FileUtil.getPathOfResource("images/red-eyed.jpg"));
 		assert frog != null;
 
 		if(WORKAROUND___ENABLE_C2_IMAGES) {
+			// Load libraries.
+			loadC2Libraries();
+
             // Load C2 image.
             ArrayList<String> file_src = new ArrayList<String>();
             ArrayList<String> file_dest = new ArrayList<String>();
@@ -143,21 +146,18 @@ public class ImagingTests {
         }
 	}
 
-	@BeforeClass
 	public static void loadC2Libraries() {
-	    if(WORKAROUND___ENABLE_C2_IMAGES) {
-            try {
-                // Load image library bridge. The bridge comes from the demonstrator in
-                //   sfb901_demonstrator/service_caller
-                System.load(FileUtil.getPathOfResource("shared_libs/libimagemagick.so"));
+		try {
+			// Load image library bridge. The bridge comes from the demonstrator in
+			//   sfb901_demonstrator/service_caller
+			System.load(FileUtil.getPathOfResource("shared_libs/libimagemagick.so"));
 
-				// Load service plugin bridge. The bridge comes from the demonstrator in
-				//   sfb901_demonstrator/service_node
-				// System.load(FileUtil.getPathOfResource("shared_libs/libpluginbridge.so"));
-            } catch (UnsatisfiedLinkError error) {
-                System.out.println(error.getMessage());
-            }
-        }
+			// Load service plugin bridge. The bridge comes from the demonstrator in
+			//   sfb901_demonstrator/service_node
+			System.load(FileUtil.getPathOfResource("shared_libs/libpluginbridge.so"));
+		} catch (UnsatisfiedLinkError error) {
+			System.out.println(error.getMessage());
+		}
 	}
 
 	@Test

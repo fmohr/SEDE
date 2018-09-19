@@ -61,7 +61,7 @@ public class ImagingTests {
 	// TODO: there is currently a bug in C2ImageManager, which breaks all tests that have GUIs. This flag controls this.
     //   if false: we can use C2Images, but no GUI (java.swing, java.awt, etc.)
     //   if true:  we cannot use C2Images, but all results are displayed in a GUI.
-	static final boolean WORKAROUND___ENABLE_C2_IMAGES = false;
+	static final boolean WORKAROUND___ENABLE_C2_IMAGES = true;
 
 	@BeforeClass
 	public static void startClient() {
@@ -144,12 +144,16 @@ public class ImagingTests {
 	}
 
 	@BeforeClass
-	public static void loadMagickLibrary() {
+	public static void loadC2Libraries() {
 	    if(WORKAROUND___ENABLE_C2_IMAGES) {
             try {
                 // Load image library bridge. The bridge comes from the demonstrator in
                 //   sfb901_demonstrator/service_caller
                 System.load(FileUtil.getPathOfResource("shared_libs/libimagemagick.so"));
+
+				// Load service plugin bridge. The bridge comes from the demonstrator in
+				//   sfb901_demonstrator/service_node
+				// System.load(FileUtil.getPathOfResource("shared_libs/libpluginbridge.so"));
             } catch (UnsatisfiedLinkError error) {
                 System.out.println(error.getMessage());
             }
@@ -351,6 +355,9 @@ public class ImagingTests {
 
 	@Test
 	public void testC2CServicesAddTwoNumbers() throws InvocationTargetException, InterruptedException {
+		// This test only works with WORKAROUND___ENABLE_C2_IMAGES enabled!
+		assert WORKAROUND___ENABLE_C2_IMAGES;
+
 		/*
 			Tests fixed parameters:
 		 */
@@ -372,6 +379,33 @@ public class ImagingTests {
 		});
 		coreClient.join("proc_cservices", true);
 	}
+
+    @Test
+    public void testC2ServicesC2service_grey() throws InvocationTargetException, InterruptedException {
+		// This test only works with WORKAROUND___ENABLE_C2_IMAGES enabled!
+		assert WORKAROUND___ENABLE_C2_IMAGES;
+
+		/*
+			Tests fixed parameters:
+		 */
+        String composition =
+                "s1 = C2Services.C2service_grey::__construct();\n" +
+                        "i1 = s1::compute({22,33});";
+
+        ResolvePolicy policy = new ResolvePolicy();
+
+        policy.setServicePolicy("None");
+        policy.setReturnFieldnames(Arrays.asList("i1"));
+
+        Map<String, SEDEObject> inputs = new HashMap<>();
+
+        RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
+
+        coreClient.run(runRequest, result -> {
+            System.out.println(result.getFieldname());
+        });
+        coreClient.join("proc_cservices", true);
+    }
 
 	private static ClassesConfig getTestClassConfig() {
 		ClassesConfig classesConfig = new ClassesConfig();

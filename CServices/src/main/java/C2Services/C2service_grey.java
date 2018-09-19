@@ -30,9 +30,9 @@ public class C2service_grey extends Plugin {
     private static List<File> linkedFiles;
 
     static {
-        serviceFile = new File("service_grey/service_grey.so");
+        serviceFile = new File("/home/deffel/coding/sfb901_demonstrator/service_plugins/build/libservice_grey.so");
         linkedFiles = new ArrayList<File>();
-        linkedFiles.add(new File("service_grey/service_grey_cpu.so"));
+        linkedFiles.add(new File("/home/deffel/coding/sfb901_demonstrator/service_plugins/build/libservice_grey_cpu.so"));
     }
 
     public C2service_grey() {

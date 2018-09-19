@@ -155,6 +155,10 @@ public class ImagingTests {
 			// Load service plugin bridge. The bridge comes from the demonstrator in
 			//   sfb901_demonstrator/service_node
 			System.load(FileUtil.getPathOfResource("shared_libs/libpluginbridge.so"));
+
+			// TODO: this needs a clean solution. Currently done via LD_LIBRARY_PATH.
+			// Add path to *.so of the service plugins to library path.
+			// System.setProperty("java.library.path", System.getProperty("java.library.path")+":/home/deffel/coding/SEDE/CServices/cbuild");
 		} catch (UnsatisfiedLinkError error) {
 			System.out.println(error.getMessage());
 		}

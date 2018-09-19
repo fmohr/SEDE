@@ -1,0 +1,32 @@
+SERVICES_ALL=\
+	service_grey \
+	service_sobel
+
+CC=gcc
+CFLAGS=-O3 -Wall
+
+all: clean $(SERVICES_ALL)
+
+$(SERVICES_ALL): common
+	@echo -e "\n=== build $@ ==="
+
+	$(CC) $(CFLAGS) -fPIC -c -o $@_scpu.o ../csrc/service_plugins/$@/$@_scpu.c
+	$(CC) $(CFLAGS) -shared -o lib$@_scpu.so $@_scpu.o
+
+	$(CC) $(CFLAGS) -fPIC -fopenmp -c -o $@_cpu.o ../csrc/service_plugins/$@/$@_cpu.c
+	$(CC) $(CFLAGS) -shared -o lib$@_cpu.so $@_cpu.o -lgomp
+
+	$(CC) $(CFLAGS) -fPIC -c -o $@.o ../csrc/service_plugins/$@/$@.c
+	$(CC) $(CFLAGS) -shared -o lib$@.so $@.o common.o -ldl -L. -l$@_scpu -l$@_cpu
+
+.PHONY: common clean cleanall
+
+common:
+	@echo -e "=== build dependencies ==="
+	$(CC) $(CFLAGS) -fPIC -c -o $@.o ../csrc/service_plugins/$@.c
+
+clean:
+	@rm -rf *.o *.so *.hmf *.hmf.cu
+
+cleanall: clean
+	@rm -rf ../bin/*

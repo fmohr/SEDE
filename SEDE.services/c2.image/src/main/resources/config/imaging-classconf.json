@@ -256,6 +256,18 @@
                 "returntype": "Number"
             }
         }
+    },
+    "C2Services.C2service_grey": {
+      "methods": {
+        "$construct" :{},
+        "compute": {
+          "params": [
+            "Number",
+            "Number"
+          ],
+          "returntype": "Number"
+        }
+      }
     }
 
 

@@ -1,27 +1,25 @@
 package C2Services;
 
+import C2Data.C2Image;
+import C2Plugins.Plugin;
+import C2Plugins.ServiceInstancePlugin;
+
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
-public class C2service_grey { // extends Plugin
+public class C2service_grey extends Plugin {
 
     private int result = 0;
-
-    public C2service_grey(int offset) {
-        result += offset;
-
-        System.out.println("AddTwoNumbers::__construct: " + result);
-    }
 
     public int compute(int a, int b) {
         result += a + b;
 
-        System.out.println("AddTwoNumbers::compute: " + result);
+        System.out.println("C2service_grey::compute: " + result);
 
         return result;
     }
-
 
     /**
      *
@@ -38,10 +36,10 @@ public class C2service_grey { // extends Plugin
     }
 
     public C2service_grey() {
-        // super(serviceFile, linkedFiles);
+        super(serviceFile, linkedFiles);
     }
 
-    /*
+
     public List<C2Image> process(List<C2Image> sourceImages) {
 
         System.out.println("---------------------- HELLO from service_grey ------------------");
@@ -50,10 +48,10 @@ public class C2service_grey { // extends Plugin
         //TODO load shared objects only once
         // System.load("/sede/codebase/ServiceCodeProvider/c2imaging/service_node/bin/libpluginbridge.so");
 
-        File serviceFile = new File("/sede/codebase/ServiceCodeProvider/c2imaging/service_plugins/bin/service_grey/libservice_grey.so");
+        File serviceFile = new File("/home/deffel/coding/sfb901_demonstrator/service_plugins/build/libservice_grey.so");
 
         ArrayList<File> linkedFiles = new ArrayList<File>();
-        linkedFiles.add(new File("/sede/codebase/ServiceCodeProvider/c2imaging/service_plugins/bin/service_grey/libservice_grey_cpu.so"));
+        linkedFiles.add(new File("/home/deffel/coding/sfb901_demonstrator/service_plugins/build/libservice_grey_cpu.so"));
 
         System.load(serviceFile.getAbsolutePath());
 
@@ -93,7 +91,7 @@ public class C2service_grey { // extends Plugin
         return results;
 
     }
-    */
+
 }
 
 

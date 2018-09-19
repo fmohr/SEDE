@@ -43,3 +43,7 @@ project(':scikit.ml').projectDir = new File(serivceFolder, "scikit.ml")
 
 rootProject.name = 'SEDE'
 
+/**
+ * CServices
+ */
+include 'CServices'

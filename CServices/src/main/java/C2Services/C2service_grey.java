@@ -30,9 +30,9 @@ public class C2service_grey extends Plugin {
     private static List<File> linkedFiles;
 
     static {
-        serviceFile = new File("/home/deffel/coding/sfb901_demonstrator/service_plugins/build/libservice_grey.so");
+        serviceFile = new File("/home/deffel/coding/SEDE/CServices/cbuild/libservice_grey.so");
         linkedFiles = new ArrayList<File>();
-        linkedFiles.add(new File("/home/deffel/coding/sfb901_demonstrator/service_plugins/build/libservice_grey_cpu.so"));
+        linkedFiles.add(new File("/home/deffel/coding/SEDE/CServices/cbuild/libservice_grey_cpu.so"));
     }
 
     public C2service_grey() {
@@ -48,10 +48,10 @@ public class C2service_grey extends Plugin {
         //TODO load shared objects only once
         // System.load("/sede/codebase/ServiceCodeProvider/c2imaging/service_node/bin/libpluginbridge.so");
 
-        File serviceFile = new File("/home/deffel/coding/sfb901_demonstrator/service_plugins/build/libservice_grey.so");
+        File serviceFile = new File("/home/deffel/coding/SEDE/CServices/cbuild/libservice_grey.so");
 
         ArrayList<File> linkedFiles = new ArrayList<File>();
-        linkedFiles.add(new File("/home/deffel/coding/sfb901_demonstrator/service_plugins/build/libservice_grey_cpu.so"));
+        linkedFiles.add(new File("/home/deffel/coding/SEDE/CServices/cbuild/libservice_grey_cpu.so"));
 
         System.load(serviceFile.getAbsolutePath());
 
@@ -91,6 +91,7 @@ public class C2service_grey extends Plugin {
         return results;
 
     }
+
 
 }
 

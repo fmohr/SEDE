@@ -25,3 +25,7 @@ project(':SEDE.assemblies').projectDir = new File(pluginFolder, "assemblies")
 
 rootProject.name = 'SEDE'
 
+/**
+ * CServices
+ */
+include 'CServices'

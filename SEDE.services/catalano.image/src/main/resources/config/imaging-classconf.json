@@ -10,10 +10,23 @@
                     }
                 ],
                 "statemutating": false
+            },
+            "applyToList": {
+                "params": [
+                    {
+                        "type": "FastBitmap_List",
+                        "statemutating": true
+                    }
+                ],
+                "statemutating": false
             }
         }
     },
+    "Catalano.Imaging.wrappers.Crop" : {
+        "extends" : ["$In_Place_Applier$"]
+    },
     "Catalano.Imaging.Filters.Crop": {
+        "wrapper" : "Catalano.Imaging.wrappers.Crop",
         "methods": {
             "$construct": {
                 "params": [
@@ -22,20 +35,14 @@
                     "Number",
                     "Number"
                 ]
-            },
-            "ApplyInPlace": {
-                "params": [
-                    {
-                        "type": "Catalano.Imaging.FastBitmap",
-                        "statemutating": true
-                    }
-                ],
-                "statemutating": false
             }
         }
     },
+    "Catalano.Imaging.wrappers.Resize": {
+        "extends" : ["$In_Place_Applier$"]
+    },
     "Catalano.Imaging.Filters.Resize": {
-        "extends" : ["$In_Place_Applier$"],
+        "wrapper" : "Catalano.Imaging.wrappers.Resize",
         "methods": {
             "$construct": {
                 "params": [
@@ -64,10 +71,90 @@
             }
         }
     },
-    "Catalano.Imaging.Filters.CannyEdgeDetector" : {
+    "Catalano.Imaging.wrappers.CannyEdgeDetector": {
         "extends" : ["$In_Place_Applier$"],
         "methods": {
-            "$construct" : {}
+            "$construct": {
+                "params": [
+                    "Number",
+                    "Number",
+                    "Number",
+                    "Number"
+                ]
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.CannyEdgeDetector" : {
+        "wrapper" : "Catalano.Imaging.wrappers.CannyEdgeDetector",
+        "methods": {
+            "$construct" : {
+                "params": [
+                    {
+                        "type":"Number",
+                        "fixed": "20"
+                    },
+                    {
+                        "type":"Number",
+                        "fixed": "100"
+                    },
+                    {
+                        "type":"Number",
+                        "fixed": "1.4"
+                    },
+                    {
+                        "type":"Number",
+                        "fixed": "1"
+                    }
+                ]
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.CannyEdgeDetector_Threshold" : {
+        "wrapper" : "Catalano.Imaging.wrappers.CannyEdgeDetector",
+        "methods": {
+            "$construct" : {
+                "params": [
+                    "Number",
+                    "Number",
+                    {
+                        "type":"Number",
+                        "fixed": "1.4"
+                    },
+                    {
+                        "type":"Number",
+                        "fixed": "1"
+                    }
+                ]
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.CannyEdgeDetector_Threshold_Sigma" : {
+        "wrapper" : "Catalano.Imaging.wrappers.CannyEdgeDetector",
+        "methods": {
+            "$construct" : {
+                "params": [
+                    "Number",
+                    "Number",
+                    "Number",
+                    {
+                        "type":"Number",
+                        "fixed": "1"
+                    }
+                ]
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.CannyEdgeDetector_Threshold_Sigma_Size" : {
+        "wrapper" : "Catalano.Imaging.wrappers.CannyEdgeDetector",
+        "methods": {
+            "$construct" : {
+                "params": [
+                    "Number",
+                    "Number",
+                    "Number",
+                    "Number"
+                ]
+            }
         }
     },
     "Catalano.Imaging.Filters.CannyEdgeDetectorFactory" : {
@@ -105,7 +192,45 @@
             }
         }
     },
+    "Catalano.Imaging.wrappers.SobelEdgeDetector": {
+        "extends" : ["$In_Place_Applier$"],
+        "methods": {
+            "$construct": {
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.SobelEdgeDetector": {
+        "wrapper" : "Catalano.Imaging.wrappers.SobelEdgeDetector",
+        "methods": {
+            "$construct": {
+            }
+        }
+    },
+    "Catalano.Imaging.wrappers.LocalBinaryPattern": {
+        "methods": {
+            "$construct": {},
+            "ComputeFeatures" : {
+                "params": [
+                    {
+                        "type": "Catalano.Imaging.FastBitmap"
+                    }
+                ],
+                "returntype": "Catalano.Imaging.Tools.ImageHistogram",
+                "statemutating": false
+            },
+            "ComputeFeatureSet" : {
+                "params": [
+                    {
+                        "type": "FastBitmap_List"
+                    }
+                ],
+                "returntype": "ImageHistogram_List",
+                "statemutating": false
+            }
+        }
+    },
     "Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern" : {
+        "wrapper" : "Catalano.Imaging.wrappers.LocalBinaryPattern",
         "methods" : {
             "$construct" :{},
             "ComputeFeatures" : {
@@ -119,7 +244,7 @@
             }
         }
     },
-    "Catalano.Imaging.Filters.GrayScale" : {
+    "Catalano.Imaging.wrappers.GrayScale": {
         "extends" : ["$In_Place_Applier$"],
         "methods": {
             "$construct": {
@@ -131,116 +256,125 @@
             }
         }
     },
-    "Catalano.Imaging.Filters.GrayScaleFactory" : {
+    "Catalano.Imaging.wrappers.GrayScaleByAlgorithm": {
+        "extends" : ["$In_Place_Applier$"],
         "methods": {
-            "withMethodname": {
+            "$construct": {
                 "params": [
                     "String"
-                ],
-                "returntype": "Catalano.Imaging.Filters.GrayScale",
-                "static": true
-            },
-            "withRGB" : {
+                ]
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.GrayScale" : {
+        "wrapper" : "Catalano.Imaging.wrappers.GrayScale",
+        "methods": {
+            "$construct": {
+                "params": [
+                    {
+                        "type":"Number",
+                        "fixed" : "0.2125"
+                    },
+                    {
+                        "type":"Number",
+                        "fixed" : "0.7154"
+                    },
+                    {
+                        "type":"Number",
+                        "fixed" : "0.0721"
+                    }
+                ]
+            }
+        }
+    },
+    "Catalano.Imaging.Filters.GrayScale_RGBCoeff" : {
+        "wrapper" : "Catalano.Imaging.wrappers.GrayScale",
+        "methods": {
+            "$construct": {
                 "params": [
                     "Number",
                     "Number",
                     "Number"
-                ],
-                "returntype": "Catalano.Imaging.Filters.GrayScale",
-                "static": true
+                ]
             }
         }
     },
     "Catalano.Imaging.Filters.GrayScale_Lightness" : {
-        "wrapper" : "Catalano.Imaging.Filters.GrayScaleFactory",
+        "wrapper" : "Catalano.Imaging.wrappers.GrayScaleByAlgorithm",
         "methods": {
-            "withMethodname": {
+            "$construct": {
                 "params": [
                     {
                         "type":"String",
                         "fixed": "\"Lightness\""
                     }
-                ],
-                "returntype": "Catalano.Imaging.Filters.GrayScale",
-                "static": true
+                ]
             }
         }
     },
     "Catalano.Imaging.Filters.GrayScale_Average" : {
-        "wrapper" : "Catalano.Imaging.Filters.GrayScaleFactory",
+        "wrapper" : "Catalano.Imaging.wrappers.GrayScaleByAlgorithm",
         "methods": {
-            "withMethodname": {
+            "$construct": {
                 "params": [
                     {
                         "type":"String",
                         "fixed": "\"Average\""
                     }
-                ],
-                "returntype": "Catalano.Imaging.Filters.GrayScale",
-                "static": true
+                ]
             }
         }
     },
     "Catalano.Imaging.Filters.GrayScale_GeometricMean" : {
-        "wrapper" : "Catalano.Imaging.Filters.GrayScaleFactory",
+        "wrapper" : "Catalano.Imaging.wrappers.GrayScaleByAlgorithm",
         "methods": {
-            "withMethodname": {
+            "$construct": {
                 "params": [
                     {
                         "type":"String",
                         "fixed": "\"GeometricMean\""
                     }
-                ],
-                "returntype": "Catalano.Imaging.Filters.GrayScale",
-                "static": true
+                ]
             }
         }
     },
     "Catalano.Imaging.Filters.GrayScale_Luminosity" : {
-        "wrapper" : "Catalano.Imaging.Filters.GrayScaleFactory",
+        "wrapper" : "Catalano.Imaging.wrappers.GrayScaleByAlgorithm",
         "methods": {
-            "withMethodname": {
+            "$construct": {
                 "params": [
                     {
                         "type":"String",
                         "fixed": "\"Luminosity\""
                     }
-                ],
-                "returntype": "Catalano.Imaging.Filters.GrayScale",
-                "static": true
+                ]
             }
         }
     },
     "Catalano.Imaging.Filters.GrayScale_MinimumDecomposition" : {
-        "wrapper" : "Catalano.Imaging.Filters.GrayScaleFactory",
+        "wrapper" : "Catalano.Imaging.wrappers.GrayScaleByAlgorithm",
         "methods": {
-            "withMethodname": {
+            "$construct": {
                 "params": [
                     {
                         "type":"String",
                         "fixed": "\"MinimumDecomposition\""
                     }
-                ],
-                "returntype": "Catalano.Imaging.Filters.GrayScale",
-                "static": true
+                ]
             }
         }
     },
     "Catalano.Imaging.Filters.GrayScale_MaximumDecomposition" : {
-        "wrapper" : "Catalano.Imaging.Filters.GrayScaleFactory",
+        "wrapper" : "Catalano.Imaging.wrappers.GrayScaleByAlgorithm",
         "methods": {
-            "withMethodname": {
+            "$construct": {
                 "params": [
                     {
                         "type":"String",
                         "fixed": "\"MaximumDecomposition\""
                     }
-                ],
-                "returntype": "Catalano.Imaging.Filters.GrayScale",
-                "static": true
+                ]
             }
         }
     }
-
-
 }

@@ -44,7 +44,7 @@ public class MLTests {
 
 	static CoreClient coreClient;
 
-	static String clientAddress = WebUtil.HostIpAddress();
+	static String clientAddress = "localhost";
 	static int clientPort = 7000;
 
 	static String gatewayAddress = "localhost";
@@ -52,6 +52,7 @@ public class MLTests {
 
 	static ExecutorHttpServer executor1;
 	static ExecutorHttpServer executor2;
+	static ExecutorHttpServer executor3;
 
 	static GatewayHttpServer gateway;
 
@@ -69,7 +70,8 @@ public class MLTests {
 
 		ExecutorConfigurationCreator creator = new ExecutorConfigurationCreator();
 		creator.withExecutorId("executor-weka-bayesnet");
-		creator.withSupportedServices(DataSetService.class.getName(), "weka.classifiers.bayes.BayesNet");
+		creator.withSupportedServices(DataSetService.class.getName(), "weka.classifiers.bayes.BayesNet",
+				"weka.classifiers.trees.RandomForest");
 		ExecutorConfiguration configuration = ExecutorConfiguration.parseJSON(creator.toString());
 		executor1 = new ExecutorHttpServer(configuration, "localhost",  9000);
 		gateway.getBasis().register(executor1.getBasisExecutor().registration());
@@ -80,6 +82,15 @@ public class MLTests {
 		configuration = ExecutorConfiguration.parseJSON(creator.toString());
 		executor2 = new ExecutorHttpServer(configuration, "localhost",  9001);
 		gateway.getBasis().register(executor2.getBasisExecutor().registration());
+
+
+		creator = new ExecutorConfigurationCreator();
+		creator.withExecutorId("executor-weka-normalize");
+		creator.withSupportedServices(DataSetService.class.getName(),
+				"weka.filters.unsupervised.attribute.Normalize");
+		configuration = ExecutorConfiguration.parseJSON(creator.toString());
+		executor3 = new ExecutorHttpServer(configuration, "localhost",  9002);
+		gateway.getBasis().register(executor3.getBasisExecutor().registration());
 
 		creator = new ExecutorConfigurationCreator();
 		creator.withExecutorId("Client");
@@ -145,6 +156,12 @@ public class MLTests {
 
 	@BeforeClass
 	public static void loadDataSet() throws Exception {
+		List<Number> numberList = new ArrayList<>();
+		short[] pixels = new short[numberList.size()];
+		for (int i = 0; i < pixels.length; i++) {
+			pixels[i] = numberList.get(i).shortValue();
+		}
+
 		dataset = MLDataSets.getDataSetWithLastIndexClass(datasetRef);
 
 		Filter imputer = new ReplaceMissingValues();
@@ -165,6 +182,7 @@ public class MLTests {
 	public static  void shutdownClient() {
 		executor1.shutdown();
 		executor2.shutdown();
+		executor3.shutdown();
 		coreClient.getClientExecutor().shutdown();
 		gateway.shutdown();
 	}
@@ -172,9 +190,13 @@ public class MLTests {
 	@Test
 	public void testClassification1() {
 		String composition =
-				"s1 = weka.classifiers.bayes.BayesNet::__construct();\n" +
-				"s1::train({trainset});\n" +
-				"predictions = s1::predict({testset});\n";
+				"pp = weka.filters.unsupervised.attribute.Normalize::__construct();\n" +
+				"pp::train({trainset});\n" +
+				"trainset1 = pp::preprocess({trainset});\n" +
+				"s1 = weka.classifiers.trees.RandomForest::__construct();\n" +
+				"s1::train({trainset1});\n" +
+				"testset1 = pp::preprocess({testset});\n" +
+				"predictions = s1::predict({testset1});\n";
 
 		logger.info("Test classification with composition: \n" + composition);
 
@@ -367,14 +389,17 @@ public class MLTests {
 
 
 	private static ClassesConfig getTestClassConfig() {
-		return new ClassesConfig(FileUtil.getPathOfResource("config/weka-ml-classifiers-classconf.json"),
+		return new ClassesConfig(
+				FileUtil.getPathOfResource("config/weka-ml-classifiers-classconf.json"),
+				FileUtil.getPathOfResource("config/weka-ml-pp-classconf.json"),
 				FileUtil.getPathOfResource("config/sl-ml-classifiers-classconf.json"));
 	}
 
 	private static OnthologicalTypeConfig getTestTypeConfig() {
 		OnthologicalTypeConfig conf = new OnthologicalTypeConfig();
 
-		conf.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/builtin-typeconf.json"),
+		conf.appendConfigFromJsonStrings(
+				FileUtil.readResourceAsString("config/builtin-typeconf.json"),
 				FileUtil.readResourceAsString("config/weka-ml-typeconf.json"),
 				FileUtil.readResourceAsString("config/sl-ml-typeconf.json"));
 		return conf;

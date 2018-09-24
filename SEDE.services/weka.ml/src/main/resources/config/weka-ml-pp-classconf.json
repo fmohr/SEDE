@@ -16,14 +16,14 @@
       },
       "train": {
         "params": [
-          "weka.core.Instances"
+          "LabeledInstances"
         ]
       },
       "preprocess": {
         "params":[
-          "weka.core.Instances"
+          "LabeledInstances"
         ],
-        "returntype" : "weka.core.Instances"
+        "returntype" : "LabeledInstances"
       },
       "set_options": {
         "params":[
@@ -67,14 +67,14 @@
       },
       "train":{
         "params": [
-          "weka.core.Instances"
+          "LabeledInstances"
         ]
       },
       "preprocess":{
         "params": [
-          "weka.core.Instances"
+          "LabeledInstances"
         ],
-        "returntype": "weka.core.Instances",
+        "returntype": "LabeledInstances",
         "statemutating":false
       }
 

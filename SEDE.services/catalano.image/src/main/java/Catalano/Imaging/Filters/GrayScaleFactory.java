@@ -1,14 +1,15 @@
 package Catalano.Imaging.Filters;
 
+import Catalano.Imaging.wrappers.GrayScaleByAlgorithm;
+
 public class GrayScaleFactory {
 
-	public static Grayscale withMethodname(String methodname) {
-		return new Grayscale(Grayscale.Algorithm.valueOf(methodname));
+	public static GrayScaleByAlgorithm withMethodname(String methodname) {
+		return new GrayScaleByAlgorithm(methodname);
 	}
 
-
-	public static Grayscale withRGB(double r, double g, double b) {
-		return new Grayscale(r, g, b);
+	public static Catalano.Imaging.wrappers.Grayscale withRGB(double r, double g, double b) {
+		return new Catalano.Imaging.wrappers.Grayscale(r, g, b);
 	}
 
 }

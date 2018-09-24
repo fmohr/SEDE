@@ -6,6 +6,9 @@ import java.util.List;
 
 public class Options {
 	public static String[] splitStringIntoArr(List optionList) {
+		if(optionList == null) {
+			return new String[0];
+		}
 		List<String> splittedOptions = new ArrayList<>();
 		for(Object opt : optionList) {
 			String optStr = opt.toString();

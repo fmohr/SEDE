@@ -354,10 +354,23 @@ public class DataFlowAnalysis {
 					addFieldType(constantType);
 					assignNodeToExec(parseConstantNode, instExec);
 				}
+				/**
+				 * Check if the type of the parsed primitive value matches the required type of the signature of the method:
+				 */
 				if (constantType.getTypeName().equals(requiredType)) {
 					consumedParams[index] = constantType;
 					nodeConsumesField(instNode, constantType);
-				} else {
+				}
+				/**
+				 * Edge case: primitive type is Null which can fill in any real type:
+				 */
+				else if(constantType.getTypeName().equalsIgnoreCase("null")&& // primitive is null
+						resolveInfo.getTypeConfig().hasOnthologicalType(requiredType)) // required type is real
+				{
+					consumedParams[index] = constantType;
+					nodeConsumesField(instNode, constantType);
+				}
+				else{
 					throw new CompositionSemanticException("Type mismatch for invocation of: " + instNode.toString()
 							+ "\nConstant parameter \"" + parameter + "\" is of type: " + constantType.getTypeName()
 							+ ", but the required type of the method signature is: " + requiredType);

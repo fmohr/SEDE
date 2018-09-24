@@ -8,6 +8,6 @@ RUN apk update && apk add \
 	graphviz \
     	ttf-freefont
 
-RUN export DOT_PATH=$(which dot)
+ENV DOT_PATH=/usr/bin/dot
 
 COPY ./run-gateway-template/configs /configs

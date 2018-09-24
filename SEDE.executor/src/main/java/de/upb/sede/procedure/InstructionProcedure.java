@@ -229,6 +229,9 @@ public class InstructionProcedure implements Procedure {
 		boolean fail = false;
 		for (int i = 0; i < parameterValues.length; i++) {
 			Object param = parameterValues[i];
+			if(param == null) {
+				continue;
+			}
 			if(!(param instanceof  Number)&& !(param instanceof Boolean) && !executable.getParameterTypes()[i].isAssignableFrom(param.getClass())) {
 				fail = true;
 				break;

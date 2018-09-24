@@ -208,7 +208,7 @@ public class PipeLineTests {
 				"s1 = Catalano.Imaging.Filters.GrayScale_Luminosity::__construct();\n" +
 				"i1 = s1::applyToList({i0});\n" +
 				"s2 = Catalano.Imaging.Filters.CannyEdgeDetector::__construct();\n" +
-				"edge_detected_images = s1::applyToList({i1});\n" +
+				"edge_detected_images = s2::applyToList({i1});\n" +
 
 				"s3 = Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern::__construct();\n" +
 				"dataset = s3::ComputeFeatureSet({edge_detected_images});\n" +
@@ -258,7 +258,7 @@ public class PipeLineTests {
 				"s1 = Catalano.Imaging.Filters.GrayScale_Luminosity::__construct();\n" +
 				"i1 = s1::applyToList({i0});\n" +
 				"s2 = Catalano.Imaging.Filters.CannyEdgeDetector::__construct();\n" +
-				"i2 = s1::applyToList({i1});\n" +
+				"i2 = s2::applyToList({i1});\n" +
 
 				"s3 = Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern::__construct();\n" +
 				"dataset = s3::ComputeFeatureSet({i2});\n" +
@@ -273,7 +273,7 @@ public class PipeLineTests {
 		policy = new ResolvePolicy();
 
 		policy.setServicePolicy("None");
-		policy.setReturnFieldnames(Arrays.asList("predictions"));
+		policy.setReturnFieldnames(Arrays.asList("i2", "predictions"));
 
 
 		inputObject_i0 = new ObjectDataField("FastBitmap_List", imageList_test);
@@ -290,16 +290,14 @@ public class PipeLineTests {
 		Map<String, Result> predictionsResult = coreClient.blockingRun(predictRequest);
 
 		Assert.assertTrue(predictionsResult.containsKey("predictions"));
+		Assert.assertTrue(predictionsResult.containsKey("i2"));
 		Assert.assertFalse(predictionsResult.get("predictions").hasFailed());
+		Assert.assertFalse(predictionsResult.get("i2").hasFailed());
 
 		List<String> predictions = (List<String>) predictionsResult.get("predictions").castResultData("builtin.List", BuiltinCaster.class).getDataField();
-
-		/*
-			Retrieve the name of the class from the Labeler service
-		 */
-
-
-		showImages(imageList_test, predictions, "Predictions");
+		List<FastBitmap> edge_detected = (List<FastBitmap>) predictionsResult.get("i2").castResultData("FastBitmap_List", FastBitmapCaster.class).getDataField();
+		
+		showImages(edge_detected, predictions, "Predictions");
 	}
 
 	synchronized void handleResults(Result result) {

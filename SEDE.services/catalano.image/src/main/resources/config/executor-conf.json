@@ -3,14 +3,22 @@
   "capabilities": [],
   "threadNumber": 4,
   "services": [
-    "Catalano.Imaging.Filters.Crop",
     "Catalano.Imaging.Filters.Resize",
+
+    "Catalano.Imaging.Filters.Crop",
     "Catalano.Imaging.sede.CropFrom0",
+
     "Catalano.Imaging.Filters.CannyEdgeDetector",
-    "Catalano.Imaging.Filters.CannyEdgeDetectorFactory",
+    "Catalano.Imaging.Filters.CannyEdgeDetector_Threshold",
+    "Catalano.Imaging.Filters.CannyEdgeDetector_Threshold_Sigma",
+    "Catalano.Imaging.Filters.CannyEdgeDetector_Threshold_Sigma_Size",
+
+    "Catalano.Imaging.Filters.SobelEdgeDetector",
+
     "Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern",
+
     "Catalano.Imaging.Filters.GrayScale",
-    "Catalano.Imaging.Filters.GrayScaleFactory",
+    "Catalano.Imaging.Filters.GrayScale_RGBCoeff",
     "Catalano.Imaging.Filters.GrayScale_Lightness",
     "Catalano.Imaging.Filters.GrayScale_Average",
     "Catalano.Imaging.Filters.GrayScale_GeometricMean",

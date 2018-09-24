@@ -14,7 +14,7 @@ public class SobelEdgeDetector {
 		sobelEdgeDetector.applyInPlace(fb);
 	}
 
-	public void applyInPlace(List<FastBitmap> fbList) {
+	public void applyToList(List<FastBitmap> fbList) {
 		for(FastBitmap fb : fbList) {
 			applyInPlace(fb);
 		}

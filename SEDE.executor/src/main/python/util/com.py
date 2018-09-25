@@ -1,7 +1,5 @@
 from typing import IO
 import exe
-logging = exe.getlogger("COM_LOGS")
-logging.setLevel("TRACE")
 import io
 from http import server
 import socketserver
@@ -9,6 +7,8 @@ import requests as httprequests
 import re
 import os
 
+logging = exe.getlogger("COM_LOGS")
+# logging.setLevel("DEBUG")
 
 def is_bytes(something)->bool:
     return isinstance(something, (bytes, bytearray))
@@ -134,12 +134,25 @@ class BasicServerResponse(object):
     def receive(self, inputstream: IO, outputstream: IO, **kwargs):
         pass
 
+    def receive_bytes(self, input_bytes: bytes, **kwargs) -> str:
+        instream = io.BytesIO(input_bytes)
+        outstream = io.BytesIO()
+        self.receive(instream, outstream, **kwargs)
+        return outstream.getvalue().decode()
+
+    def receive_str(self, input_string: str, **kwargs) -> str:
+        instream = io.StringIO(input_string)
+        outstream = io.BytesIO()
+        self.receive(instream, outstream, **kwargs)
+        return outstream.getvalue().decode()
+
 class FileServerResoponse(BasicServerResponse):
     def receive(self, inputstream: IO, outputstream: IO, **kwargs):
         filepath = in_read_string(inputstream)
         with ReadFileRequest(filepath) as filer:
             filecontent = filer.send_receive_str()
         out_write_string(outputstream, filecontent)
+
 
 class ByteServerResponse(BasicServerResponse):
     def __init__(self, response_function: callable = None):

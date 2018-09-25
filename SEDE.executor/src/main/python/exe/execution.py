@@ -3,8 +3,8 @@ import exe
 logging = exe.logging
 
 from exe.config import ExecutorConfig
-from util.locking import synchronized_method as synchronized
 from util.observing import Observable, Observer
+from threading import RLock
 
 
 class ExecutionEnvironment(dict):
@@ -18,18 +18,15 @@ class ExecutionEnvironment(dict):
         self.executor_id = executor_id
         self.execution_id = execution_id
 
-    @synchronized
     def __setitem__(self, key, value):
         logging.trace("%s.%s field update: %s", self.executor_id, self.execution_id, key)
         super().__setitem__(key, value)
         self.state.update()
 
-    @synchronized
     def mark_unavailable(self, fieldname: str):
         self.unavailables.add(fieldname)
         self.state.update()
 
-    @synchronized
     def __contains__(self, item):
         if item in self.unavailables:
             return False
@@ -66,7 +63,6 @@ class Execution:
         self.state = Observable(self)
         self.runnable_tasks = Observable()
 
-    @synchronized
     def task_update_event(self, task: 'Task'):
         if task.is_waiting():
             self.runnable_tasks.update(task)
@@ -77,7 +73,6 @@ class Execution:
             self.unfinished_tasks.remove(task)
             self.state.update()
 
-    @synchronized
     def has_execution_finished(self) -> bool:
         return self.interrupted or len(self.unfinished_tasks) == 0
 
@@ -112,12 +107,10 @@ class Execution:
             self.waiting_tasks.add(task)
             task.state.observe(self.tasks_observer)
 
-    @synchronized
     def interrupt(self):
         self.interrupted = True
         self.state.update()
 
-    @synchronized
     def is_interrupted(self):
         return self.interrupted
 
@@ -145,6 +138,7 @@ class Task:
     dependencies: set
 
     def __init__(self, execution, attributes_dict):
+        self.lock = RLock()
         self.attributes = attributes_dict
         self.task_name = attributes_dict["nodetype"]
         self.execution = execution  # reference to its execution
@@ -157,11 +151,9 @@ class Task:
         self.dependencies.add(dependecy_task)
         dependecy_task.state.observe(self.dependecies_observer)
 
-    @synchronized
     def dependecy_notification_condition(self, dependecy_task:'Task'):
         return dependecy_task.has_finished() and dependecy_task in self.dependencies
 
-    @synchronized
     def dependecy_notification(self, dependency_task):
         if self.has_finished():
             return
@@ -195,42 +187,42 @@ class Task:
                              "'{}' was queried by a procedure "
                              "but was not defined in the task attributes.").format(key))
 
-    @synchronized
     def set_resolved(self):
-        if not self.resolved:
-            self.resolved = True
-            self.state.update()
+        with self.lock:
+            if not self.resolved:
+                self.resolved = True
+                self.state.update()
 
-    @synchronized
     def set_started(self):
-        if not self.started:
-            self.resolved = True
-            self.started = True
-            self.state.update()
+        with self.lock:
+            if not self.started:
+                self.resolved = True
+                self.started = True
+                self.state.update()
 
-    @synchronized
     def set_done(self):
-        if not self.doneRunning:
-            self.resolved = True
-            self.started = True
-            self.doneRunning = True
-            self.state.update()
+        with self.lock:
+            if not self.doneRunning:
+                self.resolved = True
+                self.started = True
+                self.doneRunning = True
+                self.state.update()
 
-    @synchronized
     def set_succeeded(self):
-        if not self.has_finished():
-            self.resolved = True
-            self.started = True
-            self.doneRunning = True
-            self.succeeded = True
-            self.state.update()
+        with self.lock:
+            if not self.has_finished():
+                self.resolved = True
+                self.started = True
+                self.doneRunning = True
+                self.succeeded = True
+                self.state.update()
 
-    @synchronized
     def set_failed(self):
-        if not self.has_finished():
-            self.resolved = True
-            self.started = True
-            self.doneRunning = True
-            self.failed = True
-            self.state.update()
+        with self.lock:
+            if not self.has_finished():
+                self.resolved = True
+                self.started = True
+                self.doneRunning = True
+                self.failed = True
+                self.state.update()
 

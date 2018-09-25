@@ -3,7 +3,6 @@ logging = exe.logging
 
 from exe.executor import Executor
 from exe.config import ExecutorConfig
-from http import server
 
 from util.com import MultiContextHandler, StringServerResponse,\
     BasicClientRequest, HttpClientRequest, ByteServerResponse, ThreadHTTPServer
@@ -13,6 +12,8 @@ from exe.data import SEDEObject, SEMANTIC, PrimitiveType
 from exe import data
 
 from exe.req import DataPutRequest, ExecRequest
+
+
 
 
 def create_put_request(host, fieldname, executionId, unavailable:bool=True, semtype=SEMANTIC) -> BasicClientRequest:
@@ -205,7 +206,6 @@ def main():
     sys.argv.insert(0, program)
 
     executor = HTTPExecutor(executorConfig, host_address, port)
-    executor.start_listening()
 
 
 if __name__ == "__main__":

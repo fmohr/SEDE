@@ -81,7 +81,7 @@ public class PipeLineTests {
 	@BeforeClass
 	public static void startClient() {
 		ExecutorConfigurationCreator creator = new ExecutorConfigurationCreator();
-		creator.withExecutorId("Client");
+		creator.withExecutorId("Client").withThreadNumberId(8);
 		ExecutorConfiguration configuration = ExecutorConfiguration.parseJSON(creator.toString());
 		coreClient = HttpCoreClient.createNew(configuration, clientAddress, clientPort, gatewayAddress, gatewayPort);
 		/*
@@ -110,7 +110,7 @@ public class PipeLineTests {
 	@BeforeClass
 	public static void startupExecutors() {
 		ExecutorConfigurationCreator creator = new ExecutorConfigurationCreator();
-		creator.withExecutorId("executor_grayscaler");
+		creator.withExecutorId("executor_grayscaler").withThreadNumberId(6);
 		executor_grayscaler = new ExecutorHttpServer(ExecutorConfiguration.parseJSON(creator.toString()), executor1Address, executor1Port);
 		executor_grayscaler.getBasisExecutor().getExecutorConfiguration().getSupportedServices().addAll(
 				Arrays.asList(
@@ -126,7 +126,7 @@ public class PipeLineTests {
 		gateway.getBasis().register(executor_grayscaler.getBasisExecutor().registration());
 
 		creator = new ExecutorConfigurationCreator();
-		creator.withExecutorId("executor_edgedetector");
+		creator.withExecutorId("executor_edgedetector").withThreadNumberId(6);
 		executor_edgedetector = new ExecutorHttpServer(ExecutorConfiguration.parseJSON(creator.toString()), executor2Address, executor2Port);
 		executor_edgedetector.getBasisExecutor().getExecutorConfiguration().getSupportedServices().addAll(
 				Arrays.asList(
@@ -140,7 +140,7 @@ public class PipeLineTests {
 		gateway.getBasis().register(executor_edgedetector.getBasisExecutor().registration());
 
 		creator = new ExecutorConfigurationCreator();
-		creator.withExecutorId("executor_binarypattern");
+		creator.withExecutorId("executor_binarypattern").withThreadNumberId(6);
 		executor_binarypattern = new ExecutorHttpServer(ExecutorConfiguration.parseJSON(creator.toString()), executor3Address, executor3Port);
 		executor_binarypattern.getBasisExecutor().getExecutorConfiguration().getSupportedServices().addAll(
 				Arrays.asList(
@@ -149,7 +149,7 @@ public class PipeLineTests {
 		gateway.getBasis().register(executor_binarypattern.getBasisExecutor().registration());
 
 		creator = new ExecutorConfigurationCreator();
-		creator.withExecutorId("executor_weka");
+		creator.withExecutorId("executor_weka").withThreadNumberId(6);
 		executor_weka = new ExecutorHttpServer(ExecutorConfiguration.parseJSON(creator.toString()), executor4Address, executor4Port);
 		executor_weka.getBasisExecutor().getExecutorConfiguration().getSupportedServices().addAll(
 				Arrays.asList(
@@ -203,11 +203,11 @@ public class PipeLineTests {
 	}
 
 	@Test
-	public void testImageProcessing_ImageSetToDataset() throws InvocationTargetException, InterruptedException {
+	public void testImageClassification_pureJava() {
 		String composition_train =
 				"s1 = Catalano.Imaging.Filters.GrayScale_Luminosity::__construct();\n" +
 				"i1 = s1::applyToList({i0});\n" +
-				"s2 = Catalano.Imaging.Filters.CannyEdgeDetector::__construct();\n" +
+				"s2 = Catalano.Imaging.Filters.SobelEdgeDetector::__construct();\n" +
 				"edge_detected_images = s2::applyToList({i1});\n" +
 
 				"s3 = Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern::__construct();\n" +
@@ -257,7 +257,7 @@ public class PipeLineTests {
 		String composition_predict =
 				"s1 = Catalano.Imaging.Filters.GrayScale_Luminosity::__construct();\n" +
 				"i1 = s1::applyToList({i0});\n" +
-				"s2 = Catalano.Imaging.Filters.CannyEdgeDetector::__construct();\n" +
+				"s2 = Catalano.Imaging.Filters.SobelEdgeDetector::__construct();\n" +
 				"i2 = s2::applyToList({i1});\n" +
 
 				"s3 = Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern::__construct();\n" +
@@ -273,7 +273,7 @@ public class PipeLineTests {
 		policy = new ResolvePolicy();
 
 		policy.setServicePolicy("None");
-		policy.setReturnFieldnames(Arrays.asList("i2", "predictions"));
+		policy.setReturnFieldnames(Arrays.asList("dataset", "dataset_post", "i2", "predictions"));
 
 
 		inputObject_i0 = new ObjectDataField("FastBitmap_List", imageList_test);
@@ -298,6 +298,134 @@ public class PipeLineTests {
 		List<FastBitmap> edge_detected = (List<FastBitmap>) predictionsResult.get("i2").castResultData("FastBitmap_List", FastBitmapCaster.class).getDataField();
 		
 		showImages(edge_detected, predictions, "Predictions");
+
+		FileUtil.writeStringToFile("testrsc/dataset_predict_post.arff",
+				Streams.InReadString(predictionsResult.get("dataset_post").getResultData().getDataField()));
+		FileUtil.writeStringToFile("testrsc/dataset_predict.arff",
+				Streams.InReadString(predictionsResult.get("dataset").getResultData().getDataField()));
+	}
+	
+
+	@Test
+	public void  testImageClassification_tf_neuralnet() throws InvocationTargetException, InterruptedException {
+		/*
+		 * Check if a python executor is available.
+		 */
+		while(gateway.getBasis().getExecutorCoord().executorsSupportingServiceClass("tflib.NeuralNet").isEmpty()) {
+			Object[] options1 = { "Check again", "Cancel test"};
+			JPanel panel = new JPanel();
+			panel.add(new JLabel("No registered executor supports: \"tflib.NeuralNet\""));
+			EventQueue.invokeAndWait(()-> {
+				int result = JOptionPane.showOptionDialog(null, panel, "Test halted",
+						JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE,
+						null, options1, null);
+				if(result == 1) {
+					Assert.fail();
+				}
+			});
+		}
+		String composition_train =
+				"s1 = Catalano.Imaging.Filters.GrayScale_Luminosity::__construct();\n" +
+				"i1 = s1::applyToList({i0});\n" +
+				"s2 = Catalano.Imaging.Filters.CannyEdgeDetector::__construct();\n" +
+				"edge_detected_images = s2::applyToList({i1});\n" +
+
+				"s3 = Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern::__construct();\n" +
+				"dataset = s3::ComputeFeatureSet({edge_detected_images});\n" +
+
+				"de.upb.sede.services.mls.Labeler::setClassIndex({dataset, -1});\n" +
+				"de.upb.sede.services.mls.Labeler::labelDataset({dataset, labels});\n" +
+
+				"attrSelector = weka.attributeSelection.AttributeSelection::__construct({" +
+				"searcher, evaluator, null, null});\n" +
+				"attrSelector::train({dataset});\n" +
+				"dataset_post = attrSelector::preprocess({dataset});\n" +
+
+				"classifier = tflib.NeuralNet::__construct();\n" +
+				"classifier::set_options({options});\n" +
+				"classifier::train({dataset_post});\n";
+
+
+
+		ResolvePolicy policy = new ResolvePolicy();
+
+		policy.setPersistentServices(Arrays.asList("attrSelector", "classifier"));
+		policy.setReturnFieldnames(Arrays.asList("dataset", "dataset_post", "edge_detected_images"));
+
+		SEDEObject inputObject_i0 = new ObjectDataField("FastBitmap_List", imageList);
+		SEDEObject inputObject_labels = new ObjectDataField("builtin.List", labelList);
+
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		inputs.put("i0", inputObject_i0);
+		inputs.put("labels", inputObject_labels);
+		inputs.put("searcher", new PrimitiveDataField("weka.attributeSelection.Ranker"));
+		inputs.put("evaluator", new PrimitiveDataField("weka.attributeSelection.InfoGainAttributeEval"));
+		inputs.put("options", new ObjectDataField("builtin.List",
+				Arrays.asList("epochs", "500",
+						"learning_rate", "0.05",
+						"deviation", "0.95",
+						"log_device_placement", "true",
+						"device", "/CPU:0")));
+
+		showImages( imageList, labelList, "Original images");
+
+		RunRequest trainRequest = new RunRequest("pipe_train", composition_train, policy, inputs);
+
+
+
+		coreClient.run(trainRequest, this::handleResults);
+		coreClient.join("pipe_train", true);
+
+
+		Assert.assertTrue(services.containsKey("classifier"));
+		Assert.assertTrue(services.containsKey("attrSelector"));
+
+
+		String composition_predict =
+				"s1 = Catalano.Imaging.Filters.GrayScale_Luminosity::__construct();\n" +
+				"i1 = s1::applyToList({i0});\n" +
+				"s2 = Catalano.Imaging.Filters.CannyEdgeDetector::__construct();\n" +
+				"i2 = s2::applyToList({i1});\n" +
+
+				"s3 = Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern::__construct();\n" +
+				"dataset = s3::ComputeFeatureSet({i2});\n" +
+
+				"de.upb.sede.services.mls.Labeler::setClassIndex({dataset, -1});\n" +
+
+				"dataset_post = attrSelector::preprocess({dataset});\n" +
+
+				"indixed_predictions = classifier::predict({dataset_post});\n" +
+				"predictions = de.upb.sede.services.mls.Labeler::classIndicesToNames({labels_original, indixed_predictions});";
+
+		policy = new ResolvePolicy();
+
+		policy.setServicePolicy("None");
+		policy.setReturnFieldnames(Arrays.asList("dataset_post", "i2", "predictions"));
+
+
+		inputObject_i0 = new ObjectDataField("FastBitmap_List", imageList_test);
+
+		inputs.clear();
+		inputs.put("i0", inputObject_i0);
+		inputs.put("labels_original", inputObject_labels);
+		inputs.put("attrSelector", new ServiceInstanceField(services.get("attrSelector")));
+		inputs.put("classifier", new ServiceInstanceField(services.get("classifier")));
+
+		showImages(imageList_test, imageList_test.stream().map(fb -> "?").collect(Collectors.toList()), "To be predicted");
+
+		RunRequest predictRequest = new RunRequest("pipe_predict", composition_predict, policy, inputs);
+		Map<String, Result> predictionsResult = coreClient.blockingRun(predictRequest);
+
+		Assert.assertTrue(predictionsResult.containsKey("predictions"));
+		Assert.assertTrue(predictionsResult.containsKey("i2"));
+		Assert.assertFalse(predictionsResult.get("predictions").hasFailed());
+		Assert.assertFalse(predictionsResult.get("i2").hasFailed());
+
+		List<String> predictions = (List<String>) predictionsResult.get("predictions").castResultData("builtin.List", BuiltinCaster.class).getDataField();
+		List<FastBitmap> edge_detected = (List<FastBitmap>) predictionsResult.get("i2").castResultData("FastBitmap_List", FastBitmapCaster.class).getDataField();
+
+		showImages(edge_detected, predictions, "Predictions");
+
 	}
 
 	synchronized void handleResults(Result result) {
@@ -344,6 +472,7 @@ public class PipeLineTests {
 		classesConfig.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/imaging-classconf.json"));
 		classesConfig.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/weka-ml-classifiers-classconf.json"));
 		classesConfig.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/weka-ml-pp-classconf.json"));
+		classesConfig.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/sl-ml-classifiers-classconf.json"));
 		return classesConfig;
 	}
 
@@ -353,7 +482,8 @@ public class PipeLineTests {
 		typeConfig.appendConfigFromJsonStrings(
 				FileUtil.readResourceAsString("config/imaging-typeconf.json"),
 				FileUtil.readResourceAsString("config/builtin-typeconf.json"),
-				FileUtil.readResourceAsString("config/weka-ml-typeconf.json"));
+				FileUtil.readResourceAsString("config/weka-ml-typeconf.json"),
+				FileUtil.readResourceAsString("config/sl-ml-typeconf.json"));
 		return typeConfig;
 	}
 

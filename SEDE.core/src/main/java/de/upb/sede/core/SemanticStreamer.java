@@ -65,7 +65,7 @@ public final class SemanticStreamer {
 	}
 
 	public static SEDEObject readObjectFrom(InputStream is, String caster, String sourceSemanticType, String targetRealTypeCp) {
-		logger.debug("Casting from semantic type '{}' to '{}' using caster class: {}.", sourceSemanticType, targetRealTypeCp, caster);
+		logger.trace("Casting from semantic type '{}' to '{}' using caster class: {}.", sourceSemanticType, targetRealTypeCp, caster);
 		String targetRealType = getSimpleNameFromClasspath(targetRealTypeCp);
 		String casterMethod = getCastMethod(targetRealType, false);
 		Method method = getMethodFor(caster, casterMethod);
@@ -112,7 +112,7 @@ public final class SemanticStreamer {
 
 
 	public static void streamObjectInto(OutputStream os, SEDEObject content, String caster, String targetSemanticType) {
-		logger.debug("Casting from '{}' to semantic type '{}' using caster class: {}.", content.getType(), targetSemanticType, caster);
+		logger.trace("Casting from '{}' to semantic type '{}' using caster class: {}.", content.getType(), targetSemanticType, caster);
 
 		Objects.requireNonNull(os);
 		Objects.requireNonNull(content);

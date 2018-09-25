@@ -1,5 +1,4 @@
 import threading
-from util.locking import synchronized_method as synchronized
 
 def always_true(_):
     return True
@@ -30,29 +29,30 @@ class Observable:
     def __init__(self, observedInstance=None):
         self.observedInstace = observedInstance
         self.observers = list()
+        self.lock = threading.RLock()
 
-    @synchronized
     def observe(self, observer: Observer):
-        if self.observedInstace is not None:
-            remove = self.notification_process(self.observedInstace, observer)
-        else:
-            remove = False
-        if not remove:
-            self.observers.append(observer)
+        with self.lock:
+            if self.observedInstace is not None:
+                remove = self.notification_process(self.observedInstace, observer)
+            else:
+                remove = False
+            if not remove:
+                self.observers.append(observer)
 
-    @synchronized
     def update(self, instance=None):
-        if instance is None and self.observedInstace is not None:
-            instance = self.observedInstace
+        with self.lock:
+            if instance is None and self.observedInstace is not None:
+                instance = self.observedInstace
 
-        remainingObservers = list(self.observers)
-        for observer in self.observers:
-            remove = self.notification_process(instance, observer)
-            if remove:
-                remainingObservers.remove(observer)
+            remainingObservers = list(self.observers)
+            for observer in self.observers:
+                remove = self.notification_process(instance, observer)
+                if remove:
+                    remainingObservers.remove(observer)
 
-        # replace observer list by the remaining list:
-        self.observers = remainingObservers
+            # replace observer list by the remaining list:
+            self.observers = remainingObservers
 
     def notification_process(self, instance, observer)-> bool:
         with observer.lock:

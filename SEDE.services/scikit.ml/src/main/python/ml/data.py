@@ -191,12 +191,17 @@ def onehot_and_splitXY(dataset:dict) -> dict:
 
         for attr_index in attr_range:
             attribute_type = attr[attr_index][1]
+            attr_val = datapoint[attr_index]
             if attr_index == classindex:
                 if is_attrtype_numeric(attribute_type):
                     n_data_y.append(datapoint[attr_index])
                 elif is_attrtype_categorical(attribute_type):
-                    y_index = attribute_type.index(datapoint[attr_index])
-                    n_data_y.append(y_index)
+                    if attr_val is None:
+                        # missing value:
+                        n_data_y.append(None)
+                    else:
+                        y_index = attribute_type.index(attr_val)
+                        n_data_y.append(y_index)
                 else:
                     raise ValueError("cannot handle attribute: " + attribute_type)
                 continue

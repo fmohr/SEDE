@@ -20,6 +20,7 @@ import org.jline.reader.impl.completer.NullCompleter;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedStringBuilder;
+import org.slf4j.LoggerFactory;
 
 import java.io.PrintWriter;
 import java.nio.file.Paths;
@@ -28,7 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 public class TerminalCommandListener implements CommandListener {
-	private final static Logger logger = LogManager.getLogger();
+	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(TerminalCommandListener.class);
+
 
 	private final List<CommandTree> commandTrees = new ArrayList<>();
 

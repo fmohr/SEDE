@@ -79,11 +79,18 @@
     }
   },
   "de.upb.sede.services.mls.WekaASWrapper":{
+    "extends":["$base_preprocessor_config$", "$dict_option_handler_config$"],
     "methods" : {
-      "$construct": {
+      "$construct": {},
+      "__construct1": {
         "params": [
           "String", "String", "builtin.List", "builtin.List"
-        ]
+        ],
+        "realisedby" :{
+          "methodname" : "$construct",
+          "overload" : true
+        }
+
       },
       "train":{
         "params": [

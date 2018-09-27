@@ -1,15 +1,13 @@
 package de.upb.sede.util.server;
 
-import de.upb.sede.util.Streams;
-import de.upb.sede.webinterfaces.server.Command;
-import de.upb.sede.webinterfaces.server.CommandFormatMismatch;
-import de.upb.sede.webinterfaces.server.CommandListener;
-import de.upb.sede.webinterfaces.server.CommandTree;
-import static de.upb.sede.webinterfaces.server.CommandTree.*;
-import static de.upb.sede.webinterfaces.server.Command.*;
+import static de.upb.sede.webinterfaces.server.CommandTree.node;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.io.PrintWriter;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.jline.builtins.Completers;
 import org.jline.builtins.telnet.Telnet;
 import org.jline.reader.Completer;
@@ -20,15 +18,21 @@ import org.jline.reader.impl.completer.NullCompleter;
 import org.jline.reader.impl.completer.StringsCompleter;
 import org.jline.terminal.Terminal;
 import org.jline.utils.AttributedStringBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.PrintWriter;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import de.upb.sede.util.Streams;
+import de.upb.sede.webinterfaces.server.Command;
+import de.upb.sede.webinterfaces.server.Command.ConsumeNothing;
+import de.upb.sede.webinterfaces.server.Command.ConsumeRest;
+import de.upb.sede.webinterfaces.server.Command.Strings;
+import de.upb.sede.webinterfaces.server.CommandFormatMismatch;
+import de.upb.sede.webinterfaces.server.CommandListener;
+import de.upb.sede.webinterfaces.server.CommandTree;
+import de.upb.sede.webinterfaces.server.CommandTree.Node;
 
 public class TerminalCommandListener implements CommandListener {
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(TerminalCommandListener.class);
 
 	private final List<CommandTree> commandTrees = new ArrayList<>();
 

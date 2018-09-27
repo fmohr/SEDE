@@ -2,17 +2,26 @@ package de.upb.sede.procedure;
 
 import java.lang.reflect.Executable;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
-import de.upb.sede.core.*;
-import de.upb.sede.exec.ServiceInstance;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de.upb.sede.core.ObjectDataField;
+import de.upb.sede.core.PrimitiveDataField;
+import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.ServiceInstanceField;
+import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutionEnvironment;
+import de.upb.sede.exec.ServiceInstance;
 import de.upb.sede.exec.Task;
 
 /**
@@ -24,7 +33,7 @@ import de.upb.sede.exec.Task;
  */
 public class InstructionProcedure implements Procedure {
 
-	private final static Logger logger = LogManager.getLogger(InstructionProcedure.class);
+	private final static Logger logger = LoggerFactory.getLogger(InstructionProcedure.class);
 
 	/**
 	 * If there is a fieldname on the leftside of the instruction signal the execution-environment that the fieldname wont be available.

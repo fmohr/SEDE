@@ -1,26 +1,27 @@
 package de.upb.sede.gateway;
 
-import de.upb.sede.config.ClassesConfig;
-import de.upb.sede.config.OnthologicalTypeConfig;
-import de.upb.sede.exec.Executor;
-import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
-import de.upb.sede.webinterfaces.server.CommandTree;
-import de.upb.sede.webinterfaces.server.ServerCommandListeners;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static de.upb.sede.webinterfaces.server.CommandTree.lastMatch;
+import static de.upb.sede.webinterfaces.server.CommandTree.node;
+import static de.upb.sede.webinterfaces.server.CommandTree.rest;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static de.upb.sede.webinterfaces.server.CommandTree.*;
-import static de.upb.sede.webinterfaces.server.Command.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.config.OnthologicalTypeConfig;
+import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
+import de.upb.sede.webinterfaces.server.Command.File;
+import de.upb.sede.webinterfaces.server.Command.Strings;
+import de.upb.sede.webinterfaces.server.CommandTree;
+import de.upb.sede.webinterfaces.server.ServerCommandListeners;
 
 public class GatewayCommands {
 	private final Gateway gateway;
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(GatewayCommands.class);
 
 	public static GatewayCommands enablePlugin(Gateway gateway, ServerCommandListeners scl){
 		return new GatewayCommands(gateway, scl);

@@ -1,17 +1,17 @@
 package de.upb.sede.exec;
 
-import de.upb.sede.gateway.Gateway;
-import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
+
 public class AddressRetriever {
 
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(AddressRetriever.class);
 
 	public static void enablePlugin(ExecutorHttpServer executor) {
 		Optional<String> myAddress = retrieveAddressFromEnvironmentVar();

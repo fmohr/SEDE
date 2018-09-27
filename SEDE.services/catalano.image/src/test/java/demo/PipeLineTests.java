@@ -1,5 +1,26 @@
 package demo;
 
+import java.awt.EventQueue;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import Catalano.Imaging.FastBitmap;
 import Catalano.Imaging.Filters.Resize;
 import de.upb.sede.BuiltinCaster;
@@ -9,7 +30,12 @@ import de.upb.sede.client.HttpCoreClient;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.config.OnthologicalTypeConfig;
-import de.upb.sede.core.*;
+import de.upb.sede.core.ObjectDataField;
+import de.upb.sede.core.PrimitiveDataField;
+import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.SemanticDataField;
+import de.upb.sede.core.ServiceInstanceField;
+import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutorHttpServer;
 import de.upb.sede.gateway.GatewayHttpServer;
 import de.upb.sede.requests.Result;
@@ -18,18 +44,6 @@ import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.Streams;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.*;
-
-import javax.swing.*;
-import java.awt.*;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class PipeLineTests {
 
@@ -70,7 +84,7 @@ public class PipeLineTests {
 	Map<String, ServiceInstanceHandle> services = new HashMap<>();
 
 
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(PipeLineTests.class);
 
 
 	@BeforeClass

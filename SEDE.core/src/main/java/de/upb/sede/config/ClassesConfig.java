@@ -1,12 +1,20 @@
 package de.upb.sede.config;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.upb.sede.util.FilteredIterator;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Encapsulated configuration about classes, like service names and their methods.
@@ -21,7 +29,7 @@ public class ClassesConfig extends Configuration {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(ClassesConfig.class);
 
 	/**
 	 * Reads the configuration files from configPaths and appends them into itself..

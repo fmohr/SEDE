@@ -1,25 +1,30 @@
 package de.upb.sede.core;
 
-import de.upb.sede.util.Streams;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Serializable;
+import java.io.UncheckedIOException;
 import java.lang.reflect.Method;
-
-
 import java.text.NumberFormat;
 import java.text.ParseException;
-
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.upb.sede.util.Streams;
 
 public final class SemanticStreamer {
 
 	private static final Pattern REALTYPE_PATTERN = Pattern.compile("([a-zA-Z_0-9\\.]+\\.)*(?<classpath>[a-zA-Z_]\\w*)$");
 
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(SemanticStreamer.class);
 
 	public static SEDEObject readFrom(InputStream is, String type) {
 		SEDEObject parsedObject;

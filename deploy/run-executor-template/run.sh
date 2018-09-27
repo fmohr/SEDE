@@ -15,7 +15,8 @@ done
 echo Port: "$port"
 
 #config="${PWD##*/}"/config.json
-config="$DIR"/config.json
+# config="$DIR"/config.json
+config="$DIR"/../executor_configs/all_java_config.json
 echo Configuration file: "$config"
 
 java -cp "$DIR"/../SEDE/'*':"$DIR"/services/'*':"$DIR"  de.upb.sede.exec.ExecutorServerStarter "$config" "$ip" "$port"

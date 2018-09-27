@@ -20,6 +20,7 @@ import org.jline.terminal.TerminalBuilder;
 import org.jline.terminal.impl.DumbTerminal;
 import org.jline.utils.AttributedStringBuilder;
 import org.jline.utils.AttributedStyle;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,7 +30,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RemoteConsole {
-	private final static Logger logger = LogManager.getLogger();
+	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(RemoteConsole.class);
+
 	public static void main(String[]  args) throws IOException, InterruptedException {
 		Terminal t = TerminalBuilder.builder().system(false).streams(Streams.EmptyInStream(), Streams.DiscardOutStream()).build();
 		Attributes attrs = t.getAttributes();

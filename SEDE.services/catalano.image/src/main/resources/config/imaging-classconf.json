@@ -63,23 +63,28 @@
             }
         }
     },
-    "Catalano.Imaging.wrappers.Crop" : {
+    "Catalano.Imaging.wrappers.Center" : {
         "extends" : ["$In_Place_Applier$"],
         "methods": {
-            "$construct": {},
-            "__construct1" :{
-                "params": [
-                    "Number",
-                    "Number",
-                    "Number",
-                    "Number"
-                ],
-                "realisedby" :{
-                    "methodname" : "$construct",
-                    "overload" : true
-                }
+            "$construct": {}
+        }
+    },"Catalano.Imaging.wrappers.Crop" : {
+    "extends" : ["$In_Place_Applier$"],
+    "methods": {
+        "$construct": {},
+        "__construct1" :{
+            "params": [
+                "Number",
+                "Number",
+                "Number",
+                "Number"
+            ],
+            "realisedby" :{
+                "methodname" : "$construct",
+                "overload" : true
             }
         }
+    }
     },
     "Catalano.Imaging.Filters.Crop": {
         "wrapper" : "Catalano.Imaging.wrappers.Crop"

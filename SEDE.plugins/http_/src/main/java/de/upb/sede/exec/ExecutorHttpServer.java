@@ -12,22 +12,22 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.upb.sede.config.ExecutorConfiguration;
-import de.upb.sede.core.PrimitiveDataField;
-import de.upb.sede.core.SemanticStreamer;
-import de.upb.sede.util.Observer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.net.httpserver.HttpServer;
 
+import de.upb.sede.config.ExecutorConfiguration;
+import de.upb.sede.core.PrimitiveDataField;
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.SemanticStreamer;
 import de.upb.sede.procedure.FinishProcedure;
 import de.upb.sede.procedure.SendGraphProcedure;
 import de.upb.sede.procedure.TransmitDataProcedure;
 import de.upb.sede.requests.DataPutRequest;
 import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.requests.ExecutorRegistration;
+import de.upb.sede.util.Observer;
 import de.upb.sede.util.Streams;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
 import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
@@ -38,7 +38,7 @@ import de.upb.sede.webinterfaces.server.SunHttpHandler;
 
 public class ExecutorHttpServer implements ImServer {
 
-	private static final Logger logger = LogManager.getLogger();
+	private static final Logger logger = LoggerFactory.getLogger(ExecutorHttpServer.class);
 
 	private final Executor basis;
 	private final String hostAddress;

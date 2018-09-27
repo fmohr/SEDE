@@ -1,5 +1,21 @@
 package demo;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertThat;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.upb.sede.BuiltinCaster;
 import de.upb.sede.client.CoreClient;
 import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
 import de.upb.sede.config.ClassesConfig;
@@ -15,21 +31,11 @@ import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.requests.Result;
 import de.upb.sede.requests.RunRequest;
 import de.upb.sede.requests.resolve.ResolvePolicy;
-import de.upb.sede.BuiltinCaster;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
 import demo.types.DemoCaster;
 import demo.types.NummerList;
 import demo.types.Punkt;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.*;
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
 
 public class IntegrationTest_PyExecutor {
 
@@ -42,7 +48,7 @@ public class IntegrationTest_PyExecutor {
 
 	private static final GraphJsonSerializer GJS = new GraphJsonSerializer();
 
-	private static final Logger logger = LogManager.getLogger();
+	private static final Logger logger = LoggerFactory.getLogger(IntegrationTest_PyExecutor.class);
 
 	private static final String[] classconfFiles = {
 			FileUtil.getPathOfResource("config/demo-classconf.json"),

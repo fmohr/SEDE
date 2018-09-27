@@ -1,20 +1,23 @@
 package de.upb.sede.util;
 
-import de.upb.o4.tinyjavadot.DotNode;
-import de.upb.o4.tinyjavadot.DotGraph;
-import de.upb.sede.composition.graphs.*;
-import de.upb.sede.composition.graphs.nodes.BaseNode;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.upb.o4.tinyjavadot.DotGraph;
+import de.upb.o4.tinyjavadot.DotNode;
+import de.upb.sede.composition.graphs.CompositionGraph;
+import de.upb.sede.composition.graphs.GraphConstruction;
+import de.upb.sede.composition.graphs.GraphTraversal;
+import de.upb.sede.composition.graphs.nodes.BaseNode;
+
 
 public class GraphToDot {
 
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(GraphToDot.class);
 	
 	private static final String PATH_TO_DOT;
 

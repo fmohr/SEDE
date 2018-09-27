@@ -1,30 +1,26 @@
 package de.upb.sede.gateway;
 
-import de.upb.sede.PluginUtil;
-import de.upb.sede.config.ClassesConfig;
-import de.upb.sede.config.OnthologicalTypeConfig;
-import de.upb.sede.util.FileUtil;
-import de.upb.sede.util.Terminals;
-import de.upb.sede.util.WebUtil;
-import de.upb.sede.util.server.TerminalCommandListener;
-import de.upb.sede.webinterfaces.server.ImServerCommandListener;
-import de.upb.sede.webinterfaces.server.ServerCommandListeners;
-import de.upb.sede.webinterfaces.server.StdShellCommands;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.upb.sede.PluginUtil;
+import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.config.OnthologicalTypeConfig;
+import de.upb.sede.util.FileUtil;
+import de.upb.sede.util.server.TerminalCommandListener;
+import de.upb.sede.webinterfaces.server.ImServerCommandListener;
+import de.upb.sede.webinterfaces.server.ServerCommandListeners;
+import de.upb.sede.webinterfaces.server.StdShellCommands;
+
 public class GatewayServerStarter {
-	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(GatewayServerStarter.class);
+	private final static Logger logger = LoggerFactory.getLogger(GatewayServerStarter.class);
+
 
 
 	public static void main(String[] args) throws InterruptedException {

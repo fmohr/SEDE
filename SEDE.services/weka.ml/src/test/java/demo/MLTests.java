@@ -1,46 +1,50 @@
 package demo;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JOptionPane;
+
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.upb.sede.BuiltinCaster;
 import de.upb.sede.client.CoreClient;
 import de.upb.sede.client.HttpCoreClient;
 import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.core.ObjectDataField;
 import de.upb.sede.core.SEDEObject;
-import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.core.ServiceInstanceField;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.ExecutorHttpServer;
-import de.upb.sede.exec.ServiceInstance;
 import de.upb.sede.gateway.ExecutorHandle;
 import de.upb.sede.gateway.GatewayHttpServer;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.requests.Result;
 import de.upb.sede.requests.RunRequest;
 import de.upb.sede.requests.resolve.ResolvePolicy;
-import ml.data.LabeledInstancesCaster;
 import de.upb.sede.services.mls.DataSetService;
 import de.upb.sede.services.mls.util.MLDataSets;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
-import de.upb.sede.util.WebUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import ml.data.LabeledInstancesCaster;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 import weka.filters.unsupervised.instance.RemovePercentage;
 
-import javax.swing.*;
-import java.util.*;
-
 public class MLTests {
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(MLTests.class);
 
 	static CoreClient coreClient;
 

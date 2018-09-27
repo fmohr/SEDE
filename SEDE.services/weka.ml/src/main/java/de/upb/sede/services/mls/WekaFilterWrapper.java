@@ -5,18 +5,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import de.upb.sede.services.mls.util.Options;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.upb.sede.services.mls.util.Options;
 import weka.core.Instances;
-import weka.core.OptionHandler;
 import weka.filters.Filter;
-import weka.filters.unsupervised.attribute.Normalize;
 
 public class WekaFilterWrapper implements Serializable {
 
-	private static final Logger logger = LogManager.getLogger("MLS");
+	private static final Logger logger = LoggerFactory.getLogger("MLS");
 
 	private final String filterName;
 

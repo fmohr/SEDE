@@ -1,27 +1,24 @@
 package de.upb.sede.services.mls;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.reflect.ConstructorUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.upb.sede.services.mls.util.Options;
-import org.apache.commons.lang3.reflect.ConstructorUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import weka.attributeSelection.AttributeSelection;
 import weka.core.Attribute;
-import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.OptionHandler;
 
 public class WekaASWrapper implements Serializable, DictOptionsHandler{
 
-	private static final Logger logger = LogManager.getLogger("MLS");
+	private static final Logger logger = LoggerFactory.getLogger("MLS");
 
 	/**
 	 *

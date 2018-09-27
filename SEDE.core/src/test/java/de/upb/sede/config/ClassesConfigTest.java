@@ -46,8 +46,9 @@ public class ClassesConfigTest {
 
 		try {
 			classesConfig.appendConfigFromFiles(getConfPath("A"));
-			fail("Trying to add A again should throw an exception. Non was thrown though.");
+//			fail("Trying to add A again should throw an exception. Non was thrown though.");
 		} catch (Exception ex) {
+			fail("No exception expected. exception message: " + ex.getMessage());
 //			ex.printStackTrace();
 		}
 	}
@@ -68,7 +69,7 @@ public class ClassesConfigTest {
 		assertTrue(cc.classknown("A"));
 		assertTrue(cc.classknown("B"));
 		assertTrue(cc.classknown("C"));
-		assertFalse(cc.classknown("D"));
+		assertFalse(cc.classknown("SOME_UNDEFINED_CLASS"));
 	}
 
 	@Test
@@ -81,7 +82,7 @@ public class ClassesConfigTest {
 		assertFalse(cc.classunknown("A"));
 		assertFalse(cc.classunknown("B"));
 		assertFalse(cc.classunknown("C"));
-		assertTrue(cc.classunknown("D"));
+		assertTrue(cc.classunknown("SOME_UNDEFINED_CLASS"));
 	}
 
 	@Test
@@ -207,6 +208,54 @@ public class ClassesConfigTest {
 			thrownException = ex;
 		}
 		assertNotNull(thrownException);
+
+	}
+
+	@Test
+	public void testRealisedBy() {
+		ClassesConfig.ClassInfo A = cc.classInfo("A");
+		ClassesConfig.ClassInfo B = cc.classInfo("B");
+		ClassesConfig.ClassInfo C = cc.classInfo("C");
+
+		ClassesConfig.MethodInfo Am5 = A.methodInfo("m5");
+		assertFalse(Am5.isStateMutating());
+
+		ClassesConfig.MethodInfo Am6 = A.methodInfo("m6");
+		assertTrue(Am6.isStateMutating());
+
+		assertEquals("m5", A.actualMethoname("m5"));
+		assertEquals("m5", A.actualMethoname("m6"));
+
+		assertEquals("m5", B.actualMethoname("m5"));
+		assertEquals("m5", B.actualMethoname("m6"));
+		assertEquals("m5", B.actualMethoname("m7"));
+		assertEquals("m5", B.actualMethoname("m8"));
+		assertEquals("m5", B.actualMethoname("m9"));
+
+		assertEquals("m5", C.actualMethoname("m5"));
+		assertEquals("m5", C.actualMethoname("m7"));
+		assertEquals("m5", C.actualMethoname("m9"));
+
+		assertEquals("m6", C.actualMethoname("m6"));
+		assertEquals("m6", C.actualMethoname("m8"));
+		assertEquals("t3", C.methodInfo("m6").returnType());
+	}
+
+
+
+	@Test
+	public void testOverload() {
+		ClassesConfig.ClassInfo D = cc.classInfo("D");
+		assertEquals("D", D.methodInfo("fixed_construct").returnType());
+		assertEquals(0, D.methodInfo("fixed_construct").paramCount());
+
+
+		assertEquals(1, D.methodInfo("m1_alt").paramCount());
+		assertEquals("NULL", D.methodInfo("m1_alt").returnType());
+
+
+		assertEquals(1, D.methodInfo("m1_overload").paramCount());
+		assertEquals("t2", D.methodInfo("m1_overload").returnType());
 
 	}
 

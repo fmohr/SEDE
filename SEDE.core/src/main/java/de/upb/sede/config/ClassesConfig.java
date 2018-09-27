@@ -367,15 +367,54 @@ public class ClassesConfig extends Configuration {
 		}
 
 		/**
+		 * Given a method name this function returns the name of the service method that actually realises the functionality.
+		 * By default methods are realised by themselves.
+		 * If the method configuration contains the field 'realisedby' it is realised by the method name of the fields value.
+		 * Conducts deep search.
+		 *
+		 * @param methodname method name whose realisation method is searched.
+		 * @return name of the method realisation
+		 */
+		public String actualMethoname(String methodname) {
+			MethodInfo methodInfo = methodInfo(methodname);
+			String realisedMethodName = methodInfo.getRealisation();
+			if(realisedMethodName.equals(methodname)||
+					(methodname.equals("__construct") && realisedMethodName.equals("$construct"))) {
+				/*
+				 * Method is realised by itself:
+				 */
+				return methodname;
+			} else {
+				return actualMethoname(realisedMethodName);
+			}
+		}
+
+		/**
 		 * Returns the corresponding method info to the given name.
 		 */
 		public MethodInfo methodInfo(String methodname) {
-			if(methodname.equals("$construct")) {
+			if(methodname.equals("$construct") || methodname.equals("__construct")) {
 				return constructInfo();
 			}else if (hasMethod(methodname)) {
-				return new MethodInfo(cp, methodname, (Map<String, Object>) getInternalMethods().get(methodname));
+				Map methodConfig = (Map) getInternalMethods().get(methodname);
+				MethodInfo method = new MethodInfo(cp, methodname, methodConfig);
+				if(!method.overloadRealisation()) {
+					return method;
+				} else {
+					/*
+					 * overload the config map of the realised method:
+					 */
+					MethodInfo realisedMethod = methodInfo(method.getRealisation());
+					Map<String,Object> overloadedConfig = new HashMap<>(realisedMethod.configuration);
+					overloadedConfig.putAll(method.configuration);
+					return new MethodInfo(cp, methodname, overloadedConfig);
+				}
 			} else if(isWrapped()) {
-				return wrapper.get().methodInfo(methodname);
+				try{
+					return wrapper.get().methodInfo(methodname);
+				} catch(RuntimeException ex) {
+					throw new RuntimeException("Method " + methodname + " not found in: "  + cp);
+				}
 			}else{
 				throw new RuntimeException("Method " + methodname + " not found in: "  + cp);
 			}
@@ -389,12 +428,21 @@ public class ClassesConfig extends Configuration {
 	public static class MethodInfo {
 		private final Map<String, Object> configuration;
 		private final String classname;
+
 		private final String methodname;
 
 		private MethodInfo(String classname, String methodname, Map<String, Object> config) {
 			this.classname = classname;
 			this.methodname = methodname;
 			configuration = config;
+		}
+
+		public String getClassname() {
+			return classname;
+		}
+
+		public String getMethodname() {
+			return methodname;
 		}
 
 		public boolean isStateMutating() {
@@ -540,6 +588,50 @@ public class ClassesConfig extends Configuration {
 		public String methodName() {
 			return methodname;
 		}
+
+		private String getRealisation() {
+			if(configuration.containsKey("realisedby")) {
+				Object realisation = configuration.get("realisedby");
+				if(realisation instanceof String) {
+					return (String) realisation;
+				}
+				if(realisation instanceof Map) {
+					Map realisationMap = (Map)realisation;
+					if((realisation = realisationMap.get("methodname")) != null) {
+						return realisation.toString();
+					} else {
+						return getMethodname();
+					}
+				}
+				else {
+					logger.warn("Syntax error in 'realisedby' in" + getClassname() + "::" + getMethodname());
+				}
+			}
+			return methodname;
+		}
+
+		private boolean overloadRealisation() {
+			if(configuration.containsKey("realisedby")) {
+				Object realisation = configuration.get("realisedby");
+				if(realisation instanceof String) {
+					return false;
+				}
+				if(realisation instanceof Map) {
+					Map realisationMap = (Map)realisation;
+					if(realisationMap.get("overload") instanceof Boolean) {
+						return (boolean) realisationMap.get("overload");
+					} else {
+						return false;
+					}
+				}
+				else {
+					logger.warn("Syntax error in 'realisedby' in" + getClassname() + "::" + getMethodname());
+				}
+			}
+			return false;
+		}
+
+
 	}
 
 }

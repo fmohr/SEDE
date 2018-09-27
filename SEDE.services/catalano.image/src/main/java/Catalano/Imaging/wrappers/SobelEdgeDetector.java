@@ -1,10 +1,11 @@
 package Catalano.Imaging.wrappers;
 
+import Catalano.Imaging.AbstractImageProcessor;
 import Catalano.Imaging.FastBitmap;
 
 import java.util.List;
 
-public class SobelEdgeDetector {
+public class SobelEdgeDetector extends AbstractImageProcessor {
 	private Catalano.Imaging.Filters.SobelEdgeDetector sobelEdgeDetector;
 	public SobelEdgeDetector(){
 		sobelEdgeDetector = new Catalano.Imaging.Filters.SobelEdgeDetector();
@@ -12,11 +13,5 @@ public class SobelEdgeDetector {
 
 	public void applyInPlace(FastBitmap fb) {
 		sobelEdgeDetector.applyInPlace(fb);
-	}
-
-	public void applyToList(List<FastBitmap> fbList) {
-		for(FastBitmap fb : fbList) {
-			applyInPlace(fb);
-		}
 	}
 }

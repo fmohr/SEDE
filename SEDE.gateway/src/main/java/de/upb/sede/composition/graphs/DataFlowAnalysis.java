@@ -302,6 +302,13 @@ public class DataFlowAnalysis {
 			}
 		}
 		/*
+		 * Some methods are realised with other service method names.
+		 * Set the method name of the given instruction to the name it is realised with:
+		 */
+		String realisedMethodName = contextClassInfo.actualMethoname(methodname);
+		instNode.setMethod(realisedMethodName);
+
+		/*
 		 * Some methods do define fixed constants.
 		 * Insert them into the parameter list and act like they are all given by the client:
 		 */

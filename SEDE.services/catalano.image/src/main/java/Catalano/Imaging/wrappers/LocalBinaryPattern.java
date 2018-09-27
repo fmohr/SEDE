@@ -4,6 +4,7 @@ import Catalano.Imaging.FastBitmap;
 import Catalano.Imaging.Tools.ImageHistogram;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class LocalBinaryPattern {
@@ -16,5 +17,9 @@ public class LocalBinaryPattern {
 	}
 	public List<ImageHistogram> ComputeFeatureSet(List<FastBitmap> fbList) {
 		return fbList.stream().map(this::ComputeFeatures).collect(Collectors.toList());
+	}
+
+	public void setOptions(Map m) {
+
 	}
 }

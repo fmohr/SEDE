@@ -13,11 +13,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Wrapper for Weka-base classifier.
  */
-public class WekaBClassifierWrapper implements Serializable {
+public class WekaBClassifierWrapper implements Serializable, DictOptionsHandler, ListOptionsHandler {
 
 	/**
 	 *
@@ -106,11 +107,16 @@ public class WekaBClassifierWrapper implements Serializable {
 	public void set_options(List options) throws Exception {
 		if(classifier instanceof OptionHandler) {
 			String[] optArr = Options.splitStringIntoArr(options);
-			logger.debug("Set option of {} to: {}.", classifierName, Arrays.toString(optArr));
+			logger.trace("Set option of {} to: {}.", classifierName, Arrays.toString(optArr));
 			((OptionHandler) classifier).setOptions(optArr);
 		}
 		 else {
 			logger.error("Cannot set options of {}. Options to be set:\n{}", classifierName, options.toString());
 		}
+	}
+
+	@Override
+	public void set_options_dict(Map options) throws Exception {
+		this.set_options(Arrays.asList(Options.flattenMapToArr(options, true)));
 	}
 }

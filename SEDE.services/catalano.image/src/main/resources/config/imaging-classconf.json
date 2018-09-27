@@ -1,5 +1,28 @@
 {
+    "$Image_Processor$" : {
+        "abstract": true,
+        "methods": {
+            "process" : {}
+        }
+    },"$Feature_Extractor$" : {
+        "abstract": true,
+        "methods": {
+            "extract_featureset" : {}
+        }
+    },
+    "$dict_option_handler_config$" : {
+        "abstract": true,
+        "methods": {
+            "set_options_dict": {
+                "params": [
+                    "builtin.Dict"
+                ],
+                "statemutating": true
+            }
+        }
+    },
     "$In_Place_Applier$": {
+        "extends" : ["$Image_Processor$", "$dict_option_handler_config$"],
         "abstract" : true,
         "methods": {
             "applyInPlace": {
@@ -19,29 +42,51 @@
                     }
                 ],
                 "statemutating": false
+            },
+            "configure" : {
+                "params": [
+                    "builtin.Dict"
+                ]
+            },
+            "process" : {
+                "realisedby" : {
+                    "methodname" : "applyToList",
+                    "overload": true
+                }
+            },
+            "set_options_dict": {
+                "realisedby" : {
+                    "methodname" : "configure",
+                    "overload" : false
+                }
             }
         }
     },
     "Catalano.Imaging.wrappers.Crop" : {
-        "extends" : ["$In_Place_Applier$"]
-    },
-    "Catalano.Imaging.Filters.Crop": {
-        "wrapper" : "Catalano.Imaging.wrappers.Crop",
+        "extends" : ["$In_Place_Applier$"],
         "methods": {
-            "$construct": {
+            "$construct": {},
+            "__construct1" :{
                 "params": [
                     "Number",
                     "Number",
                     "Number",
                     "Number"
-                ]
+                ],
+                "realisedby" :{
+                    "methodname" : "$construct",
+                    "overload" : true
+                }
             }
         }
+    },
+    "Catalano.Imaging.Filters.Crop": {
+        "wrapper" : "Catalano.Imaging.wrappers.Crop"
     },
     "Catalano.Imaging.wrappers.Resize": {
         "extends" : ["$In_Place_Applier$"]
     },
-    "Catalano.Imaging.Filters.Resize": {
+    "Catalano.Imaging.Filters.Resize_": {
         "wrapper" : "Catalano.Imaging.wrappers.Resize",
         "methods": {
             "$construct": {
@@ -51,6 +96,9 @@
                 ]
             }
         }
+    },
+    "Catalano.Imaging.Filters.Resize": {
+        "wrapper" : "Catalano.Imaging.wrappers.Resize"
     },
     "Catalano.Imaging.sede.CropFrom0" : {
         "wrapper" : "Catalano.Imaging.Filters.Crop",
@@ -72,19 +120,9 @@
         }
     },
     "Catalano.Imaging.wrappers.CannyEdgeDetector": {
-        "extends" : ["$In_Place_Applier$"],
-        "methods": {
-            "$construct": {
-                "params": [
-                    "Number",
-                    "Number",
-                    "Number",
-                    "Number"
-                ]
-            }
-        }
+        "extends" : ["$In_Place_Applier$"]
     },
-    "Catalano.Imaging.Filters.CannyEdgeDetector" : {
+    "Catalano.Imaging.Filters.CannyEdgeDetector_" : {
         "wrapper" : "Catalano.Imaging.wrappers.CannyEdgeDetector",
         "methods": {
             "$construct" : {
@@ -108,6 +146,9 @@
                 ]
             }
         }
+    },
+    "Catalano.Imaging.Filters.CannyEdgeDetector" : {
+        "wrapper" : "Catalano.Imaging.wrappers.CannyEdgeDetector"
     },
     "Catalano.Imaging.Filters.CannyEdgeDetector_Threshold" : {
         "wrapper" : "Catalano.Imaging.wrappers.CannyEdgeDetector",
@@ -207,6 +248,7 @@
         }
     },
     "Catalano.Imaging.wrappers.LocalBinaryPattern": {
+        "extends" : ["$Feature_Extractor$", "$dict_option_handler_config$"],
         "methods": {
             "$construct": {},
             "ComputeFeatures" : {
@@ -226,6 +268,25 @@
                 ],
                 "returntype": "ImageHistogram_List",
                 "statemutating": false
+            }, "extract_featureset" : {
+                "realisedby": {
+                    "methodname" : "ComputeFeatureSet",
+                    "overload" : true
+                }
+            },"set_options_dict": {
+                "params": [
+                    "builtin.Dict"
+                ],
+                "realisedby":"setOptions",
+                "statemutating": true
+            },
+            "setOptions" : {
+                "set_options_dict": {
+                    "params": [
+                        "builtin.Dict"
+                    ]
+                },
+                "statemutating": true
             }
         }
     },

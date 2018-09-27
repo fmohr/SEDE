@@ -2,7 +2,7 @@ import setuptools
 
 dependencies = [
       'scikit-learn',
-      'NumPy >= 1.8.2',
+      'numpy<=1.14.5,>=1.13.3',
       'SciPy >= 0.13.3',
       'tensorflow'
 ]

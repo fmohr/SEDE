@@ -27,7 +27,7 @@ public class CannyEdgeDetector extends AbstractImageProcessor {
 			double sigma = ((Number) options.get("sigma")).doubleValue();
 			int size = ((Number) options.get("size")).intValue();
 			cannyEdgeDetector = new Catalano.Imaging.Filters.CannyEdgeDetector(lowThreshold, highThreshold, sigma, size);
-		} else {
+		} else if(!options.isEmpty()) {
 			throw new IllegalArgumentException("Options not recognized : " + options.toString());
 		}
 	}

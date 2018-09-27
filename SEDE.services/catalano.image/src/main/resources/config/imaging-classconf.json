@@ -46,7 +46,8 @@
             "configure" : {
                 "params": [
                     "builtin.Dict"
-                ]
+                ],
+                "statemutating": true
             },
             "process" : {
                 "realisedby" : {
@@ -57,7 +58,7 @@
             "set_options_dict": {
                 "realisedby" : {
                     "methodname" : "configure",
-                    "overload" : false
+                    "overload" : true
                 }
             }
         }

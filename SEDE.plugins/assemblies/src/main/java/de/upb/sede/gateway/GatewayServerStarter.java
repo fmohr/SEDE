@@ -73,7 +73,7 @@ public class GatewayServerStarter {
 	}
 
 
-	private static void loadDefaultConfigs(ClassesConfig classesConfig, OnthologicalTypeConfig typeConfig,
+	static void loadDefaultConfigs(ClassesConfig classesConfig, OnthologicalTypeConfig typeConfig,
 										   List<String> configsToBeLoaded) {
 		for(String configuration : configsToBeLoaded) {
 			/*

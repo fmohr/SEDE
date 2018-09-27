@@ -23,7 +23,7 @@ public class WriteFileRequest implements BasicClientRequest {
 
 	@Override
 	public OutputStream send() {
-		File file = new File(filepath);
+		File file = new File(filepath).getAbsoluteFile();
 		/*
 		 * Create directories up to the file.
 		 */

@@ -1,22 +1,16 @@
 package de.upb.sede.util;
 
-import de.upb.sede.test.RemoteConsole;
-import de.upb.sede.util.server.TerminalCommandListener;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import java.io.IOException;
+import java.util.HashMap;
+
 import org.jline.builtins.telnet.Telnet;
 import org.jline.terminal.Terminal;
 import org.jline.terminal.TerminalBuilder;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.util.HashMap;
-
 public class Terminals {
-
-	private final static org.slf4j.Logger logger = LoggerFactory.getLogger(Terminals.class);
-
+	private final static Logger logger = LoggerFactory.getLogger(Terminals.class);
 	public static void setupLogging() {
 		System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
 	}

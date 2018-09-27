@@ -1,11 +1,12 @@
 package Catalano.Imaging.wrappers;
 
+import Catalano.Imaging.AbstractImageProcessor;
 import Catalano.Imaging.FastBitmap;
 import Catalano.Imaging.Filters.Grayscale;
 
 import java.util.List;
 
-public class GrayScaleByAlgorithm {
+public class GrayScaleByAlgorithm extends AbstractImageProcessor {
 	private Catalano.Imaging.Filters.Grayscale grayscale;
 
 	public GrayScaleByAlgorithm(String algorithm) {
@@ -14,11 +15,5 @@ public class GrayScaleByAlgorithm {
 
 	public void applyInPlace(FastBitmap fb) {
 		grayscale.applyInPlace(fb);
-	}
-
-	public void applyToList(List<FastBitmap> fbList) {
-		for(FastBitmap fb : fbList) {
-			applyInPlace(fb);
-		}
 	}
 }

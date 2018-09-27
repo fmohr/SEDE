@@ -156,6 +156,10 @@ public class InstructionNode extends BaseNode {
 		return this.contextIsField;
 	}
 
+	public void setMethod(String methodName) {
+		this.method = methodName;
+	}
+
 	public String getMethod() {
 		if (!isAssignedMethod()) {
 			throw new UnassignedFieldException(this, "method");

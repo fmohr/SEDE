@@ -196,10 +196,10 @@ public class InstructionProcedure implements Procedure {
 			}
 			Executable[] executables;
 			if(isConstructor) {
-				executables = context.getDeclaredConstructors();
+				executables = context.getConstructors();
 			} else {
 				List<Executable> executableList = new ArrayList<>();
-				for(Method method : context.getDeclaredMethods()){
+				for(Method method : context.getMethods()){
 					if(method.getName().equals(methodname)) {
 						executableList.add(method);
 					}

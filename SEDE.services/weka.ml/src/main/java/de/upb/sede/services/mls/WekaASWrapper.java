@@ -1,7 +1,11 @@
 package de.upb.sede.services.mls;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import de.upb.sede.services.mls.util.Options;
 import org.apache.commons.lang3.reflect.ConstructorUtils;
@@ -15,7 +19,7 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.OptionHandler;
 
-public class WekaASWrapper implements Serializable {
+public class WekaASWrapper implements Serializable, DictOptionsHandler{
 
 	private static final Logger logger = LogManager.getLogger("MLS");
 
@@ -24,9 +28,10 @@ public class WekaASWrapper implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 
-
-	private final String asSearcherName, asEvaluatorName;
-	private final String[] searcherOptions, evalOptions;
+	
+	
+	private String asSearcherName, asEvaluatorName;
+	private String[] searcherOptions, evalOptions;
 
 	private AttributeSelection attributeSelection;
 
@@ -34,8 +39,12 @@ public class WekaASWrapper implements Serializable {
 	private Instances cachedInstances;
 
 
+	public WekaASWrapper() {
+		logger.trace("Created wrapper for AS without setting searcher and evaluator.");
+	}
+
 	public WekaASWrapper(String asSearcherName, String asEvaluatorName, List searcherOptions, List evalOptions) throws Exception {
-		logger.debug("Created wrapper for AS: {}/{}", asSearcherName, asEvaluatorName);
+		logger.trace("Created wrapper for AS: {}/{}", asSearcherName, asEvaluatorName);
 		logger.trace("Options for AS: \n\t{}\n\t{}", searcherOptions, evalOptions);
 		this.asSearcherName = asSearcherName;
 		this.asEvaluatorName = asEvaluatorName;
@@ -44,7 +53,33 @@ public class WekaASWrapper implements Serializable {
 		construct();
 	}
 
+
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public void set_options_dict(Map options) throws Exception {
+		if(options.containsKey("searcher") && asSearcherName == null) {
+			Map searcherOptions = (Map) options.get("searcher");
+			asSearcherName = (String) searcherOptions.get("type");
+			this.searcherOptions = Options.flattenMapToArr((Map) searcherOptions.get("params"), true);
+		}
+		if(options.containsKey("evaluator") && asEvaluatorName == null) {
+			Map evalOptions = (Map) options.get("evaluator");
+			asEvaluatorName = (String) evalOptions.get("type");
+			this.evalOptions = Options.flattenMapToArr((Map) evalOptions.get("params"), true);
+		}
+		construct();
+	}
+
 	private void construct() throws Exception {
+		if(asEvaluatorName == null || asSearcherName == null) {
+			return;
+		}
+		if(searcherOptions == null) {
+			searcherOptions = new String[0];
+		}
+		if(evalOptions == null) {
+			evalOptions = new String[0];
+		}
 		attributeSelection = new AttributeSelection();
 		ASSearch searcher = (ASSearch) ConstructorUtils.invokeConstructor(Class.forName(asSearcherName));
 		if(searcher instanceof OptionHandler) {
@@ -59,12 +94,16 @@ public class WekaASWrapper implements Serializable {
 	}
 
 	public void train(Instances instances) throws Exception {
-		System.out.println("SELECTING ATTRs");
+		if(attributeSelection == null) {
+			throw new IllegalStateException("Evaluator and Searcher were not set.");
+		}
 		attributeSelection.SelectAttributes(instances);
 	}
 
 	public Instances preprocess(Instances instances) throws Exception {
-		System.out.println("REDUCING DEMS");
+		if(attributeSelection == null) {
+			throw new IllegalStateException("Evaluator and Searcher were not set.");
+		}
 		return attributeSelection.reduceDimensionality(instances);
 	}
 }

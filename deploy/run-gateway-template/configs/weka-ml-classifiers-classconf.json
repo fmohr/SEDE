@@ -81,17 +81,37 @@
       }
     }
   },
+  "$list_option_handler_config$" : {
+    "abstract": true,
+    "methods": {
+      "set_options": {
+        "params": [
+          "builtin.List"
+        ]
+      }
+    }
+  },
+  "$dict_option_handler_config$" : {
+    "abstract": true,
+    "methods": {
+      "set_options_dict": {
+        "params": [
+          "builtin.Dict"
+        ],
+        "statemutating": true
+      }
+    }
+  },
   "$base_classifier_config$": {
     "abstract": true,
     "methods": {
       "train": {},
-      "predict": {},
-      "set_options": {}
+      "predict": {}
     }
   },
   "de.upb.sede.services.mls.WekaBClassifierWrapper": {
     "extends": [
-      "$base_classifier_config$"
+      "$base_classifier_config$", "$list_option_handler_config$", "$dict_option_handler_config$"
     ],
     "methods": {
       "$construct": {
@@ -111,11 +131,6 @@
         ],
         "returntype": "builtin.List",
         "statemutating": false
-      },
-      "set_options": {
-        "params": [
-          "builtin.List"
-        ]
       }
     }
   },

@@ -1,16 +1,15 @@
 package de.upb.sede.gateway;
 
-import com.sun.net.httpserver.HttpExchange;
-import de.upb.sede.util.Streams;
-import de.upb.sede.webinterfaces.server.ImServer;
-import de.upb.sede.webinterfaces.server.SunHttpHandler;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.io.IOException;
-import java.net.InetAddress;
 import java.net.InetSocketAddress;
-import java.util.Optional;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.sun.net.httpserver.HttpExchange;
+
+import de.upb.sede.util.Streams;
+import de.upb.sede.webinterfaces.server.SunHttpHandler;
 
 public class WhatIsMyAddressHandler extends SunHttpHandler {
 
@@ -18,7 +17,7 @@ public class WhatIsMyAddressHandler extends SunHttpHandler {
 		server.addHandle("/what-is-my-addr", new WhatIsMyAddressHandler());
 	}
 
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(WhatIsMyAddressHandler.class);
 
 	private WhatIsMyAddressHandler() {
 		super(null);

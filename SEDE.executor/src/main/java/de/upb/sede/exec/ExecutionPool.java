@@ -1,21 +1,20 @@
 package de.upb.sede.exec;
 
-import de.upb.sede.config.ExecutorConfiguration;
-import de.upb.sede.util.Observer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.function.Supplier;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.upb.sede.config.ExecutorConfiguration;
 
 public class ExecutionPool {
 
 
-	private static final Logger logger = LogManager.getLogger();
+	private static final Logger logger = LoggerFactory.getLogger(ExecutionPool.class);
 	/**
 	 * be aware that the implementation of the map is not thread safe.
 	 * So don't expose the map itself and only operate on it in synchronous methods.

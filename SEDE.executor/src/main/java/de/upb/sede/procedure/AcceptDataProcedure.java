@@ -1,23 +1,20 @@
 package de.upb.sede.procedure;
 
+import java.util.function.Function;
+
+import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.SemanticDataField;
 import de.upb.sede.core.SemanticStreamer;
-import de.upb.sede.exec.Execution;
 import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
 import de.upb.sede.util.Observer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONObject;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.util.Map;
-import java.util.function.Function;
 
 public class AcceptDataProcedure implements Procedure, Function<SemanticDataField, SEDEObject> {
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(AcceptDataProcedure.class);
 	private String fieldname;
 	private JSONObject castType;
 	private Task task;

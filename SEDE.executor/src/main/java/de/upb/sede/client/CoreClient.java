@@ -1,22 +1,10 @@
 package de.upb.sede.client;
 
-import de.upb.sede.core.SEDEObject;
-import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.exec.Execution;
-import de.upb.sede.exec.ExecutionEnvironment;
-import de.upb.sede.exec.Executor;
-import de.upb.sede.interfaces.ICoreClient;
-import de.upb.sede.requests.*;
-import de.upb.sede.requests.resolve.GatewayResolution;
-import de.upb.sede.requests.resolve.InputFields;
-import de.upb.sede.requests.resolve.ResolvePolicy;
-import de.upb.sede.requests.resolve.ResolveRequest;
-import de.upb.sede.util.FileUtil;
-import de.upb.sede.util.Observer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
@@ -24,9 +12,29 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.upb.sede.core.SEDEObject;
+import de.upb.sede.exec.Execution;
+import de.upb.sede.exec.ExecutionEnvironment;
+import de.upb.sede.exec.Executor;
+import de.upb.sede.interfaces.ICoreClient;
+import de.upb.sede.requests.DataPutRequest;
+import de.upb.sede.requests.ExecRequest;
+import de.upb.sede.requests.ExecutorRegistration;
+import de.upb.sede.requests.Result;
+import de.upb.sede.requests.RunRequest;
+import de.upb.sede.requests.resolve.GatewayResolution;
+import de.upb.sede.requests.resolve.InputFields;
+import de.upb.sede.requests.resolve.ResolvePolicy;
+import de.upb.sede.requests.resolve.ResolveRequest;
+import de.upb.sede.util.FileUtil;
+import de.upb.sede.util.Observer;
+
 public class CoreClient implements ICoreClient{
 
-	protected static final Logger logger = LogManager.getLogger();
+	protected static final Logger logger = LoggerFactory.getLogger(CoreClient.class);
 
 	private final Executor executor;
 

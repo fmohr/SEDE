@@ -69,3 +69,4 @@ SEDE.iml
 
 *.pyc
 *.egg-info
+/.metadata/

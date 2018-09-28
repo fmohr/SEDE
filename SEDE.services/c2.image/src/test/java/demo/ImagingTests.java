@@ -397,7 +397,7 @@ public class ImagingTests {
         String composition =
                 "s1 = C2Services.C2service_grey::__construct();\n" +
 				"s1::compute({22,33});\n" +
-        		"imageOut = s1::process({imageIn});\n";
+        		"imageOut = s1::process({i1=imageIn});\n";
 
 
 		SEDEObject inputObject_c2i = new ObjectDataField(C2Image.class.getName(), lenna);
@@ -414,7 +414,7 @@ public class ImagingTests {
 		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
 		Result result = resultMap.get("imageOut");
 
-		//C2Image processedImage = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
+		C2Image processedImage = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
     }
 
 	private static ClassesConfig getTestClassConfig() {

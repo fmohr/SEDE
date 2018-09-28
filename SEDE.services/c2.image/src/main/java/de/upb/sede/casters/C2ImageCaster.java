@@ -18,56 +18,38 @@ import C2Data.C2Image;
 
 public class C2ImageCaster {
 
-    public List<C2Image> cfs_C2ImageList(InputStream is) throws Exception {
-
-        ArrayList<C2Image> result = new ArrayList<C2Image>();
-
+    public C2Image cfs_C2Image(InputStream is) throws Exception {
         JSONParser parser = new JSONParser();
         Reader reader = new InputStreamReader(is);
-        JSONArray arr = (JSONArray) parser.parse(reader);
+        JSONObject jsonobject = (JSONObject) parser.parse(reader);
 
-
-        for (Iterator iter=arr.iterator();iter.hasNext();) {
-
-            Object next = iter.next();
-            if(next instanceof JSONObject) {
-
-                JSONObject jsonobject = (JSONObject) next;
-
-                int rows = ((Number) jsonobject.get("rows")).intValue();
-                int columns = ((Number) jsonobject.get("columns")).intValue();
-                List<Number> numberList = (List<Number>) jsonobject.get("pixels");
-                short[] pixels = new short[numberList.size()];
-                for (int i = 0; i < pixels.length; i++) {
-                    pixels[i] = numberList.get(i).shortValue();
-                }
-                C2Image image = new C2Image(pixels, rows, columns);
-
-                result.add(image);
-            }
+        int rows = ((Number) jsonobject.get("rows")).intValue();
+        int columns = ((Number) jsonobject.get("columns")).intValue();
+        List<Number> jsonarray = (JSONArray) jsonobject.get("pixels");
+        short[] pixels = new short[jsonarray.size()];
+        for (int i = 0; i < jsonarray.size(); i++) {
+            pixels[i] = jsonarray.get(i).shortValue();
         }
 
-        return result;
+        C2Image image = new C2Image(pixels, rows, columns);
+
+        return image;
     }
 
-    public void cts_C2ImageList(OutputStream os, List<C2Image> images) throws IOException {
-        JSONArray result = new JSONArray();
+    public void cts_C2Image(OutputStream os, C2Image image) throws IOException {
+        JSONObject entry = new JSONObject();
+        entry.put("rows", image.getRows());
+        entry.put("columns", image.getColumns());
 
-        int index =0;
-        for(C2Image image:images) {
-
-            JSONObject entry = new JSONObject();
-            entry.put("rows", image.getRows());
-            entry.put("columns", image.getColumns());
-            entry.put("pixel", image.getPixels());
-
-            result.add(index++, entry);
+        JSONArray pixels = new JSONArray();
+        for (short p:image.getPixels()) {
+            pixels.add(p);
         }
+        entry.put("pixels", pixels);
 
         OutputStreamWriter writer = new OutputStreamWriter(os);
-        result.writeJSONString(writer);
+        entry.writeJSONString(writer);
         writer.flush();
-
     }
 
 }

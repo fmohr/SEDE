@@ -39,7 +39,7 @@ public class C2service_grey extends Plugin {
     public C2service_grey() {
         super(serviceFile, linkedFiles);
     }
-
+/*
     public List<C2Image> process(List<C2Image> sourceImages) {
         System.out.println("sg::processList");
         List<C2Image> result = new ArrayList<C2Image>();
@@ -51,7 +51,7 @@ public class C2service_grey extends Plugin {
 
         return result;
     }
-
+*/
     public C2Image process(C2Image sourceImage) {
         System.out.println("sg::process");
         //TODO set and use search path for libraries: java.library.path

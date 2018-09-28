@@ -5,6 +5,7 @@ import C2Plugins.Plugin;
 import C2Plugins.ServiceInstancePlugin;
 
 import java.io.File;
+import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,28 +31,33 @@ public class C2service_grey extends Plugin {
     private static List<File> linkedFiles;
 
     static {
-        serviceFile = new File("/home/deffel/coding/SEDE/CServices/cbuild/libservice_grey.so");
+        serviceFile = new File("/home/aloesch/projects/SEDE/CServices/cbuild/libservice_grey.so");
         linkedFiles = new ArrayList<File>();
-        linkedFiles.add(new File("/home/deffel/coding/SEDE/CServices/cbuild/libservice_grey_cpu.so"));
+        linkedFiles.add(new File("/home/aloesch/projects/SEDE/CServices/cbuild/libservice_grey_cpu.so"));
     }
 
     public C2service_grey() {
         super(serviceFile, linkedFiles);
     }
 
-
     public List<C2Image> process(List<C2Image> sourceImages) {
+        System.out.println("sg::processList");
+        List<C2Image> result = new ArrayList<C2Image>();
+        for(C2Image sourceImage: sourceImages) {
 
-        System.out.println("---------------------- HELLO from service_grey ------------------");
+            result.add(this.process(sourceImage));
 
+        }
+
+        return result;
+    }
+
+    public C2Image process(C2Image sourceImage) {
+        System.out.println("sg::process");
         //TODO set and use search path for libraries: java.library.path
         //TODO load shared objects only once
-        // System.load("/sede/codebase/ServiceCodeProvider/c2imaging/service_node/bin/libpluginbridge.so");
+        System.load("/sede/codebase/ServiceCodeProvider/c2imaging/service_node/bin/libpluginbridge.so");
 
-        File serviceFile = new File("/home/deffel/coding/SEDE/CServices/cbuild/libservice_grey.so");
-
-        ArrayList<File> linkedFiles = new ArrayList<File>();
-        linkedFiles.add(new File("/home/deffel/coding/SEDE/CServices/cbuild/libservice_grey_cpu.so"));
 
         System.load(serviceFile.getAbsolutePath());
 
@@ -71,32 +77,23 @@ public class C2service_grey extends Plugin {
         //parameters.add(1d);
         params.put("params", parameters);// TODO see void get_service_params in e.g. service_dim2.c
 
-        params.put("images", sourceImages);
+        params.put("images", new ArrayList<C2Image>().add(sourceImage));
 
         Object result = serviceInstancePlugin.invokeOp("process", params);
 
-        List<C2Image> results = new ArrayList<C2Image>();
+        C2Image image = null;
 
         if (result instanceof List) {
 
-            for (Object o : (List) result) {
+            Iterator<C2Image> iter = ((List) result).iterator();
 
-                if (o instanceof C2Image) {
+            if(iter.hasNext()) {
 
-                    results.add((C2Image) o);
-                }
+                image = iter.next();
             }
 
         }
-        return results;
+        return image;
 
     }
-
-
 }
-
-
-
-
-
-

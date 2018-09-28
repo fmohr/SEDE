@@ -15,7 +15,7 @@ mkdirectories:
 	mkdir -p ../csrc/imagebridge/build
 
 clib_im:
-	javah -classpath ../build/classes/main -d ../csrc/imagebridge/include C2Data.C2ImageMagickCaller
+	javah -classpath ../build/classes/java/main -d ../csrc/imagebridge/include C2Data.C2ImageMagickCaller
 
 libimagemagick.so: $(COBJECTS)
 	cd ../csrc/imagebridge/build && \

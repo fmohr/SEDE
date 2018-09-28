@@ -2,6 +2,7 @@ package demo;
 
 import Catalano.Imaging.FastBitmap;
 import Catalano.Imaging.Tools.ImageHistogram;
+import de.upb.sede.casters.C2ImageCaster;
 import de.upb.sede.casters.FastBitmapCaster;
 import de.upb.sede.casters.ImageHistogramCaster;
 import de.upb.sede.client.CoreClient;
@@ -138,6 +139,7 @@ public class ImagingTests {
             ArrayList<String> file_src = new ArrayList<String>();
             ArrayList<String> file_dest = new ArrayList<String>();
             file_src.add(FileUtil.getPathOfResource("images/lenna.tiff"));
+			//file_src.add(FileUtil.getPathOfResource("images/red-eyed.jpg"));
             im_lenna = new C2ImageManager(file_src, file_dest);
             im_lenna.environmentUp();
             im_lenna.readImages();
@@ -394,21 +396,25 @@ public class ImagingTests {
 		 */
         String composition =
                 "s1 = C2Services.C2service_grey::__construct();\n" +
-                        "i1 = s1::compute({22,33});";
+				"s1::compute({22,33});\n" +
+        		"imageOut = s1::process({imageIn});\n";
+
+
+		SEDEObject inputObject_c2i = new ObjectDataField(C2Image.class.getName(), lenna);
 
         ResolvePolicy policy = new ResolvePolicy();
-
         policy.setServicePolicy("None");
-        policy.setReturnFieldnames(Arrays.asList("i1"));
+        policy.setReturnFieldnames(Arrays.asList("imageOut"));
 
         Map<String, SEDEObject> inputs = new HashMap<>();
+		inputs.put("imageIn", inputObject_c2i);
 
         RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
 
-        coreClient.run(runRequest, result -> {
-            System.out.println(result.getFieldname());
-        });
-        coreClient.join("proc_cservices", true);
+		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
+		Result result = resultMap.get("imageOut");
+
+		//C2Image processedImage = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
     }
 
 	private static ClassesConfig getTestClassConfig() {

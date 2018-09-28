@@ -2,13 +2,11 @@ package de.upb.sede.gateway;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-import de.upb.sede.util.GraphToDot;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.upb.sede.composition.graphs.CompositionGraph;
 import de.upb.sede.composition.graphs.GraphConstruction;
@@ -19,6 +17,7 @@ import de.upb.sede.interfaces.IGateway;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.ResolveRequest;
+import de.upb.sede.util.GraphToDot;
 
 /**
  * Implementation of IGateway. 
@@ -32,7 +31,7 @@ public class Gateway implements IGateway{
 	/**
 	 * basic logger
 	 */
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(Gateway.class);
 
 	/**
 	 * Has the task to offer coordination over registered executors.

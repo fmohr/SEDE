@@ -20,7 +20,7 @@ public class SendGraphNode extends BaseNode {
 
 
 	public String toString() {
-		return "send graph";
+		return "send graph to " + contactInfo.toString();
 	}
 
 	public Object getContactInfo() {

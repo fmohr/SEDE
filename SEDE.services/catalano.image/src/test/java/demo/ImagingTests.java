@@ -39,11 +39,11 @@ public class ImagingTests {
 
 	static CoreClient coreClient;
 
-	static String clientAddress = WebUtil.HostIpAddress();
+	static String clientAddress = "localhost";
 	static int clientPort = 7000;
 
 	static String gatewayAddress = "localhost";
-	static int gatewayPort = 6000;
+	static int gatewayPort = 30370;
 
 	static FastBitmap frog;
 
@@ -76,14 +76,16 @@ public class ImagingTests {
 		creator.withExecutorId("executor");
 		executor1 = new ExecutorHttpServer(ExecutorConfiguration.parseJSON(creator.toString()), executor1Address, executorPort);
 		executor1.getBasisExecutor().getExecutorConfiguration().getSupportedServices().addAll(
-				Arrays.asList("Catalano.Imaging.Filters.Crop",
+				Arrays.asList(
+						"Catalano.Imaging.Filters.Crop",
 						"Catalano.Imaging.Filters.Resize",
 						"Catalano.Imaging.sede.CropFrom0",
 						"Catalano.Imaging.Filters.CannyEdgeDetector",
-						"Catalano.Imaging.Filters.CannyEdgeDetectorFactory",
+						"Catalano.Imaging.Filters.SobelEdgeDetector",
+						"Catalano.Imaging.Filters.CannyEdgeDetector_Threshold",
 						"Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern",
 						"Catalano.Imaging.Filters.GrayScale",
-						"Catalano.Imaging.Filters.GrayScaleFactory",
+						"Catalano.Imaging.Filters.GrayScale_RGBCoeff",
 						"Catalano.Imaging.Filters.GrayScale_Lightness",
 						"Catalano.Imaging.Filters.GrayScale_Average",
 						"Catalano.Imaging.Filters.GrayScale_GeometricMean",
@@ -105,8 +107,8 @@ public class ImagingTests {
 
 	@AfterClass
 	public static void shutdown() {
-		gateway.shutdown();
-		executor1.shutdown();
+//		gateway.shutdown();
+//		executor1.shutdown();
 		coreClient.getClientExecutor().shutdown();
 	}
 
@@ -120,7 +122,7 @@ public class ImagingTests {
 	public void testImageProcessing1() {
 		String composition =
 				"s1 = Catalano.Imaging.Filters.Crop::__construct({i1=5, i2=5, i3=300, i4=300});\n" +
-				"s1::ApplyInPlace({i1=imageIn});\n" +
+				"s1::applyInPlace({i1=imageIn});\n" +
 				"s2 = Catalano.Imaging.Filters.Resize::__construct({i1=200, i2=200});\n" +
 				"imageOut = s2::applyInPlace({i1=imageIn});";
 
@@ -157,7 +159,7 @@ public class ImagingTests {
 		 */
 		String composition =
 				"s1  = Catalano.Imaging.sede.CropFrom0::__construct({100,100});\n" +
-						"imageOut = s1::ApplyInPlace({i1=imageIn});";
+						"imageOut = s1::applyInPlace({i1=imageIn});";
 
 		ResolvePolicy policy = new ResolvePolicy();
 		policy.setServicePolicy("None");
@@ -191,12 +193,12 @@ public class ImagingTests {
 			Tests fixed parameters:
 		 */
 		String composition =
-				"s1 = Catalano.Imaging.Filters.GrayScaleFactory::withMethodname({\"Luminosity\"});\n" +
-				"i1 = s1::applyInPlace({i0});\n" +
-				"s2 = Catalano.Imaging.Filters.CannyEdgeDetector::__construct();\n" +
-				"i2 = s1::applyInPlace({i1});\n" +
-				"s3 = Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern::__construct();\n" +
-				"histogram = s3::ComputeFeatures({i2});";
+				"s1 = Catalano.Imaging.Filters.GrayScale_Luminosity::__construct();\n" +
+						"i1 = s1::applyInPlace({i0});\n" +
+						"s2 = Catalano.Imaging.Filters.SobelEdgeDetector::__construct();\n" +
+						"i2 = s1::applyInPlace({i1});\n" +
+						"s3 = Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern::__construct();\n" +
+						"histogram = s3::ComputeFeatures({i2});";
 
 		ResolvePolicy policy = new ResolvePolicy();
 
@@ -222,11 +224,73 @@ public class ImagingTests {
 			} else {
 				FastBitmap processedImage = result.castResultData(
 						FastBitmap.class.getName(), FastBitmapCaster.class).getDataField();
-				EventQueue.invokeLater(() ->{
-						JOptionPane.showMessageDialog(null,
-								processedImage.toIcon(),  "Image " + result.getFieldname(), JOptionPane.PLAIN_MESSAGE);
-						}
+				try {
+					EventQueue.invokeAndWait(() -> {
+								JOptionPane.showMessageDialog(null,
+										processedImage.toIcon(),  "Image " + result.getFieldname(), JOptionPane.PLAIN_MESSAGE);
+							}
 					);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			}
+		});
+		coreClient.join("processing3", true);
+		ImageHistogram histogram = resultMap.get("histogram");
+		System.out.println("Histogram: " + Arrays.toString(histogram.getValues()));
+		System.out.println("Mean: " + histogram.getMean());
+
+	}
+	@Test
+	public void testImageProcessing_ImageSetToDataset() throws InvocationTargetException, InterruptedException {
+		/*
+			Tests fixed parameters:
+		 */
+		String composition =
+				"s1 = Catalano.Imaging.Filters.GrayScale_Luminosity::__construct();\n" +
+						"i1 = s1::applyInPlace({i0});\n" +
+						"s2 = Catalano.Imaging.Filters.SobelEdgeDetector::__construct();\n" +
+						"i2 = s1::applyInPlace({i1});\n" +
+						"s3 = Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern::__construct();\n" +
+						"histogram = s3::ComputeFeatures({i2});";
+
+		ResolvePolicy policy = new ResolvePolicy();
+
+		policy.setServicePolicy("None");
+		policy.setReturnFieldnames(Arrays.asList("i1", "i2", "histogram"));
+
+		SEDEObject inputObject_fb1 = new ObjectDataField(FastBitmap.class.getName(), frog);
+
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		inputs.put("i0", inputObject_fb1);
+
+		EventQueue.invokeAndWait(() -> JOptionPane.showMessageDialog(null, frog.toIcon(), "Original image", JOptionPane.PLAIN_MESSAGE));
+
+		RunRequest runRequest = new RunRequest("processing3", composition, policy, inputs);
+
+		Map<String, ImageHistogram> resultMap = new HashMap<>();
+
+		coreClient.run(runRequest, result -> {
+			if(result.getFieldname().equals("histogram")) {
+				ImageHistogram histogram = result.
+						castResultData(ImageHistogram.class.getName(), ImageHistogramCaster.class).getDataField();
+				resultMap.put(result.getFieldname(), histogram);
+			} else {
+				FastBitmap processedImage = result.castResultData(
+						FastBitmap.class.getName(), FastBitmapCaster.class).getDataField();
+				try {
+					EventQueue.invokeAndWait(() -> {
+								JOptionPane.showMessageDialog(null,
+										processedImage.toIcon(),  "Image " + result.getFieldname(), JOptionPane.PLAIN_MESSAGE);
+							}
+					);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
 			}
 		});
 		coreClient.join("processing3", true);

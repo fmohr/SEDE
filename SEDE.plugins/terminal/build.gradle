@@ -10,8 +10,6 @@ dependencies {
     // https://mvnrepository.com/artifact/org.jline/jline
     compile group: 'org.jline', name: 'jline', version: '3.9.0'
 
-    compile group: 'org.apache.logging.log4j', name: 'log4j-jul', version: '2.11.0'
-
 //     https://mvnrepository.com/artifact/net.java.dev.jna/jna-platform
 //    compile group: 'net.java.dev.jna', name: 'jna-platform', version: '4.5.1'
 

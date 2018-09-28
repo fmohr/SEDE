@@ -2,27 +2,33 @@ package de.upb.sede.exec;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.upb.sede.config.ExecutorConfiguration;
+import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.SemanticDataField;
 import de.upb.sede.interfaces.IExecution;
-import de.upb.sede.core.SEDEObject;
 import de.upb.sede.util.DefaultMap;
 import de.upb.sede.util.Observable;
 import de.upb.sede.util.Observer;
 import de.upb.sede.util.Streams;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Represents one execution.
  */
 public class Execution implements IExecution {
 
-	private static final Logger logger = LogManager.getLogger();
+	private static final Logger logger = LoggerFactory.getLogger(Execution.class);
 
 	private final ExecutionEnv environment;
 

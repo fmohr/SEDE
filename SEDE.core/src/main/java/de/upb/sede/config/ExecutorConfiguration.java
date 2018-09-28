@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.json.simple.JSONObject;
 
@@ -96,7 +97,14 @@ public class ExecutorConfiguration implements JsonSerializable {
 			serviceStoreLocation = (String) jsonObj.get("serviceStoreLocation");
 		}
 		if(jsonObj.containsKey("gateways")) {
-			gateways = Objects.requireNonNull((List<String>) jsonObj.get("gateways"));
+			gateways = new ArrayList<>();
+			;
+			/*
+			 * Remove "/" at end of every address if necessary, before adding it to the list:
+			 */
+			Objects.requireNonNull((List<String>) jsonObj.get("gateways")).stream()
+					.map(address -> address.endsWith("/")? address.substring(0, address.length()-1):address)
+					.forEach(gateways::add);
 		}
 	}
 }

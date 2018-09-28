@@ -31,7 +31,14 @@
                 "statemutating": true,
                 "static": true
             },
-            "m4": {}
+            "m4": {},
+            "m5" : {
+                "statemutating" : false
+            },
+            "m6" : {
+                "statemutating" : true,
+                "realisedby" : "m5"
+            }
         }
     },
     "B": {
@@ -50,6 +57,17 @@
                         "fixed": "constant3"
                     }
                 ]
+            },
+            "m7" : {
+                "realisedby" : {
+                    "methodname" : "m5"
+                }
+            },
+            "m8" : {
+                "realisedby" : "m6"
+            },
+            "m9" : {
+                "realisedby" : "m7"
             }
         },
         "wrapper" : "A"
@@ -68,10 +86,64 @@
                 ],
                 "returntype": "t2",
                 "statemutating": false
+            },
+            "m6" : {
+                "statemutating" : true,
+                "returntype" : "t3"
+            },
+            "m7" : {
+                "realisedby" : "m5"
+            },
+            "m8" : {
+                "realisedby" : {
+                    "methodname" : "m6"
+                }
+            },
+            "m9" : {
+                "realisedby" : "m7"
             }
         },
         "extends": [
             "A"
         ]
+    },
+    "D": {
+        "extends": [
+            "C"
+        ],
+        "methods": {
+            "fixed_construct" : {
+                "params": [
+                ],
+                "realisedby" : {
+                    "methodname" : "$construct",
+                    "overload" : true
+                }
+            },
+            "m1_alt" : {
+                "params": [
+                    {
+                        "type" : "t3",
+                        "fixed" : "1"
+                    }
+                ],
+                "realisedby" : {
+                    "methodname" : "m1",
+                    "overload" : false
+                }
+            },
+            "m1_overload" : {
+                "params": [
+                    {
+                        "type" : "t3",
+                        "fixed" : "1"
+                    }
+                ],
+                "realisedby" : {
+                    "methodname" : "m1",
+                    "overload" : true
+                }
+            }
+        }
     }
 }

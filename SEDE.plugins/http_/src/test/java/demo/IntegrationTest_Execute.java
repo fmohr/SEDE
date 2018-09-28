@@ -1,40 +1,43 @@
 package demo;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import de.upb.sede.config.ExecutorConfiguration;
-import de.upb.sede.core.ObjectDataField;
-import de.upb.sede.core.PrimitiveDataField;
-import de.upb.sede.exec.*;
-import de.upb.sede.requests.Result;
-import demo.math.Addierer;
-import demo.types.DemoCaster;
-import demo.types.NummerList;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import de.upb.sede.client.CoreClient;
 import de.upb.sede.client.HttpCoreClient;
 import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.config.OnthologicalTypeConfig;
-import de.upb.sede.client.CoreClient;
+import de.upb.sede.core.ObjectDataField;
+import de.upb.sede.core.PrimitiveDataField;
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.exec.Execution;
+import de.upb.sede.exec.Executor;
+import de.upb.sede.exec.ExecutorHttpServer;
 import de.upb.sede.gateway.GatewayHttpServer;
+import de.upb.sede.requests.Result;
 import de.upb.sede.requests.RunRequest;
 import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import demo.math.Addierer;
+import demo.types.DemoCaster;
+import demo.types.NummerList;
 
 @SuppressWarnings("unchecked")
 public class IntegrationTest_Execute {
-	private static final Logger logger = LogManager.getLogger();
+	private static final Logger logger = LoggerFactory.getLogger(IntegrationTest_Execute.class);
 
 	private static final String rscPath = FileUtil.getPathOfResource("run-requests/");
 

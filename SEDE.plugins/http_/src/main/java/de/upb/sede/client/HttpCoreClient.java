@@ -1,20 +1,21 @@
 package de.upb.sede.client;
 
-import de.upb.sede.exec.Executor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.upb.sede.config.ExecutorConfiguration;
+import de.upb.sede.exec.Executor;
 import de.upb.sede.exec.ExecutorHttpServer;
 import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
 import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * This class offers a few static methods that create a CoreClient which can reach a gateway over http.
  */
 public final class HttpCoreClient {
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(HttpCoreClient.class);
 
 	public static CoreClient createWithGiven(Executor executor, String gatewayAddress, int gatewayPort) {
 		return new CoreClient(executor, rr -> resolveRequestOverHttp(rr, gatewayAddress, gatewayPort));

@@ -1,26 +1,27 @@
 package de.upb.sede.gateway;
 
-import de.upb.sede.config.ClassesConfig;
-import de.upb.sede.config.OnthologicalTypeConfig;
-import de.upb.sede.exec.Executor;
-import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
-import de.upb.sede.webinterfaces.server.CommandTree;
-import de.upb.sede.webinterfaces.server.ServerCommandListeners;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import static de.upb.sede.webinterfaces.server.CommandTree.lastMatch;
+import static de.upb.sede.webinterfaces.server.CommandTree.node;
+import static de.upb.sede.webinterfaces.server.CommandTree.rest;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static de.upb.sede.webinterfaces.server.CommandTree.*;
-import static de.upb.sede.webinterfaces.server.Command.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.config.OnthologicalTypeConfig;
+import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
+import de.upb.sede.webinterfaces.server.Command.File;
+import de.upb.sede.webinterfaces.server.Command.Strings;
+import de.upb.sede.webinterfaces.server.CommandTree;
+import de.upb.sede.webinterfaces.server.ServerCommandListeners;
 
 public class GatewayCommands {
 	private final Gateway gateway;
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(GatewayCommands.class);
 
 	public static GatewayCommands enablePlugin(Gateway gateway, ServerCommandListeners scl){
 		return new GatewayCommands(gateway, scl);
@@ -85,7 +86,7 @@ public class GatewayCommands {
 		scl.addCommandHandle(heartbeat);
 	}
 
-	private synchronized String listServices() {
+	private String listServices() {
 		ClassesConfig classesConfig = gateway.getClassesConfig();
 		if(classesConfig.isEmpty()) {
 			return "Gateway supports no services yet.";
@@ -95,12 +96,12 @@ public class GatewayCommands {
 		return "Known services are: \n" + knownClasses;
 	}
 
-	private synchronized String loadServices(String configPath) {
+	private String loadServices(String configPath) {
 		gateway.getClassesConfig().appendConfigFromFiles(configPath);
 		return "Loaded service configurations from " + configPath;
 	}
 
-	private synchronized String listTypes() {
+	private String listTypes() {
 		OnthologicalTypeConfig typeConfig = gateway.getTypeConfig();
 		if(typeConfig.isEmpty()) {
 			return "Gateway supports no types yet.";
@@ -112,13 +113,13 @@ public class GatewayCommands {
 		return "Known types are: \n" + knownTypes;
 	}
 
-	private synchronized String listExecutors(Function<ExecutorHandle, String> mapFunction){
+	private String listExecutors(Function<ExecutorHandle, String> mapFunction){
 		return "Registered executors: \n\t" +
 				gateway.getExecutorCoord().getExecutors().stream().map(mapFunction).collect(Collectors.joining("\n\t"));
 	}
 
 
-	private synchronized String loadTypes(String configPath) {
+	private String loadTypes(String configPath) {
 		gateway.getTypeConfig().appendConfigFromFiles(configPath);
 		return "Loaded types configurations from " + configPath;
 	}
@@ -132,6 +133,7 @@ public class GatewayCommands {
 				String address =(String) contactInfo.get("host-address");
 				String heartbeatUrl = address + "/cmd/heartbeat";
 				HttpURLConnectionClientRequest requestHeartbeat = new HttpURLConnectionClientRequest(heartbeatUrl);
+				requestHeartbeat.setTimeout(200);
 				boolean executoraintalive = false;
 				try {
 					String response = requestHeartbeat.send("");
@@ -146,8 +148,8 @@ public class GatewayCommands {
 					executoraintalive = true;
 				}
 				if(executoraintalive) {
-					gateway.getExecutorCoord().removeExecutor(executorHandle.getExecutorId());
 					removedExecutors += "\n" + executorHandle.getExecutorId();
+					gateway.getExecutorCoord().removeExecutor(executorHandle.getExecutorId());
 				}
 			} else {
 				logger.warn("Gateway is performing HEARTBEAT. Cannot contact executor with id: {}. His contact information is: {}.",
@@ -156,4 +158,5 @@ public class GatewayCommands {
 		}
 		return removedExecutors;
 	}
+
 }

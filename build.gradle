@@ -13,7 +13,7 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
     group = 'de.upb.sede'
-    version = '0.0.3'
+    version = '0.0.4'
 
     configurations {
         provided
@@ -39,8 +39,8 @@ subprojects {
     }
 
     dependencies {
-        compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
-        compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'
+		compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+		runtimeOnly group: 'org.slf4j', name:'slf4j-log4j12', version:'1.7.25'
 
         // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all
         testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'

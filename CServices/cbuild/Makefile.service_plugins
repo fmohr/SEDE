@@ -2,7 +2,7 @@ SERVICES_ALL=\
 	service_grey \
 	service_sobel
 
-CC=gcc
+CC=clang
 CFLAGS=-O3 -Wall
 
 all: clean $(SERVICES_ALL)

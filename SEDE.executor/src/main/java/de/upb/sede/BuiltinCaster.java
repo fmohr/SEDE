@@ -6,10 +6,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BuiltinCaster {
 
@@ -22,10 +19,9 @@ public class BuiltinCaster {
 	}
 
 	public void cts_List(OutputStream os, List list) throws IOException {
-		JSONArray jsonArray = new JSONArray();
-		jsonArray.addAll(list);
+		Objects.requireNonNull(list);
 		OutputStreamWriter writer = new OutputStreamWriter(os);
-		jsonArray.writeJSONString(writer);
+		JSONArray.writeJSONString(list, writer);
 		writer.flush();
 	}
 
@@ -38,10 +34,9 @@ public class BuiltinCaster {
 	}
 
 	public void cts_Dict(OutputStream os, Map map) throws IOException {
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.putAll(map);
+		Objects.requireNonNull(map);
 		OutputStreamWriter writer = new OutputStreamWriter(os);
-		jsonObject.writeJSONString(writer);
+		JSONObject.writeJSONString(map, writer);
 		writer.flush();
 	}
 }

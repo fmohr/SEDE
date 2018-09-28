@@ -35,11 +35,12 @@ public class CastTypeProcedure implements Procedure {
 			 * TODO if there is a need to read the input byte multiple times change this behaviour to ByteArrayInputStream instead.
 			 * (Which offers seek)
 			 */
-			PipedInputStream byteInputSteam = new PipedInputStream();
-			PipedOutputStream byteOutputStream = null;
+			ByteArrayInputStream byteInputSteam;
+			ByteArrayOutputStream byteOutputStream = null;
 			try {
-				byteOutputStream = new PipedOutputStream(byteInputSteam);
+				byteOutputStream = new ByteArrayOutputStream();
 				SemanticStreamer.streamObjectInto(byteOutputStream, field, casterClasspath, targetType);
+				byteInputSteam = new ByteArrayInputStream(byteOutputStream.toByteArray());
 				castedField = new SemanticDataField(targetType, byteInputSteam, true);
 				byteOutputStream.close();
 			} catch (IOException e) {

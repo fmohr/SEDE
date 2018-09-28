@@ -3,17 +3,19 @@ package de.upb.sede.services.mls;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang3.reflect.ConstructorUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.upb.sede.services.mls.util.Options;
-import org.apache.commons.lang3.reflect.ConstructorUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import weka.core.Instances;
 import weka.filters.Filter;
 
 public class WekaFilterWrapper implements Serializable {
 
-	private static final Logger logger = LogManager.getLogger("MLS");
+	private static final Logger logger = LoggerFactory.getLogger("MLS");
 
 	private final String filterName;
 
@@ -33,6 +35,17 @@ public class WekaFilterWrapper implements Serializable {
 		} else {
 			construct();
 		}
+	}
+
+	public void set_options_dict(Map options) throws Exception {
+		if(filter == null) {
+			return;
+		}
+		if(options == null) {
+			return;
+		}
+		String[] optionArr = Options.flattenMapToArr(options, true);
+		this.filter.setOptions(optionArr);
 	}
 
 	/**

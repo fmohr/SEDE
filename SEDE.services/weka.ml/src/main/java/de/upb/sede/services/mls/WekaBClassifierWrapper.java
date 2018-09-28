@@ -1,30 +1,32 @@
 package de.upb.sede.services.mls;
 
-import de.upb.sede.services.mls.util.Options;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.reflect.ConstructorUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.upb.sede.services.mls.util.Options;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.OptionHandler;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 /**
  * Wrapper for Weka-base classifier.
  */
-public class WekaBClassifierWrapper implements Serializable {
+public class WekaBClassifierWrapper implements Serializable, DictOptionsHandler, ListOptionsHandler {
 
 	/**
 	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private static final Logger logger = LogManager.getLogger("MLS");
+	private static final Logger logger = LoggerFactory.getLogger("MLS");
 
 	private final String classifierName;
 	private Classifier classifier;
@@ -106,11 +108,16 @@ public class WekaBClassifierWrapper implements Serializable {
 	public void set_options(List options) throws Exception {
 		if(classifier instanceof OptionHandler) {
 			String[] optArr = Options.splitStringIntoArr(options);
-			logger.debug("Set option of {} to: {}.", classifierName, Arrays.toString(optArr));
+			logger.trace("Set option of {} to: {}.", classifierName, Arrays.toString(optArr));
 			((OptionHandler) classifier).setOptions(optArr);
 		}
 		 else {
 			logger.error("Cannot set options of {}. Options to be set:\n{}", classifierName, options.toString());
 		}
+	}
+
+	@Override
+	public void set_options_dict(Map options) throws Exception {
+		this.set_options(Arrays.asList(Options.flattenMapToArr(options, true)));
 	}
 }

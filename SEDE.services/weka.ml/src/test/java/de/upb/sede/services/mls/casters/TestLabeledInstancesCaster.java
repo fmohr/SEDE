@@ -1,23 +1,25 @@
 package de.upb.sede.services.mls.casters;
 
-import de.upb.sede.core.ObjectDataField;
-import de.upb.sede.core.SemanticStreamer;
-import de.upb.sede.services.mls.util.MLDataSets;
-import ml.data.LabeledInstancesCaster;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.junit.Test;
-import weka.core.Instances;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import de.upb.sede.core.ObjectDataField;
+import de.upb.sede.core.SemanticStreamer;
+import de.upb.sede.services.mls.util.MLDataSets;
+import ml.data.LabeledInstancesCaster;
+import weka.core.Instances;
 
 
 public class TestLabeledInstancesCaster {
 
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(TestLabeledInstancesCaster.class);
 
 	@Test
 	public void testCasting() {

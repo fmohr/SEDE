@@ -1,24 +1,19 @@
 package de.upb.sede.exec;
 
-import de.upb.sede.config.ExecutorConfiguration;
-import de.upb.sede.gateway.Gateway;
-import de.upb.sede.gateway.GatewayCommands;
+import static de.upb.sede.webinterfaces.server.CommandTree.lastMatch;
+import static de.upb.sede.webinterfaces.server.CommandTree.node;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.upb.sede.util.Streams;
 import de.upb.sede.webinterfaces.server.Command;
 import de.upb.sede.webinterfaces.server.CommandTree;
 import de.upb.sede.webinterfaces.server.ServerCommandListeners;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-import java.util.List;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
-import static de.upb.sede.webinterfaces.server.CommandTree.*;
 
 public class HttpExecutorCommands {
 
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(HttpExecutorCommands.class);
 
 	private final ExecutorHttpServer executor;
 

@@ -202,6 +202,17 @@ public class ServiceSpecTransformer {
 						effects.add("instanceOf(" + outputName() +", " + classpath + ")");
 					}
 					outputParams.add(output);
+				} else  {
+					/*
+					 * Turn call by reference to call-by-value: 
+					 */
+					int stateMutatingParamIndex = methodInfo.indexOfNthStateMutatingParam(0);
+					if(stateMutatingParamIndex >=0) {
+						JSONObject output = new JSONObject();
+						output.put("name", outputName());
+						output.put("dataType", ((JSONObject)inputParams.get(stateMutatingParamIndex)).get("dataType"));
+						outputParams.add(output);
+					}
 				}
 				hardCodedEffects(classInfo, methodInfo, precond, effects);
 				String precondition = precond.stream().collect(Collectors.joining(" & "));

@@ -1,21 +1,24 @@
 package de.upb.sede.util;
 
-import java.io.*;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Scanner;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.upb.sede.webinterfaces.client.WriteFileRequest;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 /**
  * Defines methods to access files reading and writing their content. Use this
@@ -26,7 +29,7 @@ import org.apache.logging.log4j.Logger;
  */
 public class FileUtil {
 
-	private static Logger logger = LogManager.getLogger(FileUtil.class);
+	private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
 	/**
 	 * Returns the content of the file located at the given file path as a string.

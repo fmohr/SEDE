@@ -2,6 +2,7 @@
     "capabilities": [],
     "threadNumber": 4,
     "services": [
+        "de.upb.sede.services.mls.Labeler",
         "de.upb.sede.services.mls.DataSetService",
         "de.upb.sede.services.mls.WekaASWrapper",
         "de.upb.sede.services.mls.WekaBClassifierWrapper",

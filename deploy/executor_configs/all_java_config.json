@@ -1,5 +1,5 @@
 {
-  "gateways": ["localhost:6000"],
+  "gateways": ["192.168.178.170:6000"],
   "capabilities": [],
   "threadNumber": 4,
   "services": [

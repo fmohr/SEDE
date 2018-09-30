@@ -10,9 +10,11 @@ import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 public class ImageHistogramCaster {
 	/**
@@ -78,8 +80,9 @@ public class ImageHistogramCaster {
 		output.append("@ATTRIBUTE class STRING").append("\n");
 
 		output.append("\n").append("@data").append("\n");
-
-		DecimalFormat df3 = new DecimalFormat(".###");
+		DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols(Locale.US);
+		otherSymbols.setDecimalSeparator('.');
+		DecimalFormat df3 = new DecimalFormat("0.###", otherSymbols);
 		for(ImageHistogram histogram : histogramList) {
 			StringBuilder dataPoint = new StringBuilder();
 			dataPoint.append(df3.format(histogram.getMean()))		.append(",");

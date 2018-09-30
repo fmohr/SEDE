@@ -7,10 +7,6 @@ task buildDocker {
     doLast {
         exec {
             workingDir 'deploy'
-            commandLine 'docker', 'build', '-t', 'sede:java', '-f', 'Dockerfile_Java_Base' , '.'
-        }
-        exec {
-            workingDir 'deploy'
             commandLine 'docker', 'build', '-t', 'sede:Gateway', '-f', 'Dockerfile_Gateway', '.'
         }
         exec {

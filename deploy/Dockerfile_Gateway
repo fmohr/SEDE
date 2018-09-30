@@ -1,4 +1,4 @@
-FROM sede:java
+FROM openjdk:8-jre-alpine3.8
 
 # RUN apt-get update && apt-get install -y --no-install-recommends \
 #    graphviz \
@@ -8,6 +8,16 @@ RUN apk update && apk add \
 	graphviz \
     	ttf-freefont
 
+COPY ./log4j2.xml /log4j2.xml
+COPY ./SEDE /SEDE
+COPY ./SEDE_logging_lib /SEDE_logging_lib
+
+
 ENV DOT_PATH=/usr/bin/dot
 
 COPY ./run-gateway-template/configs /configs
+
+EXPOSE 8080
+EXPOSE 2200
+
+ENTRYPOINT java -cp SEDE/*:SEDE_logging_lib/*:. de.upb.sede.gateway.GatewayServerStarter 8080 /configs

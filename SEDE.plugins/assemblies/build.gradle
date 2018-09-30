@@ -17,8 +17,8 @@ dependencies {
     provided project(':SEDE.terminal')
     provided project(':SEDE.frontend')
 
-    compile project(':weka.ml')
-    compile project(':catalano.image')
+    provided project(':weka.ml')
+    provided project(':catalano.image')
 
 }
 

@@ -5,28 +5,34 @@ SERVICES_ALL=\
 CC=gcc
 CFLAGS=-O3 -Wall
 
-all: clean $(SERVICES_ALL)
+all: mkdirectories clean $(SERVICES_ALL)
 
 $(SERVICES_ALL): common
-	@echo -e "\n=== build $@ ==="
-
-	$(CC) $(CFLAGS) -fPIC -c -o $@_scpu.o ../csrc/service_plugins/$@/$@_scpu.c
+	cd ../csrc/service_plugins/build && \
+	$(CC) $(CFLAGS) -fPIC -c -o $@_scpu.o ../$@/$@_scpu.c
+	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -shared -o lib$@_scpu.so $@_scpu.o
 
-	$(CC) $(CFLAGS) -fPIC -fopenmp -c -o $@_cpu.o ../csrc/service_plugins/$@/$@_cpu.c
+	cd ../csrc/service_plugins/build && \
+	$(CC) $(CFLAGS) -fPIC -fopenmp -c -o $@_cpu.o ../$@/$@_cpu.c
+	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -shared -o lib$@_cpu.so $@_cpu.o -lgomp
 
-	$(CC) $(CFLAGS) -fPIC -c -o $@.o ../csrc/service_plugins/$@/$@.c
+	cd ../csrc/service_plugins/build && \
+	$(CC) $(CFLAGS) -fPIC -c -o $@.o ../$@/$@.c
+	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -shared -o lib$@.so $@.o common.o -ldl -L. -l$@_scpu -l$@_cpu
 
-.PHONY: common clean cleanall
+.PHONY: common clean
+
+mkdirectories:
+	mkdir -p ../csrc/service_plugins/build
 
 common:
-	@echo -e "=== build dependencies ==="
-	$(CC) $(CFLAGS) -fPIC -c -o $@.o ../csrc/service_plugins/$@.c
+	cd ../csrc/service_plugins/build && \
+	$(CC) $(CFLAGS) -fPIC -c -o $@.o ../$@.c
 
 clean:
-	@rm -rf *.o *.so *.hmf *.hmf.cu
+	cd ../csrc/service_plugins/build && \
+	rm -rf *.o *.so *.hmf *.hmf.cu
 
-cleanall: clean
-	@rm -rf ../bin/*

@@ -438,5 +438,42 @@
                 ]
             }
         }
+    },
+    "de.upb.sede.services.ImageArchive" : {
+        "methods" : {
+            "$construct": {
+                "params": [
+                    "ImageZip",
+                    {
+                        "type" : "Bool",
+                        "fixed" : "true"
+                    },
+                    {
+                        "type" : "Bool",
+                        "fixed" : "true"
+                    }
+                ]
+            },
+            "getLabeledImages" : {
+                "returntype" : "FastBitmap_List",
+                "statemutating": false
+            },
+            "getUnlabeledImages" : {
+                "returntype" : "FastBitmap_List",
+                "statemutating": false
+            },
+            "getLabels" : {
+                "returntype" : "builtin.List",
+                "statemutating": false
+            },
+            "getLabeledImagesFileNames" : {
+                "returntype" : "builtin.List",
+                "statemutating": false
+            },
+            "getUnlabeledImagesFileNames" : {
+                "returntype" : "builtin.List",
+                "statemutating": false
+            }
+        }
     }
 }

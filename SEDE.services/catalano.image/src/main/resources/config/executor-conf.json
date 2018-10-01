@@ -4,7 +4,8 @@
   "threadNumber": 4,
   "services": [
     "Catalano.Imaging.Filters.Resize",
-
+    "de.upb.sede.services.ImageArchive",
+    
     "Catalano.Imaging.Filters.Crop",
     "Catalano.Imaging.sede.CropFrom0",
 

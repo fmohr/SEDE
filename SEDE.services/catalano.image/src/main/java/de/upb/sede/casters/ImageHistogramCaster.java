@@ -61,16 +61,16 @@ public class ImageHistogramCaster {
 
 		output.append("@relation").append(" ").append("\"image_histograms\"").append("\n\n");
 
-		output.append("@ATTRIBUTE mean NUMERIC").append("\n");
-		output.append("@ATTRIBUTE stdDev NUMERIC").append("\n");
-		output.append("@ATTRIBUTE entropy NUMERIC").append("\n");
-		output.append("@ATTRIBUTE kurtosis NUMERIC").append("\n");
-		output.append("@ATTRIBUTE skewness NUMERIC").append("\n");
-		output.append("@ATTRIBUTE median NUMERIC").append("\n");
-		output.append("@ATTRIBUTE mode NUMERIC").append("\n");
-		output.append("@ATTRIBUTE min NUMERIC").append("\n");
-		output.append("@ATTRIBUTE max NUMERIC").append("\n");
-		output.append("@ATTRIBUTE total NUMERIC").append("\n");
+//		output.append("@ATTRIBUTE mean NUMERIC").append("\n");
+//		output.append("@ATTRIBUTE stdDev NUMERIC").append("\n");
+//		output.append("@ATTRIBUTE entropy NUMERIC").append("\n");
+//		output.append("@ATTRIBUTE kurtosis NUMERIC").append("\n");
+//		output.append("@ATTRIBUTE skewness NUMERIC").append("\n");
+//		output.append("@ATTRIBUTE median NUMERIC").append("\n");
+//		output.append("@ATTRIBUTE mode NUMERIC").append("\n");
+//		output.append("@ATTRIBUTE min NUMERIC").append("\n");
+//		output.append("@ATTRIBUTE max NUMERIC").append("\n");
+//		output.append("@ATTRIBUTE total NUMERIC").append("\n");
 
 		ImageHistogram first = histogramList.get(0);
 		for (int i = 0; i < first.getValues().length; i++) {
@@ -85,16 +85,16 @@ public class ImageHistogramCaster {
 		DecimalFormat df3 = new DecimalFormat("0.###", otherSymbols);
 		for(ImageHistogram histogram : histogramList) {
 			StringBuilder dataPoint = new StringBuilder();
-			dataPoint.append(df3.format(histogram.getMean()))		.append(",");
-			dataPoint.append(df3.format(histogram.getStdDev()))		.append(",");
-			dataPoint.append(df3.format(histogram.getEntropy()))	.append(",");
-			dataPoint.append(df3.format(histogram.getKurtosis()))	.append(",");
-			dataPoint.append(df3.format(histogram.getSkewness()))	.append(",");
-			dataPoint.append(df3.format(histogram.getMedian()))		.append(",");
-		dataPoint.append(df3.format(histogram.getMode()))			.append(",");
-			dataPoint.append(df3.format(histogram.getMin()))		.append(",");
-			dataPoint.append(df3.format(histogram.getMax())	)		.append(",");
-			dataPoint.append(df3.format(histogram.getTotal()))		.append(",");
+//			dataPoint.append(df3.format(histogram.getMean()))		.append(",");
+//			dataPoint.append(df3.format(histogram.getStdDev()))		.append(",");
+//			dataPoint.append(df3.format(histogram.getEntropy()))	.append(",");
+//			dataPoint.append(df3.format(histogram.getKurtosis()))	.append(",");
+//			dataPoint.append(df3.format(histogram.getSkewness()))	.append(",");
+//			dataPoint.append(df3.format(histogram.getMedian()))		.append(",");
+//		dataPoint.append(df3.format(histogram.getMode()))			.append(",");
+//			dataPoint.append(df3.format(histogram.getMin()))		.append(",");
+//			dataPoint.append(df3.format(histogram.getMax())	)		.append(",");
+//			dataPoint.append(df3.format(histogram.getTotal()))		.append(",");
 			int[] values = histogram.getValues();
 			for (int i = 0; i < values.length; i++) {
 				dataPoint.append(values[i]).append(",");

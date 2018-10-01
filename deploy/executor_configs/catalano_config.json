@@ -5,7 +5,7 @@
   "services": [
     "Catalano.Imaging.Filters.Resize",
     "de.upb.sede.services.ImageArchive",
-    
+    "de.upb.sede.services.Image2Feature",
     "Catalano.Imaging.Filters.Crop",
     "Catalano.Imaging.sede.CropFrom0",
 

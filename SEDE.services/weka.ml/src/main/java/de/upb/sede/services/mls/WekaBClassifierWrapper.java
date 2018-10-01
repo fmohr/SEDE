@@ -59,8 +59,7 @@ public class WekaBClassifierWrapper implements Serializable, DictOptionsHandler,
 	 * @throws Exception exception thrown during invocation of 'buildClassifier'.
 	 */
 	public void train(Instances data) throws Exception {
-		/* Recreate the classifier object.
-		 * to allow warm start move this invocation to the constructor. */
+		/* Recreate the classifier object. */
 		classifier.buildClassifier(data);
 	}
 

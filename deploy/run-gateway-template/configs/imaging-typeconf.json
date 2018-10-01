@@ -14,5 +14,9 @@
     "ImageHistogram_List" : {
         "semantic_type": "dataset",
         "onthological_caster": "de.upb.sede.casters.ImageHistogramCaster"
+    },
+    "ImageZip" : {
+        "semantic_type": "image_zip_bytes",
+        "onthological_caster": "de.upb.sede.casters.ImageZipCaster"
     }
 }

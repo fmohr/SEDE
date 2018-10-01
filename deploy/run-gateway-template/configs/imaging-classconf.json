@@ -311,6 +311,51 @@
             }
         }
     },
+    "de.upb.sede.services.Image2Feature" : {
+        "extends" : ["$Feature_Extractor$", "$dict_option_handler_config$"],
+        "methods": {
+            "$construct": {},
+            "ComputeFeatures" : {
+                "params": [
+                    {
+                        "type": "Catalano.Imaging.FastBitmap",
+                        "statemutating": true
+                    }
+                ],
+                "returntype": "Catalano.Imaging.Tools.ImageHistogram",
+                "statemutating": false
+            },
+            "ComputeFeatureSet" : {
+                "params": [
+                    {
+                        "type": "FastBitmap_List",
+                        "statemutating": true
+                    }
+                ],
+                "returntype": "ImageHistogram_List",
+                "statemutating": false
+            }, "extract_featureset" : {
+                "realisedby": {
+                    "methodname" : "ComputeFeatureSet",
+                    "overload" : true
+                }
+            },"set_options_dict": {
+                "params": [
+                    "builtin.Dict"
+                ],
+                "realisedby":"setOptions",
+                "statemutating": true
+            },
+            "setOptions" : {
+                "set_options_dict": {
+                    "params": [
+                        "builtin.Dict"
+                    ]
+                },
+                "statemutating": true
+            }
+        }
+    },
     "Catalano.Imaging.wrappers.GrayScale": {
         "extends" : ["$In_Place_Applier$"],
         "methods": {
@@ -464,6 +509,10 @@
                 "statemutating": false
             },
             "getUnlabeledImages" : {
+                "returntype" : "FastBitmap_List",
+                "statemutating": false
+            },
+            "getUnlabeledImagesCopy" : {
                 "returntype" : "FastBitmap_List",
                 "statemutating": false
             },

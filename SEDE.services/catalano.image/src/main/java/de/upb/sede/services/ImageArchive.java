@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -79,7 +80,7 @@ public class ImageArchive {
 			}
 		}
 		if(!labelsWithoutImages.isEmpty()) {
-			logger.warn("The following labels are removed as there are no corresponding images found for them: %s",
+			logger.warn("The following labels are removed as there are no corresponding images found for them: {}",
 					labelsWithoutImages.toString());
 			labelsWithoutImages.forEach(extractedLabels::remove);
 			labelsWithoutImages.forEach(extractedImages::remove);
@@ -158,6 +159,10 @@ public class ImageArchive {
 
 	public List<FastBitmap> getUnlabeledImages() {
 		return unlabeledImages;
+	}
+
+	public List<FastBitmap> getUnlabeledImagesCopy() {
+		return unlabeledImages.stream().map(FastBitmap::new).collect(Collectors.toList());
 	}
 
 	public List<String> getUnlabeledImagesFileNames() {

@@ -33,6 +33,6 @@
         "sklearn.tree.DecisionTreeClassifier",
         "tflib.NeuralNet"
     ],
-    "gateways": ["localhost:30370"],
+    "gateways": ["localhost:6000"],
     "serviceStoreLocation": "instances"
 }

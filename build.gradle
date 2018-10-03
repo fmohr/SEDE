@@ -4,14 +4,13 @@ project.ext {
         Set global properties like folder paths and so on:
      */
 }
-
-
 subprojects {
     /*
         configuration for all sub projects.
      */
     apply plugin: 'java-library'
     apply plugin: 'eclipse'
+
     group = 'de.upb.sede'
     version = '0.0.4'
 

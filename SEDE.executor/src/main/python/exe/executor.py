@@ -7,17 +7,17 @@ from exe.workers import WorkerPool
 from util.observing import Observer
 from exe.config import ExecutorConfig
 from typing import Dict
-from threading import RLock
+from threading import Lock
 
 class ExecutionPool:
     execMap: Dict[str, Execution]
     config: ExecutorConfig
-    lock: RLock
+    lock: Lock
 
     def __init__(self, config:ExecutorConfig):
         self.config = config
         self.execMap = dict()
-        self.lock = RLock()
+        self.lock = Lock()
         pass
 
     def remove_execution(self, execution: Execution) -> Execution:
@@ -63,7 +63,7 @@ class Executor:
         self.executor_garbage_collector = Observer(
             Execution.has_execution_finished, self.remove_execution)
         self.bind_procedure_names()
-        self.lock = RLock()
+        self.lock = Lock()
 
     def bind_procedure_names(self):
         from procedure.data_procedures import \
@@ -87,6 +87,7 @@ class Executor:
             self.worker_pool.remove_execution(execution)
 
     def put(self, dataputrequest: 'requests.DataPutRequest'):
+        logging.trace("DATA received: %s", dataputrequest.requestId)
         with self.lock:
             execution = self.execPool.get_orcreate_execution(
                 dataputrequest.requestId)
@@ -97,16 +98,18 @@ class Executor:
             else:
                 # The request contains the data:
                 environment[dataputrequest.fieldname] = dataputrequest.data
+            logging.trace("DATA handled: %s", dataputrequest.requestId)
 
     def execute(self, execrequest: 'requests.ExecRequest'):
+        logging.trace("GRAPH received: %s", execrequest.requestId)
         with self.lock:
             execId = execrequest.requestId
-            # First check if execution id is taken:
-            if self.execPool.execIdTaken(execId):
-                raise Exception("Execution Id is already taken: {}".format(execId))
             execution = self.execPool.get_orcreate_execution(execId)
+            if execution.has_graph:
+                raise Exception("Execution Id is already taken: {}".format(execId))
             execution.runnable_tasks.observe(self.task_enqueuer)
             execution.deserialize_graph(execrequest.graph)
+            logging.trace("GRAPH parsed: %s", execrequest.requestId)
             execution.state.observe(self.executor_garbage_collector)
             logging.info("Execution request {} started.".format(execId))
             return execution

@@ -54,7 +54,7 @@ class ExecuteGraphHandler(StringServerResponse):
 
     def receive_str(self, input_str: str) -> str:
         try:
-            logging.debug("%s received execute request.", self.executor.config.executor_id)
+            logging.debug("%s received execute request.", str(self.executor.config.executor_id))
             execRequest: ExecRequest = ExecRequest.from_json_string(input_str)
             self.executor.execute(execRequest)
             return ""

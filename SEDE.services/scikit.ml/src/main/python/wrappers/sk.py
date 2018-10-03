@@ -39,6 +39,16 @@ class BaseOptionsSetterMixin(object):
         else:
             raise RuntimeError("Wrapped instance isn't a optional handler and doesn't define 'set_params'.")
 
+    def set_options_dict(self, optiondict:dict):
+        """ invokes set_params .
+        """
+        logging.debug("Setting options of %s to: " + str(optiondict), self.name)
+
+        if hasattr(self, "set_params"):
+            self.set_params(**optiondict)
+        else:
+            raise RuntimeError("Wrapped instance isn't a optional handler and doesn't define 'set_params'.")
+
 
     # def setOption(self, field, value):
     #     """ Uses the get_params and set_params method to assign the given value to the given field.

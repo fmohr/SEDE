@@ -34,20 +34,24 @@ class FlaskApp:
 
     def add_context(self, route:str, responder, methods =['GET', 'POST']):
         def route_handler(**kwargs):
-            if callable(responder):
-                responder_ = responder()
-            else:
-                responder_ = responder
-            return responder_.receive_bytes(request.get_data(), **kwargs)
+            try:
+                if callable(responder):
+                    responder_ = responder()
+                else:
+                    responder_ = responder
+                return responder_.receive_bytes(request.get_data(), **kwargs)
+            except Exception as ex:
+                return "couldn't handle request: " + str(ex)
 
         self.app.add_url_rule(route, str(uuid()), route_handler, **{"methods":methods})
 
-    def start_with_gunicorn(self, port:int, workers=1, threads=20):
+    def start_with_gunicorn(self, port:int, workers=1, threads=1):
         options = {
             'bind': '%s:%s' % ("0.0.0.0", port),
             'workers': workers,
             'threads' : threads
         }
+        logging.info("Starting executor with %d workers and %d thread each.", workers, threads)
         self.server = StandaloneApplication(self.app, options).run()
 
 class StandaloneApplication(gunicorn.app.base.BaseApplication):
@@ -66,6 +70,14 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
     def load(self):
         return self.application
 
+class HeartbeatHandler(StringServerResponse):
+    def __init__(self):
+        pass
+
+    def receive_str(self, input_str: str) -> str:
+        return "true";
+
+
 
 class HTTPExecutor(Executor):
     def __init__(self, config, host_address:str, port:int):
@@ -78,6 +90,7 @@ class HTTPExecutor(Executor):
         self.httpserver.add_context('/put/<executionId>/<fieldname>/<semtype>', partial(PutDataHandler, self))
         self.httpserver.add_context("/execute", partial(ExecuteGraphHandler, self))
         self.httpserver.add_context("/interrupt/<executionId>", partial(InterruptHandler, self))
+        self.httpserver.add_context("/cmd/heartbeat", HeartbeatHandler)
 
         logging.info("Starting Python executor http server: '%s'. host: %s port: %i", config.executor_id, host_address, port)
         self.register_toall()

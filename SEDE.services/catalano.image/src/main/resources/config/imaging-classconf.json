@@ -351,7 +351,7 @@
             }
         }
     },
-    "Catalano.Imaging.wrappers.GrayScale": {
+    "Catalano.Imaging.wrappers.Grayscale": {
         "extends" : ["$In_Place_Applier$"],
         "methods": {
             "$construct": {
@@ -374,7 +374,7 @@
         }
     },
     "Catalano.Imaging.Filters.GrayScale" : {
-        "wrapper" : "Catalano.Imaging.wrappers.GrayScale",
+        "wrapper" : "Catalano.Imaging.wrappers.Grayscale",
         "methods": {
             "$construct": {
                 "params": [
@@ -394,7 +394,7 @@
             }
         }
     },
-    "Catalano.Imaging.Filters.GrayScale_RGBCoeff" : {
+    "Catalano.Imaging.Filters.Grayscale_RGBCoeff" : {
         "wrapper" : "Catalano.Imaging.wrappers.GrayScale",
         "methods": {
             "$construct": {

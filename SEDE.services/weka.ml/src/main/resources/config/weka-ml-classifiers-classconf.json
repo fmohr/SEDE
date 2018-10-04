@@ -28,6 +28,20 @@
         ],
         "returntype" : "builtin.List",
         "static": true
+      },
+      "classIndicesPrettify": {
+        "params": [
+          "builtin.List"
+        ],
+        "returntype" : "builtin.List",
+        "static": true
+      },
+      "categorize": {
+        "params": [
+          "builtin.List"
+        ],
+        "returntype" : "builtin.List",
+        "static": true
       }
     }
   },

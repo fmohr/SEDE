@@ -140,7 +140,9 @@ public class ImageArchive {
 		InputStream is = inputStream;
 		BufferedImage image =  ImageIO.read(is);
 		FastBitmap fb = new FastBitmap(image);
-		new Center(256).applyInPlace(fb);
+		if(cropZipImages) {
+			new Center(256).applyInPlace(fb);
+		}
 		return fb;
 	}
 

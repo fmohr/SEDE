@@ -1,9 +1,9 @@
 package de.upb.sede.util;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.Inet4Address;
-import java.net.ServerSocket;
-import java.net.UnknownHostException;
+import java.io.InputStreamReader;
+import java.net.*;
 
 public class WebUtil {
 
@@ -14,6 +14,23 @@ public class WebUtil {
 			throw new RuntimeException(e);
 		}
 	}
+
+	public static String HostPublicIpAddress(){
+		URL whatismyip = null;
+		try {
+			whatismyip = new URL("http://checkip.amazonaws.com");
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
+		try (BufferedReader in = new BufferedReader(new InputStreamReader(
+				whatismyip.openStream()))){
+			String ip = in.readLine().trim();
+			return ip;
+		} catch (IOException e ) {
+			throw new RuntimeException(e);
+		}
+	}
+
 
 	public static int nextFreePort(int startFrom) {
 		int port;

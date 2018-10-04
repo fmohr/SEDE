@@ -74,9 +74,8 @@ public class FileUtil {
 
 	public static String readResourceAsString(String resourceFilePath) {
 		//Get file from resources folder
-		File file = getResourceFile(resourceFilePath);
-
-		try (InputStream inputStream = new FileInputStream(file)) {
+		ClassLoader classLoader = FileUtil.class.getClassLoader();
+		try (InputStream inputStream = classLoader.getResourceAsStream(resourceFilePath)) {
 			return Streams.InReadString(inputStream);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);

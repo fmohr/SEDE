@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 /*
  * A rudimentary test case.
  */
+import de.upb.sede.util.WebUtil;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,6 +29,12 @@ public class Rudimentary {
 	@Test
 	public void testLogging() {
 		logger.info("• • •   − − −   • • •  ");
+	}
+
+	@Test
+	public void testIpRetrievers() {
+		System.out.println("LOCAL: " + WebUtil.HostIpAddress());
+		System.out.println("PUBLIC: " + WebUtil.HostPublicIpAddress());
 	}
 
 }

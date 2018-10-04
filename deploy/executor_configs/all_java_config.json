@@ -18,7 +18,7 @@
 
     "Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern",
 
-    "Catalano.Imaging.Filters.GrayScale",
+    "Catalano.Imaging.Filters.Grayscale",
     "Catalano.Imaging.Filters.GrayScale_RGBCoeff",
     "Catalano.Imaging.Filters.GrayScale_Lightness",
     "Catalano.Imaging.Filters.GrayScale_Average",
@@ -33,6 +33,8 @@
     "de.upb.sede.services.mls.WekaBClassifierWrapper",
     "de.upb.sede.services.mls.WekaFilterWrapper",
 
+    "weka.clusterers.Canopy",
+    "weka.clusterers.SimpleKMeans",
     "weka.attributeSelection.AttributeSelection",
     "weka.classifiers.bayes.BayesNet",
     "weka.classifiers.bayes.NaiveBayes",

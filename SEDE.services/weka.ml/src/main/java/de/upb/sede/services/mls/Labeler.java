@@ -23,7 +23,7 @@ public class Labeler {
 		if(classIndex<0) {
 			throw new RuntimeException("Dataset has no class attribute defined.");
 		}
-		List<String> categories = new TreeSet<String>(labels).stream().collect(Collectors.toList());
+		List<String> categories = categorize(labels);
 
 		Attribute attribute = new Attribute("class", categories);
 		dataset.replaceAttributeAt(attribute, classIndex);
@@ -43,9 +43,31 @@ public class Labeler {
 	}
 
 	/**
-	 * Maps the classindices back to their string value.
+	 * Maps the classindices back to their class label which is implicitly assumed to be strings.
+	 * @param categories categories of labels
+	 * @param classIndices list of number representing indices.
 	 */
-	public static List<String>  classIndicesToNames(List<String> labels, List<Number> classIndices) {
+	public static List<String>  classIndicesToNames(List<String> categories, List<Number> classIndices) {
+		/*
+		 * convert indices back to labels:
+		 */
+		return classIndices.stream().map(index -> categories.get(index.intValue())).collect(Collectors.toList());
+	}
+
+	/**
+	 * Prettifies the given list of numbers by translating each number i to "Group i".
+	 * @param classIndices indices of classes in number
+	 * @return list of labels
+	 */
+	public static List<String> classIndicesPrettify(List<Number> classIndices) {
+		return classIndices.stream().map(index -> String.format("Group %d", index.intValue()))
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Categorizes the given list of labels by eliminating duplicates and sorting them alphabetically.
+	 */
+	public static List<String> categorize(List<String> labels) {
 		/*
 		 * remove duplicate values and order them alphabetically.
 		 */
@@ -54,9 +76,7 @@ public class Labeler {
 		 * Copy them into a list so one can access them by index.
 		 */
 		List<String> categories = new ArrayList<>(set);
-		/*
-		 * convert indices back to labels:
-		 */
-		return classIndices.stream().map(index -> categories.get(index.intValue())).collect(Collectors.toList());
+		return categories;
 	}
+
 }

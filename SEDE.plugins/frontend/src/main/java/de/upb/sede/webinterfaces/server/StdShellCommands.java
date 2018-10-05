@@ -42,7 +42,7 @@ public class StdShellCommands {
 											} catch (IOException e) {
 												e.printStackTrace();
 											}
-											return "Log file cleared."
+											return "Log file cleared.";
 										}
 
 								)))

@@ -8,22 +8,23 @@
     <Console name="STDOUT">
       <PatternLayout pattern="%d{mm:ss.SSSS} %p %C{2.} [%t] %m%n"/>
     </Console>
-    <File name="defaultfile" fileName="${basePath}/sede-1.log">
+    <File name="defaultfile" fileName="${basePath}/sede.log">
       <PatternLayout>
         <pattern>%d %p %C{1.} [%t] %m%n</pattern>
       </PatternLayout>
     </File>
-    <File name="defaultfile2" fileName="${basePath}/sede.log">
-            <PatternLayout>
-                <pattern>%d{dd-MM HH:mm:ss.SSS} [%-5level] [%t] %c{1} - %msg%n</pattern>
-            </PatternLayout>
+    <File name="defaultfile2" fileName="${basePath}/sede-1.log">
+      <PatternLayout>
+          <pattern>%d{dd-MM HH:mm:ss.SSS} [%-5level] [%t] %c{1} - %msg%n</pattern>
+      </PatternLayout>
     </File>
   </Appenders>
  
   <Loggers>
-    <Root level="debug">
+    <Root level="trace">
       <AppenderRef ref="STDOUT"/>
       <AppenderRef ref="defaultfile"/>
+      <AppenderRef ref="defaultfile2"/>
     </Root>
   </Loggers>
  

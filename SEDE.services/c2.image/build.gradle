@@ -4,13 +4,13 @@ dependencies {
     // https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
     provided project(":SEDE.core")
-
+    compile project(":CServices")
     compile files(
             'libs/Catalano.Image.jar',
             'libs/Catalano.Math.jar',
-            'libs/Catalano.Statistics.jar',
-            'libs/CServices.jar'
+            'libs/Catalano.Statistics.jar'
     )
 
     testCompile project(":SEDE.http")
+    testCompile project(":catalano.image")
 }

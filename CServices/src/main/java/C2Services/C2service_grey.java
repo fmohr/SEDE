@@ -25,15 +25,15 @@ public class C2service_grey extends Plugin {
     /**
      *
      */
-    private static final long serialVersionUID = -7471727695546943682L;
+    private static final long serialVersionUID = 1L;
 
     private static File serviceFile;
     private static List<File> linkedFiles;
 
     static {
-        serviceFile = new File("/home/aloesch/projects/SEDE/CServices/cbuild/libservice_grey.so");
+        serviceFile = new File("/home/amin/SEDE/CServices/csrc/service_plugins/build/libservice_grey.so");
         linkedFiles = new ArrayList<File>();
-        linkedFiles.add(new File("/home/aloesch/projects/SEDE/CServices/cbuild/libservice_grey_cpu.so"));
+        linkedFiles.add(new File("/home/amin/SEDE/CServices/csrc/service_plugins/build/libservice_grey_cpu.so"));
     }
 
     public C2service_grey() {
@@ -77,7 +77,9 @@ public class C2service_grey extends Plugin {
         //parameters.add(1d);
         params.put("params", parameters);// TODO see void get_service_params in e.g. service_dim2.c
 
-        params.put("images", new ArrayList<C2Image>().add(sourceImage));
+        List<C2Image> images = new ArrayList<C2Image>();
+        images.add(sourceImage);
+        params.put("images", images);
 
         Object result = serviceInstancePlugin.invokeOp("process", params);
 

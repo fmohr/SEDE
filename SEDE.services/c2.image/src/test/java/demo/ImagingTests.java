@@ -32,9 +32,13 @@ import org.junit.Test;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -55,6 +59,7 @@ public class ImagingTests {
     // C2 image type.
     static C2ImageManager im_lenna;
     static C2Image lenna;
+
 
 	static String executor1Address = WebUtil.HostIpAddress();
 	static int executorPort = 9000;
@@ -240,9 +245,70 @@ public class ImagingTests {
 		FastBitmap fast_lenna = new FastBitmap(buf_lenna);
 		System.out.printf("Converted to FastBitmap. %dx%d \n", fast_lenna.getHeight(), fast_lenna.getWidth());
 
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		SemanticStreamer.streamObjectInto(out, lenna);
 	}
+
+	@Test
+	public void testRGBTestImage() {
+		// Load C2 image.
+		ArrayList<String> file_src = new ArrayList<String>();
+		ArrayList<String> file_dest = new ArrayList<String>();
+		file_src.add(FileUtil.getPathOfResource("images/rgb_test.png"));
+		file_src.add(FileUtil.getPathOfResource("images/r_test.tiff"));
+		C2ImageManager manager = new C2ImageManager(file_src, file_dest);
+
+		manager.environmentUp();
+		manager.readImages();
+		C2Image rgbImg = manager.getSourceImages().get(0);
+		C2Image rImg = manager.getSourceImages().get(1);
+
+		FastBitmap rgbImgFb = new FastBitmap(FileUtil.getPathOfResource("images/rgb_test.png"));
+
+		/*
+		 * Write the pixels encoded in each representation to a file:
+		 */
+		StringBuilder pixelData = new StringBuilder();
+		pixelData.append("rgb_test.png C2Image pixels:\n" + Arrays.toString(rgbImg.getPixels()));
+		pixelData.append("\nr_test.png Fastbitmap pixels:\n" + pixelsToString(rgbImgFb));
+
+		pixelData.append("\nr_test.tiff C2Image pixels:\n" + Arrays.toString(rImg.getPixels()));
+
+		FileUtil.writeStringToFile("testrsc/pixel_data.txt", pixelData.toString());
+
+		/*
+		 * Cast C2Image -> semantic -> C2Image
+		 */
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		SEDEObject image0 = new ObjectDataField("C2Data.C2Image", rgbImg);
+		SemanticStreamer.streamObjectInto(out, image0, C2ImageCaster.class.getName(), "sem");
+		byte[] semanticData = out.toByteArray();
+
+		InputStream in = new ByteArrayInputStream(semanticData);
+		SEDEObject c2Obj = SemanticStreamer.readObjectFrom(in, C2ImageCaster.class.getName(), "sem", "C2Data.C2Image");
+
+		/*
+		 * Cast C2Image -> semantic -> FastBitmap
+		 */
+
+		in = new ByteArrayInputStream(semanticData);
+		SEDEObject fbObj = SemanticStreamer.readObjectFrom(in, FastBitmapCaster.class.getName(), "sem", "FastBitmap");
+
+//		JOptionPane.showMessageDialog(null, ((FastBitmap) fbObj.getDataField()).toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
+	}
+
+	public String pixelsToString(FastBitmap fb) {
+		int[] pixelArr = fb.getRGBData(); // 'getRGBData' is correct, internally its one array for both argb and rgb
+		List<Integer> imageEncoding = new ArrayList<>();
+		for (int index = 0, size = pixelArr.length;
+			 index < size; index++) {
+			int argb = pixelArr[index];
+			imageEncoding.add(argb  >> 24 & 255); // alpha
+			imageEncoding.add(argb  >> 16 & 255); // red
+			imageEncoding.add(argb  >>  8 & 255); // green
+			imageEncoding.add(argb  	  & 255); // blue
+		}
+		return imageEncoding.toString();
+	}
+
 
     @Test
     public void testCatalanoCropWithC2Image() throws InvocationTargetException, InterruptedException {
@@ -330,7 +396,6 @@ public class ImagingTests {
 		 */
         String composition =
                 "s1 = C2Services.C2service_grey::__construct();\n" +
-				"s1::compute({22,33});\n" +
         		"imageOut = s1::process({i1=imageIn});\n";
 
 

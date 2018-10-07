@@ -1,5 +1,6 @@
 package de.upb.sede;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /*
@@ -29,5 +30,16 @@ public class Rudimentary {
 	public void testLogging() {
 		logger.info("• • •   − − −   • • •  ");
 	}
+
+	@Test
+	public void testShift() {
+		Long a = 128L;
+		short shifted =  (short) ((a.shortValue() << 8) & 65535);
+		assertEquals(-32768, shifted);
+		int rightShifted = (shifted >> 8) & 255;
+		assertEquals(128, rightShifted);
+	}
+
+
 
 }

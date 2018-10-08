@@ -3,7 +3,7 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # look up the ip address:
-ip=$(ip route get 8.8.8.8 | awk 'NR==1 {print $NF}')
+#ip=$(ip route get 8.8.8.8 | awk 'NR==1 {print $NF}')
 ip="localhost"
 echo IP address: "$ip"
 
@@ -20,4 +20,4 @@ echo Port: "$port"
 config="$DIR"/../executor_configs/all_java_config.json
 echo Configuration file: "$config"
 
-java -Xmx12g -cp "$DIR"/../SEDE/'*':"$DIR"/../SEDE_logging_lib/'*':"$DIR"/services/'*':"$DIR"  de.upb.sede.exec.ExecutorServerStarter "$config" "$ip" "$port"
+java -Xmx8g -cp "$DIR"/../SEDE/'*':"$DIR"/../SEDE_logging_lib/'*':"$DIR"/services/'*':"$DIR"  de.upb.sede.exec.ExecutorServerStarter "$config" "$ip" "$port"

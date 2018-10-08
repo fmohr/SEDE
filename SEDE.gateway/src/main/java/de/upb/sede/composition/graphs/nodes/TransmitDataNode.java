@@ -53,6 +53,10 @@ public class TransmitDataNode extends BaseNode {
 	}
 
 	public String toString() {
-		return "transmit \"" + fieldname + "\"->" + contactInfo.get("id");
+		String host = (String) contactInfo.get("host-address");
+		if(host == null) {
+			host = "NO_HOST";
+		}
+		return "transmit \"" + fieldname + "\"->" + contactInfo.get("id") + ":" + host;
 	}
 }

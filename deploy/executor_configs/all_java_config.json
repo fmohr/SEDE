@@ -1,10 +1,11 @@
 {
-  "gateways": ["localhost:6000"],
+  "gateways": ["192.168.178.170:6000"],
   "capabilities": [],
   "threadNumber": 4,
   "services": [
     "Catalano.Imaging.Filters.Resize",
-
+    "de.upb.sede.services.ImageArchive",
+    "de.upb.sede.services.Image2Feature",
     "Catalano.Imaging.Filters.Crop",
     "Catalano.Imaging.sede.CropFrom0",
 

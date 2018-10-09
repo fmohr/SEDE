@@ -22,20 +22,25 @@ public class Center extends AbstractImageProcessor {
 		int newWidth, newHeight;
 		int offset_x, offset_y;
 		if(width > height) {
-			newWidth = (int) ((size / height) * width); // 2/5 * 10 = 4
+			newWidth = (int) Math.ceil(((size / height) * width)); // 2/5 * 10 = 4
 			newHeight = (int) size; // 2
-			offset_x = (int) ((newWidth - size) * 0.5); // (4 - 2) * 0.5 = 1
+			offset_x = (int) Math.ceil((newWidth - size) * 0.5); // (4 - 2) * 0.5 = 1
 			offset_y = 0; //0
 		} else {
 			newHeight = (int) ((size / width) * height);
 			newWidth = (int) size;
 			offset_x = 0;
-			offset_y = (int) ((newHeight - size) * 0.5);
+			offset_y = (int) Math.ceil((newHeight - size) * 0.5);
 		}
 		Resize resize = new Resize(newWidth, newHeight);
 		resize.applyInPlace(fb);
-
-		Crop crop = new Crop(offset_x, offset_y, this.size, this.size);
-		crop.ApplyInPlace(fb);
+		try {
+			Crop crop = new Crop(offset_y, offset_x, this.size, this.size);
+			crop.ApplyInPlace(fb);
+		}catch (IllegalArgumentException sizeTooBig) {
+			System.out.println("Couldnt crop out the center: image [" + newWidth + ", " + newHeight + "]." +
+					" Crop = [" + offset_y + "-" + this.size + ", " + offset_x + "-" + this.size + "]" );
+			new Resize(this.size, this.size).applyInPlace(fb);
+		}
 	}
 }

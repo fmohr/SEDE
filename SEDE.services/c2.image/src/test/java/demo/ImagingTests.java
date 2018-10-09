@@ -41,10 +41,10 @@ public class ImagingTests {
 	static CoreClient coreClient;
 
 	static String clientAddress = WebUtil.HostIpAddress();
-	static int clientPort = 7000;
+	static int clientPort = 7001;
 
 	static String gatewayAddress = "localhost";
-	static int gatewayPort = 6000;
+	static int gatewayPort = 6001;
 
 	// Catalano image type.
 	static FastBitmap frog;
@@ -54,7 +54,7 @@ public class ImagingTests {
     static C2Image lenna;
 
 	static String executor1Address = WebUtil.HostIpAddress();
-	static int executorPort = 9000;
+	static int executorPort = 9001;
 	static ExecutorHttpServer executor1;
 
 	static GatewayHttpServer gateway;
@@ -101,7 +101,8 @@ public class ImagingTests {
 						"Catalano.Imaging.Filters.GrayScale_MinimumDecomposition",
 						"Catalano.Imaging.Filters.GrayScale_MaximumDecomposition",
 						"C2Services.C2AddTwoNumbers",
-                        "C2Services.C2service_grey"
+                        "C2Services.C2service_grey",
+						"C2Services.C2service_sobel"
 						)
 		);
 		System.out.println(executor1.getBasisExecutor().getExecutorConfiguration().toJsonString());
@@ -183,7 +184,7 @@ public class ImagingTests {
 		Map<String, SEDEObject> inputs = new HashMap<>();
 		inputs.put("imageIn", inputObject_fb1);
 
-		if(!WORKAROUND___ENABLE_C2_IMAGES)
+		// if(!WORKAROUND___ENABLE_C2_IMAGES)
 		    JOptionPane.showMessageDialog(null, frog.toIcon(), "Original image", JOptionPane.PLAIN_MESSAGE);
 
 		RunRequest runRequest = new RunRequest("processing1", composition, policy, inputs);
@@ -239,6 +240,147 @@ public class ImagingTests {
 
 		if(!WORKAROUND___ENABLE_C2_IMAGES)
 		    JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
+	}
+
+	@Test
+	public void testC2ImageProcessing() {
+		/*
+			Tests fixed parameters:
+		 */
+		String composition =
+				"s1 = C2Services.C2service_grey::__construct();\n" +
+						"imageOut = s1::process({i1=imageIn})";
+
+		ResolvePolicy policy = new ResolvePolicy();
+		policy.setServicePolicy("None");
+		policy.setReturnFieldnames(Arrays.asList("imageOut"));
+
+		SEDEObject inputObject_fb1 = new ObjectDataField(C2Image.class.getName(), lenna);
+
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		inputs.put("imageIn", inputObject_fb1);
+
+		if(!WORKAROUND___ENABLE_C2_IMAGES)
+			JOptionPane.showMessageDialog(null, frog.toIcon(), "Original image", JOptionPane.PLAIN_MESSAGE);
+
+		RunRequest runRequest = new RunRequest("processing3", composition, policy, inputs);
+
+		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
+		Result result = resultMap.get("imageOut");
+		if(result == null || result.hasFailed()) {
+			Assert.fail("Result missing...");
+		}
+		/*
+			Cast it to bitmap:
+		 */
+		C2Image processedImage = result.castResultData(
+				C2Image.class.getName(), C2ImageCaster.class).getDataField();
+
+
+		System.out.printf("%dx%dx%dx%d \n", lenna.getPixels()[0], lenna.getPixels()[1], lenna.getPixels()[2], lenna.getPixels()[3]);
+
+
+		System.out.printf("Magick/JNI load \"lenna\". %dx%d \n", processedImage.getRows(), processedImage.getColumns());
+		System.out.printf("%dx%dx%dx%d \n", processedImage.getPixels()[0], processedImage.getPixels()[1], processedImage.getPixels()[2], processedImage.getPixels()[3]);
+		System.out.printf("%dx%dx%dx%d \n", processedImage.getPixels()[4], processedImage.getPixels()[5], processedImage.getPixels()[6], processedImage.getPixels()[7]);
+
+		if(!WORKAROUND___ENABLE_C2_IMAGES)
+			System.out.println("hello ");
+
+		//   JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
+
+		System.out.println("done ... ");
+	}
+
+
+	@Test
+	public void testC2SobelProcessing() {
+		/*
+			Tests fixed parameters:
+		 */
+		String composition =
+				"s1 = C2Services.C2service_sobel::__construct();\n" +
+						"imageOut = s1::process({i1=imageIn})";
+
+		ResolvePolicy policy = new ResolvePolicy();
+		policy.setServicePolicy("None");
+		policy.setReturnFieldnames(Arrays.asList("imageOut"));
+
+		SEDEObject inputObject_fb1 = new ObjectDataField(C2Image.class.getName(), lenna);
+
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		inputs.put("imageIn", inputObject_fb1);
+
+		if(!WORKAROUND___ENABLE_C2_IMAGES)
+			JOptionPane.showMessageDialog(null, frog.toIcon(), "Original image", JOptionPane.PLAIN_MESSAGE);
+
+		RunRequest runRequest = new RunRequest("processing3", composition, policy, inputs);
+
+		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
+		Result result = resultMap.get("imageOut");
+		if(result == null || result.hasFailed()) {
+			Assert.fail("Result missing...");
+		}
+		/*
+			Cast it to bitmap:
+		 */
+		C2Image processedImage = result.castResultData(
+				C2Image.class.getName(), C2ImageCaster.class).getDataField();
+
+
+		System.out.printf("%dx%dx%dx%d \n", lenna.getPixels()[0], lenna.getPixels()[1], lenna.getPixels()[2], lenna.getPixels()[3]);
+
+
+		System.out.printf("Magick/JNI load \"lenna\". %dx%d \n", processedImage.getRows(), processedImage.getColumns());
+		System.out.printf("%dx%dx%dx%d \n", processedImage.getPixels()[0], processedImage.getPixels()[1], processedImage.getPixels()[2], processedImage.getPixels()[3]);
+		System.out.printf("%dx%dx%dx%d \n", processedImage.getPixels()[4], processedImage.getPixels()[5], processedImage.getPixels()[6], processedImage.getPixels()[7]);
+
+		if(!WORKAROUND___ENABLE_C2_IMAGES)
+			System.out.println("hello ");
+
+		//   JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
+
+		System.out.println("done ... ");
+	}
+
+	@Test
+	public void testC2ImageProcessingInplace() {
+		/*
+			Tests fixed parameters:
+		 */
+		String composition =
+				"s1 = C2Services.C2service_grey::__construct();\n" +
+						"imageOut = s1::ApplyInPlace({i1=imageIn})";
+
+		ResolvePolicy policy = new ResolvePolicy();
+		policy.setServicePolicy("None");
+		policy.setReturnFieldnames(Arrays.asList("imageOut"));
+
+		SEDEObject inputObject_fb1 = new ObjectDataField(C2Image.class.getName(), lenna);
+
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		inputs.put("imageIn", inputObject_fb1);
+
+		if(!WORKAROUND___ENABLE_C2_IMAGES)
+			JOptionPane.showMessageDialog(null, frog.toIcon(), "Original image", JOptionPane.PLAIN_MESSAGE);
+
+		RunRequest runRequest = new RunRequest("processing4", composition, policy, inputs);
+
+		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
+		Result result = resultMap.get("imageOut");
+		if(result == null || result.hasFailed()) {
+			Assert.fail("Result missing...");
+		}
+		/*
+			Cast it to C2Image:
+		 */
+		C2Image processedImage = result.castResultData(
+				C2Image.class.getName(), C2ImageCaster.class).getDataField();
+
+		if(!WORKAROUND___ENABLE_C2_IMAGES)
+			System.out.println("hello ");
+
+		//   JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
 	}
 
 	@Test

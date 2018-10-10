@@ -70,7 +70,7 @@ class StandaloneApplication(gunicorn.app.base.BaseApplication):
 class HTTPExecutor(Executor):
     def __init__(self, config, host_address:str, port:int):
         super().__init__(config)
-        self.host_address = host_address
+        self.address = host_address
         self.port = port
         self.bind_http_procedure_names()
         self.httpserver = FlaskApp("PYTHON_EXECUTOR")
@@ -87,8 +87,8 @@ class HTTPExecutor(Executor):
         self.worker_pool.bind_procedure("Finish", FinishOverHttp)
 
     def contact_info(self):
-        d = super().contact_info();
-        d["host-address"] = self.host_address + ":" + str(self.port)
+        d = super().contact_info()
+        d["host-address"] = self.address
         return d
 
     def start_listening(self):
@@ -118,6 +118,16 @@ class HTTPExecutor(Executor):
             raise ValueError("Answer received was None")
 
 
+def retrieve_executoraddr():
+    import os
+    if 'EXECUTOR_ADDRESS' in os.environ:
+        addr = os.environ['EXECUTOR_ADDRESS']
+        logging.info("Retrieved the address of this executor from '$EXECUTOR_ADDRESS': %s", addr)
+        return addr
+    else:
+        return None
+
+
 def main():
     import sys
     import json
@@ -131,23 +141,27 @@ def main():
     else:
         executorConfig = ExecutorConfig.empty_config()
 
-    # second argument is the local host address.
-    # Like an ip address or 'localhost'
-    if sys.argv:
-        host_address = str(sys.argv.pop(0))
-    else:
-        host_address = "localhost"
-
-    # third argument is the port which should be opened by the http executor:
+    #  second argument is the port which should be opened by the http executor:
     if sys.argv:
         port = int(sys.argv.pop(0))
     else:
         port = 5000
+
+    # third argument is the local host address.
+    # Like an ip address or 'localhost'
+    host_address = retrieve_executoraddr()
+    if host_address is None:
+        if sys.argv:
+            host_address = str(sys.argv.pop(0))
+        else:
+            host_address = "localhost:" + str(port)
+
     # restore the first argument:
     sys.argv.insert(0, program)
 
     executor = HTTPExecutor(executorConfig, host_address, port)
     executor.start_listening()
+
 
 
 def test():

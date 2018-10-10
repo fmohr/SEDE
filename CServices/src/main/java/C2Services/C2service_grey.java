@@ -25,15 +25,15 @@ public class C2service_grey extends Plugin {
     /**
      *
      */
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = -7471727695546943682L;
 
     private static File serviceFile;
     private static List<File> linkedFiles;
 
     static {
-        serviceFile = new File("/media/sf_SEDE1/CServices/csrc/service_plugins/build/libservice_grey.so");
+        serviceFile = new File("/home/aloesch/projects/SEDE/CServices/cbuild/libservice_grey.so");
         linkedFiles = new ArrayList<File>();
-        linkedFiles.add(new File("/media/sf_SEDE1/CServices/csrc/service_plugins/build/libservice_grey_cpu.so"));
+        linkedFiles.add(new File("/home/aloesch/projects/SEDE/CServices/cbuild/libservice_grey_cpu.so"));
     }
 
     public C2service_grey() {
@@ -56,7 +56,7 @@ public class C2service_grey extends Plugin {
         System.out.println("sg::process");
         //TODO set and use search path for libraries: java.library.path
         //TODO load shared objects only once
-        System.load("/media/sf_SEDE1/CServices/csrc/pluginbridge/build/libpluginbridge.so");
+        System.load("/sede/codebase/ServiceCodeProvider/c2imaging/service_node/bin/libpluginbridge.so");
 
 
         System.load(serviceFile.getAbsolutePath());

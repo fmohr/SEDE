@@ -26,6 +26,9 @@ project(':SEDE.assemblies').projectDir = new File(pluginFolder, "assemblies")
  * Projects offering services.
  */
 def serivceFolder = 'SEDE.services/'
+include 'builtins'
+project(':builtins').projectDir = new File(serivceFolder, "builtins")
+
 include 'demolib'
 project(':demolib').projectDir = new File(serivceFolder, "demolib")
 

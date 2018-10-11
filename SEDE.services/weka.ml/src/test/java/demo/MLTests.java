@@ -393,10 +393,12 @@ public class MLTests {
 
 
 	private static ClassesConfig getTestClassConfig() {
-		return new ClassesConfig(
+		ClassesConfig cc = new ClassesConfig(
 				FileUtil.getPathOfResource("config/weka-ml-classifiers-classconf.json"),
-				FileUtil.getPathOfResource("config/weka-ml-pp-classconf.json"),
-				FileUtil.getPathOfResource("config/sl-ml-classifiers-classconf.json"));
+				FileUtil.getPathOfResource("config/weka-ml-pp-classconf.json"));
+
+		cc.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/sl-ml-classifiers-classconf.json"));
+		return cc;
 	}
 
 	private static OnthologicalTypeConfig getTestTypeConfig() {

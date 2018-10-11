@@ -1,5 +1,4 @@
 plugins {
-    // Apply the java-library plugin to add support for Java Library
     id 'java-library'
 }
 
@@ -14,3 +13,6 @@ dependencies {
 
     testCompile project(":SEDE.http")
 }
+
+project.isServiceProject = false
+project.toBePublished = false

@@ -6,8 +6,28 @@
       "train":{}
     }
   },
+  "$list_option_handler_config$" : {
+    "abstract": true,
+    "methods": {
+      "set_options": {
+        "params": [
+          "builtin.List"
+        ]
+      }
+    }
+  },
+  "$dict_option_handler_config$" : {
+    "abstract": true,
+    "methods": {
+      "set_options_dict": {
+        "params": [
+          "builtin.Dict"
+        ]
+      }
+    }
+  },
   "de.upb.sede.services.mls.WekaFilterWrapper" : {
-    "extends":["$base_preprocessor_config$"],
+    "extends":["$base_preprocessor_config$", "$list_option_handler_config$", "$dict_option_handler_config$"],
     "methods" : {
       "$construct": {
         "params": [
@@ -16,14 +36,14 @@
       },
       "train": {
         "params": [
-          "weka.core.Instances"
+          "LabeledInstances"
         ]
       },
       "preprocess": {
         "params":[
-          "weka.core.Instances"
+          "LabeledInstances"
         ],
-        "returntype" : "weka.core.Instances"
+        "returntype" : "LabeledInstances"
       },
       "set_options": {
         "params":[
@@ -59,22 +79,29 @@
     }
   },
   "de.upb.sede.services.mls.WekaASWrapper":{
+    "extends":["$base_preprocessor_config$", "$dict_option_handler_config$"],
     "methods" : {
-      "$construct": {
+      "$construct": {},
+      "__construct1": {
         "params": [
           "String", "String", "builtin.List", "builtin.List"
-        ]
+        ],
+        "realisedby" :{
+          "methodname" : "$construct",
+          "overload" : true
+        }
+
       },
       "train":{
         "params": [
-          "weka.core.Instances"
+          "LabeledInstances"
         ]
       },
       "preprocess":{
         "params": [
-          "weka.core.Instances"
+          "LabeledInstances"
         ],
-        "returntype": "weka.core.Instances",
+        "returntype": "LabeledInstances",
         "statemutating":false
       }
 

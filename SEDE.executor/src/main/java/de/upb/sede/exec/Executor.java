@@ -1,12 +1,18 @@
 package de.upb.sede.exec;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.TreeSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.upb.sede.config.ExecutorConfiguration;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.json.simple.JSONObject;
-
 import de.upb.sede.interfaces.IExecutor;
 import de.upb.sede.procedure.AcceptDataProcedure;
 import de.upb.sede.procedure.CastTypeProcedure;
@@ -16,8 +22,8 @@ import de.upb.sede.procedure.ServiceInstanceStorageProcedure;
 import de.upb.sede.requests.DataPutRequest;
 import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.requests.ExecutorRegistration;
-import de.upb.sede.util.Observer;
 import de.upb.sede.util.Observable;
+import de.upb.sede.util.Observer;
 
 /**
  * Core implementation of an executor.
@@ -25,7 +31,7 @@ import de.upb.sede.util.Observable;
 public class Executor implements IExecutor {
 
 
-	private static final Logger logger = LogManager.getLogger();
+	private static final Logger logger = LoggerFactory.getLogger(Executor.class);
 
 	private static final GraphJsonDeserializer deserializer = new GraphJsonDeserializer();
 

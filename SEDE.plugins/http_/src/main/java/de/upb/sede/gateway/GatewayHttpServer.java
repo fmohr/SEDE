@@ -5,13 +5,8 @@ import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.util.function.Supplier;
 
-import de.upb.sede.exec.Executor;
-import de.upb.sede.exec.ExecutorHttpServer;
-import de.upb.sede.util.Streams;
-import de.upb.sede.webinterfaces.server.HTTPServerResponse;
-import de.upb.sede.webinterfaces.server.ImServer;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.sun.net.httpserver.HttpServer;
 
@@ -20,12 +15,15 @@ import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.ResolveRequest;
+import de.upb.sede.util.Streams;
+import de.upb.sede.webinterfaces.server.HTTPServerResponse;
+import de.upb.sede.webinterfaces.server.ImServer;
 import de.upb.sede.webinterfaces.server.StringServerResponse;
 import de.upb.sede.webinterfaces.server.SunHttpHandler;
 
 public final class GatewayHttpServer implements ImServer {
 
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(GatewayHttpServer.class);
 	private final static int DEFAULT_PORT = 6060;
 
 	private final Gateway basis;
@@ -88,6 +86,10 @@ public final class GatewayHttpServer implements ImServer {
 	@Override
 	public void addHandle(String context, Supplier<HTTPServerResponse> serverResponder) {
 		server.createContext(context, new SunHttpHandler(serverResponder));
+	}
+
+	public void addHandle(String context, SunHttpHandler serverHandler) {
+		server.createContext(context, serverHandler);
 	}
 
 	class ExecutorRegistrationHandler extends StringServerResponse {
@@ -163,5 +165,4 @@ public final class GatewayHttpServer implements ImServer {
 			}
 		}
 	}
-
 }

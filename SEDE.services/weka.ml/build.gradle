@@ -2,7 +2,7 @@ plugins {
     id 'java'
 }
 
-version = 1.3
+version = 1.4
 sourceCompatibility = 1.8
 
 
@@ -13,17 +13,6 @@ repositories {
         url "https://nexus.cs.upb.de/repository/maven-releases/"
     }
 }
-
-sourceSets {
-    main {
-        resources {
-            srcDirs += [
-                    project(":scikit.ml").sourceSets.main.resources
-            ]
-        }
-    }
-}
-
 
 dependencies {
 
@@ -38,6 +27,12 @@ dependencies {
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
     provided project(":SEDE.core")
 
+    // only dependent on classconf and typeconf files:
+    testCompile project(path: ':scikit.ml', configuration: 'serviceConf')
+    testCompile project(path: ':builtins', configuration: 'serviceConf')
+
     testCompile project(":SEDE.http")
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
+
+project.isServiceProject = true

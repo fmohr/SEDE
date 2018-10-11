@@ -2,25 +2,21 @@ package demo;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 
-import de.upb.sede.composition.graphs.CompositionGraph;
-import de.upb.sede.composition.graphs.ExecPlan;
-import de.upb.sede.composition.graphs.GraphConstruction;
-import de.upb.sede.requests.resolve.GatewayResolution;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.simple.parser.JSONParser;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.gateway.Gateway;
 import de.upb.sede.requests.ExecutorRegistration;
+import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.util.FileUtil;
 
@@ -33,7 +29,7 @@ public class IntegrationTest_Resolve {
 	private static final GraphJsonSerializer GJS = new GraphJsonSerializer();
 	private static final JSONParser JP = new JSONParser();
 	
-	private static final Logger logger = LogManager.getLogger();
+	private static final Logger logger = LoggerFactory.getLogger(IntegrationTest_Resolve.class);
 	
 
 	@BeforeClass

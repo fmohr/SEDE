@@ -1,23 +1,38 @@
-
-project.ext {
-    /*
-        Set global properties like folder paths and so on:
-     */
+plugins {
+    id "net.linguica.maven-settings" version "0.5" apply false
 }
 
-
 subprojects {
+
     /*
         configuration for all sub projects.
      */
     apply plugin: 'java-library'
+    apply plugin: 'maven-publish'
+    apply plugin: 'net.linguica.maven-settings'
+
     apply plugin: 'eclipse'
+
     group = 'de.upb.sede'
-    version = '0.0.3'
+    version = '0.0.4'
 
     configurations {
         provided
         compile.extendsFrom provided
+        serviceConf
+    }
+
+    project.ext {
+        /*
+         * This flag indicates if the subproject is a service project.
+         * It is used to enable the jarconf task which packages the classconf and typeconf files.
+         */
+        isServiceProject = false
+
+        /*
+         * This flag determines weather the subproject should be published to the maven repository.
+         */
+        toBePublished = true
     }
 
     repositories {
@@ -27,20 +42,13 @@ subprojects {
         // we use jitpack in order to add dependecy to github projects:
         maven { url 'https://jitpack.io' }
 
-        /*// python repos:
-        pyGradlePyPi()
-        ivy{
-            url "/tmp/repo"
-            layout 'pattern' , {
-                artifact '[organisation]/[module]/[revision]/[artifact]-[revision](-[classifier]).[ext]'
-                ivy '[organisation]/[module]/[revision]/[module]-[revision].ivy'
-            }
-        }*/
     }
 
     dependencies {
-        compile group: 'org.apache.logging.log4j', name: 'log4j-core', version: '2.11.0'
-        compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.0'
+		compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+        // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
+        runtimeOnly group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.1'
+
 
         // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all
         testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
@@ -53,27 +61,30 @@ subprojects {
         ignoreFailures = true
     }
 
-    task dep {
-        doLast {
-            println "compile: "
-            (configurations.compile).collect { println "\t" + it.toString()}
-            println "\nprovided: "
-            (configurations.provided).collect { println "\t" + it.toString()  }
-            println "\ntestCompile: "
-            (configurations.testCompile).collect { println "\t" + it.toString() }
 
-
-            println "\ntestCompile - compile: "
-            (configurations.testCompile- configurations.compile).collect { println "\t" + it.toString() }
-
-
-            println "\ncompile - provided: "
-            (configurations.compile - configurations.provided).collect { println "\t" + it.toString()  }
-        }
+    // source Jar:
+    task sourcesJar(type: Jar) {
+        classifier = 'sources'
+        from sourceSets.main.allJava
     }
 
+    // classconf and typeconf Jar:
+    task jarconf(type: Jar) {
+        destinationDir = file("$rootDir/deploy/SEDE")
+        baseName = project.name
+        classifier = "serviceconf"
+
+        from (sourceSets.main.resources.
+                findAll { it.name.endsWith('classconf.json') || it.name.endsWith('typeconf.json') }
+                .collect {it}) {
+            into "config"}
+
+        onlyIf { project.isServiceProject }
+    }
+    artifacts.add('serviceConf', jarconf)
+
     // build Jar:
-    task jarjar(type: Jar, dependsOn: assemble) {
+    task jarjar(type: Jar, dependsOn: [assemble, jarconf]) {
 
         manifest {
             attributes 'Implementation-Title': "${project.name}",
@@ -85,10 +96,11 @@ subprojects {
         from { ((configurations.compile - configurations.provided))
                 .findAll { it.name.endsWith('jar') }
                 .collect { zipTree(it) } }
-        from sourceSets.main.allSource
-        with jar
+        from sourceSets.main.allJava
+        onlyIf { project.toBePublished }
     }
 
+    // copy python source:
     task buildPython(type: Copy) {
         from "${projectDir}/src/main/python/"
         include "**/*.py"
@@ -106,7 +118,12 @@ subprojects {
         delete "${rootDir}/deploy/SEDE"
         delete "${rootDir}/deploy/SEDE_Python"
     }
+
+    apply from: "$rootDir/publish.gradle"
 }
+
+apply from: 'docker.gradle'
+
 /*
     configurations for each sub project.
  */
@@ -142,6 +159,9 @@ project(':SEDE.gateway') {
         testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
 
         compile 'com.github.aminfa:TinyJavaDot:v1.3'
+
+        // dependend on the builtin service configurations
+        compile project(path: ':builtins', configuration: 'serviceConf')
     }
 }
 
@@ -156,4 +176,8 @@ project(':SEDE.executor') {
     }
 }
 
-apply from: 'docker.gradle'
+project(':SEDE.deployment') {
+    jarjar.enabled = false
+    project.toBePublished = false
+}
+

@@ -98,7 +98,8 @@ class NeuralNet:
     def __setstate__(self, state):
         self.set_params(**state)
         checkpoint = state["checkpoint"]
-        self.nn_create(weights_biases_values=checkpoint)
+        if checkpoint is not None:
+            self.nn_create(weights_biases_values=checkpoint)
 
     def get_params(self):
         return {

@@ -3,7 +3,8 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # look up the ip address:
-ip=$(ip route get 8.8.8.8 | awk 'NR==1 {print $NF}')
+#ip=$(ip route get 8.8.8.8 | awk 'NR==1 {print $NF}')
+ip="localhost"
 echo IP address: "$ip"
 
 # find the next free port
@@ -15,7 +16,8 @@ done
 echo Port: "$port"
 
 #config="${PWD##*/}"/config.json
-config="$DIR"/config.json
+#config="$DIR"/config.json
+config="$DIR"/../executor_configs/all_java_config.json
 echo Configuration file: "$config"
 
-java -cp "$DIR"/../SEDE/'*':"$DIR"/services/'*':"$DIR"  de.upb.sede.exec.ExecutorServerStarter "$config" "$ip" "$port"
+java -Xmx8g -cp "$DIR"/../SEDE/'*':"$DIR"/../SEDE_logging_lib/'*':"$DIR"/services/'*':"$DIR"  de.upb.sede.exec.ExecutorServerStarter "$config" "$ip" "$port"

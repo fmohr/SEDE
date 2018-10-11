@@ -1,7 +1,0 @@
-{
-    "capabilities": [],
-    "threadNumber": 4,
-    "services": ["demo.math.Addierer", "demo.math.Gerade"],
-    "gateways" : ["localhost:9000"],
-    "serviceStoreLocation": "instances"
-}

@@ -4,7 +4,7 @@
     "onthological_caster": "ml.data.LabeledInstancesCaster"
   },
   "numpy.ndarray" : {
-    "semantic_type":"list",
+    "semantic_type":"jsonlist",
     "onthological_caster": "ml.data.NdArrayCaster"
   }
 }

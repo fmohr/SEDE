@@ -1,19 +1,23 @@
 package de.upb.sede.config;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import de.upb.sede.util.Maps;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.upb.sede.util.FileUtil;
+import de.upb.sede.util.Maps;
 
 public class Configuration extends HashMap<String, Object> {
 	private static final long serialVersionUID = 22870752590407834L;
 	private Map<String, Object> rawConfiguration = new HashMap<>();
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(Configuration.class);
 
 	/**
 	 * Appends class configurations from files to the existing ones.

@@ -1,17 +1,18 @@
 package de.upb.sede;
 
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.upb.sede.util.Terminals;
 import de.upb.sede.util.WebUtil;
 import de.upb.sede.util.server.TerminalCommandListener;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.jline.terminal.Terminal;
-import org.jline.terminal.TerminalBuilder;
 
 
 public class PluginUtil {
 
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(PluginUtil.class);
 
 	public static void enablePlugin_SystemTerminal(TerminalCommandListener terminalListener){
 

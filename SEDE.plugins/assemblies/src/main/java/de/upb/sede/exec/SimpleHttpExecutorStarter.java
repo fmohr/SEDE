@@ -1,12 +1,13 @@
 package de.upb.sede.exec;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.util.WebUtil;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 public class SimpleHttpExecutorStarter {
-	private final static Logger logger = LogManager.getLogger();
+	private final static Logger logger = LoggerFactory.getLogger(SimpleHttpExecutorStarter.class);
 	public static void main(String[] args) {
 		if(args.length < 2) {
 			throw new RuntimeException("Please provide at least 2 arguments:" +

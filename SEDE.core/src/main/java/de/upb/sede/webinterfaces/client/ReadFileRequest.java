@@ -18,7 +18,7 @@ public class ReadFileRequest implements BasicClientRequest {
 
 	@Override
 	public InputStream receive() {
-		File file = new File(filepath);
+		File file = new File(filepath).getAbsoluteFile();
 
 		/*
 		 * return input stream

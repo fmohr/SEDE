@@ -2,113 +2,164 @@ package de.upb.sede.casters;
 
 import Catalano.Imaging.FastBitmap;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 /**
- * Provides casting methods for: FastBitmap <-> Arr
+ * Provides casting methods for: FastBitmap <-> image and FastBitmap_List <-> images
  */
 public class FastBitmapCaster {
 
 	/**
-	 * Casts from the semantic representation 'Arr' which is a list of numbers, to FastBitMap object.
-	 * The data in form of semantic type 'Arr' is taken from the provided inputstream.
+	 * Given a map in form of the json representation of image, this method constructs a a FastBitmap object.
+	 */
+	private FastBitmap jsonToFastBitmap(Map<String, Object> jsonObject) {
+		int rows = ((Number) jsonObject.get("rows")).intValue();
+		int columns = ((Number) jsonObject.get("columns")).intValue();
+		String imagetype = jsonObject.get("imagetype").toString();
+		List<Number> encodedPixels = (List<Number>) jsonObject.get("pixels");
+		FastBitmap fb;
+		if(imagetype.equals("Grayscale")) {
+			fb = new FastBitmap(columns, rows, FastBitmap.ColorSpace.Grayscale);
+			int pixelOffset = 0;
+			for(Number pixel : encodedPixels) {
+				fb.setGray(pixelOffset, pixel.intValue());
+				pixelOffset++;
+			}
+		}
+		else if(imagetype.equals("ARGB")) {
+			fb = new FastBitmap(columns, rows, FastBitmap.ColorSpace.ARGB);
+			int pixelOffset = 0;
+			Iterator<Number> colorChannelIterator = encodedPixels.iterator();
+			while(colorChannelIterator.hasNext()) {
+				int alpha = colorChannelIterator.next().intValue();
+				int red = colorChannelIterator.next().intValue();
+				int green = colorChannelIterator.next().intValue();
+				int blue = colorChannelIterator.next().intValue();
+				fb.setARGB(pixelOffset, alpha, red, green, blue);
+				pixelOffset++;
+			}
+		}
+		else if(imagetype.equals("RGB")) {
+			fb = new FastBitmap(columns, rows, FastBitmap.ColorSpace.RGB);
+			int pixelOffset = 0;
+			Iterator<Number> colorChannelIterator = encodedPixels.iterator();
+			while(colorChannelIterator.hasNext()) {
+				int red = colorChannelIterator.next().intValue();
+				int green = colorChannelIterator.next().intValue();
+				int blue = colorChannelIterator.next().intValue();
+				fb.setRGB(pixelOffset, red, green, blue);
+				pixelOffset++;
+			}
+
+		} else{
+			throw new RuntimeException("Image type not supported: " + imagetype);
+		}
+		return fb;
+	}
+
+	/**
+	 * Translates the given FastBitmap object to its json representation.
+	 */
+	private Map<String, Object> fastBitmapToJson(FastBitmap fb) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put("rows", fb.getHeight());
+		jsonObject.put("columns", fb.getWidth());
+		String imagetype;
+		List<Number> imageEncoding;
+		if(fb.isGrayscale()) {
+			imagetype = "Grayscale";
+			byte[] pixelArr = fb.getGrayData();
+			imageEncoding = new ArrayList<>(pixelArr.length * 1);
+			for (int index = 0, size = pixelArr.length;
+				 	index < size; index++) {
+				imageEncoding.add(pixelArr[index] & 255);
+			}
+
+		} else if(fb.isARGB()) {
+			imagetype = "ARGB";
+			int[] pixelArr = fb.getRGBData(); // 'getRGBData' is correct, internally its one array for both argb and rgb
+			imageEncoding = new ArrayList<>(pixelArr.length * 4);
+			for (int index = 0, size = pixelArr.length;
+				 	index < size; index++) {
+				int argb = pixelArr[index];
+				imageEncoding.add(argb  >> 24 & 255); // alpha
+				imageEncoding.add(argb  >> 16 & 255); // red
+				imageEncoding.add(argb  >>  8 & 255); // green
+				imageEncoding.add(argb  	  & 255); // blue
+			}
+		} else {
+			imagetype = "RGB";
+			int[] pixelArr = fb.getRGBData();
+			imageEncoding = new ArrayList<>(pixelArr.length * 3);
+			for (int index = 0, size = pixelArr.length;
+				 index < size; index++) {
+				int rgb = pixelArr[index];
+				imageEncoding.add(rgb  >> 16 & 255); // red
+				imageEncoding.add(rgb  >>  8 & 255); // green
+				imageEncoding.add(rgb  	  	 & 255); // blue
+			}
+		}
+		jsonObject.put("imagetype", imagetype);
+		jsonObject.put("pixels", imageEncoding);
+		return jsonObject;
+	}
+
+	/**
+	 * Casts from the semantic representation 'image' to FastBitMap object.
+	 * The data in form of semantic type 'image' is taken from the provided inputstream.
 	 */
 	public FastBitmap cfs_FastBitmap(InputStream is) throws ParseException, IOException {
 		JSONParser parser = new JSONParser();
 		Reader reader = new InputStreamReader(is);
-		List<Number> arr = (JSONArray) parser.parse(reader);
-		int width = arr.get(0).intValue();
-		int type = arr.get(1).intValue();
+		JSONObject jsonObject = (JSONObject) parser.parse(reader);
+		return jsonToFastBitmap(jsonObject);
+	}
 
-		if (type == 0) {
-			return new FastBitmap(getGrayscaleImageFromVector(arr, width));
+
+	/**
+	 * Casts from the semantic representation 'images' to List of FastBitMap objects.
+	 * The data in form of semantic type 'images' is taken from the provided inputstream.
+	 */
+	public List<FastBitmap> cfs_FastBitmap_List(InputStream is) throws ParseException, IOException {
+		JSONParser parser = new JSONParser();
+		Reader reader = new InputStreamReader(is);
+		List<JSONObject> encodedImageList = (JSONArray) parser.parse(reader);
+		List<FastBitmap> bitmapList = new ArrayList<>(encodedImageList.size());
+		for(JSONObject encodedImage : encodedImageList) {
+			bitmapList.add(jsonToFastBitmap(encodedImage));
 		}
-		else if (type == 1)
-			return new FastBitmap(getRGBImageFromVector(arr, width));
-
-		throw new UnsupportedOperationException("Bitmap type needs to be either 0 or 1. Was: " + type);
+		return bitmapList;
 	}
 
 	/**
-	 * Casts a FastBitMap object to the semantic representation 'Arr' which is a list of numbers and writes the data into the provided stream.
+	 * Casts a FastBitMap object to the semantic representation 'image' and writes the data into the provided stream.
 	 */
 	public void cts_FastBitmap(OutputStream os, FastBitmap fb) throws IOException {
-		JSONArray arr = new JSONArray();
-		arr.add(new Double(fb.getWidth()));
-		if(fb.isGrayscale()){
-			arr.add(0.); // code for grayscale images
-			int[][] image = fb.toMatrixGrayAsInt();
-			for (int i = 0; i < image.length; i++) {
-				for (int j = 0; j < image[i].length; j++) {
-					arr.add(new Double(image[i][j]));
-				}
-			}
-		} else {
-			arr.add(1.); // code for rgb images
-			int[][][] image = fb.toMatrixRGBAsInt();
-			for (int i = 0; i < image.length; i++) {
-				for (int j = 0; j < image[i].length; j++) {
-					for (int k = 0; k < image[i][j].length; k++) {
-						arr.add(new Double(image[i][j][k]));
-					}
-				}
-			}
-		}
-
+		JSONObject encodedImage = (JSONObject) fastBitmapToJson(fb);
 		OutputStreamWriter writer = new OutputStreamWriter(os);
-		arr.writeJSONString(writer);
+		encodedImage.writeJSONString(writer);
 		writer.flush();
 	}
 
 
-	private static int[][][] getRGBImageFromVector(List<Number> arr, int width) {
-		int height = (int) ((arr.size() - 2) * 1f / width / 3);
-		int[][][] image = new int[(int) height][width][3];
-		int row = 0;
-		int column = 0;
-		int color = 0;
-		Iterator<Number> it = arr.iterator();
-		it.next();
-		it.next();
-		while (it.hasNext()) {
-			int val = it.next().intValue();
-			image[row][column][color++] = val;
-
-			/* switch to next column/row if color/col has reached maximum respectively */
-			if (color == 3) {
-				color = 0;
-				column++;
-			}
-			if (column == width) {
-				column = 0;
-				row++;
-			}
+	/**
+	 * Casts a list of FastBitMap objects to the semantic representation 'images' and writes the data into the provided stream.
+	 */
+	public void cts_FastBitmap_List(OutputStream os, List<FastBitmap> images) throws IOException {
+		ArrayList<JSONObject> encodedImageList = new ArrayList<JSONObject>(images.size());
+		for(FastBitmap image : images) {
+			encodedImageList.add((JSONObject) fastBitmapToJson(image));
 		}
-		return image;
-	}
-
-	private static int[][] getGrayscaleImageFromVector(List<Number> arr, int width) {
-		int[][] image = new int[(arr.size() - 2) / width][width];
-		int row = 0;
-		int col = 0;
-		Iterator<Number> it = arr.iterator();
-		it.next();
-		it.next();
-		while (it.hasNext()) {
-			int val = it.next().intValue();
-			image[row][col++] = val;
-
-			/* switch to next row if col has reached width */
-			if (col == width) {
-				col = 0;
-				row++;
-			}
-		}
-		return image;
+		OutputStreamWriter writer = new OutputStreamWriter(os);
+		JSONArray.writeJSONString(encodedImageList, writer);
+		writer.flush();
 	}
 }

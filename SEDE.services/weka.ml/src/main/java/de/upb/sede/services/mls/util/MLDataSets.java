@@ -1,14 +1,5 @@
 package de.upb.sede.services.mls.util;
 
-import de.upb.sede.core.ObjectDataField;
-import ml.data.LabeledInstancesCaster;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import weka.core.Attribute;
-import weka.core.Instance;
-import weka.core.Instances;
-import weka.core.converters.ConverterUtils;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,9 +9,18 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import ml.data.LabeledInstancesCaster;
+import weka.core.Attribute;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.converters.ConverterUtils;
+
 public class MLDataSets {
 
-	private static final Logger logger = LogManager.getLogger("MLS");
+	private static final Logger logger = LoggerFactory.getLogger("MLS");
 
 	private static final String DATASET_PATH;
 
@@ -42,7 +42,7 @@ public class MLDataSets {
 		}
 		File datasetDirectory = new File(DATASET_PATH);
 		if(!datasetDirectory.exists() || !datasetDirectory.isDirectory()){
-			logger.fatal("Dataset folder {} doesn't exist.", datasetDirectory.getAbsolutePath());
+			logger.error("Dataset folder {} doesn't exist.", datasetDirectory.getAbsolutePath());
 		}
 	}
 

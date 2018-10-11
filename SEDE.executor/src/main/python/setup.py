@@ -14,10 +14,10 @@ setuptools.setup(name='SEDE-executor',
       license='GNU',
       long_description_content_type="text/markdown",
       packages=setuptools.find_packages(),
-      install_requires=dependencies,
-      entry_points=
-            {
-                  'console_scripts': [
-                        'pyexecutor = exe.httpexecutor:main'
-                  ]
-            })
+      install_requires=dependencies)
+            #entry_points=
+            # {
+            #       'console_scripts': [
+            #             'pyexecutor = exe.httpexecutor:main'
+            #       ]
+            # }

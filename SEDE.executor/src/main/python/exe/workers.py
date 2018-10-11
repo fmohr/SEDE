@@ -7,7 +7,6 @@ import ctypes
 
 from concurrent.futures.thread import ThreadPoolExecutor
 from weakref import WeakKeyDictionary
-from util.locking import synchronized_method as synchornized
 from exe.execution import Task
 from exe.execution import Execution
 from procedure import Procedure
@@ -90,8 +89,7 @@ class WorkerPool:
         self.executionFutureMap = WeakKeyDictionary()
         self.procedure_supplier = dict()
         pass
-    
-    @synchornized
+
     def submit_task(self, task: Task):
         """
         Submits the given task to the queue of executions.
@@ -107,7 +105,6 @@ class WorkerPool:
 
         self.executionFutureMap[execution].append((future, runner))
 
-    @synchornized
     def interrupt(self, execution):
         """
         Cancels every submitted task within the given execution which hasn't started yet.
@@ -120,8 +117,7 @@ class WorkerPool:
                     # task has already started running.
                     # interrupt by asynchronously raising an exception:
                     _async_raise(runner.thread_id, Interruption())
-    
-    @synchornized
+
     def bind_procedure(self, procedure_name, procedure_supplier):
         """ 
         Binds the given procedure_name which is the same as the task_name to the given supplier.
@@ -137,8 +133,7 @@ class WorkerPool:
             return self.procedure_supplier[task_name]()
         else:
             raise Exception("Task '%s' was not bound to a procedure supplier.", task_name)
-    
-    @synchornized
+
     def remove_execution(self, execution: Execution):
         """
         Removes the given execution from the futurelist map.
@@ -148,7 +143,6 @@ class WorkerPool:
         if execution in self.executionFutureMap : 
             del self.executionFutureMap[execution]
 
-    @synchornized    
     def shutdown(self):
         """
         Shutdowns the workers. Submitting additional tasks would cause an excetion afterwards.

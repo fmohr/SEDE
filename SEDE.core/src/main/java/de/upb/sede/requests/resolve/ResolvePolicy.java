@@ -5,9 +5,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.json.simple.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import de.upb.sede.exceptions.BadResolveRequest;
 import de.upb.sede.util.JsonSerializable;
@@ -19,7 +19,7 @@ import de.upb.sede.util.JsonSerializable;
  */
 public class ResolvePolicy implements JsonSerializable {
 
-	private static final Logger log = LogManager.getLogger();
+	private static final Logger log = LoggerFactory.getLogger(ResolvePolicy.class);
 
 	/*
 	 * list flags

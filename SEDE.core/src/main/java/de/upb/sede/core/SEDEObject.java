@@ -4,10 +4,11 @@ import de.upb.sede.util.JsonSerializable;
 import de.upb.sede.util.Streams;
 import org.json.simple.JSONObject;
 
+import java.io.Serializable;
 import java.util.*;
 import java.util.regex.Pattern;
 
-public abstract class SEDEObject implements JsonSerializable {
+public abstract class SEDEObject implements JsonSerializable, Serializable {
 
 
 	/**

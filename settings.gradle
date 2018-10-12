@@ -29,6 +29,9 @@ def serivceFolder = 'SEDE.services/'
 include 'builtins'
 project(':builtins').projectDir = new File(serivceFolder, "builtins")
 
+include 'c2.image'
+project(':c2.image').projectDir = new File(serivceFolder, "c2.image")
+
 include 'demolib'
 project(':demolib').projectDir = new File(serivceFolder, "demolib")
 

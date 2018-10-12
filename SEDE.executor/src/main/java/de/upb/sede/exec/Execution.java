@@ -333,8 +333,7 @@ public class Execution implements IExecution {
 		public synchronized SEDEObject cache(SemanticDataField value) {
 			if(!value.isPersistent()) {
 				logger.debug("Semantic data isn't persistent. It will be cache before putting it in the environment: " + value.toString());
-				byte[] cachedData = Streams.InReadByteArr(((SemanticDataField) value).getDataField());
-				InputStream inputStream = new ByteArrayInputStream(cachedData);
+				InputStream inputStream = Streams.InReadChunked(((SemanticDataField) value).getDataField()).toInputStream();
 				SemanticDataField cachedSemanticData = new SemanticDataField(value.getType(), inputStream, true);
 				return cachedSemanticData;
 			} else {

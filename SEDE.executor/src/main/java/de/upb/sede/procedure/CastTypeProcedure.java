@@ -4,6 +4,7 @@ import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.SemanticDataField;
 import de.upb.sede.core.SemanticStreamer;
 import de.upb.sede.exec.Task;
+import de.upb.sede.util.ExtendedByteArrayOutputStream;
 
 import java.io.*;
 import java.util.Map;
@@ -31,17 +32,11 @@ public class CastTypeProcedure implements Procedure {
 		SEDEObject field = task.getExecution().getEnvironment().get(fieldname);
 		SEDEObject castedField;
 		if(castToSemantic) {
-			/*
-			 * TODO if there is a need to read the input byte multiple times change this behaviour to ByteArrayInputStream instead.
-			 * (Which offers seek)
-			 */
-			ByteArrayInputStream byteInputSteam;
-			ByteArrayOutputStream byteOutputStream = null;
 			try {
-				byteOutputStream = new ByteArrayOutputStream();
+				ExtendedByteArrayOutputStream byteOutputStream = new ExtendedByteArrayOutputStream();
 				SemanticStreamer.streamObjectInto(byteOutputStream, field, casterClasspath, targetType);
-				byteInputSteam = new ByteArrayInputStream(byteOutputStream.toByteArray());
-				castedField = new SemanticDataField(targetType, byteInputSteam, true);
+				InputStream inputSteam = byteOutputStream.toInputStream();
+				castedField = new SemanticDataField(targetType, inputSteam, true);
 				byteOutputStream.close();
 			} catch (IOException e) {
 				throw new RuntimeException("This exception shouldn't have been thrown..");

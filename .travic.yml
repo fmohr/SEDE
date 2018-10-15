@@ -1,0 +1,26 @@
+language: java
+install: true
+sudo: false
+dist: trusty
+git:
+  depth: 5
+
+# Cache gradle files:
+before_cache:
+  - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+  - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+cache:
+  directories:
+    - $HOME/.gradle/caches/
+    - $HOME/.gradle/wrapper/
+
+jdk:
+  - openjdk8
+  - oraclejdk8
+  - openjdk11
+
+os:
+  - linux
+
+script: 
+  - ./gradlew assemble

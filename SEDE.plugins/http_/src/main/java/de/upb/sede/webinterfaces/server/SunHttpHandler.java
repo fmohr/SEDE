@@ -24,6 +24,8 @@ public class SunHttpHandler implements HttpHandler {
 		try {
 			HTTPServerResponse response = serverResponder.get();
 			httpExchange.sendResponseHeaders(200, 0);
+			httpExchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+			httpExchange.getResponseHeaders().add("Content-Type", "text/plain; charset=UTF-8");
 			String path = httpExchange.getRequestURI().getPath();
 			response.receive(Optional.of(path), httpExchange.getRequestBody(), httpExchange.getResponseBody());
 		} catch(RuntimeException ex) {

@@ -508,7 +508,7 @@ public class ImagingTests {
     }
 
     @Test
-    public void testC2ServicesC2service_grey() throws InvocationTargetException, InterruptedException {
+    public void testC2Services() throws InvocationTargetException, InterruptedException {
 		// This test only works with WORKAROUND___ENABLE_C2_IMAGES enabled!
 		assert WORKAROUND___ENABLE_C2_IMAGES;
 

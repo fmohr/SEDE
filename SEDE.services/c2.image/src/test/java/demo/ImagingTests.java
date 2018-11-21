@@ -104,7 +104,6 @@ public class ImagingTests {
 						"Catalano.Imaging.Filters.GrayScale_MaximumDecomposition",
 						"C2Services.C2Service_grey",
 						"C2Services.C2Service_sobel"
-						"C2Services.C2service_sobel"
 						)
 		);
 		System.out.println(executor1.getBasisExecutor().getExecutorConfiguration().toJsonString());

@@ -260,7 +260,27 @@
                         "C2Data.C2Image"
                       ],
                       "returntype": "C2Data.C2Image"
-                }
+                },
+                "ApplyInPlace": {
+                    "params": [
+                        {
+                            "type": "C2Data.C2Image",
+                            "statemutating": true
+                        }
+                    ],
+                    "statemutating": false
+              }
           }
+    },
+    "C2Services.C2service_sobel": {
+        "methods": {
+            "$construct" :{},
+            "process": {
+                "params": [
+                    "C2Data.C2Image"
+                ],
+                "returntype": "C2Data.C2Image"
+            }
+        }
     }
 }

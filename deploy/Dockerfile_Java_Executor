@@ -1,3 +1,11 @@
-FROM sede:java
+FROM openjdk:8-jre-alpine3.8
 
-COPY ./executor_configs/weka_config.json /config.json
+COPY ./log4j2.xml /log4j2.xml
+COPY ./SEDE /SEDE
+COPY ./SEDE_logging_lib /SEDE_logging_lib
+
+COPY ./executor_configs/all_java_config.json /config.json
+
+ENV EXECUTOR_ADDRESS="localhost:6001"
+
+ENTRYPOINT java -Xmx12g -cp SEDE/*:SEDE_logging_lib/*:. de.upb.sede.exec.ExecutorServerStarter config.json localhost 80

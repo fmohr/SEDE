@@ -31,6 +31,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.Buffer;
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -100,8 +102,8 @@ public class ImagingTests {
 						"Catalano.Imaging.Filters.GrayScale_Luminosity",
 						"Catalano.Imaging.Filters.GrayScale_MinimumDecomposition",
 						"Catalano.Imaging.Filters.GrayScale_MaximumDecomposition",
-						"C2Services.C2AddTwoNumbers",
-                        "C2Services.C2service_grey"
+						"C2Services.C2Service_grey",
+						"C2Services.C2Service_sobel"
 						)
 		);
 		System.out.println(executor1.getBasisExecutor().getExecutorConfiguration().toJsonString());
@@ -121,8 +123,10 @@ public class ImagingTests {
 		executor1.shutdown();
 		coreClient.getClientExecutor().shutdown();
 
+		/*
 		if(WORKAROUND___ENABLE_C2_IMAGES)
             im_lenna.environmentDown();
+         */
 	}
 
 	@BeforeClass
@@ -131,6 +135,7 @@ public class ImagingTests {
 		frog = new FastBitmap(FileUtil.getPathOfResource("images/red-eyed.jpg"));
 		assert frog != null;
 
+		/*
 		if(WORKAROUND___ENABLE_C2_IMAGES) {
 			// Load libraries.
 			loadC2Libraries();
@@ -139,6 +144,7 @@ public class ImagingTests {
             ArrayList<String> file_src = new ArrayList<String>();
             ArrayList<String> file_dest = new ArrayList<String>();
             file_src.add(FileUtil.getPathOfResource("images/lenna.tiff"));
+            file_dest.add("/home/aloesch/test.jpg");
 			//file_src.add(FileUtil.getPathOfResource("images/red-eyed.jpg"));
             im_lenna = new C2ImageManager(file_src, file_dest);
             im_lenna.environmentUp();
@@ -146,6 +152,7 @@ public class ImagingTests {
             lenna = im_lenna.getSourceImages().get(0);
             assert lenna != null;
         }
+        */
 	}
 
 	public static void loadC2Libraries() {
@@ -359,46 +366,39 @@ public class ImagingTests {
         System.out.printf("... done, result has dimensions %dx%d \n", processedImage.getHeight(), processedImage.getWidth());
     }
 
-	@Test
-	public void testC2CServicesAddTwoNumbers() throws InvocationTargetException, InterruptedException {
-		// This test only works with WORKAROUND___ENABLE_C2_IMAGES enabled!
-		assert WORKAROUND___ENABLE_C2_IMAGES;
-
-		/*
-			Tests fixed parameters:
-		 */
-		String composition =
-				"s1 = C2Services.C2AddTwoNumbers::__construct({11});\n" +
-						"i1 = s1::compute({22,33});";
-
-		ResolvePolicy policy = new ResolvePolicy();
-
-		policy.setServicePolicy("None");
-		policy.setReturnFieldnames(Arrays.asList("i1"));
-
-		Map<String, SEDEObject> inputs = new HashMap<>();
-
-		RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
-
-		coreClient.run(runRequest, result -> {
-			System.out.println(result.getFieldname());
-		});
-		coreClient.join("proc_cservices", true);
-	}
-
     @Test
     public void testC2ServicesC2service_grey() throws InvocationTargetException, InterruptedException {
 		// This test only works with WORKAROUND___ENABLE_C2_IMAGES enabled!
 		assert WORKAROUND___ENABLE_C2_IMAGES;
 
+		if(WORKAROUND___ENABLE_C2_IMAGES) {
+			// Load libraries.
+			loadC2Libraries();
+
+			// Load C2 image.
+			List<String> file_src = new ArrayList<String>();
+			List<String> file_dest = new ArrayList<String>();
+			file_src.add(FileUtil.getPathOfResource("images/lenna.tiff"));
+			file_dest.add("/home/aloesch/test.jpg");
+			//file_src.add(FileUtil.getPathOfResource("images/red-eyed.jpg"));
+			im_lenna = new C2ImageManager(file_src, file_dest);
+			im_lenna.environmentUp();
+			im_lenna.readImages();
+			lenna = im_lenna.getSourceImages().get(0);
+			assert lenna != null;
+		}
+
 		/*
 			Tests fixed parameters:
 		 */
         String composition =
-                "s1 = C2Services.C2service_grey::__construct();\n" +
-				"s1::compute({22,33});\n" +
-        		"imageOut = s1::process({i1=imageIn});\n";
+				"s1 = C2Services.C2Service_grey::__construct();\n" +
+				"i2 = s1::processImage({i1=imageIn});\n" +
+				"s2 = C2Services.C2Service_sobel::__construct();\n" +
+				"imageOut = s2::processImage({i2});\n";
 
+		FastBitmap lennapic = new FastBitmap(lenna.convertToBufferedImage());
+		JOptionPane.showMessageDialog(null, lennapic.toIcon(), "Input", JOptionPane.PLAIN_MESSAGE);
 
 		SEDEObject inputObject_c2i = new ObjectDataField(C2Image.class.getName(), lenna);
 
@@ -415,6 +415,23 @@ public class ImagingTests {
 		Result result = resultMap.get("imageOut");
 
 		C2Image processedImage = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
+
+		FastBitmap lennapic_processed = new FastBitmap(processedImage.convertToBufferedImage());
+		JOptionPane.showMessageDialog(null, lennapic_processed.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
+
+		if(WORKAROUND___ENABLE_C2_IMAGES) {
+			List<C2Image> image_list = new ArrayList<C2Image>();
+			image_list.add(processedImage);
+
+			im_lenna.setTargetImages(image_list);
+			try {
+				im_lenna.writeImages();
+			} catch (Exception e) {
+				System.out.println("Explosion!");
+			}
+
+			im_lenna.environmentDown();
+		}
     }
 
 	private static ClassesConfig getTestClassConfig() {

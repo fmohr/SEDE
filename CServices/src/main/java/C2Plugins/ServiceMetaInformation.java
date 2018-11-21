@@ -36,13 +36,8 @@ public class ServiceMetaInformation implements Serializable {
 
 	private int outputNumberAssurance = 0;
 
-	/**
-	 * Which language this service is implemented in.
-	 */
-	private Language language = Language.UNSPECIFIED;
-
 	public ServiceMetaInformation(List<String> ids, List<String> information, Map<String, List<String>> operations,
-			List<String> resources, Language language) {
+			List<String> resources) {
 		if (ids != null)
 			this.ids = ids;
 		if (information != null)
@@ -51,7 +46,6 @@ public class ServiceMetaInformation implements Serializable {
 			this.operations = operations;
 		if (resources != null)
 			this.resources = resources;
-		this.language = language;
 	}
 
 	public void setInputNumberAssurance(int inputNumberAssurance) {
@@ -84,10 +78,6 @@ public class ServiceMetaInformation implements Serializable {
 
 	public Map<String, List<String>> getParams() {
 		return operations;
-	}
-
-	public Language getLanguage() {
-		return language;
 	}
 
 	public List<String> getOperations() {
@@ -126,27 +116,13 @@ public class ServiceMetaInformation implements Serializable {
 			operationsCopy.put(new String(e.getKey()), params);
 		}
 		ServiceMetaInformation result = new ServiceMetaInformation(idsCopy, informationCopy, operationsCopy,
-				resourcesCopy, language);
+				resourcesCopy);
 		return result;
 	}
 
 	@Override
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
-		switch (language) {
-		case JAVA:
-			stringBuilder.append("Java service\n");
-			break;
-		case C:
-			stringBuilder.append("C service\n");
-			break;
-		case PYTHON:
-			stringBuilder.append("Python service\n");
-			break;
-		default:
-			stringBuilder.append("No specified language\n");
-			break;
-		}
 		stringBuilder.append("\nIDs: ");
 		for (int i = 0; i < ids.size() - 1; i++) {
 			stringBuilder.append(ids.get(i) + " | ");

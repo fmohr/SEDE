@@ -7,10 +7,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-#undef C2Plugins_Plugin_serialVersionUID
-#define C2Plugins_Plugin_serialVersionUID -6016176195313769529LL
-#undef C2Plugins_Plugin_serialVersionUID
-#define C2Plugins_Plugin_serialVersionUID -1394338964498624028LL
 /*
  * Class:     C2Plugins_Plugin
  * Method:    c_loadLibrary

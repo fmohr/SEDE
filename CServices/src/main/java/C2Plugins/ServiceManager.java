@@ -16,8 +16,6 @@ public class ServiceManager {
 	private static String namespace = "test";
 	List<File> mFiles;
 	List<Plugin> mPlugins;
-	List<ServiceJava> mServiceJavas;
-	List<ServicePython> mServicePythons;
 
 	/**
 	 * Defines the directory where all deployed services are located and loads the
@@ -30,8 +28,6 @@ public class ServiceManager {
 		mPluginLocation = location;
 
 		mPlugins = new ArrayList<Plugin>();
-		mServiceJavas = new ArrayList<ServiceJava>();
-		mServicePythons = new ArrayList<ServicePython>();
 
 		System.loadLibrary("pluginbridge");
 	}
@@ -39,8 +35,6 @@ public class ServiceManager {
 	public List<Service> getServices() {
 		List<Service> result = new ArrayList<>();
 		result.addAll(mPlugins);
-		result.addAll(mServiceJavas);
-		result.addAll(mServicePythons);
 		return result;
 	}
 
@@ -91,9 +85,6 @@ public class ServiceManager {
 		switch (extension) {
 		case "so":
 			mPlugins.add(new Plugin(serviceFile, linkedFiles));
-			break;
-		case "jar":
-			mServiceJavas.add(new ServiceJava(serviceFile, linkedFiles));
 			break;
 		default:
 			break;
@@ -163,24 +154,6 @@ public class ServiceManager {
 	 */
 	public List<Plugin> getPluginList() {
 		return mPlugins;
-	}
-
-	/**
-	 * Returns a list of all the deployed Java based Services.
-	 * 
-	 * @return A list of all the available/ deployed Java based Services.
-	 */
-	public List<ServiceJava> getServiceJavaList() {
-		return mServiceJavas;
-	}
-
-	/**
-	 * Returns a list of all the deployed Python based Services.
-	 * 
-	 * @return A list of all the available/ deployed Python based Services.
-	 */
-	public List<ServicePython> getServicePythonList() {
-		return mServicePythons;
 	}
 
 	/**

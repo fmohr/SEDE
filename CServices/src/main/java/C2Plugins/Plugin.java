@@ -22,11 +22,6 @@ import java.util.ArrayList;
  * -> plugin_bridge.c -> [plugin.h] -> plugin_XYZ.c}.
  */
 public class Plugin extends Service {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -1394338964498624028L;
-	private volatile Map<String, ServiceInstancePlugin> instances = new HashMap<>();
 
 	private long mHandler;
 	private long mHandlerGPU;
@@ -52,8 +47,7 @@ public class Plugin extends Service {
 		List<String> resources = new ArrayList<String>(Arrays.asList(c_getServiceResources(mHandler)));
 		HashMap<String, List<String>> operationParams = new HashMap<>();
 		operationParams.put("process", params);
-		ServiceMetaInformation serviceMetaInfos = new ServiceMetaInformation(ids, info, operationParams, resources,
-				Language.C);
+		ServiceMetaInformation serviceMetaInfos = new ServiceMetaInformation(ids, info, operationParams, resources);
 		setMetaInfos(serviceMetaInfos);
 		serviceMetaInfos.setInputNumberAssurance(c_getNumberOfInputImages(mHandler));
 		serviceMetaInfos.setOutputNumberAssurance(c_getNumberOfOutputImages(mHandler));
@@ -166,45 +160,9 @@ public class Plugin extends Service {
 	/**
 	 * Unloads the library pointed to by the handler and the handler to the GPU, if
 	 * it's not null.
-	 * 
-	 * @param handler
-	 *            Handler to the plug-in of interest.
-	 * @param handlerGPU
-	 *            Handler to communicate to the GPU.
 	 */
 	public void unloadLibraries() {
 		c_unloadLibraries(mHandler, mHandlerGPU);
-	}
-
-	@Override
-	public String newInstance(String name, Map<String, Object> params) {
-		ServiceInstancePlugin pluginInstance = new ServiceInstancePlugin(this);
-		String instanceName = ServiceManager.getNameSpace() + ":" + name;
-		pluginInstance.setName(instanceName);
-		pluginInstance.setParams(params);
-		instances.put(instanceName, pluginInstance);
-		return instanceName;
-	}
-
-	@Override
-	public void serializeInstance(String key) {
-		return;
-	}
-
-	@Override
-	public void startSerializedInstance(String key) {
-		return;
-	}
-
-	@Override
-	public void killInstance(String key) {
-		instances.remove(key);
-	}
-
-	@Override
-
-	public ServiceInstancePlugin getInstance(String key) {
-		return instances.get(key);
 	}
 
 	/**

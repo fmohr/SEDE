@@ -20,7 +20,7 @@ typedef struct __Image__ {
 	PixelPacket *image;
 	int32_t rows;
 	int32_t columns;
-	int64_t j_arr;
+	void *j_arr;
 } Image;
 
 void run_service(char resource, void *handler_gpu, Image **target_images, int32_t *target_images_size, Image *source_images, int32_t source_images_size, double *params, int32_t *status_code);

@@ -15,7 +15,7 @@ typedef int32_t (*get_number_of_images_t)(void);
 
 JNIEXPORT jlong JNICALL Java_C2Plugins_Plugin_c_1loadLibrary(JNIEnv *env, jobject obj, jstring j_filename) {
 	const char *filename = (*env)->GetStringUTFChars(env, j_filename, 0);
-	
+
 	void *handler = dlopen(filename, RTLD_LAZY | RTLD_LOCAL);
 	if (NULL == handler) {
 		fprintf(stderr, "Cannot open library \"%s\": %s (file: %s, line: %i)\n", filename, dlerror(), __FILE__, __LINE__);
@@ -63,7 +63,7 @@ JNIEXPORT jlong JNICALL Java_C2Plugins_Plugin_c_1loadLibraryGPU(JNIEnv *env, job
 	free_string_array(&resource_strings, resource_strings_size);
 	#endif
 		
-	return handler_gpu;
+	return (jlong)handler_gpu;
 }
 
 JNIEXPORT void JNICALL Java_C2Plugins_Plugin_c_1unloadLibraries(JNIEnv *env, jobject obj, jlong j_handler, jlong j_handler_gpu) {
@@ -216,7 +216,7 @@ JNIEXPORT jobject JNICALL Java_C2Plugins_Plugin_c_1process(JNIEnv *env, jobject 
 	jclass cls_double			= (*env)->FindClass(env, "java/lang/Double");
 	jmethodID mid_double_value	= (*env)->GetMethodID(env, cls_double, "doubleValue", "()D");
 
-	jclass cls_image			= (*env)->FindClass(env, "image/Image");
+	jclass cls_image			= (*env)->FindClass(env, "C2Data/C2Image");
 	jmethodID mid_image_init	= (*env)->GetMethodID(env, cls_image, "<init>", "([SII)V");
 	jmethodID mid_image_rows	= (*env)->GetMethodID(env, cls_image, "getRows", "()I");
 	jmethodID mid_image_columns	= (*env)->GetMethodID(env, cls_image, "getColumns", "()I");
@@ -266,7 +266,7 @@ JNIEXPORT jobject JNICALL Java_C2Plugins_Plugin_c_1process(JNIEnv *env, jobject 
 
 	// release the source images
 	for (i=0; i<source_image_list_size; ++i) {
-		(*env)->ReleaseShortArrayElements(env, source_images[i].j_arr, source_images[i].image, JNI_ABORT);
+		(*env)->ReleaseShortArrayElements(env, source_images[i].j_arr, (jshort *)(source_images[i].image), JNI_ABORT);
 	}
 
 	// build and fill target image list
@@ -274,7 +274,7 @@ JNIEXPORT jobject JNICALL Java_C2Plugins_Plugin_c_1process(JNIEnv *env, jobject 
 	for (i=0; i<target_image_list_size; ++i) {
 		int32_t size = target_images[i].rows * target_images[i].columns * 4;
 		jshortArray j_image_pixels	= (*env)->NewShortArray(env, size);
-		(*env)->SetShortArrayRegion(env, j_image_pixels, 0, size, target_images[i].image);
+		(*env)->SetShortArrayRegion(env, j_image_pixels, 0, size, (jshort *)(target_images[i].image));
 		jobject j_image_object		= (*env)->NewObject(env, cls_image, mid_image_init, j_image_pixels, target_images[i].rows, target_images[i].columns);
 
 		(*env)->CallBooleanMethod(env, j_target_image_list, mid_list_add, j_image_object);

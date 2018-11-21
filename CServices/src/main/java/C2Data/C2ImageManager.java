@@ -171,7 +171,7 @@ public class C2ImageManager {
         mTargetImages.clear();
     }
 
-    public BufferedImage convertToBufferedImage(C2Image image){
+    public static BufferedImage convertToBufferedImage(C2Image image) {
         int pos;
         int rows = image.getRows();
         int columns = image.getColumns();
@@ -192,7 +192,7 @@ public class C2ImageManager {
 
     }
 
-    public C2Image convertFromBufferedImage(BufferedImage buffImage){
+    public static C2Image convertFromBufferedImage(BufferedImage buffImage) {
         int pos, pos2;
 
         byte[] pixels = ((DataBufferByte) buffImage.getRaster().getDataBuffer()).getData();

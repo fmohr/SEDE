@@ -1,10 +1,10 @@
 package C2Data;
 
-import java.io.Serializable;
+import java.awt.image.BufferedImage;
 
-public class C2Image implements Serializable {
+public class C2Image {
     /* VARIABLES */
-    private static final long serialVersionUID = 5;
+    //private static final long serialVersionUID = 5;
 
     // image characteristics
     private short[] mPixPack;
@@ -42,4 +42,7 @@ public class C2Image implements Serializable {
         mPixPack = new short[0];
     }
 
+    public BufferedImage convertToBufferedImage() {
+        return C2ImageManager.convertToBufferedImage(this);
+    }
 }

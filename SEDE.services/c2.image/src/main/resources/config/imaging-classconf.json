@@ -241,35 +241,23 @@
             }
         }
     },
-    "C2Services.C2AddTwoNumbers": {
-        "methods": {
-            "$construct": {
-                "params": [
-                    "Number"
-                ]
-            },
-            "compute": {
-                "params": [
-                    "Number",
-                    "Number"
-                ],
-                "returntype": "Number"
-            }
-        }
-    },
-    "C2Services.C2service_grey": {
+    "C2Services.C2Service_grey": {
           "methods": {
                 "$construct" :{},
-                "compute": {
-                      "params": [
-                            "Number",
-                            "Number"
-                      ],
-                      "returntype": "Number"
-                },
-                "process": {
+                "processImage": {
                       "params": [
                           "C2Data.C2Image"
+                      ],
+                      "returntype": "C2Data.C2Image"
+                }
+          }
+    },
+    "C2Services.C2Service_sobel": {
+          "methods": {
+                "$construct" :{},
+                "processImage": {
+                      "params": [
+                        "C2Data.C2Image"
                       ],
                       "returntype": "C2Data.C2Image"
                 },

@@ -1,6 +1,7 @@
 package C2Data;
 
 import java.awt.image.BufferedImage;
+import javax.swing.ImageIcon;
 
 public class C2Image {
     /* VARIABLES */
@@ -44,5 +45,9 @@ public class C2Image {
 
     public BufferedImage convertToBufferedImage() {
         return C2ImageManager.convertToBufferedImage(this);
+    }
+
+    public ImageIcon convertToImageIcon() {
+        return new ImageIcon(convertToBufferedImage());
     }
 }

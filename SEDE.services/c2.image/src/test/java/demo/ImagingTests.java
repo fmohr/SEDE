@@ -52,8 +52,9 @@ public class ImagingTests {
 	static FastBitmap frog;
 
     // C2 image type.
-    static C2ImageManager im_lenna;
-    static C2Image lenna;
+    static C2ImageManager im;
+	static C2Image lenna;
+	static C2Image lenna_mod;
 
 	static String executor1Address = WebUtil.HostIpAddress();
 	static int executorPort = 9001;
@@ -123,10 +124,19 @@ public class ImagingTests {
 		executor1.shutdown();
 		coreClient.getClientExecutor().shutdown();
 
-		/*
-		if(WORKAROUND___ENABLE_C2_IMAGES)
-            im_lenna.environmentDown();
-         */
+		if(WORKAROUND___ENABLE_C2_IMAGES) {
+			List<C2Image> image_list = new ArrayList<C2Image>();
+			image_list.add(lenna_mod);
+
+			im.setTargetImages(image_list);
+			try {
+				im.writeImages();
+			} catch (Exception e) {
+				System.out.println("Couldn't store image on HDD!");
+			}
+
+			im.environmentDown();
+		}
 	}
 
 	@BeforeClass
@@ -135,24 +145,25 @@ public class ImagingTests {
 		frog = new FastBitmap(FileUtil.getPathOfResource("images/red-eyed.jpg"));
 		assert frog != null;
 
-		/*
 		if(WORKAROUND___ENABLE_C2_IMAGES) {
 			// Load libraries.
 			loadC2Libraries();
 
-            // Load C2 image.
-            ArrayList<String> file_src = new ArrayList<String>();
-            ArrayList<String> file_dest = new ArrayList<String>();
-            file_src.add(FileUtil.getPathOfResource("images/lenna.tiff"));
-            file_dest.add("/home/aloesch/test.jpg");
-			//file_src.add(FileUtil.getPathOfResource("images/red-eyed.jpg"));
-            im_lenna = new C2ImageManager(file_src, file_dest);
-            im_lenna.environmentUp();
-            im_lenna.readImages();
-            lenna = im_lenna.getSourceImages().get(0);
-            assert lenna != null;
-        }
-        */
+			// Load C2 image.
+			List<String> file_src = new ArrayList<String>();
+			List<String> file_dest = new ArrayList<String>();
+			file_src.add(FileUtil.getPathOfResource("images/lenna.tiff"));
+
+			// Location of result image.
+			file_dest.add("/home/aloesch/test.jpg");
+
+			im = new C2ImageManager(file_src, file_dest);
+			im.environmentUp();
+			im.readImages();
+			lenna = im.getSourceImages().get(0);
+
+			assert lenna != null;
+		}
 	}
 
 	public static void loadC2Libraries() {
@@ -350,46 +361,6 @@ public class ImagingTests {
 	}
 
 	@Test
-	public void testC2ImageProcessingInplace() {
-		/*
-			Tests fixed parameters:
-		 */
-		String composition =
-				"s1 = C2Services.C2service_grey::__construct();\n" +
-						"imageOut = s1::ApplyInPlace({i1=imageIn})";
-
-		ResolvePolicy policy = new ResolvePolicy();
-		policy.setServicePolicy("None");
-		policy.setReturnFieldnames(Arrays.asList("imageOut"));
-
-		SEDEObject inputObject_fb1 = new ObjectDataField(C2Image.class.getName(), lenna);
-
-		Map<String, SEDEObject> inputs = new HashMap<>();
-		inputs.put("imageIn", inputObject_fb1);
-
-		if(!WORKAROUND___ENABLE_C2_IMAGES)
-			JOptionPane.showMessageDialog(null, frog.toIcon(), "Original image", JOptionPane.PLAIN_MESSAGE);
-
-		RunRequest runRequest = new RunRequest("processing4", composition, policy, inputs);
-
-		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
-		Result result = resultMap.get("imageOut");
-		if(result == null || result.hasFailed()) {
-			Assert.fail("Result missing...");
-		}
-		/*
-			Cast it to C2Image:
-		 */
-		C2Image processedImage = result.castResultData(
-				C2Image.class.getName(), C2ImageCaster.class).getDataField();
-
-		if(!WORKAROUND___ENABLE_C2_IMAGES)
-			System.out.println("hello ");
-
-		//   JOptionPane.showMessageDialog(null, processedImage.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
-	}
-
-	@Test
 	public void testImageProcessingGrayScaleEdgeDetection() throws InvocationTargetException, InterruptedException {
 		/*
 			Tests fixed parameters:
@@ -450,7 +421,7 @@ public class ImagingTests {
 		System.out.printf("Magick/JNI load \"lenna\". %dx%d \n", lenna.getRows(), lenna.getColumns());
 
 		// Convert to BufferedImage.
-		BufferedImage buf_lenna = im_lenna.convertToBufferedImage(lenna);
+		BufferedImage buf_lenna = lenna.convertToBufferedImage();
 		System.out.printf("Converted to BufferedImage. %dx%d \n", buf_lenna.getHeight(), buf_lenna.getWidth());
 
 		// Convert to FastBitmap.
@@ -479,7 +450,7 @@ public class ImagingTests {
         inputs.put("imageIn", inputObject_fb1);
 
         // Convert to BufferedImage.
-        BufferedImage buf_lenna = im_lenna.convertToBufferedImage(lenna);
+        BufferedImage buf_lenna = lenna.convertToBufferedImage();
         // Convert to FastBitmap.
         FastBitmap fast_lenna = new FastBitmap(buf_lenna);
 
@@ -512,27 +483,7 @@ public class ImagingTests {
 		// This test only works with WORKAROUND___ENABLE_C2_IMAGES enabled!
 		assert WORKAROUND___ENABLE_C2_IMAGES;
 
-		if(WORKAROUND___ENABLE_C2_IMAGES) {
-			// Load libraries.
-			loadC2Libraries();
-
-			// Load C2 image.
-			List<String> file_src = new ArrayList<String>();
-			List<String> file_dest = new ArrayList<String>();
-			file_src.add(FileUtil.getPathOfResource("images/lenna.tiff"));
-			file_dest.add("/home/aloesch/test.jpg");
-			//file_src.add(FileUtil.getPathOfResource("images/red-eyed.jpg"));
-			im_lenna = new C2ImageManager(file_src, file_dest);
-			im_lenna.environmentUp();
-			im_lenna.readImages();
-			lenna = im_lenna.getSourceImages().get(0);
-			assert lenna != null;
-		}
-
-		/*
-			Tests fixed parameters:
-		 */
-        String composition =
+		String composition =
 				"s1 = C2Services.C2Service_grey::__construct();\n" +
 				"i2 = s1::processImage({i1=imageIn});\n" +
 				"s2 = C2Services.C2Service_sobel::__construct();\n" +
@@ -555,24 +506,10 @@ public class ImagingTests {
 		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
 		Result result = resultMap.get("imageOut");
 
-		C2Image processedImage = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
+		lenna_mod = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 
-		FastBitmap lennapic_processed = new FastBitmap(processedImage.convertToBufferedImage());
+		FastBitmap lennapic_processed = new FastBitmap(lenna_mod.convertToBufferedImage());
 		JOptionPane.showMessageDialog(null, lennapic_processed.toIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
-
-		if(WORKAROUND___ENABLE_C2_IMAGES) {
-			List<C2Image> image_list = new ArrayList<C2Image>();
-			image_list.add(processedImage);
-
-			im_lenna.setTargetImages(image_list);
-			try {
-				im_lenna.writeImages();
-			} catch (Exception e) {
-				System.out.println("Explosion!");
-			}
-
-			im_lenna.environmentDown();
-		}
     }
 
 	private static ClassesConfig getTestClassConfig() {

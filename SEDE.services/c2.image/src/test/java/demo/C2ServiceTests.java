@@ -110,10 +110,10 @@ public class C2ServiceTests {
 
 		// Load C2 image.
 		List<String> file_src = new ArrayList<String>();
-		List<String> file_dest = new ArrayList<String>();
 		file_src.add(FileUtil.getPathOfResource("images/lenna.tiff"));
 
 		// Location of result image.
+		List<String> file_dest = new ArrayList<String>();
 		file_dest.add("/home/aloesch/test.jpg");
 
 		im = new C2ImageManager(file_src, file_dest);
@@ -169,13 +169,11 @@ public class C2ServiceTests {
 				"s2 = C2Services.C2Service_sobel::__construct();\n" +
 				"imageOut = s2::processImage({i2});\n";
 
-		JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input", JOptionPane.PLAIN_MESSAGE);
-
 		SEDEObject inputObject_c2i = new ObjectDataField(C2Image.class.getName(), lenna);
 
         ResolvePolicy policy = new ResolvePolicy();
         policy.setServicePolicy("None");
-        policy.setReturnFieldnames(Arrays.asList("imageOut"));
+        policy.setReturnFieldnames(Arrays.asList("i2", "imageOut"));
 
         Map<String, SEDEObject> inputs = new HashMap<>();
 		inputs.put("imageIn", inputObject_c2i);
@@ -183,10 +181,14 @@ public class C2ServiceTests {
         RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
 
 		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
+		Result intermediate = resultMap.get("i2");
 		Result result = resultMap.get("imageOut");
 
+		C2Image lenna_intermediate = intermediate.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 		lenna_mod = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 
+		JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, lenna_intermediate.convertToImageIcon(), "Intermediate", JOptionPane.PLAIN_MESSAGE);
 		JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
     }
 }

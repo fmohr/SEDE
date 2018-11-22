@@ -38,6 +38,7 @@ public class Plugin extends Service {
 	public Plugin(File serviceFile, List<File> linkedFiles) {
 		super(serviceFile, linkedFiles);
 		mHandler = c_loadLibrary(serviceFile.getAbsolutePath());
+		System.out.println("Load native library: " + serviceFile.getName());
 		// mHandlerGPU = c_loadLibraryGPU(mHandler,
 		// mPluginFile.getAbsolutePath().replace(".so", "_gpu.so"));
 

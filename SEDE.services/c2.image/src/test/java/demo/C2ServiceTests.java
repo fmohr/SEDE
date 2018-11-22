@@ -26,6 +26,7 @@ import org.junit.Test;
 import C2Data.C2Image;
 import C2Data.C2ImageManager;
 import C2Data.C2ImageCaster;
+import C2Data.C2NativeInterface;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
@@ -49,6 +50,7 @@ public class C2ServiceTests {
 	static GatewayHttpServer gateway;
 
 	// C2 image type.
+	static C2NativeInterface ni;
 	static C2ImageManager im;
 	static C2Image lenna;
 	static C2Image lenna_mod;
@@ -105,8 +107,8 @@ public class C2ServiceTests {
 
 	@BeforeClass
 	public static void loadBefore() {
-		// Load libraries.
-		loadC2Libraries();
+		// Load native libraries
+		ni = C2NativeInterface.getInstance();
 
 		// Load C2 image.
 		List<String> file_src = new ArrayList<String>();
@@ -114,7 +116,7 @@ public class C2ServiceTests {
 
 		// Location of result image.
 		List<String> file_dest = new ArrayList<String>();
-		file_dest.add("/home/aloesch/test.jpg");
+		file_dest.add(ni.getSedeRootDir() + "/result.jpg");
 
 		im = new C2ImageManager(file_src, file_dest);
 		im.environmentUp();
@@ -143,25 +145,7 @@ public class C2ServiceTests {
 		im.environmentDown();
 	}
 
-	public static void loadC2Libraries() {
-		try {
-			// Load image library bridge. The bridge comes from the demonstrator in
-			//   sfb901_demonstrator/service_caller
-			System.load(FileUtil.getPathOfResource("shared_libs/libimagemagick.so"));
-
-			// Load service plugin bridge. The bridge comes from the demonstrator in
-			//   sfb901_demonstrator/service_node
-			System.load(FileUtil.getPathOfResource("shared_libs/libpluginbridge.so"));
-
-			// TODO: this needs a clean solution. Currently done via LD_LIBRARY_PATH.
-			// Add path to *.so of the service plugins to library path.
-			// System.setProperty("java.library.path", System.getProperty("java.library.path")+":/home/deffel/coding/SEDE/CServices/cbuild");
-		} catch (UnsatisfiedLinkError error) {
-			System.out.println(error.getMessage());
-		}
-	}
-
-    @Test
+	@Test
     public void testGreySobel() throws InvocationTargetException, InterruptedException {
 		String composition =
 				"s1 = C2Services.C2Service_grey::__construct();\n" +

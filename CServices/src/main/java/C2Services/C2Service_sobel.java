@@ -1,6 +1,7 @@
 package C2Services;
 
 import C2Data.C2Image;
+import C2Data.C2NativeInterface;
 import C2Plugins.Plugin;
 
 import java.io.File;
@@ -13,10 +14,10 @@ public class C2Service_sobel extends Plugin {
     private static List<File> linkedFiles;
 
     static {
-        serviceFile = new File("/home/aloesch/projects/SEDE/CServices/cbuild/libservice_sobel.so");
+        serviceFile = new File(C2NativeInterface.getPluginDir() + "libservice_sobel.so");
         linkedFiles = new ArrayList<File>();
-        linkedFiles.add(new File("/home/aloesch/projects/SEDE/CServices/cbuild/libservice_sobel_cpu.so"));
-        linkedFiles.add(new File("/home/aloesch/projects/SEDE/CServices/cbuild/libservice_sobel_scpu.so"));
+        linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_sobel_cpu.so"));
+        linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_sobel_scpu.so"));
     }
 
     public C2Service_sobel() {
@@ -27,9 +28,6 @@ public class C2Service_sobel extends Plugin {
 
     public C2Image processImage(C2Image sourceImage) {
         System.out.println("C2Service_sobel::processImage();");
-        //TODO set and use search path for libraries: java.library.path
-        //TODO load shared objects only once
-        //System.load("/sede/codebase/ServiceCodeProvider/c2imaging/service_node/bin/libpluginbridge.so");
 
         List<Double> params         = new ArrayList<Double>();
         List<C2Image> input_images  = new ArrayList<C2Image>();

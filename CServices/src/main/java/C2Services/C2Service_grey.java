@@ -26,7 +26,7 @@ public class C2Service_grey extends Plugin {
     }
 
     public C2Image processImage(C2Image sourceImage) {
-        System.out.println("C2Service_grey::processImage");
+        System.out.println("C2Service_grey::processImage();");
         //TODO set and use search path for libraries: java.library.path
         //TODO load shared objects only once
         //System.load("/sede/codebase/ServiceCodeProvider/c2imaging/service_node/bin/libpluginbridge.so");

@@ -2,6 +2,7 @@ package demo;
 
 import C2Data.C2Image;
 import C2Data.C2ImageManager;
+import C2Data.C2NativeInterface;
 import Catalano.Imaging.FastBitmap;
 import de.upb.sede.util.FileUtil;
 import org.junit.BeforeClass;
@@ -17,6 +18,7 @@ public class C2ImageVsCatalanoTests {
     static FastBitmap frog;
 
     // C2 image type.
+    static C2NativeInterface ni;
     static C2ImageManager im_c2frog;
     static C2Image c2frog;
 
@@ -33,7 +35,7 @@ public class C2ImageVsCatalanoTests {
 
         if(WORKAROUND___ENABLE_C2_IMAGES) {
             // Load libraries.
-            loadC2Libraries();
+            ni = C2NativeInterface.getInstance();
 
             // Load C2 image.
             ArrayList<String> file_src = new ArrayList<String>();
@@ -45,24 +47,6 @@ public class C2ImageVsCatalanoTests {
             im_c2frog.readImages();
             c2frog = im_c2frog.getSourceImages().get(0);
             assert c2frog != null;
-        }
-    }
-
-    public static void loadC2Libraries() {
-        try {
-            // Load image library bridge. The bridge comes from the demonstrator in
-            //   sfb901_demonstrator/service_caller
-            System.load(FileUtil.getPathOfResource("shared_libs/libimagemagick.so"));
-
-            // Load service plugin bridge. The bridge comes from the demonstrator in
-            //   sfb901_demonstrator/service_node
-            System.load(FileUtil.getPathOfResource("shared_libs/libpluginbridge.so"));
-
-            // TODO: this needs a clean solution. Currently done via LD_LIBRARY_PATH.
-            // Add path to *.so of the service plugins to library path.
-            // System.setProperty("java.library.path", System.getProperty("java.library.path")+":/home/deffel/coding/SEDE/CServices/cbuild");
-        } catch (UnsatisfiedLinkError error) {
-            System.out.println(error.getMessage());
         }
     }
 

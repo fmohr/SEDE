@@ -5,7 +5,6 @@ import de.upb.sede.util.FileUtil;
 public class C2ImageMagickCaller {
     /* CONSTRUCTORS */
     protected C2ImageMagickCaller() {
-        // TODO: this is assumed to be loaded in SEDE.
         //System.loadLibrary("imagemagick");
         // System.load("/home/deffel/coding/SEDE/SEDE.services/c2.image/src/test/resources/shared_libs/libimagemagick.so");
         //System.load(FileUtil.getPathOfResource("shared_libs/libimagemagick.so"));

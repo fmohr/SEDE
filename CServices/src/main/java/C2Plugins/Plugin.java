@@ -51,7 +51,7 @@ public class Plugin extends Service {
 		setMetaInfos(serviceMetaInfos);
 		serviceMetaInfos.setInputNumberAssurance(c_getNumberOfInputImages(mHandler));
 		serviceMetaInfos.setOutputNumberAssurance(c_getNumberOfOutputImages(mHandler));
-		printLoad();
+		//printLoad();
 	}
 
 	/* METHODS */

@@ -5,12 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class Service {
-
-	/**
-	 * 
-	 */
-	//private static final long serialVersionUID = -6016176195313769529L;
-
 	File serviceFile;
 	List<File> linkedFiles;
 	ServiceMetaInformation metaInfos = null;

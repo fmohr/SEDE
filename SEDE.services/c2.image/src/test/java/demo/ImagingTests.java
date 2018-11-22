@@ -19,6 +19,7 @@ import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.WebUtil;
+import C2Data.C2NativeInterface;
 import C2Data.C2Image;
 import C2Data.C2ImageManager;
 import C2Data.C2ImageCaster;
@@ -31,7 +32,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.Buffer;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +52,7 @@ public class ImagingTests {
 	static FastBitmap frog;
 
     // C2 image type.
+	static C2NativeInterface ni;
     static C2ImageManager im;
 	static C2Image lenna;
 	static C2Image lenna_mod;
@@ -147,7 +148,7 @@ public class ImagingTests {
 
 		if(WORKAROUND___ENABLE_C2_IMAGES) {
 			// Load libraries.
-			loadC2Libraries();
+			ni = C2NativeInterface.getInstance();
 
 			// Load C2 image.
 			List<String> file_src = new ArrayList<String>();
@@ -155,7 +156,7 @@ public class ImagingTests {
 			file_src.add(FileUtil.getPathOfResource("images/lenna.tiff"));
 
 			// Location of result image.
-			file_dest.add("/home/aloesch/test.jpg");
+			file_dest.add(ni.getSedeRootDir() + "/result.jpg");
 
 			im = new C2ImageManager(file_src, file_dest);
 			im.environmentUp();
@@ -163,24 +164,6 @@ public class ImagingTests {
 			lenna = im.getSourceImages().get(0);
 
 			assert lenna != null;
-		}
-	}
-
-	public static void loadC2Libraries() {
-		try {
-			// Load image library bridge. The bridge comes from the demonstrator in
-			//   sfb901_demonstrator/service_caller
-			System.load(FileUtil.getPathOfResource("shared_libs/libimagemagick.so"));
-
-			// Load service plugin bridge. The bridge comes from the demonstrator in
-			//   sfb901_demonstrator/service_node
-			System.load(FileUtil.getPathOfResource("shared_libs/libpluginbridge.so"));
-
-			// TODO: this needs a clean solution. Currently done via LD_LIBRARY_PATH.
-			// Add path to *.so of the service plugins to library path.
-			// System.setProperty("java.library.path", System.getProperty("java.library.path")+":/home/deffel/coding/SEDE/CServices/cbuild");
-		} catch (UnsatisfiedLinkError error) {
-			System.out.println(error.getMessage());
 		}
 	}
 

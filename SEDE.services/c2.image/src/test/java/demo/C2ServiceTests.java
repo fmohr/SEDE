@@ -25,7 +25,7 @@ import org.junit.Test;
 
 import C2Data.C2Image;
 import C2Data.C2ImageManager;
-import de.upb.sede.casters.C2ImageCaster;
+import C2Data.C2ImageCaster;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;

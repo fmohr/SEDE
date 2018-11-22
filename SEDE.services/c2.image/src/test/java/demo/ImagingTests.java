@@ -2,7 +2,6 @@ package demo;
 
 import Catalano.Imaging.FastBitmap;
 import Catalano.Imaging.Tools.ImageHistogram;
-import de.upb.sede.casters.C2ImageCaster;
 import de.upb.sede.casters.FastBitmapCaster;
 import de.upb.sede.casters.ImageHistogramCaster;
 import de.upb.sede.client.CoreClient;
@@ -22,6 +21,7 @@ import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.WebUtil;
 import C2Data.C2Image;
 import C2Data.C2ImageManager;
+import C2Data.C2ImageCaster;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;

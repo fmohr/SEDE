@@ -9,6 +9,6 @@
     },
     "C2Data.C2Image": {
         "semantic_type": "Arr",
-        "onthological_caster": "de.upb.sede.casters.C2ImageCaster"
+        "onthological_caster": "C2Data.C2ImageCaster"
     }
 }

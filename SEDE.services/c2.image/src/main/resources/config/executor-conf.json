@@ -18,6 +18,7 @@
     "Catalano.Imaging.Filters.GrayScale_MinimumDecomposition",
     "Catalano.Imaging.Filters.GrayScale_MaximumDecomposition",
     "C2Services.C2Service_grey",
+    "C2Services.C2Service_CPU_grey",
     "C2Services.C2Service_sobel"
   ],
   "serviceStoreLocation": "instances"

@@ -2,6 +2,7 @@ package C2Services;
 
 import C2Data.C2Image;
 import C2Data.C2NativeInterface;
+import C2Data.C2Resource;
 import C2Plugins.Plugin;
 
 import java.io.File;
@@ -26,14 +27,24 @@ public class C2Service_grey extends Plugin {
         System.out.println("C2Service_grey::__construct();");
     }
 
-    public C2Image processImage(C2Image sourceImage) {
-        System.out.println("C2Service_grey::processImage();");
+    public C2Image processImage(C2Resource resource, C2Image sourceImage) {
+        System.out.println("C2Service_grey::processImage()@" + resource.getResourceString() + ";");
+
+        switch (resource.getResourceString()) {
+            case "s":
+            case "c":
+                break;
+            case "g":
+            case "f":
+            default:
+                throw new Error("Resource '" + resource.getResourceString() + "' not supported by service.");
+        }
 
         List<Double> params         = new ArrayList<Double>();
         List<C2Image> input_images  = new ArrayList<C2Image>();
         input_images.add(sourceImage);
 
-        List<C2Image> output_images = (ArrayList<C2Image>)process('c', params, input_images);
+        List<C2Image> output_images = (ArrayList<C2Image>)process(resource.getResourceChar(), params, input_images);
 
         return output_images.get(0);
     }

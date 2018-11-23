@@ -10,5 +10,9 @@
     "C2Data.C2Image": {
         "semantic_type": "Arr",
         "onthological_caster": "C2Data.C2ImageCaster"
+    },
+    "C2Data.C2Resource": {
+        "semantic_type": "Arr",
+        "onthological_caster": "C2Data.C2ResourceCaster"
     }
 }

@@ -1,5 +1,6 @@
 package demo;
 
+import C2Data.*;
 import de.upb.sede.client.CoreClient;
 import de.upb.sede.client.HttpCoreClient;
 import de.upb.sede.config.ClassesConfig;
@@ -22,11 +23,6 @@ import org.json.simple.parser.ParseException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import C2Data.C2Image;
-import C2Data.C2ImageManager;
-import C2Data.C2ImageCaster;
-import C2Data.C2NativeInterface;
 
 import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
@@ -149,23 +145,32 @@ public class C2ServiceTests {
     public void testGreySobel() throws InvocationTargetException, InterruptedException {
 		String composition =
 				"s1 = C2Services.C2Service_grey::__construct();\n" +
-				"i2 = s1::processImage({i1=imageIn});\n" +
+				"imageInter = s1::processImage({i1=resource1, i2=imageIn});\n" +
 				"s2 = C2Services.C2Service_sobel::__construct();\n" +
-				"imageOut = s2::processImage({i2});\n";
+				"imageOut = s2::processImage({i1=resource2, i2=imageInter});\n";
 
-		SEDEObject inputObject_c2i = new ObjectDataField(C2Image.class.getName(), lenna);
+		C2Resource SCPU	= new C2Resource("scpu");
+		C2Resource CPU	= new C2Resource("cpu");
+		C2Resource GPU	= new C2Resource("gpu");
+		C2Resource FPGA	= new C2Resource("fpga");
+
+		SEDEObject inputObject_lenna	= new ObjectDataField(C2Image.class.getName(), lenna);
+		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), SCPU);
+		SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), CPU);
 
         ResolvePolicy policy = new ResolvePolicy();
         policy.setServicePolicy("None");
-        policy.setReturnFieldnames(Arrays.asList("i2", "imageOut"));
+        policy.setReturnFieldnames(Arrays.asList("imageInter", "imageOut"));
 
         Map<String, SEDEObject> inputs = new HashMap<>();
-		inputs.put("imageIn", inputObject_c2i);
+		inputs.put("imageIn", inputObject_lenna);
+		inputs.put("resource1", inputObject_res1);
+		inputs.put("resource2", inputObject_res2);
 
         RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
 
 		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
-		Result intermediate = resultMap.get("i2");
+		Result intermediate = resultMap.get("imageInter");
 		Result result = resultMap.get("imageOut");
 
 		C2Image lenna_intermediate = intermediate.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();

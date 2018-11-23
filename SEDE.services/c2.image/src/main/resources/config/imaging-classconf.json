@@ -246,6 +246,7 @@
                 "$construct" :{},
                 "processImage": {
                       "params": [
+                          "C2Data.C2Resource",
                           "C2Data.C2Image"
                       ],
                       "returntype": "C2Data.C2Image"
@@ -253,14 +254,15 @@
           }
     },
     "C2Services.C2Service_sobel": {
-        "methods": {
-            "$construct" :{},
-            "processImage": {
-                "params": [
-                    "C2Data.C2Image"
-                ],
-                "returntype": "C2Data.C2Image"
-            }
-        }
+          "methods": {
+                "$construct" :{},
+                "processImage": {
+                        "params": [
+                            "C2Data.C2Resource",
+                            "C2Data.C2Image"
+                        ],
+                        "returntype": "C2Data.C2Image"
+                }
+          }
     }
 }

@@ -1,10 +1,4 @@
 project.toBePublished = false
-repositories {
-    maven {
-        url "https://nexus.cs.upb.de/repository/maven-releases/"
-    }
-}
-
 
 dependencies {
     // https://mvnrepository.com/artifact/com.google.guava/guava
@@ -19,14 +13,11 @@ dependencies {
     provided project(':SEDE.terminal')
     provided project(':SEDE.frontend')
 
-    provided project(':weka.ml')
-    provided project(path: ':scikit.ml', configuration: 'serviceConf')
-    provided project(':catalano.image')
-    provided project(path: ':c2.image', configuration: 'serviceConf')
-
+    compile group: 'de.upb.isys', name: 'weka.ml', version: '1.4'
+    compile group: 'de.upb.isys', name: 'catalano.image', version: '1.2'
+    compile group: 'de.upb.isys', name: 'builtins', version: '1.0'
 
     runtime group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.1'
-
 }
 
 task jarSimpleExecutor(type: Jar, dependsOn: jarjar) {

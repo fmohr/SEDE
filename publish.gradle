@@ -18,58 +18,13 @@ task dep {
     }
 }
 
-def serviceConfArtifact = artifacts.add('serviceConf', jarconf)
 
 publishing {
     publications {
         mavenJava(MavenPublication) {
             afterEvaluate {
-//                from components.java
+                from components.java
                 artifact sourcesJar
-
-              artifact jar
-
-                /*
-                 * Currently there is a bug in gradle that doesn't let us define multiple artifacts for a single project.
-                 * Workaround: Instead of `components.java` we need to use `artifact jar` and manually specify the dependency pom.
-                 *
-                 * See: https://github.com/gradle/gradle/issues/1061
-                 */
-                pom.withXml {
-                    def dependenciesNode = asNode().appendNode('dependencies')
-
-                    configurations.runtime.allDependencies.each {
-                        if (it.group != null && it.name != null) {
-                            def dependencyNode = dependenciesNode.appendNode('dependency')
-                            dependencyNode.appendNode('groupId', it.group)
-                            if(it instanceof ModuleDependency && it.getTargetConfiguration().equals('serviceConf')) {
-                                String artifactId = it.getName() + '-serviceconf'
-                                dependencyNode.appendNode('artifactId', artifactId)
-                            } else {
-                                dependencyNode.appendNode('artifactId', it.name)
-                            }
-                            dependencyNode.appendNode('version', it.version)
-
-                            if (it.excludeRules.size() > 0) {
-                                def exclusionsNode = dependencyNode.appendNode('exclusions')
-                                it.excludeRules.each { rule ->
-                                    def exclusionNode = exclusionsNode.appendNode('exclusion')
-                                    exclusionNode.appendNode('groupId', rule.group)
-                                    exclusionNode.appendNode('artifactId', rule.module)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        mavenConf(MavenPublication) {
-            /*
-             * publish the service config under the same artifact
-             */
-            artifactId = project.name.toString() + '-serviceconf'
-            afterEvaluate{
-                artifact serviceConfArtifact
             }
         }
     }
@@ -85,8 +40,6 @@ publishing {
 tasks.withType(AbstractPublishToMaven) {
     onlyIf {
         // only publish code if the project doesn't prohibit publishing
-        (publication == publishing.publications.mavenJava && project.toBePublished) ||
-        // prevent publishing service artifacts for non service projects.
-        (publication == publishing.publications.mavenConf && project.isServiceProject)
+        (publication == publishing.publications.mavenJava && project.toBePublished)
     }
 }

@@ -1,6 +1,0 @@
-{
-  "LabeledInstances": {
-    "semantic_type": "dataset",
-    "onthological_caster": "ml.data.LabeledInstancesCaster"
-  }
-}

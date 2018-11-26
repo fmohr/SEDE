@@ -32,7 +32,7 @@ public class HttpURLConnectionClientRequest implements BasicClientRequest {
 //		try {
 //			return establishHTTPConnection().getOutputStream();
 //		} catch (IOException e) {
-//			throw new UncheckedIOException(e);
+//			throw new UncheckedIOException(e);a
 //		}
 		return payload;
 	}
@@ -59,7 +59,7 @@ public class HttpURLConnectionClientRequest implements BasicClientRequest {
 			payload.writeTo(httpConnection.getOutputStream());
 			return httpConnection.getInputStream();
 		} catch (IOException e) {
-			throw new UncheckedIOException(e);
+			throw new UncheckedIOException("Error during http request to address: " + url.getPath(),e);
 		}
 	}
 

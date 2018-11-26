@@ -191,7 +191,7 @@ public class Executor implements IExecutor {
 		// This is a java executor:
 		capabilities.add("java");
 		// The java implementation supports casting in place in transmit and accept nodes:
-		capabilities.add("cast_in_place");
+//		capabilities.add("cast_in_place");
 		/*
 		 * add capabilities specified in the configuration:
 		 */

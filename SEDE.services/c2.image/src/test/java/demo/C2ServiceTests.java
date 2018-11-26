@@ -144,9 +144,10 @@ public class C2ServiceTests {
 	@Test
     public void testGreySobel() throws InvocationTargetException, InterruptedException {
 		String composition =
-				"s1 = C2Services.C2Service_CPU_grey::__construct();\n" +
-				//"imageInter = s1::processImage({i1=resource1, i2=imageIn});\n" +
-				"imageInter = s1::processImage({i1=imageIn});\n" +
+				//"s1 = C2Services.C2Service_CPU_grey::__construct();\n" +
+				//"imageInter = s1::processImage({i1=imageIn});\n" +
+				"s1 = C2Services.C2Service_grey::__construct();\n" +
+				"imageInter = s1::processImage({i1=resource1, i2=imageIn});\n" +
 				"s2 = C2Services.C2Service_sobel::__construct();\n" +
 				"imageOut = s2::processImage({i1=resource2, i2=imageInter});\n";
 

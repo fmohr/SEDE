@@ -144,20 +144,22 @@ public class C2ServiceTests {
 	@Test
     public void testGreySobel() throws InvocationTargetException, InterruptedException {
 		String composition =
-				"s1 = C2Services.C2Service_CPU_grey::__construct();\n" +
-				//"imageInter = s1::processImage({i1=resource1, i2=imageIn});\n" +
-				"imageInter = s1::processImage({i1=imageIn});\n" +
+				"s1 = C2Services.C2Service_grey::__construct();\n" +
+				"imageInter = s1::processImage({i1=resource1, i2=imageIn});\n" +
+				//"s1 = C2Services.C2Service_CPU_grey::__construct();\n" +
+				//"imageInter = s1::processImage({i1=imageIn});\n" +
 				"s2 = C2Services.C2Service_sobel::__construct();\n" +
-				"imageOut = s2::processImage({i1=resource2, i2=imageInter});\n";
+				"imageOut = s2::processImage({i1=resource2, i2=imageIn});\n";
 
 		C2Resource SCPU	= new C2Resource("scpu");
 		C2Resource CPU	= new C2Resource("cpu");
 		C2Resource GPU	= new C2Resource("gpu");
 		C2Resource FPGA	= new C2Resource("fpga");
+		C2Resource JAVA	= new C2Resource("java");
 
 		SEDEObject inputObject_lenna	= new ObjectDataField(C2Image.class.getName(), lenna);
-		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), CPU);
-		SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), SCPU);
+		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), JAVA);
+		SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), JAVA);
 
         ResolvePolicy policy = new ResolvePolicy();
         policy.setServicePolicy("None");

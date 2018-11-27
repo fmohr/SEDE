@@ -29,6 +29,12 @@ public class C2Resource {
             case "FPGA":
                 mResource = "f";
                 break;
+            case "j":
+            case "J":
+            case "java":
+            case "JAVA":
+                mResource = "j";
+                break;
             default:
                 throw new AssertionError("Resource '" + resourceName + "' unknown!");
         }

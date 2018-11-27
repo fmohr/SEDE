@@ -19,7 +19,7 @@ subprojects {
 	apply from: "${rootDir}/gradle/maven-deployment.gradle"
 	apply plugin: 'eclipse'
 	
-	group = 'de.upb.sede.seco'
+	group = 'de.upb.sede.dsl'
 	version = '1.0.0-SNAPSHOT'
 	
 	sourceCompatibility = '1.8'

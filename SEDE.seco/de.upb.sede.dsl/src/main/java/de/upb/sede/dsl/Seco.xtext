@@ -1,0 +1,48 @@
+grammar de.upb.sede.dsl.Seco with org.eclipse.xtext.common.Terminals
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+generate seco "http://www.upb.de/sede/dsl/Seco"
+
+
+Entries:
+    (elements+=Entry)*;
+  
+Entry:
+    (
+    	instruction=Instruction
+    );
+    
+/*
+ * E.g.:
+ *  s1=Catalano.Imaging.Filters.Crop::__construct({i1=0,i2=0,i3=10,i4=10})
+ */
+Instruction:
+	(field=FieldName "=")? context=QualifiedName ("::"|".") method=MethodName "(" "{"? (inputs=Parameters)? "}"? ");";
+		
+Parameters:
+	(inputs+=Parameter) (',' inputs+=Parameter)*;
+
+Parameter:
+	(isIndexed ?= "i" index = INT)? (isNumb ?= NumberConst | isString ?= StringConst | isBool ?= BoolConst | isNull ?= NullConst | isField ?= FieldName);
+
+FieldName returns ecore::EString:
+	ID;
+	
+MethodName returns ecore::EString:
+	ID;
+	
+QualifiedName returns ecore::EString:
+     ID ('.' ID)*;
+    
+StringConst returns ecore::EString:
+	 STRING;
+	
+BoolConst returns ecore::EString:
+	 "True" | "true" | "False" | "false" | "TRUE" | "FALSE";
+	
+NullConst returns ecore::EString:
+	 "Null" | "null" | "NULL" | "NuLL";
+	
+NumberConst returns ecore::EString:
+	 ("-" | "+")? INT ("." INT)? (("e"|"E") ("-" | "+") INT)?;

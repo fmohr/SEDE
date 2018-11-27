@@ -1,3 +1,3 @@
-include 'de.upb.sede.seco'
-include 'de.upb.sede.seco.ide'
-include 'de.upb.sede.seco.web'
+include 'de.upb.sede.dsl'
+include 'de.upb.sede.dsl.ide'
+include 'de.upb.sede.dsl.web'

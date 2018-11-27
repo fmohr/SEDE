@@ -1,3 +1,6 @@
 .settings
 **/.settings
 **/.launch
+**/*.xtendbin
+**/*.xtextbin
+**/*._trace

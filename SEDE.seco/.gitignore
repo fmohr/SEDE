@@ -4,3 +4,6 @@
 **/*.xtendbin
 **/*.xtextbin
 **/*._trace
+**/xtext-gen
+**/xtend-gen
+**/generated

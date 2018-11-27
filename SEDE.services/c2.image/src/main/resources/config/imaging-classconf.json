@@ -264,6 +264,17 @@
             }
         }
     },
+    "C2Services.C2Service_JAVA_grey": {
+        "methods": {
+            "$construct" :{},
+            "processImage": {
+                "params": [
+                    "C2Data.C2Image"
+                ],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
     "C2Services.C2Service_sobel": {
           "methods": {
                 "$construct" :{},
@@ -275,5 +286,16 @@
                         "returntype": "C2Data.C2Image"
                 }
           }
+    },
+    "C2Services.C2Service_JAVA_sobel": {
+        "methods": {
+            "$construct" :{},
+            "processImage": {
+                "params": [
+                    "C2Data.C2Image"
+                ],
+                "returntype": "C2Data.C2Image"
+            }
+        }
     }
 }

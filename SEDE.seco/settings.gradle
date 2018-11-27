@@ -1,0 +1,3 @@
+include 'de.upb.sede.seco'
+include 'de.upb.sede.seco.ide'
+include 'de.upb.sede.seco.web'

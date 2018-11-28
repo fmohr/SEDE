@@ -14,5 +14,9 @@
     "C2Data.C2Resource": {
         "semantic_type": "Arr",
         "onthological_caster": "C2Data.C2ResourceCaster"
+    },
+    "C2Data.C2Params": {
+        "semantic_type": "Arr",
+        "onthological_caster": "C2Data.C2ParamsCaster"
     }
 }

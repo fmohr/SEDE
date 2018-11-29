@@ -2,6 +2,7 @@ package C2Services;
 
 import C2Data.C2Image;
 import C2Data.C2NativeInterface;
+import C2Data.C2Params;
 import C2Data.C2Resource;
 import C2Plugins.Plugin;
 
@@ -27,8 +28,9 @@ public class C2Service_grey extends Plugin {
         System.out.println("C2Service_grey::__construct();");
     }
 
-    public C2Image processImage(C2Resource resource, C2Image sourceImage) {
+    public C2Image processImage(C2Resource resource, C2Image sourceImage, C2Params param) {
         System.out.println("C2Service_grey::processImage()@" + resource.getResourceString() + ";");
+        System.out.println("C2Service_grey::parameter value:" + param.getmParam() + ";");
 
         switch (resource.getResourceString()) {
             case "j":

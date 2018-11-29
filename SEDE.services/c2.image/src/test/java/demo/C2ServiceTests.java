@@ -28,6 +28,7 @@ import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
+import java.lang.*;
 
 public class C2ServiceTests {
 
@@ -50,6 +51,7 @@ public class C2ServiceTests {
 	static C2ImageManager im;
 	static C2Image lenna;
 	static C2Image lenna_mod;
+	static C2Params paramValue = new C2Params(12345.5335);
 
 	private static ClassesConfig getTestClassConfig() {
 		ClassesConfig classesConfig = new ClassesConfig();
@@ -143,13 +145,12 @@ public class C2ServiceTests {
 
 	@Test
     public void testGreySobel() throws InvocationTargetException, InterruptedException {
+
 		String composition =
 				"s1 = C2Services.C2Service_grey::__construct();\n" +
-				"imageInter = s1::processImage({i1=resource1, i2=imageIn});\n" +
-				//"s1 = C2Services.C2Service_CPU_grey::__construct();\n" +
-				//"imageInter = s1::processImage({i1=imageIn});\n" +
+				"imageInter = s1::processImage({i1=resource1, i2=imageIn, i3 = paramValue});\n" +
 				"s2 = C2Services.C2Service_sobel::__construct();\n" +
-				"imageOut = s2::processImage({i1=resource2, i2=imageIn});\n";
+				"imageOut = s2::processImage({i1=resource2, i2=imageIn, i3 = paramValue});\n";
 
 		C2Resource SCPU	= new C2Resource("scpu");
 		C2Resource CPU	= new C2Resource("cpu");
@@ -160,6 +161,8 @@ public class C2ServiceTests {
 		SEDEObject inputObject_lenna	= new ObjectDataField(C2Image.class.getName(), lenna);
 		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), JAVA);
 		SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), JAVA);
+		SEDEObject inputObject_param	= new ObjectDataField(C2Params.class.getName(), paramValue);
+
 
         ResolvePolicy policy = new ResolvePolicy();
         policy.setServicePolicy("None");
@@ -169,6 +172,7 @@ public class C2ServiceTests {
 		inputs.put("imageIn", inputObject_lenna);
 		inputs.put("resource1", inputObject_res1);
 		inputs.put("resource2", inputObject_res2);
+		inputs.put("paramValue", inputObject_param);
 
         RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
 

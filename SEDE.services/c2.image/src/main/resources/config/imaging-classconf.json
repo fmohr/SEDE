@@ -247,7 +247,8 @@
                 "processImage": {
                       "params": [
                           "C2Data.C2Resource",
-                          "C2Data.C2Image"
+                          "C2Data.C2Image",
+                          "C2Data.C2Params"
                       ],
                       "returntype": "C2Data.C2Image"
                 }
@@ -258,7 +259,8 @@
             "$construct" :{},
             "processImage": {
                 "params": [
-                    "C2Data.C2Image"
+                    "C2Data.C2Image",
+                    "C2Data.C2Params"
                 ],
                 "returntype": "C2Data.C2Image"
             }
@@ -269,7 +271,8 @@
             "$construct" :{},
             "processImage": {
                 "params": [
-                    "C2Data.C2Image"
+                    "C2Data.C2Image",
+                    "C2Data.C2Params"
                 ],
                 "returntype": "C2Data.C2Image"
             }
@@ -281,7 +284,8 @@
                 "processImage": {
                         "params": [
                             "C2Data.C2Resource",
-                            "C2Data.C2Image"
+                            "C2Data.C2Image",
+                            "C2Data.C2Params"
                         ],
                         "returntype": "C2Data.C2Image"
                 }
@@ -292,7 +296,8 @@
             "$construct" :{},
             "processImage": {
                 "params": [
-                    "C2Data.C2Image"
+                    "C2Data.C2Image",
+                    "C2Data.C2Params"
                 ],
                 "returntype": "C2Data.C2Image"
             }

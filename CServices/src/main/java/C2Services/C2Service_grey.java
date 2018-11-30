@@ -30,7 +30,10 @@ public class C2Service_grey extends Plugin {
 
     public C2Image processImage(C2Resource resource, C2Image sourceImage, C2Params param) {
         System.out.println("C2Service_grey::processImage()@" + resource.getResourceString() + ";");
-        System.out.println("C2Service_grey::parameter value:" + param.getmParam() + ";");
+
+        for(int i = 0; i < param.getSize(); i++){
+            System.out.println("param value at position" + i + " = " + param.getParamValue(i));
+        }
 
         switch (resource.getResourceString()) {
             case "j":
@@ -43,14 +46,13 @@ public class C2Service_grey extends Plugin {
                 throw new Error("Resource '" + resource.getResourceString() + "' not supported by service.");
         }
 
-        List<Double> params         = new ArrayList<Double>();
         List<C2Image> input_images  = new ArrayList<C2Image>();
         input_images.add(sourceImage);
 
         List<C2Image> output_images = null;
 
         if (resource.getResourceString() != "j") {
-            output_images = (ArrayList<C2Image>) process(resource.getResourceChar(), params, input_images);
+            output_images = (ArrayList<C2Image>) process(resource.getResourceChar(), param.getmParams(), input_images);
         } else {
             output_images = (ArrayList<C2Image>) rgb2grey(input_images);
         }

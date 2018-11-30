@@ -51,7 +51,6 @@ public class C2ServiceTests {
 	static C2ImageManager im;
 	static C2Image lenna;
 	static C2Image lenna_mod;
-	static C2Params paramValue = new C2Params(12345.5335);
 
 	private static ClassesConfig getTestClassConfig() {
 		ClassesConfig classesConfig = new ClassesConfig();
@@ -150,9 +149,10 @@ public class C2ServiceTests {
 				//"s1 = C2Services.C2Service_CPU_grey::__construct();\n" +
 				//"imageInter = s1::processImage({i1=imageIn});\n" +
 				"s1 = C2Services.C2Service_grey::__construct();\n" +
-				"imageInter = s1::processImage({i1=resource1, i2=imageIn, i3 = paramValue});\n" +
+				"imageInter = s1::processImage({i1=resource1, i2=imageIn, i3 = paramValue1});\n" +
 				"s2 = C2Services.C2Service_sobel::__construct();\n" +
-				"imageOut = s2::processImage({i1=resource2, i2=imageIn, i3 = paramValue});\n";
+                        "s2::setOptions({i1=paramValue1});\n" +
+				"imageOut = s2::processImage({i1=resource2, i2=imageIn});\n";
 
 		C2Resource SCPU	= new C2Resource("scpu");
 		C2Resource CPU	= new C2Resource("cpu");
@@ -160,10 +160,18 @@ public class C2ServiceTests {
 		C2Resource FPGA	= new C2Resource("fpga");
 		C2Resource JAVA	= new C2Resource("java");
 
+		List<Double> params = new ArrayList<Double>(2);
+		params.add(123.555);
+		params.add(99.9899);
+
+		C2Params paramValues = new C2Params(params);
+
+
 		SEDEObject inputObject_lenna	= new ObjectDataField(C2Image.class.getName(), lenna);
 		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), JAVA);
 		SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), JAVA);
-		SEDEObject inputObject_param	= new ObjectDataField(C2Params.class.getName(), paramValue);
+		SEDEObject inputObject_param1	= new ObjectDataField(C2Params.class.getName(), paramValues);
+		//SEDEObject inputObject_param2	= new ObjectDataField(C2Params.class.getName(), paramValues);
 
 
         ResolvePolicy policy = new ResolvePolicy();
@@ -174,7 +182,8 @@ public class C2ServiceTests {
 		inputs.put("imageIn", inputObject_lenna);
 		inputs.put("resource1", inputObject_res1);
 		inputs.put("resource2", inputObject_res2);
-		inputs.put("paramValue", inputObject_param);
+		inputs.put("paramValue1", inputObject_param1);
+		//inputs.put("paramValue2", inputObject_param2);
 
         RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
 

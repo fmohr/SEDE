@@ -149,10 +149,11 @@ public class C2ServiceTests {
 				//"s1 = C2Services.C2Service_CPU_grey::__construct();\n" +
 				//"imageInter = s1::processImage({i1=imageIn});\n" +
 				"s1 = C2Services.C2Service_grey::__construct();\n" +
-				"imageInter = s1::processImage({i1=resource1, i2=imageIn, i3 = paramValue});\n" +
+				"s1::setOptions({i1=paramValue});\n" +
+				"imageInter = s1::processImage({i1=resource1, i2=imageIn});\n" +
 				"s2 = C2Services.C2Service_sobel::__construct();\n" +
-                      //  "s2::setOptions({i1=paramValue1});\n" +
-				"imageOut = s2::processImage({i1=resource2, i2=imageIn, i3 = paramValue});\n";
+				"s2::setOptions({i1=paramValue});\n" +
+				"imageOut = s2::processImage({i1=resource2, i2=imageIn});\n";
 
 		C2Resource SCPU	= new C2Resource("scpu");
 		C2Resource CPU	= new C2Resource("cpu");
@@ -168,8 +169,8 @@ public class C2ServiceTests {
 
 
 		SEDEObject inputObject_lenna	= new ObjectDataField(C2Image.class.getName(), lenna);
-		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), CPU);
-		SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), SCPU);
+		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), JAVA);
+		SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), JAVA);
 		SEDEObject inputObject_param	= new ObjectDataField(C2Params.class.getName(), paramValues);
 
 

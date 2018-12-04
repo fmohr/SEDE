@@ -33,15 +33,35 @@ public class C2Service_grey extends Plugin {
         System.out.println("C2Service_grey::__construct();");
     }
 
-    protected List<Double> getParamList(C2Params params) {
+    public void setOptions(C2Params params){
+
+        double height = 0;
+        double width = 0;
+
+        Map<String, Double> paramMap    = params.getParams();
+        Set<String> paramKeys           = paramMap.keySet();
+
+        for (String key : paramKeys) {
+            double paramValue1 = paramMap.get("height");
+            height = paramValue1;
+            double paramValue2 = paramMap.get("width");
+            width = paramValue2;
+        }
+
+        System.out.println("Height:" + height );
+        System.out.println("Width:" + width );
+
+    }
+
+    protected List<Double> getParamList() {
         List<Double> paramList = new ArrayList<Double>();
 
-        Map<String,Double> paramMap = params.getParams();
+        Map<String,Double> paramMap = getOptions().getParams();
 
         return paramList;
     }
 
-    public C2Image processImage(C2Resource resource, C2Image sourceImage, C2Params params) {
+    public C2Image processImage(C2Resource resource, C2Image sourceImage) {
         System.out.println("C2Service_grey::processImage()@" + resource.getResourceString() + ";");
 
         switch (resource.getResourceString()) {
@@ -61,7 +81,7 @@ public class C2Service_grey extends Plugin {
         List<C2Image> output_images = null;
 
         if (resource.getResourceString() != "j") {
-            output_images = (ArrayList<C2Image>) process(resource.getResourceChar(), getParamList(params), input_images);
+            output_images = (ArrayList<C2Image>) process(resource.getResourceChar(), getParamList(), input_images);
         } else {
             output_images = (ArrayList<C2Image>) rgb2grey(input_images);
         }

@@ -108,7 +108,7 @@ abstract public class Plugin extends Service {
 		}
 	}
 
-	abstract protected List<Double> getParamList(C2Params params);
+	abstract protected List<Double> getParamList();
 
 	/**
 	 * Returns which resources are supported by this plug-in.

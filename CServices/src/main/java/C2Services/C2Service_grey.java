@@ -8,7 +8,12 @@ import C2Plugins.Plugin;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Set;
+
 
 public class C2Service_grey extends Plugin {
 
@@ -28,12 +33,16 @@ public class C2Service_grey extends Plugin {
         System.out.println("C2Service_grey::__construct();");
     }
 
-    public C2Image processImage(C2Resource resource, C2Image sourceImage, C2Params param) {
-        System.out.println("C2Service_grey::processImage()@" + resource.getResourceString() + ";");
+    protected List<Double> getParamList(C2Params params) {
+        List<Double> paramList = new ArrayList<Double>();
 
-        for(int i = 0; i < param.getSize(); i++){
-            System.out.println("param value at position" + i + " = " + param.getParamValue(i));
-        }
+        Map<String,Double> paramMap = params.getParams();
+
+        return paramList;
+    }
+
+    public C2Image processImage(C2Resource resource, C2Image sourceImage, C2Params params) {
+        System.out.println("C2Service_grey::processImage()@" + resource.getResourceString() + ";");
 
         switch (resource.getResourceString()) {
             case "j":
@@ -52,7 +61,7 @@ public class C2Service_grey extends Plugin {
         List<C2Image> output_images = null;
 
         if (resource.getResourceString() != "j") {
-            output_images = (ArrayList<C2Image>) process(resource.getResourceChar(), param.getmParams(), input_images);
+            output_images = (ArrayList<C2Image>) process(resource.getResourceChar(), getParamList(params), input_images);
         } else {
             output_images = (ArrayList<C2Image>) rgb2grey(input_images);
         }

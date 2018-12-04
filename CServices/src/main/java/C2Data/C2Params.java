@@ -1,18 +1,14 @@
 package C2Data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class C2Params {
 
-    private List<Double> mParams = new ArrayList<Double>();
+    private Map< String,Double> mParams;
 
-    public C2Params(List<Double> paramValues) { mParams = paramValues; }
+    public C2Params(Map< String,Double> paramValues) { mParams = paramValues; }
 
-    public List<Double> getmParams() { return mParams; }
-
-    public double getParamValue(int i){return mParams.get(i);}
+    public Map<String,Double> getParams() { return mParams; }
 
     public int getSize(){return mParams.size();}
-
 }

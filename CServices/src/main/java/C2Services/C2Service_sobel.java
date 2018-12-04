@@ -9,6 +9,7 @@ import C2Plugins.Plugin;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class C2Service_sobel extends Plugin {
 
@@ -28,13 +29,16 @@ public class C2Service_sobel extends Plugin {
         System.out.println("C2Service_sobel::__construct();");
     }
 
-    public C2Image processImage(C2Resource resource, C2Image sourceImage, C2Params param) {
+    protected List<Double> getParamList(C2Params params) {
+        List<Double> paramList = new ArrayList<Double>();
+
+        Map<String,Double> paramMap = params.getParams();
+
+        return paramList;
+    }
+
+    public C2Image processImage(C2Resource resource, C2Image sourceImage, C2Params params) {
         System.out.println("C2Service_sobel::processImage()@" + resource.getResourceString() + ";");
-
-        for(int i = 0; i < param.getSize(); i++){
-            System.out.println("param value at position" + i + " = " + param.getParamValue(i));
-        }
-
 
         switch (resource.getResourceString()) {
             case "j":
@@ -53,7 +57,7 @@ public class C2Service_sobel extends Plugin {
         List<C2Image> output_images = null;
 
         if (resource.getResourceString() != "j") {
-            output_images = (ArrayList<C2Image>) process(resource.getResourceChar(), param.getmParams(), input_images);
+            output_images = (ArrayList<C2Image>) process(resource.getResourceChar(), getParamList(params), input_images);
         } else {
             output_images = (ArrayList<C2Image>) sobel(input_images);
         }

@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import C2Data.C2Image;
+import C2Data.C2Params;
 
 import java.util.ArrayList;
 
@@ -21,7 +22,7 @@ import java.util.ArrayList;
  * the communication pipeline can be seen as {Plugin.javah -> [plugins_Plugin.h]
  * -> plugin_bridge.c -> [plugin.h] -> plugin_XYZ.c}.
  */
-public class Plugin extends Service {
+abstract public class Plugin extends Service {
 
 	private long mHandler;
 	private long mHandlerGPU;
@@ -106,6 +107,8 @@ public class Plugin extends Service {
 			}
 		}
 	}
+
+	abstract protected List<Double> getParamList(C2Params params);
 
 	/**
 	 * Returns which resources are supported by this plug-in.

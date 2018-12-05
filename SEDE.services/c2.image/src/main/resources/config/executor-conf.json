@@ -21,7 +21,8 @@
     "C2Services.C2Service_CPU_grey",
     "C2Services.C2Service_JAVA_grey",
     "C2Services.C2Service_sobel",
-    "C2Services.C2Service_JAVA_sobel"
+    "C2Services.C2Service_JAVA_sobel",
+    "C2Services.C2Service_gausslowpass"
   ],
   "serviceStoreLocation": "instances"
 }

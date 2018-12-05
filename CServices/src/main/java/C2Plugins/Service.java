@@ -17,6 +17,14 @@ public abstract class Service {
 		this.linkedFiles = linkedFiles;
 	}
 
+	public void printMethod(String methodName) {
+		System.out.println(this.getClass().toString().replaceFirst("class ", "") + "::" + methodName + "();");
+	}
+
+	public void printMethod(String methodName, String resourceID) {
+		System.out.println(this.getClass().toString().replaceFirst("class ", "") + "::" + methodName + "()@" + resourceID + ";");
+	}
+
 	public void setMetaInfos(ServiceMetaInformation metaInfos) {
 		this.metaInfos = metaInfos;
 	}
@@ -30,6 +38,8 @@ public abstract class Service {
 	}
 
 	public void setOptions(C2Params params) {
+		printMethod("setOptions");
+
 		mParams = params;
 	}
 

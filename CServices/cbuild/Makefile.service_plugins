@@ -1,6 +1,7 @@
 SERVICES_ALL=\
 	service_grey \
-	service_sobel
+	service_sobel \
+        service_gausslowpass
 
 CC=gcc
 CFLAGS=-O3 -Wall

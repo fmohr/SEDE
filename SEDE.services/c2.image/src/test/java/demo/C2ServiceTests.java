@@ -143,18 +143,18 @@ public class C2ServiceTests {
 	}
 
 	@Test
-    public void testGreySobel() throws InvocationTargetException, InterruptedException {
+    public void testGreyGaussSobel() throws InvocationTargetException, InterruptedException {
 
 		String composition =
 				"s1 = C2Services.C2Service_grey::__construct();\n" +
 				"s1::setOptions({i1=paramValue});\n" +
 				"imageInter1 = s1::processImage({i1=resource1, i2=imageIn});\n" +
-				//"s2 = C2Services.C2Service_gaussblur::__construct();\n" +
-				//"s2::setOptions({i1=paramValue});\n" +
-				//"imageInter2 = s2::processImage({i1=resource2, i2=imageInter1});\n" +
+				"s2 = C2Services.C2Service_gausslowpass::__construct();\n" +
+				"s2::setOptions({i1=paramValue});\n" +
+				"imageInter2 = s2::processImage({i1=resource2, i2=imageInter1});\n" +
                 "s3 = C2Services.C2Service_sobel::__construct();\n" +
                 "s3::setOptions({i1=paramValue});\n" +
-                "imageOut = s3::processImage({i1=resource3, i2=imageInter1});\n";
+                "imageOut = s3::processImage({i1=resource3, i2=imageInter2});\n";
 
 		C2Resource SCPU	= new C2Resource("scpu");
 		C2Resource CPU	= new C2Resource("cpu");
@@ -190,16 +190,21 @@ public class C2ServiceTests {
 
 		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
         Result inter1 = resultMap.get("imageInter1");
-        //Result inter2 = resultMap.get("imageInter2");
+        Result inter2 = resultMap.get("imageInter2");
 		Result result = resultMap.get("imageOut");
 
         C2Image lenna_inter1 = inter1.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
-        //C2Image lenna_inter2 = inter2.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
+        C2Image lenna_inter2 = inter2.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 		lenna_mod = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 
 		JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input", JOptionPane.PLAIN_MESSAGE);
         JOptionPane.showMessageDialog(null, lenna_inter1.convertToImageIcon(), "Inter1", JOptionPane.PLAIN_MESSAGE);
-        //JOptionPane.showMessageDialog(null, lenna_inter2.convertToImageIcon(), "Inter2", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, lenna_inter2.convertToImageIcon(), "Inter2", JOptionPane.PLAIN_MESSAGE);
 		JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
     }
+
+	@Test
+	public void testGreyMedianMorph() throws InvocationTargetException, InterruptedException {
+
+	}
 }

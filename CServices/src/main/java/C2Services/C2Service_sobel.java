@@ -27,39 +27,23 @@ public class C2Service_sobel extends Plugin {
     public C2Service_sobel() {
         super(serviceFile, linkedFiles);
 
-        System.out.println("C2Service_sobel::__construct();");
-    }
-
-    public void setOptions(C2Params params){
-
-        double height = 0;
-        double width = 0;
-
-        Map<String, Double> paramMap    = params.getParams();
-        Set<String> paramKeys           = paramMap.keySet();
-
-        for (String key : paramKeys) {
-            double paramValue1 = paramMap.get("height");
-            height = paramValue1;
-            double paramValue2 = paramMap.get("width");
-            width = paramValue2;
-        }
-
-        System.out.println("Height:" + height );
-        System.out.println("Width:" + width );
-
+        printMethod("__construct");
     }
 
     protected List<Double> getParamList() {
-        List<Double> paramList = new ArrayList<Double>();
-
+        List<Double> paramList      = new ArrayList<Double>();
         Map<String,Double> paramMap = getOptions().getParams();
+
+        Set<String> paramKeys       = paramMap.keySet();
+        for (String key : paramKeys) {
+            paramList.add(paramMap.get(key));
+        }
 
         return paramList;
     }
 
     public C2Image processImage(C2Resource resource, C2Image sourceImage) {
-        System.out.println("C2Service_sobel::processImage()@" + resource.getResourceString() + ";");
+        printMethod("processImage", resource.getResourceString());
 
         switch (resource.getResourceString()) {
             case "j":

@@ -1,7 +1,9 @@
 SERVICES_ALL=\
 	service_grey \
 	service_sobel \
-        service_gausslowpass
+        service_gausslowpass \
+	service_median \
+	service_morphedgedetection
 
 CC=gcc
 CFLAGS=-O3 -Wall

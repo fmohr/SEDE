@@ -13,7 +13,7 @@ import com.google.inject.Injector;
 
 import de.upb.sede.dsl.seco.Entries;
 
-public class SecoDSL {
+public class SecoUtil {
 	private static final Injector injector = new SecoStandaloneSetup().createInjectorAndDoEMFRegistration();
 	
 	public static final Entries parseString(String seco) throws IOException{

@@ -10,7 +10,8 @@ Entries:
   
 Entry:
     (
-    	instruction=Instruction
+    	instruction=Instruction //|
+//    	definition=Definition
     );
     
 /*
@@ -18,10 +19,94 @@ Entry:
  *  s1=Catalano.Imaging.Filters.Crop::__construct({i1=0,i2=0,i3=10,i4=10})
  */
 Instruction:
-	(field=FieldName "=")? context=QualifiedName ("::"|".") method=MethodName "(" "{"? ((inputs+=Parameter) (',' inputs+=Parameter)*)? "}"? ");";
+	(field=FieldName "=")? context=QualifiedName 
+						("::"|".") method=MethodName "(" "{"? 
+								(
+									(args+=Argument)		// First argument
+									(',' args+=Argument)*  // Additional Arguments
+								)? "}"? ")"";";
 
-Parameter:
-	(indexed ?= "i" index = INT)? (number ?= NumberConst | string ?= StringConst | bool ?= BoolConst | null ?= NullConst | field ?= FieldName);
+Argument:
+	((indexed ?= "i" index = INT)| parameterName = FieldName '=')? (number ?= NumberConst | string ?= StringConst | bool ?= BoolConst | null ?= NullConst | field ?= FieldName);
+
+	 
+/*
+ * E.g.:
+ * define a.b.C wraps d.e.F extends g.H, i.J { 
+ * 		static operation m1 (Number, String, some.Entity) {
+ * 			
+ * 		}
+ * }
+ */
+EntityDefinition:
+	(def ?= "define" | refinement ?= "refine") qualifiedName = QualifiedName 
+	(
+		(wrapper ?= "wraps" 
+			wrappedEntity = QualifiedName
+		)? &
+		(extension ?= "extends" 
+			baseEntities += QualifiedName 
+			(',' baseEntities += QualifiedName)*
+		)?
+	)
+	("{" entityConfig=EntityConfig "}")?
+;
+
+EntityConfig:
+	(methods += EntityMethod)* 
+;
+
+EntityMethod:
+	 (static ?= "static"? & pure ?= "pure") ? "operation" methodName = QualifiedName "(" 
+	 		(parameters += EntityMethodParameter ("," parameters += EntityMethodParameter)*)?
+	 ")" ( '{'
+	 	(runtimeInfo ?= "\"runtimeinfo\"" '=' runtimeInfoData = Json)? 
+	 '}')?
+;
+
+
+EntityMethodParameter:
+	  (
+	  	number ?= "Number" | string ?= "String" | bool ?= "Bool" |  
+	  	((callByReference ?= "ref" | callByValue ?= "value")  entityType = QualifiedName)
+	  ) 
+	  (parameterName = FieldName)?
+;
+
+	 
+//Dictionary:
+//	'{' 
+//		((members+=Member)?
+//		(',' members+=Member)*)? 
+//	'}';
+//
+//Member:
+//	key=STRING ':' value=KomplexValue;
+//	
+//KomplexValue:
+//	Dictionary | StringConst | Array | 'true' | 'false' | 'null' | NumberConst;
+//
+//Array:
+//	'[' ((values+=KomplexValue)? (',' values+=KomplexValue)*)? ']';
+//  
+//  
+
+Json returns ecore::EString:
+	'{' 
+		((JsonObjectMemeber)
+		(',' JsonObjectMemeber)*)? 
+	'}';
+
+JsonObjectMemeber returns ecore::EString:
+	STRING ':' JsonObjectValue;
+	
+	
+JsonObjectValue returns ecore::EString:
+	Json | StringConst | JsonArray |  'true' | 'false' | 'null' | NumberConst;
+
+JsonArray returns ecore::EString:
+	'[' ((JsonObjectValue) (',' JsonObjectValue)*)? ']';
+
 
 FieldName returns ecore::EString:
 	ID;
@@ -43,3 +128,5 @@ NullConst returns ecore::EString:
 	
 NumberConst returns ecore::EString:
 	 ("-" | "+")? INT ("." INT)? (("e"|"E") ("-" | "+") INT)?;
+	 
+	 

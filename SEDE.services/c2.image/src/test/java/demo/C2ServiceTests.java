@@ -197,10 +197,10 @@ public class C2ServiceTests {
         C2Image lenna_inter2 = inter2.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 		lenna_mod = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 
-		JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input", JOptionPane.PLAIN_MESSAGE);
-        JOptionPane.showMessageDialog(null, lenna_inter1.convertToImageIcon(), "Inter1", JOptionPane.PLAIN_MESSAGE);
-        JOptionPane.showMessageDialog(null, lenna_inter2.convertToImageIcon(), "Inter2", JOptionPane.PLAIN_MESSAGE);
-		JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input Image", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, lenna_inter1.convertToImageIcon(), "Grey Image", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, lenna_inter2.convertToImageIcon(), "Gauss Blurred Image", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Sobel Filtered Image", JOptionPane.PLAIN_MESSAGE);
     }
 
 	@Test
@@ -229,8 +229,8 @@ public class C2ServiceTests {
 		C2Params paramValues = new C2Params(params);
 
 		SEDEObject inputObject_lenna	= new ObjectDataField(C2Image.class.getName(), lenna);
-		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), CPU);
-		SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), SCPU);
+		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), SCPU);
+		SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), CPU);
 		SEDEObject inputObject_res3		= new ObjectDataField(C2Resource.class.getName(), SCPU);
 		SEDEObject inputObject_param	= new ObjectDataField(C2Params.class.getName(), paramValues);
 
@@ -257,10 +257,10 @@ public class C2ServiceTests {
 		C2Image lenna_inter2 = inter2.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 		lenna_mod = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 
-		JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input", JOptionPane.PLAIN_MESSAGE);
-		JOptionPane.showMessageDialog(null, lenna_inter1.convertToImageIcon(), "Inter1", JOptionPane.PLAIN_MESSAGE);
-		JOptionPane.showMessageDialog(null, lenna_inter2.convertToImageIcon(), "Inter2", JOptionPane.PLAIN_MESSAGE);
-		JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Result", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input Image", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, lenna_inter1.convertToImageIcon(), "Grey Image", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, lenna_inter2.convertToImageIcon(), "Median filtered Image", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Morph Edge Detected Image", JOptionPane.PLAIN_MESSAGE);
 
 	}
 }

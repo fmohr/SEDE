@@ -10,86 +10,118 @@ Entries:
   
 Entry:
     (
-    	instruction=Instruction //|
-//    	definition=Definition
+    	instruction = Instruction |
+    	assignment  = Assignment |
+    	definition  = EntityDefinition
     );
     
 /*
  * E.g.:
- *  s1=Catalano.Imaging.Filters.Crop::__construct({i1=0,i2=0,i3=10,i4=10})
+ *  a = fruits.Apple::__construct({i1=0,i2=0,i3=10,i4=10})
  */
+ 
 Instruction:
-	(field=FieldName "=")? context=QualifiedName 
+	(returnValues+=FieldName (',' returnValues+=FieldName)* "=")? 
+			(contextField = FieldName | contextEntity = EntityName) 
 						("::"|".") method=MethodName "(" "{"? 
 								(
 									(args+=Argument)		// First argument
 									(',' args+=Argument)*  // Additional Arguments
-								)? "}"? ")"";";
+								)? "}" ? ")" ";"
+;
+								
+
 
 Argument:
-	((indexed ?= "i" index = INT)| parameterName = FieldName '=')? (number ?= NumberConst | string ?= StringConst | bool ?= BoolConst | null ?= NullConst | field ?= FieldName);
+	(((indexed ?= "i" index = INT)| parameterName = FieldName) '=')? value = FieldValue
+;
 
-	 
+
+Assignment:
+	field=FieldName "=" value=FieldValue ("as" )?
+;
+
+
 /*
  * E.g.:
  * define a.b.C wraps d.e.F extends g.H, i.J { 
- * 		static operation m1 (Number, String, some.Entity) {
- * 			
+ * 		static operation m1: (Number, String, some.Entity) -> (Bool, some.other.Entity) {
+ * 			"runtime-data" = {
+ * 				"some_data_java_needs" = 10
+ * 			}
  * 		}
  * }
  */
 EntityDefinition:
-	(def ?= "define" | refinement ?= "refine") qualifiedName = QualifiedName 
+	(def ?= "define") qualifiedName = EntityName 
 	(
 		(wrapper ?= "wraps" 
-			wrappedEntity = QualifiedName
+			wrappedEntity = EntityName
 		)? &
 		(extension ?= "extends" 
-			baseEntities += QualifiedName 
-			(',' baseEntities += QualifiedName)*
+			baseEntities += EntityName 
+			(',' baseEntities += EntityName)*
 		)?
 	)
-	("{" entityConfig=EntityConfig "}")?
+	( entityConfig=EntityConfig )?
 ;
 
 EntityConfig:
-	(methods += EntityMethod)* 
+	{EntityConfig} "{"(methods += EntityOperation)* "}"
 ;
 
-EntityMethod:
-	 (static ?= "static"? & pure ?= "pure") ? "operation" methodName = QualifiedName "(" 
-	 		(parameters += EntityMethodParameter ("," parameters += EntityMethodParameter)*)?
-	 ")" ( '{'
-	 	(runtimeInfo ?= "\"runtimeinfo\"" '=' runtimeInfoData = Json)? 
+EntityOperation:
+	 (static ?= "static"? & pure ?= "pure") ? "operation" operationName = MethodName
+	  "(" 
+	 		(parameters += EntityOperationParam ("," parameters += EntityOperationParam)*)?
+	 ")" 
+	 ('->' '(' 
+	 		(outputs += EntityOperationParam ("," outputs += EntityOperationParam)*)? 
+	 ')')?
+	 ('{'
+	 		(runtimeDataAdded ?= "\"runtime-data\"" '=' runtimeData = Json)? 
 	 '}')?
 ;
 
 
-EntityMethodParameter:
+EntityOperationParam:
 	  (
-	  	number ?= "Number" | string ?= "String" | bool ?= "Bool" |  
-	  	((callByReference ?= "ref" | callByValue ?= "value")  entityType = QualifiedName)
+	  	number ?= "Number" | 
+	  	string ?= "String" | 
+	  	bool ?= "Bool" |  
+	  	(
+	  		(
+	  			(final ?= "final")? &
+	  			(output ?= "out")?
+	  		)  
+	  		parameterType = EntityName
+	  	)
 	  ) 
-	  (parameterName = FieldName)?
+	  (
+	  	parameterName = VersionlessFieldName
+	  )?
+	  (
+	  	valueFixed ?= "=" fixedValue =FieldValue
+	  )
 ;
 
 	 
-//Dictionary:
-//	'{' 
-//		((members+=Member)?
-//		(',' members+=Member)*)? 
-//	'}';
-//
-//Member:
-//	key=STRING ':' value=KomplexValue;
-//	
-//KomplexValue:
-//	Dictionary | StringConst | Array | 'true' | 'false' | 'null' | NumberConst;
-//
-//Array:
-//	'[' ((values+=KomplexValue)? (',' values+=KomplexValue)*)? ']';
-//  
-//  
+Dictionary:
+	'{' 
+		((members+=DictionaryMember)
+		(',' members+=DictionaryMember)*)? 
+	'}';
+
+DictionaryMember:
+	key=STRING ':' value=DictionaryValue;
+	
+DictionaryValue:
+	Dictionary | StringConst | Array | 'true' | 'false' | 'null' | NumberConst;
+
+Array:
+	'[' ((values+=DictionaryValue) (',' values+=DictionaryValue)*)? ']';
+  
+
 
 Json returns ecore::EString:
 	'{' 
@@ -108,14 +140,16 @@ JsonArray returns ecore::EString:
 	'[' ((JsonObjectValue) (',' JsonObjectValue)*)? ']';
 
 
-FieldName returns ecore::EString:
-	ID;
+
+QualifiedName  returns ecore::EString:
+	ID ('.' ID)*
+;
 	
+EntityName:
+     name = QualifiedName '$'?;
+     
 MethodName returns ecore::EString:
-	ID;
-	
-QualifiedName returns ecore::EString:
-     ID ('.' ID)*;
+	ID '!'?;
     
 StringConst returns ecore::EString:
 	 STRING;
@@ -128,5 +162,24 @@ NullConst returns ecore::EString:
 	
 NumberConst returns ecore::EString:
 	 ("-" | "+")? INT ("." INT)? (("e"|"E") ("-" | "+") INT)?;
+	 
+	 
+VersionlessFieldName returns FieldName:
+	(name = ID) | (this?='this') | (base?='base' ( => '(' baseIndex=INT ')')?) | (wrapper?= 'wrapper');
+
+FieldName:
+	(name = ID (':' version = INT)?);
+	
+FieldValue:
+	(
+		number ?= NumberConst |
+		string ?= StringConst | 
+		bool ?= BoolConst | 
+		null ?= NullConst | 
+		(entityReference ?= "ref"  entity = EntityName ('::' method=MethodName)?) |
+		(=>field = FieldName) 
+	)
+;
+
 	 
 	 

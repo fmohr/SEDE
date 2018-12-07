@@ -32,12 +32,6 @@ public class C2Service_sobel extends Plugin {
 
     protected List<Double> getParamList() {
         List<Double> paramList      = new ArrayList<Double>();
-        Map<String,Double> paramMap = getOptions().getParams();
-
-        Set<String> paramKeys       = paramMap.keySet();
-        for (String key : paramKeys) {
-            paramList.add(paramMap.get(key));
-        }
 
         return paramList;
     }

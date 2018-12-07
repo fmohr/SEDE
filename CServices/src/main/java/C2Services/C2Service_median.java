@@ -3,14 +3,12 @@ package C2Services;
 
 import C2Data.C2Image;
 import C2Data.C2NativeInterface;
+import C2Data.C2Params;
 import C2Data.C2Resource;
 import C2Plugins.Plugin;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class C2Service_median extends Plugin {
 
@@ -27,6 +25,10 @@ public class C2Service_median extends Plugin {
     public C2Service_median() {
         super(serviceFile, linkedFiles);
 
+        Map<String, Double> paramsDefaultMap = new HashMap<String, Double>();
+        paramsDefaultMap.put("filter_size", 3.0);
+        setOptions(new C2Params(paramsDefaultMap));
+
         printMethod("__construct");
     }
 
@@ -34,10 +36,7 @@ public class C2Service_median extends Plugin {
         List<Double> paramList      = new ArrayList<Double>();
         Map<String,Double> paramMap = getOptions().getParams();
 
-        Set<String> paramKeys       = paramMap.keySet();
-        for (String key : paramKeys) {
-            paramList.add(paramMap.get(key));
-        }
+        paramList.add(paramMap.get("filter_size"));
 
         return paramList;
     }

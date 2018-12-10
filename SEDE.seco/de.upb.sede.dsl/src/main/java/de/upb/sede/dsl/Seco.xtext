@@ -6,54 +6,52 @@ generate seco "http://www.upb.de/sede/dsl/Seco"
 
 
 Entries:
-    (elements+=Entry)*;
-  
-Entry:
     (
-    	instruction = Instruction |
-    	assignment  = Assignment |
-    	definition  = EntityDefinition
-    );
+    	elements+=Assignment |
+    	elements+=EntityDefinition |
+    	elements+=Yield
+    )*;
+  
     
 /*
  * E.g.:
  *  a = fruits.Apple::__construct({i1=0,i2=0,i3=10,i4=10})
  */
  
-Instruction:
-	(returnValues+=FieldName (',' returnValues+=FieldName)* "=")? 
-			(contextField = FieldName | contextEntity = EntityName) 
-						("::"|".") method=MethodName "(" "{"? 
-								(
-									(args+=Argument)		// First argument
-									(',' args+=Argument)*  // Additional Arguments
-								)? "}" ? ")" ";"
+
+Operation:
+	(=> contextField = Field | entityName = EntityName) ("::")
+		 method=MethodName "(" "{"? 
+				(
+					(args+=Argument)		// First argument
+					(',' args+=Argument)*  // Additional Arguments
+				)? "}" ? ")" 
 ;
 								
 
 
 Argument:
-	(((indexed ?= "i" index = INT)| parameterName = FieldName) '=')? value = FieldValue
+	(((indexed ?= "i" index = INT)| parameterName = ID) '=')? value = FieldValue
 ;
 
 
 Assignment:
-	field=FieldName "=" value=FieldValue ("as" )?
+	(=> assignedFields += Field (multiAssignment ?= ',' assignedFields+= Field)* "=")? value = FieldValue ";"
 ;
 
 
 /*
  * E.g.:
- * define a.b.C wraps d.e.F extends g.H, i.J { 
- * 		static operation m1: (Number, String, some.Entity) -> (Bool, some.other.Entity) {
+ * define a.b.C wraps d.e.F extends g.H, i.J {
+ * 		method: static Construct (Number, String, some.Entity) -> (Bool, some.other.Entity) {
  * 			"runtime-data" = {
  * 				"some_data_java_needs" = 10
  * 			}
- * 		}
+ * 		};
  * }
  */
 EntityDefinition:
-	(def ?= "define") qualifiedName = EntityName 
+	(def ?= "define" | refine ?= "refine") qualifiedName = EntityName 
 	(
 		(wrapper ?= "wraps" 
 			wrappedEntity = EntityName
@@ -63,64 +61,116 @@ EntityDefinition:
 			(',' baseEntities += EntityName)*
 		)?
 	)
-	( entityConfig=EntityConfig )?
+	"{"
+		(
+			methods += EntityMethod |
+			marshals += EntityMarshal |
+			casts += EntityCast
+		)* 
+	"}"
 ;
 
-EntityConfig:
-	{EntityConfig} "{"(methods += EntityOperation)* "}"
+
+EntityMethod:
+	(property = EntityMethodProp)? "method:" methodName = MethodName
+	 paramSignature = EntityMethodParamSignature 
+	 (realization ?= 'realized' 'by' 
+	 	methodRealization = MethodName
+	 	// realizationArguments EntityMethodParamSignature // TODO parameter redirects
+	 )?
+	 (additionalData = Json)? ';'
 ;
 
-EntityOperation:
-	 (static ?= "static"? & pure ?= "pure") ? "operation" operationName = MethodName
-	  "(" 
-	 		(parameters += EntityOperationParam ("," parameters += EntityOperationParam)*)?
+enum EntityMethodProp:
+	STATIC = 'static' | PURE = 'pure'
+;
+
+
+EntityMethodParamSignature:
+	{EntityMethodParamSignature} "(" 
+	 	(parameters += EntityMethodParam ("," parameters += EntityMethodParam)*)?
 	 ")" 
 	 ('->' '(' 
-	 		(outputs += EntityOperationParam ("," outputs += EntityOperationParam)*)? 
+	 	(outputs += EntityMethodParam ("," outputs += EntityMethodParam)*)? 
 	 ')')?
-	 ('{'
-	 		(runtimeDataAdded ?= "\"runtime-data\"" '=' runtimeData = Json)? 
-	 '}')?
 ;
 
 
-EntityOperationParam:
+EntityMethodParam:
+	(
+		(final ?= "final")? &
+		(yielded ?= "yield")?
+	)  
+	parameterType = EntityName
 	  (
-	  	number ?= "Number" | 
-	  	string ?= "String" | 
-	  	bool ?= "Bool" |  
-	  	(
-	  		(
-	  			(final ?= "final")? &
-	  			(output ?= "out")?
-	  		)  
-	  		parameterType = EntityName
-	  	)
-	  ) 
-	  (
-	  	parameterName = VersionlessFieldName
+	  	parameterName = ID
 	  )?
 	  (
 	  	valueFixed ?= "=" fixedValue =FieldValue
-	  )
+	  )?
 ;
 
-	 
-Dictionary:
-	'{' 
-		((members+=DictionaryMember)
-		(',' members+=DictionaryMember)*)? 
-	'}';
 
-DictionaryMember:
-	key=STRING ':' value=DictionaryValue;
+EntityMarshal:
+	"marshal:" direction = TransformDirection resultingSemantics = ID? (additionalData = Json)? ';'
+;
+
+EntityCast:
+	"cast:" direction = TransformDirection resultingEntity = EntityName (additionalData = Json)? ';' 
+;
+
+enum TransformDirection:
+	BI = '<->' | BI = 'to and from' | 
+	TO = '->' | TO = 'to' |
+	FROM = '<-' | FROM = 'from'
+;
+
+Yield:
+	=> "yield" yields += FieldValue (multiYield ?= ',' yields += FieldValue)* ';'?
+;
+
+
+
+QualifiedName  returns ecore::EString:
+	ID ('.' ID)*
+;
 	
-DictionaryValue:
-	Dictionary | StringConst | Array | 'true' | 'false' | 'null' | NumberConst;
-
-Array:
-	'[' ((values+=DictionaryValue) (',' values+=DictionaryValue)*)? ']';
-  
+EntityName:
+     name = QualifiedName '$'?;
+     
+MethodName:
+	name = ID '!'?;
+    
+StringConst returns ecore::EString:
+	 STRING;
+	
+BoolConst returns ecore::EString:
+	 "True" | "true" | "False" | "false" | "TRUE" | "FALSE";
+	
+NullConst returns ecore::EString:
+	 "Null" | "null" | "NULL" | "NuLL";
+	
+NumberConst returns ecore::EString:
+	 ("-" | "+")? INT ("." INT)? (("e"|"E") ("-" | "+") INT)?;
+	 
+	 
+Field:
+	name = ID (-> dereference ?= '->' memeber = __TerminalField)?;
+	
+__TerminalField returns FieldValue:
+	FieldValue
+;
+	
+FieldValue:
+	( -> cast ?='(' castTarget = EntityName ')'  castValue = __TerminalField) |
+	number = NumberConst |
+	string = StringConst | 
+	bool = BoolConst | 
+	null ?= NullConst | 
+//	(entityReference ?= "ref"  entity = EntityName ('::' method=MethodName)?) | // TODO: do we need entity references?
+	(=> operation = Operation) | 
+	(field = Field)
+;
 
 
 Json returns ecore::EString:
@@ -139,47 +189,3 @@ JsonObjectValue returns ecore::EString:
 JsonArray returns ecore::EString:
 	'[' ((JsonObjectValue) (',' JsonObjectValue)*)? ']';
 
-
-
-QualifiedName  returns ecore::EString:
-	ID ('.' ID)*
-;
-	
-EntityName:
-     name = QualifiedName '$'?;
-     
-MethodName returns ecore::EString:
-	ID '!'?;
-    
-StringConst returns ecore::EString:
-	 STRING;
-	
-BoolConst returns ecore::EString:
-	 "True" | "true" | "False" | "false" | "TRUE" | "FALSE";
-	
-NullConst returns ecore::EString:
-	 "Null" | "null" | "NULL" | "NuLL";
-	
-NumberConst returns ecore::EString:
-	 ("-" | "+")? INT ("." INT)? (("e"|"E") ("-" | "+") INT)?;
-	 
-	 
-VersionlessFieldName returns FieldName:
-	(name = ID) | (this?='this') | (base?='base' ( => '(' baseIndex=INT ')')?) | (wrapper?= 'wrapper');
-
-FieldName:
-	(name = ID (':' version = INT)?);
-	
-FieldValue:
-	(
-		number ?= NumberConst |
-		string ?= StringConst | 
-		bool ?= BoolConst | 
-		null ?= NullConst | 
-		(entityReference ?= "ref"  entity = EntityName ('::' method=MethodName)?) |
-		(=>field = FieldName) 
-	)
-;
-
-	 
-	 

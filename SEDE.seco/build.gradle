@@ -44,7 +44,7 @@ project(':de.upb.sede.dsl') {
 	        mavenJava(MavenPublication) {
 	            afterEvaluate {
                 	from components.java
-                	artifactId 'seco'
+                	artifactId 'SEDE.seco'
 	            }
 	        }
 	    }

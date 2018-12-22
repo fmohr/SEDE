@@ -118,6 +118,7 @@ project(':SEDE.core') {
             exclude module: 'junit'
             exclude group: 'org.hamcrest'
         }
+        compile group: 'de.upb.isys', name: 'SEDE.seco', version: '0.1'
     }
 
     task jarTransformer(type: Jar, dependsOn: assemble) {

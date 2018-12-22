@@ -6,11 +6,15 @@ package de.upb.sede.dsl.tests;
 import com.google.inject.Inject;
 
 import de.upb.sede.dsl.seco.Assignment;
-import de.upb.sede.dsl.seco.EntityName;
+import de.upb.sede.dsl.seco.EntityClassDefinition;
+import de.upb.sede.dsl.seco.EntityMethod;
 import de.upb.sede.dsl.seco.Entries;
 import de.upb.sede.dsl.seco.SecoFactory;
-import de.upb.sede.dsl.seco.impl.EntityNameImpl;
 import de.upb.sede.dsl.tests.SecoInjectorProvider;
+import junit.framework.Assert;
+
+import java.util.Arrays;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -37,7 +41,7 @@ public class SecoParseTest {
 	
     try {
       StringConcatenation _builder = new StringConcatenation();
-      _builder.append("a = (Number) b;");
+      _builder.append("a = ($Number) b;");
       _builder.newLine();
       final Entries result = this.parseHelper.parse(_builder);
       Assertions.assertNotNull(result);
@@ -48,14 +52,59 @@ public class SecoParseTest {
       String _join = IterableExtensions.join(errors, ", ");
       _builder_1.append(_join);
       Assertions.assertTrue(_isEmpty, _builder_1.toString());
-      Assignment a = ((Assignment) result.getElements().get(0));
+      Assignment a = ((Assignment) result.getInstructions().get(0));
       Assertions.assertTrue(a.getValue().isCast());
-      EntityName numberEntity = SecoFactory.eINSTANCE.createEntityName();
-      numberEntity.setName("Number");
-      Assertions.assertTrue(EcoreUtil.equals(numberEntity,  a.getValue().getCastTarget()));
+      Assertions.assertEquals("Number",  a.getValue().getCastTarget());
       
     } catch (Throwable _e) {
       throw Exceptions.sneakyThrow(_e);
     }
+  }
+
+  @Test
+  public void testConverter() {
+	  try {
+	      StringConcatenation _builder = new StringConcatenation();
+	      
+	      _builder.append("class: a.b.C wraps $d.se.F extends $g.H, a.ai.J {");
+	      _builder.newLine();
+	      _builder.append("static method:  !Construct (Number, String, some.Entity) -> (Bool, $some.other.Entity);");
+	      _builder.newLine();
+	      _builder.append("static method:  Construct ($Number, String, some.Entity) -> (Bool, some.other.Entity);");
+	      _builder.newLine();
+	      _builder.append("cast: <-> $Some.Other.Entity;");
+	      _builder.newLine();
+	      _builder.append("}");
+	      _builder.newLine();
+	      System.out.println(_builder.toString() + "\n");
+	      
+	      final Entries result = this.parseHelper.parse(_builder);
+	      Assertions.assertNotNull(result);
+	      final EList<Resource.Diagnostic> errors = result.eResource().getErrors();
+	      boolean _isEmpty = errors.isEmpty();
+	      StringConcatenation _builder_1 = new StringConcatenation();
+	      _builder_1.append("Parsed text:\n" + _builder.toString() + "Unexpected errors:\n\t ");
+	      String _join = IterableExtensions.join(errors, "\n\t ");
+	      _builder_1.append(_join);
+	      Assertions.assertTrue(_isEmpty, _builder_1.toString());
+	      EntityClassDefinition a =  (result.getEntities().get(0));
+	      Assertions.assertEquals(a.getQualifiedName(), "a.b.C");
+	      Assertions.assertEquals(a.getWrappedEntity(), "d.se.F");
+	      Assertions.assertEquals(a.getBaseEntities(), Arrays.asList("g.H", "a.ai.J"));
+
+	      EntityMethod m1 = a.getMethods().get(0);
+	      EntityMethod m2 = a.getMethods().get(1);
+	      
+	      Assertions.assertTrue(EcoreUtil.equals(m1, m2));
+	      
+	      Assertions.assertEquals(a.getCasts().get(0).getResultingEntity(), "Some.Other.Entity");
+	      
+	      
+//	      System.out.println(a.Ecore);
+	     
+	      
+	    } catch (Throwable _e) {
+	      throw Exceptions.sneakyThrow(_e);
+	    }
   }
 }

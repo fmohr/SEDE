@@ -7,11 +7,11 @@ generate seco "http://www.upb.de/sede/dsl/Seco"
 
 Entries:
     (
-    	elements+=Assignment |
-    	elements+=EntityDefinition |
-    	elements+=Yield
-    )*;
-  
+    	instructions+=Assignment |
+    	instructions+=Yield
+    )+ | (
+    	entities+=EntityClassDefinition
+    )+;
     
 /*
  * E.g.:
@@ -42,16 +42,17 @@ Assignment:
 
 /*
  * E.g.:
- * define a.b.C wraps d.e.F extends g.H, i.J {
- * 		method: static Construct (Number, String, some.Entity) -> (Bool, some.other.Entity) {
+ * entity a.b.C class: wraps d.e.F extends g.H, i.J {
+ * 		static method:  Construct (Number, String, some.Entity) -> (Bool, some.other.Entity) {
  * 			"runtime-data" = {
  * 				"some_data_java_needs" = 10
  * 			}
  * 		};
+ * 		cast: <-> $some.Other.Entity;
  * }
  */
-EntityDefinition:
-	(def ?= "define" | refine ?= "refine") qualifiedName = EntityName 
+EntityClassDefinition:
+	("class:") qualifiedName = EntityName  
 	(
 		(wrapper ?= "wraps" 
 			wrappedEntity = EntityName
@@ -64,7 +65,6 @@ EntityDefinition:
 	"{"
 		(
 			methods += EntityMethod |
-			marshals += EntityMarshal |
 			casts += EntityCast
 		)* 
 	"}"
@@ -98,22 +98,17 @@ EntityMethodParamSignature:
 
 EntityMethodParam:
 	(
-		(final ?= "final")? &
-		(yielded ?= "yield")?
+		(final ?= "final")?
 	)  
 	parameterType = EntityName
 	  (
 	  	parameterName = ID
 	  )?
 	  (
-	  	valueFixed ?= "=" fixedValue =FieldValue
+	  	valueFixed ?= "=" fixedValue = FieldValue
 	  )?
 ;
 
-
-EntityMarshal:
-	"marshal:" direction = TransformDirection resultingSemantics = ID? (additionalData = Json)? ';'
-;
 
 EntityCast:
 	"cast:" direction = TransformDirection resultingEntity = EntityName (additionalData = Json)? ';' 
@@ -132,14 +127,14 @@ Yield:
 
 
 QualifiedName  returns ecore::EString:
-	ID ('.' ID)*
+	-> ID ('.' ID)*
 ;
 	
-EntityName:
-     name = QualifiedName '$'?;
+EntityName returns ecore::EString:
+     '$'? QualifiedName ;
      
-MethodName:
-	name = ID '!'?;
+MethodName returns ecore::EString:
+	 '!'? ID ;
     
 StringConst returns ecore::EString:
 	 STRING;

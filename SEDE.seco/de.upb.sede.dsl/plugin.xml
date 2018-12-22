@@ -12,7 +12,7 @@
       <package
             uri="http://www.upb.de/sede/dsl/Seco"
             class="de.upb.sede.dsl.seco.SecoPackage"
-            genModel="model/generated/Seco.genmodel"/>
+            genModel="model/current/Seco.genmodel"/>
    </extension>
 
 </plugin>

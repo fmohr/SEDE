@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="2.15.0" modelDirectory="/de.upb.sede.dsl/src/main/java"
+    modelPluginID="de.upb.sede.dsl" forceOverwrite="true" modelName="Seco" updateClasspath="false"
+    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" suppressEMFTypes="true"
+    suppressInterfaces="true" suppressNotification="true" complianceLevel="8.0" copyrightFields="false"
+    publicConstructors="true">
+  <genPackages prefix="Seco" basePackage="de.upb.sede.dsl" disposableProviderFactory="true"
+      fileExtensions="seco" ecorePackage="Seco.ecore#/">
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Seco.ecore#//EntityMethodProp">
+      <genEnumLiterals ecoreEnumLiteral="Seco.ecore#//EntityMethodProp/STATIC"/>
+      <genEnumLiterals ecoreEnumLiteral="Seco.ecore#//EntityMethodProp/PURE"/>
+    </genEnums>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="Seco.ecore#//TransformDirection">
+      <genEnumLiterals ecoreEnumLiteral="Seco.ecore#//TransformDirection/BI"/>
+      <genEnumLiterals ecoreEnumLiteral="Seco.ecore#//TransformDirection/TO"/>
+      <genEnumLiterals ecoreEnumLiteral="Seco.ecore#//TransformDirection/FROM"/>
+    </genEnums>
+    <genClasses ecoreClass="Seco.ecore#//Entries">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Entries/instructions"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Entries/entities"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//Operation">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Operation/contextField"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//Operation/entityName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//Operation/method"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Operation/args"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//Argument">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//Argument/indexed"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//Argument/index"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//Argument/parameterName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Argument/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//Assignment">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Assignment/assignedFields"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//Assignment/multiAssignment"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Assignment/value"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//EntityClassDefinition">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityClassDefinition/qualifiedName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityClassDefinition/wrapper"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityClassDefinition/wrappedEntity"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityClassDefinition/extension"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityClassDefinition/baseEntities"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityClassDefinition/methods"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityClassDefinition/casts"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//EntityMethod">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethod/property"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethod/methodName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityMethod/paramSignature"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethod/realization"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethod/methodRealization"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethod/additionalData"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//EntityMethodParamSignature">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityMethodParamSignature/parameters"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityMethodParamSignature/outputs"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//EntityMethodParam">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethodParam/final"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethodParam/parameterType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethodParam/parameterName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethodParam/valueFixed"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityMethodParam/fixedValue"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//EntityCast">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityCast/direction"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityCast/resultingEntity"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityCast/additionalData"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//Yield">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Yield/yields"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//Yield/multiYield"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//Field">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//Field/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//Field/dereference"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Field/memeber"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//FieldValue">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//FieldValue/cast"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//FieldValue/castTarget"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//FieldValue/castValue"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//FieldValue/number"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//FieldValue/string"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//FieldValue/bool"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//FieldValue/null"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//FieldValue/operation"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//FieldValue/field"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

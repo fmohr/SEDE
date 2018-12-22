@@ -11,7 +11,6 @@ import de.upb.sede.dsl.seco.EntityMethod;
 import de.upb.sede.dsl.seco.Entries;
 import de.upb.sede.dsl.seco.SecoFactory;
 import de.upb.sede.dsl.tests.SecoInjectorProvider;
-import junit.framework.Assert;
 
 import java.util.Arrays;
 

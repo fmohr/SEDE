@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="2.15.0" modelDirectory="/de.upb.sede.dsl/src/main/java"
-    modelPluginID="de.upb.sede.dsl" forceOverwrite="true" modelName="Seco" updateClasspath="false"
-    rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" suppressEMFTypes="true"
-    suppressInterfaces="true" suppressNotification="true" complianceLevel="8.0" copyrightFields="false"
-    publicConstructors="true">
+    modelPluginID="de.upb.sede.dsl" dynamicTemplates="true" forceOverwrite="true"
+    modelName="Seco" updateClasspath="false" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    suppressEMFTypes="true" suppressInterfaces="true" codeFormatting="true" commentFormatting="true"
+    suppressNotification="true" suppressUnsettable="true" complianceLevel="8.0" copyrightFields="false"
+    publicConstructors="true" classNamePattern="" importOrganizing="true" cleanup="true">
   <genPackages prefix="Seco" basePackage="de.upb.sede.dsl" disposableProviderFactory="true"
       fileExtensions="seco" ecorePackage="Seco.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="Seco.ecore#//EntityMethodProp">

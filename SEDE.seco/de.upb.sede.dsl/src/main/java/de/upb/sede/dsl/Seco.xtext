@@ -7,12 +7,13 @@ import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 import "platform:/resource/de.upb.sede.dsl/model/current/Seco.ecore"
 
 Entries:
+	(
+    	entities+=EntityClassDefinition
+    )* 
     (
     	instructions+=Assignment |
     	instructions+=Yield
-    )+ | (
-    	entities+=EntityClassDefinition
-    )+;
+    )* ;
     
 /*
  * E.g.:

@@ -5,16 +5,19 @@ package de.upb.sede.dsl.tests;
 
 import com.google.inject.Inject;
 
+import de.upb.sede.dsl.SecoUtil;
 import de.upb.sede.dsl.seco.Assignment;
 import de.upb.sede.dsl.seco.EntityClassDefinition;
 import de.upb.sede.dsl.seco.EntityMethod;
 import de.upb.sede.dsl.seco.Entries;
 import de.upb.sede.dsl.seco.SecoFactory;
+import de.upb.sede.dsl.seco.SecoPackage;
 import de.upb.sede.dsl.tests.SecoInjectorProvider;
 
 import java.util.Arrays;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -63,6 +66,7 @@ public class SecoParseTest {
   @Test
   public void testConverter() {
 	  try {
+		  EPackage.Registry.INSTANCE.put(SecoPackage.eNS_URI, SecoPackage.class);
 	      StringConcatenation _builder = new StringConcatenation();
 	      
 	      _builder.append("class: a.b.C wraps $d.se.F extends $g.H, a.ai.J {");
@@ -77,15 +81,8 @@ public class SecoParseTest {
 	      _builder.newLine();
 	      System.out.println(_builder.toString() + "\n");
 	      
-	      final Entries result = this.parseHelper.parse(_builder);
+	      final Entries result = SecoUtil.parseSources(_builder.toString());
 	      Assertions.assertNotNull(result);
-	      final EList<Resource.Diagnostic> errors = result.eResource().getErrors();
-	      boolean _isEmpty = errors.isEmpty();
-	      StringConcatenation _builder_1 = new StringConcatenation();
-	      _builder_1.append("Parsed text:\n" + _builder.toString() + "Unexpected errors:\n\t ");
-	      String _join = IterableExtensions.join(errors, "\n\t ");
-	      _builder_1.append(_join);
-	      Assertions.assertTrue(_isEmpty, _builder_1.toString());
 	      EntityClassDefinition a =  (result.getEntities().get(0));
 	      Assertions.assertEquals(a.getQualifiedName(), "a.b.C");
 	      Assertions.assertEquals(a.getWrappedEntity(), "d.se.F");

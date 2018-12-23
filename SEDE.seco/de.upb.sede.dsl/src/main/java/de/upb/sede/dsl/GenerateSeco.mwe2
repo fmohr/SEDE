@@ -28,7 +28,8 @@ Workflow {
 		}
 		language = StandardLanguage {
 			name = "de.upb.sede.dsl.Seco"
-			fileExtensions = "seco"referencedResource =
+			fileExtensions = "seco"
+			referencedResource =
        		 "platform:/resource/de.upb.sede.dsl/model/current/Seco.genmodel"
 
 			serializer = {

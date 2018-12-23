@@ -3,6 +3,9 @@
  */
 package de.upb.sede.dsl
 
+import com.google.inject.Injector
+import org.eclipse.emf.ecore.EPackage
+import de.upb.sede.dsl.seco.SecoPackage
 
 /**
  * Initialization support for running Xtext languages without Equinox extension registry.
@@ -12,4 +15,11 @@ class SecoStandaloneSetup extends SecoStandaloneSetupGenerated {
 	def static void doSetup() {
 		new SecoStandaloneSetup().createInjectorAndDoEMFRegistration()
 	}
+	
+    override register(Injector injector) {
+        if (!EPackage.Registry.INSTANCE.containsKey("http://www.upb.de/sede/dsl/Seco")) {
+            EPackage.Registry.INSTANCE.put("http://www.upb.de/sede/dsl/Seco", SecoPackage.eINSTANCE);
+        }
+        super.register(injector);
+    }
 }

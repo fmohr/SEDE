@@ -10,19 +10,19 @@ import java.util.List;
 import org.eclipse.emf.common.util.Enumerator;
 
 /**
- * <!-- begin-user-doc -->
- * A representation of the literals of the enumeration '<em><b>Entity Method Prop</b></em>',
- * and utility methods for working with them.
- * <!-- end-user-doc -->
+ * <!-- begin-user-doc --> A representation of the literals of the enumeration
+ * '<em><b>Entity Method Prop</b></em>', and utility methods for working with
+ * them. <!-- end-user-doc -->
+ * 
  * @see de.upb.sede.dsl.seco.SecoPackage#getEntityMethodProp()
  * @model
  * @generated
  */
 public enum EntityMethodProp implements Enumerator {
 	/**
-	 * The '<em><b>STATIC</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The '<em><b>STATIC</b></em>' literal object. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
 	 * @see #STATIC_VALUE
 	 * @generated
 	 * @ordered
@@ -30,9 +30,9 @@ public enum EntityMethodProp implements Enumerator {
 	STATIC(0, "STATIC", "static"),
 
 	/**
-	 * The '<em><b>PURE</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * The '<em><b>PURE</b></em>' literal object. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
 	 * @see #PURE_VALUE
 	 * @generated
 	 * @ordered
@@ -40,13 +40,13 @@ public enum EntityMethodProp implements Enumerator {
 	PURE(1, "PURE", "pure");
 
 	/**
-	 * The '<em><b>STATIC</b></em>' literal value.
-	 * <!-- begin-user-doc -->
+	 * The '<em><b>STATIC</b></em>' literal value. <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of '<em><b>STATIC</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
+	 * If the meaning of '<em><b>STATIC</b></em>' literal object isn't clear, there
+	 * really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * 
 	 * @see #STATIC
 	 * @model literal="static"
 	 * @generated
@@ -55,13 +55,13 @@ public enum EntityMethodProp implements Enumerator {
 	public static final int STATIC_VALUE = 0;
 
 	/**
-	 * The '<em><b>PURE</b></em>' literal value.
-	 * <!-- begin-user-doc -->
+	 * The '<em><b>PURE</b></em>' literal value. <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of '<em><b>PURE</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
+	 * If the meaning of '<em><b>PURE</b></em>' literal object isn't clear, there
+	 * really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * 
 	 * @see #PURE
 	 * @model literal="pure"
 	 * @generated
@@ -70,29 +70,25 @@ public enum EntityMethodProp implements Enumerator {
 	public static final int PURE_VALUE = 1;
 
 	/**
-	 * An array of all the '<em><b>Entity Method Prop</b></em>' enumerators.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * An array of all the '<em><b>Entity Method Prop</b></em>' enumerators. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
-	private static final EntityMethodProp[] VALUES_ARRAY =
-		new EntityMethodProp[] {
-			STATIC,
-			PURE,
-		};
+	private static final EntityMethodProp[] VALUES_ARRAY = new EntityMethodProp[] { STATIC, PURE, };
 
 	/**
-	 * A public read-only list of all the '<em><b>Entity Method Prop</b></em>' enumerators.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * A public read-only list of all the '<em><b>Entity Method Prop</b></em>'
+	 * enumerators. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public static final List<EntityMethodProp> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
 	/**
-	 * Returns the '<em><b>Entity Method Prop</b></em>' literal with the specified literal value.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Returns the '<em><b>Entity Method Prop</b></em>' literal with the specified
+	 * literal value. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public static EntityMethodProp get(String literal) {
@@ -106,9 +102,9 @@ public enum EntityMethodProp implements Enumerator {
 	}
 
 	/**
-	 * Returns the '<em><b>Entity Method Prop</b></em>' literal with the specified name.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Returns the '<em><b>Entity Method Prop</b></em>' literal with the specified
+	 * name. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public static EntityMethodProp getByName(String name) {
@@ -122,44 +118,46 @@ public enum EntityMethodProp implements Enumerator {
 	}
 
 	/**
-	 * Returns the '<em><b>Entity Method Prop</b></em>' literal with the specified integer value.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Returns the '<em><b>Entity Method Prop</b></em>' literal with the specified
+	 * integer value. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	public static EntityMethodProp get(int value) {
 		switch (value) {
-			case STATIC_VALUE: return STATIC;
-			case PURE_VALUE: return PURE;
+		case STATIC_VALUE:
+			return STATIC;
+		case PURE_VALUE:
+			return PURE;
 		}
 		return null;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	private final int value;
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	private final String name;
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	private final String literal;
 
 	/**
-	 * Only this class can construct instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Only this class can construct instances. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	private EntityMethodProp(int value, String name, String literal) {
@@ -169,41 +167,44 @@ public enum EntityMethodProp implements Enumerator {
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public int getValue() {
-	  return value;
+		return value;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public String getName() {
-	  return name;
+		return name;
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
+	@Override
 	public String getLiteral() {
-	  return literal;
+		return literal;
 	}
 
 	/**
-	 * Returns the literal value of the enumerator, which is its string representation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
+	 * Returns the literal value of the enumerator, which is its string
+	 * representation. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
 	 * @generated
 	 */
 	@Override
 	public String toString() {
 		return literal;
 	}
-	
-} //EntityMethodProp
+
+} // EntityMethodProp

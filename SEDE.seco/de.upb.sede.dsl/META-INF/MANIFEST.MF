@@ -6,7 +6,8 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8,
+ JavaSE-1.6
 Export-Package: de.upb.sede.dsl.seco,
  de.upb.sede.dsl.seco.impl,
  de.upb.sede.dsl.seco.util

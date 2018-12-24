@@ -1,0 +1,6 @@
+/*
+ * Seco translation of config/DEF-classconf.json
+ */
+class: D {}
+class: _E{}
+class: F {}

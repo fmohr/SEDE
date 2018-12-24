@@ -20,7 +20,7 @@ import java.util.Arrays;
 public class ParseTest {
 
 	File getSecoFilePath(String name) {
-		return new File(FileUtil.getPathOfResource("seco-files/" + name + ".seco"));
+		return new File(FileUtil.getPathOfResource("entities/" + name + ".seco"));
 	}
 
 	@Test

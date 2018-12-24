@@ -1,0 +1,38 @@
+/*
+ * Seco translation of config/test-classconf.json and config/test-typeconf.json
+ */
+class: testlib.A wraps some.WrapperClass {
+    static method: __construct () -> (testlib.A);
+    method: m (real.Type2, real.Type3) -> (real.Type4);
+}
+class: testlib.B {
+    method: __construct (real.Type1) -> (testlib.B);
+    method: m (real.Type3) -> (real.Type2);
+}
+class: some.WrapperClass {
+    method: m2;
+}
+class: semType1 extends builtin.Bytes {}
+class: semType2 extends builtin.Bytes {}
+class: semType3 extends builtin.Bytes {}
+
+class: real.Type1 {
+    cast: <-> semType1 {
+        "caster": "casters.Sem1_typ1_Serializer"
+    };
+}
+class: real.Type2 {
+    cast: <-> semType1 {
+       "caster": "casters.Sem1_typ2_Serializer"
+    };
+}
+class: real.Type3 {
+    cast: <-> semType2{
+       "caster": "casters.Sem2_typ3_Serializer"
+    };
+}
+class: real.Type4 {
+    cast: <-> semType2{
+       "caster": "casters.Sem2_typ4_Serializer"
+    };
+}

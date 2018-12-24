@@ -1,0 +1,5 @@
+/*
+ * Seco translation of config/A-classconf.json
+ */
+class: A  {
+}

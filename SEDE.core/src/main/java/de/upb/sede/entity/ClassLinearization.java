@@ -12,16 +12,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import de.upb.sede.dsl.seco.EntityCast;
-import de.upb.sede.dsl.seco.EntityClassDefinition;
-import de.upb.sede.dsl.seco.EntityMethod;
-import de.upb.sede.dsl.seco.EntityMethodParam;
-import de.upb.sede.dsl.seco.EntityMethodParamSignature;
-import de.upb.sede.dsl.seco.Entries;
-import de.upb.sede.dsl.seco.TransformDirection;
+import de.upb.sede.dsl.seco.*;
 
 import static de.upb.sede.dsl.seco.SecoFactory.eINSTANCE;
-import static org.eclipse.emf.ecore.util.EcoreUtil.*;
 
 /**
  * Encapsulates entities and offers viewers onto them.
@@ -58,8 +51,8 @@ public final class ClassLinearization {
 	 * Creates an empty resolver.
 	 * 
 	 */
-	public ClassLinearization(Entries entries) {
-		this(entries, true);
+	public ClassLinearization() {
+		this(true);
 	}
 	
 	/**
@@ -69,13 +62,7 @@ public final class ClassLinearization {
 	 * 
 	 * @param mergeRefinements If true, EntityResolver merges definitions of entities. 
 	 */
-	public ClassLinearization(Entries entries, boolean mergeRefinements) {
-
-		Objects.requireNonNull(entries, "Cannot put null value into resolver");
-		if(entries.getEntities() == null) { 
-			throw new IllegalArgumentException("Cannot put entries with an unassigned entities field into resolver.");
-		}
-		
+	public ClassLinearization( boolean mergeRefinements) {
 		this.mergeRefinements = mergeRefinements;
 	}
 	
@@ -203,7 +190,7 @@ public final class ClassLinearization {
 		EntityClassDefinition def = mergeEntries(entries);
 		Optional<ClassView> wrappedEntity;
 		if(def.isWrapper()) {
-			wrappedEntity = Optional.of(linearizeEntity(entityName, hierarchyCache));
+			wrappedEntity = Optional.of(linearizeEntity(def.getWrappedEntity(), hierarchyCache));
 		} else {
 			wrappedEntity = Optional.empty();
 		}
@@ -217,7 +204,7 @@ public final class ClassLinearization {
 		hierarchyCache.remove(entityName);
 		synchronized(cache) {
 			if(! cache.containsKey(entityName)) {
-				cache.put(entityName, null /* TODO */);
+				cache.put(entityName, classView);
 			}
 		}
 		return classView;
@@ -293,10 +280,10 @@ public final class ClassLinearization {
 				}
 			}
 			for(EntityMethod newMethod : partial.getMethods()) {
-				mergedDefinition.getMethods().add(copy(newMethod));
+				mergedDefinition.getMethods().add(newMethod);
 			}
 			for(EntityCast newCast : partial.getCasts()) {
-				mergedDefinition.getCasts().add(copy(newCast));
+				mergedDefinition.getCasts().add(newCast);
 			}
 		}
 		return mergedDefinition;
@@ -430,9 +417,12 @@ public final class ClassLinearization {
 			
 			MethodResolution(EntityMethod method) {
 				this.method = method;
+				if(method.getParamSignature() == null) {
+					method.setParamSignature(new EntityMethodParamSignature());
+				}
 			}
 			
-			public int paramCount(boolean input) {
+			int paramCount(boolean input) {
 				List<EntityMethodParam> parameters = input ? method.getParamSignature().getParameters() : method.getParamSignature().getOutputs();
 				int paramCount = 0 ;
 				for(EntityMethodParam parameter : parameters) {
@@ -444,7 +434,7 @@ public final class ClassLinearization {
 				return paramCount;
 			}
 			
-			public String getParamType(int paramIndex, boolean input) {
+			String getParamType(int paramIndex, boolean input) {
 				if(paramIndex < 0 || paramIndex > paramCount(input)) {
 					throw new IllegalArgumentException("Parameter index '" + paramIndex + "' is out of bound.");
 				}
@@ -454,7 +444,7 @@ public final class ClassLinearization {
 						continue; // ignore fixed value
 					}
 					if(paramIndex == 0) {
-						return parameter.getParameterName();
+						return parameter.getParameterType();
 					} else {
 						paramIndex--;
 					}
@@ -478,25 +468,55 @@ public final class ClassLinearization {
 				}
 				
 				EntityMethodParamSignature requestedSignature = requestedMethod.getParamSignature();
-				
+				if(requestedMethod.getParamSignature().getParameters().size() != method.getParamSignature().getParameters().size()) {
+					return false;
+				}
 				for(int parameterIndex = 0; parameterIndex < requestedSignature.getParameters().size(); parameterIndex++) {
 					String declaredType = getParamType(parameterIndex, true); 
 					String requestedType = requestedSignature.getParameters().get(parameterIndex).getParameterType();
-					ClassView requestedTypeView = entityView(requestedType);
-					if(!requestedTypeView.is(declaredType)) {
-						return false;
+					if(!declaredType.equals(requestedType)) {
+						ClassView requestedTypeView = entityView(requestedType);
+						if(!requestedTypeView.is(declaredType)) {
+							return false;
+						}
 					}
+				}
+
+				if(requestedMethod.getParamSignature().getOutputs().size() > method.getParamSignature().getOutputs().size()) {
+					return false;
 				}
 				for(int outputIndex = 0; outputIndex < requestedSignature.getOutputs().size(); outputIndex ++) {
 					String declaredType = getParamType(outputIndex, false); 
 					String requestedType = requestedSignature.getOutputs().get(outputIndex).getParameterType();
-					ClassView requestedTypeView = entityView(requestedType);
-					if(!requestedTypeView.is(declaredType)) {
-						return false;
+					if(!declaredType.equals(requestedType)) {
+						ClassView requestedTypeView = entityView(requestedType);
+						if(!requestedTypeView.is(declaredType)) {
+							return false;
+						}
 					}
 				}
 				
 				return true;
+			}
+
+			@Override
+			public boolean isPure() {
+				return method.getProperty() == EntityMethodProp.STATIC || method.getProperty() == EntityMethodProp.PURE;
+			}
+
+			@Override
+			public boolean isStatic() {
+				return method.getProperty() == EntityMethodProp.STATIC;
+			}
+
+			@Override
+			public List<EntityMethodParam> outputParams() {
+				return method.getParamSignature().getOutputs();
+			}
+
+			@Override
+			public List<EntityMethodParam> inputParams() {
+				return method.getParamSignature().getParameters();
 			}
 		}
 	}

@@ -14,6 +14,8 @@ public interface ClassView {
 
 	boolean is(String entity);
 
+	boolean isWrapper();
+
 	List<MethodView> allMethodsWithName(String methodName);
 
 	Optional<MethodView> resolveMethod(EntityMethod requestedMethod);

@@ -37,7 +37,16 @@ public enum EntityMethodProp implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	PURE(1, "PURE", "pure");
+	PURE(1, "PURE", "pure"),
+	/**
+	 * The '<em><b>MUTATING</b></em>' literal object. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
+	 * @see #MUTATING_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	MUTATING(3, "MUTATING", "mutating");
 
 	/**
 	 * The '<em><b>STATIC</b></em>' literal value. <!-- begin-user-doc -->
@@ -70,12 +79,27 @@ public enum EntityMethodProp implements Enumerator {
 	public static final int PURE_VALUE = 1;
 
 	/**
+	 * The '<em><b>MUTATING</b></em>' literal value. <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>MUTATING</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * 
+	 * @see #MUTATING
+	 * @model literal="mutating"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int MUTATING_VALUE = 3;
+
+	/**
 	 * An array of all the '<em><b>Entity Method Prop</b></em>' enumerators. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
 	 * @generated
 	 */
-	private static final EntityMethodProp[] VALUES_ARRAY = new EntityMethodProp[] { STATIC, PURE, };
+	private static final EntityMethodProp[] VALUES_ARRAY = new EntityMethodProp[] { STATIC, PURE, MUTATING, };
 
 	/**
 	 * A public read-only list of all the '<em><b>Entity Method Prop</b></em>'
@@ -129,6 +153,8 @@ public enum EntityMethodProp implements Enumerator {
 			return STATIC;
 		case PURE_VALUE:
 			return PURE;
+		case MUTATING_VALUE:
+			return MUTATING;
 		}
 		return null;
 	}

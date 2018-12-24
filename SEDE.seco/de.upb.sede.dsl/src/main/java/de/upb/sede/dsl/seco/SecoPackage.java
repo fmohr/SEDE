@@ -2017,7 +2017,7 @@ public class SecoPackage extends EPackageImpl {
 
 		initEClass(entityMethodEClass, EntityMethod.class, "EntityMethod", !IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getEntityMethod_Property(), this.getEntityMethodProp(), "property", null, 0, 1,
+		initEAttribute(getEntityMethod_Property(), this.getEntityMethodProp(), "property", "mutating", 0, 1,
 				EntityMethod.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
 				!IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEntityMethod_MethodName(), ecorePackage.getEString(), "methodName", null, 0, 1,
@@ -2120,6 +2120,7 @@ public class SecoPackage extends EPackageImpl {
 		initEEnum(entityMethodPropEEnum, EntityMethodProp.class, "EntityMethodProp");
 		addEEnumLiteral(entityMethodPropEEnum, EntityMethodProp.STATIC);
 		addEEnumLiteral(entityMethodPropEEnum, EntityMethodProp.PURE);
+		addEEnumLiteral(entityMethodPropEEnum, EntityMethodProp.MUTATING);
 
 		initEEnum(transformDirectionEEnum, TransformDirection.class, "TransformDirection");
 		addEEnumLiteral(transformDirectionEEnum, TransformDirection.BI);

@@ -76,7 +76,7 @@ EntityClassDefinition:
 EntityMethod:
 	(property = EntityMethodProp)? "method" ":" methodName = MethodName
 	 paramSignature = EntityMethodParamSignature 
-	 (realization ?= 'realized' 'by' 
+	 (realization ?= ('realized' | 'realised') 'by' 
 	 	methodRealization = MethodName
 	 	// realizationArguments EntityMethodParamSignature // TODO parameter redirects
 	 )?
@@ -84,14 +84,15 @@ EntityMethod:
 ;
 
 enum EntityMethodProp:
-	STATIC = 'static' | PURE = 'pure'
+	MUTATING = 'mutating' | STATIC = 'static' | PURE = 'pure'
 ;
 
 
 EntityMethodParamSignature:
-	{EntityMethodParamSignature} "(" 
+	{EntityMethodParamSignature} 
+	("(" 
 	 	(parameters += EntityMethodParam ("," parameters += EntityMethodParam)*)?
-	 ")" 
+	 ")")
 	 ('->' '(' 
 	 	(outputs += EntityMethodParam ("," outputs += EntityMethodParam)*)? 
 	 ')')?

@@ -84,6 +84,7 @@ Package seco <http://www.upb.de/sede/dsl/Seco>
   Enum EntityMethodProp
     Literal STATIC = 0
     Literal PURE = 1
+    Literal MUTATING = 3
 
   Enum TransformDirection
     Literal BI = 0

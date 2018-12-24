@@ -45,7 +45,7 @@ public class EntityMethod extends MinimalEObjectImpl.Container implements EObjec
 	 * @generated
 	 * @ordered
 	 */
-	protected static final EntityMethodProp PROPERTY_EDEFAULT = EntityMethodProp.STATIC;
+	protected static final EntityMethodProp PROPERTY_EDEFAULT = EntityMethodProp.MUTATING;
 
 	/**
 	 * The cached value of the '{@link #getProperty() <em>Property</em>}' attribute.

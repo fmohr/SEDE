@@ -114,7 +114,7 @@ EntityMethodParam:
 
 
 EntityCast:
-	"cast:" direction = TransformDirection resultingEntity = EntityName (additionalData = Json)? ';' 
+	"cast" ":" direction = TransformDirection resultingEntity = EntityName (additionalData = Json)? ';' 
 ;
 
 enum TransformDirection:

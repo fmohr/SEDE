@@ -11,8 +11,8 @@ class: A {
     pure method: m6() realized by m5;
 }
 
-class: B wraps A{
-    method: m2 (t1, t2, t3="Hello");
+class: B wraps A {
+    method: m2 (t1, t2, t3, t4 = "Hello");
     method: m7() realized by m5;
     method: m8() realized by m6;
     method: m9() realized by m7;

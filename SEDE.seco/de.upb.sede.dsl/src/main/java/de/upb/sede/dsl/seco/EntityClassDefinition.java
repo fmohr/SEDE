@@ -3,19 +3,11 @@
  */
 package de.upb.sede.dsl.seco;
 
-import java.util.Collection;
-import java.util.List;
-import org.eclipse.emf.common.notify.NotificationChain;
-
+import de.upb.sede.dsl.SecoObject;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
-import org.eclipse.emf.ecore.util.BasicInternalEList;
-import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc --> A representation of the model object '<em><b>Entity
@@ -45,117 +37,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * @model kind="class"
  * @generated
  */
-public class EntityClassDefinition extends MinimalEObjectImpl.Container implements EObject {
-	/**
-	 * The default value of the '{@link #getQualifiedName() <em>Qualified
-	 * Name</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getQualifiedName()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String QUALIFIED_NAME_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getQualifiedName() <em>Qualified Name</em>}'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getQualifiedName()
-	 * @generated
-	 * @ordered
-	 */
-	protected String qualifiedName = QUALIFIED_NAME_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isWrapper() <em>Wrapper</em>}' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #isWrapper()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean WRAPPER_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isWrapper() <em>Wrapper</em>}' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #isWrapper()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean wrapper = WRAPPER_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getWrappedEntity() <em>Wrapped
-	 * Entity</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getWrappedEntity()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String WRAPPED_ENTITY_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getWrappedEntity() <em>Wrapped Entity</em>}'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getWrappedEntity()
-	 * @generated
-	 * @ordered
-	 */
-	protected String wrappedEntity = WRAPPED_ENTITY_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isExtension() <em>Extension</em>}'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #isExtension()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean EXTENSION_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isExtension() <em>Extension</em>}'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #isExtension()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean extension = EXTENSION_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getBaseEntities() <em>Base Entities</em>}'
-	 * attribute list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getBaseEntities()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<String> baseEntities;
-
-	/**
-	 * The cached value of the '{@link #getMethods() <em>Methods</em>}' containment
-	 * reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getMethods()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<EntityMethod> methods;
-
-	/**
-	 * The cached value of the '{@link #getCasts() <em>Casts</em>}' containment
-	 * reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getCasts()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<EntityCast> casts;
-
+public class EntityClassDefinition extends SecoObject implements EObject {
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -176,6 +58,16 @@ public class EntityClassDefinition extends MinimalEObjectImpl.Container implemen
 	}
 
 	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	@Override
+	protected int eStaticFeatureCount() {
+		return 0;
+	}
+
+	/**
 	 * Returns the value of the '<em><b>Qualified Name</b></em>' attribute. <!--
 	 * begin-user-doc -->
 	 * <p>
@@ -191,7 +83,7 @@ public class EntityClassDefinition extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 */
 	public String getQualifiedName() {
-		return qualifiedName;
+		return (String) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__QUALIFIED_NAME, true);
 	}
 
 	/**
@@ -205,7 +97,7 @@ public class EntityClassDefinition extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 */
 	public void setQualifiedName(String newQualifiedName) {
-		qualifiedName = newQualifiedName;
+		eSet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__QUALIFIED_NAME, newQualifiedName);
 	}
 
 	/**
@@ -224,7 +116,7 @@ public class EntityClassDefinition extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 */
 	public boolean isWrapper() {
-		return wrapper;
+		return (Boolean) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__WRAPPER, true);
 	}
 
 	/**
@@ -237,7 +129,7 @@ public class EntityClassDefinition extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 */
 	public void setWrapper(boolean newWrapper) {
-		wrapper = newWrapper;
+		eSet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__WRAPPER, newWrapper);
 	}
 
 	/**
@@ -256,7 +148,7 @@ public class EntityClassDefinition extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 */
 	public String getWrappedEntity() {
-		return wrappedEntity;
+		return (String) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__WRAPPED_ENTITY, true);
 	}
 
 	/**
@@ -270,7 +162,7 @@ public class EntityClassDefinition extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 */
 	public void setWrappedEntity(String newWrappedEntity) {
-		wrappedEntity = newWrappedEntity;
+		eSet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__WRAPPED_ENTITY, newWrappedEntity);
 	}
 
 	/**
@@ -289,7 +181,7 @@ public class EntityClassDefinition extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 */
 	public boolean isExtension() {
-		return extension;
+		return (Boolean) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__EXTENSION, true);
 	}
 
 	/**
@@ -302,7 +194,7 @@ public class EntityClassDefinition extends MinimalEObjectImpl.Container implemen
 	 * @generated
 	 */
 	public void setExtension(boolean newExtension) {
-		extension = newExtension;
+		eSet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__EXTENSION, newExtension);
 	}
 
 	/**
@@ -319,11 +211,9 @@ public class EntityClassDefinition extends MinimalEObjectImpl.Container implemen
 	 * @model unique="false"
 	 * @generated
 	 */
-	public List<String> getBaseEntities() {
-		if (baseEntities == null) {
-			baseEntities = new BasicInternalEList<String>(String.class);
-		}
-		return baseEntities;
+	@SuppressWarnings("unchecked")
+	public EList<String> getBaseEntities() {
+		return (EList<String>) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__BASE_ENTITIES, true);
 	}
 
 	/**
@@ -341,11 +231,9 @@ public class EntityClassDefinition extends MinimalEObjectImpl.Container implemen
 	 * @model containment="true"
 	 * @generated
 	 */
-	public List<EntityMethod> getMethods() {
-		if (methods == null) {
-			methods = new BasicInternalEList<EntityMethod>(EntityMethod.class);
-		}
-		return methods;
+	@SuppressWarnings("unchecked")
+	public EList<EntityMethod> getMethods() {
+		return (EList<EntityMethod>) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__METHODS, true);
 	}
 
 	/**
@@ -363,176 +251,9 @@ public class EntityClassDefinition extends MinimalEObjectImpl.Container implemen
 	 * @model containment="true"
 	 * @generated
 	 */
-	public List<EntityCast> getCasts() {
-		if (casts == null) {
-			casts = new BasicInternalEList<EntityCast>(EntityCast.class);
-		}
-		return casts;
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_CLASS_DEFINITION__METHODS:
-			return ((InternalEList<?>) getMethods()).basicRemove(otherEnd, msgs);
-		case SecoPackage.ENTITY_CLASS_DEFINITION__CASTS:
-			return ((InternalEList<?>) getCasts()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_CLASS_DEFINITION__QUALIFIED_NAME:
-			return getQualifiedName();
-		case SecoPackage.ENTITY_CLASS_DEFINITION__WRAPPER:
-			return isWrapper();
-		case SecoPackage.ENTITY_CLASS_DEFINITION__WRAPPED_ENTITY:
-			return getWrappedEntity();
-		case SecoPackage.ENTITY_CLASS_DEFINITION__EXTENSION:
-			return isExtension();
-		case SecoPackage.ENTITY_CLASS_DEFINITION__BASE_ENTITIES:
-			return getBaseEntities();
-		case SecoPackage.ENTITY_CLASS_DEFINITION__METHODS:
-			return getMethods();
-		case SecoPackage.ENTITY_CLASS_DEFINITION__CASTS:
-			return getCasts();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
 	@SuppressWarnings("unchecked")
-	@Override
-	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_CLASS_DEFINITION__QUALIFIED_NAME:
-			setQualifiedName((String) newValue);
-			return;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__WRAPPER:
-			setWrapper((Boolean) newValue);
-			return;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__WRAPPED_ENTITY:
-			setWrappedEntity((String) newValue);
-			return;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__EXTENSION:
-			setExtension((Boolean) newValue);
-			return;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__BASE_ENTITIES:
-			getBaseEntities().clear();
-			getBaseEntities().addAll((Collection<? extends String>) newValue);
-			return;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__METHODS:
-			getMethods().clear();
-			getMethods().addAll((Collection<? extends EntityMethod>) newValue);
-			return;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__CASTS:
-			getCasts().clear();
-			getCasts().addAll((Collection<? extends EntityCast>) newValue);
-			return;
-		}
-		super.eSet(featureID, newValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public void eUnset(int featureID) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_CLASS_DEFINITION__QUALIFIED_NAME:
-			setQualifiedName(QUALIFIED_NAME_EDEFAULT);
-			return;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__WRAPPER:
-			setWrapper(WRAPPER_EDEFAULT);
-			return;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__WRAPPED_ENTITY:
-			setWrappedEntity(WRAPPED_ENTITY_EDEFAULT);
-			return;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__EXTENSION:
-			setExtension(EXTENSION_EDEFAULT);
-			return;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__BASE_ENTITIES:
-			getBaseEntities().clear();
-			return;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__METHODS:
-			getMethods().clear();
-			return;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__CASTS:
-			getCasts().clear();
-			return;
-		}
-		super.eUnset(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_CLASS_DEFINITION__QUALIFIED_NAME:
-			return QUALIFIED_NAME_EDEFAULT == null ? qualifiedName != null
-					: !QUALIFIED_NAME_EDEFAULT.equals(qualifiedName);
-		case SecoPackage.ENTITY_CLASS_DEFINITION__WRAPPER:
-			return wrapper != WRAPPER_EDEFAULT;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__WRAPPED_ENTITY:
-			return WRAPPED_ENTITY_EDEFAULT == null ? wrappedEntity != null
-					: !WRAPPED_ENTITY_EDEFAULT.equals(wrappedEntity);
-		case SecoPackage.ENTITY_CLASS_DEFINITION__EXTENSION:
-			return extension != EXTENSION_EDEFAULT;
-		case SecoPackage.ENTITY_CLASS_DEFINITION__BASE_ENTITIES:
-			return baseEntities != null && !baseEntities.isEmpty();
-		case SecoPackage.ENTITY_CLASS_DEFINITION__METHODS:
-			return methods != null && !methods.isEmpty();
-		case SecoPackage.ENTITY_CLASS_DEFINITION__CASTS:
-			return casts != null && !casts.isEmpty();
-		}
-		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy())
-			return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (qualifiedName: ");
-		result.append(qualifiedName);
-		result.append(", wrapper: ");
-		result.append(wrapper);
-		result.append(", wrappedEntity: ");
-		result.append(wrappedEntity);
-		result.append(", extension: ");
-		result.append(extension);
-		result.append(", baseEntities: ");
-		result.append(baseEntities);
-		result.append(')');
-		return result.toString();
+	public EList<EntityCast> getCasts() {
+		return (EList<EntityCast>) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__CASTS, true);
 	}
 
 } // EntityClassDefinition

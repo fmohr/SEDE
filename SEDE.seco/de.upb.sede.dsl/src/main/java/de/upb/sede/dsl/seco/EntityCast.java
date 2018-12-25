@@ -3,9 +3,9 @@
  */
 package de.upb.sede.dsl.seco;
 
+import de.upb.sede.dsl.SecoObject;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc --> A representation of the model object '<em><b>Entity
@@ -27,67 +27,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * @model kind="class"
  * @generated
  */
-public class EntityCast extends MinimalEObjectImpl.Container implements EObject {
-	/**
-	 * The default value of the '{@link #getDirection() <em>Direction</em>}'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getDirection()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final TransformDirection DIRECTION_EDEFAULT = TransformDirection.BI;
-
-	/**
-	 * The cached value of the '{@link #getDirection() <em>Direction</em>}'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getDirection()
-	 * @generated
-	 * @ordered
-	 */
-	protected TransformDirection direction = DIRECTION_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getResultingEntity() <em>Resulting
-	 * Entity</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getResultingEntity()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String RESULTING_ENTITY_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getResultingEntity() <em>Resulting
-	 * Entity</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getResultingEntity()
-	 * @generated
-	 * @ordered
-	 */
-	protected String resultingEntity = RESULTING_ENTITY_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getAdditionalData() <em>Additional
-	 * Data</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getAdditionalData()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String ADDITIONAL_DATA_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getAdditionalData() <em>Additional
-	 * Data</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getAdditionalData()
-	 * @generated
-	 * @ordered
-	 */
-	protected String additionalData = ADDITIONAL_DATA_EDEFAULT;
-
+public class EntityCast extends SecoObject implements EObject {
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -108,6 +48,16 @@ public class EntityCast extends MinimalEObjectImpl.Container implements EObject 
 	}
 
 	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	@Override
+	protected int eStaticFeatureCount() {
+		return 0;
+	}
+
+	/**
 	 * Returns the value of the '<em><b>Direction</b></em>' attribute. The literals
 	 * are from the enumeration {@link de.upb.sede.dsl.seco.TransformDirection}.
 	 * <!-- begin-user-doc -->
@@ -125,7 +75,7 @@ public class EntityCast extends MinimalEObjectImpl.Container implements EObject 
 	 * @generated
 	 */
 	public TransformDirection getDirection() {
-		return direction;
+		return (TransformDirection) eGet(SecoPackage.Literals.ENTITY_CAST__DIRECTION, true);
 	}
 
 	/**
@@ -138,7 +88,7 @@ public class EntityCast extends MinimalEObjectImpl.Container implements EObject 
 	 * @generated
 	 */
 	public void setDirection(TransformDirection newDirection) {
-		direction = newDirection == null ? DIRECTION_EDEFAULT : newDirection;
+		eSet(SecoPackage.Literals.ENTITY_CAST__DIRECTION, newDirection);
 	}
 
 	/**
@@ -157,7 +107,7 @@ public class EntityCast extends MinimalEObjectImpl.Container implements EObject 
 	 * @generated
 	 */
 	public String getResultingEntity() {
-		return resultingEntity;
+		return (String) eGet(SecoPackage.Literals.ENTITY_CAST__RESULTING_ENTITY, true);
 	}
 
 	/**
@@ -170,7 +120,7 @@ public class EntityCast extends MinimalEObjectImpl.Container implements EObject 
 	 * @generated
 	 */
 	public void setResultingEntity(String newResultingEntity) {
-		resultingEntity = newResultingEntity;
+		eSet(SecoPackage.Literals.ENTITY_CAST__RESULTING_ENTITY, newResultingEntity);
 	}
 
 	/**
@@ -189,7 +139,7 @@ public class EntityCast extends MinimalEObjectImpl.Container implements EObject 
 	 * @generated
 	 */
 	public String getAdditionalData() {
-		return additionalData;
+		return (String) eGet(SecoPackage.Literals.ENTITY_CAST__ADDITIONAL_DATA, true);
 	}
 
 	/**
@@ -202,108 +152,7 @@ public class EntityCast extends MinimalEObjectImpl.Container implements EObject 
 	 * @generated
 	 */
 	public void setAdditionalData(String newAdditionalData) {
-		additionalData = newAdditionalData;
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_CAST__DIRECTION:
-			return getDirection();
-		case SecoPackage.ENTITY_CAST__RESULTING_ENTITY:
-			return getResultingEntity();
-		case SecoPackage.ENTITY_CAST__ADDITIONAL_DATA:
-			return getAdditionalData();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_CAST__DIRECTION:
-			setDirection((TransformDirection) newValue);
-			return;
-		case SecoPackage.ENTITY_CAST__RESULTING_ENTITY:
-			setResultingEntity((String) newValue);
-			return;
-		case SecoPackage.ENTITY_CAST__ADDITIONAL_DATA:
-			setAdditionalData((String) newValue);
-			return;
-		}
-		super.eSet(featureID, newValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public void eUnset(int featureID) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_CAST__DIRECTION:
-			setDirection(DIRECTION_EDEFAULT);
-			return;
-		case SecoPackage.ENTITY_CAST__RESULTING_ENTITY:
-			setResultingEntity(RESULTING_ENTITY_EDEFAULT);
-			return;
-		case SecoPackage.ENTITY_CAST__ADDITIONAL_DATA:
-			setAdditionalData(ADDITIONAL_DATA_EDEFAULT);
-			return;
-		}
-		super.eUnset(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_CAST__DIRECTION:
-			return direction != DIRECTION_EDEFAULT;
-		case SecoPackage.ENTITY_CAST__RESULTING_ENTITY:
-			return RESULTING_ENTITY_EDEFAULT == null ? resultingEntity != null
-					: !RESULTING_ENTITY_EDEFAULT.equals(resultingEntity);
-		case SecoPackage.ENTITY_CAST__ADDITIONAL_DATA:
-			return ADDITIONAL_DATA_EDEFAULT == null ? additionalData != null
-					: !ADDITIONAL_DATA_EDEFAULT.equals(additionalData);
-		}
-		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy())
-			return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (direction: ");
-		result.append(direction);
-		result.append(", resultingEntity: ");
-		result.append(resultingEntity);
-		result.append(", additionalData: ");
-		result.append(additionalData);
-		result.append(')');
-		return result.toString();
+		eSet(SecoPackage.Literals.ENTITY_CAST__ADDITIONAL_DATA, newAdditionalData);
 	}
 
 } // EntityCast

@@ -3,21 +3,11 @@
  */
 package de.upb.sede.dsl.seco;
 
-import java.util.Collection;
-import java.util.List;
-
-import org.eclipse.emf.common.notify.NotificationChain;
-
+import de.upb.sede.dsl.SecoObject;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.InternalEObject;
-
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
-import org.eclipse.emf.ecore.util.BasicInternalEList;
-import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc --> A representation of the model object
@@ -36,27 +26,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * @model kind="class"
  * @generated
  */
-public class Entries extends MinimalEObjectImpl.Container implements EObject {
-	/**
-	 * The cached value of the '{@link #getInstructions() <em>Instructions</em>}'
-	 * containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getInstructions()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<EObject> instructions;
-
-	/**
-	 * The cached value of the '{@link #getEntities() <em>Entities</em>}'
-	 * containment reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getEntities()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<EntityClassDefinition> entities;
-
+public class Entries extends SecoObject implements EObject {
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -77,6 +47,16 @@ public class Entries extends MinimalEObjectImpl.Container implements EObject {
 	}
 
 	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	@Override
+	protected int eStaticFeatureCount() {
+		return 0;
+	}
+
+	/**
 	 * Returns the value of the '<em><b>Instructions</b></em>' containment reference
 	 * list. The list contents are of type {@link org.eclipse.emf.ecore.EObject}.
 	 * <!-- begin-user-doc -->
@@ -91,11 +71,9 @@ public class Entries extends MinimalEObjectImpl.Container implements EObject {
 	 * @model containment="true"
 	 * @generated
 	 */
-	public List<EObject> getInstructions() {
-		if (instructions == null) {
-			instructions = new BasicInternalEList<EObject>(EObject.class);
-		}
-		return instructions;
+	@SuppressWarnings("unchecked")
+	public EList<EObject> getInstructions() {
+		return (EList<EObject>) eGet(SecoPackage.Literals.ENTRIES__INSTRUCTIONS, true);
 	}
 
 	/**
@@ -113,98 +91,9 @@ public class Entries extends MinimalEObjectImpl.Container implements EObject {
 	 * @model containment="true"
 	 * @generated
 	 */
-	public List<EntityClassDefinition> getEntities() {
-		if (entities == null) {
-			entities = new BasicInternalEList<EntityClassDefinition>(EntityClassDefinition.class);
-		}
-		return entities;
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-		case SecoPackage.ENTRIES__INSTRUCTIONS:
-			return ((InternalEList<?>) getInstructions()).basicRemove(otherEnd, msgs);
-		case SecoPackage.ENTRIES__ENTITIES:
-			return ((InternalEList<?>) getEntities()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-		case SecoPackage.ENTRIES__INSTRUCTIONS:
-			return getInstructions();
-		case SecoPackage.ENTRIES__ENTITIES:
-			return getEntities();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
 	@SuppressWarnings("unchecked")
-	@Override
-	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-		case SecoPackage.ENTRIES__INSTRUCTIONS:
-			getInstructions().clear();
-			getInstructions().addAll((Collection<? extends EObject>) newValue);
-			return;
-		case SecoPackage.ENTRIES__ENTITIES:
-			getEntities().clear();
-			getEntities().addAll((Collection<? extends EntityClassDefinition>) newValue);
-			return;
-		}
-		super.eSet(featureID, newValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public void eUnset(int featureID) {
-		switch (featureID) {
-		case SecoPackage.ENTRIES__INSTRUCTIONS:
-			getInstructions().clear();
-			return;
-		case SecoPackage.ENTRIES__ENTITIES:
-			getEntities().clear();
-			return;
-		}
-		super.eUnset(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-		case SecoPackage.ENTRIES__INSTRUCTIONS:
-			return instructions != null && !instructions.isEmpty();
-		case SecoPackage.ENTRIES__ENTITIES:
-			return entities != null && !entities.isEmpty();
-		}
-		return super.eIsSet(featureID);
+	public EList<EntityClassDefinition> getEntities() {
+		return (EList<EntityClassDefinition>) eGet(SecoPackage.Literals.ENTRIES__ENTITIES, true);
 	}
 
 } // Entries

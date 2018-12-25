@@ -72,18 +72,7 @@ public class ClassLinTest {
 
 	@Test
 	public void testMethodsA() {
-		ClassView A = cl.entityView("A");
-		testMethodsA(A);
-	}
-
-	@Test
-	public void testMethodsB() {
-		ClassView B = cl.entityView("B");
-		testMethodsA(B);
-	}
-
-	public void testMethodsA(ClassView classA) {
-
+		ClassView classA = cl.entityView("A");
 		EntityMethod querry;
 		EntityMethodParamSignature signature;
 		EntityMethodParam param;
@@ -132,6 +121,87 @@ public class ClassLinTest {
 		querry.setParamSignature(new EntityMethodParamSignature());
 
 		MethodView m4 = classA.resolveMethod(querry).get();
+
+		assertFalse(m1.outputParams().isEmpty());
+		assertTrue(m2.outputParams().isEmpty());
+		assertTrue(m3.outputParams().isEmpty());
+		assertTrue(m4.outputParams().isEmpty());
+
+		assertEquals("t1", m1.outputParams().get(0).getParameterType());
+
+		assertEquals(2, m1.inputParams().size());
+		assertEquals(3, m2.inputParams().size());
+		assertEquals(0, m2.outputParams().size());
+		assertEquals(0, m3.outputParams().size());
+
+		assertFalse(m1.isPure());
+		assertTrue(m2.isPure());
+		assertTrue(m3.isPure());
+		assertFalse(m4.isPure());
+
+		assertFalse(m1.isStatic());
+		assertFalse(m2.isStatic());
+		assertTrue(m3.isStatic());
+		assertFalse(m4.isStatic());
+
+		assertEquals("t2", m1.inputParams().get(1).getParameterType());
+		assertEquals("t2", m2.inputParams().get(1).getParameterType());
+
+		assertFalse(m1.inputParams().get(1).isFinal());
+		assertTrue( m2.inputParams().get(2).isFinal());
+	}
+
+	@Test
+	public void testMethodsB() {
+		ClassView classB = cl.entityView("B");
+		EntityMethod querry;
+		EntityMethodParamSignature signature;
+		EntityMethodParam param;
+
+		querry = new EntityMethod();
+		querry.setMethodName("m1");
+		signature = new EntityMethodParamSignature();
+		param = new EntityMethodParam();
+		param.setParameterType("t1");
+		signature.getParameters().add(param);
+		param = new EntityMethodParam();
+		param.setParameterType("t2");
+		signature.getParameters().add(param);
+		param = new EntityMethodParam();
+		param.setParameterType("t1");
+		signature.getOutputs().add(param);
+		querry.setParamSignature(signature);
+
+		MethodView m1 = classB.resolveMethod(querry).get();
+
+		querry = new EntityMethod();
+		querry.setMethodName("m2");
+		signature = new EntityMethodParamSignature();
+		param = new EntityMethodParam();
+		param.setParameterType("t1");
+		signature.getParameters().add(param);
+		param = new EntityMethodParam();
+		param.setParameterType("t2");
+		signature.getParameters().add(param);
+		param = new EntityMethodParam();
+		param.setParameterType("t3");
+		signature.getParameters().add(param);
+		querry.setParamSignature(signature);
+
+		MethodView m2 = classB.resolveMethod(querry).get();
+
+		querry = new EntityMethod();
+		querry.setMethodName("m3");
+		querry.setParamSignature(new EntityMethodParamSignature());
+
+		MethodView m3 = classB.resolveMethod(querry).get();
+
+
+		querry = new EntityMethod();
+		querry.setMethodName("m4");
+		querry.setParamSignature(new EntityMethodParamSignature());
+
+		MethodView m4 = classB.resolveMethod(querry).get();
 
 		assertFalse(m1.outputParams().isEmpty());
 		assertTrue(m2.outputParams().isEmpty());

@@ -14,6 +14,7 @@ import de.upb.sede.dsl.seco.SecoFactory;
 import de.upb.sede.dsl.seco.SecoPackage;
 import de.upb.sede.dsl.tests.SecoInjectorProvider;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 import org.eclipse.emf.common.util.EList;
@@ -33,15 +34,12 @@ import org.junit.jupiter.api.extension.ExtendWith;
 @ExtendWith(InjectionExtension.class)
 @InjectWith(SecoInjectorProvider.class)
 @SuppressWarnings("all")
-public class SecoParseTest {
+public class SecoUtilTest {
   @Inject
   private ParseHelper<Entries> parseHelper;
   
   @Test
-  public void testCast() {
-	  
-	
-    try {
+  public void testOperation() throws Exception {
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("a = ($Number) b;");
       _builder.newLine();
@@ -58,30 +56,30 @@ public class SecoParseTest {
       Assertions.assertTrue(a.getValue().isCast());
       Assertions.assertEquals("Number",  a.getValue().getCastTarget());
       
-    } catch (Throwable _e) {
-      throw Exceptions.sneakyThrow(_e);
-    }
+      a = EcoreUtil.copy(a);
+      Entries entries = new Entries();
+      entries.getInstructions().add(a);
+      System.out.println(SecoUtil.serialize(entries));
   }
 
   @Test
-  public void testConverter() {
-	  try {
+  public void testConverter() throws IOException {
 		  EPackage.Registry.INSTANCE.put(SecoPackage.eNS_URI, SecoPackage.class);
 	      StringConcatenation _builder = new StringConcatenation();
 	      
 	      _builder.append("class: a.b.C wraps $d.se.F extends $g.H, a.ai.J {");
 	      _builder.newLine();
-	      _builder.append("static method:  !Construct (Number, String, some.Entity) -> (Bool, $some.other.Entity);");
+	      _builder.append("method:  !Construct (Number, String, some.Entity) -> (Bool, $some.other.Entity);");
 	      _builder.newLine();
-	      _builder.append("static method:  Construct ($Number, String, some.Entity) -> (Bool, some.other.Entity);");
+	      _builder.append("method:  Construct ($Number, String, some.Entity) -> (Bool, some.other.Entity);");
 	      _builder.newLine();
 	      _builder.append("cast: <-> $Some.Other.Entity;");
 	      _builder.newLine();
 	      _builder.append("}");
 	      _builder.newLine();
-	      System.out.println(_builder.toString() + "\n");
+//	      System.out.println(_builder.toString() + "\n");
 	      
-	      final Entries result = SecoUtil.parseSources(_builder.toString());
+	      Entries result = SecoUtil.parseSources(_builder.toString());
 	      Assertions.assertNotNull(result);
 	      EntityClassDefinition a =  (result.getEntities().get(0));
 	      Assertions.assertEquals(a.getQualifiedName(), "a.b.C");
@@ -94,13 +92,10 @@ public class SecoParseTest {
 	      Assertions.assertTrue(EcoreUtil.equals(m1, m2));
 	      
 	      Assertions.assertEquals(a.getCasts().get(0).getResultingEntity(), "Some.Other.Entity");
+
+	      Entries entries = EcoreUtil.copy(result);
+	      System.out.println(SecoUtil.serialize(entries));
+	      System.out.println(entries);
 	      
-	      
-//	      System.out.println(a.Ecore);
-	     
-	      
-	    } catch (Throwable _e) {
-	      throw Exceptions.sneakyThrow(_e);
-	    }
   }
 }

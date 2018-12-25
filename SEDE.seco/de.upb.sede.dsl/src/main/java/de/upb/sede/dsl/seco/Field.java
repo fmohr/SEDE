@@ -3,12 +3,9 @@
  */
 package de.upb.sede.dsl.seco;
 
-import org.eclipse.emf.common.notify.NotificationChain;
-
+import de.upb.sede.dsl.SecoObject;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc --> A representation of the model object
@@ -28,57 +25,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * @model kind="class"
  * @generated
  */
-public class Field extends MinimalEObjectImpl.Container implements EObject {
-	/**
-	 * The default value of the '{@link #getName() <em>Name</em>}' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String NAME_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected String name = NAME_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isDereference() <em>Dereference</em>}'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #isDereference()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean DEREFERENCE_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isDereference() <em>Dereference</em>}'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #isDereference()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean dereference = DEREFERENCE_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getMemeber() <em>Memeber</em>}' containment
-	 * reference. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getMemeber()
-	 * @generated
-	 * @ordered
-	 */
-	protected FieldValue memeber;
-
+public class Field extends SecoObject implements EObject {
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -99,6 +46,16 @@ public class Field extends MinimalEObjectImpl.Container implements EObject {
 	}
 
 	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	@Override
+	protected int eStaticFeatureCount() {
+		return 0;
+	}
+
+	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute. <!--
 	 * begin-user-doc -->
 	 * <p>
@@ -114,7 +71,7 @@ public class Field extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public String getName() {
-		return name;
+		return (String) eGet(SecoPackage.Literals.FIELD__NAME, true);
 	}
 
 	/**
@@ -126,7 +83,7 @@ public class Field extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public void setName(String newName) {
-		name = newName;
+		eSet(SecoPackage.Literals.FIELD__NAME, newName);
 	}
 
 	/**
@@ -145,7 +102,7 @@ public class Field extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public boolean isDereference() {
-		return dereference;
+		return (Boolean) eGet(SecoPackage.Literals.FIELD__DEREFERENCE, true);
 	}
 
 	/**
@@ -158,7 +115,7 @@ public class Field extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public void setDereference(boolean newDereference) {
-		dereference = newDereference;
+		eSet(SecoPackage.Literals.FIELD__DEREFERENCE, newDereference);
 	}
 
 	/**
@@ -177,18 +134,7 @@ public class Field extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public FieldValue getMemeber() {
-		return memeber;
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public NotificationChain basicSetMemeber(FieldValue newMemeber, NotificationChain msgs) {
-		FieldValue oldMemeber = memeber;
-		memeber = newMemeber;
-		return msgs;
+		return (FieldValue) eGet(SecoPackage.Literals.FIELD__MEMEBER, true);
 	}
 
 	/**
@@ -201,129 +147,7 @@ public class Field extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public void setMemeber(FieldValue newMemeber) {
-		if (newMemeber != memeber) {
-			NotificationChain msgs = null;
-			if (memeber != null)
-				msgs = ((InternalEObject) memeber).eInverseRemove(this,
-						EOPPOSITE_FEATURE_BASE - SecoPackage.FIELD__MEMEBER, null, msgs);
-			if (newMemeber != null)
-				msgs = ((InternalEObject) newMemeber).eInverseAdd(this,
-						EOPPOSITE_FEATURE_BASE - SecoPackage.FIELD__MEMEBER, null, msgs);
-			msgs = basicSetMemeber(newMemeber, msgs);
-			if (msgs != null)
-				msgs.dispatch();
-		}
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-		case SecoPackage.FIELD__MEMEBER:
-			return basicSetMemeber(null, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-		case SecoPackage.FIELD__NAME:
-			return getName();
-		case SecoPackage.FIELD__DEREFERENCE:
-			return isDereference();
-		case SecoPackage.FIELD__MEMEBER:
-			return getMemeber();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-		case SecoPackage.FIELD__NAME:
-			setName((String) newValue);
-			return;
-		case SecoPackage.FIELD__DEREFERENCE:
-			setDereference((Boolean) newValue);
-			return;
-		case SecoPackage.FIELD__MEMEBER:
-			setMemeber((FieldValue) newValue);
-			return;
-		}
-		super.eSet(featureID, newValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public void eUnset(int featureID) {
-		switch (featureID) {
-		case SecoPackage.FIELD__NAME:
-			setName(NAME_EDEFAULT);
-			return;
-		case SecoPackage.FIELD__DEREFERENCE:
-			setDereference(DEREFERENCE_EDEFAULT);
-			return;
-		case SecoPackage.FIELD__MEMEBER:
-			setMemeber((FieldValue) null);
-			return;
-		}
-		super.eUnset(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-		case SecoPackage.FIELD__NAME:
-			return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-		case SecoPackage.FIELD__DEREFERENCE:
-			return dereference != DEREFERENCE_EDEFAULT;
-		case SecoPackage.FIELD__MEMEBER:
-			return memeber != null;
-		}
-		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy())
-			return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (name: ");
-		result.append(name);
-		result.append(", dereference: ");
-		result.append(dereference);
-		result.append(')');
-		return result.toString();
+		eSet(SecoPackage.Literals.FIELD__MEMEBER, newMemeber);
 	}
 
 } // Field

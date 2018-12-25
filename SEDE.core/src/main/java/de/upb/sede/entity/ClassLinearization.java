@@ -13,6 +13,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import de.upb.sede.dsl.seco.*;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 import static de.upb.sede.dsl.seco.SecoFactory.eINSTANCE;
 
@@ -288,8 +289,11 @@ public final class ClassLinearization {
 		}
 		return mergedDefinition;
 	}
-	
-	
+
+	public Optional<OperationResolution> resolveOperation(Operation operation) {
+//		operation.get
+		return Optional.empty();
+	}
 	
 	
 	/* (non-Javadoc)
@@ -359,8 +363,6 @@ public final class ClassLinearization {
 			Objects.requireNonNull(entityType);
 			if(entityName().equals(entityType)) {
 				return true;
-			} else if(isWrapper() && wrapped.is(entityType)){
-				return true;
 			}
 			for(ClassView parent : parents) {
 				if(parent.is(entityType)) {
@@ -376,7 +378,7 @@ public final class ClassLinearization {
 			List<MethodView> methods = new ArrayList<>();
 			for(EntityMethod servedMethod : def.getMethods()) {
 				if(servedMethod.getMethodName().equals(methodName)) {
-					methods.add(new MethodResolution(servedMethod));
+					methods.add(new NestedMethodView(servedMethod));
 				}
 			}
 			if(isWrapper()) {
@@ -387,13 +389,13 @@ public final class ClassLinearization {
 			}
 			return methods;
 		}
-		
+
 		@Override
 		public Optional<MethodView> resolveMethod(EntityMethod requestedMethod) {
 			for(EntityMethod method : def.getMethods()) {
-				MethodResolution methodResolution = new MethodResolution(method);
-				if(methodResolution.matchesSignature(requestedMethod)) {
-					return Optional.of(methodResolution);
+				NestedMethodView nestedMethodView = new NestedMethodView(method);
+				if(nestedMethodView.matchesSignature(requestedMethod)) {
+					return Optional.of(nestedMethodView);
 				}
 			}
 			if(isWrapper()) {
@@ -411,11 +413,11 @@ public final class ClassLinearization {
 			return Optional.empty();
  		}
 		
-		public class MethodResolution implements MethodView {
+		public class NestedMethodView implements MethodView {
 			
 			private final EntityMethod method;
 			
-			MethodResolution(EntityMethod method) {
+			NestedMethodView(EntityMethod method) {
 				this.method = method;
 				if(method.getParamSignature() == null) {
 					method.setParamSignature(new EntityMethodParamSignature());
@@ -435,7 +437,7 @@ public final class ClassLinearization {
 			}
 			
 			String getParamType(int paramIndex, boolean input) {
-				if(paramIndex < 0 || paramIndex > paramCount(input)) {
+				if(paramIndex < 0 || paramIndex >= paramCount(input)) {
 					throw new IllegalArgumentException("Parameter index '" + paramIndex + "' is out of bound.");
 				}
 				List<EntityMethodParam> parameters = input ? method.getParamSignature().getParameters() : method.getParamSignature().getOutputs();
@@ -450,7 +452,7 @@ public final class ClassLinearization {
 					}
 				}
 				{
-					throw new IllegalStateException("This cannot be reached. BUG in MethodResolution::getInputParameterType(int)");
+					throw new IllegalStateException("This line cannot be reached. BUG in MethodResolution::getInputParameterType(int)");
 				}
 			}
 			
@@ -495,7 +497,6 @@ public final class ClassLinearization {
 						}
 					}
 				}
-				
 				return true;
 			}
 
@@ -517,6 +518,34 @@ public final class ClassLinearization {
 			@Override
 			public List<EntityMethodParam> inputParams() {
 				return method.getParamSignature().getParameters();
+			}
+
+			public EntityMethod getMethod() {
+				EntityMethod method = EcoreUtil.copy(this.method);
+				return method;
+			}
+			public String toString(){
+				return method.toString();
+			}
+			public Optional<MethodView> getRealization() {
+				if(method.isRealization()) {
+					EntityMethod realisedMethod = getMethod();
+					realisedMethod.setMethodName(method.getMethodRealization());
+					Optional<MethodView> methodView = resolveMethod(realisedMethod);
+					if(methodView.isPresent()) {
+						return methodView;
+					} else{
+						/*
+						 * Method realization is defined to be realised but its realised method cannot be resolved.
+						 * -> Illegal class state:
+						 */
+						throw new IllegalStateException("Illegal class definition: Method " + toString()  +
+								" is said to be realised by: " + method.getMethodRealization() +
+								" but the realized method cannot be resolved.");
+					}
+				} else {
+					return Optional.empty();
+				}
 			}
 		}
 	}

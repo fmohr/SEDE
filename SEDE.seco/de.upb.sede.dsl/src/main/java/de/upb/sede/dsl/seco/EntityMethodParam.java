@@ -3,12 +3,9 @@
  */
 package de.upb.sede.dsl.seco;
 
-import org.eclipse.emf.common.notify.NotificationChain;
-
+import de.upb.sede.dsl.SecoObject;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc --> A representation of the model object '<em><b>Entity
@@ -34,97 +31,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * @model kind="class"
  * @generated
  */
-public class EntityMethodParam extends MinimalEObjectImpl.Container implements EObject {
-	/**
-	 * The default value of the '{@link #isFinal() <em>Final</em>}' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #isFinal()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean FINAL_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isFinal() <em>Final</em>}' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #isFinal()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean final_ = FINAL_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getParameterType() <em>Parameter
-	 * Type</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getParameterType()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String PARAMETER_TYPE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getParameterType() <em>Parameter Type</em>}'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getParameterType()
-	 * @generated
-	 * @ordered
-	 */
-	protected String parameterType = PARAMETER_TYPE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getParameterName() <em>Parameter
-	 * Name</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getParameterName()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String PARAMETER_NAME_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getParameterName() <em>Parameter Name</em>}'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getParameterName()
-	 * @generated
-	 * @ordered
-	 */
-	protected String parameterName = PARAMETER_NAME_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isValueFixed() <em>Value Fixed</em>}'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #isValueFixed()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean VALUE_FIXED_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isValueFixed() <em>Value Fixed</em>}'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #isValueFixed()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean valueFixed = VALUE_FIXED_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getFixedValue() <em>Fixed Value</em>}'
-	 * containment reference. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getFixedValue()
-	 * @generated
-	 * @ordered
-	 */
-	protected FieldValue fixedValue;
-
+public class EntityMethodParam extends SecoObject implements EObject {
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -145,6 +52,16 @@ public class EntityMethodParam extends MinimalEObjectImpl.Container implements E
 	}
 
 	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	@Override
+	protected int eStaticFeatureCount() {
+		return 0;
+	}
+
+	/**
 	 * Returns the value of the '<em><b>Final</b></em>' attribute. <!--
 	 * begin-user-doc -->
 	 * <p>
@@ -160,7 +77,7 @@ public class EntityMethodParam extends MinimalEObjectImpl.Container implements E
 	 * @generated
 	 */
 	public boolean isFinal() {
-		return final_;
+		return (Boolean) eGet(SecoPackage.Literals.ENTITY_METHOD_PARAM__FINAL, true);
 	}
 
 	/**
@@ -172,7 +89,7 @@ public class EntityMethodParam extends MinimalEObjectImpl.Container implements E
 	 * @generated
 	 */
 	public void setFinal(boolean newFinal) {
-		final_ = newFinal;
+		eSet(SecoPackage.Literals.ENTITY_METHOD_PARAM__FINAL, newFinal);
 	}
 
 	/**
@@ -191,7 +108,7 @@ public class EntityMethodParam extends MinimalEObjectImpl.Container implements E
 	 * @generated
 	 */
 	public String getParameterType() {
-		return parameterType;
+		return (String) eGet(SecoPackage.Literals.ENTITY_METHOD_PARAM__PARAMETER_TYPE, true);
 	}
 
 	/**
@@ -204,7 +121,7 @@ public class EntityMethodParam extends MinimalEObjectImpl.Container implements E
 	 * @generated
 	 */
 	public void setParameterType(String newParameterType) {
-		parameterType = newParameterType;
+		eSet(SecoPackage.Literals.ENTITY_METHOD_PARAM__PARAMETER_TYPE, newParameterType);
 	}
 
 	/**
@@ -223,7 +140,7 @@ public class EntityMethodParam extends MinimalEObjectImpl.Container implements E
 	 * @generated
 	 */
 	public String getParameterName() {
-		return parameterName;
+		return (String) eGet(SecoPackage.Literals.ENTITY_METHOD_PARAM__PARAMETER_NAME, true);
 	}
 
 	/**
@@ -236,7 +153,7 @@ public class EntityMethodParam extends MinimalEObjectImpl.Container implements E
 	 * @generated
 	 */
 	public void setParameterName(String newParameterName) {
-		parameterName = newParameterName;
+		eSet(SecoPackage.Literals.ENTITY_METHOD_PARAM__PARAMETER_NAME, newParameterName);
 	}
 
 	/**
@@ -255,7 +172,7 @@ public class EntityMethodParam extends MinimalEObjectImpl.Container implements E
 	 * @generated
 	 */
 	public boolean isValueFixed() {
-		return valueFixed;
+		return (Boolean) eGet(SecoPackage.Literals.ENTITY_METHOD_PARAM__VALUE_FIXED, true);
 	}
 
 	/**
@@ -268,7 +185,7 @@ public class EntityMethodParam extends MinimalEObjectImpl.Container implements E
 	 * @generated
 	 */
 	public void setValueFixed(boolean newValueFixed) {
-		valueFixed = newValueFixed;
+		eSet(SecoPackage.Literals.ENTITY_METHOD_PARAM__VALUE_FIXED, newValueFixed);
 	}
 
 	/**
@@ -287,18 +204,7 @@ public class EntityMethodParam extends MinimalEObjectImpl.Container implements E
 	 * @generated
 	 */
 	public FieldValue getFixedValue() {
-		return fixedValue;
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public NotificationChain basicSetFixedValue(FieldValue newFixedValue, NotificationChain msgs) {
-		FieldValue oldFixedValue = fixedValue;
-		fixedValue = newFixedValue;
-		return msgs;
+		return (FieldValue) eGet(SecoPackage.Literals.ENTITY_METHOD_PARAM__FIXED_VALUE, true);
 	}
 
 	/**
@@ -313,155 +219,7 @@ public class EntityMethodParam extends MinimalEObjectImpl.Container implements E
 	 * @generated
 	 */
 	public void setFixedValue(FieldValue newFixedValue) {
-		if (newFixedValue != fixedValue) {
-			NotificationChain msgs = null;
-			if (fixedValue != null)
-				msgs = ((InternalEObject) fixedValue).eInverseRemove(this,
-						EOPPOSITE_FEATURE_BASE - SecoPackage.ENTITY_METHOD_PARAM__FIXED_VALUE, null, msgs);
-			if (newFixedValue != null)
-				msgs = ((InternalEObject) newFixedValue).eInverseAdd(this,
-						EOPPOSITE_FEATURE_BASE - SecoPackage.ENTITY_METHOD_PARAM__FIXED_VALUE, null, msgs);
-			msgs = basicSetFixedValue(newFixedValue, msgs);
-			if (msgs != null)
-				msgs.dispatch();
-		}
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_METHOD_PARAM__FIXED_VALUE:
-			return basicSetFixedValue(null, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_METHOD_PARAM__FINAL:
-			return isFinal();
-		case SecoPackage.ENTITY_METHOD_PARAM__PARAMETER_TYPE:
-			return getParameterType();
-		case SecoPackage.ENTITY_METHOD_PARAM__PARAMETER_NAME:
-			return getParameterName();
-		case SecoPackage.ENTITY_METHOD_PARAM__VALUE_FIXED:
-			return isValueFixed();
-		case SecoPackage.ENTITY_METHOD_PARAM__FIXED_VALUE:
-			return getFixedValue();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_METHOD_PARAM__FINAL:
-			setFinal((Boolean) newValue);
-			return;
-		case SecoPackage.ENTITY_METHOD_PARAM__PARAMETER_TYPE:
-			setParameterType((String) newValue);
-			return;
-		case SecoPackage.ENTITY_METHOD_PARAM__PARAMETER_NAME:
-			setParameterName((String) newValue);
-			return;
-		case SecoPackage.ENTITY_METHOD_PARAM__VALUE_FIXED:
-			setValueFixed((Boolean) newValue);
-			return;
-		case SecoPackage.ENTITY_METHOD_PARAM__FIXED_VALUE:
-			setFixedValue((FieldValue) newValue);
-			return;
-		}
-		super.eSet(featureID, newValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public void eUnset(int featureID) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_METHOD_PARAM__FINAL:
-			setFinal(FINAL_EDEFAULT);
-			return;
-		case SecoPackage.ENTITY_METHOD_PARAM__PARAMETER_TYPE:
-			setParameterType(PARAMETER_TYPE_EDEFAULT);
-			return;
-		case SecoPackage.ENTITY_METHOD_PARAM__PARAMETER_NAME:
-			setParameterName(PARAMETER_NAME_EDEFAULT);
-			return;
-		case SecoPackage.ENTITY_METHOD_PARAM__VALUE_FIXED:
-			setValueFixed(VALUE_FIXED_EDEFAULT);
-			return;
-		case SecoPackage.ENTITY_METHOD_PARAM__FIXED_VALUE:
-			setFixedValue((FieldValue) null);
-			return;
-		}
-		super.eUnset(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-		case SecoPackage.ENTITY_METHOD_PARAM__FINAL:
-			return final_ != FINAL_EDEFAULT;
-		case SecoPackage.ENTITY_METHOD_PARAM__PARAMETER_TYPE:
-			return PARAMETER_TYPE_EDEFAULT == null ? parameterType != null
-					: !PARAMETER_TYPE_EDEFAULT.equals(parameterType);
-		case SecoPackage.ENTITY_METHOD_PARAM__PARAMETER_NAME:
-			return PARAMETER_NAME_EDEFAULT == null ? parameterName != null
-					: !PARAMETER_NAME_EDEFAULT.equals(parameterName);
-		case SecoPackage.ENTITY_METHOD_PARAM__VALUE_FIXED:
-			return valueFixed != VALUE_FIXED_EDEFAULT;
-		case SecoPackage.ENTITY_METHOD_PARAM__FIXED_VALUE:
-			return fixedValue != null;
-		}
-		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy())
-			return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (final: ");
-		result.append(final_);
-		result.append(", parameterType: ");
-		result.append(parameterType);
-		result.append(", parameterName: ");
-		result.append(parameterName);
-		result.append(", valueFixed: ");
-		result.append(valueFixed);
-		result.append(')');
-		return result.toString();
+		eSet(SecoPackage.Literals.ENTITY_METHOD_PARAM__FIXED_VALUE, newFixedValue);
 	}
 
 } // EntityMethodParam

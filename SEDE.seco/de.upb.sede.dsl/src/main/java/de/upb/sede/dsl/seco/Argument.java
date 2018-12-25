@@ -3,12 +3,9 @@
  */
 package de.upb.sede.dsl.seco;
 
-import org.eclipse.emf.common.notify.NotificationChain;
-
+import de.upb.sede.dsl.SecoObject;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc --> A representation of the model object
@@ -29,77 +26,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * @model kind="class"
  * @generated
  */
-public class Argument extends MinimalEObjectImpl.Container implements EObject {
-	/**
-	 * The default value of the '{@link #isIndexed() <em>Indexed</em>}' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #isIndexed()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean INDEXED_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isIndexed() <em>Indexed</em>}' attribute.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #isIndexed()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean indexed = INDEXED_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getIndex() <em>Index</em>}' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getIndex()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final int INDEX_EDEFAULT = 0;
-
-	/**
-	 * The cached value of the '{@link #getIndex() <em>Index</em>}' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getIndex()
-	 * @generated
-	 * @ordered
-	 */
-	protected int index = INDEX_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getParameterName() <em>Parameter
-	 * Name</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getParameterName()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String PARAMETER_NAME_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getParameterName() <em>Parameter Name</em>}'
-	 * attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getParameterName()
-	 * @generated
-	 * @ordered
-	 */
-	protected String parameterName = PARAMETER_NAME_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getValue() <em>Value</em>}' containment
-	 * reference. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @see #getValue()
-	 * @generated
-	 * @ordered
-	 */
-	protected FieldValue value;
-
+public class Argument extends SecoObject implements EObject {
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -120,6 +47,16 @@ public class Argument extends MinimalEObjectImpl.Container implements EObject {
 	}
 
 	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	@Override
+	protected int eStaticFeatureCount() {
+		return 0;
+	}
+
+	/**
 	 * Returns the value of the '<em><b>Indexed</b></em>' attribute. <!--
 	 * begin-user-doc -->
 	 * <p>
@@ -135,7 +72,7 @@ public class Argument extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public boolean isIndexed() {
-		return indexed;
+		return (Boolean) eGet(SecoPackage.Literals.ARGUMENT__INDEXED, true);
 	}
 
 	/**
@@ -147,7 +84,7 @@ public class Argument extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public void setIndexed(boolean newIndexed) {
-		indexed = newIndexed;
+		eSet(SecoPackage.Literals.ARGUMENT__INDEXED, newIndexed);
 	}
 
 	/**
@@ -166,7 +103,7 @@ public class Argument extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public int getIndex() {
-		return index;
+		return (Integer) eGet(SecoPackage.Literals.ARGUMENT__INDEX, true);
 	}
 
 	/**
@@ -178,7 +115,7 @@ public class Argument extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public void setIndex(int newIndex) {
-		index = newIndex;
+		eSet(SecoPackage.Literals.ARGUMENT__INDEX, newIndex);
 	}
 
 	/**
@@ -197,7 +134,7 @@ public class Argument extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public String getParameterName() {
-		return parameterName;
+		return (String) eGet(SecoPackage.Literals.ARGUMENT__PARAMETER_NAME, true);
 	}
 
 	/**
@@ -210,7 +147,7 @@ public class Argument extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public void setParameterName(String newParameterName) {
-		parameterName = newParameterName;
+		eSet(SecoPackage.Literals.ARGUMENT__PARAMETER_NAME, newParameterName);
 	}
 
 	/**
@@ -229,18 +166,7 @@ public class Argument extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public FieldValue getValue() {
-		return value;
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	public NotificationChain basicSetValue(FieldValue newValue, NotificationChain msgs) {
-		FieldValue oldValue = value;
-		value = newValue;
-		return msgs;
+		return (FieldValue) eGet(SecoPackage.Literals.ARGUMENT__VALUE, true);
 	}
 
 	/**
@@ -253,142 +179,7 @@ public class Argument extends MinimalEObjectImpl.Container implements EObject {
 	 * @generated
 	 */
 	public void setValue(FieldValue newValue) {
-		if (newValue != value) {
-			NotificationChain msgs = null;
-			if (value != null)
-				msgs = ((InternalEObject) value).eInverseRemove(this,
-						EOPPOSITE_FEATURE_BASE - SecoPackage.ARGUMENT__VALUE, null, msgs);
-			if (newValue != null)
-				msgs = ((InternalEObject) newValue).eInverseAdd(this,
-						EOPPOSITE_FEATURE_BASE - SecoPackage.ARGUMENT__VALUE, null, msgs);
-			msgs = basicSetValue(newValue, msgs);
-			if (msgs != null)
-				msgs.dispatch();
-		}
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-		case SecoPackage.ARGUMENT__VALUE:
-			return basicSetValue(null, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public Object eGet(int featureID, boolean resolve, boolean coreType) {
-		switch (featureID) {
-		case SecoPackage.ARGUMENT__INDEXED:
-			return isIndexed();
-		case SecoPackage.ARGUMENT__INDEX:
-			return getIndex();
-		case SecoPackage.ARGUMENT__PARAMETER_NAME:
-			return getParameterName();
-		case SecoPackage.ARGUMENT__VALUE:
-			return getValue();
-		}
-		return super.eGet(featureID, resolve, coreType);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public void eSet(int featureID, Object newValue) {
-		switch (featureID) {
-		case SecoPackage.ARGUMENT__INDEXED:
-			setIndexed((Boolean) newValue);
-			return;
-		case SecoPackage.ARGUMENT__INDEX:
-			setIndex((Integer) newValue);
-			return;
-		case SecoPackage.ARGUMENT__PARAMETER_NAME:
-			setParameterName((String) newValue);
-			return;
-		case SecoPackage.ARGUMENT__VALUE:
-			setValue((FieldValue) newValue);
-			return;
-		}
-		super.eSet(featureID, newValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public void eUnset(int featureID) {
-		switch (featureID) {
-		case SecoPackage.ARGUMENT__INDEXED:
-			setIndexed(INDEXED_EDEFAULT);
-			return;
-		case SecoPackage.ARGUMENT__INDEX:
-			setIndex(INDEX_EDEFAULT);
-			return;
-		case SecoPackage.ARGUMENT__PARAMETER_NAME:
-			setParameterName(PARAMETER_NAME_EDEFAULT);
-			return;
-		case SecoPackage.ARGUMENT__VALUE:
-			setValue((FieldValue) null);
-			return;
-		}
-		super.eUnset(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public boolean eIsSet(int featureID) {
-		switch (featureID) {
-		case SecoPackage.ARGUMENT__INDEXED:
-			return indexed != INDEXED_EDEFAULT;
-		case SecoPackage.ARGUMENT__INDEX:
-			return index != INDEX_EDEFAULT;
-		case SecoPackage.ARGUMENT__PARAMETER_NAME:
-			return PARAMETER_NAME_EDEFAULT == null ? parameterName != null
-					: !PARAMETER_NAME_EDEFAULT.equals(parameterName);
-		case SecoPackage.ARGUMENT__VALUE:
-			return value != null;
-		}
-		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy())
-			return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (indexed: ");
-		result.append(indexed);
-		result.append(", index: ");
-		result.append(index);
-		result.append(", parameterName: ");
-		result.append(parameterName);
-		result.append(')');
-		return result.toString();
+		eSet(SecoPackage.Literals.ARGUMENT__VALUE, newValue);
 	}
 
 } // Argument

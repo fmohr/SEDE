@@ -1,6 +1,5 @@
 package de.upb.sede.entity;
 
-import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.dsl.SecoUtil;
 import de.upb.sede.dsl.seco.EntityMethod;
 import de.upb.sede.dsl.seco.EntityMethodParam;
@@ -9,11 +8,9 @@ import de.upb.sede.util.FileUtil;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.experimental.theories.ParameterSignature;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -59,20 +56,20 @@ public class ClassLinTest {
 
 	@Test
 	public void isWrapped() {
-		assertFalse(cl.entityView("A").isWrapper());
-		assertTrue(cl.entityView("B").isWrapper());
-		assertFalse(cl.entityView("C").isWrapper());
+		assertFalse(cl.classView("A").isWrapper());
+		assertTrue(cl.classView("B").isWrapper());
+		assertFalse(cl.classView("C").isWrapper());
 	}
 
 	@Test
 	public void classpath() {
-		assertEquals("A", cl.entityView("A").targetEntityName());
-		assertEquals("A", cl.entityView("B").targetEntityName());
+		assertEquals("A", cl.classView("A").targetEntityName());
+		assertEquals("A", cl.classView("B").targetEntityName());
 	}
 
 	@Test
 	public void testMethodsA() {
-		ClassView classA = cl.entityView("A");
+		ClassView classA = cl.classView("A");
 		EntityMethod querry;
 		EntityMethodParamSignature signature;
 		EntityMethodParam param;
@@ -153,7 +150,7 @@ public class ClassLinTest {
 
 	@Test
 	public void testMethodsB() {
-		ClassView classB = cl.entityView("B");
+		ClassView classB = cl.classView("B");
 		EntityMethod querry;
 		EntityMethodParamSignature signature;
 		EntityMethodParam param;

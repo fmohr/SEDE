@@ -8,7 +8,11 @@ public class SecoObject extends MinimalEObjectImpl.Container{
 	
 	@Override
 	public String toString() {
-		return SecoUtil.serializeSilently(this);
+		try {
+			return SecoUtil.serialize(this);
+		} catch (Exception ex) { // fall back:
+			return super.toString();
+		}
 	}
 	
 	public void setRes(Resource res) {

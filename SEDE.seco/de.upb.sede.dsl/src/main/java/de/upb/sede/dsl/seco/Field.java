@@ -133,8 +133,8 @@ public class Field extends SecoObject implements EObject {
 	 * @model containment="true"
 	 * @generated
 	 */
-	public FieldValue getMember() {
-		return (FieldValue) eGet(SecoPackage.Literals.FIELD__MEMBER, true);
+	public Field getMember() {
+		return (Field) eGet(SecoPackage.Literals.FIELD__MEMBER, true);
 	}
 
 	/**
@@ -146,7 +146,7 @@ public class Field extends SecoObject implements EObject {
 	 * @see #getMember()
 	 * @generated
 	 */
-	public void setMember(FieldValue newMember) {
+	public void setMember(Field newMember) {
 		eSet(SecoPackage.Literals.FIELD__MEMBER, newMember);
 	}
 

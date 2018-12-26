@@ -1,17 +1,8 @@
 package de.upb.sede.entity;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
+import com.sun.org.apache.xpath.internal.Arg;
 import de.upb.sede.dsl.seco.*;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
@@ -24,7 +15,7 @@ import static de.upb.sede.dsl.seco.SecoFactory.eINSTANCE;
  *
  */
 public final class ClassLinearization {
-	
+
 	/**
 	 * If true, EntityResolver merges incoming definitions of entities into a single one. 
 	 * When false, all refinements are kept separate from definitions. <\n>
@@ -155,7 +146,7 @@ public final class ClassLinearization {
 	 * @param entityName name of the entity to be resolved
 	 * @return view on the resolved entity
 	 */
-	public ClassView entityView(String entityName) {
+	public ClassView classView(String entityName) {
 		
 		Objects.requireNonNull(entityName, "entityName was null");
 		
@@ -290,15 +281,105 @@ public final class ClassLinearization {
 		return mergedDefinition;
 	}
 
+	/**
+	 * Resolved a given operation like: "fruits.Apple::__construct({i1=0,i2=0,i3=10,i4=10})"
+	 *
+	 * @param operation
+	 * @param typeLookup
+	 * @return
+	 */
 	public Optional<OperationResolution> resolveOperation(Operation operation, FieldTypeLookup typeLookup) {
-		String contextEntity;
+		/*
+		 * Resolve operation context entity:
+		 */
+		String contextEntityName;
 		if(operation.getContextField() != null) {
-			contextEntity = operation.getContextField().
+			if(operation.getContextField().isDereference()) {
+				// TODO - add support for dereference of fields
+				throw new OperationResolutionException(operation, "Context field dereference not yet supported.");
+			}
+			String fieldName = operation.getContextField().getName();
+			Optional<String> fieldType = typeLookup.apply(fieldName);
+			if(fieldType.isPresent()) {
+				contextEntityName = fieldType.get();
+			} else {
+				throw new OperationResolutionException(operation, "Field '" + fieldName + "' type lookup failed.");
+			}
+		} else {
+			contextEntityName = operation.getEntityName();
 		}
+		ClassView contextEntity;
+		try{
+			contextEntity = classView(contextEntityName);
+		} catch(IllegalArgumentException ex) {
+			throw new OperationResolutionException(operation, "Couldn't resolve context entity type.", ex);
+		}
+		/*
+		 * prepare arguments:
+		 * Order by index if all arguments are indexed: e.g.: (i2=2, i1="hello") -> ("hello", 2)
+		 *
+		 */
+		boolean indexed = false;
+		for(int argIndex = 0; argIndex < operation.getArgs().size(); argIndex ++) {
+			Argument argument = operation.getArgs().get(argIndex);
+
+			if(argument.isIndexed() && argIndex == 0) {
+				indexed = true;
+			} else if (argIndex > 0) {
+				/*
+				 * Make sure every argument is indexed:
+				 */
+				if ((argument.isIndexed() && !indexed) || (!argument.isIndexed() && indexed)) {
+					throw new OperationResolutionException(operation, "Arguments are only partially indexed. " +
+							"Make sure either all arguments are indexed or order them and fill the gaps with NULLs.");
+				}
+			}
+			if(argument.getParameterName()!= null) {
+				/*
+				 * TODO - Add support for named arguments
+			 	 */
+				throw new OperationResolutionException(operation, "Has named arguments. This language feature is not yet supported.");
+			}
+
+
+			FieldValue argValue = argument.getValue();
+			if(argValue.getOperation()!=null) {
+				// TODO add support for argument operation
+				throw new OperationResolutionException(operation, "Arguments are inner operations. This language feature is not yet supported.");
+			}
+			else if(argValue.getCastTarget()!=null) {
+				// TODO add support for argument cast
+				throw new OperationResolutionException(operation, "Arguments have explicit cast. This language feature is not yet supported.");
+			}
+
+		}
+		List<Argument> orderedArgs = new ArrayList<>(operation.getArgs());
+		if(indexed) {
+			/*
+			 * Sort by argument indexes
+			 */
+			orderedArgs.sort(Comparator.comparingInt(Argument::getIndex));
+		}
+
+		/*
+		 * Infer argument types:
+		 */
+
+		List<String> argType = new ArrayList<>();
+		for(Argument arg : orderedArgs) {
+			FieldValue argValue = arg.getValue();
+			if(argValue == null) {
+				throw new OperationResolutionException(operation, "Has void argument values: " + arg.toString());
+			}
+			if(argValue.getBool() != null) {
+
+			}
+		}
+
 		return Optional.empty();
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#clone()
 	 */
@@ -393,6 +474,11 @@ public final class ClassLinearization {
 			return methods;
 		}
 
+		/**
+		 * Resolves m
+		 * @param requestedMethod
+		 * @return
+		 */
 		@Override
 		public Optional<MethodView> resolveMethod(EntityMethod requestedMethod) {
 			for(EntityMethod method : def.getMethods()) {
@@ -480,7 +566,7 @@ public final class ClassLinearization {
 					String declaredType = getParamType(parameterIndex, true); 
 					String requestedType = requestedSignature.getParameters().get(parameterIndex).getParameterType();
 					if(!declaredType.equals(requestedType)) {
-						ClassView requestedTypeView = entityView(requestedType);
+						ClassView requestedTypeView = classView(requestedType);
 						if(!requestedTypeView.is(declaredType)) {
 							return false;
 						}
@@ -494,7 +580,7 @@ public final class ClassLinearization {
 					String declaredType = getParamType(outputIndex, false); 
 					String requestedType = requestedSignature.getOutputs().get(outputIndex).getParameterType();
 					if(!declaredType.equals(requestedType)) {
-						ClassView requestedTypeView = entityView(requestedType);
+						ClassView requestedTypeView = classView(requestedType);
 						if(!requestedTypeView.is(declaredType)) {
 							return false;
 						}
@@ -597,7 +683,7 @@ public final class ClassLinearization {
 		
 		private void dfs(ClassCastPath path) {
 			String currentEntity = path.last();
-			ClassView entityClass = entityView(currentEntity);
+			ClassView entityClass = classView(currentEntity);
 			for(EntityCast cast : entityClass.getAllCasts()) {
 				String target = cast.getResultingEntity();
 				boolean outGoingEdge = (cast.getDirection() != TransformDirection.FROM);  

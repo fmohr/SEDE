@@ -2087,7 +2087,7 @@ public class SecoPackage extends EPackageImpl {
 				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getField_Dereference(), ecorePackage.getEBoolean(), "dereference", null, 0, 1, Field.class,
 				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getField_Member(), this.getFieldValue(), null, "member", null, 0, 1, Field.class, !IS_TRANSIENT,
+		initEReference(getField_Member(), this.getField(), null, "member", null, 0, 1, Field.class, !IS_TRANSIENT,
 				!IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED,
 				IS_ORDERED);
 

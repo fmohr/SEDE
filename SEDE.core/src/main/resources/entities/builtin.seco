@@ -1,0 +1,9 @@
+class: $Bool {
+	method: from_Bool_const ($String) -> ($Bool);
+}
+class: $Number {
+	method: from_Number_const ($String) -> ($Number);
+}
+class: $String {
+	method: from_String_const ($String) -> ($String);
+}

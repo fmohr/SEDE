@@ -4,6 +4,7 @@
  */
 package de.upb.sede.dsl.seco.validation;
 
+import de.upb.sede.dsl.seco.Field;
 import de.upb.sede.dsl.seco.FieldValue;
 
 /**
@@ -19,6 +20,8 @@ public interface FieldValidator {
 	boolean validateName(String value);
 
 	boolean validateDereference(boolean value);
+
+	boolean validateMember(Field value);
 
 	boolean validateMember(FieldValue value);
 

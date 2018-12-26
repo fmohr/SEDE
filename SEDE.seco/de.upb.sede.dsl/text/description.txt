@@ -68,7 +68,7 @@ Package seco <http://www.upb.de/sede/dsl/Seco>
   Class Field
     Attribute name : EString
     Attribute dereference : EBoolean
-    Reference member : FieldValue
+    Reference member : Field
 
   Class FieldValue
     Attribute cast : EBoolean

@@ -2,6 +2,8 @@ package de.upb.sede.dsl.converter;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Function;
 
 import org.eclipse.xtext.common.services.DefaultTerminalConverters;
 import org.eclipse.xtext.conversion.IValueConverter;
@@ -17,13 +19,13 @@ public class SecoTerminalConverters extends DefaultTerminalConverters{
 	@ValueConverter(rule = "EntityName")
     public IValueConverter<String> EntityName() 
     {
-		return new OptionalPrefixNameConverter("$");
+		return new OptionalPrefixNameConverter("$", s -> !s.contains(".") && !s.startsWith("$"));
     }
 
 	@ValueConverter(rule = "MethodName")
     public IValueConverter<String> MethodName() 
     {
-		return new OptionalPrefixNameConverter("!");
+		return new OptionalPrefixNameConverter("!", s -> false);
     }
 	
 //	@ValueConverter(rule = "Json")
@@ -35,9 +37,11 @@ public class SecoTerminalConverters extends DefaultTerminalConverters{
 	static class OptionalPrefixNameConverter implements IValueConverter<String> {
 		private final String prefix;
 		private final int prefixLength;
-		OptionalPrefixNameConverter(String prefix) {
+		private final Function<String, Boolean> mandatoryCondition;
+		OptionalPrefixNameConverter(String prefix, Function<String, Boolean> mandatoryCondition) {
 			this.prefix = Objects.requireNonNull(prefix);
 			this.prefixLength = prefix.length();
+			this.mandatoryCondition = mandatoryCondition;
 		}
 		
 		@Override
@@ -53,7 +57,11 @@ public class SecoTerminalConverters extends DefaultTerminalConverters{
 		@Override
 		public String toString(String value) throws ValueConverterException {
 			Objects.requireNonNull(value);
-			return value;
+			if(mandatoryCondition.apply(value)) {
+				return prefix + value;
+			} else {
+				return value;
+			}
 		}
 	}
 	

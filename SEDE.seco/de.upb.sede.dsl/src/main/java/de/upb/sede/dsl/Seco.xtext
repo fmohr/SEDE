@@ -36,7 +36,7 @@ Operation:
 
 
 Argument:
-	(((indexed ?= "i" index = INT)| parameterName = ID) '=')? value = FieldValue
+	(((-> indexed ?= "i" index = INT)| parameterName = ID) '=')? value = FieldValue
 ;
 
 
@@ -72,6 +72,7 @@ EntityClassDefinition:
 			methods += EntityMethod |
 			casts += EntityCast
 		)* 
+		(runtimeInfo = Json)?
 	"}"
 ;
 
@@ -83,7 +84,7 @@ EntityMethod:
 	 	methodRealization = MethodName
 	 	// realizationArguments EntityMethodParamSignature // TODO parameter redirects
 	 )?
-	 (additionalData = Json)? ';'
+	 (runtimeInfo = Json)? ';'
 ;
 
 enum EntityMethodProp:
@@ -158,12 +159,12 @@ NumberConst returns ecore::EString:
 Field:
 	name = ID (-> dereference ?= '->' member = __TerminalField)?;
 	
-__TerminalField returns FieldValue:
-	FieldValue
+__TerminalField returns Field:
+	Field
 ;
 	
 FieldValue:
-	( -> cast ?='(' castTarget = EntityName ')'  castValue = __TerminalField) |
+	( -> cast ?='(' castTarget = EntityName ')'  castValue = __TerminalFieldValue) |
 	number = NumberConst |
 	string = StringConst | 
 	bool = BoolConst | 
@@ -171,6 +172,10 @@ FieldValue:
 //	(entityReference ?= "ref"  entity = EntityName ('::' method=MethodName)?) | // TODO: do we need entity references?
 	(=> operation = Operation) | 
 	(field = Field)
+;	
+
+__TerminalFieldValue returns FieldValue:
+	FieldValue
 ;
 
 

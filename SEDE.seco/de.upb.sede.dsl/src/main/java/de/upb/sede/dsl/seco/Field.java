@@ -17,7 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * <li>{@link de.upb.sede.dsl.seco.Field#getName <em>Name</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.Field#isDereference
  * <em>Dereference</em>}</li>
- * <li>{@link de.upb.sede.dsl.seco.Field#getMemeber <em>Memeber</em>}</li>
+ * <li>{@link de.upb.sede.dsl.seco.Field#getMember <em>Member</em>}</li>
  * </ul>
  * </p>
  *
@@ -119,35 +119,35 @@ public class Field extends SecoObject implements EObject {
 	}
 
 	/**
-	 * Returns the value of the '<em><b>Memeber</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
+	 * Returns the value of the '<em><b>Member</b></em>' containment reference. <!--
+	 * begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Memeber</em>' containment reference isn't clear,
+	 * If the meaning of the '<em>Member</em>' containment reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * 
-	 * @return the value of the '<em>Memeber</em>' containment reference.
-	 * @see #setMemeber(FieldValue)
-	 * @see de.upb.sede.dsl.seco.SecoPackage#getField_Memeber()
+	 * @return the value of the '<em>Member</em>' containment reference.
+	 * @see #setMember(FieldValue)
+	 * @see de.upb.sede.dsl.seco.SecoPackage#getField_Member()
 	 * @model containment="true"
 	 * @generated
 	 */
-	public FieldValue getMemeber() {
-		return (FieldValue) eGet(SecoPackage.Literals.FIELD__MEMEBER, true);
+	public FieldValue getMember() {
+		return (FieldValue) eGet(SecoPackage.Literals.FIELD__MEMBER, true);
 	}
 
 	/**
-	 * Sets the value of the '{@link de.upb.sede.dsl.seco.Field#getMemeber
-	 * <em>Memeber</em>}' containment reference. <!-- begin-user-doc --> <!--
+	 * Sets the value of the '{@link de.upb.sede.dsl.seco.Field#getMember
+	 * <em>Member</em>}' containment reference. <!-- begin-user-doc --> <!--
 	 * end-user-doc -->
 	 * 
-	 * @param value the new value of the '<em>Memeber</em>' containment reference.
-	 * @see #getMemeber()
+	 * @param value the new value of the '<em>Member</em>' containment reference.
+	 * @see #getMember()
 	 * @generated
 	 */
-	public void setMemeber(FieldValue newMemeber) {
-		eSet(SecoPackage.Literals.FIELD__MEMEBER, newMemeber);
+	public void setMember(FieldValue newMember) {
+		eSet(SecoPackage.Literals.FIELD__MEMBER, newMember);
 	}
 
 } // Field

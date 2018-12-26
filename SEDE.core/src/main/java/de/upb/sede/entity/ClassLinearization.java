@@ -290,8 +290,11 @@ public final class ClassLinearization {
 		return mergedDefinition;
 	}
 
-	public Optional<OperationResolution> resolveOperation(Operation operation) {
-//		operation.get
+	public Optional<OperationResolution> resolveOperation(Operation operation, FieldTypeLookup typeLookup) {
+		String contextEntity;
+		if(operation.getContextField() != null) {
+			contextEntity = operation.getContextField().
+		}
 		return Optional.empty();
 	}
 	

@@ -620,13 +620,13 @@ public class SecoPackage extends EPackageImpl {
 	public static final int FIELD__DEREFERENCE = 1;
 
 	/**
-	 * The feature id for the '<em><b>Memeber</b></em>' containment reference. <!--
+	 * The feature id for the '<em><b>Member</b></em>' containment reference. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	public static final int FIELD__MEMEBER = 2;
+	public static final int FIELD__MEMBER = 2;
 
 	/**
 	 * The number of structural features of the '<em>Field</em>' class. <!--
@@ -1628,15 +1628,15 @@ public class SecoPackage extends EPackageImpl {
 
 	/**
 	 * Returns the meta object for the containment reference
-	 * '{@link de.upb.sede.dsl.seco.Field#getMemeber <em>Memeber</em>}'. <!--
+	 * '{@link de.upb.sede.dsl.seco.Field#getMember <em>Member</em>}'. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
-	 * @return the meta object for the containment reference '<em>Memeber</em>'.
-	 * @see de.upb.sede.dsl.seco.Field#getMemeber()
+	 * @return the meta object for the containment reference '<em>Member</em>'.
+	 * @see de.upb.sede.dsl.seco.Field#getMember()
 	 * @see #getField()
 	 * @generated
 	 */
-	public EReference getField_Memeber() {
+	public EReference getField_Member() {
 		return (EReference) fieldEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -1896,7 +1896,7 @@ public class SecoPackage extends EPackageImpl {
 		fieldEClass = createEClass(FIELD);
 		createEAttribute(fieldEClass, FIELD__NAME);
 		createEAttribute(fieldEClass, FIELD__DEREFERENCE);
-		createEReference(fieldEClass, FIELD__MEMEBER);
+		createEReference(fieldEClass, FIELD__MEMBER);
 
 		fieldValueEClass = createEClass(FIELD_VALUE);
 		createEAttribute(fieldValueEClass, FIELD_VALUE__CAST);
@@ -2087,9 +2087,9 @@ public class SecoPackage extends EPackageImpl {
 				!IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getField_Dereference(), ecorePackage.getEBoolean(), "dereference", null, 0, 1, Field.class,
 				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getField_Memeber(), this.getFieldValue(), null, "memeber", null, 0, 1, Field.class,
-				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
-				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getField_Member(), this.getFieldValue(), null, "member", null, 0, 1, Field.class, !IS_TRANSIENT,
+				!IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED,
+				IS_ORDERED);
 
 		initEClass(fieldValueEClass, FieldValue.class, "FieldValue", !IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);
@@ -2587,12 +2587,12 @@ public class SecoPackage extends EPackageImpl {
 		public static final EAttribute FIELD__DEREFERENCE = eINSTANCE.getField_Dereference();
 
 		/**
-		 * The meta object literal for the '<em><b>Memeber</b></em>' containment
+		 * The meta object literal for the '<em><b>Member</b></em>' containment
 		 * reference feature. <!-- begin-user-doc --> <!-- end-user-doc -->
 		 * 
 		 * @generated
 		 */
-		public static final EReference FIELD__MEMEBER = eINSTANCE.getField_Memeber();
+		public static final EReference FIELD__MEMBER = eINSTANCE.getField_Member();
 
 		/**
 		 * The meta object literal for the '{@link de.upb.sede.dsl.seco.FieldValue

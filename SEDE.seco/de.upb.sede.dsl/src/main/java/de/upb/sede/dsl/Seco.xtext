@@ -156,7 +156,7 @@ NumberConst returns ecore::EString:
 	 
 	 
 Field:
-	name = ID (-> dereference ?= '->' memeber = __TerminalField)?;
+	name = ID (-> dereference ?= '->' member = __TerminalField)?;
 	
 __TerminalField returns FieldValue:
 	FieldValue

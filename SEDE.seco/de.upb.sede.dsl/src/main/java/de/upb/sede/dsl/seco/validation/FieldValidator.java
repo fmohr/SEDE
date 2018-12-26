@@ -20,5 +20,7 @@ public interface FieldValidator {
 
 	boolean validateDereference(boolean value);
 
+	boolean validateMember(FieldValue value);
+
 	boolean validateMemeber(FieldValue value);
 }

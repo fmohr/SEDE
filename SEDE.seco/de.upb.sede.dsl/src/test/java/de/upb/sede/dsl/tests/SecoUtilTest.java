@@ -113,7 +113,6 @@ public class SecoUtilTest {
       System.out.println(seco);
       System.out.println(entries.getEntities().get(0).getMethods().get(0).getAdditionalData());
       System.out.println(entries.toString());
-      
   }
   
 }

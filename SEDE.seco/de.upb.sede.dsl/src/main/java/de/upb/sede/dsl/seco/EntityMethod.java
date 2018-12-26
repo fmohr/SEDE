@@ -24,8 +24,8 @@ import org.eclipse.emf.ecore.EObject;
  * <em>Realization</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.EntityMethod#getMethodRealization <em>Method
  * Realization</em>}</li>
- * <li>{@link de.upb.sede.dsl.seco.EntityMethod#getAdditionalData <em>Additional
- * Data</em>}</li>
+ * <li>{@link de.upb.sede.dsl.seco.EntityMethod#getRuntimeInfo <em>Runtime
+ * Info</em>}</li>
  * </ul>
  * </p>
  *
@@ -228,35 +228,35 @@ public class EntityMethod extends SecoObject implements EObject {
 	}
 
 	/**
-	 * Returns the value of the '<em><b>Additional Data</b></em>' attribute. <!--
+	 * Returns the value of the '<em><b>Runtime Info</b></em>' attribute. <!--
 	 * begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Additional Data</em>' attribute isn't clear, there
+	 * If the meaning of the '<em>Runtime Info</em>' attribute isn't clear, there
 	 * really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * 
-	 * @return the value of the '<em>Additional Data</em>' attribute.
-	 * @see #setAdditionalData(String)
-	 * @see de.upb.sede.dsl.seco.SecoPackage#getEntityMethod_AdditionalData()
+	 * @return the value of the '<em>Runtime Info</em>' attribute.
+	 * @see #setRuntimeInfo(String)
+	 * @see de.upb.sede.dsl.seco.SecoPackage#getEntityMethod_RuntimeInfo()
 	 * @model
 	 * @generated
 	 */
-	public String getAdditionalData() {
-		return (String) eGet(SecoPackage.Literals.ENTITY_METHOD__ADDITIONAL_DATA, true);
+	public String getRuntimeInfo() {
+		return (String) eGet(SecoPackage.Literals.ENTITY_METHOD__RUNTIME_INFO, true);
 	}
 
 	/**
 	 * Sets the value of the
-	 * '{@link de.upb.sede.dsl.seco.EntityMethod#getAdditionalData <em>Additional
-	 * Data</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * '{@link de.upb.sede.dsl.seco.EntityMethod#getRuntimeInfo <em>Runtime
+	 * Info</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
-	 * @param value the new value of the '<em>Additional Data</em>' attribute.
-	 * @see #getAdditionalData()
+	 * @param value the new value of the '<em>Runtime Info</em>' attribute.
+	 * @see #getRuntimeInfo()
 	 * @generated
 	 */
-	public void setAdditionalData(String newAdditionalData) {
-		eSet(SecoPackage.Literals.ENTITY_METHOD__ADDITIONAL_DATA, newAdditionalData);
+	public void setRuntimeInfo(String newRuntimeInfo) {
+		eSet(SecoPackage.Literals.ENTITY_METHOD__RUNTIME_INFO, newRuntimeInfo);
 	}
 
 } // EntityMethod

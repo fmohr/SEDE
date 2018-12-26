@@ -36,6 +36,7 @@ Package seco <http://www.upb.de/sede/dsl/Seco>
     Attribute baseEntities : EString<<0..*>>
     Reference methods : EntityMethod<<0..*>>
     Reference casts : EntityCast<<0..*>>
+    Attribute runtimeInfo : EString
 
   Class EntityMethod
     Attribute property : EntityMethodProp
@@ -43,7 +44,7 @@ Package seco <http://www.upb.de/sede/dsl/Seco>
     Reference paramSignature : EntityMethodParamSignature
     Attribute realization : EBoolean
     Attribute methodRealization : EString
-    Attribute additionalData : EString
+    Attribute runtimeInfo : EString
 
   Class EntityMethodParamSignature
     Reference parameters : EntityMethodParam<<0..*>>

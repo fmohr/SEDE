@@ -324,13 +324,22 @@ public class SecoPackage extends EPackageImpl {
 	public static final int ENTITY_CLASS_DEFINITION__CASTS = 6;
 
 	/**
+	 * The feature id for the '<em><b>Runtime Info</b></em>' attribute. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ENTITY_CLASS_DEFINITION__RUNTIME_INFO = 7;
+
+	/**
 	 * The number of structural features of the '<em>Entity Class Definition</em>'
 	 * class. <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ENTITY_CLASS_DEFINITION_FEATURE_COUNT = 7;
+	public static final int ENTITY_CLASS_DEFINITION_FEATURE_COUNT = 8;
 
 	/**
 	 * The meta object id for the '{@link de.upb.sede.dsl.seco.EntityMethod
@@ -388,13 +397,13 @@ public class SecoPackage extends EPackageImpl {
 	public static final int ENTITY_METHOD__METHOD_REALIZATION = 4;
 
 	/**
-	 * The feature id for the '<em><b>Additional Data</b></em>' attribute. <!--
+	 * The feature id for the '<em><b>Runtime Info</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ENTITY_METHOD__ADDITIONAL_DATA = 5;
+	public static final int ENTITY_METHOD__RUNTIME_INFO = 5;
 
 	/**
 	 * The number of structural features of the '<em>Entity Method</em>' class. <!--
@@ -1270,6 +1279,20 @@ public class SecoPackage extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for the attribute
+	 * '{@link de.upb.sede.dsl.seco.EntityClassDefinition#getRuntimeInfo <em>Runtime
+	 * Info</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the attribute '<em>Runtime Info</em>'.
+	 * @see de.upb.sede.dsl.seco.EntityClassDefinition#getRuntimeInfo()
+	 * @see #getEntityClassDefinition()
+	 * @generated
+	 */
+	public EAttribute getEntityClassDefinition_RuntimeInfo() {
+		return (EAttribute) entityClassDefinitionEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
 	 * Returns the meta object for class '{@link de.upb.sede.dsl.seco.EntityMethod
 	 * <em>Entity Method</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -1354,15 +1377,15 @@ public class SecoPackage extends EPackageImpl {
 
 	/**
 	 * Returns the meta object for the attribute
-	 * '{@link de.upb.sede.dsl.seco.EntityMethod#getAdditionalData <em>Additional
-	 * Data</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * '{@link de.upb.sede.dsl.seco.EntityMethod#getRuntimeInfo <em>Runtime
+	 * Info</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
-	 * @return the meta object for the attribute '<em>Additional Data</em>'.
-	 * @see de.upb.sede.dsl.seco.EntityMethod#getAdditionalData()
+	 * @return the meta object for the attribute '<em>Runtime Info</em>'.
+	 * @see de.upb.sede.dsl.seco.EntityMethod#getRuntimeInfo()
 	 * @see #getEntityMethod()
 	 * @generated
 	 */
-	public EAttribute getEntityMethod_AdditionalData() {
+	public EAttribute getEntityMethod_RuntimeInfo() {
 		return (EAttribute) entityMethodEClass.getEStructuralFeatures().get(5);
 	}
 
@@ -1864,6 +1887,7 @@ public class SecoPackage extends EPackageImpl {
 		createEAttribute(entityClassDefinitionEClass, ENTITY_CLASS_DEFINITION__BASE_ENTITIES);
 		createEReference(entityClassDefinitionEClass, ENTITY_CLASS_DEFINITION__METHODS);
 		createEReference(entityClassDefinitionEClass, ENTITY_CLASS_DEFINITION__CASTS);
+		createEAttribute(entityClassDefinitionEClass, ENTITY_CLASS_DEFINITION__RUNTIME_INFO);
 
 		entityMethodEClass = createEClass(ENTITY_METHOD);
 		createEAttribute(entityMethodEClass, ENTITY_METHOD__PROPERTY);
@@ -1871,7 +1895,7 @@ public class SecoPackage extends EPackageImpl {
 		createEReference(entityMethodEClass, ENTITY_METHOD__PARAM_SIGNATURE);
 		createEAttribute(entityMethodEClass, ENTITY_METHOD__REALIZATION);
 		createEAttribute(entityMethodEClass, ENTITY_METHOD__METHOD_REALIZATION);
-		createEAttribute(entityMethodEClass, ENTITY_METHOD__ADDITIONAL_DATA);
+		createEAttribute(entityMethodEClass, ENTITY_METHOD__RUNTIME_INFO);
 
 		entityMethodParamSignatureEClass = createEClass(ENTITY_METHOD_PARAM_SIGNATURE);
 		createEReference(entityMethodParamSignatureEClass, ENTITY_METHOD_PARAM_SIGNATURE__PARAMETERS);
@@ -2014,6 +2038,9 @@ public class SecoPackage extends EPackageImpl {
 		initEReference(getEntityClassDefinition_Casts(), this.getEntityCast(), null, "casts", null, 0, -1,
 				EntityClassDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
 				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEntityClassDefinition_RuntimeInfo(), ecorePackage.getEString(), "runtimeInfo", null, 0, 1,
+				EntityClassDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(entityMethodEClass, EntityMethod.class, "EntityMethod", !IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);
@@ -2032,7 +2059,7 @@ public class SecoPackage extends EPackageImpl {
 		initEAttribute(getEntityMethod_MethodRealization(), ecorePackage.getEString(), "methodRealization", null, 0, 1,
 				EntityMethod.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
 				!IS_DERIVED, IS_ORDERED);
-		initEAttribute(getEntityMethod_AdditionalData(), ecorePackage.getEString(), "additionalData", null, 0, 1,
+		initEAttribute(getEntityMethod_RuntimeInfo(), ecorePackage.getEString(), "runtimeInfo", null, 0, 1,
 				EntityMethod.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
 				!IS_DERIVED, IS_ORDERED);
 
@@ -2360,6 +2387,15 @@ public class SecoPackage extends EPackageImpl {
 		public static final EReference ENTITY_CLASS_DEFINITION__CASTS = eINSTANCE.getEntityClassDefinition_Casts();
 
 		/**
+		 * The meta object literal for the '<em><b>Runtime Info</b></em>' attribute
+		 * feature. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		public static final EAttribute ENTITY_CLASS_DEFINITION__RUNTIME_INFO = eINSTANCE
+				.getEntityClassDefinition_RuntimeInfo();
+
+		/**
 		 * The meta object literal for the '{@link de.upb.sede.dsl.seco.EntityMethod
 		 * <em>Entity Method</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
 		 * 
@@ -2411,12 +2447,12 @@ public class SecoPackage extends EPackageImpl {
 				.getEntityMethod_MethodRealization();
 
 		/**
-		 * The meta object literal for the '<em><b>Additional Data</b></em>' attribute
+		 * The meta object literal for the '<em><b>Runtime Info</b></em>' attribute
 		 * feature. <!-- begin-user-doc --> <!-- end-user-doc -->
 		 * 
 		 * @generated
 		 */
-		public static final EAttribute ENTITY_METHOD__ADDITIONAL_DATA = eINSTANCE.getEntityMethod_AdditionalData();
+		public static final EAttribute ENTITY_METHOD__RUNTIME_INFO = eINSTANCE.getEntityMethod_RuntimeInfo();
 
 		/**
 		 * The meta object literal for the

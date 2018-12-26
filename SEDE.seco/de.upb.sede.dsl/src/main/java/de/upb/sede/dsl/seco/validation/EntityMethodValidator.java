@@ -27,5 +27,7 @@ public interface EntityMethodValidator {
 
 	boolean validateMethodRealization(String value);
 
+	boolean validateRuntimeInfo(String value);
+
 	boolean validateAdditionalData(String value);
 }

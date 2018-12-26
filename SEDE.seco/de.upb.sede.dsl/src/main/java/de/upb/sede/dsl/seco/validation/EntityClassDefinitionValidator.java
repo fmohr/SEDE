@@ -35,6 +35,8 @@ public interface EntityClassDefinitionValidator {
 
 	boolean validateCasts(EList<EntityCast> value);
 
+	boolean validateRuntimeInfo(String value);
+
 	boolean validateBaseEntities(List<String> value);
 
 	boolean validateMethods(List<EntityMethod> value);

@@ -30,6 +30,8 @@ import org.eclipse.emf.ecore.EObject;
  * <em>Methods</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.EntityClassDefinition#getCasts
  * <em>Casts</em>}</li>
+ * <li>{@link de.upb.sede.dsl.seco.EntityClassDefinition#getRuntimeInfo
+ * <em>Runtime Info</em>}</li>
  * </ul>
  * </p>
  *
@@ -254,6 +256,38 @@ public class EntityClassDefinition extends SecoObject implements EObject {
 	@SuppressWarnings("unchecked")
 	public EList<EntityCast> getCasts() {
 		return (EList<EntityCast>) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__CASTS, true);
+	}
+
+	/**
+	 * Returns the value of the '<em><b>Runtime Info</b></em>' attribute. <!--
+	 * begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Runtime Info</em>' attribute isn't clear, there
+	 * really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * 
+	 * @return the value of the '<em>Runtime Info</em>' attribute.
+	 * @see #setRuntimeInfo(String)
+	 * @see de.upb.sede.dsl.seco.SecoPackage#getEntityClassDefinition_RuntimeInfo()
+	 * @model
+	 * @generated
+	 */
+	public String getRuntimeInfo() {
+		return (String) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__RUNTIME_INFO, true);
+	}
+
+	/**
+	 * Sets the value of the
+	 * '{@link de.upb.sede.dsl.seco.EntityClassDefinition#getRuntimeInfo <em>Runtime
+	 * Info</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @param value the new value of the '<em>Runtime Info</em>' attribute.
+	 * @see #getRuntimeInfo()
+	 * @generated
+	 */
+	public void setRuntimeInfo(String newRuntimeInfo) {
+		eSet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__RUNTIME_INFO, newRuntimeInfo);
 	}
 
 } // EntityClassDefinition

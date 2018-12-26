@@ -5,6 +5,10 @@ dependencies {
 	testCompile "org.eclipse.xtext:org.eclipse.xtext.xbase.testing:${xtextVersion}"
 	compile "org.eclipse.xtext:org.eclipse.xtext:${xtextVersion}"
 	compile "org.eclipse.xtext:org.eclipse.xtext.xbase:${xtextVersion}"
+	compile (group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1') {
+	        exclude module: 'junit'
+	        exclude group: 'org.hamcrest'
+	    }
 }
 configurations {
 	mwe2 {

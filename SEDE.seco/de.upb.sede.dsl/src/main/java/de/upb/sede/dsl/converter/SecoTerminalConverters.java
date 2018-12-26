@@ -1,5 +1,6 @@
 package de.upb.sede.dsl.converter;
 
+import java.util.Map;
 import java.util.Objects;
 
 import org.eclipse.xtext.common.services.DefaultTerminalConverters;
@@ -8,6 +9,9 @@ import org.eclipse.xtext.conversion.ValueConverter;
 import org.eclipse.xtext.conversion.ValueConverterException;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.util.Strings;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 public class SecoTerminalConverters extends DefaultTerminalConverters{
 	@ValueConverter(rule = "EntityName")
@@ -21,6 +25,12 @@ public class SecoTerminalConverters extends DefaultTerminalConverters{
     {
 		return new OptionalPrefixNameConverter("!");
     }
+	
+//	@ValueConverter(rule = "Json")
+//    public IValueConverter<JSONObject> Json() 
+//    {
+//		return new JsonConverter();
+//    }
 	
 	static class OptionalPrefixNameConverter implements IValueConverter<String> {
 		private final String prefix;
@@ -43,14 +53,26 @@ public class SecoTerminalConverters extends DefaultTerminalConverters{
 		@Override
 		public String toString(String value) throws ValueConverterException {
 			Objects.requireNonNull(value);
-			if (Strings.isEmpty(value))
-                throw new IllegalArgumentException("Couldn't convert empty string to entity name");
-			
-			if(value.startsWith(prefix)) {
-				return value.substring(prefixLength, value.length());
-			} else {
-				return value;
+			return value;
+		}
+	}
+	
+	static class JsonConverter implements IValueConverter<JSONObject> {
+		JSONParser parser = new JSONParser();
+		
+
+		@Override
+		public JSONObject toValue(String string, INode node) throws ValueConverterException {
+			try {
+				return (JSONObject) parser.parse(string);
+			} catch (ParseException e) {
+                throw new ValueConverterException("Couldn't convert " + string + " to a json object.", node, null);
 			}
+		}
+
+		@Override
+		public String toString(JSONObject value) throws ValueConverterException {
+			return value.toJSONString();
 		}
 	}
 }

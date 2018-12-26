@@ -74,16 +74,30 @@ class SecoFormatter extends AbstractFormatter2 {
 	
 	def dispatch void format(EntityMethod obj, extension IFormattableDocument doc) {
 		obj.regionFor.keyword(':').prepend[noSpace].append[oneSpace]
+	    obj.regionFor.keyword(';').prepend[noSpace].append[oneSpace]
 	    format(obj.paramSignature, doc)
 	}
 	 
 	def dispatch void format(EntityMethodParamSignature obj, extension IFormattableDocument doc) {
-		
-		obj.regionFor.keyword('(').prepend[oneSpace].append[noSpace]
-		obj.regionFor.keyword(')').prepend[noSpace] .append[oneSpace]
+		var first = true
 	    for(parameter : obj.parameters){
 	    	parameter.format
-//	    	parameter.prepend[noSpace].append[oneSpace]
+	    	if(!first) {
+	    		parameter.prepend[oneSpace].append[noSpace]
+    		} else {
+	    		parameter.prepend[noSpace].append[noSpace]
+    			first = false
+    		}
+	    }
+	    first = true
+	    for(parameter : obj.outputs){
+	    	parameter.format
+	    	if(!first) {
+	    		parameter.prepend[oneSpace] .append[noSpace]
+    		} else {
+	    		parameter.prepend[noSpace].append[noSpace]
+    			first = false
+    		}
 	    }
 	}
 	
@@ -94,6 +108,7 @@ class SecoFormatter extends AbstractFormatter2 {
 	
 	def dispatch void format(EntityCast obj, extension IFormattableDocument doc) {
 	    obj.regionFor.keyword(':').prepend[noSpace].append[oneSpace]
+	    obj.regionFor.keyword(';').prepend[noSpace].append[oneSpace]
 		
 	} 
 	

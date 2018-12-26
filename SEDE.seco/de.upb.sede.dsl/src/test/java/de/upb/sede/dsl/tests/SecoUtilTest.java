@@ -27,6 +27,7 @@ import org.eclipse.xtext.testing.extensions.InjectionExtension;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.eclipse.xtext.xbase.lib.IterableExtensions;
+import org.json.simple.JSONObject;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -96,6 +97,23 @@ public class SecoUtilTest {
 	      Entries entries = EcoreUtil.copy(result);
 	      System.out.println(SecoUtil.serialize(entries));
 	      System.out.println(entries);
-	      
   }
+  @Test
+  public void testJson() throws IOException {
+      String seco = "class: a {"
+      				+ "method:  !Construct (Number, String, some.Entity) -> (Bool, $some.other.Entity)"
+      				+"{"
+      				+	"\"Hello\":\"world!\",\n"
+      				+	"\"Number\":1"
+      				+"}"
+      				+ ";"
+      		+ "}";
+      
+      Entries entries = EcoreUtil.copy(SecoUtil.parseSources(seco));
+      System.out.println(seco);
+      System.out.println(entries.getEntities().get(0).getMethods().get(0).getAdditionalData());
+      System.out.println(entries.toString());
+      
+  }
+  
 }

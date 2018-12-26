@@ -1,5 +1,6 @@
 package de.upb.sede.entity;
 
+import java.lang.reflect.Method;
 import java.util.*;
 
 import com.sun.org.apache.xpath.internal.Arg;
@@ -298,12 +299,12 @@ public final class ClassLinearization {
 				// TODO - add support for dereference of fields
 				throw new OperationResolutionException(operation, "Context field dereference not yet supported.");
 			}
-			String fieldName = operation.getContextField().getName();
-			Optional<String> fieldType = typeLookup.apply(fieldName);
+			Field field = operation.getContextField();
+			Optional<String> fieldType = typeLookup.apply(field);
 			if(fieldType.isPresent()) {
 				contextEntityName = fieldType.get();
 			} else {
-				throw new OperationResolutionException(operation, "Field '" + fieldName + "' type lookup failed.");
+				throw new OperationResolutionException(operation, "Context field '" + field.getName() + "' type lookup failed.");
 			}
 		} else {
 			contextEntityName = operation.getEntityName();
@@ -314,6 +315,9 @@ public final class ClassLinearization {
 		} catch(IllegalArgumentException ex) {
 			throw new OperationResolutionException(operation, "Couldn't resolve context entity type.", ex);
 		}
+
+		List<MethodView> methodViews = contextEntity.allMethodsWithName(operation.getMethod());
+
 		/*
 		 * prepare arguments:
 		 * Order by index if all arguments are indexed: e.g.: (i2=2, i1="hello") -> ("hello", 2)
@@ -331,7 +335,7 @@ public final class ClassLinearization {
 				 */
 				if ((argument.isIndexed() && !indexed) || (!argument.isIndexed() && indexed)) {
 					throw new OperationResolutionException(operation, "Arguments are only partially indexed. " +
-							"Make sure either all arguments are indexed or order them and fill the gaps with NULLs.");
+							"Make sure either all arguments are indexed or order them manually.");
 				}
 			}
 			if(argument.getParameterName()!= null) {
@@ -362,18 +366,61 @@ public final class ClassLinearization {
 		}
 
 		/*
-		 * Infer argument types:
+		 * Infer argument types and values:
 		 */
 
-		List<String> argType = new ArrayList<>();
+		List<String> argTypes = new ArrayList<>();
+		List<String> argValues = new ArrayList<>();
 		for(Argument arg : orderedArgs) {
 			FieldValue argValue = arg.getValue();
 			if(argValue == null) {
 				throw new OperationResolutionException(operation, "Has void argument values: " + arg.toString());
 			}
-			if(argValue.getBool() != null) {
-
+			else if(argValue.getBool() != null) {
+				argTypes.add(BuiltinEntities.ENTITY_BOOL);
+				argValues.add(argValue.getBool());
 			}
+			else if(argValue.getString() != null) {
+				argTypes.add(BuiltinEntities.ENTITY_STRING);
+				argValues.add(argValue.getString());
+			}
+			else if(argValue.getNumber() != null) {
+				argTypes.add(BuiltinEntities.ENTITY_NUMBER);
+				argValues.add(argValue.getNumber());
+			}
+			else if(argValue.isNull()) {
+				argTypes.add(BuiltinEntities.ENTITY_NULL);
+				argValues.add(null);
+			}
+			else if(argValue.getField() != null) {
+				Field field = argValue.getField();
+				if(field.isDereference()) {
+					throw new OperationResolutionException(operation, "Cannot dereference argument: " + arg);
+				}
+				Optional<String> fieldTypeOpt = typeLookup.apply(field);
+				if( ! fieldTypeOpt.isPresent()) {
+					throw new OperationResolutionException(operation, "Couldnt look up argument type of field: " + arg);
+				}
+				String fieldType = fieldTypeOpt.get();
+				argTypes.add(fieldType);
+				argValues.add(field.getName());
+			}
+		}
+
+		/*
+		 *
+		 * Illustration of collected data for the following operation example:
+		  * 	"fruits.Apple::__construct({i1=0,i2=0,i3=10,i4=10})":
+		 */
+		assert contextEntity != null; // this is the context type: "fruits.Apple"
+		assert methodViews != null; // this is a list of all method with the name: "__construct"
+		assert argTypes != null; // this is the list of argument types: "[Number, Number, Number, Number]
+
+		/*
+		 * Find method that matches the operation:
+		 */
+		for(MethodView methodCandidate : methodViews) {
+			methodCandidate.
 		}
 
 		return Optional.empty();
@@ -395,7 +442,7 @@ public final class ClassLinearization {
 		
 		LinkedClassView(EntityClassDefinition definition, Optional<ClassView> wrappedEntity, List<ClassView> parentEntities) {
 			if(definition.isWrapper() && !wrappedEntity.isPresent()) {
-				throw new IllegalArgumentException("Definition says entity is wrapper. However no wrappedEntity was supplied.");
+				throw new IllegalArgumentException("Definition says entity is a wrapper. However no wrappedEntity was supplied.");
 			} else if (!definition.isWrapper() && wrappedEntity.isPresent()){
 				throw new IllegalArgumentException("Definition says entity is not a wrapper. However a wrappedEntity was supplied.");
 			}
@@ -480,6 +527,7 @@ public final class ClassLinearization {
 		 * @return
 		 */
 		@Override
+		@Deprecated
 		public Optional<MethodView> resolveMethod(EntityMethod requestedMethod) {
 			for(EntityMethod method : def.getMethods()) {
 				NestedMethodView nestedMethodView = new NestedMethodView(method);
@@ -546,12 +594,7 @@ public final class ClassLinearization {
 			}
 			
 			
-			/**
-			 * Checks if the given method has a matching signature.
-			 * In other words if true is returned, this method can be invoked with the given method signature (matching name, input and output types).
-			 * @param requestedMethod requested method signature match
-			 * @return true if the given method has a matching signature.
-			 */
+
 			public boolean matchesSignature(EntityMethod requestedMethod) {
 				Objects.requireNonNull(requestedMethod);
 				if(!requestedMethod.getMethodName().equals(method.getMethodName())) {

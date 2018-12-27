@@ -1,21 +1,38 @@
 package de.upb.sede.entity;
 
-import java.lang.reflect.Method;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
-import com.sun.org.apache.xpath.internal.Arg;
+import de.upb.sede.config.ClassesConfig;
+import de.upb.sede.dsl.SecoUtil;
 import de.upb.sede.dsl.seco.*;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import sun.reflect.Reflection;
 
 import static de.upb.sede.dsl.seco.SecoFactory.eINSTANCE;
 
 /**
  * Encapsulates entities and offers viewers onto them.
+ * This class is thread-safe.
  * 
  * @author aminfaez
  *
  */
-public final class ClassLinearization {
+public final class ClassLinearization implements Serializable {
+
+	private final static Logger logger = LoggerFactory.getLogger(ClassLinearization.class);
 
 	/**
 	 * If true, EntityResolver merges incoming definitions of entities into a single one. 
@@ -37,15 +54,29 @@ public final class ClassLinearization {
 	 * Resolved entity cache:
 	 */
 	private final Map<String, ClassView> cache = new HashMap<>();
-	
-	
-	
+
+
+	/*
+	 * Finds path to cast between entities.
+	 */
+	private final EntityClassCastGraph castGraph = new EntityClassCastGraph();
+
+
+	/**
+	 * Copy constructor.
+	 * @param original the entries of this class will be copied in the newly created object.
+	 */
+	public ClassLinearization(ClassLinearization original) {
+		this(original.mergeRefinements);
+		original.entries().getEntities().stream().forEach(this::add);
+	}
+
 	/**
 	 * Creates an empty resolver.
 	 * 
 	 */
 	public ClassLinearization() {
-		this(true);
+		this(false);
 	}
 	
 	/**
@@ -98,11 +129,7 @@ public final class ClassLinearization {
 	 */
 	public synchronized void add(EntityClassDefinition entity) {
 		Objects.requireNonNull(entity, "Cannot put null value into resolver");
-		synchronized(cache) {
-			if(!cache.isEmpty()) {
-				cache.clear();
-			}
-		}
+		clearCache();
 		String entityName = entity.getQualifiedName();
 		Entries entries = entityMap.get(entityName);
 		if(entries == null) {
@@ -119,6 +146,15 @@ public final class ClassLinearization {
 			entries.getEntities().add(mergedEntityDef);
 			entityMap.put(entityName, entries);
 		}
+	}
+
+	private synchronized void clearCache() {
+		synchronized(cache) {
+			if(!cache.isEmpty()) {
+				cache.clear();
+			}
+		}
+		castGraph.clearCache();
 	}
 	
 	/**
@@ -152,15 +188,17 @@ public final class ClassLinearization {
 		Objects.requireNonNull(entityName, "entityName was null");
 		
 		if(isKnown(entityName)) {
-			return linearizeEntity(entityName, new HashSet<String>());
+			return linearizeClass(entityName, new HashSet<String>());
 		} else {
 			throw new IllegalArgumentException("Entity was not known. Given name was '" + entityName + "'.");
 		}
 	}
-	
-	
-	
-	private ClassView linearizeEntity(String entityName, Set<String> hierarchyCache) {
+
+
+	/**
+	 * Recursivelty linearizes class definitions of entity.
+	 */
+	private ClassView linearizeClass(String entityName, Set<String> hierarchyCache) {
 		/*
 		 * Shield against re-entrance of a previous argument to prevent infinitely looping recursions. 
 		 */
@@ -183,13 +221,13 @@ public final class ClassLinearization {
 		EntityClassDefinition def = mergeEntries(entries);
 		Optional<ClassView> wrappedEntity;
 		if(def.isWrapper()) {
-			wrappedEntity = Optional.of(linearizeEntity(def.getWrappedEntity(), hierarchyCache));
+			wrappedEntity = Optional.of(linearizeClass(def.getWrappedEntity(), hierarchyCache));
 		} else {
 			wrappedEntity = Optional.empty();
 		}
 		List<ClassView> parents = new ArrayList<>();
 		for(String baseEntityName : def.getBaseEntities()) {
-			ClassView parentView = linearizeEntity(baseEntityName, hierarchyCache);
+			ClassView parentView = linearizeClass(baseEntityName, hierarchyCache);
 			parents.add(parentView);
 		}
 		LinkedClassView classView = new LinkedClassView(def, wrappedEntity, parents);
@@ -410,7 +448,7 @@ public final class ClassLinearization {
 		/*
 		 *
 		 * Illustration of collected data for the following operation example:
-		  * 	"fruits.Apple::__construct({i1=0,i2=0,i3=10,i4=10})":
+		 * 		"fruits.Apple::__construct({i1=0,i2=0,i3=10,i4=10})":
 		 */
 		assert contextEntity != null; // this is the context type: "fruits.Apple"
 		assert methodViews != null; // this is a list of all method with the name: "__construct"
@@ -420,18 +458,93 @@ public final class ClassLinearization {
 		 * Find method that matches the operation:
 		 */
 		for(MethodView methodCandidate : methodViews) {
-			methodCandidate.
+			if(methodCandidate.requiredParams().size() != argTypes.size()) {
+				/*
+				 * Ignore methods with an unequal amount of arguments.
+				 */
+				continue;
+			}
+			/*
+			 * Find cast paths between supplied argument types and required parameter types.
+			 */
+			OperationResolution resolution = new OperationResolution(operation, methodCandidate);
+			Iterator<String> suppliedTypeIterator = argTypes.iterator();
+			boolean methodSignatureMatches = true; // assume the signature matches until an argument cannot be casted to the required parameter.
+			for(EntityMethodParam requiredParam : methodCandidate.requiredParams()) {
+				assert !requiredParam.isValueFixed() : "BUG in MethodView::requiredParams, " +
+						"fixed parameter slipped through: " + requiredParam.toString();
+				String suppliedType = suppliedTypeIterator.next();
+				String requiredType = requiredParam.getParameterType();
+				List<ClassCastPath> castPath = castGraph.querry(suppliedType, requiredParam.getParameterType());
+				if(castPath.size() == 0) {
+					// cannot cast between suppliedType and requiredType
+					logger.debug("Couldn't cast from suppliedtype '{}' to requiredtype '{}' " +
+							"in operation '{}'.", suppliedType, requiredType, operation);
+					methodSignatureMatches = false;
+					break;
+				}
+				resolution.addArgCast(castPath);
+			}
+			if(methodSignatureMatches) {
+				return Optional.of(resolution);
+			}
+
 		}
 
 		return Optional.empty();
 	}
 
+	public synchronized Entries entries() {
+		Collection<Entries> fragments = EcoreUtil.copyAll(entityMap.values());
+		Entries entries = new Entries();
+		fragments.stream().forEach(fragment -> entries.getEntities().addAll(fragment.getEntities()));
+		return entries;
+	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#clone()
-	 */
-	public ClassLinearization clone() {
-		return null; // TODO
+
+
+	private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException
+	{
+		boolean mergeFlag = in.readBoolean();
+		String entriesSecoRepresentation = in.readUTF();
+		Entries entries = SecoUtil.parseSources(entriesSecoRepresentation);
+
+		/*
+		 * Use reflection to set final fields:
+		 */
+
+		try {
+			java.lang.reflect.Field cache = ClassLinearization.class.getField("cache");
+			cache.setAccessible(true);
+			cache.set(this, new HashMap<>());
+
+			java.lang.reflect.Field castGraph = ClassLinearization.class.getField("castGraph");
+			castGraph.setAccessible(true);
+			castGraph.set(this, new EntityClassCastGraph());
+
+			java.lang.reflect.Field entityMap = ClassLinearization.class.getField("entityMap");
+			entityMap.setAccessible(true);
+			entityMap.set(this, new HashMap<>());
+
+
+			java.lang.reflect.Field mergeRefinements = ClassLinearization.class.getField("mergeRefinements");
+			mergeRefinements.setAccessible(true);
+			mergeRefinements.set(this, mergeFlag);
+
+		} catch (NoSuchFieldException | IllegalAccessException e) {
+			throw new RuntimeException(e);
+		}
+
+		/*
+		 * Now that the fields of this object are not null anymore, add the parsed entries:
+		 */
+		this.add(entries);
+	}
+
+	private void writeObject(ObjectOutputStream out) throws IOException
+	{
+		out.writeBoolean(mergeRefinements);
+		out.writeUTF(entries().toString());
 	}
 	
 
@@ -652,6 +765,13 @@ public final class ClassLinearization {
 				return method.getParamSignature().getParameters();
 			}
 
+			@Override
+			public List<EntityMethodParam> requiredParams() {
+				return method.getParamSignature().getParameters()
+						.stream().filter(param -> ! param.isValueFixed()) // filter out unfixed values
+						.collect(Collectors.toList());
+			}
+
 			public EntityMethod getMethod() {
 				EntityMethod method = EcoreUtil.copy(this.method);
 				return method;
@@ -685,8 +805,59 @@ public final class ClassLinearization {
 	class EntityClassCastGraph {
 		
 		private final Map<CastTupel, Optional<List<ClassCastPath>>> cache = new HashMap<>();
-		
-		List<ClassCastPath> castPaths(String start, String goal) {
+
+		private final Semaphore qurries = new Semaphore(0);
+
+		/*
+		 * Any number of queries can read the cache in parallel.
+		 * Clear operation must have exclusive access to cache.
+		 *
+		 * (See: The little book of semaphores, Allen B. Downey  -> Readers-Writers Problem)
+		 */
+		private final Lock 	queryLock = new ReentrantLock(),
+							clearLock = new ReentrantLock();
+		private final AtomicInteger queryProcessCount = new AtomicInteger(0);
+
+		List<ClassCastPath> querry(String start, String goal) {
+			queryLock.lock();
+			synchronized (queryProcessCount) {
+				if( queryProcessCount.incrementAndGet() == 1 ){
+					// the first query locks the reset lock
+					clearLock.lock();
+				}
+			}
+			queryLock.unlock();
+			// critical section
+			List<ClassCastPath> castPaths = dfs(start, goal);
+
+			synchronized (queryProcessCount) {
+				if (queryProcessCount.decrementAndGet() == 0) {
+					// last query is done reset can happen now
+					clearLock.unlock();
+				}
+			}
+			return castPaths;
+		}
+
+		public void clearCache() {
+			queryLock.lock(); // lock the query lock to prevent starvation of the clear operation.
+			clearLock.lock();
+			// critical section: No one is querying:
+			synchronized(cache) {
+				cache.clear();
+			}
+			clearLock.unlock();
+			queryLock.unlock();
+		}
+
+
+		/**
+		 *
+		 * @deprecated Deprecated used to prevent use inside this file. This method shall only be called by query(String, String)
+		 */
+		@Deprecated
+		 private List<ClassCastPath> dfs(String start, String goal) {
+
 			CastTupel querry = new CastTupel(start, goal);
 			/*
 			 * First look into the cache for the cast:
@@ -766,13 +937,16 @@ public final class ClassLinearization {
 				if(!castPaths.isPresent()) {
 					throw new IllegalStateException("BUG: the cache in the cast graph is in an illegal state. "
 							+ "cache says there is no path between " + cp.head() + " -> " + cp.last() + ","
-									+ " however such a path is instructed to be cached.\n\n cache.toString() = " + cache.toString());
+									+ " however such a path was just found.\n\n cache.toString() = " + cache.toString());
 				} else if(!castPaths.get().contains(cp)) {
 					castPaths.get().add(cp);
 				}
 			}
 		}
-		
+
+		/**
+		 * This class is only used as the index for the cache of CastGraph.
+		 */
 		class CastTupel {
 			final String from, to;
 			CastTupel(String from , String to) {

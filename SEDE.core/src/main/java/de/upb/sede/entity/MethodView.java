@@ -36,6 +36,13 @@ public interface MethodView {
 	List<EntityMethodParam> inputParams();
 
 	/**
+	 * The list of input parameters that are required. Fixed parameters are therefore excluded.
+	 *
+	 * @return The list of required parameters.
+	 */
+	List<EntityMethodParam> requiredParams();
+
+	/**
 	 * Returns true if the given signature matches the signature of this method.
 	 * A signature matches if all input and output entities are the compatible.
 	 * See classView::is for meaning of compatible.

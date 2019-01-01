@@ -3,5 +3,5 @@ class: a.b.C wraps $d.se.F extends $g.H, a.ai.J {
     static method: !Construct ( Number, String, some.Entity) -> (Bool, $some.other.Entity);
     static method:  Construct ($Number, String, some.Entity) -> (Bool,  some.other.Entity);
 
-    cast: <-> $Some.Other.Entity;
+    casts to: $Some.Other.Entity;
 }

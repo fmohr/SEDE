@@ -72,7 +72,6 @@
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EntityCast">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="direction" eType="#//TransformDirection"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="resultingEntity" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="additionalData" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>

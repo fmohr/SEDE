@@ -1,9 +1,7 @@
 package de.upb.sede.entity;
 
 import de.upb.sede.dsl.SecoUtil;
-import de.upb.sede.dsl.seco.EntityMethod;
-import de.upb.sede.dsl.seco.EntityMethodParam;
-import de.upb.sede.dsl.seco.EntityMethodParamSignature;
+import de.upb.sede.dsl.seco.*;
 import de.upb.sede.util.FileUtil;
 import org.junit.After;
 import org.junit.Before;
@@ -11,6 +9,9 @@ import org.junit.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -22,6 +23,9 @@ public class ClassLinTest {
 	public void setUp() throws Exception {
 		cl = new ClassLinearization();
 		cl.add(SecoUtil.parseSources(getSecoFile("ABC")));
+		cl.add(SecoUtil.parseSources(getSecoFile("animals")));
+		cl.add(SecoUtil.parseSources(getSecoFile("builtin")));
+		cl.add(SecoUtil.parseSources(getSecoFile("TypeCasting")));
 	}
 
 	@After
@@ -229,6 +233,100 @@ public class ClassLinTest {
 		assertTrue( m2.inputParams().get(2).isFinal());
 	}
 
+	@Test
+	public void testAllParents() {
+		assertEquals(
+				Arrays.asList(
+						cl.classView("Bird"),
+						cl.classView("CanFly"),
+						cl.classView("Animal")),
+				cl.classView("Goose").allParents());
+		assertEquals(
+				Arrays.asList(
+						cl.classView("Bird"),
+						cl.classView("CanFly")),
+				cl.classView("Goose").declaredParents());
+
+		assertEquals(
+				Arrays.asList(
+						cl.classView("Bird"),
+						cl.classView("CanFly"),
+						cl.classView("Animal")),
+				cl.classView("Duck").allParents());
+		assertEquals(
+				Arrays.asList(
+						cl.classView("Bird"),
+						cl.classView("CanFly")),
+				cl.classView("Duck").declaredParents());
+
+		assertEquals(
+				Arrays.asList(
+						cl.classView("Mammal"),
+						cl.classView("CanFly"),
+						cl.classView("Animal")),
+				cl.classView("Bat").allParents());
+		assertEquals(
+				Arrays.asList(
+						cl.classView("Mammal"),
+						cl.classView("CanFly")),
+				cl.classView("Bat").declaredParents());
+
+		assertEquals(
+				Arrays.asList(
+						cl.classView("Primate"),
+						cl.classView("Mammal"),
+						cl.classView("CanClimb"),
+						cl.classView("Animal")),
+				cl.classView("Human").allParents());
+		assertEquals(
+				Collections.singletonList(
+						cl.classView("Primate")),
+				cl.classView("Human").declaredParents());
+
+	}
+
+	@Test
+	public void testCastGraph() {
+		List<ClassCastPath> a ;
+ 		a = cl.entityCast().querry("A", "B");
+		assertTrue(a.isEmpty());
+
+		a = cl.entityCast().querry("BA", "B");
+		assertEquals(1, a.size());
+
+		a = cl.entityCast().querry("BA", "ABC");
+		assertEquals(0, a.size());
+
+		a = cl.entityCast().querry("BA", "A");
+		assertEquals(1, a.size());
+
+		a = cl.entityCast().querry("BA", "AB");
+		assertEquals(1, a.size());
+
+		a = cl.entityCast().querry("BAC", "BAC");
+		assertEquals(1, a.size());
+
+		a = cl.entityCast().querry("BAC", "ABC");
+		assertEquals(1, a.size());
+
+		a = cl.entityCast().querry("BAC", "A");
+		assertEquals(3, a.size());
+
+		a = cl.entityCast().querry("BAC", "O");
+		assertEquals(6, a.size());
+	}
+
+
+
+	@Test
+	public void testResolveOp1() {
+		Operation op1 = new Operation();
+		op1.setMethod("__construct");
+		op1.setEntityName("Duck");
+
+		op1.getArgs();
+		cl.resolveOperation(op1, null);
+	}
 
 
 }

@@ -3,8 +3,9 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" copyrightText="2.15.0" modelDirectory="/de.upb.sede.dsl/src/main/java"
     modelPluginID="de.upb.sede.dsl" dynamicTemplates="true" forceOverwrite="true"
     modelName="Seco" updateClasspath="false" rootExtendsClass="de.upb.sede.dsl.SecoObject"
-    suppressInterfaces="true" reflectiveDelegation="true" codeFormatting="true" commentFormatting="true"
-    featureDelegation="Reflective" suppressNotification="true" suppressUnsettable="true"
+    suppressEMFTypes="true" suppressInterfaces="true" reflectiveDelegation="true"
+    codeFormatting="true" commentFormatting="true" featureDelegation="Reflective"
+    suppressContainment="true" suppressNotification="true" suppressUnsettable="true"
     complianceLevel="8.0" copyrightFields="false" publicConstructors="true" classNamePattern=""
     importOrganizing="true" cleanup="true">
   <genPackages prefix="Seco" basePackage="de.upb.sede.dsl" disposableProviderFactory="true"
@@ -48,6 +49,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityClassDefinition/baseEntities"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityClassDefinition/methods"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityClassDefinition/casts"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityClassDefinition/runtimeInfo"/>
     </genClasses>
     <genClasses ecoreClass="Seco.ecore#//EntityMethod">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethod/property"/>
@@ -55,7 +57,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityMethod/paramSignature"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethod/realization"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethod/methodRealization"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethod/additionalData"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethod/runtimeInfo"/>
     </genClasses>
     <genClasses ecoreClass="Seco.ecore#//EntityMethodParamSignature">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityMethodParamSignature/parameters"/>
@@ -80,7 +82,7 @@
     <genClasses ecoreClass="Seco.ecore#//Field">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//Field/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//Field/dereference"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Field/memeber"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Field/member"/>
     </genClasses>
     <genClasses ecoreClass="Seco.ecore#//FieldValue">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//FieldValue/cast"/>

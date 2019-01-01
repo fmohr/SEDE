@@ -7,3 +7,9 @@ class: $Number {
 class: $String {
 	method: from_String_const ($String) -> ($String);
 }
+class: java.lang.String {
+    casts to: $String;
+}
+class: python.lang.String extends $String {
+	method: from_String_const ($String) -> ($String);
+}

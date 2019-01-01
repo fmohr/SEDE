@@ -20,7 +20,6 @@ public class ClassCastPath {
 		this.rootEntity = root;
 		this.path =  Collections.unmodifiableList(path);
 	}
-	
 
 	ClassCastPath(String rootEntity) {
 		this(rootEntity, Collections.emptyList());
@@ -62,7 +61,6 @@ public class ClassCastPath {
 			String root = extendedList.remove(0).getResultingEntity();
 			return Optional.of(new ClassCastPath(root, extendedList));
 		}
-		
 	}
 	
 	ClassCastPath addCast(EntityCast newCast) {
@@ -102,7 +100,7 @@ public class ClassCastPath {
 	}
 	
 	public String toString() {
-		return rootEntity + " -> " + tail().toString();
+		return rootEntity + (tail().isPresent()? " -> " + tail().get().toString(): "");
 	}
 	
 }

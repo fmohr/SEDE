@@ -4,8 +4,7 @@
 package de.upb.sede.dsl.seco;
 
 import de.upb.sede.dsl.SecoObject;
-import org.eclipse.emf.common.util.EList;
-
+import java.util.List;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -73,8 +72,8 @@ public class EntityMethodParamSignature extends SecoObject implements EObject {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<EntityMethodParam> getParameters() {
-		return (EList<EntityMethodParam>) eGet(SecoPackage.Literals.ENTITY_METHOD_PARAM_SIGNATURE__PARAMETERS, true);
+	public List<EntityMethodParam> getParameters() {
+		return (List<EntityMethodParam>) eGet(SecoPackage.Literals.ENTITY_METHOD_PARAM_SIGNATURE__PARAMETERS, true);
 	}
 
 	/**
@@ -93,8 +92,8 @@ public class EntityMethodParamSignature extends SecoObject implements EObject {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<EntityMethodParam> getOutputs() {
-		return (EList<EntityMethodParam>) eGet(SecoPackage.Literals.ENTITY_METHOD_PARAM_SIGNATURE__OUTPUTS, true);
+	public List<EntityMethodParam> getOutputs() {
+		return (List<EntityMethodParam>) eGet(SecoPackage.Literals.ENTITY_METHOD_PARAM_SIGNATURE__OUTPUTS, true);
 	}
 
 } // EntityMethodParamSignature

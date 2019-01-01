@@ -4,8 +4,7 @@
 package de.upb.sede.dsl.seco;
 
 import de.upb.sede.dsl.SecoObject;
-import org.eclipse.emf.common.util.EList;
-
+import java.util.List;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -171,8 +170,8 @@ public class Operation extends SecoObject implements EObject {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<Argument> getArgs() {
-		return (EList<Argument>) eGet(SecoPackage.Literals.OPERATION__ARGS, true);
+	public List<Argument> getArgs() {
+		return (List<Argument>) eGet(SecoPackage.Literals.OPERATION__ARGS, true);
 	}
 
 } // Operation

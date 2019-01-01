@@ -58,7 +58,6 @@ Package seco <http://www.upb.de/sede/dsl/Seco>
     Reference fixedValue : FieldValue
 
   Class EntityCast
-    Attribute direction : TransformDirection
     Attribute resultingEntity : EString
     Attribute additionalData : EString
 

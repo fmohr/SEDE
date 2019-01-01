@@ -1,0 +1,54 @@
+/*
+ * Animal entity class definitions.
+ * Used for testing.
+ */
+class: Animal {
+    method: __construct () -> (Animal);
+}
+class: CanFly {}
+class: CanClimb {}
+
+class: Domestic {
+    method: __construct() -> (Animal);
+}
+
+class: Bird extends Animal {
+    method: cheep(String);
+    method: tweet(String);
+}
+
+class: Goose extends Bird, CanFly {
+
+}
+
+class: Duck extends Bird, CanFly {
+
+}
+
+class: Chicken extends Bird, Domestic {
+
+}
+
+class: Mammal extends Animal{
+
+}
+
+class: Bat extends Mammal, CanFly {
+
+}
+
+class: Primate extends Mammal, CanClimb{
+
+}
+
+class: Monkey extends Primate {
+
+}
+
+class: Human extends Primate{
+
+}
+
+class: Ape extends Primate {
+
+}

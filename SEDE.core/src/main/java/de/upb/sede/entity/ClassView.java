@@ -55,9 +55,31 @@ public interface ClassView {
 	Optional<MethodView> resolveMethod(EntityMethod requestedMethod);
 
 	/**
-	 * List of all declared entity casts.
-	 * @return List of all declared entity casts.
+	 * List of all explicit and implicit entity casts.
+	 * E.g.
+	 * 	"casts to: some.other.Entity;"
+	 * is a explicit cast to "some.other.Entity".
+	 * Implicit casts include casting to the entity itself and casting to DIRECT parents. (identity)
+	 * Note that if:
+	 * 		class: A extends B{};
+	 * 		class: B extends C{};
+	 * 	invoking getDeclaredCasts on the classview of A will NOT return the cast between A -> C
+	 * @return List of all entity casts.
 	 */
-	List<EntityCast> getAllCasts();
+	List<EntityCast> declaredCasts();
+
+	/**
+	 * Returns the list of declared parent entities,
+	 * i.e. all entities this entity is directly extending from.
+	 * @return parent entities.
+	 */
+	List<ClassView> declaredParents();
+
+	/**
+	 * Returns the list of all entities that are the parent of this entity.
+	 * The returned list also contains indirect parents that are extended transitively.
+	 * @return list of all parents of this entity.
+	 */
+	List<ClassView> allParents();
 
 }

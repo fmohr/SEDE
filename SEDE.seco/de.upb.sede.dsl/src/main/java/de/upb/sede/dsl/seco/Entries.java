@@ -4,8 +4,7 @@
 package de.upb.sede.dsl.seco;
 
 import de.upb.sede.dsl.SecoObject;
-import org.eclipse.emf.common.util.EList;
-
+import java.util.List;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -72,8 +71,8 @@ public class Entries extends SecoObject implements EObject {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<EObject> getInstructions() {
-		return (EList<EObject>) eGet(SecoPackage.Literals.ENTRIES__INSTRUCTIONS, true);
+	public List<EObject> getInstructions() {
+		return (List<EObject>) eGet(SecoPackage.Literals.ENTRIES__INSTRUCTIONS, true);
 	}
 
 	/**
@@ -92,8 +91,8 @@ public class Entries extends SecoObject implements EObject {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<EntityClassDefinition> getEntities() {
-		return (EList<EntityClassDefinition>) eGet(SecoPackage.Literals.ENTRIES__ENTITIES, true);
+	public List<EntityClassDefinition> getEntities() {
+		return (List<EntityClassDefinition>) eGet(SecoPackage.Literals.ENTRIES__ENTITIES, true);
 	}
 
 } // Entries

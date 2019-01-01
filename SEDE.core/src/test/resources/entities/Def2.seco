@@ -1,6 +1,4 @@
 class: A  {
-
     static method: m1 () -> ();
-
-    cast: <-> a.b.C;
+    casts to: a.b.C;
 }

@@ -4,8 +4,7 @@
 package de.upb.sede.dsl.seco;
 
 import de.upb.sede.dsl.SecoObject;
-import org.eclipse.emf.common.util.EList;
-
+import java.util.List;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -214,8 +213,8 @@ public class EntityClassDefinition extends SecoObject implements EObject {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<String> getBaseEntities() {
-		return (EList<String>) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__BASE_ENTITIES, true);
+	public List<String> getBaseEntities() {
+		return (List<String>) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__BASE_ENTITIES, true);
 	}
 
 	/**
@@ -234,8 +233,8 @@ public class EntityClassDefinition extends SecoObject implements EObject {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<EntityMethod> getMethods() {
-		return (EList<EntityMethod>) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__METHODS, true);
+	public List<EntityMethod> getMethods() {
+		return (List<EntityMethod>) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__METHODS, true);
 	}
 
 	/**
@@ -254,8 +253,8 @@ public class EntityClassDefinition extends SecoObject implements EObject {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<EntityCast> getCasts() {
-		return (EList<EntityCast>) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__CASTS, true);
+	public List<EntityCast> getCasts() {
+		return (List<EntityCast>) eGet(SecoPackage.Literals.ENTITY_CLASS_DEFINITION__CASTS, true);
 	}
 
 	/**

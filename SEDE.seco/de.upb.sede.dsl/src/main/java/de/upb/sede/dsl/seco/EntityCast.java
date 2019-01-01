@@ -14,8 +14,6 @@ import org.eclipse.emf.ecore.EObject;
  * <p>
  * The following features are supported:
  * <ul>
- * <li>{@link de.upb.sede.dsl.seco.EntityCast#getDirection
- * <em>Direction</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.EntityCast#getResultingEntity <em>Resulting
  * Entity</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.EntityCast#getAdditionalData <em>Additional
@@ -55,40 +53,6 @@ public class EntityCast extends SecoObject implements EObject {
 	@Override
 	protected int eStaticFeatureCount() {
 		return 0;
-	}
-
-	/**
-	 * Returns the value of the '<em><b>Direction</b></em>' attribute. The literals
-	 * are from the enumeration {@link de.upb.sede.dsl.seco.TransformDirection}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Direction</em>' attribute isn't clear, there
-	 * really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * 
-	 * @return the value of the '<em>Direction</em>' attribute.
-	 * @see de.upb.sede.dsl.seco.TransformDirection
-	 * @see #setDirection(TransformDirection)
-	 * @see de.upb.sede.dsl.seco.SecoPackage#getEntityCast_Direction()
-	 * @model
-	 * @generated
-	 */
-	public TransformDirection getDirection() {
-		return (TransformDirection) eGet(SecoPackage.Literals.ENTITY_CAST__DIRECTION, true);
-	}
-
-	/**
-	 * Sets the value of the '{@link de.upb.sede.dsl.seco.EntityCast#getDirection
-	 * <em>Direction</em>}' attribute. <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @param value the new value of the '<em>Direction</em>' attribute.
-	 * @see de.upb.sede.dsl.seco.TransformDirection
-	 * @see #getDirection()
-	 * @generated
-	 */
-	public void setDirection(TransformDirection newDirection) {
-		eSet(SecoPackage.Literals.ENTITY_CAST__DIRECTION, newDirection);
 	}
 
 	/**

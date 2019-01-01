@@ -17,22 +17,22 @@ class: semType2 extends builtin.Bytes {}
 class: semType3 extends builtin.Bytes {}
 
 class: real.Type1 {
-    cast: <-> semType1 {
+    casts to: semType1 {
         "caster": "casters.Sem1_typ1_Serializer"
     };
 }
 class: real.Type2 {
-    cast: <-> semType1 {
+    casts to: semType1 {
        "caster": "casters.Sem1_typ2_Serializer"
     };
 }
 class: real.Type3 {
-    cast: <-> semType2{
+    casts to: semType2{
        "caster": "casters.Sem2_typ3_Serializer"
     };
 }
 class: real.Type4 {
-    cast: <-> semType2{
+    casts to: semType2{
        "caster": "casters.Sem2_typ4_Serializer"
     };
 }

@@ -74,7 +74,7 @@ public class SecoUtilTest {
 	      _builder.newLine();
 	      _builder.append("method:  Construct ($Number, String, some.Entity) -> (Bool, some.other.Entity);");
 	      _builder.newLine();
-	      _builder.append("cast: <-> $Some.Other.Entity;");
+	      _builder.append("casts to: $Some.Other.Entity;");
 	      _builder.newLine();
 	      _builder.append("}");
 	      _builder.newLine();
@@ -111,7 +111,7 @@ public class SecoUtilTest {
       
       Entries entries = EcoreUtil.copy(SecoUtil.parseSources(seco));
       System.out.println(seco);
-      System.out.println(entries.getEntities().get(0).getMethods().get(0).getAdditionalData());
+      System.out.println(entries.getEntities().get(0).getMethods().get(0).getRuntimeInfo());
       System.out.println(entries.toString());
   }
   

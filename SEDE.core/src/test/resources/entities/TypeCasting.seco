@@ -1,0 +1,29 @@
+/*
+ * A few entities that have casts between another.
+ * Just like blood type these entities can cast to any other entity whose name contains the same letters:
+ */
+
+ class: O {}
+
+ class: A extends O{
+ }
+
+ class: B extends O{
+ }
+
+ class: AB extends A {
+    cast: BA;
+ }
+
+ class: BA extends B {
+    cast: AB;
+ }
+
+ class: ABC extends AB {
+    cast: BAC;
+ }
+
+ class: BAC extends BA{
+    cast: ABC;
+    cast: AB;
+ }

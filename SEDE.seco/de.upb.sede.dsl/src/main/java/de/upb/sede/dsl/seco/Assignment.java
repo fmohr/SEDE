@@ -4,8 +4,7 @@
 package de.upb.sede.dsl.seco;
 
 import de.upb.sede.dsl.SecoObject;
-import org.eclipse.emf.common.util.EList;
-
+import java.util.List;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -75,8 +74,8 @@ public class Assignment extends SecoObject implements EObject {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<Field> getAssignedFields() {
-		return (EList<Field>) eGet(SecoPackage.Literals.ASSIGNMENT__ASSIGNED_FIELDS, true);
+	public List<Field> getAssignedFields() {
+		return (List<Field>) eGet(SecoPackage.Literals.ASSIGNMENT__ASSIGNED_FIELDS, true);
 	}
 
 	/**

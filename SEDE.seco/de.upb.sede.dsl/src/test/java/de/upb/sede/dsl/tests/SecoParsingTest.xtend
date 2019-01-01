@@ -10,6 +10,7 @@ import org.eclipse.xtext.testing.util.ParseHelper
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.^extension.ExtendWith
+import de.upb.sede.dsl.tests.SecoInjectorProvider
 
 @ExtendWith(InjectionExtension)
 @InjectWith(SecoInjectorProvider)
@@ -20,7 +21,6 @@ class SecoParsingTest {
 	@Test
 	def void loadModel() {
 		val result = parseHelper.parse('''
-			Hello Xtext!
 		''')
 		Assertions.assertNotNull(result)
 		val errors = result.eResource.errors

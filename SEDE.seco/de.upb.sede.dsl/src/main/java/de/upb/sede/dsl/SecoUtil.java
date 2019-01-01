@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,7 +32,11 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 
 import com.google.inject.Injector;
 
+import de.upb.sede.dsl.seco.Argument;
 import de.upb.sede.dsl.seco.Entries;
+import de.upb.sede.dsl.seco.Field;
+import de.upb.sede.dsl.seco.FieldValue;
+import de.upb.sede.dsl.seco.Operation;
 
 public class SecoUtil {
 	private static final Injector injector = new SecoStandaloneSetup().createInjectorAndDoEMFRegistration();
@@ -118,5 +123,59 @@ public class SecoUtil {
 			return eobj.getClass().getSimpleName() + '@' + eobj.hashCode();
 		}
 	}  
+	
+	public static Field createField(String...fieldnames) {
+		if(fieldnames == null || fieldnames.length == 0) {
+			throw new IllegalArgumentException("Provide at least one fieldname.");
+		}
+		if(Arrays.stream(fieldnames).anyMatch(s -> s == null || s.isEmpty())) {
+			throw new IllegalArgumentException("Provide only non null and non empty field names.");
+		}
+		Field head = new Field();
+		Field current = head;
+		for(int i = 0; i < fieldnames.length; i++) {
+			current.setName(fieldnames[i]);
+			if(fieldnames.length > i + 1) {
+				current.setDereference(true);
+				Field tail  = new Field();
+				current.setMember(tail);
+				current = tail;
+			}
+		}
+		return head;
+	}
+	
+	public static Argument createArgument(Object value) {
+		FieldValue fieldValue;
+		if(value instanceof FieldValue) {
+			fieldValue = (FieldValue) value;
+		} else {
+			fieldValue = createFieldValue(value);
+		}
+		Argument arg = new Argument();
+		arg.setValue(fieldValue);
+		return arg;
+	}
+	
+	public static FieldValue createFieldValue(Object value) {
+		FieldValue fieldValue = new FieldValue(); 
+		if(value instanceof String) {
+			fieldValue.setString((String) value);
+		} else if(value instanceof Boolean) {
+			fieldValue.setBool(((Boolean)value)? "True" : "False");
+		} else if(value instanceof Number) {
+			fieldValue.setNumber(value.toString());
+		} else if (value == null) {
+			fieldValue.setNull(true);
+		} else if(value instanceof Field) {
+			fieldValue.setField((Field) value);
+		} else if(value instanceof Operation) {
+			fieldValue.setOperation((Operation) value);
+		}  else {
+			throw new IllegalArgumentException("Cannot create field value with the given value. "
+					+ "Value type is: " + value.getClass().getName());
+		}
+		return fieldValue;
+	}
 	
 }

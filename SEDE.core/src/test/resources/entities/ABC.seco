@@ -2,7 +2,7 @@
  * Seco translation of config/ABC-classconf.json
  */
 class: A {
-    static method: __construct (t1) -> (ABC);
+    static method: __construct (t1) -> (A);
     method: m1 (t1, t2) -> (t1);
     pure method: m2 (t1, t2, final t3);
     static method: m3();
@@ -26,3 +26,19 @@ class: C extends A {
     method: m8() realized by m6;
     method: m9() realized by m7;
 }
+
+class: t1 {}
+class: t2 {}
+class: t3 {}
+class: t4 {}
+
+class: $Bool {
+	method: from_Bool_const ($String) -> ($Bool);
+}
+class: $Number {
+	method: from_Number_const ($String) -> ($Number);
+}
+class: $String {
+	method: from_String_const ($String) -> ($String);
+}
+

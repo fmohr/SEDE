@@ -4,8 +4,7 @@
 package de.upb.sede.dsl.seco;
 
 import de.upb.sede.dsl.SecoObject;
-import org.eclipse.emf.common.util.EList;
-
+import java.util.List;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -71,8 +70,8 @@ public class Yield extends SecoObject implements EObject {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<FieldValue> getYields() {
-		return (EList<FieldValue>) eGet(SecoPackage.Literals.YIELD__YIELDS, true);
+	public List<FieldValue> getYields() {
+		return (List<FieldValue>) eGet(SecoPackage.Literals.YIELD__YIELDS, true);
 	}
 
 	/**

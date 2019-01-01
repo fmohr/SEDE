@@ -528,22 +528,13 @@ public class SecoPackage extends EPackageImpl {
 	public static final int ENTITY_CAST = 8;
 
 	/**
-	 * The feature id for the '<em><b>Direction</b></em>' attribute. <!--
-	 * begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @generated
-	 * @ordered
-	 */
-	public static final int ENTITY_CAST__DIRECTION = 0;
-
-	/**
 	 * The feature id for the '<em><b>Resulting Entity</b></em>' attribute. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ENTITY_CAST__RESULTING_ENTITY = 1;
+	public static final int ENTITY_CAST__RESULTING_ENTITY = 0;
 
 	/**
 	 * The feature id for the '<em><b>Additional Data</b></em>' attribute. <!--
@@ -552,7 +543,7 @@ public class SecoPackage extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ENTITY_CAST__ADDITIONAL_DATA = 2;
+	public static final int ENTITY_CAST__ADDITIONAL_DATA = 1;
 
 	/**
 	 * The number of structural features of the '<em>Entity Cast</em>' class. <!--
@@ -561,7 +552,7 @@ public class SecoPackage extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ENTITY_CAST_FEATURE_COUNT = 3;
+	public static final int ENTITY_CAST_FEATURE_COUNT = 2;
 
 	/**
 	 * The meta object id for the '{@link de.upb.sede.dsl.seco.Yield
@@ -1529,20 +1520,6 @@ public class SecoPackage extends EPackageImpl {
 
 	/**
 	 * Returns the meta object for the attribute
-	 * '{@link de.upb.sede.dsl.seco.EntityCast#getDirection <em>Direction</em>}'.
-	 * <!-- begin-user-doc --> <!-- end-user-doc -->
-	 * 
-	 * @return the meta object for the attribute '<em>Direction</em>'.
-	 * @see de.upb.sede.dsl.seco.EntityCast#getDirection()
-	 * @see #getEntityCast()
-	 * @generated
-	 */
-	public EAttribute getEntityCast_Direction() {
-		return (EAttribute) entityCastEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * Returns the meta object for the attribute
 	 * '{@link de.upb.sede.dsl.seco.EntityCast#getResultingEntity <em>Resulting
 	 * Entity</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
@@ -1552,7 +1529,7 @@ public class SecoPackage extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getEntityCast_ResultingEntity() {
-		return (EAttribute) entityCastEClass.getEStructuralFeatures().get(1);
+		return (EAttribute) entityCastEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1566,7 +1543,7 @@ public class SecoPackage extends EPackageImpl {
 	 * @generated
 	 */
 	public EAttribute getEntityCast_AdditionalData() {
-		return (EAttribute) entityCastEClass.getEStructuralFeatures().get(2);
+		return (EAttribute) entityCastEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1909,7 +1886,6 @@ public class SecoPackage extends EPackageImpl {
 		createEReference(entityMethodParamEClass, ENTITY_METHOD_PARAM__FIXED_VALUE);
 
 		entityCastEClass = createEClass(ENTITY_CAST);
-		createEAttribute(entityCastEClass, ENTITY_CAST__DIRECTION);
 		createEAttribute(entityCastEClass, ENTITY_CAST__RESULTING_ENTITY);
 		createEAttribute(entityCastEClass, ENTITY_CAST__ADDITIONAL_DATA);
 
@@ -2092,9 +2068,6 @@ public class SecoPackage extends EPackageImpl {
 
 		initEClass(entityCastEClass, EntityCast.class, "EntityCast", !IS_ABSTRACT, !IS_INTERFACE,
 				IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getEntityCast_Direction(), this.getTransformDirection(), "direction", null, 0, 1,
-				EntityCast.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
-				!IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEntityCast_ResultingEntity(), ecorePackage.getEString(), "resultingEntity", null, 0, 1,
 				EntityCast.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
 				!IS_DERIVED, IS_ORDERED);
@@ -2545,14 +2518,6 @@ public class SecoPackage extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EClass ENTITY_CAST = eINSTANCE.getEntityCast();
-
-		/**
-		 * The meta object literal for the '<em><b>Direction</b></em>' attribute
-		 * feature. <!-- begin-user-doc --> <!-- end-user-doc -->
-		 * 
-		 * @generated
-		 */
-		public static final EAttribute ENTITY_CAST__DIRECTION = eINSTANCE.getEntityCast_Direction();
 
 		/**
 		 * The meta object literal for the '<em><b>Resulting Entity</b></em>' attribute

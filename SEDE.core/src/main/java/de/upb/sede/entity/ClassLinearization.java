@@ -4,22 +4,17 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
-import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.dsl.SecoUtil;
 import de.upb.sede.dsl.seco.*;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.reflect.Reflection;
 
 import static de.upb.sede.dsl.seco.SecoFactory.eINSTANCE;
 
@@ -57,6 +52,7 @@ public final class ClassLinearization implements Serializable {
 
 
 	/*
+
 	 * Finds path to cast between entities.
 	 */
 	private final EntityClassCastGraph castGraph = new EntityClassCastGraph();
@@ -136,7 +132,7 @@ public final class ClassLinearization implements Serializable {
 			entries = eINSTANCE.createEntries();
 			entityMap.put(entityName, entries);
 		}
-		entries.getEntities().add(entity);
+		entries.getEntities().add(EcoreUtil.copy(entity));
 		if(this.mergeRefinements) {
 			/*
 			 * Merge the new entity with the old one to keep a single definition per entity.
@@ -147,6 +143,12 @@ public final class ClassLinearization implements Serializable {
 			entityMap.put(entityName, entries);
 		}
 	}
+
+
+	public EntityClassCastGraph entityCast() {
+		return castGraph;
+	}
+
 
 	private synchronized void clearCache() {
 		synchronized(cache) {
@@ -310,10 +312,10 @@ public final class ClassLinearization implements Serializable {
 					mergedDefinition.getBaseEntities().add(parentEntity);
 				}
 			}
-			for(EntityMethod newMethod : partial.getMethods()) {
+			for(EntityMethod newMethod : EcoreUtil.copyAll(partial.getMethods())) {
 				mergedDefinition.getMethods().add(newMethod);
 			}
-			for(EntityCast newCast : partial.getCasts()) {
+			for(EntityCast newCast :  EcoreUtil.copyAll(partial.getCasts())) {
 				mergedDefinition.getCasts().add(newCast);
 			}
 		}
@@ -327,7 +329,7 @@ public final class ClassLinearization implements Serializable {
 	 * @param typeLookup
 	 * @return
 	 */
-	public Optional<OperationResolution> resolveOperation(Operation operation, FieldTypeLookup typeLookup) {
+	public Optional<OperationResolution> resolveOperation(Operation operation, FieldLookup<String> typeLookup) {
 		/*
 		 * Resolve operation context entity:
 		 */
@@ -338,7 +340,7 @@ public final class ClassLinearization implements Serializable {
 				throw new OperationResolutionException(operation, "Context field dereference not yet supported.");
 			}
 			Field field = operation.getContextField();
-			Optional<String> fieldType = typeLookup.apply(field);
+			Optional<String> fieldType = typeLookup.lookupLatest(field);
 			if(fieldType.isPresent()) {
 				contextEntityName = fieldType.get();
 			} else {
@@ -432,10 +434,10 @@ public final class ClassLinearization implements Serializable {
 			}
 			else if(argValue.getField() != null) {
 				Field field = argValue.getField();
-				if(field.isDereference()) {
-					throw new OperationResolutionException(operation, "Cannot dereference argument: " + arg);
-				}
-				Optional<String> fieldTypeOpt = typeLookup.apply(field);
+//				if(field.isDereference()) {
+//					throw new OperationResolutionException(operation, "Cannot dereference argument: " + arg);
+//				}
+				Optional<String> fieldTypeOpt = typeLookup.lookupLatest(field);
 				if( ! fieldTypeOpt.isPresent()) {
 					throw new OperationResolutionException(operation, "Couldnt look up argument type of field: " + arg);
 				}
@@ -488,7 +490,6 @@ public final class ClassLinearization implements Serializable {
 			if(methodSignatureMatches) {
 				return Optional.of(resolution);
 			}
-
 		}
 
 		return Optional.empty();
@@ -585,18 +586,53 @@ public final class ClassLinearization implements Serializable {
 		}
 		
 		@Override
-		public List<EntityCast> getAllCasts() {
+		public List<EntityCast> declaredCasts() {
 			List<EntityCast> casts = new ArrayList<>();
+			/*
+			 * Cast to iteself
+			 */
+			EntityCast identityCast = new EntityCast();
+			identityCast.setResultingEntity(this.entityName());
+			identityCast.setAdditionalData("{\"implicit\":True}");
+			casts.add(identityCast);
+
+			/*
+			 * All declared casts:
+			 */
 			casts.addAll(def.getCasts());
-			if(isWrapper()) {
-				casts.addAll(wrapped.getAllCasts());
+
+			/*
+			 * Cast to all declared parents:
+			 */
+			for(ClassView declaredParent : declaredParents()){
+				identityCast = new EntityCast();
+				identityCast.setResultingEntity(declaredParent.entityName());
+				identityCast.setAdditionalData("{\"implicit\":True}");
+				casts.add(identityCast);
 			}
-			for(ClassView parent : parents) {
-				casts.addAll(parent.getAllCasts());
-			}
+
 			return casts;
 		}
-		
+
+		@Override
+		public List<ClassView> declaredParents() {
+			return Collections.unmodifiableList(parents);
+		}
+
+		@Override
+		public List<ClassView> allParents() {
+			List<ClassView> accumulatedParents = new ArrayList<>();
+			List<ClassView> parentsInQueue = new ArrayList<>(declaredParents());
+			while(!parentsInQueue.isEmpty()) {
+				ClassView currentParent = parentsInQueue.remove(0);
+				if(!accumulatedParents.contains(currentParent)) {
+					accumulatedParents.add(currentParent);
+					parentsInQueue.addAll(currentParent.declaredParents());
+				}
+			}
+			return accumulatedParents;
+		}
+
 		@Override
 		/**
 		 * Returns true if this entity is of the given type. The given type can also be the wrapped entity or a super class. 
@@ -662,7 +698,14 @@ public final class ClassLinearization implements Serializable {
 			}
 			return Optional.empty();
  		}
-		
+
+		@Override
+		public String toString() {
+			return "LinkedClassView{" +
+						entityName() +
+					'}';
+		}
+
 		public class NestedMethodView implements MethodView {
 			
 			private final EntityMethod method;
@@ -804,9 +847,7 @@ public final class ClassLinearization implements Serializable {
 	
 	class EntityClassCastGraph {
 		
-		private final Map<CastTupel, Optional<List<ClassCastPath>>> cache = new HashMap<>();
-
-		private final Semaphore qurries = new Semaphore(0);
+		private final CastTupelCache cache = new CastTupelCache();
 
 		/*
 		 * Any number of queries can read the cache in parallel.
@@ -816,25 +857,22 @@ public final class ClassLinearization implements Serializable {
 		 */
 		private final Lock 	queryLock = new ReentrantLock(),
 							clearLock = new ReentrantLock();
-		private final AtomicInteger queryProcessCount = new AtomicInteger(0);
 
-		List<ClassCastPath> querry(String start, String goal) {
+		private final AtomicInteger concurrentQuerries = new AtomicInteger(0);
+
+		List<ClassCastPath> querry(String startEntity, String goalEntity) {
 			queryLock.lock();
-			synchronized (queryProcessCount) {
-				if( queryProcessCount.incrementAndGet() == 1 ){
-					// the first query locks the reset lock
-					clearLock.lock();
-				}
+			if( concurrentQuerries.incrementAndGet() == 1 ){
+				// the first query locks the reset lock
+				clearLock.lock();
 			}
 			queryLock.unlock();
 			// critical section
-			List<ClassCastPath> castPaths = dfs(start, goal);
+			List<ClassCastPath> castPaths = dfs(startEntity, goalEntity);
 
-			synchronized (queryProcessCount) {
-				if (queryProcessCount.decrementAndGet() == 0) {
-					// last query is done reset can happen now
-					clearLock.unlock();
-				}
+			if (concurrentQuerries.decrementAndGet() == 0) {
+				// last query is done, reset can happen now
+				clearLock.unlock();
 			}
 			return castPaths;
 		}
@@ -843,9 +881,7 @@ public final class ClassLinearization implements Serializable {
 			queryLock.lock(); // lock the query lock to prevent starvation of the clear operation.
 			clearLock.lock();
 			// critical section: No one is querying:
-			synchronized(cache) {
-				cache.clear();
-			}
+			cache.clear();
 			clearLock.unlock();
 			queryLock.unlock();
 		}
@@ -855,22 +891,22 @@ public final class ClassLinearization implements Serializable {
 		 *
 		 * @deprecated Deprecated used to prevent use inside this file. This method shall only be called by query(String, String)
 		 */
+		@SuppressWarnings("DeprecatedIsStillUsed")
 		@Deprecated
 		 private List<ClassCastPath> dfs(String start, String goal) {
+			Objects.requireNonNull(start);
+			Objects.requireNonNull(goal);
+			if(start.equals(goal)) {
+				return Collections.singletonList(new ClassCastPath(start));
+			}
 
-			CastTupel querry = new CastTupel(start, goal);
+			CastTuple querry = new CastTuple(start, goal);
 			/*
 			 * First look into the cache for the cast:
 			 */
-			synchronized(cache) {
-				Optional<List<ClassCastPath>> cachedEntry = cache.get(querry);
-				if(cachedEntry != null) {
-					if(cachedEntry.isPresent()) {
-						return cachedEntry.get();
-					} else {
-						return Collections.emptyList();
-					}
-				}
+			Optional<List<ClassCastPath>> cachedEntry = cache.get(querry);
+			if(cachedEntry.isPresent()) {
+				return cachedEntry.get();
 			}
 			/*
 			 * Perform depth first search from the source entity. 
@@ -878,32 +914,33 @@ public final class ClassLinearization implements Serializable {
 			 */
 			dfs(new ClassCastPath(start));
 			
-			synchronized(cache) {
-				Optional<List<ClassCastPath>> cachedEntry = cache.get(querry);
-				if(cachedEntry == null) {
-					/*
-					 * Cache the information that there is no path start -> goal:
-					 */
-					cache.put(querry, Optional.empty());
-					return Collections.emptyList();
-				}
-				else if(cachedEntry.isPresent()) {
-					return cachedEntry.get();
-				} else {
-					return Collections.emptyList();
-				}
+			cachedEntry = cache.get(querry);
+			if(!cachedEntry.isPresent()) {
+				/*
+				 * Cache the information that there is no path start -> goal:
+				 */
+				cache.put(querry, Optional.empty());
+				return Collections.emptyList();
+			}
+			else {
+				return cachedEntry.get();
 			}
 		}
 		
 		private void dfs(ClassCastPath path) {
+			/*
+			 * Find all cast targets from the last node in the path:
+			 */
 			String currentEntity = path.last();
 			ClassView entityClass = classView(currentEntity);
-			for(EntityCast cast : entityClass.getAllCasts()) {
+			List<EntityCast> declaredCasts = entityClass.declaredCasts();
+			for(EntityCast cast : declaredCasts) {
 				String target = cast.getResultingEntity();
-				boolean outGoingEdge = (cast.getDirection() != TransformDirection.FROM);  
-				if(!outGoingEdge || path.contains(target)) {
+
+//				boolean outGoingEdge = (cast.getDirection() != TransformDirection.FROM); -> NOT NEEDED ANYMORE, ALL PATHS ARE OUTGOING
+				if(path.contains(target)) {
 					/*
-					 * Ignore cast edges that are not outgoing or have targets already contained in the path: 
+					 * Ignore cast edges that have targets already contained in the path:
 					 */
 					continue;
 				}
@@ -912,7 +949,7 @@ public final class ClassLinearization implements Serializable {
 				 */
 				ClassCastPath newPath = path.addCast(cast);
 				/*
-				 * Add it to cache:
+				 * Add it into cache:
 				 */
 				putInCache(newPath);
 				/*
@@ -923,33 +960,20 @@ public final class ClassLinearization implements Serializable {
 		}
 		
 		private void putInCache(ClassCastPath cp) {
-			if(cp.isEmpty()) {
-				return;
-			}
-			synchronized(cache) {
-				CastTupel tupel = new CastTupel(cp.head(), cp.last());
-				Optional<List<ClassCastPath>> castPaths = cache.get(tupel);
-				if(castPaths == null) {
-					List<ClassCastPath> castPathList = new ArrayList<>();
-					castPaths = Optional.of(castPathList);
-					cache.put(tupel, castPaths);
-				}
-				if(!castPaths.isPresent()) {
-					throw new IllegalStateException("BUG: the cache in the cast graph is in an illegal state. "
-							+ "cache says there is no path between " + cp.head() + " -> " + cp.last() + ","
-									+ " however such a path was just found.\n\n cache.toString() = " + cache.toString());
-				} else if(!castPaths.get().contains(cp)) {
-					castPaths.get().add(cp);
-				}
-			}
+			logger.debug("Caching cast path:\n\t" + cp.toString());
+			String castInput = cp.head();
+			String castOutput = cp.last();
+
+			CastTuple tuple = new CastTuple(castInput, castOutput);
+			cache.put(tuple, Optional.of(cp));
 		}
 
 		/**
 		 * This class is only used as the index for the cache of CastGraph.
 		 */
-		class CastTupel {
+		private class CastTuple {
 			final String from, to;
-			CastTupel(String from , String to) {
+			CastTuple(String from , String to) {
 				this.from = from;
 				this.to = to;
 			}
@@ -966,9 +990,65 @@ public final class ClassLinearization implements Serializable {
 					return false;
 				if (getClass() != obj.getClass())
 					return false;
-				CastTupel other = (CastTupel) obj;
+				CastTuple other = (CastTuple) obj;
 				return Objects.equals(from, other.from) && Objects.equals(to, other.to);
 			}
+
+			@Override
+			public String toString() {
+				return "CastTuple{" +
+						"from='" + from + '\'' +
+						", to='" + to + '\'' +
+						'}';
+			}
+		}
+
+		private class CastTupelCache extends HashMap<String, Map<String,  Optional<List<ClassCastPath>>>> {
+
+			synchronized void put(CastTuple cast, Optional<ClassCastPath> newPath) {
+				if(!this.containsKey(cast.from)) {
+					Map<String, Optional<List<ClassCastPath>>>  castPaths = new HashMap<>();
+					put(cast.from, castPaths);
+				}
+
+				Map<String, Optional<List<ClassCastPath>>> allCastTargets = get(cast.from);
+
+
+				if(!newPath.isPresent()) {
+					allCastTargets.put(cast.to, Optional.empty());
+				} else {
+					Optional<List<ClassCastPath>> castPaths = allCastTargets.get(cast.to);
+					if(castPaths == null) {
+						castPaths = Optional.of(new ArrayList<>());
+						allCastTargets.put(cast.to, castPaths);
+					}
+					if(!castPaths.isPresent()) {
+						throw new IllegalStateException("BUG: the cache in the cast graph is in an illegal state. "
+								+ "cache says there is no path between " + newPath.get().head() + " -> " + newPath.get().last() + ","
+								+ " however such a path was just found.\n\n cache.toString() = " + cache.toString());
+					}
+					castPaths.get().add(newPath.get());
+				}
+			}
+
+			synchronized  Optional<List<ClassCastPath>> get(CastTuple cast) {
+				if(!this.containsKey(cast.from)) {
+					return Optional.empty(); // empty to signal that a dfs wasn't done from cast.from
+				} else {
+					Map<String, Optional<List<ClassCastPath>>> allCastTargets = get(cast.from);
+					Optional<List<ClassCastPath>> classPaths  = allCastTargets.get(cast.to);
+					if(classPaths == null || !classPaths.isPresent()) {
+						return Optional.of(Collections.emptyList());
+					} else {
+						return classPaths;
+					}
+				}
+			}
+
+			public synchronized void clear(){
+				super.clear();
+			}
+
 		}
 	}
 }

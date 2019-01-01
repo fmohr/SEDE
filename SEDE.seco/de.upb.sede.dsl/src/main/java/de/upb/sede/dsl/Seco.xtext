@@ -118,19 +118,21 @@ EntityMethodParam:
 
 
 EntityCast:
-	"cast" ":" direction = TransformDirection resultingEntity = EntityName (additionalData = Json)? ';' 
+	("casts to" | "cast") ":" resultingEntity = EntityName (additionalData = Json)? ';' 
 ;
 
-enum TransformDirection:
-	BI = '<->' | BI = 'to and from' | 
-	TO = '->' | TO = 'to' |
-	FROM = '<-' | FROM = 'from'
-;
+//enum TransformDirection:
+//	BI = '<->' | BI = 'to and from' | 
+//	TO = '->' | TO = 'to' |
+//	FROM = '<-' | FROM = 'from' |
+//	BI = 'bijective' | 
+//	TO = 'surjective' |
+//	FROM = 'injective'
+//;
 
 Yield:
 	=> "yield" yields += FieldValue (multiYield ?= ',' yields += FieldValue)* ';'?
 ;
-
 
 
 QualifiedName  returns ecore::EString:

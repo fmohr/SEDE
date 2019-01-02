@@ -84,8 +84,7 @@
     "weka.classifiers.trees.RandomForest",
     "weka.classifiers.trees.RandomTree",
     "weka.filters.unsupervised.attribute.Normalize",
-    "weka.filters.unsupervised.attribute.Standardize",
-    "wrappers.sk.WrappedClassifier"
+    "weka.filters.unsupervised.attribute.Standardize"
   ],
   "serviceStoreLocation": "instances"
 }

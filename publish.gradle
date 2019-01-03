@@ -31,8 +31,13 @@ publishing {
 
     repositories {
         maven {
-            name = 'sfb901'
-            url = "https://nexus.cs.upb.de/repository/maven-releases/"
+            if(project.version.endsWith('-SNAPSHOT')) {
+                name = 'sfb901'
+                url = "https://nexus.cs.upb.de/repository/maven-snapshots/"
+            } else {
+                name = 'sfb901'
+                url = "https://nexus.cs.upb.de/repository/maven-releases/"
+            }
         }
     }
 }

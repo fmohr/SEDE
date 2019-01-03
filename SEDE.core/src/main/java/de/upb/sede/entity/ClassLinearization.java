@@ -340,7 +340,7 @@ public final class ClassLinearization implements Serializable {
 				throw new OperationResolutionException(operation, "Context field dereference not yet supported.");
 			}
 			Field field = operation.getContextField();
-			Optional<String> fieldType = typeLookup.lookupLatest(field);
+			Optional<String> fieldType = typeLookup.readLatest(field);
 			if(fieldType.isPresent()) {
 				contextEntityName = fieldType.get();
 			} else {
@@ -437,7 +437,7 @@ public final class ClassLinearization implements Serializable {
 //				if(field.isDereference()) {
 //					throw new OperationResolutionException(operation, "Cannot dereference argument: " + arg);
 //				}
-				Optional<String> fieldTypeOpt = typeLookup.lookupLatest(field);
+				Optional<String> fieldTypeOpt = typeLookup.readLatest(field);
 				if( ! fieldTypeOpt.isPresent()) {
 					throw new OperationResolutionException(operation, "Couldnt look up argument type of field: " + arg);
 				}

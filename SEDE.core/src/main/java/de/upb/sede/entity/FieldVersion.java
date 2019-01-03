@@ -18,6 +18,9 @@ public final class FieldVersion implements FieldPointer {
 	public FieldVersion(String name, Long version) {
 		this.name = Objects.requireNonNull(name);
 		this.version = Objects.requireNonNull(version);
+		if(version < LATEST) {
+			throw new IllegalArgumentException("Version number is invalid. Version was: " + version);
+		}
 	}
 
 	public FieldVersion(String name) {

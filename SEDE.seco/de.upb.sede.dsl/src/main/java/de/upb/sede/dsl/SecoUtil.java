@@ -33,10 +33,13 @@ import org.eclipse.xtext.xbase.lib.IterableExtensions;
 import com.google.inject.Injector;
 
 import de.upb.sede.dsl.seco.Argument;
+import de.upb.sede.dsl.seco.Assignment;
+import de.upb.sede.dsl.seco.EntityClassDefinition;
 import de.upb.sede.dsl.seco.Entries;
 import de.upb.sede.dsl.seco.Field;
 import de.upb.sede.dsl.seco.FieldValue;
 import de.upb.sede.dsl.seco.Operation;
+import de.upb.sede.dsl.seco.Yield;
 
 public class SecoUtil {
 	private static final Injector injector = new SecoStandaloneSetup().createInjectorAndDoEMFRegistration();
@@ -156,6 +159,14 @@ public class SecoUtil {
 		arg.setValue(fieldValue);
 		return arg;
 	}
+
+	public static FieldValue createFieldValue(String castTarget, FieldValue value) {
+		FieldValue fieldValue = new FieldValue(); 
+		fieldValue.setCast(true);
+		fieldValue.setCastTarget(castTarget);
+		fieldValue.setCastValue(value);
+		return fieldValue;
+	}
 	
 	public static FieldValue createFieldValue(Object value) {
 		FieldValue fieldValue = new FieldValue(); 
@@ -176,6 +187,20 @@ public class SecoUtil {
 					+ "Value type is: " + value.getClass().getName());
 		}
 		return fieldValue;
+	}
+
+	public static Entries createEntries(EObject... assignmentsYieldsDefs) {
+		Entries entries = new Entries();
+		for(EObject entry : assignmentsYieldsDefs) {
+			if(entry instanceof Assignment || entry instanceof Yield) {
+				entries.getInstructions().add(entry);
+			} else if(entry instanceof EntityClassDefinition) {
+				entries.getEntities().add((EntityClassDefinition) entry);
+			}else {
+				throw new IllegalArgumentException("Entities cannot contain: " + entry.getClass().getSimpleName());
+			}
+		}
+		return entries;
 	}
 	
 }

@@ -30,7 +30,7 @@ public class StdShellCommands {
 		CommandTree rm = new CommandTree(
 				node(new Strings("rm"),
 						node(new Command.File(".", false, true)
-								.addExe(t ->
+								.addExe(t->
 										{
 											String filePath =
 													CommandTree.lastMatch(t) + "/"
@@ -42,14 +42,14 @@ public class StdShellCommands {
 											} catch (IOException e) {
 												e.printStackTrace();
 											}
-											return "Log file cleared.";
+											return "File cleared: " + filePath;
 										}
 
 								)))
 		);
 		CommandTree ls = new CommandTree(
 				node(new Strings("la"),
-						node(new Command.File(".", true, false)
+						node(new Command.File("/", true, false)
 								.addExe(t ->
 										{
 											String filePath =

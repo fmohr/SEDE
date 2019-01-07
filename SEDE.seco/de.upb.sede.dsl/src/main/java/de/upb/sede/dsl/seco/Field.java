@@ -13,13 +13,13 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  * <li>{@link de.upb.sede.dsl.seco.Field#getName <em>Name</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.Field#isDereference
  * <em>Dereference</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.Field#getMember <em>Member</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.upb.sede.dsl.seco.SecoPackage#getField()
  * @model kind="class"

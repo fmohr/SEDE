@@ -17,6 +17,9 @@ import de.upb.sede.dsl.seco.EntityMethodParam
 import de.upb.sede.dsl.seco.EntityMethodParamSignature
 import de.upb.sede.dsl.seco.EntityMethod
 import de.upb.sede.dsl.seco.EntityCast
+import de.upb.sede.dsl.seco.EntityDeploymentDefinition
+import de.upb.sede.dsl.seco.DeploymentProcedure
+import de.upb.sede.dsl.seco.DeploymentDependency
 
 class SecoFormatter extends AbstractFormatter2 {
 	
@@ -28,6 +31,10 @@ class SecoFormatter extends AbstractFormatter2 {
 		for (entityClassDefinition : entries.entities) {
 			format(entityClassDefinition, document)
 	        entityClassDefinition.append[newLine]
+		}
+		for (entityDeploymentDefinition : entries.deployments) {
+			format(entityDeploymentDefinition, document)
+			entityDeploymentDefinition.append[newLine]
 		}
 		for (eObject : entries.instructions) {
 			format(eObject, document)
@@ -125,6 +132,52 @@ class SecoFormatter extends AbstractFormatter2 {
 		format(obj.field, doc)
 	} 
 	 
+	def dispatch void format(EntityDeploymentDefinition obj, extension IFormattableDocument doc) {
+	    obj.regionFor.feature(eINSTANCE.entityDeploymentDefinition_QualifiedName).surround[oneSpace]
+	    obj.regionFor.keyword(':').prepend[noSpace].append[oneSpace]
+	    interior(
+	        obj.regionFor.keyword('{').prepend[oneSpace].append[newLine],
+	        obj.regionFor.keyword('}'),
+	        [indent]
+	    )
+	    for (procedure : obj.procedures) {
+			format(procedure, doc)
+	        procedure.append[setNewLines(1, 1, 2)]
+	    }
+	    for (dependency : obj.dependencies) {
+	        format(dependency, doc)
+	        dependency.append[setNewLines(1, 1, 2)]
+	    }
+	}
+	
+	def dispatch void format(DeploymentProcedure obj, extension IFormattableDocument doc) {
+		/*
+		"procedure" ":" 
+			(
+				("name=" name=ID) &
+				("act=" act=ID) &
+				("fetch=" fetch=ID) &
+				("source=" source=STRING)
+			)
+		";"
+		 */
+		obj.regionFor.keyword(':').prepend[noSpace].append[oneSpace]
+		obj.regionFor.keyword('name=').prepend[oneSpace].append[noSpace]
+		obj.regionFor.feature(eINSTANCE.deploymentProcedure_Name).prepend[noSpace].append[oneSpace]
+		obj.regionFor.keyword('act=').prepend[oneSpace].append[noSpace]
+		obj.regionFor.feature(eINSTANCE.deploymentProcedure_Act).prepend[noSpace].append[oneSpace]
+		obj.regionFor.keyword('fetch=').prepend[oneSpace].append[noSpace]
+		obj.regionFor.feature(eINSTANCE.deploymentProcedure_Fetch).prepend[noSpace].append[oneSpace]
+		obj.regionFor.keyword('source=').prepend[oneSpace].append[noSpace]
+		obj.regionFor.feature(eINSTANCE.deploymentProcedure_Source).prepend[noSpace].append[oneSpace]
+	}
+	
+	def dispatch void format(DeploymentDependency obj, extension IFormattableDocument doc) {
+		obj.regionFor.keyword(':').prepend[noSpace].append[oneSpace]
+	    obj.regionFor.keyword('(').prepend[noSpace].append[noSpace]
+	    obj.regionFor.keyword(')').prepend[noSpace].append[noSpace]
+	    obj.regionFor.keyword(';').prepend[noSpace].append[oneSpace]
+	}
 	
 	// TODO: implement for Argument, Assignment, EntityClassDefinition, EntityMethod, EntityMethodParamSignature, EntityMethodParam, Yield, Field, FieldValue
 }

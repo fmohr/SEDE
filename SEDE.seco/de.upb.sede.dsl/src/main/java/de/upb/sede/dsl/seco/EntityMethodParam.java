@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  * <li>{@link de.upb.sede.dsl.seco.EntityMethodParam#isFinal
  * <em>Final</em>}</li>
@@ -25,7 +26,6 @@ import org.eclipse.emf.ecore.EObject;
  * <li>{@link de.upb.sede.dsl.seco.EntityMethodParam#getFixedValue <em>Fixed
  * Value</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.upb.sede.dsl.seco.SecoPackage#getEntityMethodParam()
  * @model kind="class"

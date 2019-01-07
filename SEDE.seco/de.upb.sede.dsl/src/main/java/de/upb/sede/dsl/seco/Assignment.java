@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  * <li>{@link de.upb.sede.dsl.seco.Assignment#getAssignedFields <em>Assigned
  * Fields</em>}</li>
@@ -21,7 +22,6 @@ import org.eclipse.emf.ecore.EObject;
  * Assignment</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.Assignment#getValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.upb.sede.dsl.seco.SecoPackage#getAssignment()
  * @model kind="class"

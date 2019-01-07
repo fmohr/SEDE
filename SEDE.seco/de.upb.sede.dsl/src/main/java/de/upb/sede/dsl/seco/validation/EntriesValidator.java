@@ -6,6 +6,7 @@ package de.upb.sede.dsl.seco.validation;
 
 import de.upb.sede.dsl.seco.EntityClassDefinition;
 
+import de.upb.sede.dsl.seco.EntityDeploymentDefinition;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
@@ -28,4 +29,6 @@ public interface EntriesValidator {
 	boolean validateInstructions(List<EObject> value);
 
 	boolean validateEntities(List<EntityClassDefinition> value);
+
+	boolean validateDeployments(List<EntityDeploymentDefinition> value);
 }

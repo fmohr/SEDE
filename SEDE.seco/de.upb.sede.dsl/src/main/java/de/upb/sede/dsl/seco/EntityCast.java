@@ -13,13 +13,13 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  * <li>{@link de.upb.sede.dsl.seco.EntityCast#getResultingEntity <em>Resulting
  * Entity</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.EntityCast#getAdditionalData <em>Additional
  * Data</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.upb.sede.dsl.seco.SecoPackage#getEntityCast()
  * @model kind="class"

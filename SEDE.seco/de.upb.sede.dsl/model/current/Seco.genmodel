@@ -23,6 +23,7 @@
     <genClasses ecoreClass="Seco.ecore#//Entries">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Entries/instructions"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Entries/entities"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Entries/deployments"/>
     </genClasses>
     <genClasses ecoreClass="Seco.ecore#//Operation">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//Operation/contextField"/>
@@ -71,7 +72,6 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityMethodParam/fixedValue"/>
     </genClasses>
     <genClasses ecoreClass="Seco.ecore#//EntityCast">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityCast/direction"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityCast/resultingEntity"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityCast/additionalData"/>
     </genClasses>
@@ -94,6 +94,21 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//FieldValue/null"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//FieldValue/operation"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//FieldValue/field"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//EntityDeploymentDefinition">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityDeploymentDefinition/procedures"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityDeploymentDefinition/dependencies"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityDeploymentDefinition/qualifiedName"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//DeploymentProcedure">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//DeploymentProcedure/source"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//DeploymentProcedure/act"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//DeploymentProcedure/fetch"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//DeploymentProcedure/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//DeploymentDependency">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//DeploymentDependency/deployment"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//DeploymentDependency/order"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

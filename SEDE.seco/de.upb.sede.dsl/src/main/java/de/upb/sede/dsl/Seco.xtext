@@ -16,6 +16,9 @@ Entries:
     (
     	instructions+=Assignment |
     	instructions+=Yield
+    )*
+    (
+    	deployments += EntityDeploymentDefinition	
     )* ;
     
 /*
@@ -119,6 +122,34 @@ EntityMethodParam:
 
 EntityCast:
 	("casts to" | "cast") ":" resultingEntity = EntityName (additionalData = Json)? ';' 
+;
+
+EntityDeploymentDefinition:
+	"deployment" ":" qualifiedName = EntityName "{"
+		(
+			procedures += DeploymentProcedure |
+			dependencies += DeploymentDependency
+		)* 
+	"}"
+;
+
+DeploymentProcedure: 
+	"procedure" ":" 
+		(
+			("name=" name=ID) &
+			("act=" act=ID) &
+			("fetch=" fetch=ID) &
+			("source=" source=STRING)
+		)
+		";"
+;
+
+DeploymentDependency:
+	"dependency" ":" deployment=EntityName ("(" order = DependencyOrder")")? ";"
+;
+
+DependencyOrder returns ecore::EInt:
+	"PRE-FETCH" | "PRE-RUN" | "POST-RUN" | (("-" | "+")?INT)
 ;
 
 //enum TransformDirection:

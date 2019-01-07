@@ -4,15 +4,20 @@
 package de.upb.sede.dsl.tests;
 
 import com.google.inject.Inject;
+import com.ibm.icu.impl.Assert;
 
 import de.upb.sede.dsl.SecoUtil;
 import de.upb.sede.dsl.seco.Assignment;
+import de.upb.sede.dsl.seco.DeploymentDependency;
 import de.upb.sede.dsl.seco.EntityClassDefinition;
+import de.upb.sede.dsl.seco.EntityDeploymentDefinition;
 import de.upb.sede.dsl.seco.EntityMethod;
 import de.upb.sede.dsl.seco.Entries;
 import de.upb.sede.dsl.seco.SecoFactory;
 import de.upb.sede.dsl.seco.SecoPackage;
 import de.upb.sede.dsl.tests.SecoInjectorProvider;
+
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -113,6 +118,44 @@ public class SecoUtilTest {
       System.out.println(seco);
       System.out.println(entries.getEntities().get(0).getMethods().get(0).getRuntimeInfo());
       System.out.println(entries.toString());
+  }
+  
+  
+  @Test
+  public void testDeployment() throws IOException {
+      String seco = "deployment: apple {"
+				+ "procedure: name=build act=gradle_java fetch=git source=\"http://example.com.git\";"
+  				+ "procedure: name=verify act=bash fetch=http source=\"http://apple.verify\";"
+  				+ "dependency: food;"
+  				+ "dependency: fruit(PRE-RUN);"
+  				+ "dependency: cut(POST-RUN);"
+  				+ "dependency: eat(10);"
+      		+ "}";
+      
+      System.out.println(seco);
+      
+      Entries entries = EcoreUtil.copy(SecoUtil.parseSources(seco));
+      EntityDeploymentDefinition apple = entries.getDeployments().get(0);
+      assertEquals("build", apple.getProcedures().get(0).getName());
+      assertEquals("http://example.com.git", apple.getProcedures().get(0).getSource());
+      
+      DeploymentDependency dep0 = apple.getDependencies().get(0);
+      assertEquals("food", dep0.getDeployment());
+      assertEquals(-100, dep0.getOrder());
+      
+      DeploymentDependency dep1 = apple.getDependencies().get(1);
+      assertEquals("fruit", dep1.getDeployment());
+      assertEquals(-10, dep1.getOrder());
+      
+      DeploymentDependency dep2 = apple.getDependencies().get(2);
+      assertEquals("cut", dep2.getDeployment());
+      assertEquals(10, dep2.getOrder());
+      
+      DeploymentDependency dep3 = apple.getDependencies().get(3);
+      assertEquals("eat", dep3.getDeployment());
+      assertEquals(10, dep3.getOrder());
+      
+      System.out.println("Formatted to:\n" + entries.toString());
   }
   
 }

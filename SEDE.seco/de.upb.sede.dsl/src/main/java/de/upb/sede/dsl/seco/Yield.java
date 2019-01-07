@@ -14,11 +14,11 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  * <li>{@link de.upb.sede.dsl.seco.Yield#getYields <em>Yields</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.Yield#isMultiYield <em>Multi Yield</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.upb.sede.dsl.seco.SecoPackage#getYield()
  * @model kind="class"

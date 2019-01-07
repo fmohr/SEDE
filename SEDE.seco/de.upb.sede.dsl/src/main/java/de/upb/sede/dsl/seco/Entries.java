@@ -14,12 +14,14 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  * <li>{@link de.upb.sede.dsl.seco.Entries#getInstructions
  * <em>Instructions</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.Entries#getEntities <em>Entities</em>}</li>
+ * <li>{@link de.upb.sede.dsl.seco.Entries#getDeployments
+ * <em>Deployments</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.upb.sede.dsl.seco.SecoPackage#getEntries()
  * @model kind="class"
@@ -93,6 +95,27 @@ public class Entries extends SecoObject implements EObject {
 	@SuppressWarnings("unchecked")
 	public List<EntityClassDefinition> getEntities() {
 		return (List<EntityClassDefinition>) eGet(SecoPackage.Literals.ENTRIES__ENTITIES, true);
+	}
+
+	/**
+	 * Returns the value of the '<em><b>Deployments</b></em>' containment reference
+	 * list. The list contents are of type
+	 * {@link de.upb.sede.dsl.seco.EntityDeploymentDefinition}. <!-- begin-user-doc
+	 * -->
+	 * <p>
+	 * If the meaning of the '<em>Deployments</em>' containment reference list isn't
+	 * clear, there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * 
+	 * @return the value of the '<em>Deployments</em>' containment reference list.
+	 * @see de.upb.sede.dsl.seco.SecoPackage#getEntries_Deployments()
+	 * @model containment="true"
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public List<EntityDeploymentDefinition> getDeployments() {
+		return (List<EntityDeploymentDefinition>) eGet(SecoPackage.Literals.ENTRIES__DEPLOYMENTS, true);
 	}
 
 } // Entries

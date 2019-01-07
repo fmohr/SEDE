@@ -14,13 +14,13 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  * <li>{@link de.upb.sede.dsl.seco.EntityMethodParamSignature#getParameters
  * <em>Parameters</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.EntityMethodParamSignature#getOutputs
  * <em>Outputs</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.upb.sede.dsl.seco.SecoPackage#getEntityMethodParamSignature()
  * @model kind="class"

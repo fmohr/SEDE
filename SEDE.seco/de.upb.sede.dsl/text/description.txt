@@ -10,6 +10,7 @@ Package seco <http://www.upb.de/sede/dsl/Seco>
   Class Entries
     Reference instructions : EObject<<0..*>>
     Reference entities : EntityClassDefinition<<0..*>>
+    Reference deployments : EntityDeploymentDefinition<<0..*>>
 
   Class Operation
     Reference contextField : Field
@@ -80,6 +81,21 @@ Package seco <http://www.upb.de/sede/dsl/Seco>
     Attribute null : EBoolean
     Reference operation : Operation
     Reference field : Field
+
+  Class EntityDeploymentDefinition
+    Reference procedures : DeploymentProcedure<<0..*>>
+    Reference dependencies : DeploymentDependency<<0..*>>
+    Attribute qualifiedName : EString
+
+  Class DeploymentProcedure
+    Attribute source : EString
+    Attribute act : EString
+    Attribute fetch : EString
+    Attribute name : EString
+
+  Class DeploymentDependency
+    Attribute deployment : EString
+    Attribute order : EInt
 
   Enum EntityMethodProp
     Literal STATIC = 0

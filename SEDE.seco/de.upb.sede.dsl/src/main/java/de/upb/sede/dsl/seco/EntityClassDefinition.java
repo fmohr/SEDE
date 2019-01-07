@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  * <li>{@link de.upb.sede.dsl.seco.EntityClassDefinition#getQualifiedName
  * <em>Qualified Name</em>}</li>
@@ -32,7 +33,6 @@ import org.eclipse.emf.ecore.EObject;
  * <li>{@link de.upb.sede.dsl.seco.EntityClassDefinition#getRuntimeInfo
  * <em>Runtime Info</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.upb.sede.dsl.seco.SecoPackage#getEntityClassDefinition()
  * @model kind="class"

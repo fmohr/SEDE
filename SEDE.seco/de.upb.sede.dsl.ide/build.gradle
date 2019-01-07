@@ -1,6 +1,5 @@
-plugins {
-	id 'com.github.johnrengelman.shadow' version '2.0.0'
-}
+
+apply plugin: 'com.github.johnrengelman.shadow'
 
 dependencies {
 	compile project(':de.upb.sede.dsl')

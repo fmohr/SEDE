@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import de.upb.sede.dsl.SecoUtil;
 import de.upb.sede.dsl.seco.*;
+import de.upb.sede.util.DefaultMap;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -550,9 +551,11 @@ public final class ClassLinearization implements Serializable {
 	
 
 	public class LinkedClassView implements ClassView {
+
 		private final EntityClassDefinition def;
 		private final ClassView wrapped;
 		private final List<ClassView> parents;
+		private final Map<String, List<MethodView>> methodCache = new HashMap<>();
 		
 		LinkedClassView(EntityClassDefinition definition, Optional<ClassView> wrappedEntity, List<ClassView> parentEntities) {
 			if(definition.isWrapper() && !wrappedEntity.isPresent()) {
@@ -565,7 +568,8 @@ public final class ClassLinearization implements Serializable {
 			this.wrapped = wrappedEntity.orElse(null);
 			this.parents = parentEntities;
 		}
-		
+
+
 
 		public boolean isWrapper() {
 			return def.isWrapper();
@@ -653,20 +657,26 @@ public final class ClassLinearization implements Serializable {
 		}
 		
 		@Override
-		public List<MethodView> allMethodsWithName(String methodName) {
+		public synchronized List<MethodView> allMethodsWithName(String methodName) {
+			if(methodCache.containsKey(methodName)) {
+				return methodCache.get(methodName);
+			}
 			Objects.requireNonNull(methodName);
 			List<MethodView> methods = new ArrayList<>();
+			for(ClassView parent : parents) {
+				methods.addAll(parent.allMethodsWithName(methodName));
+			}
 			for(EntityMethod servedMethod : def.getMethods()) {
 				if(servedMethod.getMethodName().equals(methodName)) {
+
 					methods.add(new NestedMethodView(servedMethod));
 				}
 			}
 			if(isWrapper()) {
 				methods.addAll(wrapped.allMethodsWithName(methodName));
 			}
-			for(ClassView parent : parents) {
-				methods.addAll(parent.allMethodsWithName(methodName));
-			}
+
+			methodCache.put(methodName, methods);
 			return methods;
 		}
 
@@ -775,6 +785,7 @@ public final class ClassLinearization implements Serializable {
 				if(requestedMethod.getParamSignature().getOutputs().size() > method.getParamSignature().getOutputs().size()) {
 					return false;
 				}
+
 				for(int outputIndex = 0; outputIndex < requestedSignature.getOutputs().size(); outputIndex ++) {
 					String declaredType = getParamType(outputIndex, false); 
 					String requestedType = requestedSignature.getOutputs().get(outputIndex).getParameterType();
@@ -822,6 +833,7 @@ public final class ClassLinearization implements Serializable {
 			public String toString(){
 				return method.toString();
 			}
+
 			public Optional<MethodView> getRealization() {
 				if(method.isRealization()) {
 					EntityMethod realisedMethod = getMethod();

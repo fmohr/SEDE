@@ -58,7 +58,7 @@ public enum TransformDirection implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * 
 	 * @see #BI
-	 * @model literal="<->"
+	 * @model literal="&lt;-&gt;"
 	 * @generated
 	 * @ordered
 	 */
@@ -73,7 +73,7 @@ public enum TransformDirection implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * 
 	 * @see #TO
-	 * @model literal="->"
+	 * @model literal="-&gt;"
 	 * @generated
 	 * @ordered
 	 */
@@ -88,7 +88,7 @@ public enum TransformDirection implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * 
 	 * @see #FROM
-	 * @model literal="<-"
+	 * @model literal="&lt;-"
 	 * @generated
 	 * @ordered
 	 */
@@ -114,6 +114,8 @@ public enum TransformDirection implements Enumerator {
 	 * Returns the '<em><b>Transform Direction</b></em>' literal with the specified
 	 * literal value. <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
+	 * @param literal the literal.
+	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
 	public static TransformDirection get(String literal) {
@@ -130,6 +132,8 @@ public enum TransformDirection implements Enumerator {
 	 * Returns the '<em><b>Transform Direction</b></em>' literal with the specified
 	 * name. <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
+	 * @param name the name.
+	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
 	public static TransformDirection getByName(String name) {
@@ -146,6 +150,8 @@ public enum TransformDirection implements Enumerator {
 	 * Returns the '<em><b>Transform Direction</b></em>' literal with the specified
 	 * integer value. <!-- begin-user-doc --> <!-- end-user-doc -->
 	 * 
+	 * @param value the integer value.
+	 * @return the matching enumerator or <code>null</code>.
 	 * @generated
 	 */
 	public static TransformDirection get(int value) {

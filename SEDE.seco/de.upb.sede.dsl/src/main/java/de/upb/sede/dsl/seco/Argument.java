@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  * <li>{@link de.upb.sede.dsl.seco.Argument#isIndexed <em>Indexed</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.Argument#getIndex <em>Index</em>}</li>
@@ -20,7 +21,6 @@ import org.eclipse.emf.ecore.EObject;
  * Name</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.Argument#getValue <em>Value</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.upb.sede.dsl.seco.SecoPackage#getArgument()
  * @model kind="class"

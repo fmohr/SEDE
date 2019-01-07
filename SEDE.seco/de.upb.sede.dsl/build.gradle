@@ -1,3 +1,4 @@
+apply plugin: 'com.github.johnrengelman.shadow'
 dependencies {
 	testCompile "org.junit.jupiter:junit-jupiter-api:5.1.0"
 	testRuntime "org.junit.jupiter:junit-jupiter-engine:5.1.0"
@@ -40,3 +41,34 @@ test {
 generateXtext.dependsOn(generateXtextLanguage)
 clean.dependsOn(cleanGenerateXtextLanguage)
 eclipse.classpath.plusConfigurations += [configurations.mwe2]
+
+task sourcesJar(type: Jar) {
+    classifier = 'sources'
+    from sourceSets.main.allJava
+}
+
+task javadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+//shadowJar {
+  //  baseName = ''
+    //classifier = ''
+    //exclude "log4j.xml"
+//}
+
+	
+publishing {
+    publications {
+		 shadow(MavenPublication) {  
+	            publication -> project.shadow.component(publication)
+	     }
+	}
+    repositories {
+        maven {
+            name = 'sfb901'
+            url = "https://nexus.cs.upb.de/repository/maven-releases/"
+        }
+    }
+}

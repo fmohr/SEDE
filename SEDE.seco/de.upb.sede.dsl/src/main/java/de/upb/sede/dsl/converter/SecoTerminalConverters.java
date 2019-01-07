@@ -5,6 +5,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 
+import org.eclipse.emf.mwe.internal.core.ast.util.converter.IntegerConverter;
 import org.eclipse.xtext.common.services.DefaultTerminalConverters;
 import org.eclipse.xtext.conversion.IValueConverter;
 import org.eclipse.xtext.conversion.ValueConverter;
@@ -16,6 +17,13 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
 public class SecoTerminalConverters extends DefaultTerminalConverters{
+
+	public final static int PRE_FETCH = -100;
+
+	public final static int PRE_RUN = -10;
+	
+	public final static int POST_RUN = 10;
+	
 	@ValueConverter(rule = "EntityName")
     public IValueConverter<String> EntityName() 
     {
@@ -26,6 +34,12 @@ public class SecoTerminalConverters extends DefaultTerminalConverters{
     public IValueConverter<String> MethodName() 
     {
 		return new OptionalPrefixNameConverter("!", s -> false);
+    }
+	
+	@ValueConverter(rule = "DependencyOrder")
+    public IValueConverter<Integer> DependencyOrder() 
+    {
+		return new DependencyOrderConverter();
     }
 	
 //	@ValueConverter(rule = "Json")
@@ -81,6 +95,39 @@ public class SecoTerminalConverters extends DefaultTerminalConverters{
 		@Override
 		public String toString(JSONObject value) throws ValueConverterException {
 			return value.toJSONString();
+		}
+	}
+	
+	static class DependencyOrderConverter implements IValueConverter<Integer> {
+
+		
+		@Override
+		public Integer toValue(String string, INode node) throws ValueConverterException {
+			// string can be: "PRE-FETCH" | "PRE-RUN" | "POST-RUN" | INT
+			switch (string) {
+			case "PRE-FETCH":
+				return PRE_FETCH;
+			case "PRE-RUN":
+				return PRE_RUN;
+			case "POST-RUN":
+				return POST_RUN;
+			default:
+				return Integer.valueOf(string);
+			}
+		}
+
+		@Override
+		public String toString(Integer value) throws ValueConverterException {
+			switch (value) {
+			case PRE_FETCH:
+				return "PRE-FETCH";
+			case PRE_RUN:
+				return "PRE-RUN";
+			case POST_RUN:
+				return "POST-RUN";
+			default:
+				return value.toString();
+			}
 		}
 	}
 }

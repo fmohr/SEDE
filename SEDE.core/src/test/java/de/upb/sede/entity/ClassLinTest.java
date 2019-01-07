@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
+import static de.upb.sede.dsl.SecoUtil.*;
 
 public class ClassLinTest {
 	ClassLinearization cl;
@@ -320,10 +321,7 @@ public class ClassLinTest {
 
 	@Test
 	public void testResolveOp1() {
-		Operation op1 = new Operation();
-		op1.setMethod("__construct");
-		op1.setEntityName("Duck");
-
+		Operation op1 = createOp
 		op1.getArgs();
 		cl.resolveOperation(op1, null);
 	}

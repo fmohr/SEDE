@@ -5,6 +5,7 @@ buildscript {
 	}
 	dependencies {
 		classpath 'org.xtext:xtext-gradle-plugin:2.0.1'
+	    classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.3'
 	}
 }
 plugins {
@@ -36,38 +37,6 @@ subprojects {
 	}
 	
 	
-}
-
-project(':de.upb.sede.dsl') {
-	
-	task sourcesJar(type: Jar) {
-	    classifier = 'sources'
-	    from sourceSets.main.allJava
-	}
-	
-	task javadocJar(type: Jar) {
-	    classifier = 'javadoc'
-	    from javadoc.destinationDir
-	}
-	
-	publishing {
-	    publications {
-	        mavenJava(MavenPublication) {
-	            afterEvaluate {
-                	from components.java
-		            artifact sourcesJar
-		            artifact javadocJar
-                	artifactId 'SEDE.seco'
-	            }
-	        }
-	    }
-	    repositories {
-	        maven {
-	            name = 'sfb901'
-	            url = "https://nexus.cs.upb.de/repository/maven-releases/"
-	        }
-	    }
-	}
 }
 
 

@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  * <li>{@link de.upb.sede.dsl.seco.Operation#getContextField <em>Context
  * Field</em>}</li>
@@ -22,7 +23,6 @@ import org.eclipse.emf.ecore.EObject;
  * <li>{@link de.upb.sede.dsl.seco.Operation#getMethod <em>Method</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.Operation#getArgs <em>Args</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.upb.sede.dsl.seco.SecoPackage#getOperation()
  * @model kind="class"

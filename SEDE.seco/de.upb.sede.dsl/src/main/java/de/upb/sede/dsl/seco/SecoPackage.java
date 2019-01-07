@@ -85,13 +85,22 @@ public class SecoPackage extends EPackageImpl {
 	public static final int ENTRIES__ENTITIES = 1;
 
 	/**
+	 * The feature id for the '<em><b>Deployments</b></em>' containment reference
+	 * list. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ENTRIES__DEPLOYMENTS = 2;
+
+	/**
 	 * The number of structural features of the '<em>Entries</em>' class. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ENTRIES_FEATURE_COUNT = 2;
+	public static final int ENTRIES_FEATURE_COUNT = 3;
 
 	/**
 	 * The meta object id for the '{@link de.upb.sede.dsl.seco.Operation
@@ -738,6 +747,147 @@ public class SecoPackage extends EPackageImpl {
 	public static final int FIELD_VALUE_FEATURE_COUNT = 9;
 
 	/**
+	 * The meta object id for the
+	 * '{@link de.upb.sede.dsl.seco.EntityDeploymentDefinition <em>Entity Deployment
+	 * Definition</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @see de.upb.sede.dsl.seco.EntityDeploymentDefinition
+	 * @see de.upb.sede.dsl.seco.SecoPackage#getEntityDeploymentDefinition()
+	 * @generated
+	 */
+	public static final int ENTITY_DEPLOYMENT_DEFINITION = 12;
+
+	/**
+	 * The feature id for the '<em><b>Procedures</b></em>' containment reference
+	 * list. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ENTITY_DEPLOYMENT_DEFINITION__PROCEDURES = 0;
+
+	/**
+	 * The feature id for the '<em><b>Dependencies</b></em>' containment reference
+	 * list. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ENTITY_DEPLOYMENT_DEFINITION__DEPENDENCIES = 1;
+
+	/**
+	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ENTITY_DEPLOYMENT_DEFINITION__QUALIFIED_NAME = 2;
+
+	/**
+	 * The number of structural features of the '<em>Entity Deployment
+	 * Definition</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ENTITY_DEPLOYMENT_DEFINITION_FEATURE_COUNT = 3;
+
+	/**
+	 * The meta object id for the '{@link de.upb.sede.dsl.seco.DeploymentProcedure
+	 * <em>Deployment Procedure</em>}' class. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
+	 * @see de.upb.sede.dsl.seco.DeploymentProcedure
+	 * @see de.upb.sede.dsl.seco.SecoPackage#getDeploymentProcedure()
+	 * @generated
+	 */
+	public static final int DEPLOYMENT_PROCEDURE = 13;
+
+	/**
+	 * The feature id for the '<em><b>Source</b></em>' attribute. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DEPLOYMENT_PROCEDURE__SOURCE = 0;
+
+	/**
+	 * The feature id for the '<em><b>Act</b></em>' attribute. <!-- begin-user-doc
+	 * --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DEPLOYMENT_PROCEDURE__ACT = 1;
+
+	/**
+	 * The feature id for the '<em><b>Fetch</b></em>' attribute. <!-- begin-user-doc
+	 * --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DEPLOYMENT_PROCEDURE__FETCH = 2;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute. <!-- begin-user-doc
+	 * --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DEPLOYMENT_PROCEDURE__NAME = 3;
+
+	/**
+	 * The number of structural features of the '<em>Deployment Procedure</em>'
+	 * class. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DEPLOYMENT_PROCEDURE_FEATURE_COUNT = 4;
+
+	/**
+	 * The meta object id for the '{@link de.upb.sede.dsl.seco.DeploymentDependency
+	 * <em>Deployment Dependency</em>}' class. <!-- begin-user-doc --> <!--
+	 * end-user-doc -->
+	 * 
+	 * @see de.upb.sede.dsl.seco.DeploymentDependency
+	 * @see de.upb.sede.dsl.seco.SecoPackage#getDeploymentDependency()
+	 * @generated
+	 */
+	public static final int DEPLOYMENT_DEPENDENCY = 14;
+
+	/**
+	 * The feature id for the '<em><b>Deployment</b></em>' attribute. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DEPLOYMENT_DEPENDENCY__DEPLOYMENT = 0;
+
+	/**
+	 * The feature id for the '<em><b>Order</b></em>' attribute. <!-- begin-user-doc
+	 * --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DEPLOYMENT_DEPENDENCY__ORDER = 1;
+
+	/**
+	 * The number of structural features of the '<em>Deployment Dependency</em>'
+	 * class. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int DEPLOYMENT_DEPENDENCY_FEATURE_COUNT = 2;
+
+	/**
 	 * The meta object id for the '{@link de.upb.sede.dsl.seco.EntityMethodProp
 	 * <em>Entity Method Prop</em>}' enum. <!-- begin-user-doc --> <!-- end-user-doc
 	 * -->
@@ -746,7 +896,7 @@ public class SecoPackage extends EPackageImpl {
 	 * @see de.upb.sede.dsl.seco.SecoPackage#getEntityMethodProp()
 	 * @generated
 	 */
-	public static final int ENTITY_METHOD_PROP = 12;
+	public static final int ENTITY_METHOD_PROP = 15;
 
 	/**
 	 * The meta object id for the '{@link de.upb.sede.dsl.seco.TransformDirection
@@ -757,7 +907,7 @@ public class SecoPackage extends EPackageImpl {
 	 * @see de.upb.sede.dsl.seco.SecoPackage#getTransformDirection()
 	 * @generated
 	 */
-	public static final int TRANSFORM_DIRECTION = 13;
+	public static final int TRANSFORM_DIRECTION = 16;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -848,6 +998,27 @@ public class SecoPackage extends EPackageImpl {
 	 * 
 	 * @generated
 	 */
+	private EClass entityDeploymentDefinitionEClass = null;
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	private EClass deploymentProcedureEClass = null;
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	private EClass deploymentDependencyEClass = null;
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
 	private EEnum entityMethodPropEEnum = null;
 
 	/**
@@ -886,7 +1057,7 @@ public class SecoPackage extends EPackageImpl {
 	/**
 	 * Creates, registers, and initializes the <b>Package</b> for this model, and
 	 * for any others upon which it depends.
-	 * 
+	 *
 	 * <p>
 	 * This method is used to initialize {@link SecoPackage#eINSTANCE} when that
 	 * field is accessed. Clients should not invoke it directly. Instead, they
@@ -903,9 +1074,9 @@ public class SecoPackage extends EPackageImpl {
 			return (SecoPackage) EPackage.Registry.INSTANCE.getEPackage(SecoPackage.eNS_URI);
 
 		// Obtain or create and register package
-		SecoPackage theSecoPackage = (SecoPackage) (EPackage.Registry.INSTANCE.get(eNS_URI) instanceof SecoPackage
-				? EPackage.Registry.INSTANCE.get(eNS_URI)
-				: new SecoPackage());
+		Object registeredSecoPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		SecoPackage theSecoPackage = registeredSecoPackage instanceof SecoPackage ? (SecoPackage) registeredSecoPackage
+				: new SecoPackage();
 
 		isInited = true;
 
@@ -963,6 +1134,21 @@ public class SecoPackage extends EPackageImpl {
 	 */
 	public EReference getEntries_Entities() {
 		return (EReference) entriesEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * Returns the meta object for the containment reference list
+	 * '{@link de.upb.sede.dsl.seco.Entries#getDeployments <em>Deployments</em>}'.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the containment reference list
+	 *         '<em>Deployments</em>'.
+	 * @see de.upb.sede.dsl.seco.Entries#getDeployments()
+	 * @see #getEntries()
+	 * @generated
+	 */
+	public EReference getEntries_Deployments() {
+		return (EReference) entriesEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1779,6 +1965,173 @@ public class SecoPackage extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for class
+	 * '{@link de.upb.sede.dsl.seco.EntityDeploymentDefinition <em>Entity Deployment
+	 * Definition</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for class '<em>Entity Deployment Definition</em>'.
+	 * @see de.upb.sede.dsl.seco.EntityDeploymentDefinition
+	 * @generated
+	 */
+	public EClass getEntityDeploymentDefinition() {
+		return entityDeploymentDefinitionEClass;
+	}
+
+	/**
+	 * Returns the meta object for the containment reference list
+	 * '{@link de.upb.sede.dsl.seco.EntityDeploymentDefinition#getProcedures
+	 * <em>Procedures</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the containment reference list
+	 *         '<em>Procedures</em>'.
+	 * @see de.upb.sede.dsl.seco.EntityDeploymentDefinition#getProcedures()
+	 * @see #getEntityDeploymentDefinition()
+	 * @generated
+	 */
+	public EReference getEntityDeploymentDefinition_Procedures() {
+		return (EReference) entityDeploymentDefinitionEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * Returns the meta object for the containment reference list
+	 * '{@link de.upb.sede.dsl.seco.EntityDeploymentDefinition#getDependencies
+	 * <em>Dependencies</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the containment reference list
+	 *         '<em>Dependencies</em>'.
+	 * @see de.upb.sede.dsl.seco.EntityDeploymentDefinition#getDependencies()
+	 * @see #getEntityDeploymentDefinition()
+	 * @generated
+	 */
+	public EReference getEntityDeploymentDefinition_Dependencies() {
+		return (EReference) entityDeploymentDefinitionEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * Returns the meta object for the attribute
+	 * '{@link de.upb.sede.dsl.seco.EntityDeploymentDefinition#getQualifiedName
+	 * <em>Qualified Name</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the attribute '<em>Qualified Name</em>'.
+	 * @see de.upb.sede.dsl.seco.EntityDeploymentDefinition#getQualifiedName()
+	 * @see #getEntityDeploymentDefinition()
+	 * @generated
+	 */
+	public EAttribute getEntityDeploymentDefinition_QualifiedName() {
+		return (EAttribute) entityDeploymentDefinitionEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * Returns the meta object for class
+	 * '{@link de.upb.sede.dsl.seco.DeploymentProcedure <em>Deployment
+	 * Procedure</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for class '<em>Deployment Procedure</em>'.
+	 * @see de.upb.sede.dsl.seco.DeploymentProcedure
+	 * @generated
+	 */
+	public EClass getDeploymentProcedure() {
+		return deploymentProcedureEClass;
+	}
+
+	/**
+	 * Returns the meta object for the attribute
+	 * '{@link de.upb.sede.dsl.seco.DeploymentProcedure#getSource <em>Source</em>}'.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the attribute '<em>Source</em>'.
+	 * @see de.upb.sede.dsl.seco.DeploymentProcedure#getSource()
+	 * @see #getDeploymentProcedure()
+	 * @generated
+	 */
+	public EAttribute getDeploymentProcedure_Source() {
+		return (EAttribute) deploymentProcedureEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * Returns the meta object for the attribute
+	 * '{@link de.upb.sede.dsl.seco.DeploymentProcedure#getAct <em>Act</em>}'. <!--
+	 * begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the attribute '<em>Act</em>'.
+	 * @see de.upb.sede.dsl.seco.DeploymentProcedure#getAct()
+	 * @see #getDeploymentProcedure()
+	 * @generated
+	 */
+	public EAttribute getDeploymentProcedure_Act() {
+		return (EAttribute) deploymentProcedureEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * Returns the meta object for the attribute
+	 * '{@link de.upb.sede.dsl.seco.DeploymentProcedure#getFetch <em>Fetch</em>}'.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the attribute '<em>Fetch</em>'.
+	 * @see de.upb.sede.dsl.seco.DeploymentProcedure#getFetch()
+	 * @see #getDeploymentProcedure()
+	 * @generated
+	 */
+	public EAttribute getDeploymentProcedure_Fetch() {
+		return (EAttribute) deploymentProcedureEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * Returns the meta object for the attribute
+	 * '{@link de.upb.sede.dsl.seco.DeploymentProcedure#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see de.upb.sede.dsl.seco.DeploymentProcedure#getName()
+	 * @see #getDeploymentProcedure()
+	 * @generated
+	 */
+	public EAttribute getDeploymentProcedure_Name() {
+		return (EAttribute) deploymentProcedureEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * Returns the meta object for class
+	 * '{@link de.upb.sede.dsl.seco.DeploymentDependency <em>Deployment
+	 * Dependency</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for class '<em>Deployment Dependency</em>'.
+	 * @see de.upb.sede.dsl.seco.DeploymentDependency
+	 * @generated
+	 */
+	public EClass getDeploymentDependency() {
+		return deploymentDependencyEClass;
+	}
+
+	/**
+	 * Returns the meta object for the attribute
+	 * '{@link de.upb.sede.dsl.seco.DeploymentDependency#getDeployment
+	 * <em>Deployment</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the attribute '<em>Deployment</em>'.
+	 * @see de.upb.sede.dsl.seco.DeploymentDependency#getDeployment()
+	 * @see #getDeploymentDependency()
+	 * @generated
+	 */
+	public EAttribute getDeploymentDependency_Deployment() {
+		return (EAttribute) deploymentDependencyEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * Returns the meta object for the attribute
+	 * '{@link de.upb.sede.dsl.seco.DeploymentDependency#getOrder <em>Order</em>}'.
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the attribute '<em>Order</em>'.
+	 * @see de.upb.sede.dsl.seco.DeploymentDependency#getOrder()
+	 * @see #getDeploymentDependency()
+	 * @generated
+	 */
+	public EAttribute getDeploymentDependency_Order() {
+		return (EAttribute) deploymentDependencyEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
 	 * Returns the meta object for enum
 	 * '{@link de.upb.sede.dsl.seco.EntityMethodProp <em>Entity Method Prop</em>}'.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -1838,6 +2191,7 @@ public class SecoPackage extends EPackageImpl {
 		entriesEClass = createEClass(ENTRIES);
 		createEReference(entriesEClass, ENTRIES__INSTRUCTIONS);
 		createEReference(entriesEClass, ENTRIES__ENTITIES);
+		createEReference(entriesEClass, ENTRIES__DEPLOYMENTS);
 
 		operationEClass = createEClass(OPERATION);
 		createEReference(operationEClass, OPERATION__CONTEXT_FIELD);
@@ -1909,6 +2263,21 @@ public class SecoPackage extends EPackageImpl {
 		createEReference(fieldValueEClass, FIELD_VALUE__OPERATION);
 		createEReference(fieldValueEClass, FIELD_VALUE__FIELD);
 
+		entityDeploymentDefinitionEClass = createEClass(ENTITY_DEPLOYMENT_DEFINITION);
+		createEReference(entityDeploymentDefinitionEClass, ENTITY_DEPLOYMENT_DEFINITION__PROCEDURES);
+		createEReference(entityDeploymentDefinitionEClass, ENTITY_DEPLOYMENT_DEFINITION__DEPENDENCIES);
+		createEAttribute(entityDeploymentDefinitionEClass, ENTITY_DEPLOYMENT_DEFINITION__QUALIFIED_NAME);
+
+		deploymentProcedureEClass = createEClass(DEPLOYMENT_PROCEDURE);
+		createEAttribute(deploymentProcedureEClass, DEPLOYMENT_PROCEDURE__SOURCE);
+		createEAttribute(deploymentProcedureEClass, DEPLOYMENT_PROCEDURE__ACT);
+		createEAttribute(deploymentProcedureEClass, DEPLOYMENT_PROCEDURE__FETCH);
+		createEAttribute(deploymentProcedureEClass, DEPLOYMENT_PROCEDURE__NAME);
+
+		deploymentDependencyEClass = createEClass(DEPLOYMENT_DEPENDENCY);
+		createEAttribute(deploymentDependencyEClass, DEPLOYMENT_DEPENDENCY__DEPLOYMENT);
+		createEAttribute(deploymentDependencyEClass, DEPLOYMENT_DEPENDENCY__ORDER);
+
 		// Create enums
 		entityMethodPropEEnum = createEEnum(ENTITY_METHOD_PROP);
 		transformDirectionEEnum = createEEnum(TRANSFORM_DIRECTION);
@@ -1950,6 +2319,9 @@ public class SecoPackage extends EPackageImpl {
 				Entries.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
 				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEntries_Entities(), this.getEntityClassDefinition(), null, "entities", null, 0, -1,
+				Entries.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
+				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEntries_Deployments(), this.getEntityDeploymentDefinition(), null, "deployments", null, 0, -1,
 				Entries.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
 				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -2116,6 +2488,42 @@ public class SecoPackage extends EPackageImpl {
 				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE,
 				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		initEClass(entityDeploymentDefinitionEClass, EntityDeploymentDefinition.class, "EntityDeploymentDefinition",
+				!IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getEntityDeploymentDefinition_Procedures(), this.getDeploymentProcedure(), null, "procedures",
+				null, 0, -1, EntityDeploymentDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEntityDeploymentDefinition_Dependencies(), this.getDeploymentDependency(), null,
+				"dependencies", null, 0, -1, EntityDeploymentDefinition.class, !IS_TRANSIENT, !IS_VOLATILE,
+				IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEntityDeploymentDefinition_QualifiedName(), ecorePackage.getEString(), "qualifiedName", null,
+				0, 1, EntityDeploymentDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE,
+				!IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(deploymentProcedureEClass, DeploymentProcedure.class, "DeploymentProcedure", !IS_ABSTRACT,
+				!IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getDeploymentProcedure_Source(), ecorePackage.getEString(), "source", null, 0, 1,
+				DeploymentProcedure.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getDeploymentProcedure_Act(), ecorePackage.getEString(), "act", null, 0, 1,
+				DeploymentProcedure.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getDeploymentProcedure_Fetch(), ecorePackage.getEString(), "fetch", null, 0, 1,
+				DeploymentProcedure.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getDeploymentProcedure_Name(), ecorePackage.getEString(), "name", null, 0, 1,
+				DeploymentProcedure.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(deploymentDependencyEClass, DeploymentDependency.class, "DeploymentDependency", !IS_ABSTRACT,
+				!IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getDeploymentDependency_Deployment(), ecorePackage.getEString(), "deployment", null, 0, 1,
+				DeploymentDependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getDeploymentDependency_Order(), ecorePackage.getEInt(), "order", "-100", 0, 1,
+				DeploymentDependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		// Initialize enums and add enum literals
 		initEEnum(entityMethodPropEEnum, EntityMethodProp.class, "EntityMethodProp");
 		addEEnumLiteral(entityMethodPropEEnum, EntityMethodProp.STATIC);
@@ -2169,6 +2577,14 @@ public class SecoPackage extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference ENTRIES__ENTITIES = eINSTANCE.getEntries_Entities();
+
+		/**
+		 * The meta object literal for the '<em><b>Deployments</b></em>' containment
+		 * reference list feature. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		public static final EReference ENTRIES__DEPLOYMENTS = eINSTANCE.getEntries_Deployments();
 
 		/**
 		 * The meta object literal for the '{@link de.upb.sede.dsl.seco.Operation
@@ -2676,6 +3092,115 @@ public class SecoPackage extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference FIELD_VALUE__FIELD = eINSTANCE.getFieldValue_Field();
+
+		/**
+		 * The meta object literal for the
+		 * '{@link de.upb.sede.dsl.seco.EntityDeploymentDefinition <em>Entity Deployment
+		 * Definition</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @see de.upb.sede.dsl.seco.EntityDeploymentDefinition
+		 * @see de.upb.sede.dsl.seco.SecoPackage#getEntityDeploymentDefinition()
+		 * @generated
+		 */
+		public static final EClass ENTITY_DEPLOYMENT_DEFINITION = eINSTANCE.getEntityDeploymentDefinition();
+
+		/**
+		 * The meta object literal for the '<em><b>Procedures</b></em>' containment
+		 * reference list feature. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		public static final EReference ENTITY_DEPLOYMENT_DEFINITION__PROCEDURES = eINSTANCE
+				.getEntityDeploymentDefinition_Procedures();
+
+		/**
+		 * The meta object literal for the '<em><b>Dependencies</b></em>' containment
+		 * reference list feature. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		public static final EReference ENTITY_DEPLOYMENT_DEFINITION__DEPENDENCIES = eINSTANCE
+				.getEntityDeploymentDefinition_Dependencies();
+
+		/**
+		 * The meta object literal for the '<em><b>Qualified Name</b></em>' attribute
+		 * feature. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		public static final EAttribute ENTITY_DEPLOYMENT_DEFINITION__QUALIFIED_NAME = eINSTANCE
+				.getEntityDeploymentDefinition_QualifiedName();
+
+		/**
+		 * The meta object literal for the
+		 * '{@link de.upb.sede.dsl.seco.DeploymentProcedure <em>Deployment
+		 * Procedure</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @see de.upb.sede.dsl.seco.DeploymentProcedure
+		 * @see de.upb.sede.dsl.seco.SecoPackage#getDeploymentProcedure()
+		 * @generated
+		 */
+		public static final EClass DEPLOYMENT_PROCEDURE = eINSTANCE.getDeploymentProcedure();
+
+		/**
+		 * The meta object literal for the '<em><b>Source</b></em>' attribute feature.
+		 * <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		public static final EAttribute DEPLOYMENT_PROCEDURE__SOURCE = eINSTANCE.getDeploymentProcedure_Source();
+
+		/**
+		 * The meta object literal for the '<em><b>Act</b></em>' attribute feature. <!--
+		 * begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		public static final EAttribute DEPLOYMENT_PROCEDURE__ACT = eINSTANCE.getDeploymentProcedure_Act();
+
+		/**
+		 * The meta object literal for the '<em><b>Fetch</b></em>' attribute feature.
+		 * <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		public static final EAttribute DEPLOYMENT_PROCEDURE__FETCH = eINSTANCE.getDeploymentProcedure_Fetch();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		public static final EAttribute DEPLOYMENT_PROCEDURE__NAME = eINSTANCE.getDeploymentProcedure_Name();
+
+		/**
+		 * The meta object literal for the
+		 * '{@link de.upb.sede.dsl.seco.DeploymentDependency <em>Deployment
+		 * Dependency</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @see de.upb.sede.dsl.seco.DeploymentDependency
+		 * @see de.upb.sede.dsl.seco.SecoPackage#getDeploymentDependency()
+		 * @generated
+		 */
+		public static final EClass DEPLOYMENT_DEPENDENCY = eINSTANCE.getDeploymentDependency();
+
+		/**
+		 * The meta object literal for the '<em><b>Deployment</b></em>' attribute
+		 * feature. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		public static final EAttribute DEPLOYMENT_DEPENDENCY__DEPLOYMENT = eINSTANCE
+				.getDeploymentDependency_Deployment();
+
+		/**
+		 * The meta object literal for the '<em><b>Order</b></em>' attribute feature.
+		 * <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		public static final EAttribute DEPLOYMENT_DEPENDENCY__ORDER = eINSTANCE.getDeploymentDependency_Order();
 
 		/**
 		 * The meta object literal for the '{@link de.upb.sede.dsl.seco.EntityMethodProp

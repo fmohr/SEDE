@@ -128,6 +128,21 @@ public class SecoAdapterFactory extends AdapterFactoryImpl {
 		}
 
 		@Override
+		public Adapter caseEntityDeploymentDefinition(EntityDeploymentDefinition object) {
+			return createEntityDeploymentDefinitionAdapter();
+		}
+
+		@Override
+		public Adapter caseDeploymentProcedure(DeploymentProcedure object) {
+			return createDeploymentProcedureAdapter();
+		}
+
+		@Override
+		public Adapter caseDeploymentDependency(DeploymentDependency object) {
+			return createDeploymentDependencyAdapter();
+		}
+
+		@Override
 		public Adapter defaultCase(EObject object) {
 			return createEObjectAdapter();
 		}
@@ -323,6 +338,51 @@ public class SecoAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createFieldValueAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class
+	 * '{@link de.upb.sede.dsl.seco.EntityDeploymentDefinition <em>Entity Deployment
+	 * Definition</em>}'. <!-- begin-user-doc --> This default implementation
+	 * returns null so that we can easily ignore cases; it's useful to ignore a case
+	 * when inheritance will catch all the cases anyway. <!-- end-user-doc -->
+	 * 
+	 * @return the new adapter.
+	 * @see de.upb.sede.dsl.seco.EntityDeploymentDefinition
+	 * @generated
+	 */
+	public Adapter createEntityDeploymentDefinitionAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class
+	 * '{@link de.upb.sede.dsl.seco.DeploymentProcedure <em>Deployment
+	 * Procedure</em>}'. <!-- begin-user-doc --> This default implementation returns
+	 * null so that we can easily ignore cases; it's useful to ignore a case when
+	 * inheritance will catch all the cases anyway. <!-- end-user-doc -->
+	 * 
+	 * @return the new adapter.
+	 * @see de.upb.sede.dsl.seco.DeploymentProcedure
+	 * @generated
+	 */
+	public Adapter createDeploymentProcedureAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class
+	 * '{@link de.upb.sede.dsl.seco.DeploymentDependency <em>Deployment
+	 * Dependency</em>}'. <!-- begin-user-doc --> This default implementation
+	 * returns null so that we can easily ignore cases; it's useful to ignore a case
+	 * when inheritance will catch all the cases anyway. <!-- end-user-doc -->
+	 * 
+	 * @return the new adapter.
+	 * @see de.upb.sede.dsl.seco.DeploymentDependency
+	 * @generated
+	 */
+	public Adapter createDeploymentDependencyAdapter() {
 		return null;
 	}
 

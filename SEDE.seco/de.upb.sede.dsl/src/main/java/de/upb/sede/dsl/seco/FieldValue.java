@@ -13,6 +13,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  * <li>{@link de.upb.sede.dsl.seco.FieldValue#isCast <em>Cast</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.FieldValue#getCastTarget <em>Cast
@@ -27,7 +28,6 @@ import org.eclipse.emf.ecore.EObject;
  * <em>Operation</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.FieldValue#getField <em>Field</em>}</li>
  * </ul>
- * </p>
  *
  * @see de.upb.sede.dsl.seco.SecoPackage#getFieldValue()
  * @model kind="class"

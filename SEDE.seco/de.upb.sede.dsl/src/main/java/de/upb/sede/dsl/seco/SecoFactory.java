@@ -88,6 +88,12 @@ public class SecoFactory extends EFactoryImpl {
 			return createField();
 		case SecoPackage.FIELD_VALUE:
 			return createFieldValue();
+		case SecoPackage.ENTITY_DEPLOYMENT_DEFINITION:
+			return createEntityDeploymentDefinition();
+		case SecoPackage.DEPLOYMENT_PROCEDURE:
+			return createDeploymentProcedure();
+		case SecoPackage.DEPLOYMENT_DEPENDENCY:
+			return createDeploymentDependency();
 		default:
 			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -245,6 +251,36 @@ public class SecoFactory extends EFactoryImpl {
 	public FieldValue createFieldValue() {
 		FieldValue fieldValue = new FieldValue();
 		return fieldValue;
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public EntityDeploymentDefinition createEntityDeploymentDefinition() {
+		EntityDeploymentDefinition entityDeploymentDefinition = new EntityDeploymentDefinition();
+		return entityDeploymentDefinition;
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public DeploymentProcedure createDeploymentProcedure() {
+		DeploymentProcedure deploymentProcedure = new DeploymentProcedure();
+		return deploymentProcedure;
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public DeploymentDependency createDeploymentDependency() {
+		DeploymentDependency deploymentDependency = new DeploymentDependency();
+		return deploymentDependency;
 	}
 
 	/**

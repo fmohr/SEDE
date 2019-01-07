@@ -51,4 +51,18 @@ public interface MethodView {
 	 * @return true if the given method has a matching signature.
 	 */
 	boolean matchesSignature(EntityMethod otherSignature);
+
+	/**
+	 * Merges the given method into this one.
+	 * The returned method is the final merged method view, it isn't however guaranteed that it is a new one.
+	 * It could be the given methodInstance or this one or a newly created one.
+	 * Consequently, one should dispose this and the otherMethod instance as it this method may change their state.
+	 * The attributes of this method instance have precedence over the given method in case of conflicts.
+	 *
+	 * It is assumes that the signatures match.
+	 *
+	 * @param otherMethod
+	 * @return
+	 */
+	MethodView mergeMethod(MethodView otherMethod);
 }

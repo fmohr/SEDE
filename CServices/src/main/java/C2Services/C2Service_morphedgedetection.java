@@ -20,6 +20,8 @@ public class C2Service_morphedgedetection extends Plugin {
         linkedFiles = new ArrayList<File>();
         linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_morphedgedetection_cpu.so"));
         linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_morphedgedetection_scpu.so"));
+        //linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_morphedgedetection_gpu.so"));
+        //linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_morphedgedetection_fpga.so"));
     }
 
     public C2Service_morphedgedetection() {
@@ -45,12 +47,12 @@ public class C2Service_morphedgedetection extends Plugin {
         printMethod("processImage", resource.getResourceString());
 
         switch (resource.getResourceString()) {
-            case "j":
             case "s":
             case "c":
-                break;
             case "g":
             case "f":
+                break;
+            case "j":
             default:
                 throw new Error("Resource '" + resource.getResourceString() + "' not supported by service.");
         }

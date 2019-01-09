@@ -25,6 +25,8 @@ public class C2Service_grey extends Plugin {
         linkedFiles = new ArrayList<File>();
         linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_grey_cpu.so"));
         linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_grey_scpu.so"));
+        //linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_grey_gpu.so"));
+        //linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_grey_fpga.so"));
     }
 
     public C2Service_grey() {
@@ -43,12 +45,12 @@ public class C2Service_grey extends Plugin {
         printMethod("processImage", resource.getResourceString());
 
         switch (resource.getResourceString()) {
-            case "j":
             case "s":
             case "c":
-                break;
             case "g":
             case "f":
+            case "j":
+                break;
             default:
                 throw new Error("Resource '" + resource.getResourceString() + "' not supported by service.");
         }

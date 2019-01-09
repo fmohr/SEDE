@@ -348,5 +348,70 @@
                 "returntype": "C2Data.C2Image"
             }
         }
+    },
+    "C2Services.C2Service_gausslowpass_CPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_grey_CPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_median_CPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_morphedgedetection_CPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_sobel_CPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
     }
 }

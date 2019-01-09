@@ -24,7 +24,12 @@
     "C2Services.C2Service_JAVA_sobel",
     "C2Services.C2Service_gausslowpass",
     "C2Services.C2Service_morphedgedetection",
-    "C2Services.C2Service_median"
+    "C2Services.C2Service_median",
+    "C2Services.C2Service_gausslowpass_CPU",
+    "C2Services.C2Service_grey_CPU",
+    "C2Services.C2Service_median_CPU",
+    "C2Services.C2Service_morphedgedetection_CPU",
+    "C2Services.C2Service_sobel_CPU"
   ],
   "serviceStoreLocation": "instances"
 }

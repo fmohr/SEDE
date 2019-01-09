@@ -21,6 +21,8 @@ public class C2Service_gausslowpass extends Plugin{
         linkedFiles = new ArrayList<File>();
         linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "llibservice_gausslowpass_cpu.so"));
         linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_gauslowpass_scpu.so"));
+        //linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_gauslowpass_gpu.so"));
+        //linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_gauslowpass_fpga.so"));
     }
 
     public C2Service_gausslowpass() {
@@ -39,12 +41,12 @@ public class C2Service_gausslowpass extends Plugin{
         printMethod("processImage", resource.getResourceString());
 
         switch (resource.getResourceString()) {
-            case "j":
             case "s":
             case "c":
-                break;
             case "g":
             case "f":
+                break;
+            case "j":
             default:
                 throw new Error("Resource '" + resource.getResourceString() + "' not supported by service.");
         }

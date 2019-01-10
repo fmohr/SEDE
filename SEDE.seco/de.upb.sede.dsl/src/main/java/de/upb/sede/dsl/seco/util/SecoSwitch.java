@@ -170,6 +170,13 @@ public class SecoSwitch<T> extends Switch<T> {
 				result = defaultCase(theEObject);
 			return result;
 		}
+		case SecoPackage.ENTITY_METHOD_INSTRUCTIONS: {
+			EntityMethodInstructions entityMethodInstructions = (EntityMethodInstructions) theEObject;
+			T result = caseEntityMethodInstructions(entityMethodInstructions);
+			if (result == null)
+				result = defaultCase(theEObject);
+			return result;
+		}
 		default:
 			return defaultCase(theEObject);
 		}
@@ -405,6 +412,22 @@ public class SecoSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseDeploymentDependency(DeploymentDependency object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Entity
+	 * Method Instructions</em>'. <!-- begin-user-doc --> This implementation
+	 * returns null; returning a non-null result will terminate the switch. <!--
+	 * end-user-doc -->
+	 * 
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Entity
+	 *         Method Instructions</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseEntityMethodInstructions(EntityMethodInstructions object) {
 		return null;
 	}
 

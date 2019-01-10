@@ -26,7 +26,7 @@ public class WebUtil {
 				whatismyip.openStream()))){
 			String ip = in.readLine().trim();
 			return ip;
-		} catch (IOException e ) {
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}

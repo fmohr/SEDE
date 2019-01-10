@@ -415,13 +415,22 @@ public class SecoPackage extends EPackageImpl {
 	public static final int ENTITY_METHOD__RUNTIME_INFO = 5;
 
 	/**
+	 * The feature id for the '<em><b>Method Instructions</b></em>' containment
+	 * reference list. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ENTITY_METHOD__METHOD_INSTRUCTIONS = 6;
+
+	/**
 	 * The number of structural features of the '<em>Entity Method</em>' class. <!--
 	 * begin-user-doc --> <!-- end-user-doc -->
 	 * 
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ENTITY_METHOD_FEATURE_COUNT = 6;
+	public static final int ENTITY_METHOD_FEATURE_COUNT = 7;
 
 	/**
 	 * The meta object id for the
@@ -888,6 +897,44 @@ public class SecoPackage extends EPackageImpl {
 	public static final int DEPLOYMENT_DEPENDENCY_FEATURE_COUNT = 2;
 
 	/**
+	 * The meta object id for the
+	 * '{@link de.upb.sede.dsl.seco.EntityMethodInstructions <em>Entity Method
+	 * Instructions</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @see de.upb.sede.dsl.seco.EntityMethodInstructions
+	 * @see de.upb.sede.dsl.seco.SecoPackage#getEntityMethodInstructions()
+	 * @generated
+	 */
+	public static final int ENTITY_METHOD_INSTRUCTIONS = 15;
+
+	/**
+	 * The feature id for the '<em><b>Instructions</b></em>' containment reference
+	 * list. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ENTITY_METHOD_INSTRUCTIONS__INSTRUCTIONS = 0;
+
+	/**
+	 * The feature id for the '<em><b>Order</b></em>' attribute. <!-- begin-user-doc
+	 * --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ENTITY_METHOD_INSTRUCTIONS__ORDER = 1;
+
+	/**
+	 * The number of structural features of the '<em>Entity Method
+	 * Instructions</em>' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 * @ordered
+	 */
+	public static final int ENTITY_METHOD_INSTRUCTIONS_FEATURE_COUNT = 2;
+
+	/**
 	 * The meta object id for the '{@link de.upb.sede.dsl.seco.EntityMethodProp
 	 * <em>Entity Method Prop</em>}' enum. <!-- begin-user-doc --> <!-- end-user-doc
 	 * -->
@@ -896,7 +943,7 @@ public class SecoPackage extends EPackageImpl {
 	 * @see de.upb.sede.dsl.seco.SecoPackage#getEntityMethodProp()
 	 * @generated
 	 */
-	public static final int ENTITY_METHOD_PROP = 15;
+	public static final int ENTITY_METHOD_PROP = 16;
 
 	/**
 	 * The meta object id for the '{@link de.upb.sede.dsl.seco.TransformDirection
@@ -907,7 +954,7 @@ public class SecoPackage extends EPackageImpl {
 	 * @see de.upb.sede.dsl.seco.SecoPackage#getTransformDirection()
 	 * @generated
 	 */
-	public static final int TRANSFORM_DIRECTION = 16;
+	public static final int TRANSFORM_DIRECTION = 17;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -1013,6 +1060,13 @@ public class SecoPackage extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass deploymentDependencyEClass = null;
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	private EClass entityMethodInstructionsEClass = null;
 
 	/**
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -1564,6 +1618,21 @@ public class SecoPackage extends EPackageImpl {
 	 */
 	public EAttribute getEntityMethod_RuntimeInfo() {
 		return (EAttribute) entityMethodEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * Returns the meta object for the containment reference list
+	 * '{@link de.upb.sede.dsl.seco.EntityMethod#getMethodInstructions <em>Method
+	 * Instructions</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the containment reference list '<em>Method
+	 *         Instructions</em>'.
+	 * @see de.upb.sede.dsl.seco.EntityMethod#getMethodInstructions()
+	 * @see #getEntityMethod()
+	 * @generated
+	 */
+	public EReference getEntityMethod_MethodInstructions() {
+		return (EReference) entityMethodEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -2132,6 +2201,48 @@ public class SecoPackage extends EPackageImpl {
 	}
 
 	/**
+	 * Returns the meta object for class
+	 * '{@link de.upb.sede.dsl.seco.EntityMethodInstructions <em>Entity Method
+	 * Instructions</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for class '<em>Entity Method Instructions</em>'.
+	 * @see de.upb.sede.dsl.seco.EntityMethodInstructions
+	 * @generated
+	 */
+	public EClass getEntityMethodInstructions() {
+		return entityMethodInstructionsEClass;
+	}
+
+	/**
+	 * Returns the meta object for the containment reference list
+	 * '{@link de.upb.sede.dsl.seco.EntityMethodInstructions#getInstructions
+	 * <em>Instructions</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the containment reference list
+	 *         '<em>Instructions</em>'.
+	 * @see de.upb.sede.dsl.seco.EntityMethodInstructions#getInstructions()
+	 * @see #getEntityMethodInstructions()
+	 * @generated
+	 */
+	public EReference getEntityMethodInstructions_Instructions() {
+		return (EReference) entityMethodInstructionsEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * Returns the meta object for the attribute
+	 * '{@link de.upb.sede.dsl.seco.EntityMethodInstructions#getOrder
+	 * <em>Order</em>}'. <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @return the meta object for the attribute '<em>Order</em>'.
+	 * @see de.upb.sede.dsl.seco.EntityMethodInstructions#getOrder()
+	 * @see #getEntityMethodInstructions()
+	 * @generated
+	 */
+	public EAttribute getEntityMethodInstructions_Order() {
+		return (EAttribute) entityMethodInstructionsEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
 	 * Returns the meta object for enum
 	 * '{@link de.upb.sede.dsl.seco.EntityMethodProp <em>Entity Method Prop</em>}'.
 	 * <!-- begin-user-doc --> <!-- end-user-doc -->
@@ -2227,6 +2338,7 @@ public class SecoPackage extends EPackageImpl {
 		createEAttribute(entityMethodEClass, ENTITY_METHOD__REALIZATION);
 		createEAttribute(entityMethodEClass, ENTITY_METHOD__METHOD_REALIZATION);
 		createEAttribute(entityMethodEClass, ENTITY_METHOD__RUNTIME_INFO);
+		createEReference(entityMethodEClass, ENTITY_METHOD__METHOD_INSTRUCTIONS);
 
 		entityMethodParamSignatureEClass = createEClass(ENTITY_METHOD_PARAM_SIGNATURE);
 		createEReference(entityMethodParamSignatureEClass, ENTITY_METHOD_PARAM_SIGNATURE__PARAMETERS);
@@ -2277,6 +2389,10 @@ public class SecoPackage extends EPackageImpl {
 		deploymentDependencyEClass = createEClass(DEPLOYMENT_DEPENDENCY);
 		createEAttribute(deploymentDependencyEClass, DEPLOYMENT_DEPENDENCY__DEPLOYMENT);
 		createEAttribute(deploymentDependencyEClass, DEPLOYMENT_DEPENDENCY__ORDER);
+
+		entityMethodInstructionsEClass = createEClass(ENTITY_METHOD_INSTRUCTIONS);
+		createEReference(entityMethodInstructionsEClass, ENTITY_METHOD_INSTRUCTIONS__INSTRUCTIONS);
+		createEAttribute(entityMethodInstructionsEClass, ENTITY_METHOD_INSTRUCTIONS__ORDER);
 
 		// Create enums
 		entityMethodPropEEnum = createEEnum(ENTITY_METHOD_PROP);
@@ -2386,7 +2502,7 @@ public class SecoPackage extends EPackageImpl {
 		initEReference(getEntityClassDefinition_Casts(), this.getEntityCast(), null, "casts", null, 0, -1,
 				EntityClassDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
 				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getEntityClassDefinition_RuntimeInfo(), ecorePackage.getEString(), "runtimeInfo", null, 0, 1,
+		initEAttribute(getEntityClassDefinition_RuntimeInfo(), ecorePackage.getEString(), "runtimeInfo", "{}", 0, 1,
 				EntityClassDefinition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
 				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -2407,9 +2523,12 @@ public class SecoPackage extends EPackageImpl {
 		initEAttribute(getEntityMethod_MethodRealization(), ecorePackage.getEString(), "methodRealization", null, 0, 1,
 				EntityMethod.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
 				!IS_DERIVED, IS_ORDERED);
-		initEAttribute(getEntityMethod_RuntimeInfo(), ecorePackage.getEString(), "runtimeInfo", null, 0, 1,
+		initEAttribute(getEntityMethod_RuntimeInfo(), ecorePackage.getEString(), "runtimeInfo", "{}", 0, 1,
 				EntityMethod.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE,
 				!IS_DERIVED, IS_ORDERED);
+		initEReference(getEntityMethod_MethodInstructions(), this.getEntityMethodInstructions(), null,
+				"methodInstructions", null, 0, -1, EntityMethod.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE,
+				IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(entityMethodParamSignatureEClass, EntityMethodParamSignature.class, "EntityMethodParamSignature",
 				!IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -2522,6 +2641,15 @@ public class SecoPackage extends EPackageImpl {
 				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getDeploymentDependency_Order(), ecorePackage.getEInt(), "order", "-100", 0, 1,
 				DeploymentDependency.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
+				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(entityMethodInstructionsEClass, EntityMethodInstructions.class, "EntityMethodInstructions",
+				!IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getEntityMethodInstructions_Instructions(), ecorePackage.getEObject(), null, "instructions",
+				null, 0, -1, EntityMethodInstructions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE,
+				!IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEntityMethodInstructions_Order(), ecorePackage.getEInt(), "order", "5", 0, 1,
+				EntityMethodInstructions.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID,
 				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
@@ -2842,6 +2970,16 @@ public class SecoPackage extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute ENTITY_METHOD__RUNTIME_INFO = eINSTANCE.getEntityMethod_RuntimeInfo();
+
+		/**
+		 * The meta object literal for the '<em><b>Method Instructions</b></em>'
+		 * containment reference list feature. <!-- begin-user-doc --> <!-- end-user-doc
+		 * -->
+		 * 
+		 * @generated
+		 */
+		public static final EReference ENTITY_METHOD__METHOD_INSTRUCTIONS = eINSTANCE
+				.getEntityMethod_MethodInstructions();
 
 		/**
 		 * The meta object literal for the
@@ -3201,6 +3339,35 @@ public class SecoPackage extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute DEPLOYMENT_DEPENDENCY__ORDER = eINSTANCE.getDeploymentDependency_Order();
+
+		/**
+		 * The meta object literal for the
+		 * '{@link de.upb.sede.dsl.seco.EntityMethodInstructions <em>Entity Method
+		 * Instructions</em>}' class. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @see de.upb.sede.dsl.seco.EntityMethodInstructions
+		 * @see de.upb.sede.dsl.seco.SecoPackage#getEntityMethodInstructions()
+		 * @generated
+		 */
+		public static final EClass ENTITY_METHOD_INSTRUCTIONS = eINSTANCE.getEntityMethodInstructions();
+
+		/**
+		 * The meta object literal for the '<em><b>Instructions</b></em>' containment
+		 * reference list feature. <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		public static final EReference ENTITY_METHOD_INSTRUCTIONS__INSTRUCTIONS = eINSTANCE
+				.getEntityMethodInstructions_Instructions();
+
+		/**
+		 * The meta object literal for the '<em><b>Order</b></em>' attribute feature.
+		 * <!-- begin-user-doc --> <!-- end-user-doc -->
+		 * 
+		 * @generated
+		 */
+		public static final EAttribute ENTITY_METHOD_INSTRUCTIONS__ORDER = eINSTANCE
+				.getEntityMethodInstructions_Order();
 
 		/**
 		 * The meta object literal for the '{@link de.upb.sede.dsl.seco.EntityMethodProp

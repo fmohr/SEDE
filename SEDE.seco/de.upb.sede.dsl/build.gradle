@@ -52,17 +52,19 @@ task javadocJar(type: Jar) {
     from javadoc.destinationDir
 }
 
-//shadowJar {
-  //  baseName = ''
-    //classifier = ''
-    //exclude "log4j.xml"
-//}
+shadowJar {
+    	//artifactId 'SEDE.seco'
+        baseName = ''
+        classifier = ''
+    }
 
 	
 publishing {
     publications {
 		 shadow(MavenPublication) {  
-	            publication -> project.shadow.component(publication)
+	            publication -> project.shadow.component(publication)                	
+	            artifactId 'SEDE.seco'
+	            
 	     }
 	}
     repositories {

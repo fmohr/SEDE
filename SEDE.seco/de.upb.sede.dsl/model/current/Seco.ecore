@@ -42,7 +42,8 @@
         eType="#//EntityMethod" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="casts" upperBound="-1"
         eType="#//EntityCast" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="runtimeInfo" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="runtimeInfo" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="{}"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EntityMethod">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="property" eType="#//EntityMethodProp"
@@ -52,7 +53,10 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="realization" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="methodRealization" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="runtimeInfo" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="runtimeInfo" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral="{}"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="methodInstructions" upperBound="-1"
+        eType="#//EntityMethodInstructions" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="EntityMethodProp">
     <eLiterals name="STATIC" literal="static"/>
@@ -124,5 +128,11 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="deployment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="order" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
         defaultValueLiteral="-100"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EntityMethodInstructions">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="instructions" upperBound="-1"
+        eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="order" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+        defaultValueLiteral="5"/>
   </eClassifiers>
 </ecore:EPackage>

@@ -94,6 +94,8 @@ public class SecoFactory extends EFactoryImpl {
 			return createDeploymentProcedure();
 		case SecoPackage.DEPLOYMENT_DEPENDENCY:
 			return createDeploymentDependency();
+		case SecoPackage.ENTITY_METHOD_INSTRUCTIONS:
+			return createEntityMethodInstructions();
 		default:
 			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -281,6 +283,16 @@ public class SecoFactory extends EFactoryImpl {
 	public DeploymentDependency createDeploymentDependency() {
 		DeploymentDependency deploymentDependency = new DeploymentDependency();
 		return deploymentDependency;
+	}
+
+	/**
+	 * <!-- begin-user-doc --> <!-- end-user-doc -->
+	 * 
+	 * @generated
+	 */
+	public EntityMethodInstructions createEntityMethodInstructions() {
+		EntityMethodInstructions entityMethodInstructions = new EntityMethodInstructions();
+		return entityMethodInstructions;
 	}
 
 	/**

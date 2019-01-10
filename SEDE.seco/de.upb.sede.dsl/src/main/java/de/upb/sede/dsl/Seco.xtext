@@ -33,7 +33,7 @@ Operation:
 				(
 					(args+=Argument)		// First argument
 					(',' args+=Argument)*  // Additional Arguments
-				)? "}" ? ")" 
+				)? "}"? ")"
 ;
 								
 
@@ -83,17 +83,27 @@ EntityClassDefinition:
 EntityMethod:
 	(property = EntityMethodProp)? "method" ":" methodName = MethodName
 	 paramSignature = EntityMethodParamSignature 
-	 (realization ?= ('realized' | 'realised') 'by' 
-	 	methodRealization = MethodName
-	 	// realizationArguments EntityMethodParamSignature // TODO parameter redirects
-	 )?
-	 (runtimeInfo = Json)? ';'
+	 (
+	 	methodInstructions += EntityMethodInstructions
+	 )*
+	 ("runtime" ":" runtimeInfo = Json)? ';'
 ;
 
 enum EntityMethodProp:
 	MUTATING = 'mutating' | STATIC = 'static' | PURE = 'pure'
 ;
 
+EntityMethodInstructions:
+	{EntityMethodInstructions} "do" (order=InstructionOrder)? ":" "{"
+	    (instructions+=Assignment |
+		instructions+=Yield)*
+    "}"
+;
+
+
+InstructionOrder returns ecore::EInt:
+	"before" | "instead" | "after" | (("-" | "+")?INT)
+;
 
 EntityMethodParamSignature:
 	{EntityMethodParamSignature} 
@@ -121,7 +131,7 @@ EntityMethodParam:
 
 
 EntityCast:
-	("casts to" | "cast") ":" resultingEntity = EntityName (additionalData = Json)? ';' 
+	("casts" "to" | "cast") ":" resultingEntity = EntityName (additionalData = Json)? ';' 
 ;
 
 EntityDeploymentDefinition:
@@ -134,13 +144,20 @@ EntityDeploymentDefinition:
 ;
 
 DeploymentProcedure: 
-	"procedure" ":" 
-		(
-			("name=" name=ID) &
+	=> "procedure" ":" 
+		((
+			=>("name=" name=ID) &
 			("act=" act=ID) &
 			("fetch=" fetch=ID) &
 			("source=" source=STRING)
-		)
+		) 
+		| 
+		(
+			(name=ID)
+			(act=ID)
+			(fetch=ID)
+			(source=STRING)
+		))
 		";"
 ;
 

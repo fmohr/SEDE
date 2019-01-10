@@ -73,7 +73,7 @@ public final class ClassLinearization implements Serializable {
 	 * 
 	 */
 	public ClassLinearization() {
-		this(false);
+		this(true);
 	}
 	
 	/**
@@ -83,7 +83,7 @@ public final class ClassLinearization implements Serializable {
 	 * 
 	 * @param mergeRefinements If true, EntityResolver merges definitions of entities. 
 	 */
-	public ClassLinearization( boolean mergeRefinements) {
+	private ClassLinearization( boolean mergeRefinements) {
 		this.mergeRefinements = mergeRefinements;
 	}
 	
@@ -320,7 +320,17 @@ public final class ClassLinearization implements Serializable {
 				mergedDefinition.getCasts().add(newCast);
 			}
 		}
+
 		return mergedDefinition;
+	}
+
+	private EntityMethod mergeInto(EntityClassDefinition def, EntityMethod other) {
+		boolean merged = false;
+		for(EntityMethod method :  def.getMethods()) {
+			if(SecoUtil.checkSignatureMatch(method.getParamSignature(), other.getParamSignature(), false)) {
+				method.
+			}
+		}
 	}
 
 	/**
@@ -798,6 +808,7 @@ public final class ClassLinearization implements Serializable {
 				}
 				return true;
 			}
+
 
 			@Override
 			public boolean isPure() {

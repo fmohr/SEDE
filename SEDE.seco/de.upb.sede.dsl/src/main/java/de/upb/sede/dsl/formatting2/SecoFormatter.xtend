@@ -20,6 +20,7 @@ import de.upb.sede.dsl.seco.EntityCast
 import de.upb.sede.dsl.seco.EntityDeploymentDefinition
 import de.upb.sede.dsl.seco.DeploymentProcedure
 import de.upb.sede.dsl.seco.DeploymentDependency
+import de.upb.sede.dsl.seco.EntityMethodInstructions
 
 class SecoFormatter extends AbstractFormatter2 {
 	
@@ -52,12 +53,12 @@ class SecoFormatter extends AbstractFormatter2 {
 	
 	def dispatch void format(EntityClassDefinition obj, extension IFormattableDocument doc) {
 	    obj.regionFor.feature(eINSTANCE.entityClassDefinition_QualifiedName).surround[oneSpace]
-	    obj.regionFor.keyword(':').prepend[noSpace].append[oneSpace]
-	    obj.regionFor.keyword(',').prepend[noSpace].append[oneSpace]
-	    obj.regionFor.keyword('extends').surround[oneSpace]
-	    obj.regionFor.keyword('wraps').surround[oneSpace]
+	    obj.regionFor.keyword(':').prepend[noSpace]
+	    obj.regionFor.keyword(',').prepend[noSpace]
+	    obj.regionFor.keyword('extends')
+	    obj.regionFor.keyword('wraps')
 	    interior(
-	        obj.regionFor.keyword('{').prepend[oneSpace].append[newLine],
+	        obj.regionFor.keyword('{').append[newLine],
 	        obj.regionFor.keyword('}'),
 	        [indent]
 	    )
@@ -77,16 +78,39 @@ class SecoFormatter extends AbstractFormatter2 {
 	
 	def dispatch void format(Assignment obj, extension IFormattableDocument doc) {
 		format(obj.value, doc)
+	    obj.regionFor.keyword(';').prepend[noSpace]
 	} 
 	
 	def dispatch void format(EntityMethod obj, extension IFormattableDocument doc) {
-		obj.regionFor.keyword(':').prepend[noSpace].append[oneSpace]
-	    obj.regionFor.keyword(';').prepend[noSpace].append[oneSpace]
+		obj.regionFor.keyword(':').prepend[noSpace]
+	    obj.regionFor.keyword(';').prepend[noSpace]
+	    for (instructions : obj.methodInstructions) {
+			format(instructions, doc)
+	        instructions.prepend[newLine]
+	    }
+	    
 	    format(obj.paramSignature, doc)
+	    obj.regionFor.keyword('runtime').append[noSpace].prepend[newLine]
+	}
+	
+	
+	def dispatch void format(EntityMethodInstructions obj, extension IFormattableDocument doc) {
+		obj.regionFor.keyword(':').prepend[noSpace]
+	    interior(
+			obj.regionFor.keyword('{'),
+			obj.regionFor.keyword('}')
+		)[indent]
+	    
+	    for (instructions : obj.instructions) {
+			format(instructions, doc)
+	        instructions.prepend[newLine].append[newLine]
+	    }
 	}
 	 
 	def dispatch void format(EntityMethodParamSignature obj, extension IFormattableDocument doc) {
 		var first = true
+		obj.regionFor.keyword('(').append[noSpace]
+		obj.regionFor.keyword(')').prepend[noSpace]
 	    for(parameter : obj.parameters){
 	    	parameter.format
 	    	if(!first) {
@@ -102,7 +126,7 @@ class SecoFormatter extends AbstractFormatter2 {
 	    	if(!first) {
 	    		parameter.prepend[oneSpace] .append[noSpace]
     		} else {
-	    		parameter.prepend[noSpace].append[noSpace]
+	    		parameter.prepend[noSpace]
     			first = false
     		}
 	    }
@@ -162,14 +186,15 @@ class SecoFormatter extends AbstractFormatter2 {
 		";"
 		 */
 		obj.regionFor.keyword(':').prepend[noSpace].append[oneSpace]
-		obj.regionFor.keyword('name=').prepend[oneSpace].append[noSpace]
-		obj.regionFor.feature(eINSTANCE.deploymentProcedure_Name).prepend[noSpace].append[oneSpace]
-		obj.regionFor.keyword('act=').prepend[oneSpace].append[noSpace]
-		obj.regionFor.feature(eINSTANCE.deploymentProcedure_Act).prepend[noSpace].append[oneSpace]
-		obj.regionFor.keyword('fetch=').prepend[oneSpace].append[noSpace]
-		obj.regionFor.feature(eINSTANCE.deploymentProcedure_Fetch).prepend[noSpace].append[oneSpace]
-		obj.regionFor.keyword('source=').prepend[oneSpace].append[noSpace]
-		obj.regionFor.feature(eINSTANCE.deploymentProcedure_Source).prepend[noSpace].append[oneSpace]
+		obj.regionFor.keyword('name=').append[noSpace]
+		obj.regionFor.feature(eINSTANCE.deploymentProcedure_Name).prepend[noSpace]
+		obj.regionFor.keyword('act=').append[noSpace]
+		obj.regionFor.feature(eINSTANCE.deploymentProcedure_Act).prepend[noSpace]
+		obj.regionFor.keyword('fetch=').append[noSpace]
+		obj.regionFor.feature(eINSTANCE.deploymentProcedure_Fetch).prepend[noSpace]
+		obj.regionFor.keyword('source=').append[noSpace]
+		obj.regionFor.feature(eINSTANCE.deploymentProcedure_Source).prepend[noSpace]
+	    obj.regionFor.keyword(';').prepend[noSpace].append[oneSpace]
 	}
 	
 	def dispatch void format(DeploymentDependency obj, extension IFormattableDocument doc) {

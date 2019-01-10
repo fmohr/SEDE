@@ -46,6 +46,7 @@ Package seco <http://www.upb.de/sede/dsl/Seco>
     Attribute realization : EBoolean
     Attribute methodRealization : EString
     Attribute runtimeInfo : EString
+    Reference methodInstructions : EntityMethodInstructions<<0..*>>
 
   Class EntityMethodParamSignature
     Reference parameters : EntityMethodParam<<0..*>>
@@ -95,6 +96,10 @@ Package seco <http://www.upb.de/sede/dsl/Seco>
 
   Class DeploymentDependency
     Attribute deployment : EString
+    Attribute order : EInt
+
+  Class EntityMethodInstructions
+    Reference instructions : EObject<<0..*>>
     Attribute order : EInt
 
   Enum EntityMethodProp

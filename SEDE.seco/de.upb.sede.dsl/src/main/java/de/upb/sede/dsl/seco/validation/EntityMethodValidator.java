@@ -4,8 +4,10 @@
  */
 package de.upb.sede.dsl.seco.validation;
 
+import de.upb.sede.dsl.seco.EntityDeploymentDefinition;
 import de.upb.sede.dsl.seco.EntityMethodParamSignature;
 import de.upb.sede.dsl.seco.EntityMethodProp;
+import java.util.List;
 
 /**
  * A sample validator interface for {@link de.upb.sede.dsl.seco.EntityMethod}.
@@ -28,6 +30,8 @@ public interface EntityMethodValidator {
 	boolean validateMethodRealization(String value);
 
 	boolean validateRuntimeInfo(String value);
+
+	boolean validateMethodInstructions(List<EntityDeploymentDefinition> value);
 
 	boolean validateAdditionalData(String value);
 }

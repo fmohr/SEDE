@@ -8,11 +8,11 @@ public class FieldLookup<K> {
 
 	private final FieldLinker<VersionMap<K>> rootLinker;
 
-	FieldLookup() {
+	public FieldLookup() {
 		rootLinker = new FieldLinker<>();
 	}
 
-	FieldLookup(FieldLinker<VersionMap<K>> linker) {
+	public FieldLookup(FieldLinker<VersionMap<K>> linker) {
 		rootLinker = linker;
 	}
 
@@ -69,4 +69,6 @@ public class FieldLookup<K> {
 	public synchronized Optional<K> delete(Field field, Long version) {
 		return rootLinker.get(field).map(versionMap -> versionMap.remove(version));
 	}
+
+	
 }

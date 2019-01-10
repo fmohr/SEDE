@@ -4,6 +4,7 @@
 package de.upb.sede.dsl.seco;
 
 import de.upb.sede.dsl.SecoObject;
+import java.util.List;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
@@ -27,6 +28,8 @@ import org.eclipse.emf.ecore.EObject;
  * Realization</em>}</li>
  * <li>{@link de.upb.sede.dsl.seco.EntityMethod#getRuntimeInfo <em>Runtime
  * Info</em>}</li>
+ * <li>{@link de.upb.sede.dsl.seco.EntityMethod#getMethodInstructions <em>Method
+ * Instructions</em>}</li>
  * </ul>
  *
  * @see de.upb.sede.dsl.seco.SecoPackage#getEntityMethod()
@@ -257,6 +260,28 @@ public class EntityMethod extends SecoObject implements EObject {
 	 */
 	public void setRuntimeInfo(String newRuntimeInfo) {
 		eSet(SecoPackage.Literals.ENTITY_METHOD__RUNTIME_INFO, newRuntimeInfo);
+	}
+
+	/**
+	 * Returns the value of the '<em><b>Method Instructions</b></em>' containment
+	 * reference list. The list contents are of type
+	 * {@link de.upb.sede.dsl.seco.EntityMethodInstructions}. <!-- begin-user-doc
+	 * -->
+	 * <p>
+	 * If the meaning of the '<em>Method Instructions</em>' containment reference
+	 * list isn't clear, there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * 
+	 * @return the value of the '<em>Method Instructions</em>' containment reference
+	 *         list.
+	 * @see de.upb.sede.dsl.seco.SecoPackage#getEntityMethod_MethodInstructions()
+	 * @model containment="true"
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public List<EntityMethodInstructions> getMethodInstructions() {
+		return (List<EntityMethodInstructions>) eGet(SecoPackage.Literals.ENTITY_METHOD__METHOD_INSTRUCTIONS, true);
 	}
 
 } // EntityMethod

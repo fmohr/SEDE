@@ -107,7 +107,7 @@ public class SecoUtilTest {
   public void testJson() throws IOException {
       String seco = "class: a {"
       				+ "method:  !Construct (Number, String, some.Entity) -> (Bool, $some.other.Entity)"
-      				+"{"
+      				+ "runtime: {"
       				+	"\"Hello\":\"world!\",\n"
       				+	"\"Number\":1"
       				+"}"
@@ -120,16 +120,16 @@ public class SecoUtilTest {
       System.out.println(entries.toString());
   }
   
-  
+
   @Test
   public void testDeployment() throws IOException {
-      String seco = "deployment: apple {"
-				+ "procedure: name=build act=gradle_java fetch=git source=\"http://example.com.git\";"
+      String seco = "deployment: apple { "
+				+ "procedure: build gradle_java git \"http://example.com.git\";"
   				+ "procedure: name=verify act=bash fetch=http source=\"http://apple.verify\";"
   				+ "dependency: food;"
   				+ "dependency: fruit(PRE-RUN);"
   				+ "dependency: cut(POST-RUN);"
-  				+ "dependency: eat(10);"
+  				+ "dependency: eat(-  \n11);"
       		+ "}";
       
       System.out.println(seco);
@@ -153,8 +153,41 @@ public class SecoUtilTest {
       
       DeploymentDependency dep3 = apple.getDependencies().get(3);
       assertEquals("eat", dep3.getDeployment());
-      assertEquals(10, dep3.getOrder());
+      assertEquals(- 11, dep3.getOrder());
       
+      System.out.println("Formatted to:\n" + entries.toString());
+  }
+  @Test
+  public void testNumbers() throws IOException {
+      String seco = "a = -10;"
+      		+ "a = - 10;"
+      		+ "- 10 . 3;";
+      
+      System.out.println(seco);
+      
+      Entries entries = EcoreUtil.copy(SecoUtil.parseSources(seco));
+
+      Assignment a0 = (Assignment) entries.getInstructions().get(0);
+      assertEquals("-10", a0.getValue().getNumber());
+      Assignment a1 = (Assignment) entries.getInstructions().get(1);
+      assertEquals("-10", a1.getValue().getNumber());
+      Assignment a2 = (Assignment) entries.getInstructions().get(2);
+      assertEquals("-10.3", a2.getValue().getNumber());
+      
+      System.out.println("Formatted to:\n" + entries.toString());
+  }
+  @Test
+  public void testMethodInstructions() throws IOException {
+      String seco = "class: A {"
+			      		+ "method: A() -> ()"
+			      		+ 	"do: {a=2;}"
+			      		+ ";"
+		      		+ "}";
+		      
+      System.out.println(seco);
+      
+      Entries entries = EcoreUtil.copy(SecoUtil.parseSources(seco));
+
       System.out.println("Formatted to:\n" + entries.toString());
   }
   

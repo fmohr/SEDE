@@ -59,6 +59,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethod/realization"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethod/methodRealization"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethod/runtimeInfo"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityMethod/methodInstructions"/>
     </genClasses>
     <genClasses ecoreClass="Seco.ecore#//EntityMethodParamSignature">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityMethodParamSignature/parameters"/>
@@ -109,6 +110,10 @@
     <genClasses ecoreClass="Seco.ecore#//DeploymentDependency">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//DeploymentDependency/deployment"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//DeploymentDependency/order"/>
+    </genClasses>
+    <genClasses ecoreClass="Seco.ecore#//EntityMethodInstructions">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Seco.ecore#//EntityMethodInstructions/instructions"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Seco.ecore#//EntityMethodInstructions/order"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
@@ -35,6 +36,9 @@ import com.google.inject.Injector;
 import de.upb.sede.dsl.seco.Argument;
 import de.upb.sede.dsl.seco.Assignment;
 import de.upb.sede.dsl.seco.EntityClassDefinition;
+import de.upb.sede.dsl.seco.EntityMethod;
+import de.upb.sede.dsl.seco.EntityMethodParam;
+import de.upb.sede.dsl.seco.EntityMethodParamSignature;
 import de.upb.sede.dsl.seco.Entries;
 import de.upb.sede.dsl.seco.Field;
 import de.upb.sede.dsl.seco.FieldValue;
@@ -201,6 +205,65 @@ public class SecoUtil {
 			}
 		}
 		return entries;
+	}
+	
+	public static boolean checkSignatureMatch(EntityMethodParamSignature signature, EntityMethodParamSignature other, boolean silently) {
+		if(signature == other) {
+			return true;
+		}
+		if(signature == null || other == null) {
+			return false;
+		}
+		if(signature.getParameters().size() != other.getParameters().size()) {
+			return false;
+		}
+		for(int i = 0; i < signature.getParameters().size(); i++) {
+			EntityMethodParam param = signature.getParameters().get(i);
+			EntityMethodParam otherParam = other.getParameters().get(i);
+			if(!param.getParameterType().equals(otherParam.getParameterType())) {
+				return false;
+			}
+			
+		}
+		if(silently) {
+			return true;
+		}
+		/* 
+		 * Throw an exception if the two signature are in conflicted.
+		 */
+		checkForSignatureConflict(signature.getParameters(), other.getParameters());
+		checkForSignatureConflict(signature.getOutputs(), other.getOutputs());
+		/*
+		 * No conflict detected. Signature matches!
+		 */
+		return true;
+	}
+	
+	private static void checkForSignatureConflict(List<EntityMethodParam> signature, List<EntityMethodParam> other) {
+		RuntimeException conflict = new IllegalArgumentException("The two method signatures are in conflict. Were: " + signature.toString() + " and " + other.toString());
+		for(int i = 0; i < signature.size(); i++) {
+			EntityMethodParam param = signature.get(i);
+			EntityMethodParam otherParam = other.get(i);
+			
+			if(param.isFinal() != otherParam.isFinal()) {
+				throw conflict;
+			} 
+			if(param.isValueFixed() != otherParam.isValueFixed()) {
+				throw conflict;
+			}else if(param.isValueFixed() && !EcoreUtil.equals(param.getFixedValue(), otherParam.getFixedValue())) {
+				throw conflict;
+			}
+			String name = param.getParameterName();
+			String otherName = otherParam.getParameterName();
+			if((name == null)  != (other == null)) {
+				throw conflict;
+			}
+			else if(name != null) {
+				if(!name.equals(otherName)) {
+					throw conflict;
+				}
+			}
+		}
 	}
 	
 }

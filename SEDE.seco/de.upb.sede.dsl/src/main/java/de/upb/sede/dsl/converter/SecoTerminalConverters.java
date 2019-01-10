@@ -1,11 +1,8 @@
 package de.upb.sede.dsl.converter;
 
-import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 
-import org.eclipse.emf.mwe.internal.core.ast.util.converter.IntegerConverter;
 import org.eclipse.xtext.common.services.DefaultTerminalConverters;
 import org.eclipse.xtext.conversion.IValueConverter;
 import org.eclipse.xtext.conversion.ValueConverter;
@@ -24,6 +21,12 @@ public class SecoTerminalConverters extends DefaultTerminalConverters{
 	
 	public final static int POST_RUN = 10;
 	
+	public final static int INSTEAD = 0;
+
+	public final static int BEFORE = -10;
+	
+	public final static int AFTER = 10;
+	
 	@ValueConverter(rule = "EntityName")
     public IValueConverter<String> EntityName() 
     {
@@ -35,11 +38,23 @@ public class SecoTerminalConverters extends DefaultTerminalConverters{
     {
 		return new OptionalPrefixNameConverter("!", s -> false);
     }
-	
+
 	@ValueConverter(rule = "DependencyOrder")
     public IValueConverter<Integer> DependencyOrder() 
     {
 		return new DependencyOrderConverter();
+    }
+
+	@ValueConverter(rule = "InstructionOrder")
+    public IValueConverter<Integer> InstructionOrder() 
+    {
+		return new InstructionOrderConverter();
+    }
+	
+	@ValueConverter(rule = "NumberConst")
+    public IValueConverter<String> NumberConst() 
+    {
+		return new NumberConstConverter();
     }
 	
 //	@ValueConverter(rule = "Json")
@@ -112,7 +127,7 @@ public class SecoTerminalConverters extends DefaultTerminalConverters{
 			case "POST-RUN":
 				return POST_RUN;
 			default:
-				return Integer.valueOf(string);
+				return Integer.valueOf(string.replaceAll("\\s", ""));
 			}
 		}
 
@@ -129,5 +144,51 @@ public class SecoTerminalConverters extends DefaultTerminalConverters{
 				return value.toString();
 			}
 		}
+	}
+	static class InstructionOrderConverter implements IValueConverter<Integer> {
+	
+		
+		@Override
+		public Integer toValue(String string, INode node) throws ValueConverterException {
+			// string can be: 	"before" | "instead" | "after" | (("-" | "+")?INT)
+			switch (string) {
+			case "before":
+				return BEFORE;
+			case "instead":
+				return INSTEAD;
+			case "after":
+				return AFTER;
+			default:
+				return Integer.valueOf(string.replaceAll("\\s", ""));
+			}
+		}
+	
+		@Override
+		public String toString(Integer value) throws ValueConverterException {
+			switch (value) {
+			case BEFORE:
+				return "before";
+			case INSTEAD:
+				return "instead";
+			case AFTER:
+				return "after";
+			default:
+				return value.toString();
+			}
+		}
+	}
+	static class NumberConstConverter implements IValueConverter<String> {
+
+		@Override
+		public String toValue(String string, INode node) throws ValueConverterException {
+			return string.replaceAll("\\s", "");
+		}
+
+		@Override
+		public String toString(String value) throws ValueConverterException {
+			return value.replaceAll("\\s", "");
+		}
+
+	
 	}
 }

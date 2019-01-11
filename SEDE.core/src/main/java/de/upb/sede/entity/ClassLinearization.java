@@ -14,6 +14,9 @@ import de.upb.sede.dsl.SecoUtil;
 import de.upb.sede.dsl.seco.*;
 import de.upb.sede.util.DefaultMap;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -314,7 +317,7 @@ public final class ClassLinearization implements Serializable {
 				}
 			}
 			for(EntityMethod newMethod : EcoreUtil.copyAll(partial.getMethods())) {
-				mergedDefinition.getMethods().add(newMethod);
+				mergeInto(mergedDefinition, newMethod);
 			}
 			for(EntityCast newCast :  EcoreUtil.copyAll(partial.getCasts())) {
 				mergedDefinition.getCasts().add(newCast);
@@ -325,11 +328,77 @@ public final class ClassLinearization implements Serializable {
 	}
 
 	private EntityMethod mergeInto(EntityClassDefinition def, EntityMethod other) {
-		boolean merged = false;
 		for(EntityMethod method :  def.getMethods()) {
-			if(SecoUtil.checkSignatureMatch(method.getParamSignature(), other.getParamSignature(), false)) {
-				method.
+			if(!method.getMethodName().equals(other.getMethodName())){
+				continue;
 			}
+			if(!SecoUtil.checkSignatureMatch(method.getParamSignature(), other.getParamSignature(), false)) {
+				continue;
+			}
+			/*
+			 * Methods match.
+			 */
+			if(!method.getProperty().equals(other.getProperty())) {
+				throw new IllegalStateException("Merging incompatible methods: " + method.toString() + ", " + other.toString());
+			}
+			method.getMethodInstructions().addAll(EcoreUtil.copyAll(other.getMethodInstructions()));
+			try {
+				method.setRuntimeInfo(mergeMaps(method.getRuntimeInfo(), other.getRuntimeInfo()));
+			} catch (ParseException e) {
+				logger.error("Cannot merge the runtime-info of two methods: " + method.toString() + ", " + other.toString(), e);
+			}
+			return method;
+		}
+		/*
+		 * No matching candidate found.
+		 * Add the given method into the definition and return it:
+		 *
+		 */
+		EntityMethod newMethod = EcoreUtil.copy(other);
+		def.getMethods().add(newMethod);
+		return newMethod;
+	}
+
+	/**
+	 * Merges two json string into one another:
+	 */
+	private String mergeMaps(String jsonString, String otherJsonString) throws ParseException {
+		JSONParser parser = new JSONParser();
+		Map<String, Object> map = (Map<String, Object>) parser.parse(jsonString);
+		Map<String, Object> otherMap = (Map<String, Object>) parser.parse(otherJsonString);
+		mergeIntoMap(map, otherMap);
+		return JSONObject.toJSONString(map);
+	}
+
+	private void mergeIntoMap(Map<String, Object> map, Map<String, Object> other) {
+		for(String key : other.keySet()){
+			Object entry = map.get(key);
+			Object otherEntry = other.get(key);
+			if(otherEntry == null) {
+				continue;
+			}
+			if(entry == null) {
+				map.put(key, otherEntry);
+				continue;
+			}
+			/*
+			 * If both are maps they are recursively merged:
+			 */
+			if((entry instanceof Map) && (otherEntry instanceof  Map)) {
+				mergeIntoMap((Map)entry, (Map)otherEntry);
+				continue;
+			}
+			/*
+			 * Lists are extended:
+			 */
+			if((entry instanceof List) && (otherEntry instanceof  List)) {
+				((List)entry).addAll((List) otherEntry);
+				continue;
+			}
+			/*
+			 * Every other entry will be discarded as the first one has already defined it.
+			 */
+			logger.warn("Merging maps and ignoring key `{}`. Values were: {}, {}", key, entry, otherEntry);
 		}
 	}
 

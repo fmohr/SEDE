@@ -64,5 +64,5 @@ public interface MethodView {
 	 * @param otherMethod
 	 * @return
 	 */
-	MethodView mergeMethod(MethodView otherMethod);
+//	MethodView mergeMethod(MethodView otherMethod); // Was moved to CLassLineariazation
 }

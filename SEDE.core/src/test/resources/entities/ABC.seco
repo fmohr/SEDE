@@ -8,23 +8,16 @@ class: A {
     static method: m3();
     method: m4();
     pure method: m5();
-    pure method: m6() realized by m5;
 }
 
 class: B wraps A {
     method: m2 (t1, t2, t3, t4 = "Hello");
-    method: m7() realized by m5;
-    method: m8() realized by m6;
-    method: m9() realized by m7;
 }
 
 class: C extends A {
     static method: __construct(t3, t2) -> (C);
     pure method: m1(t3) -> (t2);
     method: m6() -> (t3);
-    method: m7() realized by m5;
-    method: m8() realized by m6;
-    method: m9() realized by m7;
 }
 
 class: t1 {}

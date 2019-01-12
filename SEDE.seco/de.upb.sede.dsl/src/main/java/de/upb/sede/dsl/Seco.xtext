@@ -52,7 +52,8 @@ Assignment:
  * E.g.:
  * class : a.b.C  wraps d.e.F extends g.H, i.J {
  * 		static method:  Construct (Number, String, some.Entity) -> (Bool, some.other.Entity) {
- * 			"runtime-data" = {
+ * 			
+ * 			runtime : {
  * 				"some_data_java_needs" = 10
  * 			}
  * 		};

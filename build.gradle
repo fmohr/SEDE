@@ -37,7 +37,11 @@ subprojects {
 
         maven {
             url "https://nexus.cs.upb.de/repository/maven-releases/"
+            content {
+                includeGroupByRegex "de\\.upb\\.isys"
+            }
         }
+        
 
         // we use jitpack in order to add dependecy to github projects:
         maven { url 'https://jitpack.io' }

@@ -60,7 +60,19 @@ public class ExecutorHttpServer implements ImServer {
 		setHostAddress(hostAddress + ":" + port);
 
 		try {
-			server = HttpServer.create(new InetSocketAddress(port), 0);
+			Optional<String> envPort = Optional.ofNullable(System.getenv("EXECUTOR_SERVER_PORT"));
+			int actualPort = port;
+			if(envPort.isPresent()) {
+				logger.info("EXECUTOR_SERVER_PORT was set to `" + envPort.get() + "`.");
+				try{
+					actualPort = Integer.parseInt(envPort.get());
+				} catch(NumberFormatException ex) {
+					logger.warn("Format error: `" + envPort.get() + "`. Using fallback port `" + actualPort + "`.");
+				}
+			}
+			logger.info("Creating Executor http server with port=" + actualPort);
+			server = HttpServer.create(new InetSocketAddress(actualPort), 0);
+
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}

@@ -14,7 +14,7 @@ subprojects {
     apply plugin: 'eclipse'
 
     group = 'de.upb.isys'
-    version = '0.0.5'
+    version = '0.0.5-SNAPSHOT'
 
     configurations {
         provided
@@ -37,7 +37,11 @@ subprojects {
 
         maven {
             url "https://nexus.cs.upb.de/repository/maven-releases/"
+            content {
+                includeGroupByRegex "de\\.upb\\.isys"
+            }
         }
+        
 
         // we use jitpack in order to add dependecy to github projects:
         maven { url 'https://jitpack.io' }
@@ -146,7 +150,7 @@ project(':SEDE.gateway') {
         compile 'com.github.aminfa:TinyJavaDot:v1.3'
 
         // dependend on the builtin service configurations
-        compile group: 'de.upb.isys', name: 'builtins', version: '1.0'
+        compile group: 'de.upb.isys', name: 'builtins', version: '1.1'
     }
 }
 

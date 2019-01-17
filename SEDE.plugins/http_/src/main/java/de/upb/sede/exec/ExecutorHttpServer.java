@@ -222,7 +222,7 @@ public class ExecutorHttpServer implements ImServer {
 			String fieldname = (String) task.getAttributes().get("fieldname");
 			String semType = PrimitiveDataField.PrimitiveType.Bool.name();
 			String executionId = task.getExecution().getExecutionId();
-			boolean failed = false;
+			boolean failed = task.hasDependencyFailed();
 			return createPutDataRequest(host, fieldname, semType, executionId, failed);
 		}
 	}

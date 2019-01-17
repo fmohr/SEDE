@@ -10,19 +10,22 @@ class: CanClimb {}
 
 class: Domestic {
     method: __construct() -> (Animal);
+    cast: Meat {
+            "by" : "slaughter"
+        };
 }
 
 class: Bird extends Animal {
-    method: cheep(String);
+    static method: cheep(String) -> (Boolean);
     method: tweet(String);
+
+    method: eat(Fruit);
 }
 
 class: Goose extends Bird, CanFly {
-
 }
 
 class: Duck extends Bird, CanFly {
-
 }
 
 class: Chicken extends Bird, Domestic {
@@ -46,9 +49,27 @@ class: Monkey extends Primate {
 }
 
 class: Human extends Primate{
+    method: eat(CookedMeat);
 
 }
 
 class: Ape extends Primate {
+}
+
+class: Food {
+
+}
+
+class: Fruit extends Food {
+
+}
+
+class: Meat extends Food {
+    cast: CookedMeat {
+        "by" : "cooking"
+    };
+}
+
+class: CookedMeat extends Food {
 
 }

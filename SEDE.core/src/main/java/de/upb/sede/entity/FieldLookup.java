@@ -69,6 +69,4 @@ public class FieldLookup<K> {
 	public synchronized Optional<K> delete(Field field, Long version) {
 		return rootLinker.get(field).map(versionMap -> versionMap.remove(version));
 	}
-
-	
 }

@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import de.upb.sede.dsl.SecoUtil;
@@ -25,7 +26,7 @@ import static de.upb.sede.dsl.seco.SecoFactory.eINSTANCE;
 /**
  * Encapsulates entities and offers viewers onto them.
  * This class is thread-safe.
- * 
+ *
  * @author aminfaez
  *
  */
@@ -34,21 +35,21 @@ public final class ClassLinearization implements Serializable {
 	private final static Logger logger = LoggerFactory.getLogger(ClassLinearization.class);
 
 	/**
-	 * If true, EntityResolver merges incoming definitions of entities into a single one. 
+	 * If true, EntityResolver merges incoming definitions of entities into a single one.
 	 * When false, all refinements are kept separate from definitions. <\n>
-	 * 
+	 *
 	 * By contract, the state of this flag will not change the functionality of viewers.
 	 * It only determines how entities are kept and serialized. <\n>
-	 * 
+	 *
 	 * It is set to true, by default
 	 */
 	private final boolean mergeRefinements;
-	
+
 	/**
 	 * Maps entity names their entity definitions.
 	 */
 	private final Map<String, Entries> entityMap = new HashMap<>();
-	
+
 	/**
 	 * Resolved entity cache:
 	 */
@@ -73,56 +74,56 @@ public final class ClassLinearization implements Serializable {
 
 	/**
 	 * Creates an empty resolver.
-	 * 
+	 *
 	 */
 	public ClassLinearization() {
 		this(true);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Creates an empty resolver.
-	 * 
-	 * 
-	 * @param mergeRefinements If true, EntityResolver merges definitions of entities. 
+	 *
+	 *
+	 * @param mergeRefinements If true, EntityResolver merges definitions of entities.
 	 */
 	private ClassLinearization( boolean mergeRefinements) {
 		this.mergeRefinements = mergeRefinements;
 	}
-	
+
 	public void add(EntityClassDefinition...entries) {
 		this.add(Arrays.asList(entries));
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Adds the given entity definitions from the given Entries object to this resolver.
-	 * 
+	 *
 	 * @param entries entity definitions will be added to this resolver.
 	 */
 	public void add(Entries entries) {
 
 		Objects.requireNonNull(entries, "Cannot put null value into resolver");
-		if(entries.getEntities() == null) { 
+		if(entries.getEntities() == null) {
 			throw new IllegalArgumentException("Cannot put entries with an unassigned entities field into resolver.");
 		}
-		
+
 		this.add(entries.getEntities());
 	}
-	
+
 	/**
 	 * Adds the given collection of entity definitions to this resolver.
 	 * @param entries new entity definitions
 	 */
 	public void add(Collection<EntityClassDefinition> entries) {
-		
+
 		Objects.requireNonNull(entries, "Cannot put null value into resolver");
-		
+
 		for(EntityClassDefinition entityDefinition : entries) {
 			add(entityDefinition);
 		}
 	}
-	
+
 	/**
 	 * Adds the given entity definition to this resolver.
 	 * @param entity new entity definition
@@ -162,37 +163,37 @@ public final class ClassLinearization implements Serializable {
 		}
 		castGraph.clearCache();
 	}
-	
+
 	/**
-	 * Returns collection of all entities that were added to this resolver and thus are known by this resolver. 
-	 * 
+	 * Returns collection of all entities that were added to this resolver and thus are known by this resolver.
+	 *
 	 * @return collection of all added entities.
 	 */
 	public Collection<String> knownEntities() {
 		return entityMap.keySet();
 	}
-	
+
 	/**
 	 * Returns true if an entity with the given name has been added to this resolver.
-	 * @param entityName name of an entity 
+	 * @param entityName name of an entity
 	 * @return true if the given entity name corresponds to a definition that was added.
 	 */
 	public boolean isKnown(String entityName) {
-		
+
 		Objects.requireNonNull(entityName, "entityName was null");
-		
+
 		return knownEntities().contains(entityName);
 	}
-	
+
 	/**
 	 * Resolves the entity with the given name and returns a view on it.
 	 * @param entityName name of the entity to be resolved
 	 * @return view on the resolved entity
 	 */
 	public ClassView classView(String entityName) {
-		
+
 		Objects.requireNonNull(entityName, "entityName was null");
-		
+
 		if(isKnown(entityName)) {
 			return linearizeClass(entityName, new HashSet<String>());
 		} else {
@@ -206,18 +207,18 @@ public final class ClassLinearization implements Serializable {
 	 */
 	private ClassView linearizeClass(String entityName, Set<String> hierarchyCache) {
 		/*
-		 * Shield against re-entrance of a previous argument to prevent infinitely looping recursions. 
+		 * Shield against re-entrance of a previous argument to prevent infinitely looping recursions.
 		 */
 		if(hierarchyCache.contains(entityName)) {
 			throw new IllegalStateException("Presence of a cyclic class hierarchy. Hierarchy cache was: " + hierarchyCache.toString() + ", Reentered entity was: " + entityName);
 		}
-		
+
 		synchronized(cache) {
 			if(cache.containsKey(entityName)) {
 				return cache.get(entityName);
-			} 
+			}
 		}
-		
+
 		/*
 		 * Add this entity to the cache in order to detect hierarchy cycles.
 		 */
@@ -237,7 +238,7 @@ public final class ClassLinearization implements Serializable {
 			parents.add(parentView);
 		}
 		LinkedClassView classView = new LinkedClassView(def, wrappedEntity, parents);
-		
+
 		hierarchyCache.remove(entityName);
 		synchronized(cache) {
 			if(! cache.containsKey(entityName)) {
@@ -246,20 +247,20 @@ public final class ClassLinearization implements Serializable {
 		}
 		return classView;
 	}
-	
+
 	/**
-	 * Merges the partial definitions. 
+	 * Merges the partial definitions.
 	 * Delegates to mergeEntries(Collection).
-	 * @param entries partial entity definition. 
+	 * @param entries partial entity definition.
 	 * @return One merged entity definition.
 	 */
 	private EntityClassDefinition mergeEntries(Entries entries) {
 		return mergeEntries(entries.getEntities());
 	}
-	
+
 	/**
-	 * Merges the given list of partial definitions into one. 
-	 * 
+	 * Merges the given list of partial definitions into one.
+	 *
 	 * @param partialDefinitions list of parial entity defitions.
 	 * @return merged entity.
 	 */
@@ -273,9 +274,9 @@ public final class ClassLinearization implements Serializable {
 			 */
 			return partialDefinitions.get(0);
 		}
-			
+
 		String entityName = partialDefinitions.get(0).getQualifiedName();
-		
+
 		/*
 		 * Make sure every given definition has the same entity name:
 		 */
@@ -284,16 +285,16 @@ public final class ClassLinearization implements Serializable {
 				throw new IllegalArgumentException("Cannot merge different entities (with different names) into one. Was: "
 						+ entityName + ",  " + partial.getQualifiedName());
 			}
-		}		
+		}
 		/*
-		 * This will be the final resulting entity which is the merge result of all given partial entityDefinitions. 
+		 * This will be the final resulting entity which is the merge result of all given partial entityDefinitions.
 		 */
 		EntityClassDefinition mergedDefinition = new EntityClassDefinition();
 		/*
 		 * Set entity name.
 		 */
 		mergedDefinition.setQualifiedName(entityName);
-		
+
 		boolean wrapperAttrSet = false;
 		Set<String> parentCache = new HashSet<>();
 		for(EntityClassDefinition partial : partialDefinitions) {
@@ -363,6 +364,13 @@ public final class ClassLinearization implements Serializable {
 	 * Merges two json string into one another:
 	 */
 	private String mergeMaps(String jsonString, String otherJsonString) throws ParseException {
+		if(jsonString == null) {
+			if(otherJsonString == null) {
+				return null;
+			} else {
+				return otherJsonString;
+			}
+		}
 		JSONParser parser = new JSONParser();
 		Map<String, Object> map = (Map<String, Object>) parser.parse(jsonString);
 		Map<String, Object> otherMap = (Map<String, Object>) parser.parse(otherJsonString);
@@ -409,7 +417,7 @@ public final class ClassLinearization implements Serializable {
 	 * @param typeLookup
 	 * @return
 	 */
-	public Optional<OperationResolution> resolveOperation(Operation operation, FieldLookup<String> typeLookup) {
+	public Optional<OperationResolution> resolveOperation(Operation operation, Function<Field, Optional<String>> typeLookup) {
 		/*
 		 * Resolve operation context entity:
 		 */
@@ -420,7 +428,7 @@ public final class ClassLinearization implements Serializable {
 				throw new OperationResolutionException(operation, "Context field dereference not yet supported.");
 			}
 			Field field = operation.getContextField();
-			Optional<String> fieldType = typeLookup.readLatest(field);
+			Optional<String> fieldType = typeLookup.apply(field);
 			if(fieldType.isPresent()) {
 				contextEntityName = fieldType.get();
 			} else {
@@ -517,7 +525,7 @@ public final class ClassLinearization implements Serializable {
 //				if(field.isDereference()) {
 //					throw new OperationResolutionException(operation, "Cannot dereference argument: " + arg);
 //				}
-				Optional<String> fieldTypeOpt = typeLookup.readLatest(field);
+				Optional<String> fieldTypeOpt = typeLookup.apply(field);
 				if( ! fieldTypeOpt.isPresent()) {
 					throw new OperationResolutionException(operation, "Couldnt look up argument type of field: " + arg);
 				}
@@ -627,7 +635,7 @@ public final class ClassLinearization implements Serializable {
 		out.writeBoolean(mergeRefinements);
 		out.writeUTF(entries().toString());
 	}
-	
+
 
 	public class LinkedClassView implements ClassView {
 
@@ -635,14 +643,14 @@ public final class ClassLinearization implements Serializable {
 		private final ClassView wrapped;
 		private final List<ClassView> parents;
 		private final Map<String, List<MethodView>> methodCache = new HashMap<>();
-		
+
 		LinkedClassView(EntityClassDefinition definition, Optional<ClassView> wrappedEntity, List<ClassView> parentEntities) {
 			if(definition.isWrapper() && !wrappedEntity.isPresent()) {
 				throw new IllegalArgumentException("Definition says entity is a wrapper. However no wrappedEntity was supplied.");
 			} else if (!definition.isWrapper() && wrappedEntity.isPresent()){
 				throw new IllegalArgumentException("Definition says entity is not a wrapper. However a wrappedEntity was supplied.");
 			}
-			
+
 			this.def = definition;
 			this.wrapped = wrappedEntity.orElse(null);
 			this.parents = parentEntities;
@@ -653,12 +661,12 @@ public final class ClassLinearization implements Serializable {
 		public boolean isWrapper() {
 			return def.isWrapper();
 		}
-		
+
 		@Override
 		public String entityName() {
 			return def.getQualifiedName();
 		}
-		
+
 		@Override
 		public String targetEntityName() {
 			if(isWrapper()) {
@@ -667,7 +675,7 @@ public final class ClassLinearization implements Serializable {
 				return entityName();
 			}
 		}
-		
+
 		@Override
 		public List<EntityCast> declaredCasts() {
 			List<EntityCast> casts = new ArrayList<>();
@@ -718,7 +726,7 @@ public final class ClassLinearization implements Serializable {
 
 		@Override
 		/**
-		 * Returns true if this entity is of the given type. The given type can also be the wrapped entity or a super class. 
+		 * Returns true if this entity is of the given type. The given type can also be the wrapped entity or a super class.
 		 * @param entity
 		 * @return
 		 */
@@ -734,7 +742,7 @@ public final class ClassLinearization implements Serializable {
 			}
 			return false;
 		}
-		
+
 		@Override
 		public synchronized List<MethodView> allMethodsWithName(String methodName) {
 			if(methodCache.containsKey(methodName)) {
@@ -796,16 +804,16 @@ public final class ClassLinearization implements Serializable {
 		}
 
 		public class NestedMethodView implements MethodView {
-			
+
 			private final EntityMethod method;
-			
+
 			NestedMethodView(EntityMethod method) {
 				this.method = method;
 				if(method.getParamSignature() == null) {
 					method.setParamSignature(new EntityMethodParamSignature());
 				}
 			}
-			
+
 			int paramCount(boolean input) {
 				List<EntityMethodParam> parameters = input ? method.getParamSignature().getParameters() : method.getParamSignature().getOutputs();
 				int paramCount = 0 ;
@@ -817,7 +825,7 @@ public final class ClassLinearization implements Serializable {
 				}
 				return paramCount;
 			}
-			
+
 			String getParamType(int paramIndex, boolean input) {
 				if(paramIndex < 0 || paramIndex >= paramCount(input)) {
 					throw new IllegalArgumentException("Parameter index '" + paramIndex + "' is out of bound.");
@@ -837,21 +845,21 @@ public final class ClassLinearization implements Serializable {
 					throw new IllegalStateException("This line cannot be reached. BUG in MethodResolution::getInputParameterType(int)");
 				}
 			}
-			
-			
+
+
 
 			public boolean matchesSignature(EntityMethod requestedMethod) {
 				Objects.requireNonNull(requestedMethod);
 				if(!requestedMethod.getMethodName().equals(method.getMethodName())) {
 					return false;
 				}
-				
+
 				EntityMethodParamSignature requestedSignature = requestedMethod.getParamSignature();
 				if(requestedMethod.getParamSignature().getParameters().size() != method.getParamSignature().getParameters().size()) {
 					return false;
 				}
 				for(int parameterIndex = 0; parameterIndex < requestedSignature.getParameters().size(); parameterIndex++) {
-					String declaredType = getParamType(parameterIndex, true); 
+					String declaredType = getParamType(parameterIndex, true);
 					String requestedType = requestedSignature.getParameters().get(parameterIndex).getParameterType();
 					if(!declaredType.equals(requestedType)) {
 						ClassView requestedTypeView = classView(requestedType);
@@ -866,7 +874,7 @@ public final class ClassLinearization implements Serializable {
 				}
 
 				for(int outputIndex = 0; outputIndex < requestedSignature.getOutputs().size(); outputIndex ++) {
-					String declaredType = getParamType(outputIndex, false); 
+					String declaredType = getParamType(outputIndex, false);
 					String requestedType = requestedSignature.getOutputs().get(outputIndex).getParameterType();
 					if(!declaredType.equals(requestedType)) {
 						ClassView requestedTypeView = classView(requestedType);
@@ -936,9 +944,9 @@ public final class ClassLinearization implements Serializable {
 			}
 		}
 	}
-	
+
 	class EntityClassCastGraph {
-		
+
 		private final CastTupelCache cache = new CastTupelCache();
 
 		/*
@@ -1001,11 +1009,11 @@ public final class ClassLinearization implements Serializable {
 				return cachedEntry.get();
 			}
 			/*
-			 * Perform depth first search from the source entity. 
-			 * This operation fills the cache. 
+			 * Perform depth first search from the source entity.
+			 * This operation fills the cache.
 			 */
 			dfs(new ClassCastPath(start));
-			
+
 			cachedEntry = cache.get(querry);
 			if(!cachedEntry.isPresent()) {
 				/*
@@ -1018,7 +1026,7 @@ public final class ClassLinearization implements Serializable {
 				return cachedEntry.get();
 			}
 		}
-		
+
 		private void dfs(ClassCastPath path) {
 			/*
 			 * Find all cast targets from the last node in the path:
@@ -1050,7 +1058,7 @@ public final class ClassLinearization implements Serializable {
 				dfs(newPath);
 			}
 		}
-		
+
 		private void putInCache(ClassCastPath cp) {
 			logger.debug("Caching cast path:\n\t" + cp.toString());
 			String castInput = cp.head();
@@ -1069,7 +1077,7 @@ public final class ClassLinearization implements Serializable {
 				this.from = from;
 				this.to = to;
 			}
-			
+
 			@Override
 			public int hashCode() {
 				return Objects.hash(from, to);

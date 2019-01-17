@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertEquals;
@@ -321,9 +322,34 @@ public class ClassLinTest {
 
 	@Test
 	public void testResolveOp1() {
-//		Operation op1 = createOp
-//		op1.getArgs();
-//		cl.resolveOperation(op1, null);
+		Operation humanEatChicken = SecoUtil.createOperation(createField("Joe"), "eat", createArgument(createField("Chicken1")));
+		FieldLookup<String> typeLookUp = new FieldLookup<String>();
+		typeLookUp.write(createField("Joe"), "Human");
+		typeLookUp.write(createField("Chicken1"), "Chicken");
+		Optional<OperationResolution> resolution = cl.resolveOperation(humanEatChicken, typeLookUp::readLatest);
+		assertTrue(resolution.isPresent());
+		assertEquals("Chicken",  resolution.get().getArgsCastPaths().get(0).get(0).head());
+		assertEquals("Domestic",  resolution.get().getArgsCastPaths().get(0).get(0).tail().get().head());;
+		assertEquals("Meat",  resolution.get().getArgsCastPaths().get(0).get(0).tail().get().tail().get().head());
+		assertEquals("CookedMeat",  resolution.get().getArgsCastPaths().get(0).get(0).tail().get().tail().get().tail().get().head());
+
+
+		Operation apeEatChicken = SecoUtil.createOperation(createField("Charley"), "eat", createArgument(createField("Chicken1")));
+		typeLookUp.write(createField("Charley"), "Ape");
+		Optional<OperationResolution> resolution1 = cl.resolveOperation(apeEatChicken, typeLookUp::readLatest);
+		assertFalse(resolution1.isPresent());
+
+		Operation chickenEatsCorn = SecoUtil.createOperation(createField("goose"), "eat", createArgument(createField("corn")));
+		typeLookUp.write(createField("goose"), "Goose");
+		typeLookUp.write(createField("corn"), "Fruit");;
+		Optional<OperationResolution> resolution2 = cl.resolveOperation(chickenEatsCorn, typeLookUp::readLatest);
+		assertTrue(resolution2.isPresent());
+
+
+		Operation duckCheep = SecoUtil.createOperation("Duck", "cheep", createArgument("Cheep cheep"));
+		Optional<OperationResolution> resolution3 = cl.resolveOperation(duckCheep, typeLookUp::readLatest);
+		assertTrue(resolution3.isPresent());
+		assertEquals( "Boolean", resolution3.get().getMethodView().outputParams().get(0).getParameterType());
 	}
 
 

@@ -206,6 +206,27 @@ public class SecoUtil {
 		}
 		return entries;
 	}
+
+	
+	public static Operation createOperation(String entityContext, String method, Argument... args) {
+		Operation op = new Operation();
+		op.setEntityName(entityContext);
+		op.setMethod(method);
+		for(Argument arg : args) {
+			op.getArgs().add(arg);
+		}
+		return op;
+	}
+	
+	public static Operation createOperation(Field context, String method, Argument... args) {
+		Operation op = new Operation();
+		op.setContextField(context);
+		op.setMethod(method);
+		for(Argument arg : args) {
+			op.getArgs().add(arg);
+		}
+		return op;
+	}
 	
 	public static boolean checkSignatureMatch(EntityMethodParamSignature signature, EntityMethodParamSignature other, boolean silently) {
 		if(signature == other) {
@@ -255,7 +276,7 @@ public class SecoUtil {
 			}
 			String name = param.getParameterName();
 			String otherName = otherParam.getParameterName();
-			if((name == null)  != (other == null)) {
+			if((name == null)  != (otherName == null)) {
 				throw conflict;
 			}
 			else if(name != null) {

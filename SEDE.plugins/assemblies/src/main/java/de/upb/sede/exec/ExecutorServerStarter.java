@@ -37,7 +37,9 @@ public class ExecutorServerStarter {
 		 * Enable plugins:
 		 */
 		AddressRetriever.enablePlugin(httpExecutor);
-		ImServerCommandListener httpListener = new ImServerCommandListener(httpExecutor);
+		ProxySetup.enablePlugin(httpExecutor);
+
+		ImServerCommandListener httpListener = new ImServerCommandListener(httpExecutor, httpExecutor.getBasisExecutor().getExecutorConfiguration().getExecutorId());
 		TerminalCommandListener terminalListener = new TerminalCommandListener();
 
 		ServerCommandListeners scl = new ServerCommandListeners();
@@ -54,7 +56,6 @@ public class ExecutorServerStarter {
 		 * Terminals:
 		 */
 		PluginUtil.enablePlugin_SystemTerminal(terminalListener);
-		PluginUtil.enablePlugin_TellnetServer(terminalListener);
 	}
 
 }

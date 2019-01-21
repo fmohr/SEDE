@@ -12,10 +12,16 @@ public class ImServerCommandListener implements CommandListener {
 
 	private final static Logger logger = LoggerFactory.getLogger(ImServerCommandListener.class);
 	private final ImServer innerServer;
+	private final String executorId;
 	private final CommandTree commandResponders = new CommandTree(CommandTree.node(Command.nothing()));
 
 	public ImServerCommandListener(ImServer innerServer) {
+		this(innerServer, null);
+	}
+
+	public ImServerCommandListener(ImServer innerServer, String executorId) {
 		this.innerServer = innerServer;
+		this.executorId = executorId;
 		innerServer.addHandle("/cmd", GETResponse::new);
 	}
 
@@ -34,7 +40,11 @@ public class ImServerCommandListener implements CommandListener {
 			if(!urlString.startsWith("/cmd/")){
 				return "URL MISMATCH";
 			}
-			String splits[] = urlString.substring("/cmd/".length()).split("/");
+			urlString = urlString.substring("/cmd/".length());
+			if(executorId != null && urlString.startsWith(executorId)) {
+				urlString = urlString.substring(executorId.length() + 1);
+			}
+			String splits[] = urlString.split("/");
 			try{
 				return commandResponders.execute(splits);
 			} catch(CommandFormatMismatch ex) {

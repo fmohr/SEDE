@@ -89,6 +89,10 @@ public class WorkerPool {
 		procedureSupplierMap.put(procedureName, procedureSupplier);
 	}
 
+	public synchronized Supplier<Procedure> getBoundedProducer(String procedureName) {
+		return procedureSupplierMap.get(procedureName);
+	}
+
 	private Procedure procedureForTask(String taskName) {
 		if(procedureSupplierMap.containsKey(taskName)){
 			return procedureSupplierMap.get(taskName).get();

@@ -47,8 +47,8 @@ public class ExecutorHttpServer implements ImServer {
 	private final HttpServer server;
 	private final int port;
 
-	private final Pattern PUT_DATA_URL_PATTERN = Pattern.compile("/put/(?<executionId>[\\-\\w]+)/(?<fieldname>(?:[&_a-zA-Z][&\\-\\w]*+))/(?<semtype>[\\-\\w]+)");
-	private final Pattern INTERRUPT_URL_PATTERN = Pattern.compile("/interrupt/(?<executionId>[\\-\\w]+)");
+	private final Pattern PUT_DATA_URL_PATTERN = Pattern.compile("/put/(?:[\\-\\w]+)/(?<executionId>[\\-\\w]+)/(?<fieldname>(?:[&_a-zA-Z][&\\-\\w]*+))/(?<semtype>[\\-\\w]+)");
+	private final Pattern INTERRUPT_URL_PATTERN = Pattern.compile("/interrupt/(?:[\\-\\w]+)/(?<executionId>[\\-\\w]+)");
 
 	public static ExecutorHttpServer enablePlugin(Executor basis, String hostAddress, int port) {
 		return new ExecutorHttpServer(basis, hostAddress, port);
@@ -122,6 +122,10 @@ public class ExecutorHttpServer implements ImServer {
 		basis.getModifiableContactInfo().put("host-address", this.hostAddress);
 	}
 
+	public String getHostAddress() {
+		return hostAddress;
+	}
+
 	public ExecutorHttpServer(ExecutorConfiguration execConfig, String hostAddress, int port) {
 		this(new Executor(execConfig), hostAddress, port);
 	}
@@ -166,12 +170,12 @@ public class ExecutorHttpServer implements ImServer {
 		server.stop(1);
 	}
 
-	private static BasicClientRequest createPutDataRequest(String host, String fieldname, String semType, String executionId, boolean failed) {
+	private static BasicClientRequest createPutDataRequest(String host, String targetExecutorId, String fieldname, String semType, String executionId, boolean failed) {
 		if (host == null || fieldname == null) {
 			throw new RuntimeException(
 					"Cannot create a put data request without host or fieldname");
 		}
-		String dataPutUrl = host + "/put/" + executionId + "/" + fieldname;
+		String dataPutUrl = host + "/put/" + targetExecutorId + "/" + executionId + "/" + fieldname;
 		if(failed) {
 			dataPutUrl += "/unavailable";
 		} else {
@@ -191,6 +195,7 @@ public class ExecutorHttpServer implements ImServer {
 			String fieldname = (String) task.getAttributes().get("fieldname");
 			String semType = (String) task.getAttributes().get("semantic-type");
 			String executionId = task.getExecution().getExecutionId();
+			String targetExecutorId =  contactInfo.get("id");
 			if (!unavailable && semType == null) {
 				SEDEObject sedeObject = task.getExecution().getEnvironment().get(fieldname);
 				if (sedeObject.isReal()) {
@@ -202,7 +207,7 @@ public class ExecutorHttpServer implements ImServer {
 					semType = sedeObject.getType();
 				}
 			}
-			String dataPutUrl = host + "/put/" + executionId + "/" + fieldname;
+			String dataPutUrl = host + "/put/" + targetExecutorId + "/" + executionId + "/" + fieldname;
 			if(unavailable) {
 				dataPutUrl += "/unavailable";
 			} else {
@@ -219,11 +224,12 @@ public class ExecutorHttpServer implements ImServer {
 		public BasicClientRequest getFinishFlagRequest(Task task) {
 			Map<String, String> contactInfo = (Map<String, String>) task.getAttributes().get("contact-info");
 			String host = contactInfo.get("host-address");
+			String targetExecutorId = contactInfo.get("id");
 			String fieldname = (String) task.getAttributes().get("fieldname");
 			String semType = PrimitiveDataField.PrimitiveType.Bool.name();
 			String executionId = task.getExecution().getExecutionId();
 			boolean failed = false;
-			return createPutDataRequest(host, fieldname, semType, executionId, failed);
+			return createPutDataRequest(host, targetExecutorId, fieldname, semType, executionId, failed);
 		}
 	}
 
@@ -233,11 +239,12 @@ public class ExecutorHttpServer implements ImServer {
 		public BasicClientRequest getExecRequest(Task task) {
 			Map<String, String> contactInfo = (Map<String, String>) task.getAttributes().get("contact-info");
 			String host = contactInfo.get("host-address");
+			String targetExecutorId = contactInfo.get("id");
 			if (host == null) {
 				throw new RuntimeException(
 						"The task doesn't contain all necessary fields: " + task.getAttributes().toString());
 			}
-			String executeGraphUrl = host + "/execute";
+			String executeGraphUrl = host + "/" + targetExecutorId + "/execute";
 			BasicClientRequest clientRequest = new HttpURLConnectionClientRequest(executeGraphUrl);
 			return clientRequest;
 		}
@@ -246,7 +253,8 @@ public class ExecutorHttpServer implements ImServer {
 		public void handleInterrupt(Task task) {
 			Map<String, String> contactInfo = (Map<String, String>) task.getAttributes().get("contact-info");
 			String host = contactInfo.get("host-address");
-			String interruptUrl = host + "/interrupt/" + task.getExecution().getExecutionId();
+			String targetExecutorId = contactInfo.get("id");
+			String interruptUrl = host + "/interrupt/" + targetExecutorId + "/" + task.getExecution().getExecutionId();
 			BasicClientRequest interruptRequest = new HttpURLConnectionClientRequest(interruptUrl);
 			logger.debug("Interrupting remote execution: {}", contactInfo);
 			String response = interruptRequest.send("");

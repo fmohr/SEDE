@@ -101,7 +101,7 @@ public class GatewayServerStarter {
 					configStringContent = FileUtil.readResourceAsString(configuration);
 				} catch (Exception ex) {
 					logger.error(
-							"Config file '{}' could not be resolved. Skipping it.",
+							"Config file '{}' could not be parsed. (Skipping it).",
 							configuration, ex);
 					return;
 				}

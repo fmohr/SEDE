@@ -131,7 +131,8 @@ public class GatewayCommands {
 			Map contactInfo = executorHandle.getContactInfo();
 			if(contactInfo.containsKey("host-address")) {
 				String address =(String) contactInfo.get("host-address");
-				String heartbeatUrl = address + "/cmd/heartbeat";
+				String id = (String) contactInfo.get("id");
+				String heartbeatUrl = address + "/cmd/" + id + "/heartbeat";
 				Thread pingThread = new Thread(() -> {
 					boolean executoraintalive = false;
 					try (HttpURLConnectionClientRequest requestHeartbeat = new HttpURLConnectionClientRequest(heartbeatUrl)){

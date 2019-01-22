@@ -158,11 +158,12 @@ public class C2ServiceTests {
 		C2Resource GPU	= new C2Resource("gpu");
 		C2Resource FPGA	= new C2Resource("fpga");
 		C2Resource JAVA	= new C2Resource("java");
+		C2Resource OVERLAY = new C2Resource("overlay");
 
 		SEDEObject inputObject_lenna	= new ObjectDataField(C2Image.class.getName(), lenna);
-		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), CPU);
-        SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), SCPU);
-        SEDEObject inputObject_res3		= new ObjectDataField(C2Resource.class.getName(), CPU);
+		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), SCPU);
+        SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), OVERLAY);
+        SEDEObject inputObject_res3		= new ObjectDataField(C2Resource.class.getName(), SCPU);
 
         ResolvePolicy policy = new ResolvePolicy();
         policy.setServicePolicy("None");
@@ -209,6 +210,7 @@ public class C2ServiceTests {
 		C2Resource GPU	= new C2Resource("gpu");
 		C2Resource FPGA	= new C2Resource("fpga");
 		C2Resource JAVA	= new C2Resource("java");
+		C2Resource OVERLAY = new C2Resource("overlay");
 
 		Map< String,Double> paramsMedian = new HashMap< String,Double>();
 		paramsMedian.put("filter_size",3.0);
@@ -221,7 +223,7 @@ public class C2ServiceTests {
 		SEDEObject inputObject_lenna		= new ObjectDataField(C2Image.class.getName(), lenna);
 		SEDEObject inputObject_res1			= new ObjectDataField(C2Resource.class.getName(), SCPU);
 		SEDEObject inputObject_res2			= new ObjectDataField(C2Resource.class.getName(), CPU);
-		SEDEObject inputObject_res3			= new ObjectDataField(C2Resource.class.getName(), SCPU);
+		SEDEObject inputObject_res3			= new ObjectDataField(C2Resource.class.getName(), OVERLAY);
 		SEDEObject inputObject_paramMedian	= new ObjectDataField(C2Params.class.getName(), paramValuesMedian);
 		SEDEObject inputObject_paramMorph	= new ObjectDataField(C2Params.class.getName(), paramValuesMorph);
 

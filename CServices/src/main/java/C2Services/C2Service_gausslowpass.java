@@ -20,9 +20,10 @@ public class C2Service_gausslowpass extends Plugin{
         serviceFile = new File(C2NativeInterface.getPluginDir() + "libservice_gausslowpass.so");
         linkedFiles = new ArrayList<File>();
         linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "llibservice_gausslowpass_cpu.so"));
-        linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_gauslowpass_scpu.so"));
+        linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_gausslowpass_scpu.so"));
         //linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_gauslowpass_gpu.so"));
-        //linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_gauslowpass_fpga.so"));
+        linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_gausslowpass_fpga.so"));
+        linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_gausslowpass_overlay.so"));	
     }
 
     public C2Service_gausslowpass() {
@@ -45,6 +46,7 @@ public class C2Service_gausslowpass extends Plugin{
             case "c":
             case "g":
             case "f":
+            case "o":
                 break;
             case "j":
             default:

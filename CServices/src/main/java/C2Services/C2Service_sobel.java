@@ -23,7 +23,8 @@ public class C2Service_sobel extends Plugin {
         linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_sobel_cpu.so"));
         linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_sobel_scpu.so"));
         //linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_sobel_gpu.so"));
-        //linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_sobel_fpga.so"));
+        linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_sobel_fpga.so"));
+        linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_sobel_overlay.so"));
     }
 
     public C2Service_sobel() {
@@ -47,6 +48,7 @@ public class C2Service_sobel extends Plugin {
             case "g":
             case "f":
             case "j":
+            case "o":
                 break;
             default:
                 throw new Error("Resource '" + resource.getResourceString() + "' not supported by service.");

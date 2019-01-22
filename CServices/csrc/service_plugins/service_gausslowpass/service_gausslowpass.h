@@ -11,6 +11,7 @@ int32_t run_service_gausslowpass_cpu(PixelPacket *pixpack_target, PixelPacket *p
 int32_t run_service_gausslowpass_scpu(PixelPacket *pixpack_target, PixelPacket *pixpack_source, int32_t rows, int32_t columns);
 int32_t run_service_gausslowpass_gpu(PixelPacket *pixpack_target, PixelPacket *pixpack_source, int32_t rows, int32_t columns);
 int32_t run_service_gausslowpass_fpga(PixelPacket *pixpack_target, PixelPacket *pixpack_source, int32_t rows, int32_t columns);
+int32_t run_service_gausslowpass_overlay(PixelPacket *pixpack_target, PixelPacket *pixpack_source, int32_t rows, int32_t columns);
 
 // internal maxfile interface(s)
 void run_service_gausslowpass_max(uint16_t *dataOut, uint16_t *dataIn, uint32_t rows, uint32_t columns);

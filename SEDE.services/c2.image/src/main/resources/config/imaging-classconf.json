@@ -241,6 +241,73 @@
             }
         }
     },
+
+    "C2Services.C2Service_gausslowpass": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{"params": ["C2Data.C2Params"]},
+            "processImage": {
+                "params": [
+                    "C2Data.C2Resource",
+                    "C2Data.C2Image"
+                ],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_gausslowpass_CPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_gausslowpass_FPGA ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_gausslowpass_GPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_gausslowpass_SCPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+
     "C2Services.C2Service_grey": {
           "methods": {
                 "$construct" :{},
@@ -257,6 +324,32 @@
           }
     },
     "C2Services.C2Service_grey_CPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_grey_FPGA ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_grey_GPU ": {
         "methods": {
             "$construct" :{},
             "setOptions" :{
@@ -296,48 +389,6 @@
         }
     },
 
-
-    "C2Services.C2Service_gausslowpass": {
-        "methods": {
-            "$construct" :{},
-            "setOptions" :{"params": ["C2Data.C2Params"]},
-            "processImage": {
-                "params": [
-                    "C2Data.C2Resource",
-                    "C2Data.C2Image"
-                ],
-                "returntype": "C2Data.C2Image"
-            }
-        }
-    },
-    "C2Services.C2Service_gausslowpass_CPU ": {
-        "methods": {
-            "$construct" :{},
-            "setOptions" :{
-                "params": [
-                    "C2Data.C2Params"]
-            },
-            "processImage": {
-                "params": ["C2Data.C2Image"],
-                "returntype": "C2Data.C2Image"
-            }
-        }
-    },
-    "C2Services.C2Service_gausslowpass_SCPU ": {
-        "methods": {
-            "$construct" :{},
-            "setOptions" :{
-                "params": [
-                    "C2Data.C2Params"]
-            },
-            "processImage": {
-                "params": ["C2Data.C2Image"],
-                "returntype": "C2Data.C2Image"
-            }
-        }
-    },
-
-
     "C2Services.C2Service_median" :{
         "methods": {
             "$construct" :{},
@@ -364,6 +415,32 @@
             }
         }
     },
+    "C2Services.C2Service_median_FPGA ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_median_GPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
     "C2Services.C2Service_median_SCPU ": {
         "methods": {
             "$construct" :{},
@@ -377,7 +454,6 @@
             }
         }
     },
-
 
     "C2Services.C2Service_morphedgedetection" :{
         "methods": {
@@ -405,6 +481,32 @@
             }
         }
     },
+    "C2Services.C2Service_morphedgedetection_FPGA ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_morphedgedetection_GPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
     "C2Services.C2Service_morphedgedetection_SCPU ": {
         "methods": {
             "$construct" :{},
@@ -418,7 +520,6 @@
             }
         }
     },
-
 
     "C2Services.C2Service_sobel": {
         "methods": {
@@ -435,6 +536,32 @@
     },
 
     "C2Services.C2Service_sobel_CPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_sobel_FPGA ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_sobel_GPU ": {
         "methods": {
             "$construct" :{},
             "setOptions" :{

@@ -256,12 +256,12 @@
                 }
           }
     },
-    "C2Services.C2Service_CPU_grey": {
+    "C2Services.C2Service_grey_CPU ": {
         "methods": {
-          "$construct" :{},
-          "setOptions" :{
-            "params": [
-              "C2Data.C2Params"]
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
             },
             "processImage": {
                 "params": ["C2Data.C2Image"],
@@ -269,74 +269,35 @@
             }
         }
     },
-    "C2Services.C2Service_JAVA_grey": {
+    "C2Services.C2Service_grey_JAVA ": {
         "methods": {
             "$construct" :{},
-             "setOptions" :{
-               "params": ["C2Data.C2Params"]
-             },
-            "processImage": {
+            "setOptions" :{
                 "params": [
-                    "C2Data.C2Image"
-                ],
-                "returntype": "C2Data.C2Image"
-            }
-        }
-    },
-    "C2Services.C2Service_sobel": {
-          "methods": {
-                "$construct" :{},
-                "setOptions" :{"params": ["C2Data.C2Params"]},
-                "processImage": {
-                        "params": [
-                            "C2Data.C2Resource",
-                            "C2Data.C2Image"
-                        ],
-                        "returntype": "C2Data.C2Image"
-                }
-          }
-    },
-    "C2Services.C2Service_JAVA_sobel": {
-        "methods": {
-            "$construct" :{},
-            "setOptions" : {
-                "params": ["C2Data.C2Params"]
+                    "C2Data.C2Params"]
             },
             "processImage": {
-                "params": [
-                    "C2Data.C2Image"
-                ],
+                "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"
             }
         }
     },
+    "C2Services.C2Service_grey_SCPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+
+
     "C2Services.C2Service_gausslowpass": {
-        "methods": {
-            "$construct" :{},
-            "setOptions" :{"params": ["C2Data.C2Params"]},
-            "processImage": {
-                "params": [
-                    "C2Data.C2Resource",
-                    "C2Data.C2Image"
-                ],
-                "returntype": "C2Data.C2Image"
-            }
-        }
-    },
-    "C2Services.C2Service_morphedgedetection" :{
-        "methods": {
-            "$construct" :{},
-            "setOptions" :{"params": ["C2Data.C2Params"]},
-            "processImage": {
-                "params": [
-                    "C2Data.C2Resource",
-                    "C2Data.C2Image"
-                ],
-                "returntype": "C2Data.C2Image"
-            }
-        }
-    },
-    "C2Services.C2Service_median" :{
         "methods": {
             "$construct" :{},
             "setOptions" :{"params": ["C2Data.C2Params"]},
@@ -362,7 +323,7 @@
             }
         }
     },
-    "C2Services.C2Service_grey_CPU ": {
+    "C2Services.C2Service_gausslowpass_SCPU ": {
         "methods": {
             "$construct" :{},
             "setOptions" :{
@@ -371,6 +332,21 @@
             },
             "processImage": {
                 "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+
+
+    "C2Services.C2Service_median" :{
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{"params": ["C2Data.C2Params"]},
+            "processImage": {
+                "params": [
+                    "C2Data.C2Resource",
+                    "C2Data.C2Image"
+                ],
                 "returntype": "C2Data.C2Image"
             }
         }
@@ -388,6 +364,34 @@
             }
         }
     },
+    "C2Services.C2Service_median_SCPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+
+
+    "C2Services.C2Service_morphedgedetection" :{
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{"params": ["C2Data.C2Params"]},
+            "processImage": {
+                "params": [
+                    "C2Data.C2Resource",
+                    "C2Data.C2Image"
+                ],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
     "C2Services.C2Service_morphedgedetection_CPU ": {
         "methods": {
             "$construct" :{},
@@ -401,7 +405,62 @@
             }
         }
     },
+    "C2Services.C2Service_morphedgedetection_SCPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+
+
+    "C2Services.C2Service_sobel": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{"params": ["C2Data.C2Params"]},
+            "processImage": {
+                "params": [
+                    "C2Data.C2Resource",
+                    "C2Data.C2Image"
+                ],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+
     "C2Services.C2Service_sobel_CPU ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_sobel_JAVA ": {
+        "methods": {
+            "$construct" :{},
+            "setOptions" :{
+                "params": [
+                    "C2Data.C2Params"]
+            },
+            "processImage": {
+                "params": ["C2Data.C2Image"],
+                "returntype": "C2Data.C2Image"
+            }
+        }
+    },
+    "C2Services.C2Service_sobel_SCPU ": {
         "methods": {
             "$construct" :{},
             "setOptions" :{

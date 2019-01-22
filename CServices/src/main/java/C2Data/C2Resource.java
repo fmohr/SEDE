@@ -35,6 +35,12 @@ public class C2Resource {
             case "JAVA":
                 mResource = "j";
                 break;
+            case "o":
+            case "O":
+            case "overlay":
+            case "OVERLAY":
+                mResource = "o";
+                break;
             default:
                 throw new AssertionError("Resource '" + resourceName + "' unknown!");
         }

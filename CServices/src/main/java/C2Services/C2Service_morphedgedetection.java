@@ -21,7 +21,8 @@ public class C2Service_morphedgedetection extends Plugin {
         linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_morphedgedetection_cpu.so"));
         linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_morphedgedetection_scpu.so"));
         //linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_morphedgedetection_gpu.so"));
-        //linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_morphedgedetection_fpga.so"));
+        linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_morphedgedetection_fpga.so"));
+        linkedFiles.add(new File(C2NativeInterface.getPluginDir() + "libservice_morphedgedetection_overlay.so"));
     }
 
     public C2Service_morphedgedetection() {
@@ -51,6 +52,7 @@ public class C2Service_morphedgedetection extends Plugin {
             case "c":
             case "g":
             case "f":
+            case "o":
                 break;
             case "j":
             default:

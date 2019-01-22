@@ -51,6 +51,9 @@ void run_service(char resource, void *handler_gpu, Image **target_images, int32_
 		case 'f':
 			*status_code = run_service_grey_fpga((*target_images)[0].image, source_images[0].image, source_images[0].rows, source_images[0].columns);
 			break;
+		case 'o':
+			*status_code = run_service_grey_overlay((*target_images)[0].image, source_images[0].image, source_images[0].rows, source_images[0].columns);
+			break;
 		case 's':
 		default:
 			*status_code = run_service_grey_scpu((*target_images)[0].image, source_images[0].image, source_images[0].rows, source_images[0].columns);
@@ -86,10 +89,10 @@ void get_service_params(char ***param_strings, int32_t *param_strings_size) {
 
 void get_service_resources(char ***resource_strings, int32_t *resource_strings_size) {
 	char *strings[] = {
-		"CPU", "SCPU", "GPU", "FPGA",
-		"cpu", "scpu", "gpu", "fpga",
-		"C"  , "S"   , "G"  , "F"   ,
-		"c"  , "s"   , "g"  , "f"
+		"CPU", "SCPU", "GPU", "FPGA", "OVERLAY",
+		"cpu", "scpu", "gpu", "fpga", "overlay",
+		"C"  , "S"   , "G"  , "F"   , "O",
+		"c"  , "s"   , "g"  , "f"   , "o"
 	};
 	*resource_strings_size = 16;
 

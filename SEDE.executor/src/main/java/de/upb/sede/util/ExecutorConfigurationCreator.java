@@ -1,9 +1,6 @@
 package de.upb.sede.util;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,7 +12,7 @@ public class ExecutorConfigurationCreator {
 
 	private String serviceStoreLocation;
 	private String executorId;
-	private String gatewayId;
+	private List<String> gateways = new ArrayList<>();
 	private Integer threadNumber;
 	private List<String> capabilities;
 	private List<String> services;
@@ -30,8 +27,8 @@ public class ExecutorConfigurationCreator {
 		return this;
 	}
 
-	public ExecutorConfigurationCreator withGatewayId(String gatewayId) {
-		this.gatewayId = gatewayId;
+	public ExecutorConfigurationCreator withGateway(String gatewayId) {
+		gateways.add(Objects.requireNonNull(gatewayId));
 		return this;
 	}
 
@@ -74,9 +71,9 @@ public class ExecutorConfigurationCreator {
 		if (executorId != null) {
 			obj.put("executorId", executorId);
 		}
-		if (gatewayId != null) {
-			obj.put("gatewayId", gatewayId);
-		}
+
+		obj.put("gateways", gateways);
+
 		if (threadNumber != null) {
 			obj.put("threadNumber", threadNumber);
 		}

@@ -21,14 +21,26 @@ public final class HttpCoreClient {
 		return new CoreClient(executor, rr -> resolveRequestOverHttp(rr, gatewayAddress, gatewayPort));
 	}
 
+	public static CoreClient createWithGiven(Executor executor, String gatewayAddress) {
+		return new CoreClient(executor, rr -> resolveRequestOverHttp(rr, gatewayAddress));
+	}
+
 	public static CoreClient createNew(final ExecutorConfiguration executorConfig, final String clientAddress,
 									   final int clientPort, final String gatewayAddress, final int gatewayPort) {
 		return new CoreClient(simpleHttpClientExecutor(executorConfig, clientAddress, clientPort),
 				rr -> resolveRequestOverHttp(rr, gatewayAddress, gatewayPort));
 	}
 
+	public static GatewayResolution resolveRequestOverHttp(ResolveRequest rr, String gatewayAddress) {
+		BasicClientRequest requestToGateway = new HttpURLConnectionClientRequest(gatewayAddress + "/resolve");
+		return resolveRequest(rr, requestToGateway);
+	}
+
 	public static GatewayResolution resolveRequestOverHttp(ResolveRequest rr, String gatewayAddress, int gatewayPort) {
 		BasicClientRequest requestToGateway = new HttpURLConnectionClientRequest(gatewayAddress, gatewayPort, "resolve");
+		return resolveRequest(rr, requestToGateway);
+	}
+	public static GatewayResolution resolveRequest(ResolveRequest rr, BasicClientRequest requestToGateway) {
 		String resolutionJsonString = requestToGateway.send(rr.toJsonString());
 		GatewayResolution gatewayResolution = new GatewayResolution();
 		try {

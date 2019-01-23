@@ -6,6 +6,7 @@ import de.upb.sede.config.OnthologicalTypeConfig;
 import de.upb.sede.exec.AddressRetriever;
 import de.upb.sede.exec.Executor;
 import de.upb.sede.exec.ExecutorHttpServer;
+import de.upb.sede.exec.ProxySetup;
 import de.upb.sede.gateway.Gateway;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
@@ -28,7 +29,7 @@ public class ClientSetup {
 	 * Builds a SEDE client from the given ClientProperties.
 	 * If the properties define the gatewayaddress, the returned client will be connected to the DISTRIBUTED sede environment.
 	 * Else the properties must define service configuration files and client side supported services.
-	 * 
+	 *
 	 * @param properties loaded from SEDEClient.properties. Contains configurations for the client.
 	 * @return a ready to be used CoreClient.
 	 * @throws IllegalArgumentException If the properties fail to define mandatory fields.
@@ -85,6 +86,11 @@ public class ClientSetup {
 				server.setHostAddress(clientAddress);
 			}
 			AddressRetriever.enablePlugin(server);
+			if(properties.proxyExecutorAddress() != null) {
+				System.getenv().put("PROXY_ADDRESS", properties.proxyExecutorAddress());
+			}
+			ProxySetup.enablePlugin(server);
+
 			CoreClient coreClient = HttpCoreClient.createWithGiven(server.getBasisExecutor(), gatewayAdress);
 			logger.info("Successfullt created DISTRIBUTED SEDE client.");
 			return coreClient;

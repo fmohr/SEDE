@@ -51,7 +51,7 @@ public interface ClientProperties  extends Config {
 	Integer clientPublicPort();
 
 	@Key(proxyExecutorAddressKey)
-	String proxyExecutorAddressKey();
+	String proxyExecutorAddress();
 
 	@Key(serviceConfigFilesKey)
 	String serviceConfigFiles();

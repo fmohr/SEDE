@@ -244,7 +244,7 @@ public class ExecutorHttpServer implements ImServer {
 				throw new RuntimeException(
 						"The task doesn't contain all necessary fields: " + task.getAttributes().toString());
 			}
-			String executeGraphUrl = host + "/" + targetExecutorId + "/execute";
+			String executeGraphUrl = host + "/execute/" + targetExecutorId;
 			BasicClientRequest clientRequest = new HttpURLConnectionClientRequest(executeGraphUrl);
 			return clientRequest;
 		}

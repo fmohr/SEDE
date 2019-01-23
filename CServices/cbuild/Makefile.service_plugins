@@ -13,8 +13,6 @@ CFLAGS=-O3 -Wall
 all: mkdirectories clean common $(SERVICES_ALL) $(SERVICES_HW)
 
 $(SERVICES_HW):
-	cp ../csrc/service_plugins/$@/lib$@_max.so ../csrc/service_plugins/build/
-	
 	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -fPIC -c -o $@_scpu.o ../$@/$@_scpu.c
 	cd ../csrc/service_plugins/build && \
@@ -38,7 +36,7 @@ $(SERVICES_HW):
 	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -fPIC -c -o $@.o ../$@/$@.c
 	cd ../csrc/service_plugins/build && \
-	$(CC) $(CFLAGS) -shared -o lib$@.so $@.o common.o -ldl -L. -l$@_scpu -l$@_cpu -l$@_fpga -l$@_overlay -l$@_max
+	$(CC) $(CFLAGS) -shared -o lib$@.so $@.o common.o -ldl -L. -l$@_scpu -l$@_cpu -l$@_fpga -l$@_overlay -L${SEDE_ROOT}/CServices/max_so -l$@_max
 
 $(SERVICES_ALL):
 	cd ../csrc/service_plugins/build && \

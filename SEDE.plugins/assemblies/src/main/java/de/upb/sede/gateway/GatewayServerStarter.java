@@ -61,7 +61,6 @@ public class GatewayServerStarter {
 		 * Terminals:
 		 */
 		PluginUtil.enablePlugin_SystemTerminal(terminalListener);
-		PluginUtil.enablePlugin_TellnetServer(terminalListener);
 	}
 
 	static void loadDefaultConfigs(ClassesConfig classesConfig, OnthologicalTypeConfig typeConfig,

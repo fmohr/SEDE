@@ -34,7 +34,8 @@ public class ExecutorCommands {
 
 		CommandTree execution = new CommandTree(
 				node(new Command.Strings(false, "executions"),
-						node(new Command.Strings("info").addExe(t->this.executionsInfo()),
+						node(new Command.Strings("info"),
+								node(new Command.Strings(false, "all").addExe(t->this.executionsInfo()),
 								node(new Command.Token().addExe(t->this.executionInfo(lastMatch(t))))),
 						node(new Command.Strings("ls").addExe(t -> this.executionList()))
 				)

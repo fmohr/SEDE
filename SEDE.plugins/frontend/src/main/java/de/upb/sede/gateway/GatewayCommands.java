@@ -4,10 +4,17 @@ import static de.upb.sede.webinterfaces.server.CommandTree.lastMatch;
 import static de.upb.sede.webinterfaces.server.CommandTree.node;
 import static de.upb.sede.webinterfaces.server.CommandTree.rest;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import de.upb.sede.util.Streams;
+import de.upb.sede.webinterfaces.client.AsyncClientRequest;
+import de.upb.sede.webinterfaces.server.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +65,7 @@ public class GatewayCommands {
 				)
 		);
 
-		CommandTree heartbeat = new CommandTree(
+		CommandTree executors = new CommandTree(
 				node(new Strings(false, "executors"),
 					node(new Strings(false, "heartbeat")
 							.addExe(t-> heartbeat())),
@@ -77,13 +84,14 @@ public class GatewayCommands {
 							node(new Strings("services")
 									.addExe(t -> listExecutors(executor ->
 										 executor.getExecutorId() + "\n\t\t"+
-												executor.getExecutionerCapabilities().supportedServices().stream().collect(Collectors.joining("\n\t\t")))
+												 String.join("\n\t\t", executor.getExecutionerCapabilities().supportedServices()))
 									))
-							)));
+							),
+					node(new Strings("cmd"), node(new Command.ConsumeNothing().addExe(t -> forwardToExecutors(rest(t)))))));
 
 		scl.addCommandHandle(services);
 		scl.addCommandHandle(types);
-		scl.addCommandHandle(heartbeat);
+		scl.addCommandHandle(executors);
 	}
 
 	private String listServices() {
@@ -127,48 +135,95 @@ public class GatewayCommands {
 	private synchronized String heartbeat()  {
 		logger.info("Gateway is performing HEARTBEAT. Removing every registered executor who doesn't respond.");
 		StringBuilder removedExecutors = new StringBuilder("Removed executors: ");
-		for(ExecutorHandle executorHandle : gateway.getExecutorCoord().getExecutors()){
+		Map<String, AsyncClientRequest> pingRequests = new HashMap<>();
+		for(ExecutorHandle executorHandle : gateway.getExecutorCoord().getExecutors()) {
 			Map contactInfo = executorHandle.getContactInfo();
-			if(contactInfo.containsKey("host-address")) {
-				String address =(String) contactInfo.get("host-address");
+			if (contactInfo.containsKey("host-address")) {
+				String address = (String) contactInfo.get("host-address");
 				String id = (String) contactInfo.get("id");
 				String heartbeatUrl = address + "/cmd/" + id + "/heartbeat";
-				Thread pingThread = new Thread(() -> {
-					boolean executoraintalive = false;
-					try (HttpURLConnectionClientRequest requestHeartbeat = new HttpURLConnectionClientRequest(heartbeatUrl)){
-						requestHeartbeat.setTimeout(200);
-						String response = requestHeartbeat.send("");
-						if (!response.equals("true")) {
-							logger.info("Gateway is performing HEARTBEAT. Heartbeat failed for executor with id: {}. Response: {}",
-									executorHandle.getExecutorId(), response);
-							executoraintalive = true;
-						}
-					} catch (Exception ex) {
-						logger.info("Gateway is performing HEARTBEAT. Heartbeat failed for executor with id: {}. Error: {}",
-								executorHandle.getExecutorId(), ex.getMessage());
-						executoraintalive = true;
-					}
-					if (executoraintalive) {
-						removedExecutors.append("\n").append(executorHandle.getExecutorId());
-						gateway.getExecutorCoord().removeExecutor(executorHandle.getExecutorId());
-					}
-				});
-				pingThread.start();
-				try {
-					pingThread.join(1000);
-				} catch (InterruptedException e) {}
-				if(pingThread.isAlive()){
-					pingThread.interrupt();
-					logger.warn("Gateway is performing HEARTBEAT. Removed executor with id {} because of timeout.");
-					gateway.getExecutorCoord().removeExecutor(executorHandle.getExecutorId());
-					removedExecutors.append("\n").append(executorHandle.getExecutorId());
-				}
+				HttpURLConnectionClientRequest requestHeartbeat = new HttpURLConnectionClientRequest(heartbeatUrl);
+				AsyncClientRequest asyncRequestHeartbeat = new AsyncClientRequest(requestHeartbeat, "");
+				pingRequests.put(executorHandle.getExecutorId(), asyncRequestHeartbeat);
 			} else {
 				logger.warn("Gateway is performing HEARTBEAT. Cannot contact executor with id: {}. His contact information is: {}.",
 						executorHandle.getExecutorId(), contactInfo);
 			}
 		}
+
+
+		try {
+			AsyncClientRequest.joinAll(pingRequests.values(), 8, TimeUnit.SECONDS);
+		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+			logger.warn("Error while perfoming HEARTBEAT: " , e);
+			return Streams.ErrToString(e);
+		}
+
+
+		for(String executorId : pingRequests.keySet()) {
+			AsyncClientRequest pingRequest = pingRequests.get(executorId);
+			if(pingRequest.hasFailed() || !pingRequest.isDone()) {
+				logger.info("Gateway is performing HEARTBEAT. Heartbeat failed for executor with id: {}",
+						executorId);
+				removedExecutors.append("\n").append(executorId);
+				gateway.getExecutorCoord().removeExecutor(executorId);
+			} else {
+				logger.info("Gateway is performing HEARTBEAT. Executor responded successfully: {}", executorId);
+			}
+		}
 		return removedExecutors.toString();
+	}
+
+	private synchronized String forwardToExecutors(String[] commandTokens) {
+		StringBuilder urlBuilder = new StringBuilder("%s/cmd/%s/");
+		StringBuilder responseAggregate = new StringBuilder();
+		for(String token : commandTokens) {
+			urlBuilder.append(token).append("/");
+		}
+		String forwardUrl = urlBuilder.toString();
+		logger.info("Forwarding cmd to all executors: {}", String.format(forwardUrl, "ADRESS", "ID"));
+		Map<String, AsyncClientRequest> forwardRequests = new HashMap<>();
+		for(ExecutorHandle executorHandle : gateway.getExecutorCoord().getExecutors()) {
+			String executorId = executorHandle.getExecutorId();
+			Map contactInfo = executorHandle.getContactInfo();
+			if (contactInfo.containsKey("host-address")) {
+				String address = (String) contactInfo.get("host-address");
+				HttpURLConnectionClientRequest forwardRequest = new HttpURLConnectionClientRequest(String.format(forwardUrl, address, executorId));
+				AsyncClientRequest asyncRequestHeartbeat = new AsyncClientRequest(forwardRequest, "");
+				forwardRequests.put(executorHandle.getExecutorId(), asyncRequestHeartbeat);
+			} else {
+				responseAggregate.append(String.format("No address found for executor %s:\n", executorId));
+			}
+		}
+
+
+		try {
+			AsyncClientRequest.joinAll(forwardRequests.values(), 8, TimeUnit.SECONDS);
+		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+			logger.warn("Error while forwarding request url {}:", forwardUrl , e);
+			return Streams.ErrToString(e);
+		}
+
+		for(String executorId : forwardRequests.keySet()) {
+			AsyncClientRequest forwardRequest = forwardRequests.get(executorId);
+			if(forwardRequest.hasFailed() || !forwardRequest.isDone()) {
+				responseAggregate.append(String.format("Time-out for executor %s:\n", executorId));
+			} else {
+				String response;
+				try {
+					response = forwardRequest.get().orElse("");
+				} catch (InterruptedException | ExecutionException e) {
+					logger.error("THIS SHOULDN'T HAVE HAPPENED: ", e);
+					continue;
+				}
+				responseAggregate.append(String.format("Executor %s:\n\t", executorId))
+						.append(response.replace("\n", "\n\t"))
+						.append("\n");
+
+			}
+		}
+
+		return responseAggregate.toString();
 	}
 
 }

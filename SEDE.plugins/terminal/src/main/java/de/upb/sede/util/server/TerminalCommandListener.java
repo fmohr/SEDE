@@ -164,7 +164,7 @@ public class TerminalCommandListener implements CommandListener {
 			} else {
 				return new Completers.FilesCompleter(Paths.get(fileCommand.getPath()));
 			}
-		} else if(command instanceof ConsumeRest || command instanceof ConsumeNothing) {
+		} else if(command instanceof ConsumeRest || command instanceof ConsumeNothing  || command instanceof Command.Token) {
 			return new NullCompleter();
 		}
 		else {

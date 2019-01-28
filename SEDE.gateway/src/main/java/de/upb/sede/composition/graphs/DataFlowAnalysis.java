@@ -56,6 +56,7 @@ public class DataFlowAnalysis {
 			analyzeDataFlow(instNode);
 		}
 		determineExecutors();
+		//addErrorCollectors();
 		resolveResults();
 		connectDependencyEdges();
 		mergeAcceptAndCasts();
@@ -751,6 +752,38 @@ public class DataFlowAnalysis {
 		}
 	}
 
+	private void addErrorCollectors() {
+		/*
+		 * Add error collectors node to the executors.
+		 * These will collects execution exceptions from tasks into a map and write this map as a field called __execution_erros_id.
+		 * This field needs to be sent to the client.
+		 * The client collector needs to collect these maps and include it in its final error collection.
+		 */
+//		List
+		for(ExecPlan exec : getInvolvedExecutions()) {
+			if(exec == getClientExecPlan()) {
+				continue;
+			}
+			/*
+				Add node that collects errors:
+			 */
+			String errorfielname = String.format("__execution_errors_%s", exec.getTarget().getExecutorId());
+			CollectErrorsNode collectErrorsNode = new CollectErrorsNode();
+			exec.getGraph().executeLast(Collections.singletonList(collectErrorsNode));
+
+
+			/*
+				Add accept node to client:
+			 */
+			AcceptDataNode acceptFinishFlag = new AcceptDataNode(flagname);
+			getClientExecPlan().getGraph().addNode(acceptFinishFlag);
+
+			getTransmissionGraph().addNode(finishNode);
+			getTransmissionGraph().addNode(acceptFinishFlag);
+			getTransmissionGraph().connectNodes(finishNode, acceptFinishFlag);
+		}
+	}
+
 	private void resolveResults() {
 		/*
 		 * iterate all the fieldnames and return results to client.
@@ -838,12 +871,14 @@ public class DataFlowAnalysis {
 			if(exec == getClientExecPlan()) {
 				continue;
 			}
+
 			/*
 				Add node that indicate that the execution is done:
 		 	*/
 			String flagname = ("&finished&" + exec.getTarget().getExecutorId());
 			FinishNode finishNode = new FinishNode(getClientExecPlan().getTarget().getContactInfo(), flagname);
-			exec.getGraph().executeLast(Arrays.asList(finishNode));
+			exec.getGraph().executeLast(Collections.singletonList(finishNode));
+
 
 			/*
 				Add accept node to client:

@@ -136,25 +136,25 @@ public class GatewayCommands {
 		logger.info("Gateway is performing HEARTBEAT. Removing every registered executor who doesn't respond.");
 		StringBuilder removedExecutors = new StringBuilder("Removed executors: ");
 		Map<String, AsyncClientRequest> pingRequests = new HashMap<>();
-		for(ExecutorHandle executorHandle : gateway.getExecutorCoord().getExecutors()) {
-			Map contactInfo = executorHandle.getContactInfo();
-			if (contactInfo.containsKey("host-address")) {
-				String address = (String) contactInfo.get("host-address");
-				String id = (String) contactInfo.get("id");
-				String heartbeatUrl = address + "/cmd/" + id + "/heartbeat";
-				HttpURLConnectionClientRequest requestHeartbeat = new HttpURLConnectionClientRequest(heartbeatUrl);
-				AsyncClientRequest asyncRequestHeartbeat = new AsyncClientRequest(requestHeartbeat, "");
-				pingRequests.put(executorHandle.getExecutorId(), asyncRequestHeartbeat);
-			} else {
-				logger.warn("Gateway is performing HEARTBEAT. Cannot contact executor with id: {}. His contact information is: {}.",
-						executorHandle.getExecutorId(), contactInfo);
-			}
-		}
-
 
 		try {
+			for(ExecutorHandle executorHandle : gateway.getExecutorCoord().getExecutors()) {
+				Map contactInfo = executorHandle.getContactInfo();
+				if (contactInfo.containsKey("host-address")) {
+					String address = (String) contactInfo.get("host-address");
+					String id = (String) contactInfo.get("id");
+					String heartbeatUrl = address + "/cmd/" + id + "/heartbeat";
+					HttpURLConnectionClientRequest requestHeartbeat = new HttpURLConnectionClientRequest(heartbeatUrl);
+					AsyncClientRequest asyncRequestHeartbeat = new AsyncClientRequest(requestHeartbeat, "");
+					pingRequests.put(executorHandle.getExecutorId(), asyncRequestHeartbeat);
+				} else {
+					logger.warn("Gateway is performing HEARTBEAT. Cannot contact executor with id: {}. His contact information is: {}.",
+							executorHandle.getExecutorId(), contactInfo);
+				}
+			}
+
 			AsyncClientRequest.joinAll(pingRequests.values(), 8, TimeUnit.SECONDS);
-		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+		} catch (Exception e) {
 			logger.warn("Error while perfoming HEARTBEAT: " , e);
 			return Streams.ErrToString(e);
 		}
@@ -183,23 +183,24 @@ public class GatewayCommands {
 		String forwardUrl = urlBuilder.toString();
 		logger.info("Forwarding cmd to all executors: {}", String.format(forwardUrl, "ADRESS", "ID"));
 		Map<String, AsyncClientRequest> forwardRequests = new HashMap<>();
-		for(ExecutorHandle executorHandle : gateway.getExecutorCoord().getExecutors()) {
-			String executorId = executorHandle.getExecutorId();
-			Map contactInfo = executorHandle.getContactInfo();
-			if (contactInfo.containsKey("host-address")) {
-				String address = (String) contactInfo.get("host-address");
-				HttpURLConnectionClientRequest forwardRequest = new HttpURLConnectionClientRequest(String.format(forwardUrl, address, executorId));
-				AsyncClientRequest asyncRequestHeartbeat = new AsyncClientRequest(forwardRequest, "");
-				forwardRequests.put(executorHandle.getExecutorId(), asyncRequestHeartbeat);
-			} else {
-				responseAggregate.append(String.format("No address found for executor %s:\n", executorId));
-			}
-		}
-
 
 		try {
+			for(ExecutorHandle executorHandle : gateway.getExecutorCoord().getExecutors()) {
+				String executorId = executorHandle.getExecutorId();
+				Map contactInfo = executorHandle.getContactInfo();
+				if (contactInfo.containsKey("host-address")) {
+					String address = (String) contactInfo.get("host-address");
+					HttpURLConnectionClientRequest forwardRequest = new HttpURLConnectionClientRequest(String.format(forwardUrl, address, executorId));
+					AsyncClientRequest asyncRequestHeartbeat = new AsyncClientRequest(forwardRequest, "");
+					forwardRequests.put(executorHandle.getExecutorId(), asyncRequestHeartbeat);
+				} else {
+					responseAggregate.append(String.format("No address found for executor %s:\n", executorId));
+				}
+			}
+
+
 			AsyncClientRequest.joinAll(forwardRequests.values(), 8, TimeUnit.SECONDS);
-		} catch (InterruptedException | ExecutionException | TimeoutException e) {
+		} catch (Exception e) {
 			logger.warn("Error while forwarding request url {}:", forwardUrl , e);
 			return Streams.ErrToString(e);
 		}

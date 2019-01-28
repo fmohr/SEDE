@@ -30,6 +30,7 @@ public final class NodeJsonSerializer {
 	public static final String NODETYPE_SEND_GRAPH = "SendGraph";
 	public static final String NODETYPE_INT_EXEC = "InterruptExec";
 	public static final String NODETYPE_FINISH = "Finish";
+	public static final String NODETYPE_COLLECT_ERRORS = "CollectErrors";
 	public static final String NODETYPE_SERVICE_INSTANCE_STORAGE = "ServiceInstanceStorage";
 
 	public final BaseNode fromJSON(Map<Object, Object> jsonObject) {
@@ -269,12 +270,27 @@ public final class NodeJsonSerializer {
 		return jsonObject;
 	}
 
-	public FinishNode FinishExecNodeFromJSON(Map<Object, Object> node) {
+	public FinishNode FinishNodeFromJSON(Map<Object, Object> node) {
 		assert node.get(NODETYPE).equals(NODETYPE_FINISH);
 		Object contactInfo = (Object) node.get("contact-info");
 		String fieldname = (String) node.get("fieldname");
 
 		FinishNode n = new FinishNode((Map<String, Object>) contactInfo, fieldname);
+		return n;
+	}
+
+	@SuppressWarnings("unchecked")
+	public JSONObject CollectErrorsNodeToJSON(CollectErrorsNode collectErrorsNode) {
+		JSONObject jsonObject = new JSONObject();
+		jsonObject.put(NODETYPE, NODETYPE_COLLECT_ERRORS);
+		jsonObject.put("error_fields", collectErrorsNode.getErrorFields());
+		return jsonObject;
+	}
+
+	public CollectErrorsNode CollectErrorsFinishExecNodeFromJSON(Map<Object, Object> node) {
+		assert node.get(NODETYPE).equals(NODETYPE_COLLECT_ERRORS);
+		List<String> errorFields = (List<String>) node.get("error_fields");
+		CollectErrorsNode n = new CollectErrorsNode(errorFields);
 		return n;
 	}
 

@@ -716,6 +716,9 @@ public class DataFlowAnalysis {
 	 */
 	private void determineExecutors() {
 		for(ExecPlan plan: execPlans) {
+			if(plan == getClientExecPlan()) {
+				continue;
+			}
 			ExecutorHandle chosedTarget = resolveInfo.getExecutorCoordinator().scheduleNextAmong(plan.candidates());
 			/*
 				Remove every other executor:

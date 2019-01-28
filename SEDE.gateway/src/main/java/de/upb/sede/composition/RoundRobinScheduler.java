@@ -53,14 +53,28 @@ public class RoundRobinScheduler {
 		if(candidates.isEmpty()) {
 			throw new IllegalArgumentException("Cannot decide between 0 candidates!");
 		}
-		Optional<ExecutorAccessMonitor> monitor = candidates.stream().map(handle -> executorAccess.get(handle.getExecutorId())).sorted().findFirst();
-		if(monitor.isPresent()) {
-			return monitor.get().access();
+
+		ExecutorAccessMonitor highestPriority = null;
+		for(ExecutorHandle handle : candidates) {
+			ExecutorAccessMonitor monitor = executorAccess.get(handle.getExecutorId());
+			if(monitor == null) {
+				logger.error("Candidate not recognized: " + handle.getExecutorId());
+			} else if (highestPriority == null) {
+				highestPriority = monitor;
+			} else {
+				if(monitor.compareTo(highestPriority) < 0) {
+					highestPriority = monitor;
+				}
+			}
+		}
+		if(highestPriority != null) {
+			return highestPriority.access();
 		} else {
 			throw new IllegalArgumentException(String.format("None of the executor candidates are found in the access map of the round robin scheduler." +
 					"\nCandidates: %s" +
 					"\n%s",
-					candidates.toString(), this.toString()));
+					candidates.stream().map(ExecutorHandle::getExecutorId).collect(Collectors.joining(", ")),
+					this.toString()));
 		}
 	}
 
@@ -92,6 +106,19 @@ public class RoundRobinScheduler {
 			return executorId;
 		}
 
+		@Override
+		public boolean equals(Object o) {
+			if (this == o) return true;
+			if (o instanceof String) return executorId.equals(o);
+			if (o == null || getClass() != o.getClass()) return false;
+			ExecutorAccessMonitor monitor = (ExecutorAccessMonitor) o;
+			return executorId.equals(monitor.executorId);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(executorId);
+		}
 
 		public String toString() {
 			return "id=" + executorId + "\t\t accesses=" + accessCount;

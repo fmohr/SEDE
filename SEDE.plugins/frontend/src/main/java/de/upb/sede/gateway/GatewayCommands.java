@@ -87,7 +87,17 @@ public class GatewayCommands {
 												 String.join("\n\t\t", executor.getExecutionerCapabilities().supportedServices()))
 									))
 							),
-					node(new Strings("cmd"), node(new Command.ConsumeNothing().addExe(t -> forwardToExecutors(rest(t)))))));
+					node(new Strings("cmd"), node(new Command.ConsumeNothing().addExe(t -> forwardToExecutors(rest(t))))),
+					node(new Strings("scheduler"),
+							node(new Strings("state").addExe(t -> getScheduleState())),
+							node(new Strings("reset").addExe(t -> {
+								gateway.getExecutorCoord().getScheduler().reset();
+								return  getScheduleState();
+							}))
+					)
+				));
+
+
 
 		scl.addCommandHandle(services);
 		scl.addCommandHandle(types);
@@ -130,6 +140,10 @@ public class GatewayCommands {
 	private String loadTypes(String configPath) {
 		gateway.getTypeConfig().appendConfigFromFiles(configPath);
 		return "Loaded types configurations from " + configPath;
+	}
+
+	private String getScheduleState() {
+		return gateway.getExecutorCoord().getScheduler().toString();
 	}
 
 	private synchronized String heartbeat()  {

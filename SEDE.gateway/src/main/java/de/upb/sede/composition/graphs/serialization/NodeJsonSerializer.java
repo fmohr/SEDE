@@ -284,13 +284,16 @@ public final class NodeJsonSerializer {
 		JSONObject jsonObject = new JSONObject();
 		jsonObject.put(NODETYPE, NODETYPE_COLLECT_ERRORS);
 		jsonObject.put("error_fields", collectErrorsNode.getErrorFields());
+		jsonObject.put("fieldname", collectErrorsNode.getFieldname());
 		return jsonObject;
 	}
 
 	public CollectErrorsNode CollectErrorsFinishExecNodeFromJSON(Map<Object, Object> node) {
 		assert node.get(NODETYPE).equals(NODETYPE_COLLECT_ERRORS);
 		List<String> errorFields = (List<String>) node.get("error_fields");
-		CollectErrorsNode n = new CollectErrorsNode(errorFields);
+		String fieldname = (String) node.get("fieldname");
+		String executorId = fieldname.substring(CollectErrorsNode.EXECUTION_ERRORS_FIELDNAME.length()-2);
+		CollectErrorsNode n = new CollectErrorsNode(errorFields, executorId);
 		return n;
 	}
 

@@ -9,16 +9,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
+import de.upb.sede.procedure.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.interfaces.IExecutor;
-import de.upb.sede.procedure.AcceptDataProcedure;
-import de.upb.sede.procedure.CastTypeProcedure;
-import de.upb.sede.procedure.InstructionProcedure;
-import de.upb.sede.procedure.ParseConstantProcedure;
-import de.upb.sede.procedure.ServiceInstanceStorageProcedure;
 import de.upb.sede.requests.DataPutRequest;
 import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.requests.ExecutorRegistration;
@@ -92,6 +88,7 @@ public class Executor implements IExecutor {
 		workerPool.bindProcedure("CastType", CastTypeProcedure::new);
 		workerPool.bindProcedure("DeleteField", null); // TODO
 		workerPool.bindProcedure("ServiceInstanceStorage", ServiceInstanceStorageProcedure::new);
+		workerPool.bindProcedure("CollectErrors", CollectErrorsProcedure::new);
 		// send graph and transmit data needs to be bounded from outside because
 		// based on the type of this executor they require different implementations.
 		// One can also rebind other procedures to change the behaviour of the executor.

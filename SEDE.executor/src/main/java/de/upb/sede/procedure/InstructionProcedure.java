@@ -47,6 +47,7 @@ public class InstructionProcedure implements Procedure {
 			task.getExecution().getEnvironment().remove(fieldname); // remove the field
 			task.getExecution().getEnvironment().markUnavailable(fieldname); // mark the field unavailable
 		}
+		task.setFailed();
 	}
 
 	/**

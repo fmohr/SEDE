@@ -59,6 +59,7 @@ public abstract class TransmitDataProcedure implements Procedure{
 		catch (IOException e) {
 			throw new UncheckedIOException(e);
 		}
+		task.setFailed();
 	}
 
 	 /** 

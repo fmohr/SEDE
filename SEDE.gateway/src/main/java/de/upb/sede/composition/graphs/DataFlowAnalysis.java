@@ -778,9 +778,9 @@ public class DataFlowAnalysis {
 			AcceptDataNode acceptFinishFlag = new AcceptDataNode(errorfielname);
 			getClientExecPlan().getGraph().addNode(acceptFinishFlag);
 
-			getTransmissionGraph().addNode(finishNode);
+			getTransmissionGraph().addNode(collectErrorsNode);
 			getTransmissionGraph().addNode(acceptFinishFlag);
-			getTransmissionGraph().connectNodes(finishNode, acceptFinishFlag);
+			getTransmissionGraph().connectNodes(collectErrorsNode, acceptFinishFlag);
 		}
 	}
 

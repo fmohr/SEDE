@@ -775,7 +775,7 @@ public class DataFlowAnalysis {
 			/*
 				Add accept node to client:
 			 */
-			AcceptDataNode acceptFinishFlag = new AcceptDataNode(flagname);
+			AcceptDataNode acceptFinishFlag = new AcceptDataNode(errorfielname);
 			getClientExecPlan().getGraph().addNode(acceptFinishFlag);
 
 			getTransmissionGraph().addNode(finishNode);

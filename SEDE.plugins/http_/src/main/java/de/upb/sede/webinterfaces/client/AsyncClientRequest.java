@@ -75,7 +75,7 @@ public class AsyncClientRequest implements Future<Optional<String>>, Runnable {
 		long remainingMillis = unit.toMillis(timeout);
 		long lastTimestamp = System.currentTimeMillis();
 		for(AsyncClientRequest request : requests) {
-			if(lastTimestamp < 0) {
+			if(remainingMillis <= 0) {
 				return;
 			}
 			request.get(remainingMillis, TimeUnit.MILLISECONDS);

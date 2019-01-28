@@ -29,6 +29,7 @@ import de.upb.sede.util.Streams;
 public class Execution implements IExecution {
 
 	private static final Logger logger = LoggerFactory.getLogger(Execution.class);
+	public final static String EXECUTION_ERRORS_FIELDNAME = "__execution_errors";
 
 	private final ExecutionEnv environment;
 
@@ -39,6 +40,7 @@ public class Execution implements IExecution {
 	private final Observable<Task> runnableTasks = new Observable<Task>();
 
 	private final ExecutorConfiguration executorConfiguration;
+
 
 
 	/**

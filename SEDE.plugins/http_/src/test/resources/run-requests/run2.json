@@ -6,7 +6,7 @@
         "n1 = g1::nullstelle()",
         "n2 = g2::nullstelle()",
         "l2 = a1::summierListe({n1, n2})",
-        "l3 = a1::addierListe({l1})",
+        "l3 = a1::addierListe({l2})",
         "l4 = a1::summierListe({l3, l2})",
         "g1::liagtAufGerade({l4})",
         "b1 = g2::liagtAufGerade({l4})"
@@ -20,10 +20,6 @@
         "b": {
             "data": -1,
             "type": "Number"
-        },
-        "l1": {
-            "data": "[-7,-4]",
-            "type": "Arr"
         }
     },
     "policy": {

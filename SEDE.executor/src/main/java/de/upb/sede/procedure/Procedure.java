@@ -6,6 +6,8 @@ public interface Procedure {
 
 	void processTask(Task task);
 
-	default void processFail(Task task) {}
+	default void processFail(Task task) {
+		task.setFailed();
+	}
 
 }

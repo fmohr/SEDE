@@ -7,14 +7,22 @@ import java.util.stream.Collectors;
 
 public class CollectErrorsNode extends BaseNode{
 
-	private final List<String> errorFields;
+	public final static String EXECUTION_ERRORS_FIELDNAME = "__execution_errors_%s";
 
-	public CollectErrorsNode(List<String> errorFields) {
+	private final List<String> errorFields;
+	private final String fieldname;
+
+	public CollectErrorsNode(List<String> errorFields, String executorId) {
 		this.errorFields = errorFields;
+		this.fieldname = fieldname(executorId);
 	}
 
-	public CollectErrorsNode() {
-		this.errorFields = Collections.EMPTY_LIST;
+	public CollectErrorsNode(String executorId) {
+		this(Collections.EMPTY_LIST, executorId);
+	}
+
+	private static String fieldname(String executorId) {
+		return String.format(EXECUTION_ERRORS_FIELDNAME, executorId);
 	}
 
 	public List<String> getErrorFields() {
@@ -28,5 +36,9 @@ public class CollectErrorsNode extends BaseNode{
 			return "Collect errors";
 		}
 		return "Collect errors from " + errorFields.stream().collect(Collectors.joining(", "));
+	}
+
+	public String getFieldname() {
+		return fieldname;
 	}
 }

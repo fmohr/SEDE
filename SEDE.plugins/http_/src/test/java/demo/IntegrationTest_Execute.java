@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.simple.JSONObject;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -179,22 +180,31 @@ public class IntegrationTest_Execute {
 		Map<String, Result> resultMap = cc.blockingRun(rr);
 		Assert.assertTrue(resultMap.containsKey("a"));
 		Assert.assertTrue(resultMap.get("a").hasFailed());
+		Assert.assertTrue(resultMap.containsKey(cc.getErrorFieldName()));
+//		System.out.println((String) resultMap.get(cc.getErrorFieldName()).getResultData().getDataField());
+		System.out.println(JSONObject.toJSONString(resultMap.get(cc.getErrorFieldName()).getResultData().getDataField()));
+		try{
+			cc.assertErrorFreeRun(resultMap);
+			Assert.fail("Error free run didnt throw exception.");
+		} catch (Exception ex) {
+			logger.debug("Corretcly throw error: ", ex);
+		}
 	}
 
 	@Test
-	public void testLocalRun() {
+	public void testLocalRun()throws Exception {
 		CoreClient cc = getLocalClient();
 		runAllOnce(cc);
 	}
 
 	@Test
-	public void  testHttpRun() {
+	public void  testHttpRun()throws Exception {
 		CoreClient cc = getHttpClient();
 		runAllOnce(cc);
 		//cc.getClientExecutor().shutdown();
 	}
 
-	public void runAllOnce(CoreClient cc) {
+	public void runAllOnce(CoreClient cc) throws Exception {
 
 		for (String pathToRequest : FileUtil.listAllFilesInDir(rscPath, "(.*?)\\.json$")) {
 			pathToRequest = rscPath + pathToRequest;
@@ -203,24 +213,24 @@ public class IntegrationTest_Execute {
 				String jsonRunRequest = FileUtil.readFileAsString(pathToRequest);
 				RunRequest runRequest = new RunRequest();
 				runRequest.fromJsonString(jsonRunRequest);
-
-				String requestId = cc.run(runRequest, null);
-				cc.join(requestId, false);
+				Map<String, Result> resultMap = cc.blockingRun(runRequest);
+				cc.assertErrorFreeRun(resultMap);
 			} catch (Exception ex) {
 				logger.error("Error during " + pathToRequest + ":", ex);
+				throw ex;
 			}
 		}
 	}
 
 
 	@Test
-	public void testLocalBenchmark() throws InterruptedException {
+	public void testLocalBenchmark() throws Exception {
 		CoreClient cc = getLocalClient();
 		runBenchmark(cc);
 	}
 
-//	@Test
-	public void testHttpBenchmark() throws InterruptedException {
+	@Test
+	public void testHttpBenchmark() throws Exception {
 		CoreClient cc = getHttpClient();
 		runBenchmark(cc);
 		System.gc();
@@ -230,16 +240,16 @@ public class IntegrationTest_Execute {
 		/*
 			Check for potential memory leak:
 		 */
-		Assert.assertEquals(0, httpClient.getClientExecutor().getWorkerPool().futueListSize());
-		Assert.assertEquals(0, executor2.getBasisExecutor().getWorkerPool().futueListSize());
-		Assert.assertEquals(0, executor1.getBasisExecutor().getWorkerPool().futueListSize());
+//		Assert.assertEquals(0, httpClient.getClientExecutor().getWorkerPool().futueListSize());
+//		Assert.assertEquals(0, executor2.getBasisExecutor().getWorkerPool().futueListSize());
+//		Assert.assertEquals(0, executor1.getBasisExecutor().getWorkerPool().futueListSize());
 
 	}
 
 
 
 
-	public void runBenchmark(CoreClient cc) throws InterruptedException {
+	public void runBenchmark(CoreClient cc) throws Exception {
 		List<String> runningRequestsIds = new ArrayList<>();
 		Map<String, RunRequest> runRequests = new HashMap<>();
 		for (String pathToRequest : FileUtil.listAllFilesInDir(rscPath, "(.*?)\\.json$")) {
@@ -256,13 +266,16 @@ public class IntegrationTest_Execute {
 		}
 		int reruns = 100;
 
+		List<Map<String, Result>> results = new ArrayList<>();
 		for (int i = 0; i < reruns; i++) {
 			for (String requestId : runRequests.keySet()) {
 				RunRequest runRequest = runRequests.get(requestId);
 				try {
 					String runId = requestId + i;
 					runRequest.setRequestId(runId);
-					cc.run(runRequest, null);
+					CoreClient.MapResultConsumer result = new CoreClient.MapResultConsumer();
+					results.add(result);
+					cc.run(runRequest, result);
 					runningRequestsIds.add(requestId);
 					logger.debug("Added request Id {}", requestId);
 					Thread.sleep(10);
@@ -276,6 +289,8 @@ public class IntegrationTest_Execute {
 		logger.info("{} request many requests have been sent.", requestCount);
 		for (int i = 0; i < requestCount; i++) {
 			cc.join(runningRequestsIds.get(i), false);
+			Map<String, Result> resultMap = results.get(i);
+			cc.assertErrorFreeRun(resultMap);
 			int currentpercent = ((int)(100. * ((double)i)/((double)requestCount)));
 
 			if(currentpercent > percentreached){
@@ -301,7 +316,8 @@ public class IntegrationTest_Execute {
 
 	private static OnthologicalTypeConfig getTestTypeConfig() {
 		OnthologicalTypeConfig typeConfig = new OnthologicalTypeConfig();
-		typeConfig.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/demo-typeconf.json"));
+		typeConfig.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/demo-typeconf.json"),
+				FileUtil.readResourceAsString("config/builtin-typeconf.json"));
 		return typeConfig;
 	}
 

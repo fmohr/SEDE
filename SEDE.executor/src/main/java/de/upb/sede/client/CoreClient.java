@@ -36,11 +36,15 @@ public class CoreClient implements ICoreClient{
 
 	protected static final Logger logger = LoggerFactory.getLogger(CoreClient.class);
 
+	public final static String ERROR_COLLECTION_FIELDNAME = "__execution_errors_%s";
+
 	private final Executor executor;
 
 	private final Function<ResolveRequest, GatewayResolution> gatewayChannel;
 
 	private Optional<BiConsumer<String, String>> dotGraphConsumer = Optional.empty();
+
+
 
 	public CoreClient(Executor executor, Function<ResolveRequest, GatewayResolution> gatewayChannel)  {
 		this.executor = executor;
@@ -128,6 +132,11 @@ public class CoreClient implements ICoreClient{
 		deliverInputs(requestId, runRequest.getInputs());
 
 		List<String> resultFields = resolution.getReturnFields();
+		/*
+		 * Results need to include error collection of this executor:
+		 */
+		resultFields.add(getErrorFieldName());
+
 		logger.debug("waiting for {}", resultFields);
 		ResultObserver resultObserver = new ResultObserver(requestId, resultFields, resultConsumer);
 		execution.getEnvironment().observe(resultObserver);
@@ -236,6 +245,10 @@ public class CoreClient implements ICoreClient{
 
 	public static class MapResultConsumer extends ConcurrentHashMap<String, Result> implements Consumer<Result> {
 
+		public MapResultConsumer() {
+
+		}
+
 		@Override
 		public void accept(Result result) {
 			this.put(result.getFieldname(), result);
@@ -244,6 +257,41 @@ public class CoreClient implements ICoreClient{
 
 	public void setDotGraphConsumer(BiConsumer<String, String> executionIdDotConsumer){
 		dotGraphConsumer = Optional.of(executionIdDotConsumer);
+	}
+
+	public String getErrorFieldName() {
+		return String.format(ERROR_COLLECTION_FIELDNAME, executor.contactInfo().get("id"));
+	}
+
+	public void assertErrorFreeRun(Map<String, Result> resultMap) throws Exception {
+		if(resultMap.containsKey(this.getErrorFieldName())) {
+			/*
+			 * error collection maps executor_ids onto a it's executor specific error collection.
+			 * An executor specific error collection maps from task description onto the stacktrace of their runtime-exception.
+			 * If an executor specific error collection is empty it means that the executor didn't have any errors.
+			 */
+			Map<String, Map<String, String>> errorCollection = resultMap.get(this.getErrorFieldName()).getResultData().getDataField();
+			if(!errorCollection.values().stream().allMatch(Map::isEmpty)) {
+				/*
+				 * Recreate the stack trace
+				 */
+				StringBuilder errorBuilder = new StringBuilder();
+				for(String executorId : errorCollection.keySet()) {
+					Map<String, String> executorErrors = errorCollection.get(executorId);
+					if(executorErrors.isEmpty()) {
+						continue;
+					}
+					errorBuilder.append(executorId).append(" errors: \n");
+					for(String taskDescription : executorErrors.keySet()){
+						String stackTrace = executorErrors.get(taskDescription);
+						errorBuilder.append("Error during ").append(taskDescription).append(". Stack Trace: ") .append(stackTrace).append("\n");
+					}
+				}
+				throw new Exception(errorBuilder.toString());
+			}
+		} else {
+			throw new Exception("Results doesn't contain error collection: " + this.getErrorFieldName());
+		}
 	}
 
 	public void writeDotGraphToDir(final String directoryPath) {

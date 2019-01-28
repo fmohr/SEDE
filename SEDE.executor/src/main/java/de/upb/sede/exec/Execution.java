@@ -2,12 +2,7 @@ package de.upb.sede.exec;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
@@ -29,7 +24,6 @@ import de.upb.sede.util.Streams;
 public class Execution implements IExecution {
 
 	private static final Logger logger = LoggerFactory.getLogger(Execution.class);
-	public final static String EXECUTION_ERRORS_FIELDNAME = "__execution_errors";
 
 	private final ExecutionEnv environment;
 
@@ -61,6 +55,13 @@ public class Execution implements IExecution {
 	 */
 	private final Set<Task> unfinishedTasks = new HashSet<>();
 
+
+	/**
+	 * Set of all tasks of this execution. Tasks are added to this set at the beginning of the execution. The set is then left untouched.
+	 */
+	private final Set<Task> allTasks = new HashSet<>();
+
+
 	/**
 	 * Observes all tasks. Once an observed task changes its state to resolved, this
 	 * observer will put it into the waiting-Tasks set.
@@ -86,7 +87,6 @@ public class Execution implements IExecution {
 	 */
 	private final List<Observer<Task>> observersOfAllTasks = Arrays.asList(waitingTasksObserver,
 			unresolvedTasksObserver, unfinishedTasksObserver);
-
 	/**
 	 * Default constructor.
 	 * 
@@ -180,6 +180,7 @@ public class Execution implements IExecution {
 		boolean newTask = unfinishedTasks.add(task);
 		if (newTask) {
 			waitingTasks.add(task);
+			allTasks.add(task);
 			for (Observer<Task> taskObserver : observersOfAllTasks) {
 				task.getState().observe(taskObserver);
 			}
@@ -241,6 +242,14 @@ public class Execution implements IExecution {
 		} else {
 			return Collections.unmodifiableSet(unfinishedTasks);
 		}
+	}
+
+	/**
+	 * Returns the set of all tasks of this execution.
+	 * @return set of all tasks.
+	 */
+	public Set<Task> getAllTasks() {
+		return Collections.unmodifiableSet(allTasks);
 	}
 
 	/**

@@ -716,13 +716,11 @@ public class DataFlowAnalysis {
 	 */
 	private void determineExecutors() {
 		for(ExecPlan plan: execPlans) {
-			if(!plan.targetDetermined()) {
-				ExecutorHandle chosedTarget = resolveInfo.getExecutorCoordinator().scheduleNextAmong(plan.candidates());
-				/*
-					Remove every other executor:
-				 */
-				plan.removeCandidates(candidate->candidate!=chosedTarget);
-			}
+			ExecutorHandle chosedTarget = resolveInfo.getExecutorCoordinator().scheduleNextAmong(plan.candidates());
+			/*
+				Remove every other executor:
+			 */
+			plan.removeCandidates(candidate->candidate!=chosedTarget);
 		}
 	}
 

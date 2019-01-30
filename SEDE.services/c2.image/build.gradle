@@ -14,4 +14,5 @@ dependencies {
 
     testCompile project(":SEDE.http")
     compile group: 'de.upb.isys', name: 'builtins', version: '1.1'
+    compile group: 'de.upb.isys', name: 'c2.image', version: '1.2'
 }

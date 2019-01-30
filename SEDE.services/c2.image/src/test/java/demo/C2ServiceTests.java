@@ -54,13 +54,17 @@ public class C2ServiceTests {
 
 	private static ClassesConfig getTestClassConfig() {
 		ClassesConfig classesConfig = new ClassesConfig();
-		classesConfig.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/imaging-classconf.json"));
+		classesConfig.appendConfigFromJsonStrings(
+				FileUtil.readResourceAsString("config/imaging-classconf.json"),
+				FileUtil.readResourceAsString("config/builtin-classconf.json"));
 		return classesConfig;
 	}
 
 	private static OnthologicalTypeConfig getTestTypeConfig() {
 		OnthologicalTypeConfig typeConfig = new OnthologicalTypeConfig();
-		typeConfig.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/imaging-typeconf.json"));
+		typeConfig.appendConfigFromJsonStrings(
+				FileUtil.readResourceAsString("config/imaging-typeconf.json")
+				, FileUtil.readResourceAsString("config/builtin-typeconf.json"));
 		return typeConfig;
 	}
 

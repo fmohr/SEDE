@@ -7,10 +7,8 @@ import C2Data.C2Resource;
 import C2Plugins.Plugin;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class C2Service_sobel extends Plugin {
 
@@ -40,36 +38,62 @@ public class C2Service_sobel extends Plugin {
     }
 
     public C2Image processImage(C2Resource resource, C2Image sourceImage) {
+
+        Objects.requireNonNull(resource, "resource argument must not be null.");
+        Objects.requireNonNull(sourceImage, "sourceImage argument must not be null.");
+
         printMethod("processImage", resource.getResourceString());
 
-        switch (resource.getResourceString()) {
-            case "s":
-            case "c":
-            case "g":
-            case "f":
-            case "j":
-            case "o":
+        List<C2Image> sourceImages = Collections.singletonList(sourceImage);
+        List<C2Image> outputImages = internalProcessImages(resource, sourceImages);
+        assert outputImages.size() == 1;
+
+        return outputImages.get(0);
+    }
+
+    public List<C2Image> processImages(C2Resource resource, List<C2Image> input_images) {
+
+        Objects.requireNonNull(resource, "resource argument must not be null.");
+        Objects.requireNonNull(input_images, "input_images argument must not be null.");
+
+        printMethod("processImages", resource.getResourceString());
+
+        return internalProcessImages(resource, input_images);
+    }
+
+    private List<C2Image> internalProcessImages(C2Resource resource, List<C2Image> input_images) {
+        switch (resource.getResourceChar()) {
+            case 's':
+            case 'c':
+            case 'g':
+            case 'f':
+            case 'j':
+            case 'o':
                 break;
             default:
-                throw new Error("Resource '" + resource.getResourceString() + "' not supported by service.");
+                throw new IllegalArgumentException("Resource '" + resource.getResourceString() + "' not supported by service.");
         }
-
-        List<C2Image> input_images  = new ArrayList<C2Image>();
-        input_images.add(sourceImage);
 
         List<C2Image> output_images = null;
 
-        if (resource.getResourceString() != "j") {
-            output_images = (ArrayList<C2Image>) process(resource.getResourceChar(), getParamList(), input_images);
+        if (resource.getResourceChar() != 'j') {
+            output_images = (List<C2Image>) process(resource.getResourceChar(), getParamList(), input_images);
         } else {
-            output_images = (ArrayList<C2Image>) sobel(input_images);
+            output_images =  sobel(input_images);
         }
 
-        return output_images.get(0);
+        return output_images;
     }
 
-    public List<C2Image> sobel(List<C2Image> inputImages) {
-        C2Image inputImage  = inputImages.get(0);
+
+    public List<C2Image> sobel(List<C2Image> inputImage) {
+        return inputImage.stream()
+                .map(this::sobel)
+                .collect(Collectors.toList()); // Collectors.toList returns an ArrayList instance
+    }
+
+    public C2Image sobel(C2Image inputImage) {
+//        C2Image inputImage  = inputImages.get(0);
 
         int rows            = inputImage.getRows();
         int columns         = inputImage.getColumns();
@@ -135,10 +159,6 @@ public class C2Service_sobel extends Plugin {
         }
 
         C2Image outputImage = new C2Image(pixelsOut, inputImage.getRows(), inputImage.getColumns());
-
-        List<C2Image> outputImages = new ArrayList<C2Image>();
-        outputImages.add(outputImage);
-
-        return outputImages;
+        return outputImage;
     }
 }

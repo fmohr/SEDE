@@ -21,12 +21,24 @@ import java.util.function.Supplier;
 
 public class ProxySetup {
 
+
 	private final static Logger logger = LoggerFactory.getLogger(ProxySetup.class);
 
 	private final Map<String, String> fetchedMapping = new HashMap<>();
 	private Long lastMappingFetch = Long.MIN_VALUE;
 	private final Long mappingTTL = 5000L;
 	private final String proxyAddress;
+
+	private static String PROXY_ADDRESS = null;
+
+	static {
+		Optional<String> proxyAddressOpt = Optional.ofNullable(System.getenv("PROXY_ADDRESS"));
+		proxyAddressOpt.ifPresent(s -> PROXY_ADDRESS = s);
+	}
+
+	public static void setGlobalProxyAddress(String proxyAddress){
+		ProxySetup.PROXY_ADDRESS = proxyAddress;
+	}
 
 	public ProxySetup(ExecutorHttpServer executor, String proxyAddress) {
 		this.proxyAddress = proxyAddress;
@@ -40,15 +52,14 @@ public class ProxySetup {
 	}
 
 	public static void enablePlugin(ExecutorHttpServer executor) {
-		Optional<String> proxyAddressOpt = Optional.ofNullable(System.getenv("PROXY_ADDRESS"));
-		if(! proxyAddressOpt.isPresent()) {
+		if(PROXY_ADDRESS == null) {
 			logger.info("PROXY_ADDRESS was not set.");
 			return;
 		}
 		/*
 		 * Setup proxy server:
 		 */
-		String proxyAddress = proxyAddressOpt.get();
+		String proxyAddress = PROXY_ADDRESS;
 		String executorId;
 		String executorLocalAddress;
 		try {

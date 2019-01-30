@@ -7,15 +7,8 @@ import C2Data.C2Resource;
 import C2Plugins.Plugin;
 
 import java.io.File;
-<<<<<<< HEAD
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-=======
 import java.util.*;
 import java.util.stream.Collectors;
->>>>>>> b28e25ba8b1866aa35a9f043c083e11122e28250
 
 public class C2Service_sobel extends Plugin {
 

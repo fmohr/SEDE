@@ -13,4 +13,5 @@ dependencies {
     )
 
     testCompile project(":SEDE.http")
+    compile group: 'de.upb.isys', name: 'builtins', version: '1.1'
 }

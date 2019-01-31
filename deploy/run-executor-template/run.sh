@@ -15,9 +15,17 @@ while lsof -Pi :"$port" -sTCP:LISTEN -t >/dev/null ; do
 done
 echo Port: "$port"
 
+# set out environment.
+export SEDE_ROOT=${DIR}/../../
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${SEDE_ROOT}/CServices/csrc/service_plugins/build/
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/maxeler/maxeleros/lib/
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${SEDE_ROOT}/CServices/max_so/
+
+# export EXECUTOR_ADDRESS="131.234.92.211:9000"
+
 #config="${PWD##*/}"/config.json
 #config="$DIR"/config.json
-config="$DIR"/../executor_configs/all_java_config.json
+config="$DIR"/../executor_configs/all_cservices_config.json
 echo Configuration file: "$config"
 
 java -Xmx8g -cp "$DIR"/../SEDE/'*':"$DIR"/../SEDE_logging_lib/'*':"$DIR"/services/'*':"$DIR"  de.upb.sede.exec.ExecutorServerStarter "$config" "$ip" "$port"

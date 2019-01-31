@@ -2,7 +2,7 @@
   "gateways": ["sfb-k8node-1.cs.uni-paderborn.de:30370"],
   "capabilities": [],
   "threadNumber": 4,
-  "executorId": "HetNode12",
+  "executorId": "HetNode12_dockered",
   "services": [
     "C2Services.C2Service_grey_CPU",
     "C2Services.C2Service_grey_FPGA",

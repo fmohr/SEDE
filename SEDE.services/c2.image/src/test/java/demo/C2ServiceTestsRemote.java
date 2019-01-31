@@ -146,7 +146,7 @@ public class C2ServiceTestsRemote {
     public void testGreyGaussSobelExplicitResources() throws Exception {
 
 		String composition =
-				"s1 = C2Services.C2Service_grey_OVERLAY::__construct();\n" +
+				"s1 = C2Services.C2Service_grey_SCPU::__construct();\n" +
 						"imageInter2 = s1::processImage({i1=imageIn});\n" +
 						// "s2 = C2Services.C2Service_gausslowpass::__construct();\n" +
 						// "imageInter2 = s2::processImage({i1=resource2, i2=imageInter1});\n" +

@@ -28,11 +28,14 @@ import javax.swing.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public class C2ServiceTestsRemoteDell {
+/*
+	Test class to run a standalone SEDE executor.
+ */
+public class C2ServiceTestsRemote {
 
 	static CoreClient coreClient;
 
-	static String clientAddress = "localhost"; // WebUtil.HostIpAddress()
+	static String clientAddress = "locahost"; // WebUtil.HostIpAddress();
 	static int clientPort = 7001;
 
 	static String gatewayAddress = "sfb-k8node-1.cs.uni-paderborn.de";
@@ -88,6 +91,8 @@ public class C2ServiceTestsRemoteDell {
 		creator.withExecutorId("Client");
 		ExecutorConfiguration configuration = ExecutorConfiguration.parseJSON(creator.toString());
 		coreClient = HttpCoreClient.createNew(configuration, clientAddress, clientPort, gatewayAddress, gatewayPort);
+
+		System.out.println(clientAddress.toString());
 
 //		List<String> services = getTestExecConfig();
 //

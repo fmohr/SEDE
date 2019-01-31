@@ -143,50 +143,50 @@ public class C2ServiceTestsRemote {
 	}
 
 	@Test
-    public void testGreyGaussSobel() throws Exception {
+    public void testGreyGaussSobelExplicitResources() throws Exception {
 
 		String composition =
-				"s1 = C2Services.C2Service_grey_SCPU::__construct();\n" +
-				"imageInter2 = s1::processImage({i1=imageIn});\n" +
-				// "s2 = C2Services.C2Service_gausslowpass::__construct();\n" +
-				// "imageInter2 = s2::processImage({i1=resource2, i2=imageInter1});\n" +
-                "s3 = C2Services.C2Service_sobel_FPGA::__construct();\n" +
-                "imageOut = s3::processImage({i1=imageInter2});\n";
+				"s1 = C2Services.C2Service_grey_OVERLAY::__construct();\n" +
+						"imageInter2 = s1::processImage({i1=imageIn});\n" +
+						// "s2 = C2Services.C2Service_gausslowpass::__construct();\n" +
+						// "imageInter2 = s2::processImage({i1=resource2, i2=imageInter1});\n" +
+						"s3 = C2Services.C2Service_sobel_FPGA::__construct();\n" +
+						"imageOut = s3::processImage({i1=imageInter2});\n";
 
-		C2Resource SCPU	= new C2Resource("scpu");
-		C2Resource CPU	= new C2Resource("cpu");
-		C2Resource GPU	= new C2Resource("gpu");
-		C2Resource FPGA	= new C2Resource("fpga");
-		C2Resource JAVA	= new C2Resource("java");
+		C2Resource SCPU = new C2Resource("scpu");
+		C2Resource CPU = new C2Resource("cpu");
+		C2Resource GPU = new C2Resource("gpu");
+		C2Resource FPGA = new C2Resource("fpga");
+		C2Resource JAVA = new C2Resource("java");
 		C2Resource OVERLAY = new C2Resource("overlay");
 
-		SEDEObject inputObject_lenna	= new ObjectDataField(C2Image.class.getName(), lenna);
-		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), SCPU);
-        SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), SCPU);
-        SEDEObject inputObject_res3		= new ObjectDataField(C2Resource.class.getName(), SCPU);
+		SEDEObject inputObject_lenna = new ObjectDataField(C2Image.class.getName(), lenna);
+		SEDEObject inputObject_res1 = new ObjectDataField(C2Resource.class.getName(), SCPU);
+		SEDEObject inputObject_res2 = new ObjectDataField(C2Resource.class.getName(), SCPU);
+		SEDEObject inputObject_res3 = new ObjectDataField(C2Resource.class.getName(), SCPU);
 
-        ResolvePolicy policy = new ResolvePolicy();
-        policy.setServicePolicy("None");
-        policy.setReturnFieldnames(Arrays.asList("imageInter2", "imageOut"));
+		ResolvePolicy policy = new ResolvePolicy();
+		policy.setServicePolicy("None");
+		policy.setReturnFieldnames(Arrays.asList("imageInter2", "imageOut"));
 
-        Map<String, SEDEObject> inputs = new HashMap<>();
+		Map<String, SEDEObject> inputs = new HashMap<>();
 		inputs.put("imageIn", inputObject_lenna);
 
-        RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
+		RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
 
 		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
 		coreClient.assertErrorFreeRun(resultMap);
-        // Result inter1 = resultMap.get("imageInter1");
-        Result inter2 = resultMap.get("imageInter2");
+		// Result inter1 = resultMap.get("imageInter1");
+		Result inter2 = resultMap.get("imageInter2");
 		Result result = resultMap.get("imageOut");
 
-        C2Image lenna_inter2 = inter2.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
+		C2Image lenna_inter2 = inter2.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 		lenna_mod = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 
 		JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input Image", JOptionPane.PLAIN_MESSAGE);
-        JOptionPane.showMessageDialog(null, lenna_inter2.convertToImageIcon(), "Gauss Blurred Image", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, lenna_inter2.convertToImageIcon(), "Gauss Blurred Image", JOptionPane.PLAIN_MESSAGE);
 		JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Sobel Filtered Image", JOptionPane.PLAIN_MESSAGE);
-    }
+	}
 
 	@Test
 	public void testGreyMedianMorph() throws InvocationTargetException, InterruptedException {

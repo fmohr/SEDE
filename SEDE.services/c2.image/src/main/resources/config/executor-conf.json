@@ -28,6 +28,7 @@
     "C2Services.C2Service_grey_GPU",
     "C2Services.C2Service_grey_JAVA",
     "C2Services.C2Service_grey_SCPU",
+    "C2Services.C2Service_grey_OVERLAY",
     "C2Services.C2Service_median",
     "C2Services.C2Service_median_CPU",
     "C2Services.C2Service_median_SCPU",
@@ -43,7 +44,8 @@
     "C2Services.C2Service_sobel_JAVA",
     "C2Services.C2Service_sobel_FPGA",
     "C2Services.C2Service_sobel_GPU",
-    "C2Services.C2Service_sobel_SCPU"
+    "C2Services.C2Service_sobel_SCPU",
+    "C2Services.C2Service_sobel_OVERLAY"
   ],
   "serviceStoreLocation": "instances"
 }

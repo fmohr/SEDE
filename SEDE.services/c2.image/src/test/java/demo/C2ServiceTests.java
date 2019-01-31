@@ -197,6 +197,43 @@ public class C2ServiceTests {
     }
 
 	@Test
+	public void testGreyGaussSobelExplicitResources() throws InvocationTargetException, InterruptedException {
+
+		String composition =
+				"s1 = C2Services.C2Service_grey_OVERLAY::__construct();\n" +
+						"imageInter1 = s1::processImage({i1=imageIn});\n" +
+						"s2 = C2Services.C2Service_gausslowpass_SCPU::__construct();\n" +
+						"imageInter2 = s2::processImage({i1=imageInter1});\n" +
+						"s3 = C2Services.C2Service_sobel_OVERLAY::__construct();\n" +
+						"imageOut = s3::processImage({i1=imageInter2});\n";
+
+		SEDEObject inputObject_lenna	= new ObjectDataField(C2Image.class.getName(), lenna);
+
+		ResolvePolicy policy = new ResolvePolicy();
+		policy.setServicePolicy("None");
+		policy.setReturnFieldnames(Arrays.asList("imageInter1", "imageInter2", "imageOut"));
+
+		Map<String, SEDEObject> inputs = new HashMap<>();
+		inputs.put("imageIn", inputObject_lenna);
+
+		RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
+
+		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
+		Result inter1 = resultMap.get("imageInter1");
+		Result inter2 = resultMap.get("imageInter2");
+		Result result = resultMap.get("imageOut");
+
+		C2Image lenna_inter1 = inter1.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
+		C2Image lenna_inter2 = inter2.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
+		lenna_mod = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
+
+		JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input Image", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, lenna_inter1.convertToImageIcon(), "Grey Image", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, lenna_inter2.convertToImageIcon(), "Gauss Blurred Image", JOptionPane.PLAIN_MESSAGE);
+		JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Sobel Filtered Image", JOptionPane.PLAIN_MESSAGE);
+	}
+
+	@Test
 	public void testGreyMedianMorph() throws InvocationTargetException, InterruptedException {
 
 		String composition =

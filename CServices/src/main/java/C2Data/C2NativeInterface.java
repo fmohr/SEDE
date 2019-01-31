@@ -10,6 +10,10 @@ public class C2NativeInterface {
 
     private static C2NativeInterface instance;
 
+    static  {
+        getInstance ();
+    }
+
     private C2NativeInterface() {
         try {
             Map<String, String> env = System.getenv();

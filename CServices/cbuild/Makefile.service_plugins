@@ -28,7 +28,7 @@ $(SERVICES_HW):
 	cd ../csrc/service_plugins/build && \
 	$(PGCC) $(PGCFLAGS) -fPIC -c -o $@_gpu.o ../$@/$@_gpu.c
 	cd ../csrc/service_plugins/build && \
-	$(PGCC) $(PGCFLAGS) -shared -o lib$@_gpu.so $@_gpu.o
+	$(PGCC) $(PGCFLAGS) -mp -shared -o lib$@_gpu.so $@_gpu.o
 	
 	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -fPIC -c -o $@_fpga.o ../$@/$@_fpga.c
@@ -43,7 +43,7 @@ $(SERVICES_HW):
 	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -fPIC -c -o $@.o ../$@/$@.c
 	cd ../csrc/service_plugins/build && \
-	$(CC) $(CFLAGS) -shared -o lib$@.so $@.o common.o -ldl -L. -l$@_scpu -l$@_cpu -l$@_fpga -l$@_overlay -L${SEDE_ROOT}/CServices/max_so -l$@_max
+	$(CC) $(CFLAGS) -shared -o lib$@.so $@.o common.o -ldl -L. -l$@_scpu -l$@_cpu -l$@_gpu -l$@_fpga -l$@_overlay -L${SEDE_ROOT}/CServices/max_so -l$@_max
 
 $(SERVICES_ALL):
 	cd ../csrc/service_plugins/build && \
@@ -59,12 +59,12 @@ $(SERVICES_ALL):
 	cd ../csrc/service_plugins/build && \
 	$(PGCC) $(PGCFLAGS) -fPIC -c -o $@_gpu.o ../$@/$@_gpu.c
 	cd ../csrc/service_plugins/build && \
-	$(PGCC) $(PGCFLAGS) -shared -o lib$@_gpu.so $@_gpu.o
+	$(PGCC) $(PGCFLAGS) -mp -shared -o lib$@_gpu.so $@_gpu.o
 	
 	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -fPIC -c -o $@.o ../$@/$@.c
 	cd ../csrc/service_plugins/build && \
-	$(CC) $(CFLAGS) -shared -o lib$@.so $@.o common.o -ldl -L. -l$@_scpu -l$@_cpu
+	$(CC) $(CFLAGS) -shared -o lib$@.so $@.o common.o -ldl -L. -l$@_scpu -l$@_cpu -l$@_gpu
 
 .PHONY: common clean
 

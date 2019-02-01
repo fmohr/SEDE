@@ -21,7 +21,8 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${SEDE_ROOT}/CServices/csrc/service_pl
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/maxeler/maxeleros/lib/
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${SEDE_ROOT}/CServices/max_so/
 
-# export EXECUTOR_ADDRESS="131.234.92.211:9000"
+export EXECUTOR_ADDRESS="cc-8.pc2.uni-paderborn.de:9000"
+export PROXY_ADDRESS="131.234.58.16:9090"
 
 #config="${PWD##*/}"/config.json
 #config="$DIR"/config.json

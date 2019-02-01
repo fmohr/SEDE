@@ -7,7 +7,7 @@ sudo docker run \
 	-v /opt/pgi:/opt/pgi \
 	-v /usr/local/cuda-8.0:/usr/local/cuda-8.0 \
 	-v /usr/lib64/libnuma.so.1:/usr/lib64/libnuma.so.1 \
-	-p 8080:8080 \
+	-p 9000:9000 \
 	--device /dev/nvidia0 \
 	--device /dev/nvidiactl \
 	--device /dev/nvidia-uvm \

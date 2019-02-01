@@ -26,16 +26,17 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${SEDE_ROOT}/CServices/csrc/service_pl
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/opt/maxeler/maxeleros/lib/
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${SEDE_ROOT}/CServices/max_so/
 
-export EXECUTOR_ADDRESS="131.234.58.31:8080"
+export EXECUTOR_ADDRESS="cc-8.pc2.upb.de:9000"
+export PROXY_ADDRESS="131.234.58.16:9090"
 
 DIR="/root/SEDE/deploy/run-executor-template"
 
 #config="${PWD##*/}"/config.json
 #config="$DIR"/config.json
-config="$DIR"/../executor_configs/all_cservices_config.json
+config="$DIR"/../executor_configs/all_cservices_docker_config.json
 echo Configuration file: "$config"
 
-java -Xmx8g -cp "$DIR"/../SEDE/'*':"$DIR"/../SEDE_logging_lib/'*':"$DIR"/services/'*':"$DIR"  de.upb.sede.exec.ExecutorServerStarter "$config" localhost 80
+java -Xmx8g -cp "$DIR"/../SEDE/'*':"$DIR"/../SEDE_logging_lib/'*':"$DIR"/services/'*':"$DIR"  de.upb.sede.exec.ExecutorServerStarter "$config" cc-8.pc2.upb.de 9000
 
 #ENTRYPOINT java -Xmx12g -cp SEDE/*:SEDE_logging_lib/*:. de.upb.sede.exec.ExecutorServerStarter config.json localhost 80
 

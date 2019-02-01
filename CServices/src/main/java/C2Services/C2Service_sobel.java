@@ -77,11 +77,14 @@ public class C2Service_sobel extends Plugin {
         List<C2Image> output_images = null;
 
         if (resource.getResourceChar() != 'j') {
-            output_images = (List<C2Image>) process(resource.getResourceChar(), getParamList(), input_images);
+            output_images = new ArrayList<>(input_images.size());
+            for (C2Image image : input_images) {
+                Object process = process(resource.getResourceChar(), getParamList(), Collections.singletonList(image));
+                output_images.add((C2Image) process);
+            }
         } else {
-            output_images =  sobel(input_images);
+            output_images = sobel(input_images);
         }
-
         return output_images;
     }
 

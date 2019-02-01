@@ -35,9 +35,9 @@ public class C2ServiceTestsRemote {
 
 	static CoreClient coreClient;
 
-	static String clientAddress = "localhost";
+	static String clientAddress = "131.234.58.31";
 	// static String clientAddress = WebUtil.HostIpAddress();
-	static int clientPort = 7001;
+	static int clientPort = 9001;
 
 	static String gatewayAddress = "sfb-k8node-1.cs.uni-paderborn.de";
 	static int gatewayPort = 30370;
@@ -172,7 +172,7 @@ public class C2ServiceTestsRemote {
 		Map<String, SEDEObject> inputs = new HashMap<>();
 		inputs.put("imageIn", inputObject_lenna);
 
-		RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
+		RunRequest runRequest = new RunRequest("proc_cservices_2", composition, policy, inputs);
 
 		Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
 		coreClient.assertErrorFreeRun(resultMap);

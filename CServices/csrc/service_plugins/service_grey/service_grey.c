@@ -30,13 +30,12 @@ void run_service(char resource, void *handler_gpu, Image **target_images, int32_
 			*status_code = run_service_grey_cpu((*target_images)[0].image, source_images[0].image, source_images[0].rows, source_images[0].columns);
 			break;
 		case 'g':
-			#ifdef PGCC
-			handler_gpu = dlopen("../bin/plugins/libservice_grey_gpu.so", RTLD_LAZY | RTLD_GLOBAL);
+			handler_gpu = dlopen("libservice_grey_gpu.so", RTLD_LAZY | RTLD_GLOBAL);
 			if (NULL == handler_gpu) {
 				fprintf(stderr, "Cannot open library libservice_grey_gpu.so: %s (file: %s, line: %i)\n", dlerror(), __FILE__, __LINE__);
 				exit(EXIT_FAILURE);
 			}
-			#endif
+			
 			run_service_grey_gpu = (run_service_grey_gpu_t) dlsym(handler_gpu, "run_service_grey_gpu");
 			dlsym_error = dlerror();
 			if (dlsym_error) {
@@ -44,9 +43,9 @@ void run_service(char resource, void *handler_gpu, Image **target_images, int32_
 				break;
 			}
 			*status_code = run_service_grey_gpu((*target_images)[0].image, source_images[0].image, source_images[0].rows, source_images[0].columns);
-			#ifdef PGCC
+			
 			dlclose(handler_gpu);
-			#endif
+			
 			break;
 		case 'f':
 			*status_code = run_service_grey_fpga((*target_images)[0].image, source_images[0].image, source_images[0].rows, source_images[0].columns);

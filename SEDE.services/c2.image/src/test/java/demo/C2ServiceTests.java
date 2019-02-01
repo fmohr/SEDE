@@ -167,7 +167,7 @@ public class C2ServiceTests {
 		SEDEObject inputObject_lenna	= new ObjectDataField(C2Image.class.getName(), lenna);
 		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), SCPU);
         SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), OVERLAY);
-        SEDEObject inputObject_res3		= new ObjectDataField(C2Resource.class.getName(), SCPU);
+        SEDEObject inputObject_res3		= new ObjectDataField(C2Resource.class.getName(), GPU);
 
         ResolvePolicy policy = new ResolvePolicy();
         policy.setServicePolicy("None");

@@ -9,6 +9,8 @@ SERVICES_HW=\
 
 CC=gcc
 CFLAGS=-O3 -Wall
+PGCC=/opt/pgi/linux86-64/18.4/bin/pgcc
+PGCFLAGS=-acc -ta=tesla,cuda8.0 -O3 -Minfo
 
 all: mkdirectories clean common $(SERVICES_ALL) $(SERVICES_HW)
 
@@ -22,6 +24,11 @@ $(SERVICES_HW):
 	$(CC) $(CFLAGS) -fPIC -c -o $@_cpu.o ../$@/$@_cpu.c
 	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -shared -o lib$@_cpu.so $@_cpu.o -lgomp
+	
+	cd ../csrc/service_plugins/build && \
+	$(PGCC) $(PGCFLAGS) -fPIC -c -o $@_gpu.o ../$@/$@_gpu.c
+	cd ../csrc/service_plugins/build && \
+	$(PGCC) $(PGCFLAGS) -shared -o lib$@_gpu.so $@_gpu.o
 	
 	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -fPIC -c -o $@_fpga.o ../$@/$@_fpga.c
@@ -43,12 +50,17 @@ $(SERVICES_ALL):
 	$(CC) $(CFLAGS) -fPIC -c -o $@_scpu.o ../$@/$@_scpu.c
 	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -shared -o lib$@_scpu.so $@_scpu.o
-
+	
 	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -fPIC -fopenmp -c -o $@_cpu.o ../$@/$@_cpu.c
 	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -shared -o lib$@_cpu.so $@_cpu.o -lgomp
-
+	
+	cd ../csrc/service_plugins/build && \
+	$(PGCC) $(PGCFLAGS) -fPIC -c -o $@_gpu.o ../$@/$@_gpu.c
+	cd ../csrc/service_plugins/build && \
+	$(PGCC) $(PGCFLAGS) -shared -o lib$@_gpu.so $@_gpu.o
+	
 	cd ../csrc/service_plugins/build && \
 	$(CC) $(CFLAGS) -fPIC -c -o $@.o ../$@/$@.c
 	cd ../csrc/service_plugins/build && \

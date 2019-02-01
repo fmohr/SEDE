@@ -161,7 +161,7 @@ public class C2ImageCaster {
 	/**
 	 * Casts a list of C2Image objects to the semantic representation 'images' and writes the data into the provided stream.
 	 */
-	public void cts_FastBitmap_List(OutputStream os, List<C2Image> images) throws IOException {
+	public void cts_C2ImageList(OutputStream os, List<C2Image> images) throws IOException {
 		ArrayList<JSONObject> encodedImageList = new ArrayList<JSONObject>(images.size());
 		for (C2Image image : images) {
 			encodedImageList.add((JSONObject) encodeC2Image(image));
@@ -175,7 +175,7 @@ public class C2ImageCaster {
 	 * Casts from the semantic representation 'images' to List of C2Image objects.
 	 * The data in form of semantic type 'images' is taken from the provided inputstream.
 	 */
-	public List<C2Image> cfs_FastBitmap_List(InputStream is) throws ParseException, IOException {
+	public List<C2Image> cfs_C2ImageList(InputStream is) throws ParseException, IOException {
 		JSONParser parser = new JSONParser();
 		Reader reader = new InputStreamReader(is);
 		List<JSONObject> encodedImageList = (JSONArray) parser.parse(reader);

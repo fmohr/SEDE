@@ -24,7 +24,6 @@ public class C2ImageCaster {
 		JSONObject entry = new JSONObject();
 		entry.put("rows", image.getRows());
 		entry.put("columns", image.getColumns());
-		entry.put("imagetype", "ARGB");
 
 		/*
 		 * This caster needs to translate the image pixels from the C2Image class to match the expected image encoding (entry->pixels).
@@ -64,22 +63,73 @@ public class C2ImageCaster {
 		 *
 		 */
 
-		List<Integer> expectedImageEncoding = new ArrayList<>(image.getPixels().length);
 
 		short[] pixelArr = image.getPixels();
+
+		/*
+		 * First pass is calculate image type. Assume its gray and hasAlphaChannel.
+		 *   - image type is gray iff isColored == false and hasAlphaChannel == false
+		 *   - image type is rgb  iff isColored ==  true and hasAlphaChannel == false
+		 *   - image type is argb iff                        hasAlphaChannel ==  true
+		 */
+		boolean isColored = false,
+				hasAlphaChannel = false;
+
 		for (int index = 0, size = pixelArr.length;
 			 index < size; ) {
-
-			int blue = (pixelArr[index++] >> 8) & 255;
-			int green = (pixelArr[index++] >> 8) & 255;
-			int red = (pixelArr[index++] >> 8) & 255;
-			int alpha = 255 - ((pixelArr[index++] >> 8) & 255);
-
-			expectedImageEncoding.add(alpha); // alpha
-			expectedImageEncoding.add(red); // red
-			expectedImageEncoding.add(green); // green
-			expectedImageEncoding.add(blue); // blue
+			
+			isColored = isColored  // if a pixel has been found to be colored the image type degrades to color.
+						|| pixelArr[index] != pixelArr[index++]  // check if the first and second color channel are equal
+						|| pixelArr[index++] != pixelArr[index++] ; // check if the second and third color channel are equal.
+			hasAlphaChannel = pixelArr[index++] != 0; // check if the alpha channel is 0, i.e. the pixel is not transparent.
+			if(hasAlphaChannel) // the first transpare
+				break;
 		}
+
+		List<Integer> expectedImageEncoding;
+		if( (!isColored) && (!hasAlphaChannel)) {
+			entry.put("imagetype", "Grayscale");
+			expectedImageEncoding = new ArrayList<>((int)(image.getPixels().length / 4)); 
+			for (int index = 0, size = pixelArr.length;
+				index < size; ) { 
+				int greyScaleValue = (pixelArr[index] >> 8) & 255;
+				index += 4; // skip to the next pixel
+				expectedImageEncoding.add(greyScaleValue); // gray value
+			}
+		} else if (isColored && !hasAlphaChannel) {
+			entry.put("imagetype", "RGB");
+			expectedImageEncoding = new ArrayList<>((int)(((float) image.getPixels().length) * (0.75f)));
+			for (int index = 0, size = pixelArr.length;
+				 index < size; ) {
+
+				int blue = (pixelArr[index++] >> 8) & 255;
+				int green = (pixelArr[index++] >> 8) & 255;
+				int red = (pixelArr[index] >> 8) & 255;
+				index+= 2; // skip the alpha channel
+
+				expectedImageEncoding.add(red); // red
+				expectedImageEncoding.add(green); // green
+				expectedImageEncoding.add(blue); // blue
+			}
+		}
+		else {
+			entry.put("imagetype", "ARGB");
+			expectedImageEncoding = new ArrayList<>((int)(((float) image.getPixels().length) * (0.75f)));
+			for (int index = 0, size = pixelArr.length;
+				 index < size; ) {
+
+				int blue = (pixelArr[index++] >> 8) & 255;
+				int green = (pixelArr[index++] >> 8) & 255;
+				int red = (pixelArr[index++] >> 8) & 255;
+				int alpha = 255 - ((pixelArr[index++] >> 8) & 255);
+
+				expectedImageEncoding.add(alpha); // alpha
+				expectedImageEncoding.add(red); // red
+				expectedImageEncoding.add(green); // green
+				expectedImageEncoding.add(blue); // blue
+			}
+		}
+
 
 		entry.put("pixels", expectedImageEncoding);
 		return entry;

@@ -37,6 +37,9 @@ public class ExecutorCommands {
 						node(new Command.Strings("info"),
 								node(new Command.Strings(false, "all").addExe(t->this.executionsInfo())),
 								node(new Command.Token().addExe(t->this.executionInfo(lastMatch(t))))),
+						node(new Command.Strings("interrupt"),
+								node(new Command.Strings(false, "all").addExe(t->this.interruptAllExecutions())),
+								node(new Command.Token().addExe(t->this.interruptExecution(lastMatch(t))))),
 						node(new Command.Strings("ls").addExe(t -> this.executionList()))
 				)
 		);
@@ -80,14 +83,41 @@ public class ExecutorCommands {
 		outputString.append(indent).append("execution id: ").append(execution.getExecutionId());
 		outputString.append("\n").append(indent).append("\thas started: ").append(execution.hasStarted());
 		outputString.append("\n").append(indent).append("\tunfinished tasks: ").append(execution.getUnfinishedTasksCount());
+		execution.forEachTask(task -> {
+			if(task.hasNotFinished()) {
+				outputString.append("\n").append(indent)
+						.append("\t\t - task ");
+				if(task.isWaiting())
+					outputString.append(" - WAITING: ");
+				else if(task.isRunning())
+					outputString.append(" - RUNNING: ");
+				else if(task.isDoneRunning())
+					outputString.append(" - FINISHED: ");
+				outputString.append("\n").append(indent).append("\t\t\t ");
+				outputString.append(task.getDescription());
+			}
+		});
+		synchronized (execution.getEnvironment()) {
+
+		}
 		outputString.append("\n").append(indent).append("\tfield environment: ");
 		synchronized (execution.getEnvironment()) {
 			for (String field : execution.getEnvironment().keySet()) {
-				outputString.append("\n").append(indent).append("\t\t").append(field).append(": ")
+				outputString.append("\n").append(indent).append("\t\t - field: ").append(field).append(": ")
 						.append(execution.getEnvironment().isUnavailable(field) ?
 									"unavailable": execution.getEnvironment().get(field).getType());
 			}
 		}
+	}
+
+	public String interruptExecution(String executionId) {
+		executor.interrupt(executionId);
+		return "Send interrupt signal to execution with id: " + executionId;
+	}
+
+	public String interruptAllExecutions() {
+		executor.interruptAll();
+		return "Send interrupt signal to all executions";
 	}
 
 

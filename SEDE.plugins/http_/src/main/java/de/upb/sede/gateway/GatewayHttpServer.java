@@ -3,6 +3,7 @@ package de.upb.sede.gateway;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
@@ -48,7 +49,7 @@ public final class GatewayHttpServer implements ImServer {
 		addHandle("/resolve", ResolveCompositionHandler::new);
 		addHandle("/add-conf/classes", ClassConfigAdditionHandler::new);
 		addHandle("/add-conf/types", TypeConfigAdditionHandler::new);
-		server.setExecutor(null); // creates a default executor
+		server.setExecutor(Executors.newCachedThreadPool());
 		server.start();
 	}
 

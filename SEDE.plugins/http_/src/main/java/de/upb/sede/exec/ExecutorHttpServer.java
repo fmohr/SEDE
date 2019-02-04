@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -81,7 +82,7 @@ public class ExecutorHttpServer implements ImServer {
 		addHandle("/execute", ExecuteGraphHandler::new);
 		addHandle("/interrupt", InterruptHandler::new);
 
-		server.setExecutor(null); // creates a default executor
+		server.setExecutor(Executors.newCachedThreadPool());
 		server.start();
 
 		bindHttpProcedures();

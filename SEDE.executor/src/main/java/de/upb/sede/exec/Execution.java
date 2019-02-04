@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
@@ -286,8 +287,14 @@ public class Execution implements IExecution {
 		return started;
 	}
 
+	public synchronized void forEachTask(Consumer<Task> taskConsumer) {
+		for(Task task : allTasks) {
+			taskConsumer.accept(task);
+		}
+	}
 
-	 private class ExecutionEnv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
+
+	private class ExecutionEnv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
 
 		 /**
 		  * This map exists because for accept data procedures can register themselves

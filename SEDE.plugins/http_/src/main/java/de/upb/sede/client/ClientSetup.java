@@ -87,7 +87,7 @@ public class ClientSetup {
 			}
 			AddressRetriever.enablePlugin(server);
 			if(properties.proxyExecutorAddress() != null) {
-				System.getenv().put("PROXY_ADDRESS", properties.proxyExecutorAddress());
+				ProxySetup.setGlobalProxyAddress(properties.proxyExecutorAddress());
 			}
 			ProxySetup.enablePlugin(server);
 

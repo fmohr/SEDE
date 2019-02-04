@@ -48,9 +48,9 @@ public class CollectErrorsProcedure implements Procedure {
 			if(!task.getExecution().getEnvironment().isUnavailable(otherErrorCollectionField) && task.getExecution().getEnvironment().containsKey(otherErrorCollectionField)) {
 				Map otherErrorCollection = task.getExecution().getEnvironment().get(otherErrorCollectionField).getDataField();
 				errorCollection.putAll(otherErrorCollection);
-				logger.error("Collected errors from: {}", otherErrorCollectionField);
+				logger.debug("Collected errors from: {}", otherErrorCollectionField);
 			} else  {
-				logger.error("Error collection is unavailable: {}", otherErrorCollectionField);
+				logger.error("Errorcollection is unavailable: {}", otherErrorCollectionField);
 
 			}
 		}

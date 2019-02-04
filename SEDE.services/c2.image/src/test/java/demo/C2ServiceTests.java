@@ -41,7 +41,7 @@ public class C2ServiceTests {
 	static int gatewayPort = 6001;
 
 	static String executor1Address = WebUtil.HostIpAddress();
-	static int executorPort = 9001;
+	static int executorPort = 9004;
 	static ExecutorHttpServer executor1;
 
 	static GatewayHttpServer gateway;
@@ -204,7 +204,7 @@ public class C2ServiceTests {
 						"imageInter1 = s1::processImage({i1=imageIn});\n" +
 						"s2 = C2Services.C2Service_gausslowpass_SCPU::__construct();\n" +
 						"imageInter2 = s2::processImage({i1=imageInter1});\n" +
-						"s3 = C2Services.C2Service_sobel_OVERLAY::__construct();\n" +
+						"s3 = C2Services.C2Service_sobel_GPU::__construct();\n" +
 						"imageOut = s3::processImage({i1=imageInter2});\n";
 
 		SEDEObject inputObject_lenna	= new ObjectDataField(C2Image.class.getName(), lenna);

@@ -29,7 +29,7 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${SEDE_ROOT}/CServices/max_so/
 export EXECUTOR_ADDRESS="cc-8.pc2.upb.de:9000"
 export PROXY_ADDRESS="131.234.58.16:9090"
 
-DIR="/root/SEDE/deploy/run-executor-template"
+export DIR="/root/SEDE/deploy/run-executor-template"
 
 #config="${PWD##*/}"/config.json
 #config="$DIR"/config.json

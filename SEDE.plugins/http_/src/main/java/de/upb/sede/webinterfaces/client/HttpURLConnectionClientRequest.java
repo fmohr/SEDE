@@ -53,7 +53,7 @@ public class HttpURLConnectionClientRequest implements BasicClientRequest {
 			httpConnection.setDoInput(true);
 			httpConnection.setDoOutput(true);
 			httpConnection.setFixedLengthStreamingMode(payload.size());
-			httpConnection.setConnectTimeout(timeoutInMs);
+//			httpConnection.setConnectTimeout(timeoutInMs);
 			httpConnection.connect();
 
 			payload.writeTo(httpConnection.getOutputStream());

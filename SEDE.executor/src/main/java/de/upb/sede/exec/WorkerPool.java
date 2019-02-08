@@ -147,9 +147,9 @@ public class WorkerPool {
 					procedure.processFail(task);
 					task.setFailed();
 				}
-			} catch(Exception ex) {
+			} catch(Throwable ex) {
 				logger.error("ERROR during {}:", task.getDescription(), ex);
-				task.setError(ex);
+				task.setError(new Exception((ex)));
 				if(!task.hasFailed()){
 					try{
 						procedure.processFail(task);

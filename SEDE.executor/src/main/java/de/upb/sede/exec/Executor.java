@@ -29,8 +29,6 @@ public class Executor implements IExecutor {
 
 	private static final Logger logger = LoggerFactory.getLogger(Executor.class);
 
-	private static final GraphJsonDeserializer deserializer = new GraphJsonDeserializer();
-
 	private final ExecutionPool execPool;
 
 	private final ExecutorConfiguration config;
@@ -121,7 +119,7 @@ public class Executor implements IExecutor {
 	}
 
 	@Override
-	public synchronized void put(DataPutRequest dataPutRequest){
+	public synchronized void put(DataPutRequest dataPutRequest) {
 		Execution exec = getOrCreateExecution(dataPutRequest.getRequestID());
 		if(dataPutRequest.isUnavailable()) {
 			/*
@@ -139,18 +137,18 @@ public class Executor implements IExecutor {
 	@Override
 	public synchronized Execution exec(ExecRequest execRequest){
 		String execId = execRequest.getRequestID();
-
+		/*
+		 * Retrieve the execution:
+		 */
+		Execution exec;
 		/* First check if execution id is taken: */
 		if(execIdTaken(execId)) {
-			/*
-				Throw exception signaling that the exec Id is already occupied:
-			 */
-			throw new RuntimeException("Execution Id was already taken: " + execId);
+			logger.warn("Execution already exists: {}", execId);
 		}
-		Execution exec = getOrCreateExecution(execRequest.getRequestID());
+		exec = getOrCreateExecution(execId);
 		exec.getRunnableTasksObservable().observe(taskWorkerEnqueuer);
 
-		deserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
+		GraphJsonDeserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
 
 		exec.getState().observe(executionGarbageCollector);
 		exec.start();

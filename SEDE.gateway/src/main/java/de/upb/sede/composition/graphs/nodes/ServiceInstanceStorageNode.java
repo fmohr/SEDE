@@ -43,6 +43,17 @@ public class ServiceInstanceStorageNode extends BaseNode {
 	}
 
 	public String toString() {
-		return (isLoadInstruction() ? "load" : "store") + " \"" + getServiceInstanceFieldname() + "\"";
+		try{
+			StringBuilder desc = new StringBuilder();
+			if(isLoadInstruction()) {
+				desc.append("load");
+			} else {
+				desc.append("store");
+			}
+			desc.append("'").append(getServiceInstanceFieldname()).append("'=").append(getServiceClasspath());
+			return desc.toString();
+		} catch(Exception ex) {
+			return (isLoadInstruction() ? "load" : "store") + " \"" + getServiceInstanceFieldname() + "\"";
+		}
 	}
 }

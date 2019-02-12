@@ -4,6 +4,7 @@ import de.upb.sede.exceptions.DependecyTaskFailed;
 import de.upb.sede.exec.Execution;
 import de.upb.sede.exec.Task;
 import de.upb.sede.requests.ExecRequest;
+import de.upb.sede.util.AsyncObserver;
 import de.upb.sede.util.Observer;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
 
@@ -21,7 +22,9 @@ public abstract class SendGraphProcedure implements Procedure {
 		String executionId = task.getExecution().getExecutionId();
 		ExecRequest request = new ExecRequest(executionId, graph);
 
-		task.getExecution().getState().observe(Observer.lambda(Execution::hasExecutionBeenInterrupted, e -> handleInterrupt(task)));
+		task.getExecution().getState().observe(
+				new AsyncObserver<>(Observer.lambda(Execution::hasExecutionBeenInterrupted, e -> handleInterrupt(task)),
+						task.getExecution().getMessenger()));
 
 		try (BasicClientRequest execRequest = getExecRequest(task)) {
 			String response = execRequest.send(request.toJsonString());

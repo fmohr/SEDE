@@ -4,9 +4,13 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import de.upb.sede.util.*;
+import de.upb.sede.util.Observable;
+import de.upb.sede.util.Observer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,10 +18,6 @@ import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.SemanticDataField;
 import de.upb.sede.interfaces.IExecution;
-import de.upb.sede.util.DefaultMap;
-import de.upb.sede.util.Observable;
-import de.upb.sede.util.Observer;
-import de.upb.sede.util.Streams;
 
 /**
  * Represents one execution.
@@ -37,6 +37,12 @@ public class Execution implements IExecution {
 	private final ExecutorConfiguration executorConfiguration;
 
 
+	/*
+	 * This executor service handle observer updates for all observers in this execution.
+	 * Procedures and tasks all use this messenger to create asynchronous observers.
+	 * Do not use this service for tasks outside of this execution and don't use it for heavy duty tasks.
+	 */
+	private final ExecutorService messenger = ExecutorServices.createSingleDaemonThreaded();
 
 	/**
 	 * Flag that indicates that the execution has been interrupted.
@@ -67,19 +73,23 @@ public class Execution implements IExecution {
 	 * Observes all tasks. Once an observed task changes its state to resolved, this
 	 * observer will put it into the waiting-Tasks set.
 	 */
-	private final Observer<Task> unresolvedTasksObserver = Observer.lambda(Task::isWaiting, this::taskResolved);
+	private final Observer<Task> unresolvedTasksObserver = new AsyncObserver<>(
+			Observer.lambda(Task::isWaiting, this::taskResolved), getMessenger());
+
 
 	/**
 	 * Observes all tasks. Once an observed task has started processing, it will be
 	 * removed from the waiting-Tasks set.
 	 */
-	private final Observer<Task> waitingTasksObserver = Observer.lambda(Task::hasStarted, this::taskStarted);
+	private final Observer<Task> waitingTasksObserver = new AsyncObserver<>(
+			Observer.lambda(Task::hasStarted, this::taskStarted), getMessenger());
 
 	/**
 	 * Observes all tasks. Once an observed tasks has finished (success or fail), it
 	 * will be removed from the unfinished-Tasks set.
 	 */
-	private final Observer<Task> unfinishedTasksObserver = Observer.lambda(Task::hasFinished, this::taskFinished);
+	private final Observer<Task> unfinishedTasksObserver = new AsyncObserver<>(
+			Observer.lambda(Task::hasFinished, this::taskFinished), getMessenger());
 
 
 	/**
@@ -293,6 +303,15 @@ public class Execution implements IExecution {
 		}
 	}
 
+	/**
+	 * This executor service handle observer updates for all observers in this execution.
+	 * Procedures and tasks all use this messenger to create asynchronous observers.
+	 * Do not use this service for tasks outside of this execution and don't use it for heavy duty tasks.
+	 * @return Executor service used to communicate messages inside of an execution.
+	 */
+	public ExecutorService getMessenger() {
+		return messenger;
+	}
 
 	private class ExecutionEnv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
 

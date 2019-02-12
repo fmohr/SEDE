@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import de.upb.sede.procedure.*;
+import de.upb.sede.util.AsyncObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,9 +68,9 @@ public class Executor implements IExecutor {
 		this.execPool = new ExecutionPool(execConfig);
 		this.config = execConfig;
 		this.workerPool = new WorkerPool(execConfig.getThreadNumber());
-		this.taskWorkerEnqueuer = Observer.lambda(t->true,  workerPool::processTask, t->false);
-		this.executionGarbageCollector = Observer.<Execution>lambda(Execution::hasExecutionFinished,  // when an execution is done, .
-				this::removeExecution);
+		this.taskWorkerEnqueuer = new AsyncObserver<>(Observer.lambda(t->true,  workerPool::processTask, t->false));
+		this.executionGarbageCollector = new AsyncObserver<>(Observer.lambda(Execution::hasExecutionFinished,  // when an execution is done, .
+				this::removeExecution));
 		contactInfo.put("id", getExecutorConfiguration().getExecutorId());
 		bindProcedureNames();
 		logger.info("Executor with id '{}' created.\n" +

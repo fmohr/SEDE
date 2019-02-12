@@ -177,6 +177,11 @@ public class Executor implements IExecutor {
 
 	public void interruptAll() {
 		execPool.forAll(Execution::interrupt);
+		execPool.forAll(execution -> {
+			if(!execution.hasStarted()) {
+				execPool.removeExecution(execution);
+			}
+		});
 	}
 
 	public Set<String> capabilities() {

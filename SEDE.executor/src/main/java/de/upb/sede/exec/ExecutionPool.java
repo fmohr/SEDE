@@ -1,8 +1,6 @@
 package de.upb.sede.exec;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -61,7 +59,8 @@ public class ExecutionPool {
 
 
 	public synchronized  void forAll(Consumer<Execution> executionConsumer) {
-		for(String execId : execMap.keySet()) {
+		Set<String> executions = new HashSet<>(execMap.keySet());
+		for(String execId : executions) {
 			executionConsumer.accept(execMap.get(execId));
 		}
 	}

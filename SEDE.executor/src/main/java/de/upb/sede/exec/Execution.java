@@ -2,13 +2,9 @@ package de.upb.sede.exec;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.slf4j.Logger;
@@ -41,6 +37,7 @@ public class Execution implements IExecution {
 	private final ExecutorConfiguration executorConfiguration;
 
 
+
 	/**
 	 * Flag that indicates that the execution has been interrupted.
 	 */
@@ -58,6 +55,13 @@ public class Execution implements IExecution {
 	 * Each time a task finished it will be removed.
 	 */
 	private final Set<Task> unfinishedTasks = new HashSet<>();
+
+
+	/**
+	 * Set of all tasks of this execution. Tasks are added to this set at the beginning of the execution. The set is then left untouched.
+	 */
+	private final Set<Task> allTasks = new HashSet<>();
+
 
 	/**
 	 * Observes all tasks. Once an observed task changes its state to resolved, this
@@ -84,7 +88,6 @@ public class Execution implements IExecution {
 	 */
 	private final List<Observer<Task>> observersOfAllTasks = Arrays.asList(waitingTasksObserver,
 			unresolvedTasksObserver, unfinishedTasksObserver);
-
 	/**
 	 * Default constructor.
 	 * 
@@ -178,6 +181,7 @@ public class Execution implements IExecution {
 		boolean newTask = unfinishedTasks.add(task);
 		if (newTask) {
 			waitingTasks.add(task);
+			allTasks.add(task);
 			for (Observer<Task> taskObserver : observersOfAllTasks) {
 				task.getState().observe(taskObserver);
 			}
@@ -242,6 +246,14 @@ public class Execution implements IExecution {
 	}
 
 	/**
+	 * Returns the set of all tasks of this execution.
+	 * @return set of all tasks.
+	 */
+	public Set<Task> getAllTasks() {
+		return Collections.unmodifiableSet(allTasks);
+	}
+
+	/**
 	 * Returns the amount of tasks that are unfinished.
 	 *
 	 * @return amount of unfinished tasks
@@ -275,8 +287,14 @@ public class Execution implements IExecution {
 		return started;
 	}
 
+	public synchronized void forEachTask(Consumer<Task> taskConsumer) {
+		for(Task task : allTasks) {
+			taskConsumer.accept(task);
+		}
+	}
 
-	 private class ExecutionEnv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
+
+	private class ExecutionEnv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
 
 		 /**
 		  * This map exists because for accept data procedures can register themselves
@@ -333,8 +351,7 @@ public class Execution implements IExecution {
 		public synchronized SEDEObject cache(SemanticDataField value) {
 			if(!value.isPersistent()) {
 				logger.debug("Semantic data isn't persistent. It will be cache before putting it in the environment: " + value.toString());
-				byte[] cachedData = Streams.InReadByteArr(((SemanticDataField) value).getDataField());
-				InputStream inputStream = new ByteArrayInputStream(cachedData);
+				InputStream inputStream = Streams.InReadChunked(((SemanticDataField) value).getDataField()).toInputStream();
 				SemanticDataField cachedSemanticData = new SemanticDataField(value.getType(), inputStream, true);
 				return cachedSemanticData;
 			} else {

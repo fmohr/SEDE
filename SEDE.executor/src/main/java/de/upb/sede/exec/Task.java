@@ -220,6 +220,10 @@ public final class Task implements Observer<Task>{
 		error = Optional.of(ex);
 	}
 
+	public Optional<Exception> getError() {
+		return error;
+	}
+
 	public final boolean equals(Object otherObject) {
 		return super.equals(otherObject);
 	}

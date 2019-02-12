@@ -1,8 +1,4 @@
-repositories {
-    maven {
-        url "https://nexus.cs.upb.de/repository/maven-releases/"
-    }
-}
+project.toBePublished = false
 
 dependencies {
     // https://mvnrepository.com/artifact/com.google.guava/guava
@@ -17,9 +13,12 @@ dependencies {
     provided project(':SEDE.terminal')
     provided project(':SEDE.frontend')
 
-    runtimeOnly project(':weka.ml')
-    runtimeOnly project(':catalano.image')
+    compile group: 'de.upb.isys', name: 'weka.ml', version: '1.5'
+    compile group: 'de.upb.isys', name: 'catalano.image', version: '1.6'
+    compile group: 'de.upb.isys', name: 'builtins', version: '1.1'
+    compile group: 'de.upb.isys', name: 'c2.image', version: '1.2'
 
+    runtimeOnly group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.1'
 }
 
 task jarSimpleExecutor(type: Jar, dependsOn: jarjar) {
@@ -50,6 +49,17 @@ task jarGateway(type: Jar, dependsOn: jarjar) {
     destinationDir = file("$rootDir")
     baseName = 'JavaHttpGateway'
     from { (configurations.compile)
+            .collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}
+
+task jarMonolith(type: Jar, dependsOn: jarjar) {
+    manifest {
+        attributes 'Main-Class': 'de.upb.sede.gateway.Monolith'
+    }
+    destinationDir = file("$rootDir")
+    baseName = 'JavaMonolith'
+    from { (configurations.runtime)
             .collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
 }

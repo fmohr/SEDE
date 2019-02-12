@@ -102,6 +102,28 @@ public abstract class Command {
 		}
 	}
 
+	public static class Token extends Command{
+
+		public Token() {
+		}
+
+
+		@Override
+		public boolean matches(String[] inputs) {
+			if(inputs.length == 0) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+		@Override
+		public Match createMatch(String[] inputs) {
+			String input = inputs[0];
+			return Match.removeFirst(input, inputs);
+		}
+	}
+
 	public static class File extends Command {
 		private final String path;
 		private final boolean directories, files;

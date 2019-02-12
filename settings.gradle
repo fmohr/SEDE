@@ -1,7 +1,8 @@
 import java.io.File;
 
+
 include 'SEDE.core'
-include 'SEDE.deployment'
+//include 'SEDE.deployment'
 include 'SEDE.gateway'
 include 'SEDE.executor'
 
@@ -21,25 +22,6 @@ project(':SEDE.frontend').projectDir = new File(pluginFolder, "frontend")
 
 include 'SEDE.assemblies'
 project(':SEDE.assemblies').projectDir = new File(pluginFolder, "assemblies")
-
-/*
- * Projects offering services.
- */
-def serivceFolder = 'SEDE.services/'
-include 'builtins'
-project(':builtins').projectDir = new File(serivceFolder, "builtins")
-
-include 'demolib'
-project(':demolib').projectDir = new File(serivceFolder, "demolib")
-
-include 'catalano.image'
-project(':catalano.image').projectDir = new File(serivceFolder, "catalano.image")
-
-include 'weka.ml'
-project(':weka.ml').projectDir = new File(serivceFolder, "weka.ml")
-
-include 'scikit.ml'
-project(':scikit.ml').projectDir = new File(serivceFolder, "scikit.ml")
 
 rootProject.name = 'SEDE'
 

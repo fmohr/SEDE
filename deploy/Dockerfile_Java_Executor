@@ -1,6 +1,6 @@
 FROM openjdk:8-jre-alpine3.8
 
-COPY ./log4j2.xml /log4j2.xml
+COPY ./run-gateway-template/log4j2.xml /log4j2.xml
 COPY ./SEDE /SEDE
 COPY ./SEDE_logging_lib /SEDE_logging_lib
 

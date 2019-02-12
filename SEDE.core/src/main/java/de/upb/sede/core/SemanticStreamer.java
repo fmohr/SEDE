@@ -150,7 +150,7 @@ public final class SemanticStreamer {
 		Objects.requireNonNull(caster);
 		Objects.requireNonNull(methodName);
 		try {
-			logger.info("Using method {} in caster {}.", methodName, caster);
+			logger.trace("Using method {} in caster {}.", methodName, caster);
 			Class casterClass = Class.forName(caster);
 			Method[] allDefinedMethods = casterClass.getMethods();
 			for(Method method : allDefinedMethods){

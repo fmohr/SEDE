@@ -8,11 +8,11 @@ public class Streams {
 	/**
 	 * Reads the content in the given input stream chunkwise and fills it into a byte array output stream.
 	 */
-	public static ByteArrayOutputStream InReadChunked(InputStream is) {
+	public static ExtendedByteArrayOutputStream InReadChunked(InputStream is) {
 
 		try (InputStream inputStream = is) {
 
-			ByteArrayOutputStream result = new ByteArrayOutputStream();
+			ExtendedByteArrayOutputStream result = new ExtendedByteArrayOutputStream(1024);
 			byte[] buffer = new byte[1024];
 			int length;
 			while ((length = inputStream.read(buffer)) != -1) {

@@ -62,7 +62,7 @@ public class Configuration extends HashMap<String, Object> {
 	/**
 	 * Appends class configurations from json-Maps to the existing ones.
 	 */
-	public void appendConfigFromJsonMaps(Map<String, Object>... jsonMaps) {
+	private void appendConfigFromJsonMaps(final Map<String, Object>[] jsonMaps) {
 		for(Map<String, Object> jsonMap : jsonMaps) {
 			Set intersection = Maps.keyIntersection(jsonMap, rawConfiguration);
 			if(!intersection.isEmpty()) {

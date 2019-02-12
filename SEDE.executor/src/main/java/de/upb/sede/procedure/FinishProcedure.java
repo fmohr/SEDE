@@ -17,7 +17,10 @@ public abstract class FinishProcedure implements Procedure {
 		finishNotice(task);
 	}
 
-	public void processFail(Task task) { finishNotice(task); }
+	public void processFail(Task task) {
+		finishNotice(task);
+		task.setFailed();
+	}
 
 	private void finishNotice(Task task) {
 		Boolean executionSuccess = !task.hasDependencyFailed();

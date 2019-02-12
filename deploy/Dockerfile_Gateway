@@ -5,19 +5,32 @@ FROM openjdk:8-jre-alpine3.8
 #    ttf-freefont
 
 RUN apk update && apk add \
+	bash \
 	graphviz \
     	ttf-freefont
 
-COPY ./log4j2.xml /log4j2.xml
+COPY ./run-gateway-template/log4j2.xml /log4j2.xml
 COPY ./SEDE /SEDE
 COPY ./SEDE_logging_lib /SEDE_logging_lib
 
 
 ENV DOT_PATH=/usr/bin/dot
 
-COPY ./run-gateway-template/configs /configs
+# COPY ./run-gateway-template/configs /configs
 
 EXPOSE 8080
 EXPOSE 2200
 
-ENTRYPOINT java -cp SEDE/*:SEDE_logging_lib/*:. de.upb.sede.gateway.GatewayServerStarter 8080 /configs
+ENTRYPOINT java -cp SEDE/*:SEDE_logging_lib/*:. de.upb.sede.gateway.GatewayServerStarter 8080 \
+        config/builtin-classconf.json \
+        config/builtin-typeconf.json \
+        config/c2imaging-classconf.json \
+        config/c2imaging-typeconf.json \
+        config/imaging-classconf.json \
+        config/imaging-typeconf.json \
+        config/sl-ml-classifiers-classconf.json \
+        config/sl-ml-typeconf.json \
+        config/weka-ml-classifiers-classconf.json \
+        config/weka-ml-clusterers-classconf.json \
+        config/weka-ml-pp-classconf.json \
+        config/weka-ml-typeconf.json \

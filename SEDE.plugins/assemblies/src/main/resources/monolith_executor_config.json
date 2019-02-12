@@ -6,19 +6,16 @@
     "Catalano.Imaging.Filters.Resize",
     "de.upb.sede.services.ImageArchive",
     "de.upb.sede.services.Image2Feature",
+
     "Catalano.Imaging.Filters.Crop",
     "Catalano.Imaging.sede.CropFrom0",
-
     "Catalano.Imaging.Filters.CannyEdgeDetector",
     "Catalano.Imaging.Filters.CannyEdgeDetector_Threshold",
     "Catalano.Imaging.Filters.CannyEdgeDetector_Threshold_Sigma",
     "Catalano.Imaging.Filters.CannyEdgeDetector_Threshold_Sigma_Size",
-
     "Catalano.Imaging.Filters.SobelEdgeDetector",
-
     "Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern",
-
-    "Catalano.Imaging.Filters.GrayScale",
+    "Catalano.Imaging.Filters.Grayscale",
     "Catalano.Imaging.Filters.GrayScale_RGBCoeff",
     "Catalano.Imaging.Filters.GrayScale_Lightness",
     "Catalano.Imaging.Filters.GrayScale_Average",
@@ -84,7 +81,8 @@
     "weka.classifiers.trees.RandomForest",
     "weka.classifiers.trees.RandomTree",
     "weka.filters.unsupervised.attribute.Normalize",
-    "weka.filters.unsupervised.attribute.Standardize"
+    "weka.filters.unsupervised.attribute.Standardize",
+    "wrappers.sk.WrappedClassifier"
   ],
   "serviceStoreLocation": "instances"
 }

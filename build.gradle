@@ -2,6 +2,7 @@ plugins {
     id "net.linguica.maven-settings" version "0.5" apply false
 }
 
+
 subprojects {
 
     /*
@@ -10,11 +11,10 @@ subprojects {
     apply plugin: 'java-library'
     apply plugin: 'maven-publish'
     apply plugin: 'net.linguica.maven-settings'
-
     apply plugin: 'eclipse'
 
-    group = 'de.upb.sede'
-    version = '0.0.4'
+    group = 'de.upb.isys'
+    version = '0.0.7-SNAPSHOT'
 
     configurations {
         provided
@@ -24,20 +24,21 @@ subprojects {
 
     project.ext {
         /*
-         * This flag indicates if the subproject is a service project.
-         * It is used to enable the jarconf task which packages the classconf and typeconf files.
-         */
-        isServiceProject = false
-
-        /*
          * This flag determines weather the subproject should be published to the maven repository.
          */
         toBePublished = true
     }
 
     repositories {
+        mavenLocal()
+
         jcenter()
         mavenCentral()
+
+        maven {
+            url "https://nexus.cs.upb.de/repository/maven-releases/"
+        }
+        
 
         // we use jitpack in order to add dependecy to github projects:
         maven { url 'https://jitpack.io' }
@@ -47,7 +48,7 @@ subprojects {
     dependencies {
 		compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
         // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
-        runtimeOnly group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.1'
+        testRuntimeOnly group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.1'
 
 
         // https://mvnrepository.com/artifact/org.hamcrest/hamcrest-all
@@ -68,23 +69,8 @@ subprojects {
         from sourceSets.main.allJava
     }
 
-    // classconf and typeconf Jar:
-    task jarconf(type: Jar) {
-        destinationDir = file("$rootDir/deploy/SEDE")
-        baseName = project.name
-        classifier = "serviceconf"
-
-        from (sourceSets.main.resources.
-                findAll { it.name.endsWith('classconf.json') || it.name.endsWith('typeconf.json') }
-                .collect {it}) {
-            into "config"}
-
-        onlyIf { project.isServiceProject }
-    }
-    artifacts.add('serviceConf', jarconf)
-
     // build Jar:
-    task jarjar(type: Jar, dependsOn: [assemble, jarconf]) {
+    task jarjar(type: Jar, dependsOn: [assemble]) {
 
         manifest {
             attributes 'Implementation-Title': "${project.name}",
@@ -96,8 +82,7 @@ subprojects {
         from { ((configurations.compile - configurations.provided))
                 .findAll { it.name.endsWith('jar') }
                 .collect { zipTree(it) } }
-        from sourceSets.main.allJava
-        onlyIf { project.toBePublished }
+        from sourceSets.main.output
     }
 
     // copy python source:
@@ -161,23 +146,18 @@ project(':SEDE.gateway') {
         compile 'com.github.aminfa:TinyJavaDot:v1.3'
 
         // dependend on the builtin service configurations
-        compile project(path: ':builtins', configuration: 'serviceConf')
+        compile group: 'de.upb.isys', name: 'builtins', version: '1.1'
     }
 }
 
 project(':SEDE.executor') {
     dependencies {
-        testCompile project(':demolib')
-
         // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
         compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
 
         provided project(':SEDE.core')
-    }
-}
 
-project(':SEDE.deployment') {
-    jarjar.enabled = false
-    project.toBePublished = false
+        testCompile group: 'de.upb.isys', name: 'demolib', version: '1.0'
+    }
 }
 

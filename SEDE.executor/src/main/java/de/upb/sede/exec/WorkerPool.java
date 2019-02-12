@@ -89,6 +89,10 @@ public class WorkerPool {
 		procedureSupplierMap.put(procedureName, procedureSupplier);
 	}
 
+	public synchronized Supplier<Procedure> getBoundedProducer(String procedureName) {
+		return procedureSupplierMap.get(procedureName);
+	}
+
 	private Procedure procedureForTask(String taskName) {
 		if(procedureSupplierMap.containsKey(taskName)){
 			return procedureSupplierMap.get(taskName).get();
@@ -99,7 +103,7 @@ public class WorkerPool {
 	}
 
 	public void shutdown() {
-//		workers.shutdown();
+		workers.shutdown();
 	}
 
 	/**
@@ -143,9 +147,9 @@ public class WorkerPool {
 					procedure.processFail(task);
 					task.setFailed();
 				}
-			} catch(Exception ex) {
+			} catch(Throwable ex) {
 				logger.error("ERROR during {}:", task.getDescription(), ex);
-				task.setError(ex);
+				task.setError(new Exception((ex)));
 				if(!task.hasFailed()){
 					try{
 						procedure.processFail(task);

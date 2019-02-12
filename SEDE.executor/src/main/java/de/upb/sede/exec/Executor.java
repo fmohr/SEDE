@@ -9,16 +9,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
+import de.upb.sede.procedure.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.interfaces.IExecutor;
-import de.upb.sede.procedure.AcceptDataProcedure;
-import de.upb.sede.procedure.CastTypeProcedure;
-import de.upb.sede.procedure.InstructionProcedure;
-import de.upb.sede.procedure.ParseConstantProcedure;
-import de.upb.sede.procedure.ServiceInstanceStorageProcedure;
 import de.upb.sede.requests.DataPutRequest;
 import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.requests.ExecutorRegistration;
@@ -32,8 +28,6 @@ public class Executor implements IExecutor {
 
 
 	private static final Logger logger = LoggerFactory.getLogger(Executor.class);
-
-	private static final GraphJsonDeserializer deserializer = new GraphJsonDeserializer();
 
 	private final ExecutionPool execPool;
 
@@ -92,6 +86,7 @@ public class Executor implements IExecutor {
 		workerPool.bindProcedure("CastType", CastTypeProcedure::new);
 		workerPool.bindProcedure("DeleteField", null); // TODO
 		workerPool.bindProcedure("ServiceInstanceStorage", ServiceInstanceStorageProcedure::new);
+		workerPool.bindProcedure("CollectErrors", CollectErrorsProcedure::new);
 		// send graph and transmit data needs to be bounded from outside because
 		// based on the type of this executor they require different implementations.
 		// One can also rebind other procedures to change the behaviour of the executor.
@@ -124,7 +119,7 @@ public class Executor implements IExecutor {
 	}
 
 	@Override
-	public synchronized void put(DataPutRequest dataPutRequest){
+	public synchronized void put(DataPutRequest dataPutRequest) {
 		Execution exec = getOrCreateExecution(dataPutRequest.getRequestID());
 		if(dataPutRequest.isUnavailable()) {
 			/*
@@ -142,18 +137,18 @@ public class Executor implements IExecutor {
 	@Override
 	public synchronized Execution exec(ExecRequest execRequest){
 		String execId = execRequest.getRequestID();
-
+		/*
+		 * Retrieve the execution:
+		 */
+		Execution exec;
 		/* First check if execution id is taken: */
 		if(execIdTaken(execId)) {
-			/*
-				Throw exception signaling that the exec Id is already occupied:
-			 */
-			throw new RuntimeException("Execution Id was already taken: " + execId);
+			logger.warn("Execution already exists: {}", execId);
 		}
-		Execution exec = getOrCreateExecution(execRequest.getRequestID());
+		exec = getOrCreateExecution(execId);
 		exec.getRunnableTasksObservable().observe(taskWorkerEnqueuer);
 
-		deserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
+		GraphJsonDeserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
 
 		exec.getState().observe(executionGarbageCollector);
 		exec.start();
@@ -191,7 +186,7 @@ public class Executor implements IExecutor {
 		// This is a java executor:
 		capabilities.add("java");
 		// The java implementation supports casting in place in transmit and accept nodes:
-		capabilities.add("cast_in_place");
+//		capabilities.add("cast_in_place");
 		/*
 		 * add capabilities specified in the configuration:
 		 */

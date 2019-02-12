@@ -59,6 +59,7 @@ public class DataFlowAnalysis {
 		resolveResults();
 		connectDependencyEdges();
 		mergeAcceptAndCasts();
+		addErrorCollectors();
 		fillinContactInforamtions();
 		if(resolveInfo.getResolvePolicy().isBlockTillFinished()) {
 			addFinishingNodes();
@@ -715,39 +716,14 @@ public class DataFlowAnalysis {
 	 */
 	private void determineExecutors() {
 		for(ExecPlan plan: execPlans) {
-			if(!plan.targetDetermined()) {
-				List<ExecutorHandle> executors = plan.candidates();
-				int randomIndex = (int) (executors.size() * Math.random());
-				ExecutorHandle chosedTarget = executors.get(randomIndex);
-				/*
-					Remove every other executor:
-				 */
-				plan.removeCandidates(candidate->candidate!=chosedTarget);
+			if(plan == getClientExecPlan()) {
+				continue;
 			}
-		}
-	}
-
-	/**
-	 * This method fills in his contact information to all concerned transmission nodes.
-	 * Background:
-	 * Transmission nodes up until now dont yet have the concrete contact information.
-	 * That is because the execPlan hold candidates of executors.
-	 * Before this method is invoked 'determineExecutors' should have been invoked.
-	 * Thus at the time of the invocation of this method every exec plan now has a specific target executor.
-	 */
-	private void fillinContactInforamtions() {
-		for(ExecPlan execPlan : execPlans){
-			assert execPlan.targetDetermined();
+			ExecutorHandle chosedTarget = resolveInfo.getExecutorCoordinator().scheduleNextAmong(plan.candidates());
 			/*
-				For every accept data node in the graph:
-				fill in the contact information to the corresponding transmission node.
+				Remove every other executor:
 			 */
-			Map<String, Object> contactInformation = execPlan.getTarget().getContactInfo();
-			for(AcceptDataNode accepter : GraphTraversal.iterateNodesWithClass(execPlan.getGraph(),
-					AcceptDataNode.class)) {
-				getCorrespondingSender(accepter).getContactInfo().putAll(contactInformation);
-
-			}
+			plan.removeCandidates(candidate->candidate!=chosedTarget);
 		}
 	}
 
@@ -832,18 +808,115 @@ public class DataFlowAnalysis {
 		}
 	}
 
+	/**
+	 * Add CollectError nodes to all executors and collect all errors at the client.
+	 * This needs to be performed after executors are determined.
+	 */
+	private void addErrorCollectors() {
+		/*
+		 * Add error collectors node to the executors.
+		 * These will collects execution exceptions from tasks into a map and write this map as a field called __execution_erros_id.
+		 * This field needs to be sent to the client.
+		 * The client collector needs to collect these maps and include it in its final error collection.
+		 */
+		final TypeClass errorFieldTypeClass = TypeClass.RealDataType;
+		final String errorFieldTypeName = "builtin.Dict";
+		final String errorSemanticType = "jsonobj";
+		final String caster = "de.upb.sede.BuiltinCaster";
+
+		List<String> clientFetschedErrorFields = new ArrayList<>(getInvolvedExecutions().size());
+		for(ExecPlan exec : getInvolvedExecutions()) {
+			if(exec == getClientExecPlan()) {
+				continue;
+			}
+			/*
+				Add node that collects errors:
+			 */
+			String executorId =  exec.getTarget().getExecutorId();
+			CollectErrorsNode collectErrorsNode = new CollectErrorsNode(executorId);
+			exec.getGraph().executeLast(Collections.singletonList(collectErrorsNode));
+			assignNodeToExec(collectErrorsNode, exec);
+
+			String errorFielname = collectErrorsNode.getFieldname();
+			clientFetschedErrorFields.add(errorFielname);
+			FieldType errorField = new FieldType(collectErrorsNode, errorFielname, errorFieldTypeClass, errorFieldTypeName,
+					true);
+			addFieldType(errorField);
+
+
+			/*
+				Transmit error to clinet:
+			 */
+			FieldType fetchedErrors = createTransmission(exec, getClientExecPlan(), errorField);
+
+			CastTypeNode castTypeNode = new CastTypeNode(errorFielname, errorSemanticType, errorFieldTypeName, false,
+					caster);
+			assignNodeToExec(castTypeNode, getClientExecPlan());
+
+			nodeConsumesField(castTypeNode, fetchedErrors);
+			FieldType parsedFetchedErrors = new FieldType(castTypeNode, errorFielname, errorFieldTypeClass, errorFieldTypeName,
+					false);
+			addFieldType(parsedFetchedErrors);
+
+			/*
+			   HACK:
+			 * Add transmit and cast dependency edges.
+			 */
+			exec.getGraph().connectNodes(collectErrorsNode, getConsumersOfField(errorField).get(0));
+			getClientExecPlan().getGraph().connectNodes(fetchedErrors.getProducer(), castTypeNode);
+		}
+
+		/*
+		 * Now collect the errors on the client:
+		 */
+		CollectErrorsNode clientSideCollect = new CollectErrorsNode(clientFetschedErrorFields, getClientExecPlan().getTarget().getExecutorId());
+		getClientExecPlan().getGraph().executeLast(Collections.singletonList(clientSideCollect));
+		assignNodeToExec(clientSideCollect, getClientExecPlan());
+
+		String errorFielname = clientSideCollect.getFieldname();
+		FieldType errorField = new FieldType(clientSideCollect, errorFielname, errorFieldTypeClass, errorFieldTypeName,
+				true);
+		addFieldType(errorField);
+	}
+
+	/**
+	 * This method fills in the contact information to all concerned transmission nodes.
+	 * Background:
+	 * Transmission nodes up until now dont yet have the concrete contact information.
+	 * That is because the execPlans hold candidates of executors.
+	 * Before this method is invoked 'determineExecutors' should have been invoked.
+	 * Thus at the time of the invocation of this method every exec plan now has a specific target executor.
+	 */
+	private void fillinContactInforamtions() {
+		for(ExecPlan execPlan : execPlans){
+			assert execPlan.targetDetermined();
+			/*
+				For every accept data node in the graph:
+				fill in the contact information to the corresponding transmission node.
+			 */
+			Map<String, Object> contactInformation = execPlan.getTarget().getContactInfo();
+			for(AcceptDataNode accepter : GraphTraversal.iterateNodesWithClass(execPlan.getGraph(),
+					AcceptDataNode.class)) {
+				getCorrespondingSender(accepter).getContactInfo().putAll(contactInformation);
+
+			}
+		}
+	}
+
 	private void addFinishingNodes() {
 
 		for(ExecPlan exec : getInvolvedExecutions()) {
 			if(exec == getClientExecPlan()) {
 				continue;
 			}
+
 			/*
 				Add node that indicate that the execution is done:
 		 	*/
 			String flagname = ("&finished&" + exec.getTarget().getExecutorId());
 			FinishNode finishNode = new FinishNode(getClientExecPlan().getTarget().getContactInfo(), flagname);
-			exec.getGraph().executeLast(Arrays.asList(finishNode));
+			exec.getGraph().executeLast(Collections.singletonList(finishNode));
+
 
 			/*
 				Add accept node to client:
@@ -983,7 +1056,7 @@ public class DataFlowAnalysis {
 
 	private ExecPlan getAssignedExec(BaseNode node) {
 		if (!isAssignedToExec(node)) {
-			throw new CompositionSemanticException("The node " + node.toString() + " isn't assigned to a execution.");
+			throw new CompositionSemanticException("The node `" + node.toString() + "` isn't assigned to a execution.");
 		}
 		return nodeExecutionAssignment.get(node);
 	}

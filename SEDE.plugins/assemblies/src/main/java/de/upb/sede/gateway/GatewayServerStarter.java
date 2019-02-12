@@ -61,58 +61,67 @@ public class GatewayServerStarter {
 		 * Terminals:
 		 */
 		PluginUtil.enablePlugin_SystemTerminal(terminalListener);
-		PluginUtil.enablePlugin_TellnetServer(terminalListener);
 	}
 
 	static void loadDefaultConfigs(ClassesConfig classesConfig, OnthologicalTypeConfig typeConfig,
 			List<String> configsToBeLoaded) {
 		for (String configuration : configsToBeLoaded) {
-			
-			File configFile = new File(configuration).getAbsoluteFile();
-			if (!configFile.exists()) {
-				logger.error("Configuration file '{}' associated with config string '{}' does not exist, skipping it.", configFile.getAbsolutePath(), configuration);
-				continue;
-			}
-			
+			loadDefaultConfiguration(classesConfig, typeConfig, configuration);
+		}
+	}
+
+	static void loadDefaultConfiguration(ClassesConfig classesConfig, OnthologicalTypeConfig typeConfig,
+								   String configuration) {
+		File configFile = new File(configuration).getAbsoluteFile();
+
+		/*
+		 * look for json files ending with classconf.json or typeconf.json in the given
+		 * list and try to append them to the class/type configuration:
+		 */
+		if (configFile.isDirectory()) {
 			/*
-			 * look for json files ending with classconf.json or typeconf.json in the given
-			 * list and try to append them to the class/type configuration:
+			 * load every class conf file from the given folder:
 			 */
+			logger.info(
+					"Config file '{}' is a directory, loading every classconf and typeconf files in it...",
+					configuration);
+			List<String> additionalConfigs = FileUtil.listAllFilesInDir(configFile.getAbsolutePath(), "(.*?)\\.json$").stream()
+					.map(s -> configFile + "/" + s) // prepend the folder:
+					.collect(Collectors.toList());
+			loadDefaultConfigs(classesConfig, typeConfig, additionalConfigs);
+		} else{
+
+			String configStringContent;
+			if(configFile.exists()) {
+				configStringContent = FileUtil.readFileAsString(configuration);
+			} else {
+				try{
+					logger.info("Reading config file {} from classpath..", configuration);
+					configStringContent = FileUtil.readResourceAsString(configuration);
+				} catch (Exception ex) {
+					logger.error(
+							"Config file '{}' could not be parsed. (Skipping it).",
+							configuration, ex);
+					return;
+				}
+			}
 			if (configuration.matches("(.*?)classconf\\.json$")) {
 				try {
-					classesConfig.appendConfigFromFiles(configuration);
+					classesConfig.appendConfigFromJsonStrings(configStringContent);
 					logger.info("Added classes config from: {}", configuration);
 				} catch (Exception ex) {
 					logger.error("Problem loading class configuration from {}:\n", configuration, ex);
 				}
 			} else if (configuration.matches("(.*?)typeconf\\.json$")) {
 				try {
-					typeConfig.appendConfigFromFiles(configuration);
+					typeConfig.appendConfigFromJsonStrings(configStringContent);
 					logger.info("Added type config from: {}", configuration);
 				} catch (Exception ex) {
 					logger.error("Problem loading type configuration from {}:\n", configuration, ex);
 				}
-			} else {
-				
-				/* check that this configuration specifies a folder */
-				logger.info(
-						"Config file '{}' doesn't end with classconf.json or typeconf.json. Now treating it as a directory ...",
-						configuration);
-				if (!configFile.isDirectory()) {
-					logger.error(
-							"Config '{}' is not a directory. Don't know how to handle it, canceling the load procedure.",
-							configFile.getAbsolutePath());
-					return;
-				}
-				/*
-				 * load every class conf file from the given folder:
-				 */
-				logger.info("Loading configurations from '{}'.", configuration);
-				List<String> additionalConfigs = FileUtil.listAllFilesInDir(configFile.getAbsolutePath(), "(.*?)\\.json$").stream()
-						.map(s -> configFile + "/" + s) // prepend the folder:
-						.collect(Collectors.toList());
-				loadDefaultConfigs(classesConfig, typeConfig, additionalConfigs);
-
+			}
+			else{
+				logger.error("Cannot differentiate configuration {}, as it doesn't end with classconf nor typeconf.", configuration);
 			}
 		}
 	}

@@ -13,6 +13,7 @@ import java.util.Map;
  * Semantic data consists of unstructured data which first needs to be casted to real data types.
  * Semantic data can be casted to other types of SEDEObject using the SemanticStreamer class.
  */
+@SuppressWarnings("unchecked")
 public class SemanticDataField extends SEDEObject{
 
 	private InputStream semanticData;

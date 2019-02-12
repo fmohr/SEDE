@@ -47,7 +47,7 @@ public class WorkerPool {
 
 	public synchronized void processTask(Task task){
 		if(logger.isTraceEnabled()) {
-			logger.trace("{} submitted: {}", task.toString(), task.getDescription());
+			logger.trace("Task submitted to start: {}", task.getDescription());
 		}
 
 		Procedure procedure = procedureForTask(task.getTaskName());

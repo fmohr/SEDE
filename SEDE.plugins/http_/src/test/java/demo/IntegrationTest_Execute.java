@@ -95,6 +95,7 @@ public class IntegrationTest_Execute {
 	public void testHttpInterrupt() throws InterruptedException {
 		CoreClient cc = getHttpClient();
 		testInterruptExecution(cc);
+		Thread.sleep(1000);
 		Execution exec = cc.getClientExecutor().getExecution("SleepRequest").orElse(null);
 		if(exec!=null) {
 			Assert.assertTrue(exec.hasExecutionFinished());
@@ -149,7 +150,7 @@ public class IntegrationTest_Execute {
 		String requestId = cc.run(rr, results);
 		Assert.assertEquals("SleepRequest", requestId);
 
-		Thread.sleep(100); // wait for the result to be calculated.
+		Thread.sleep(300); // wait for the result to be calculated.
 
 		cc.interrupt(requestId);
 
@@ -227,6 +228,12 @@ public class IntegrationTest_Execute {
 	public void testLocalBenchmark() throws Exception {
 		CoreClient cc = getLocalClient();
 		runBenchmark(cc);
+		System.gc();
+		Thread.sleep(1000);
+		/*
+			Check for potential memory leak:
+		 */
+		Assert.assertTrue(10 > localClient.getClientExecutor().getWorkerPool().futueListSize());
 	}
 
 	@Test
@@ -234,15 +241,13 @@ public class IntegrationTest_Execute {
 		CoreClient cc = getHttpClient();
 		runBenchmark(cc);
 		System.gc();
-		System.gc();
-		System.gc();
-		Thread.sleep(500);
+		Thread.sleep(1000);
 		/*
 			Check for potential memory leak:
 		 */
-//		Assert.assertEquals(0, httpClient.getClientExecutor().getWorkerPool().futueListSize());
-//		Assert.assertEquals(0, executor2.getBasisExecutor().getWorkerPool().futueListSize());
-//		Assert.assertEquals(0, executor1.getBasisExecutor().getWorkerPool().futueListSize());
+		Assert.assertTrue(10 >  httpClient.getClientExecutor().getWorkerPool().futueListSize());
+		Assert.assertTrue(10 >  executor2.getBasisExecutor().getWorkerPool().futueListSize());
+		Assert.assertTrue(10 >  executor1.getBasisExecutor().getWorkerPool().futueListSize());
 
 	}
 

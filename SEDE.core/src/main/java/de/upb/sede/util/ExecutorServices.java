@@ -17,7 +17,7 @@ public class ExecutorServices {
 	public static ExecutorService createSingleDaemonThreaded() {
 		final AtomicInteger threadNr = new AtomicInteger(0);
 		return Executors.newSingleThreadExecutor(r -> {
-			Thread thread = new Thread();
+			Thread thread = new Thread(r);
 			thread.setDaemon(true);
 			thread.setPriority(6);
 			String threadName =

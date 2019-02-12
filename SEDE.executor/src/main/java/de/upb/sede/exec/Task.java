@@ -51,7 +51,7 @@ public final class Task implements Observer<Task>{
 		if(logger.isTraceEnabled()) {
 			final Observer<Task> logObserver = Observer.lambda(
 					t -> t.attributes != null,
-					t -> logger.debug("{}\n\tUPDATE: {}", t, t.getDescription()),
+					t -> logger.trace("{}\n\tUPDATE: {}", t, t.getDescription()),
 					t -> false);
 			taskState.observe(logObserver);
 		}

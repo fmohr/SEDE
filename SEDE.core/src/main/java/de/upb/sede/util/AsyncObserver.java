@@ -1,6 +1,8 @@
 package de.upb.sede.util;
 
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -12,7 +14,6 @@ public class AsyncObserver<T>  implements Observer<T>{
 
 	private final Observer<T> synchronizedObserver;
 	private final ExecutorService asyncExecutor;
-	private AtomicBoolean hasBeenNotified = new AtomicBoolean(false);
 
 
 	public AsyncObserver(Observer<T> synchronizedObserver, ExecutorService asyncExecutor) {
@@ -28,26 +29,12 @@ public class AsyncObserver<T>  implements Observer<T>{
 	}
 
 	public boolean notifyCondition(T t) {
-		if(! hasBeenNotified.get()) {
-			/*
-			 * First time notification:
-			 */
-			return synchronizedObserver.notifyCondition(t);
-		} else {
-			/*
-			 * Second time notification:
-			 * Note that in the asynchronous setting the removeAfterNotification check is performed before the actual notification.
-			 * Thus observer who need to be removed after their first notification, assume there won't be a second notification.
-			 * This construct guards them from being notified mutliple times:
-			 */
-			return synchronizedObserver.notifyCondition(t) && ! synchronizedObserver.removeAfterNotification(t);
-		}
+		return synchronizedObserver.notifyCondition(t);
 	}
 
 	public void notification(T t) {
-		hasBeenNotified.set(true);
 		NotificationTask<T> task = new NotificationTask<T>(synchronizedObserver, t);
-		asyncExecutor.submit(task);
+		Future<?> future = asyncExecutor.submit(task);
 	}
 
 	public boolean removeAfterNotification(T t) {

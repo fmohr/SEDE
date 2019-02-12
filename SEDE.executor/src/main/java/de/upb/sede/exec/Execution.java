@@ -1,30 +1,25 @@
 package de.upb.sede.exec;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 import de.upb.sede.util.*;
 import de.upb.sede.util.Observable;
 import de.upb.sede.util.Observer;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import de.upb.sede.config.ExecutorConfiguration;
-import de.upb.sede.core.SEDEObject;
-import de.upb.sede.core.SemanticDataField;
 import de.upb.sede.interfaces.IExecution;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Represents one execution.
  */
 public class Execution implements IExecution {
 
-	private static final Logger logger = LoggerFactory.getLogger(Execution.class);
+	private static final Logger logger = getLogger(Execution.class);
 
 	private final ExecutionEnv environment;
 
@@ -313,72 +308,4 @@ public class Execution implements IExecution {
 		return messenger;
 	}
 
-	private class ExecutionEnv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
-
-		 /**
-		  * This map exists because for accept data procedures can register themselves
-		  * as a cacher of semantic data and do conversation in place:
-		  */
-		private DefaultMap<String, Function<SemanticDataField, SEDEObject>> cachers = new DefaultMap<>(() -> this::cache);
-
-		private Set<String> unavailableFields = new HashSet<>();
-
-		final Observable<ExecutionEnvironment> state = Observable.ofInstance(this);
-		@Override
-		public synchronized SEDEObject put(String key, SEDEObject value) {
-			if(value.isSemantic()){
-				/*
-				 * Semantic data forward to a cacher (Like Accept data procedure which may cast in place):
-				 */
-				value = cachers.get(key).apply((SemanticDataField) value);
-			}
-			SEDEObject prevValue = super.put(key, value);
-			state.update(this);
-			return prevValue;
-		}
-
-		@Override
-		public synchronized boolean containsKey(Object fieldname) {
-			if(isUnavailable(fieldname)) {
-				return false;
-			} else {
-				return super.containsKey(fieldname);
-			}
-		}
-
-		@Override
-		public synchronized boolean isUnavailable(Object fieldname) {
-			return this.unavailableFields.contains(fieldname);
-		}
-
-
-		 @Override
-		 public synchronized void observe(Observer<ExecutionEnvironment> observer) {
-			 this.state.observe(observer);
-		 }
-
-		 @Override
-		public synchronized void markUnavailable(String fieldname) {
-			unavailableFields.add(fieldname);
-			state.update(this);
-		}
-
-		public synchronized void registerCacher(String fieldname, Function<SemanticDataField, SEDEObject> cacher) {
-			cachers.put(fieldname, cacher);
-		}
-
-		public synchronized SEDEObject cache(SemanticDataField value) {
-			if(!value.isPersistent()) {
-				logger.debug("Semantic data isn't persistent. It will be cache before putting it in the environment: " + value.toString());
-				InputStream inputStream = Streams.InReadChunked(((SemanticDataField) value).getDataField()).toInputStream();
-				SemanticDataField cachedSemanticData = new SemanticDataField(value.getType(), inputStream, true);
-				return cachedSemanticData;
-			} else {
-				/*
-				 * no need to cache as it is persistent anyway:
-				 */
-				return value;
-			}
-		}
-	}
- }
+}

@@ -6,7 +6,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ExecutorServices {
-	private final AtomicInteger poolNr = new AtomicInteger(0);
+	private static final AtomicInteger poolNr = new AtomicInteger(0);
 
 	/**
 	 * Creates a new executor services which always run with a single daemon thread.

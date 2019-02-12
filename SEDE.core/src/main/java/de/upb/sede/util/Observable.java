@@ -14,7 +14,8 @@ public class Observable<T> {
 
 
 	/**
-	 * A flag that helps prevent bugs.
+	 * A flag that helps prevent implementation bugs.
+	 * This flag guards against recursive updates which should be avoided on a single object.
 	 */
 	private boolean updateInProcess = false;
 

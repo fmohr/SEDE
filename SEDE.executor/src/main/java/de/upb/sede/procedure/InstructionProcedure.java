@@ -186,10 +186,14 @@ public class InstructionProcedure implements Procedure {
 				Put field into environment:
 			 */
 			String leftsideFieldname = attr.getLeftsidefieldname();
-			environment.put(leftsideFieldname, outputSEDEObject);
+			task.getExecution().performLater( () -> {
+				environment.put(leftsideFieldname, outputSEDEObject);
+				task.setSucceeded();
+			});
 
+		} else {
+			task.setSucceeded();
 		}
-		task.setSucceeded();
 	}
 	private Executable getExecutable(ExecutionEnvironment env, InstructionNodeAttributes attr, Object[] parameterValues) {
 		return reflectExecutable(env, attr, parameterValues);

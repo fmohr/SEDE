@@ -8,6 +8,7 @@ import de.upb.sede.util.ExtendedByteArrayOutputStream;
 
 import java.io.*;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 public class CastTypeProcedure implements Procedure {
 	@Override
@@ -29,7 +30,18 @@ public class CastTypeProcedure implements Procedure {
 		String targetType = (String) parameters.get("target-type");
 		boolean castToSemantic = (Boolean) parameters.get("cast-to-semantic");
 
-		SEDEObject field = task.getExecution().getEnvironment().get(fieldname);
+		/*
+		 * Retrieve the data that needs to be casted:
+		 */
+		SEDEObject field = null;
+		try {
+			field = task.getExecution().performLater(() -> task.getExecution().getEnvironment().get(fieldname)).get();
+		} catch (InterruptedException | ExecutionException e) {
+			throw new RuntimeException("Interrupted while accessing field: " + fieldname, e);
+		}
+		/*
+		 * Cast the data:
+		 */
 		SEDEObject castedField;
 		if(castToSemantic) {
 			try {
@@ -48,7 +60,15 @@ public class CastTypeProcedure implements Procedure {
 			throw new RuntimeException("Task states to cast \"" + fieldname + "\" to  real data type " +
 					"but the field is not semantic: \n" + field.toString());
 		}
-		task.getExecution().getEnvironment().put(fieldname, castedField);
-		task.setSucceeded();
+		/*
+		 * Perform execution changes later:
+		 */
+		task.getExecution().performLater( () -> {
+			/*
+			 * Add this field to the environment.
+			 */
+			task.getExecution().getEnvironment().put(fieldname, castedField);
+			task.setSucceeded();
+		});
 	}
 }

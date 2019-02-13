@@ -37,6 +37,7 @@ public class AcceptDataProcedure implements Procedure, Function<SemanticDataFiel
 		Observer<ExecutionEnvironment> fieldObserver = new AsyncObserver<>(Observer.lambda(
 				env -> env.containsKey(fieldname) || env.isUnavailable(fieldname),
 				this::eventHandler), task.getExecution().getMessenger());
+
 		environment.observe(fieldObserver);
 		if(castType != null) {
 			environment.registerCacher(fieldname, this);

@@ -45,7 +45,10 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 			} catch (ClassNotFoundException e) {
 				throw new RuntimeException(e);
 			}
-			task.getExecution().getEnvironment().put(fieldname, loadedSedeObject);
+			task.getExecution().performLater( () -> {
+				task.getExecution().getEnvironment().put(fieldname, loadedSedeObject);
+				task.setSucceeded();
+			});
 		} else {
 			/* store the service instance which the fieldname is pointing to */
 			ServiceInstanceHandle instanceHandle = task.getExecution().getEnvironment().get(fieldname)
@@ -63,8 +66,8 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 				throw new RuntimeException(
 						"Error during service storage: " + instanceHandle.toString() + "\nmessage: " + answer);
 			}
+			task.setSucceeded();
 		}
-		task.setSucceeded();
 	}
     // TODO treat fail
 	/**

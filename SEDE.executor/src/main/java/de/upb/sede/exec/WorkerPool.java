@@ -110,7 +110,7 @@ public class WorkerPool {
 	 * Returns true if the given execution is still running.
 	 * Should only be used by tests.
 	 */
-	public boolean isExecutionOngoing(Execution exec) {
+	public synchronized boolean isExecutionOngoing(Execution exec) {
 		if(executionFutureMap.containsKey(exec)) {
 			return !executionFutureMap.get(exec).isEmpty();
 		} else{

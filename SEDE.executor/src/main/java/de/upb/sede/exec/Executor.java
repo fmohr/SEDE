@@ -120,7 +120,7 @@ public class Executor implements IExecutor {
 	}
 
 	@Override
-	public synchronized void put(DataPutRequest dataPutRequest) {
+	public void put(DataPutRequest dataPutRequest) {
 		Execution exec = getOrCreateExecution(dataPutRequest.getRequestID());
 		if(dataPutRequest.isUnavailable()) {
 			/*
@@ -136,7 +136,7 @@ public class Executor implements IExecutor {
 	}
 
 	@Override
-	public synchronized Execution exec(ExecRequest execRequest){
+	public Execution exec(ExecRequest execRequest){
 		String execId = execRequest.getRequestID();
 		/*
 		 * Retrieve the execution:

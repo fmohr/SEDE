@@ -2,6 +2,7 @@ package de.upb.sede.procedure;
 
 import de.upb.sede.core.ObjectDataField;
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.exec.ExecutionEnvironment;
 import de.upb.sede.exec.Task;
 import de.upb.sede.util.Streams;
 import org.json.simple.JSONObject;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 public class CollectErrorsProcedure implements Procedure {
 	private final static Logger logger = LoggerFactory.getLogger(CollectErrorsProcedure.class);
@@ -46,7 +48,16 @@ public class CollectErrorsProcedure implements Procedure {
 		errorCollection.put(fieldname, executorErrorCollection);
 		for(String otherErrorCollectionField : errorFields) {
 			if(!task.getExecution().getEnvironment().isUnavailable(otherErrorCollectionField) && task.getExecution().getEnvironment().containsKey(otherErrorCollectionField)) {
-				Map otherErrorCollection = task.getExecution().getEnvironment().get(otherErrorCollectionField).getDataField();
+				Map otherErrorCollection =
+						null;
+				try {
+					ExecutionEnvironment environment = task.getExecution().getEnvironment();
+					otherErrorCollection = (Map) task.getExecution().performLater(
+							() -> environment.get(otherErrorCollectionField).getDataField()
+							).get();
+				} catch (InterruptedException | ExecutionException e) {
+					logger.warn("Interrupted while collecting errors from: {} ", otherErrorCollection, e);
+				}
 				errorCollection.putAll(otherErrorCollection);
 				logger.debug("Collected errors from: {}", otherErrorCollectionField);
 			} else  {

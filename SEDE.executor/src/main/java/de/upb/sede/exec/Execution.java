@@ -1,7 +1,9 @@
 package de.upb.sede.exec;
 
 import java.util.*;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 import de.upb.sede.util.*;
@@ -102,6 +104,7 @@ public class Execution implements IExecution {
 
 	public Execution(String execId, ExecutorConfiguration executorConfiguration) {
 		Objects.requireNonNull(execId);
+		logger.info("Execution {} was created.", execId);
 		this.execId = execId;
 		this.environment = new ExecutionEnv();
 		this.state = Observable.ofInstance(this);
@@ -142,26 +145,25 @@ public class Execution implements IExecution {
 	 */
 
 	private final void taskResolved(Task task) {
-		synchronized (this) {
-
+		performLater(() ->  {
 			/* notify observers about this new resolved task. */
 			runnableTasks.update(task);
-		}
-		state.update(this);
+			state.update(this);
+		});
 	}
 
 	private final void taskStarted(Task task) {
-		synchronized (this) {
+		performLater(() -> {
 			waitingTasks.remove(task);
-		}
-		state.update(this);
+			state.update(this);
+		});
 	}
 
 	private final void taskFinished(Task task) {
-		synchronized (this) {
+		performLater(() -> {
 			unfinishedTasks.remove(task);
-		}
-		state.update(this);
+			state.update(this);
+		});
 	}
 
 	/**
@@ -177,20 +179,22 @@ public class Execution implements IExecution {
 	 *            assigned to this execution.
 	 */
 	synchronized void addTask(Task task) {
-		if (task.getExecution() != this) {
-			throw new RuntimeException("Bug: Task states that it belongs to another execution.");
-		}
-		if (task.hasStarted()) {
-			throw new RuntimeException("Bug: the given task was already started before.");
-		}
-		boolean newTask = unfinishedTasks.add(task);
-		if (newTask) {
-			waitingTasks.add(task);
-			allTasks.add(task);
-			for (Observer<Task> taskObserver : observersOfAllTasks) {
-				task.getState().observe(taskObserver);
+		performLater( () ->  {
+			if (task.getExecution() != this) {
+				throw new RuntimeException("Bug: Task states that it belongs to another execution.");
 			}
-		}
+			if (task.hasStarted()) {
+				throw new RuntimeException("Bug: the given task was already started before.");
+			}
+			boolean newTask = unfinishedTasks.add(task);
+			if (newTask) {
+				waitingTasks.add(task);
+				allTasks.add(task);
+				for (Observer<Task> taskObserver : observersOfAllTasks) {
+					task.getState().observe(taskObserver);
+				}
+			}
+		});
 	}
 
 	/**
@@ -275,28 +279,58 @@ public class Execution implements IExecution {
 		return runnableTasks;
 	}
 
-	synchronized void interrupt() {
-		interrupted = true;
-		state.update(this);
+	void interrupt() {
+		logger.info("Execution {} has been interrupted.", getExecutionId());
+		performLater(() -> {
+			interrupted = true;
+			state.update(this);
+		});
 	}
 
 	public ExecutorConfiguration getConfiguration() {
 		return executorConfiguration;
 	}
 
-	public synchronized void start() {
-		started = true;
+	public void start() {
+		logger.info("Execution {} has been started.", getExecutionId());
+		performLater(() -> {
+			started = true;
+			state.update(this);
+		});
 	}
 
-	public synchronized boolean hasStarted() {
+	public boolean hasStarted() {
 		return started;
 	}
 
-	public synchronized void forEachTask(Consumer<Task> taskConsumer) {
+	public void forEachTask(Consumer<Task> taskConsumer) {
 		for(Task task : allTasks) {
 			taskConsumer.accept(task);
 		}
 	}
+
+	/**
+	 * Enqueues the given runnable to be performed later.
+	 * Use this to perform changes onto this execution.
+	 *
+	 * @param runnable task to be done.
+	 * @return empty future. Performing Future::get on the returned object will block until the task is completed.
+	 */
+	public Future<?> performLater(Runnable runnable) {
+		return getMessenger().submit(runnable);
+	}
+
+	/**
+	 * Enqueues the given callabe to be performed later.
+	 * Use this to perform changes onto this execution.
+	 *
+	 * @param callable task to be done.
+	 * @return Performing Future::get on the returned object will block until the task is completed and returns the returned object of the callable.
+	 */
+	public <T> Future<T> performLater(Callable<T> callable) {
+		return getMessenger().submit(callable);
+	}
+
 
 	/**
 	 * This executor service handle observer updates for all observers in this execution.
@@ -307,5 +341,6 @@ public class Execution implements IExecution {
 	public ExecutorService getMessenger() {
 		return messenger;
 	}
+
 
 }

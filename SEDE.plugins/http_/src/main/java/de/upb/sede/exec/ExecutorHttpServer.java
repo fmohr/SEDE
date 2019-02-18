@@ -14,6 +14,7 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import de.upb.sede.core.SemanticDataField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +83,7 @@ public class ExecutorHttpServer implements HttpExecutor {
 		addHandle("/execute", ExecuteGraphHandler::new);
 		addHandle("/interrupt", InterruptHandler::new);
 
-		server.setExecutor(Executors.newWorkStealingPool(2));
+		server.setExecutor(Executors.newFixedThreadPool(4));
 		server.start();
 
 		bindHttpProcedures();
@@ -293,7 +294,7 @@ public class ExecutorHttpServer implements HttpExecutor {
 				if(semanticType.equals("unavailable")) {
 					putRequest = DataPutRequest.unavailableData(execId, fieldname);
 				} else{
-					SEDEObject inputObject = SemanticStreamer.readFrom(payload, semanticType);
+					SEDEObject inputObject = new SemanticDataField(semanticType, Streams.InReadChunked(payload).toInputStream(), true);
 					putRequest = new DataPutRequest(execId, fieldname, inputObject);
 				}
 				basis.put(putRequest);

@@ -203,7 +203,7 @@ public class Execution implements IExecution {
 	 *
 	 * @return true if the execution has finished
 	 */
-	public boolean hasExecutionFinished() {
+	public synchronized boolean hasExecutionFinished() {
 		return interrupted || unfinishedTasks.isEmpty();
 	}
 

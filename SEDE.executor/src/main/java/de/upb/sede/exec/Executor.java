@@ -108,12 +108,12 @@ public class Executor implements IExecutor {
 	}
 
 	public void removeExecution(Execution execution) {
-		if(!execution.hasStarted()) {
+		if(execution.hasStarted()) {
 			logger.debug("Removing execution: id={}, unfinished tasks={}", execution.getExecutionId(), execution.getUnfinishedTasksCount());
 			execPool.removeExecution(execution);
 			workerPool.removeExecution(execution);
 		} else {
-			logger.error("Instructed to remove an unstarted execution:= ", execution.getExecutionId());
+			logger.warn("Instructed to remove an unstarted execution = {}", execution.getExecutionId());
 		}
 
 	}
@@ -159,8 +159,8 @@ public class Executor implements IExecutor {
 
 		GraphJsonDeserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
 
-		exec.start();
 		exec.getState().observe(executionGarbageCollector);
+		exec.start();
 		/*
 		  	Notify hooks:
 		 */

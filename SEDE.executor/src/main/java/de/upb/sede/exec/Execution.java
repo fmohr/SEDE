@@ -178,23 +178,21 @@ public class Execution implements IExecution {
 	 * @param task
 	 *            assigned to this execution.
 	 */
-	synchronized void addTask(Task task) {
-		performLater( () ->  {
-			if (task.getExecution() != this) {
-				throw new RuntimeException("Bug: Task states that it belongs to another execution.");
+	void addTask(Task task) {
+		if (task.getExecution() != this) {
+			throw new RuntimeException("Bug: Task states that it belongs to another execution.");
+		}
+		if (task.hasStarted()) {
+			throw new RuntimeException("Bug: the given task was already started before.");
+		}
+		boolean newTask = unfinishedTasks.add(task);
+		if (newTask) {
+			waitingTasks.add(task);
+			allTasks.add(task);
+			for (Observer<Task> taskObserver : observersOfAllTasks) {
+				task.getState().observe(taskObserver);
 			}
-			if (task.hasStarted()) {
-				throw new RuntimeException("Bug: the given task was already started before.");
-			}
-			boolean newTask = unfinishedTasks.add(task);
-			if (newTask) {
-				waitingTasks.add(task);
-				allTasks.add(task);
-				for (Observer<Task> taskObserver : observersOfAllTasks) {
-					task.getState().observe(taskObserver);
-				}
-			}
-		});
+		}
 	}
 
 	/**

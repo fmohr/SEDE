@@ -1,0 +1,13 @@
+import org.gradle.plugins.ide.eclipse.model.AccessRule
+dependencies {
+    compile group: 'org.aeonbits.owner', name: 'owner', version: '1.0.10'
+
+    provided project(':SEDE.core')
+    provided project(':SEDE.executor')
+    provided project(":SEDE.http")
+
+    compile group: 'org.eclipse.jetty', name: 'jetty-servlet', version: '9.4.14.v20181114'
+    compile group: 'org.eclipse.jetty', name: 'jetty-util', version: '9.4.14.v20181114'
+
+    testCompile group: 'de.upb.isys', name: 'demolib', version: '1.0'
+}

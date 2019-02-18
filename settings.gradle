@@ -14,6 +14,9 @@ def pluginFolder = 'SEDE.plugins/'
 include 'SEDE.http'
 project(':SEDE.http').projectDir = new File(pluginFolder, "http_")
 
+include 'SEDE.jetty'
+project(':SEDE.jetty').projectDir = new File(pluginFolder, "http_jetty")
+
 include 'SEDE.terminal'
 project(':SEDE.terminal').projectDir = new File(pluginFolder, "terminal")
 

@@ -1,0 +1,60 @@
+{
+    "client-executor": {
+        "contact-info": {
+            "id": "client executor"
+        },
+        "supported-services": [
+            "demo.math.Addierer",
+            "demo.math.Gerade"
+        ]
+    },
+    "composition": [
+        "a = demo.math.Addierer::__construct({1})",
+        "n = a::addier({in3})",
+        "p1 = s1::calc({n})",
+        "b1 = s1::liagtAufGerade({p1})",
+        "a = demo.math.Addierer::__construct({n})",
+        "n = a::addier({in4})",
+        "p2 = s2::achsenabschnitt()",
+        "p1 = a::summierListe({p1, p2})",
+        "a = demo.math.Addierer::__construct({n})",
+        "p2 = s2::nullstelle()",
+        "p1 = a::summierListe({p1, p2})",
+        "p2 = s1::achsenabschnitt()",
+        "p1 = a::summierListe({p1, p2})",
+        "n = a::summier({p1})",
+        "a = demo.math.Addierer::__construct({n})",
+        "p2 = s1::nullstelle()",
+        "p1 = a::summierListe({p1, p2})",
+        "bool2 = s2::liagtAufGerade({p2})"
+    ],
+    "requestId": "id",
+    "input-fields": {
+        "service-instance-map": {
+            "s1": {
+                "classpath": "demo.math.Gerade",
+                "executorId": "client executor",
+                "id": "id0"
+            },
+            "s2": {
+                "classpath": "demo.math.Gerade",
+                "executorId": "client executor",
+                "id": "id1"
+            }
+        },
+        "field-types": {
+            "in1": "Array",
+            "in2": "Array",
+            "in3": "Number",
+            "in4": "Number",
+            "s1": "ServiceInstanceHandle",
+            "s2": "ServiceInstanceHandle"
+        }
+    },
+    "policy": {
+        "service-policy": [],
+        "return-policy": [
+            "p1"
+        ]
+    }
+}

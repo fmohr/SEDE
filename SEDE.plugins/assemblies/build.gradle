@@ -10,6 +10,7 @@ dependencies {
 
     // plugins:
     provided project(':SEDE.http')
+    provided project(':SEDE.jetty')
     provided project(':SEDE.terminal')
     provided project(':SEDE.frontend')
 

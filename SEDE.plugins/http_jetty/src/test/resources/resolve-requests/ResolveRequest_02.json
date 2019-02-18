@@ -1,0 +1,50 @@
+{
+    "client-executor": {
+        "contact-info": {
+            "id": "client executor"
+        }
+    },
+    "composition": [
+        "adder1 = demo.math.Addierer::__construct({100})",
+        "n1 = adder1::addier({in3})",
+        "p1 = s1::calc({n1})",
+        "bool1 = s1::liagtAufGerade({p1})",
+        "adder1 = demo.math.Addierer::__construct({10})",
+        "n2 = adder1::addier({in4})",
+        "p2 = s2::calc({n2})",
+        "bool2 = s2::liagtAufGerade({p2})"
+    ],
+    "requestId": "id",
+    "input-fields": {
+        "service-instance-map": {
+            "s1": {
+                "classpath": "demo.math.Gerade",
+                "executorId": "exec_2",
+                "id": "id0"
+            },
+            "s2": {
+                "classpath": "demo.math.Gerade",
+                "executorId": "exec_2",
+                "id": "id1"
+            }
+        },
+        "field-types": {
+            "in1": "Array",
+            "in2": "Array",
+            "in3": "Number",
+            "in4": "Number",
+            "s1": "ServiceInstanceHandle",
+            "s2": "ServiceInstanceHandle"
+        }
+    },
+    "policy": {
+        "service-policy": [
+            "s1",
+            "s2"
+        ],
+        "return-policy": [
+            "bool1",
+            "s2"
+        ]
+    }
+}

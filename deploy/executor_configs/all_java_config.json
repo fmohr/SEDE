@@ -1,5 +1,6 @@
 {
   "gateways": ["localhost:6000"],
+  "executorId": "localExecutor",
   "capabilities": [],
   "threadNumber": 4,
   "services": [

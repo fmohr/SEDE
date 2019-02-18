@@ -13,7 +13,7 @@ public class AddressRetriever {
 
 	private final static Logger logger = LoggerFactory.getLogger(AddressRetriever.class);
 
-	public static void enablePlugin(ExecutorHttpServer executor) {
+	public static void enablePlugin(HttpExecutor executor) {
 		Optional<String> myAddress = retrieveAddressFromEnvironmentVar();
 		if(myAddress.isPresent()){
 			logger.info("Changing the address of this executor to {}", myAddress);

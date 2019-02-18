@@ -292,8 +292,8 @@ public class Execution implements IExecution {
 	}
 
 	public void start() {
-		logger.info("Execution {} has been started.", getExecutionId());
 		performLater(() -> {
+			logger.info("Execution {} has been started.", getExecutionId());
 			started = true;
 			state.update(this);
 		});

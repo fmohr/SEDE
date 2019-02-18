@@ -37,7 +37,7 @@ import de.upb.sede.webinterfaces.server.ImServer;
 import de.upb.sede.webinterfaces.server.StringServerResponse;
 import de.upb.sede.webinterfaces.server.SunHttpHandler;
 
-public class ExecutorHttpServer implements ImServer {
+public class ExecutorHttpServer implements HttpExecutor {
 
 	private static final Logger logger = LoggerFactory.getLogger(ExecutorHttpServer.class);
 
@@ -81,7 +81,7 @@ public class ExecutorHttpServer implements ImServer {
 		addHandle("/execute", ExecuteGraphHandler::new);
 		addHandle("/interrupt", InterruptHandler::new);
 
-		server.setExecutor(Executors.newCachedThreadPool());
+		server.setExecutor(Executors.newWorkStealingPool(2));
 		server.start();
 
 		basis.getModifiableContactInfo().put("host-address", this.hostAddress);
@@ -109,6 +109,11 @@ public class ExecutorHttpServer implements ImServer {
 				logger.error("Error during registration to gateway: {}", gatewayAddress, ex);
 			}
 		}
+	}
+
+	@Override
+	public String getExecutorId() {
+		return basis.getExecutorConfiguration().getExecutorId();
 	}
 
 	/**
@@ -336,5 +341,4 @@ public class ExecutorHttpServer implements ImServer {
 			}
 		}
 	}
-
 }

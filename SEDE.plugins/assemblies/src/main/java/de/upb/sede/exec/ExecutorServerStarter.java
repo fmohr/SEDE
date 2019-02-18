@@ -37,7 +37,7 @@ public class ExecutorServerStarter {
 		 * Enable plugins:
 		 */
 		AddressRetriever.enablePlugin(httpExecutor);
-		ProxySetup.enablePlugin(httpExecutor);
+		ProxySetup.enablePlugin(httpExecutor, httpExecutor.getBasisExecutor());
 
 		ImServerCommandListener httpListener = new ImServerCommandListener(httpExecutor, httpExecutor.getBasisExecutor().getExecutorConfiguration().getExecutorId());
 		TerminalCommandListener terminalListener = new TerminalCommandListener();
@@ -49,7 +49,7 @@ public class ExecutorServerStarter {
 
 
 		ExecutorCommands.enablePlugin(executor, scl);
-		HttpExecutorCommands.enablePlugin(httpExecutor, scl);
+		HttpExecutorCommands.enablePlugin(httpExecutor, httpExecutor.getBasisExecutor(), scl);
 		StdShellCommands.enablePlugin(scl);
 
 		/*

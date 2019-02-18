@@ -122,7 +122,7 @@ public class WorkerPool {
 		return executionFutureMap.size();
 	}
 
-	public void removeExecution(Execution exec) {
+	public synchronized void removeExecution(Execution exec) {
 		executionFutureMap.remove(exec);
 	}
 

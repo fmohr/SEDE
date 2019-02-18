@@ -40,18 +40,18 @@ public class ProxySetup {
 		ProxySetup.PROXY_ADDRESS = proxyAddress;
 	}
 
-	public ProxySetup(ExecutorHttpServer executor, String proxyAddress) {
+	public ProxySetup(Executor executor, String proxyAddress) {
 		this.proxyAddress = proxyAddress;
 
 		final Supplier<Procedure> defaultTransmitProcedure =
-				executor.getBasisExecutor().getWorkerPool().getBoundedProducer("TransmitData");
+				executor.getWorkerPool().getBoundedProducer("TransmitData");
 
-		executor.getBasisExecutor().getWorkerPool().bindProcedure("TransmitData",
+		executor.getWorkerPool().bindProcedure("TransmitData",
 				() -> new TransmitDataOverLocalNetwork(defaultTransmitProcedure));
 
 	}
 
-	public static void enablePlugin(ExecutorHttpServer executor) {
+	public static void enablePlugin(HttpExecutor executor, Executor basis) {
 		if(PROXY_ADDRESS == null) {
 			logger.info("PROXY_ADDRESS was not set.");
 			return;
@@ -63,7 +63,7 @@ public class ProxySetup {
 		String executorId;
 		String executorLocalAddress;
 		try {
-			executorId = URLEncoder.encode(executor.getBasisExecutor().getExecutorConfiguration().getExecutorId(), "UTF-8");
+			executorId = URLEncoder.encode(executor.getExecutorId(), "UTF-8");
 			executorLocalAddress = URLEncoder.encode(executor.getHostAddress(), "UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e); // This cant occur anyway
@@ -83,7 +83,7 @@ public class ProxySetup {
 		executor.setHostAddress(proxyAddress);
 		executor.registerToEveryGateway();
 
-		new ProxySetup(executor, proxyAddress);
+		new ProxySetup(basis, proxyAddress);
 	}
 
 	private synchronized Optional<String> getLocalExecutorAddress(String executorId) {

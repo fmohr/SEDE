@@ -15,14 +15,16 @@ public class HttpExecutorCommands {
 
 	private final static Logger logger = LoggerFactory.getLogger(HttpExecutorCommands.class);
 
-	private final ExecutorHttpServer executor;
+	private final HttpExecutor executor;
+	private final Executor basis;
 
-	public static HttpExecutorCommands enablePlugin(ExecutorHttpServer executor, ServerCommandListeners scl){
-		return new HttpExecutorCommands(executor, scl);
+	public static HttpExecutorCommands enablePlugin(HttpExecutor executor, Executor basis, ServerCommandListeners scl){
+		return new HttpExecutorCommands(executor, basis, scl);
 	}
 
-	public HttpExecutorCommands(ExecutorHttpServer executor, ServerCommandListeners scl){
+	public HttpExecutorCommands(HttpExecutor executor, Executor basis, ServerCommandListeners scl){
 		this.executor = executor;
+		this.basis = basis;
 		CommandTree registration = new CommandTree(
 				node(new Command.Strings(false, "register"),
 						node(new Command.Strings("to"),
@@ -49,7 +51,7 @@ public class HttpExecutorCommands {
 			/*
 				Add gateway to the list of gateways:
 			 */
-			executor.getBasisExecutor().getExecutorConfiguration().getGateways().add(gatewayAddress);
+			basis.getExecutorConfiguration().getGateways().add(gatewayAddress);
 			executor.registerToGateway(gatewayAddress);
 			return "Successfully registered to " + gatewayAddress;
 		} catch(Exception ex) {

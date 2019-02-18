@@ -73,7 +73,8 @@ public class Executor implements IExecutor {
 				this::removeExecution));
 		contactInfo.put("id", getExecutorConfiguration().getExecutorId());
 		bindProcedureNames();
-		logger.info("Executor with id '{}' created.\n" +
+		logger.info(
+				"Executor with id '{}' created.\n" +
 				"Capabilities: {}\n" +
 				"Supported services: {}\n" +
 				"Contact-information: {}",
@@ -121,6 +122,7 @@ public class Executor implements IExecutor {
 
 	@Override
 	public void put(DataPutRequest dataPutRequest) {
+		logger.debug("Executor has received putRequest: Field={}, Available={}, ExecutionId={}", dataPutRequest.getFieldname(), !dataPutRequest.isUnavailable(), dataPutRequest.getRequestID());
 		Execution exec = getOrCreateExecution(dataPutRequest.getRequestID());
 		if(dataPutRequest.isUnavailable()) {
 			/*
@@ -138,6 +140,8 @@ public class Executor implements IExecutor {
 	@Override
 	public Execution exec(ExecRequest execRequest){
 		String execId = execRequest.getRequestID();
+		logger.debug("Executor has received execRequest: ExecutionId={}", execRequest.getRequestID());
+
 		/*
 		 * Retrieve the execution:
 		 */
@@ -163,6 +167,7 @@ public class Executor implements IExecutor {
 
 	@Override
 	public synchronized void interrupt(String executionId) {
+		logger.debug("Executor has received interruptRequest: ExecutionId={}", executionId);
 		if (execPool.hasExecution(executionId)) {
 			Optional<Execution> toBeInterrupted = execPool.getExecution(executionId);
 			if(toBeInterrupted.isPresent()){

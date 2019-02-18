@@ -76,6 +76,11 @@ public final class SemanticStreamer {
 		Method method = getMethodFor(caster, casterMethod);
 		try {
 			Object casterInstance = Class.forName(caster).getConstructor().newInstance();
+			try {
+				is.reset();
+			} catch (IOException e) {
+				logger.warn("Couldn't reset the input stream before casting: " + is.toString() + ", type: " + is.getClass().getName(), e);
+			}
 			Object castedObject = method.invoke(casterInstance, is);
 			SEDEObject sedeObject = new ObjectDataField(targetRealTypeCp, castedObject);
 			return sedeObject;
@@ -98,6 +103,11 @@ public final class SemanticStreamer {
 				 * Semnatic objects hold byte arrray as object:
 				 */
 				InputStream encodedData = content.getDataField();
+				try {
+					encodedData.reset();
+				} catch (IOException e) {
+					logger.warn("Couldn't reset the input stream before casting: " + encodedData.toString() + ", type: " + encodedData.getClass().getName(), e);
+				}
 				Streams.InReadChunked(encodedData).writeTo(os);
 				os.flush();
 			} else if(content.isServiceInstanceHandle()) {

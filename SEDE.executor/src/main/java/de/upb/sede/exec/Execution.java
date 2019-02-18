@@ -1,30 +1,27 @@
 package de.upb.sede.exec;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.upb.sede.config.ExecutorConfiguration;
-import de.upb.sede.core.SEDEObject;
-import de.upb.sede.core.SemanticDataField;
-import de.upb.sede.interfaces.IExecution;
-import de.upb.sede.util.DefaultMap;
+import de.upb.sede.util.*;
 import de.upb.sede.util.Observable;
 import de.upb.sede.util.Observer;
-import de.upb.sede.util.Streams;
+import org.slf4j.Logger;
+
+import de.upb.sede.config.ExecutorConfiguration;
+import de.upb.sede.interfaces.IExecution;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * Represents one execution.
  */
 public class Execution implements IExecution {
 
-	private static final Logger logger = LoggerFactory.getLogger(Execution.class);
+	private static final Logger logger = getLogger(Execution.class);
 
 	private final ExecutionEnv environment;
 
@@ -37,6 +34,12 @@ public class Execution implements IExecution {
 	private final ExecutorConfiguration executorConfiguration;
 
 
+	/*
+	 * This executor service handle observer updates for all observers in this execution.
+	 * Procedures and tasks all use this messenger to create asynchronous observers.
+	 * Do not use this service for tasks outside of this execution and don't use it for heavy duty tasks.
+	 */
+	private final ExecutorService messenger = ExecutorServices.createSingleDaemonThreaded();
 
 	/**
 	 * Flag that indicates that the execution has been interrupted.
@@ -67,19 +70,23 @@ public class Execution implements IExecution {
 	 * Observes all tasks. Once an observed task changes its state to resolved, this
 	 * observer will put it into the waiting-Tasks set.
 	 */
-	private final Observer<Task> unresolvedTasksObserver = Observer.lambda(Task::isWaiting, this::taskResolved);
+	private final Observer<Task> unresolvedTasksObserver = new AsyncObserver<>(
+			Observer.lambda(Task::isWaiting, this::taskResolved), getMessenger());
+
 
 	/**
 	 * Observes all tasks. Once an observed task has started processing, it will be
 	 * removed from the waiting-Tasks set.
 	 */
-	private final Observer<Task> waitingTasksObserver = Observer.lambda(Task::hasStarted, this::taskStarted);
+	private final Observer<Task> waitingTasksObserver = new AsyncObserver<>(
+			Observer.lambda(Task::hasStarted, this::taskStarted), getMessenger());
 
 	/**
 	 * Observes all tasks. Once an observed tasks has finished (success or fail), it
 	 * will be removed from the unfinished-Tasks set.
 	 */
-	private final Observer<Task> unfinishedTasksObserver = Observer.lambda(Task::hasFinished, this::taskFinished);
+	private final Observer<Task> unfinishedTasksObserver = new AsyncObserver<>(
+			Observer.lambda(Task::hasFinished, this::taskFinished), getMessenger());
 
 
 	/**
@@ -97,6 +104,7 @@ public class Execution implements IExecution {
 
 	public Execution(String execId, ExecutorConfiguration executorConfiguration) {
 		Objects.requireNonNull(execId);
+		logger.info("Execution {} was created.", execId);
 		this.execId = execId;
 		this.environment = new ExecutionEnv();
 		this.state = Observable.ofInstance(this);
@@ -137,26 +145,25 @@ public class Execution implements IExecution {
 	 */
 
 	private final void taskResolved(Task task) {
-		synchronized (this) {
-
+		performLater(() ->  {
 			/* notify observers about this new resolved task. */
 			runnableTasks.update(task);
-		}
-		state.update(this);
+			state.update(this);
+		});
 	}
 
 	private final void taskStarted(Task task) {
-		synchronized (this) {
+		performLater(() -> {
 			waitingTasks.remove(task);
-		}
-		state.update(this);
+			state.update(this);
+		});
 	}
 
 	private final void taskFinished(Task task) {
-		synchronized (this) {
+		performLater(() -> {
 			unfinishedTasks.remove(task);
-		}
-		state.update(this);
+			state.update(this);
+		});
 	}
 
 	/**
@@ -172,20 +179,22 @@ public class Execution implements IExecution {
 	 *            assigned to this execution.
 	 */
 	synchronized void addTask(Task task) {
-		if (task.getExecution() != this) {
-			throw new RuntimeException("Bug: Task states that it belongs to another execution.");
-		}
-		if (task.hasStarted()) {
-			throw new RuntimeException("Bug: the given task was already started before.");
-		}
-		boolean newTask = unfinishedTasks.add(task);
-		if (newTask) {
-			waitingTasks.add(task);
-			allTasks.add(task);
-			for (Observer<Task> taskObserver : observersOfAllTasks) {
-				task.getState().observe(taskObserver);
+		performLater( () ->  {
+			if (task.getExecution() != this) {
+				throw new RuntimeException("Bug: Task states that it belongs to another execution.");
 			}
-		}
+			if (task.hasStarted()) {
+				throw new RuntimeException("Bug: the given task was already started before.");
+			}
+			boolean newTask = unfinishedTasks.add(task);
+			if (newTask) {
+				waitingTasks.add(task);
+				allTasks.add(task);
+				for (Observer<Task> taskObserver : observersOfAllTasks) {
+					task.getState().observe(taskObserver);
+				}
+			}
+		});
 	}
 
 	/**
@@ -270,96 +279,68 @@ public class Execution implements IExecution {
 		return runnableTasks;
 	}
 
-	synchronized void interrupt() {
-		interrupted = true;
-		state.update(this);
+	void interrupt() {
+		logger.info("Execution {} has been interrupted.", getExecutionId());
+		performLater(() -> {
+			interrupted = true;
+			state.update(this);
+		});
 	}
 
 	public ExecutorConfiguration getConfiguration() {
 		return executorConfiguration;
 	}
 
-	public synchronized void start() {
-		started = true;
+	public void start() {
+		logger.info("Execution {} has been started.", getExecutionId());
+		performLater(() -> {
+			started = true;
+			state.update(this);
+		});
 	}
 
-	public synchronized boolean hasStarted() {
+	public boolean hasStarted() {
 		return started;
 	}
 
-	public synchronized void forEachTask(Consumer<Task> taskConsumer) {
+	public void forEachTask(Consumer<Task> taskConsumer) {
 		for(Task task : allTasks) {
 			taskConsumer.accept(task);
 		}
 	}
 
-
-	private class ExecutionEnv extends ConcurrentHashMap<String, SEDEObject> implements ExecutionEnvironment {
-
-		 /**
-		  * This map exists because for accept data procedures can register themselves
-		  * as a cacher of semantic data and do conversation in place:
-		  */
-		private DefaultMap<String, Function<SemanticDataField, SEDEObject>> cachers = new DefaultMap<>(() -> this::cache);
-
-		private Set<String> unavailableFields = new HashSet<>();
-
-		final Observable<ExecutionEnvironment> state = Observable.ofInstance(this);
-		@Override
-		public synchronized SEDEObject put(String key, SEDEObject value) {
-			if(value.isSemantic()){
-				/*
-				 * Semantic data forward to a cacher (Like Accept data procedure which may cast in place):
-				 */
-				value = cachers.get(key).apply((SemanticDataField) value);
-			}
-			SEDEObject prevValue = super.put(key, value);
-			state.update(this);
-			return prevValue;
-		}
-
-		@Override
-		public synchronized boolean containsKey(Object fieldname) {
-			if(isUnavailable(fieldname)) {
-				return false;
-			} else {
-				return super.containsKey(fieldname);
-			}
-		}
-
-		@Override
-		public synchronized boolean isUnavailable(Object fieldname) {
-			return this.unavailableFields.contains(fieldname);
-		}
-
-
-		 @Override
-		 public synchronized void observe(Observer<ExecutionEnvironment> observer) {
-			 this.state.observe(observer);
-		 }
-
-		 @Override
-		public synchronized void markUnavailable(String fieldname) {
-			unavailableFields.add(fieldname);
-			state.update(this);
-		}
-
-		public synchronized void registerCacher(String fieldname, Function<SemanticDataField, SEDEObject> cacher) {
-			cachers.put(fieldname, cacher);
-		}
-
-		public synchronized SEDEObject cache(SemanticDataField value) {
-			if(!value.isPersistent()) {
-				logger.debug("Semantic data isn't persistent. It will be cache before putting it in the environment: " + value.toString());
-				InputStream inputStream = Streams.InReadChunked(((SemanticDataField) value).getDataField()).toInputStream();
-				SemanticDataField cachedSemanticData = new SemanticDataField(value.getType(), inputStream, true);
-				return cachedSemanticData;
-			} else {
-				/*
-				 * no need to cache as it is persistent anyway:
-				 */
-				return value;
-			}
-		}
+	/**
+	 * Enqueues the given runnable to be performed later.
+	 * Use this to perform changes onto this execution.
+	 *
+	 * @param runnable task to be done.
+	 * @return empty future. Performing Future::get on the returned object will block until the task is completed.
+	 */
+	public Future<?> performLater(Runnable runnable) {
+		return getMessenger().submit(runnable);
 	}
- }
+
+	/**
+	 * Enqueues the given callabe to be performed later.
+	 * Use this to perform changes onto this execution.
+	 *
+	 * @param callable task to be done.
+	 * @return Performing Future::get on the returned object will block until the task is completed and returns the returned object of the callable.
+	 */
+	public <T> Future<T> performLater(Callable<T> callable) {
+		return getMessenger().submit(callable);
+	}
+
+
+	/**
+	 * This executor service handle observer updates for all observers in this execution.
+	 * Procedures and tasks all use this messenger to create asynchronous observers.
+	 * Do not use this service for tasks outside of this execution and don't use it for heavy duty tasks.
+	 * @return Executor service used to communicate messages inside of an execution.
+	 */
+	public ExecutorService getMessenger() {
+		return messenger;
+	}
+
+
+}

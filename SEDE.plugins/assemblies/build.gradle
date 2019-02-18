@@ -15,7 +15,7 @@ dependencies {
     provided project(':CServices')
 
     compile group: 'de.upb.isys', name: 'weka.ml', version: '1.5'
-    compile group: 'de.upb.isys', name: 'catalano.image', version: '1.5'
+    compile group: 'de.upb.isys', name: 'catalano.image', version: '1.6'
     compile group: 'de.upb.isys', name: 'builtins', version: '1.1'
     compile group: 'de.upb.isys', name: 'c2.image', version: '1.2'
 

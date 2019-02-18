@@ -12,6 +12,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import de.upb.sede.util.AsyncObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,9 +76,9 @@ public class CoreClient implements ICoreClient{
 		final Semaphore executionIsFinished = new Semaphore(0);
 		final Object dummy = new Object();
 
-		Observer<Execution> executionDoneObserver = Observer.lambda(Execution::hasExecutionFinished, exec -> {
-			executionIsFinished.release();
-		});
+		Observer<Execution> executionDoneObserver = new AsyncObserver<Execution>(
+				Observer.lambda(Execution::hasExecutionFinished, exec -> executionIsFinished.release()),
+				execution.get().getMessenger());
 
 		execution.get().getState().observe(executionDoneObserver);
 		try {

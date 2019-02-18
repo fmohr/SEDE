@@ -2,6 +2,7 @@ package de.upb.sede.procedure;
 
 import java.util.function.Function;
 
+import de.upb.sede.util.AsyncObserver;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,9 +34,10 @@ public class AcceptDataProcedure implements Procedure, Function<SemanticDataFiel
 		/*
 		 * Add an observer to the environment to be notified when the field is there
 		 */
-		Observer<ExecutionEnvironment> fieldObserver = Observer.lambda(
+		Observer<ExecutionEnvironment> fieldObserver = new AsyncObserver<>(Observer.lambda(
 				env -> env.containsKey(fieldname) || env.isUnavailable(fieldname),
-				this::eventHandler);
+				this::eventHandler), task.getExecution().getMessenger());
+
 		environment.observe(fieldObserver);
 		if(castType != null) {
 			environment.registerCacher(fieldname, this);

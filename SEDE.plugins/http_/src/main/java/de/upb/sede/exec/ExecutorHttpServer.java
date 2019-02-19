@@ -294,7 +294,7 @@ public class ExecutorHttpServer implements HttpExecutor {
 				if(semanticType.equals("unavailable")) {
 					putRequest = DataPutRequest.unavailableData(execId, fieldname);
 				} else{
-					SEDEObject inputObject = new SemanticDataField(semanticType, Streams.InReadChunked(payload).toInputStream(), true);
+					SEDEObject inputObject = SemanticStreamer.readFrom(payload, semanticType);
 					putRequest = new DataPutRequest(execId, fieldname, inputObject);
 				}
 				basis.put(putRequest);

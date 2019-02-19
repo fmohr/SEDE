@@ -50,7 +50,7 @@ public final class SemanticStreamer {
 			 * We don't know if the stream is persistent or not.
 			 * So we assume the worst case.
 			 */
-			parsedObject = new SemanticDataField(type, is, false);
+			parsedObject = new SemanticDataField(type, Streams.InReadChunked(is).toInputStream(), true);
 		}
 		return parsedObject;
 	}

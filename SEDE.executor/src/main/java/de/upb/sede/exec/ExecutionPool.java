@@ -1,6 +1,7 @@
 package de.upb.sede.exec;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -17,16 +18,14 @@ public class ExecutionPool {
 	 * be aware that the implementation of the map is not thread safe.
 	 * So don't expose the map itself and only operate on it in synchronous methods.
 	 */
-	private final Map<String, Execution> execMap = new HashMap<>();
+	private final Map<String, Execution> execMap = new ConcurrentHashMap<>();
 
 
 	private final ExecutorConfiguration executorConfiguration;
 
-	private Function<String, Execution> executionSupplier;
 
 	ExecutionPool(ExecutorConfiguration executorConfiguration){
 		this.executorConfiguration = executorConfiguration;
-		setExecutionSupplier(this::createExecution);
 	}
 
 	synchronized Execution getOrCreateExecution(String execId) {
@@ -37,7 +36,7 @@ public class ExecutionPool {
 			 * The given id doesn't have any execution assigned to it.
 			 * Create a new Execution for the given request id:
 			 */
-			exec = executionSupplier.apply(execId);
+			exec = createExecution(execId);
 			execMap.put(execId, exec);
 		}
 		return exec;
@@ -49,6 +48,7 @@ public class ExecutionPool {
 
 	public synchronized void removeExecution(Execution execution) {
 		if(hasExecution(execution.getExecutionId())){
+			logger.debug("Removing execution from pool: {}", execution.getExecutionId());
 			execMap.remove(execution.getExecutionId());
 		}
 	}
@@ -67,9 +67,5 @@ public class ExecutionPool {
 
 	public synchronized Optional<Execution> getExecution(String execId) {
 		return Optional.ofNullable(execMap.get(execId));
-	}
-
-	public void setExecutionSupplier(Function<String, Execution> executionForIdSupplier) {
-		this.executionSupplier = executionForIdSupplier;
 	}
 }

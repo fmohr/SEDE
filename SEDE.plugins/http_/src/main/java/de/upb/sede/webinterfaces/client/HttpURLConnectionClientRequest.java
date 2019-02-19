@@ -10,7 +10,7 @@ public class HttpURLConnectionClientRequest implements BasicClientRequest {
 	private final ByteArrayOutputStream payload = new ByteArrayOutputStream();
 
 	private HttpURLConnection httpConnection;
-	private int timeoutInMs = 1000;
+	private int timeoutInMs = 2000;
 
 	public HttpURLConnectionClientRequest(String ipAddress, int port, String url) {
 		this(ipAddress + ":" + port + (url.startsWith("/")? "" : "/")  + url);
@@ -53,13 +53,13 @@ public class HttpURLConnectionClientRequest implements BasicClientRequest {
 			httpConnection.setDoInput(true);
 			httpConnection.setDoOutput(true);
 			httpConnection.setFixedLengthStreamingMode(payload.size());
-//			httpConnection.setConnectTimeout(timeoutInMs);
+			httpConnection.setConnectTimeout(timeoutInMs);
 			httpConnection.connect();
 
 			payload.writeTo(httpConnection.getOutputStream());
 			return httpConnection.getInputStream();
 		} catch (IOException e) {
-			throw new UncheckedIOException("Error during http request to address: " + url.getPath(),e);
+			throw new UncheckedIOException("Error during http request to address: " + url.toString(), e);
 		}
 	}
 

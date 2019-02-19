@@ -69,8 +69,8 @@ public class Executor implements IExecutor {
 		this.config = execConfig;
 		this.workerPool = new WorkerPool(execConfig.getThreadNumber());
 		this.taskWorkerEnqueuer = new AsyncObserver<>(Observer.lambda(t->true,  workerPool::processTask, t->false));
-		this.executionGarbageCollector = new AsyncObserver<>(Observer.lambda(Execution::hasExecutionFinished,  // when an execution is done, .
-				this::removeExecution));
+		this.executionGarbageCollector = Observer.lambda(Execution::hasExecutionFinished,  // when an execution is done, .
+				this::removeExecution);
 		contactInfo.put("id", getExecutorConfiguration().getExecutorId());
 		bindProcedureNames();
 		logger.info(
@@ -103,27 +103,31 @@ public class Executor implements IExecutor {
 		return execPool.getExecution(execId);
 	}
 
-	public Execution getOrCreateExecution(String execId) {
-		return execPool.getOrCreateExecution(execId);
-	}
-
-	public boolean execIdTaken(String execId) {
-		return execPool.getOrCreateExecution(execId).hasStarted();
-	}
-
 	public ExecutionPool getExecPool() {
 		return execPool;
 	}
 
 	public void removeExecution(Execution execution) {
-		execPool.removeExecution(execution);
-		workerPool.removeExecution(execution);
+		if(execution.hasStarted()) {
+			logger.debug("Removing execution: id={}, unfinished tasks={}", execution.getExecutionId(), execution.getUnfinishedTasksCount());
+			execPool.removeExecution(execution);
+			workerPool.removeExecution(execution);
+		} else {
+			logger.warn("Instructed to remove an unstarted execution = {}", execution.getExecutionId());
+		}
+
 	}
 
 	@Override
 	public void put(DataPutRequest dataPutRequest) {
 		logger.debug("Executor has received putRequest: Field={}, Available={}, ExecutionId={}", dataPutRequest.getFieldname(), !dataPutRequest.isUnavailable(), dataPutRequest.getRequestID());
-		Execution exec = getOrCreateExecution(dataPutRequest.getRequestID());
+		String execId = dataPutRequest.getRequestID();
+		Execution exec = execPool.getExecution(execId) .orElseGet(
+				() -> {
+					logger.warn("Put request received for a nonexistent execution. Creating an empty execution beforehand.");
+					return execPool.getOrCreateExecution(execId);
+				}
+		);
 		if(dataPutRequest.isUnavailable()) {
 			/*
 			 * The request indicates that the data is unavailable. (wont be delivered)
@@ -147,10 +151,10 @@ public class Executor implements IExecutor {
 		 */
 		Execution exec;
 		/* First check if execution id is taken: */
-		if(execIdTaken(execId)) {
+		if(execPool.getExecution(execId).isPresent()) {
 			logger.warn("Execution already exists: {}", execId);
 		}
-		exec = getOrCreateExecution(execId);
+		exec = execPool.getOrCreateExecution(execId);
 		exec.getRunnableTasksObservable().observe(taskWorkerEnqueuer);
 
 		GraphJsonDeserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());

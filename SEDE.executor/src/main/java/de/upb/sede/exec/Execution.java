@@ -178,23 +178,21 @@ public class Execution implements IExecution {
 	 * @param task
 	 *            assigned to this execution.
 	 */
-	synchronized void addTask(Task task) {
-		performLater( () ->  {
-			if (task.getExecution() != this) {
-				throw new RuntimeException("Bug: Task states that it belongs to another execution.");
+	void addTask(Task task) {
+		if (task.getExecution() != this) {
+			throw new RuntimeException("Bug: Task states that it belongs to another execution.");
+		}
+		if (task.hasStarted()) {
+			throw new RuntimeException("Bug: the given task was already started before.");
+		}
+		boolean newTask = unfinishedTasks.add(task);
+		if (newTask) {
+			waitingTasks.add(task);
+			allTasks.add(task);
+			for (Observer<Task> taskObserver : observersOfAllTasks) {
+				task.getState().observe(taskObserver);
 			}
-			if (task.hasStarted()) {
-				throw new RuntimeException("Bug: the given task was already started before.");
-			}
-			boolean newTask = unfinishedTasks.add(task);
-			if (newTask) {
-				waitingTasks.add(task);
-				allTasks.add(task);
-				for (Observer<Task> taskObserver : observersOfAllTasks) {
-					task.getState().observe(taskObserver);
-				}
-			}
-		});
+		}
 	}
 
 	/**
@@ -203,7 +201,7 @@ public class Execution implements IExecution {
 	 *
 	 * @return true if the execution has finished
 	 */
-	public boolean hasExecutionFinished() {
+	public synchronized boolean hasExecutionFinished() {
 		return interrupted || unfinishedTasks.isEmpty();
 	}
 
@@ -292,8 +290,8 @@ public class Execution implements IExecution {
 	}
 
 	public void start() {
-		logger.info("Execution {} has been started.", getExecutionId());
 		performLater(() -> {
+			logger.info("Execution {} has been started.", getExecutionId());
 			started = true;
 			state.update(this);
 		});

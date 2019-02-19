@@ -89,7 +89,7 @@ public class ClientSetup {
 			if(properties.proxyExecutorAddress() != null) {
 				ProxySetup.setGlobalProxyAddress(properties.proxyExecutorAddress());
 			}
-			ProxySetup.enablePlugin(server);
+			ProxySetup.enablePlugin(server, server.getBasisExecutor());
 
 			CoreClient coreClient = HttpCoreClient.createWithGiven(server.getBasisExecutor(), gatewayAdress);
 			logger.info("Successfullt created DISTRIBUTED SEDE client.");

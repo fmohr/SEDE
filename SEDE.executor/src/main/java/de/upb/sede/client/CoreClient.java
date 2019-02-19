@@ -229,11 +229,9 @@ public class CoreClient implements ICoreClient{
 				if(env.containsKey(fieldname)){
 					Result result = new Result(reqId, fieldname, env.get(fieldname));
 					sedeObjectConsumer.accept(result);
-					remaining.remove();
 				} else if(env.isUnavailable(fieldname)) {
 					Result result = Result.failed(reqId, fieldname);
 					sedeObjectConsumer.accept(result);
-					remaining.remove();
 				}
 			}
 		}

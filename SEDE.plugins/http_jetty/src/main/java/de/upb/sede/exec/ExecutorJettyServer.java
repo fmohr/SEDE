@@ -86,6 +86,7 @@ public class ExecutorJettyServer implements HttpExecutor {
 		threadPool.setMaxThreads(500);
 		server = new Server(threadPool);
 		ServerConnector connector=new ServerConnector(server);
+		connector.setHost("0.0.0.0");
 		connector.setPort(actualPort);
 		server.setConnectors(new Connector[]{connector});
 
@@ -96,7 +97,7 @@ public class ExecutorJettyServer implements HttpExecutor {
 		server.setHandler(contexts);
 		try {
 			server.start();
-//			server.dumpStdErr();
+			server.dumpStdErr();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}

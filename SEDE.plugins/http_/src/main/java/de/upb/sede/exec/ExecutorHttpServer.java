@@ -82,7 +82,7 @@ public class ExecutorHttpServer implements HttpExecutor {
 		addHandle("/execute", ExecuteGraphHandler::new);
 		addHandle("/interrupt", InterruptHandler::new);
 
-		server.setExecutor(Executors.newWorkStealingPool(2));
+		server.setExecutor(Executors.newFixedThreadPool(8));
 		server.start();
 
 		bindHttpProcedures();

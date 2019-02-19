@@ -20,4 +20,4 @@ echo Port: "$port"
 config="$DIR"/../executor_configs/all_java_config.json
 echo Configuration file: "$config"
 
-java -Djava.net.preferIPv4Stack=true -Xmx8g -cp "$DIR"/../SEDE/'*':"$DIR"/../SEDE_logging_lib/'*':"$DIR"/services/'*':"$DIR"  de.upb.sede.exec.ExecutorServerStarter "$config" "$ip" "$port"
+java -Xmx8g -cp "$DIR"/../SEDE/'*':"$DIR"/../SEDE_logging_lib/'*':"$DIR"/services/'*':"$DIR"  de.upb.sede.exec.JettyServerStarter "$config" "$ip" "$port"

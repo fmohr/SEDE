@@ -65,9 +65,12 @@ public class CollectErrorsProcedure implements Procedure {
 
 			}
 		}
+
 		SEDEObject errorCollectionField = new ObjectDataField("builtin.Dict", errorCollection);
-		task.getExecution().getEnvironment().put(fieldname, errorCollectionField);
-		task.setSucceeded();
+		task.getExecution().performLater( () -> {
+			task.getExecution().getEnvironment().put(fieldname, errorCollectionField);
+			task.setSucceeded();
+		});
 	}
 
 }

@@ -69,8 +69,9 @@ public class Executor implements IExecutor {
 		this.config = execConfig;
 		this.workerPool = new WorkerPool(execConfig.getThreadNumber());
 		this.taskWorkerEnqueuer = new AsyncObserver<>(Observer.lambda(t->true,  workerPool::processTask, t->false));
-		this.executionGarbageCollector = Observer.lambda(Execution::hasExecutionFinished,  // when an execution is done, .
-				this::removeExecution);
+		this.executionGarbageCollector = new AsyncObserver<>(Observer.lambda(Execution::hasExecutionFinished,  // when an execution is done, .
+				this::removeExecution,
+				t -> false));
 		contactInfo.put("id", getExecutorConfiguration().getExecutorId());
 		bindProcedureNames();
 		logger.info(
@@ -108,6 +109,9 @@ public class Executor implements IExecutor {
 	}
 
 	public void removeExecution(Execution execution) {
+		if(!execPool.hasExecution(execution.getExecutionId())) {
+			return;
+		}
 		if(execution.hasStarted()) {
 			logger.debug("Removing execution: id={}, unfinished tasks={}", execution.getExecutionId(), execution.getUnfinishedTasksCount());
 			execPool.removeExecution(execution);
@@ -187,7 +191,7 @@ public class Executor implements IExecutor {
 	public void interruptAll() {
 		execPool.forAll(Execution::interrupt);
 		execPool.forAll(execution -> {
-			if(!execution.hasStarted()) {
+			if(!execution.hasStarted() || execution.hasExecutionFinished()) {
 				execPool.removeExecution(execution);
 			}
 		});

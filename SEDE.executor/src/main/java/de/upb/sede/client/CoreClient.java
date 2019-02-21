@@ -74,7 +74,6 @@ public class CoreClient implements ICoreClient{
 			return;
 		}
 		final Semaphore executionIsFinished = new Semaphore(0);
-		final Object dummy = new Object();
 
 		Observer<Execution> executionDoneObserver = new AsyncObserver<Execution>(
 				Observer.lambda(Execution::hasExecutionFinished, exec -> executionIsFinished.release()),
@@ -87,7 +86,9 @@ public class CoreClient implements ICoreClient{
 			else
 				executionIsFinished.acquire();
 		} catch (InterruptedException e) {
+			logger.info("CoreClient was interrupted {} while joining execution={}.", requestId);
 			if (interruptExecution) {
+				logger.info("Propagate interruption to execution={}", requestId);
 				interrupt(requestId);
 			}
 		}

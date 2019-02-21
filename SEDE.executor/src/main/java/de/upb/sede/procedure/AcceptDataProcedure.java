@@ -48,6 +48,7 @@ public class AcceptDataProcedure implements Procedure, Function<SemanticDataFiel
 		if(env.isUnavailable(fieldname)) {
 			task.setFailed();
 		} else if(env.containsKey(fieldname)) {
+
 			if(castType != null) {
 				/*
 				 * This accept data procedure has to cast the field in place.
@@ -65,6 +66,7 @@ public class AcceptDataProcedure implements Procedure, Function<SemanticDataFiel
 		} else {
 			logger.error("Something went wrong during Accept Data procedure. " +
 					"Notification was triggered but field '{}' is not inside the environment.", fieldname);
+			task.setFailed();
 		}
 	}
 

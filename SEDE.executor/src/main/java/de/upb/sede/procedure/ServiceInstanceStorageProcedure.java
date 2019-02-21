@@ -69,7 +69,19 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 			task.setSucceeded();
 		}
 	}
-    // TODO treat fail
+
+	public void processFail(Task task) {
+		boolean isLoadInstruction = (boolean) task.getAttributes().get("is-load-instruction");
+		String fieldname = (String) task.getAttributes().get("serviceinstance-fieldname");
+		if (isLoadInstruction) {
+			task.getExecution().performLater( () -> {
+				task.getExecution().getEnvironment().markUnavailable(fieldname);
+				task.setFailed();
+			});
+		} else {
+			task.setFailed();
+		}
+	}
 	/**
 	 * Returns the path of storage for the requested instance.
 	 * 

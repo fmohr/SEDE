@@ -124,6 +124,7 @@ public class IntegrationTest_Execute {
 		testInterruptExecution(cc);
 		if(cc.getClientExecutor().getExecPool().hasExecution("SleepRequest")) {
 			Execution clientExec = cc.getClientExecutor().getExecution("SleepRequest").orElse(null);
+			Thread.sleep(100);
 			if (clientExec != null) {
 				Assert.assertTrue(clientExec.hasExecutionFinished());
 				Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(clientExec));
@@ -281,7 +282,7 @@ public class IntegrationTest_Execute {
 					CoreClient.MapResultConsumer result = new CoreClient.MapResultConsumer();
 					results.add(result);
 					cc.run(runRequest, result);
-					runningRequestsIds.add(requestId);
+					runningRequestsIds.add(runId);
 					logger.debug("Added request Id {}", requestId);
 					Thread.sleep(10);
 				} catch (Exception ex) {

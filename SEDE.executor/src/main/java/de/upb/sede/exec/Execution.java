@@ -145,25 +145,19 @@ public class Execution implements IExecution {
 	 */
 
 	private final void taskResolved(Task task) {
-		performLater(() ->  {
-			/* notify observers about this new resolved task. */
-			runnableTasks.update(task);
-			state.update(this);
-		});
+		/* notify observers about this new resolved task. */
+		runnableTasks.update(task);
+		state.update(this);
 	}
 
 	private final void taskStarted(Task task) {
-		performLater(() -> {
-			waitingTasks.remove(task);
-			state.update(this);
-		});
+		waitingTasks.remove(task);
+		state.update(this);
 	}
 
 	private final void taskFinished(Task task) {
-		performLater(() -> {
-			unfinishedTasks.remove(task);
-			state.update(this);
-		});
+		unfinishedTasks.remove(task);
+		state.update(this);
 	}
 
 	/**
@@ -277,24 +271,33 @@ public class Execution implements IExecution {
 		return runnableTasks;
 	}
 
-	void interrupt() {
-		logger.info("Execution {} has been interrupted.", getExecutionId());
-		performLater(() -> {
-			interrupted = true;
-			state.update(this);
-		});
+	public void interrupt() {
+		class Interruption implements Runnable {
+			@Override
+			public void run() {
+				logger.info("Execution {} has been interrupted.", getExecutionId());
+				interrupted = true;
+				state.update(Execution.this);
+			}
+		}
+		performLater(new Interruption());
 	}
+
 
 	public ExecutorConfiguration getConfiguration() {
 		return executorConfiguration;
 	}
 
 	public void start() {
-		performLater(() -> {
-			logger.info("Execution {} has been started.", getExecutionId());
-			started = true;
-			state.update(this);
-		});
+		class Start implements Runnable {
+			@Override
+			public void run() {
+				logger.info("Execution {} has been started.", getExecutionId());
+				started = true;
+				state.update(Execution.this);
+			}
+		}
+		performLater(new Start());
 	}
 
 	public boolean hasStarted() {

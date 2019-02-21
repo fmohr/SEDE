@@ -24,11 +24,12 @@ class ExecutionEnv extends ConcurrentHashMap<String, SEDEObject> implements Exec
 	  * This map exists because for accept data procedures can register themselves
 	  * as a cacher of semantic data and do conversation in place:
 	  */
-	private DefaultMap<String, Function<SemanticDataField, SEDEObject>> cachers = new DefaultMap<>(() -> this::cache);
+	private final DefaultMap<String, Function<SemanticDataField, SEDEObject>> cachers =
+			 new DefaultMap<>(() -> ExecutionEnv::cache);
 
-	private Set<String> unavailableFields = new HashSet<>();
+	private final Set<String> unavailableFields = new HashSet<>();
 
-	final Observable<ExecutionEnvironment> state = Observable.ofInstance(this);
+	private final Observable<ExecutionEnvironment> state = Observable.ofInstance(this);
 
 	@Override
 	public synchronized SEDEObject put(String key, SEDEObject value) {
@@ -73,7 +74,7 @@ class ExecutionEnv extends ConcurrentHashMap<String, SEDEObject> implements Exec
 		cachers.put(fieldname, cacher);
 	}
 
-	public synchronized SEDEObject cache(SemanticDataField value) {
+	public static SEDEObject cache(SemanticDataField value) {
 		if(!value.isPersistent()) {
 			logger.trace("Semantic data isn't persistent and will be cached: " + value.toString());
 			InputStream inputStream = Streams.InReadChunked(value.getDataField()).toInputStream();

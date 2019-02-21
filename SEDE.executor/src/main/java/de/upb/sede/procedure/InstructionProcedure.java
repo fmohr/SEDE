@@ -44,8 +44,10 @@ public class InstructionProcedure implements Procedure {
 		String fieldname = nodeAttributes.getLeftsidefieldname();
 		if(fieldname != null) {
 			logger.debug("Instruction {} failed. Marking field {} unavailable.", task.getDescription(), fieldname);
-			task.getExecution().getEnvironment().remove(fieldname); // remove the field
-			task.getExecution().getEnvironment().markUnavailable(fieldname); // mark the field unavailable
+			task.getExecution().performLater(() -> {
+				task.getExecution().getEnvironment().remove(fieldname); // remove the field
+				task.getExecution().getEnvironment().markUnavailable(fieldname); // mark the field unavailable
+			});
 		}
 		task.setFailed();
 	}

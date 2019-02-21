@@ -81,10 +81,6 @@ public class WorkerPool {
 		}
 	}
 
-	private synchronized  void removeExec(Execution execution) {
-		executionFutureMap.remove(execution);
-	}
-
 	public synchronized void bindProcedure(String procedureName, Supplier<Procedure> procedureSupplier) {
 		procedureSupplierMap.put(procedureName, procedureSupplier);
 	}
@@ -145,12 +141,14 @@ public class WorkerPool {
 					procedure.processTask(task);
 				} else {
 					procedure.processFail(task);
-					task.setFailed();
 				}
 			} catch(Throwable ex) {
 				logger.error("ERROR during {}:", task.getDescription(), ex);
 				task.setError(new Exception((ex)));
-				if(!task.hasFailed()){
+				if(task.hasDependencyFailed()) {
+					task.setFailed();
+				}
+				else if(!task.hasFailed()){
 					try{
 						procedure.processFail(task);
 					} catch(Exception innerException){

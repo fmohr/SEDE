@@ -25,11 +25,6 @@ public class AcceptDataProcedure implements Procedure, Function<SemanticDataFiel
 		fieldname = task.getAttribute("fieldname");
 		castType = task.getAttribute("CastType");
 		this.task = task;
-//		try {
-////			Thread.sleep(1000);
-//		} catch (InterruptedException e) {
-//			e.printStackTrace();
-//		}
 		ExecutionEnvironment environment = task.getExecution().getEnvironment();
 		/*
 		 * Add an observer to the environment to be notified when the field is there

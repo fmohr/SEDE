@@ -132,6 +132,11 @@ public class Executor implements IExecutor {
 					return execPool.getOrCreateExecution(execId);
 				}
 		);
+		if(exec == null) {
+			logger.warn("Put request is ignored because it is trying to put into" +
+					" an already finished execution={}.", execId );
+			return;
+		}
 		if(dataPutRequest.isUnavailable()) {
 			/*
 			 * The request indicates that the data is unavailable. (wont be delivered)
@@ -159,6 +164,12 @@ public class Executor implements IExecutor {
 			logger.warn("Execution already exists: {}", execId);
 		}
 		exec = execPool.getOrCreateExecution(execId);
+		if(exec == null) {
+			logger.error("Exec request is ignored because the supplied exec id collided" +
+					" with an already finished execution={}.", execId );
+			throw new IllegalStateException("An execution with id=" + execId + " cannot be " +
+					"created as it has already existed.");
+		}
 		exec.getRunnableTasksObservable().observe(taskWorkerEnqueuer);
 
 		GraphJsonDeserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());

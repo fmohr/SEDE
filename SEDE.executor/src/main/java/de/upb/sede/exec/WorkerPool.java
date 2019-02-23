@@ -135,11 +135,14 @@ public class WorkerPool {
 				logger.trace("worker STARTED working on task: {}", task.getDescription());
 
 			task.setStarted();
-
-			try{
-				if(!task.hasDependencyFailed()) {
+			if (Thread.currentThread().isInterrupted()) {
+				logger.info("Task {} was interrupted.", task.getDescription());
+				return;
+			}
+			try {
+				if (!task.hasDependencyFailed()) {
 					procedure.processTask(task);
-				} else {
+				} else{
 					procedure.processFail(task);
 				}
 			} catch(Throwable ex) {

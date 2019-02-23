@@ -20,6 +20,7 @@ public class ExecutionPool {
 	 */
 	private final Map<String, Execution> execMap = new ConcurrentHashMap<>();
 
+	private final Set<String> knownExecutions = new HashSet<>();
 
 	private final ExecutorConfiguration executorConfiguration;
 
@@ -31,6 +32,9 @@ public class ExecutionPool {
 	synchronized Execution getOrCreateExecution(String execId) {
 		Execution exec = execMap.get(execId);
 		if(exec == null) {
+			if(knownExecutions.contains(execId)) {
+				return null;
+			}
 			logger.debug("{} created a new execution: {}", executorConfiguration.getExecutorId(),execId);
 			/*
 			 * The given id doesn't have any execution assigned to it.
@@ -38,6 +42,7 @@ public class ExecutionPool {
 			 */
 			exec = createExecution(execId);
 			execMap.put(execId, exec);
+			knownExecutions.add(execId);
 		}
 		return exec;
 	}

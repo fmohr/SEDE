@@ -1,4 +1,4 @@
-
+import os
 # gunicorn imports
 import gunicorn.app.base
 from gunicorn.six import iteritems
@@ -93,6 +93,15 @@ class ReadLogsHandler(StringServerResponse):
             logs = logged.read()
         return logs
 
+class RemoveLogsHandler(StringServerResponse):
+    def __init__(self):
+        pass
+
+    def receive_str(self, input_str: str, executorId) -> str:
+        os.remove("logs/sede-1.log")
+
+        return "Logs cleared."
+
 class HTTPExecutor(Executor):
     def __init__(self, config, host_address:str, port:int):
         super().__init__(config)
@@ -106,6 +115,7 @@ class HTTPExecutor(Executor):
         self.httpserver.add_context("/interrupt/<executorId>/<executionId>", partial(InterruptHandler, self))
         self.httpserver.add_context("/cmd/<executorId>/heartbeat", HeartbeatHandler)
         self.httpserver.add_context("/cmd/<executorId>/cat/logs/sede-1.log", ReadLogsHandler)
+        self.httpserver.add_context("/cmd/<executorId>/rm/logs/sede-1.log", RemoveLogsHandler)
 
         logging.info("Starting Python executor http server: '%s'. host: %s port: %i", config.executor_id, host_address, port)
         self.register_toall()
@@ -147,7 +157,6 @@ class HTTPExecutor(Executor):
 
 
 def retrieve_executoraddr():
-    import os
     if 'EXECUTOR_ADDRESS' in os.environ:
         addr = os.environ['EXECUTOR_ADDRESS']
         logging.info("Retrieved the address of this executor from '$EXECUTOR_ADDRESS': %s", addr)
@@ -156,7 +165,6 @@ def retrieve_executoraddr():
         return None
 
 def signup_proxy(id, internal_address):
-    import os
     if 'PROXY_ADDRESS' in os.environ:
         proxy_addr = os.environ['PROXY_ADDRESS']
         logging.info("Retrieved the address of PROXY from 'PROXY_ADDRESS': %s.", proxy_addr)

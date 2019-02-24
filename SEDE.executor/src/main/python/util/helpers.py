@@ -1,5 +1,6 @@
 import logging
 from logging import Logger
+from logging import handlers
 
 try:
     import ujson as json
@@ -80,7 +81,7 @@ def getlogger(loggername):
     import os
     if not os.path.isdir("logs"):
         os.mkdir("logs")
-    fh = logging.FileHandler('logs/sede-1.log')
+    fh = logging.handlers.RotatingFileHandler('logs/sede-1.log', backupCount=1, maxBytes=1000000)
     fh.setLevel(logging.DEBUG)
     # create formatter
     formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')

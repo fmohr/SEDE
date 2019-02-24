@@ -16,8 +16,8 @@ from exe.req import DataPutRequest, ExecRequest
 
 
 
-def create_put_request(host, fieldname, executionId, unavailable:bool=True, semtype=SEMANTIC) -> BasicClientRequest:
-    dataPutUrl = host + "/put/" + executionId + "/" + fieldname + "/"
+def create_put_request(host, fieldname, targetexecutorId, executionId, unavailable:bool=True, semtype=SEMANTIC) -> BasicClientRequest:
+    dataPutUrl = host + "/put/" + targetexecutorId + "/" + executionId + "/" + fieldname + "/"
     if unavailable:
         dataPutUrl += "unavailable"
     else:
@@ -30,7 +30,7 @@ class PutDataHandler(ByteServerResponse):
     def __init__(self, executor):
         self.executor : Executor = executor
 
-    def receive_bytes(self, input_bytes: bytes, executionId, fieldname, semtype) -> str:
+    def receive_bytes(self, input_bytes: bytes, executorId, executionId, fieldname, semtype) -> str:
         logging.trace("%s received data at %s/%s/%s", self.executor.config.executor_id, executionId, fieldname, semtype)
         try:
             if semtype != "unavailable":
@@ -52,7 +52,7 @@ class ExecuteGraphHandler(StringServerResponse):
     def __init__(self, executor):
         self.executor: Executor = executor
 
-    def receive_str(self, input_str: str) -> str:
+    def receive_str(self, input_str: str, executorId) -> str:
         try:
             logging.debug("%s received execute request.", str(self.executor.config.executor_id))
             execRequest: ExecRequest = ExecRequest.from_json_string(input_str)
@@ -68,7 +68,7 @@ class InterruptHandler(StringServerResponse):
     def __init__(self, executor):
         self.executor: Executor = executor
 
-    def receive_str(self, input_str: str, executionId:str) -> str:
+    def receive_str(self, input_str: str, executorId, executionId:str) -> str:
         try:
             self.executor.interrupt(executionId)
             return "";
@@ -78,24 +78,24 @@ class InterruptHandler(StringServerResponse):
             return str(e)
 
 
-
 class TransmitDataOverHttp(TransmitDataProcedure):
 
     def get_put_request(self, task, unavailable:bool)->BasicClientRequest:
         host = task["contact-info"]["host-address"]
         fieldname = task["fieldname"]
+        target_executor_id = task["contact-info"]["id"]
         executionId = task.execution.exec_id
         logging.trace("Execution '%s': Transmitting %s to %s. (%available)", executionId, fieldname, host,
                       "un" if unavailable else "")
         if unavailable:
-            return create_put_request(host, fieldname, executionId, unavailable=True)
+            return create_put_request(host, fieldname, target_executor_id, executionId, unavailable=True)
         else:
             if "semantic-type" in task:
                 semtype = task["semantic-type"]
             else:
                 sedeObj:SEDEObject = task.execution.env[fieldname]
                 semtype = sedeObj.type
-            return create_put_request(host, fieldname, executionId, unavailable=False, semtype=semtype)
+            return create_put_request(host, fieldname, target_executor_id, executionId, unavailable=False, semtype=semtype)
 
 
 class FinishOverHttp(FinishProcedure):
@@ -103,10 +103,11 @@ class FinishOverHttp(FinishProcedure):
     def get_finish_flag_request(self, task)-> BasicClientRequest:
         host = task["contact-info"]["host-address"]
         fieldname = task["fieldname"]
+        target_executor_id = task["contact-info"]["id"]
         semtype = PrimitiveType.Bool.name
         executionId = task.execution.exec_id
         logging.trace("Execution '%s': Notifying %s with a finish flag.", executionId, host)
-        return create_put_request(host, fieldname, executionId, unavailable=False, semtype=semtype)
+        return create_put_request(host, fieldname, target_executor_id, executionId, unavailable=False, semtype=semtype)
 
 
 class HTTPExecutor(Executor):

@@ -5,7 +5,7 @@ from gunicorn.six import iteritems
 
 # flask imports
 from werkzeug.routing import BaseConverter
-from flask import Flask, request
+from flask import Flask, request, make_response
 
 # sede executor imports
 from exe.config import ExecutorConfig
@@ -39,9 +39,15 @@ class FlaskApp:
                     responder_ = responder()
                 else:
                     responder_ = responder
-                return responder_.receive_bytes(request.get_data(), **kwargs)
+
+                resp = make_response(responder_.receive_bytes(request.get_data(), **kwargs), 200)
+                resp.headers['Access-Control-Allow-Origin'] = '*'
+                resp.headers["Content-type"]='bytes'
+                return resp
             except Exception as ex:
-                return "couldn't handle request: " + str(ex)
+                resp = make_response("couldn't handle request: " + str(ex), 500)
+                resp.headers['Access-Control-Allow-Origin'] = '*'
+                return resp
 
         self.app.add_url_rule(route, str(uuid()), route_handler, **{"methods":methods})
 
@@ -49,7 +55,8 @@ class FlaskApp:
         options = {
             'bind': '%s:%s' % ("0.0.0.0", port),
             'workers': workers,
-            'threads' : threads
+            'threads' : threads,
+            'forwarded-allow-ips' : "*"
         }
         logging.info("Starting executor with %d workers and %d thread each.", workers, threads)
         self.server = StandaloneApplication(self.app, options).run()
@@ -74,10 +81,17 @@ class HeartbeatHandler(StringServerResponse):
     def __init__(self):
         pass
 
-    def receive_str(self, input_str: str) -> str:
+    def receive_str(self, input_str: str, executorId) -> str:
         return "true";
 
+class ReadLogsHandler(StringServerResponse):
+    def __init__(self):
+        pass
 
+    def receive_str(self, input_str: str, executorId) -> str:
+        with open("logs/sede-1.log") as logged:
+            logs = logged.read()
+        return logs
 
 class HTTPExecutor(Executor):
     def __init__(self, config, host_address:str, port:int):
@@ -87,10 +101,11 @@ class HTTPExecutor(Executor):
         self.bind_http_procedure_names()
         self.httpserver = FlaskApp("PYTHON_EXECUTOR")
 
-        self.httpserver.add_context('/put/<executionId>/<fieldname>/<semtype>', partial(PutDataHandler, self))
-        self.httpserver.add_context("/execute", partial(ExecuteGraphHandler, self))
-        self.httpserver.add_context("/interrupt/<executionId>", partial(InterruptHandler, self))
-        self.httpserver.add_context("/cmd/heartbeat", HeartbeatHandler)
+        self.httpserver.add_context('/put/<executorId>/<executionId>/<fieldname>/<semtype>', partial(PutDataHandler, self))
+        self.httpserver.add_context("/execute/<executorId>", partial(ExecuteGraphHandler, self))
+        self.httpserver.add_context("/interrupt/<executorId>/<executionId>", partial(InterruptHandler, self))
+        self.httpserver.add_context("/cmd/<executorId>/heartbeat", HeartbeatHandler)
+        self.httpserver.add_context("/cmd/<executorId>/cat/logs/sede-1.log", ReadLogsHandler)
 
         logging.info("Starting Python executor http server: '%s'. host: %s port: %i", config.executor_id, host_address, port)
         self.register_toall()
@@ -140,6 +155,21 @@ def retrieve_executoraddr():
     else:
         return None
 
+def signup_proxy(id, internal_address):
+    import os
+    if 'PROXY_ADDRESS' in os.environ:
+        proxy_addr = os.environ['PROXY_ADDRESS']
+        logging.info("Retrieved the address of PROXY from 'PROXY_ADDRESS': %s.", proxy_addr)
+        url = proxy_addr + "/signup/" + str(id) + "/" + internal_address
+        registration_req = HttpClientRequest(url)
+        answer = registration_req.send_receive_str("")
+        if answer is not None and len(answer) == 0:
+            logging.info("Successfully signed up to the proxy: %s.", url)
+            return proxy_addr
+        else:
+            logging.error("Error singing up to the proxy: %s", url)
+    return None
+
 
 def main():
     import sys
@@ -171,7 +201,13 @@ def main():
 
     # restore the first argument:
     sys.argv.insert(0, program)
-
+    id = executorConfig.executor_id
+    if host_address is None or id is None:
+        logging.fatal("Define host address or id.")
+    proxy_addr = signup_proxy(id, host_address)
+    if proxy_addr is not None:
+        logging.info("Replacing own address with the one from the proxy: %s", proxy_addr)
+        host_address = proxy_addr
     executor = HTTPExecutor(executorConfig, host_address, port)
     executor.start_listening()
 
@@ -180,7 +216,7 @@ def main():
 def test():
     class Printer(StringServerResponse):
         def receive_str(self, input_string: str, **kwargs) -> str:
-            print("PRIINT:" + input_string)
+            print("PRINT:" + input_string)
             return "hello"
     testServer = FlaskApp()
     testServer.add_context("/", Printer())

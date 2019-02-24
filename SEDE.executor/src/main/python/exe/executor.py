@@ -67,17 +67,19 @@ class Executor:
 
     def bind_procedure_names(self):
         from procedure.data_procedures import \
-            ParseConstatProcedure,\
+            ParseConstantProcedure,\
             AcceptDataProcedure, \
             CastTypeProcedure, \
-            ServiceInstanceStorageProcedure
+            ServiceInstanceStorageProcedure, \
+            CollectErrorProcedure
         from procedure.inst_procedure import InstructionProcedure
 
         self.worker_pool.bind_procedure("Instruction", InstructionProcedure)
-        self.worker_pool.bind_procedure("ParseConstant", ParseConstatProcedure)
+        self.worker_pool.bind_procedure("ParseConstant", ParseConstantProcedure)
         self.worker_pool.bind_procedure("AcceptData", AcceptDataProcedure)
         self.worker_pool.bind_procedure("CastType", CastTypeProcedure)
         self.worker_pool.bind_procedure("ServiceInstanceStorage", ServiceInstanceStorageProcedure)
+        self.worker_pool.bind_procedure("CollectErrors", CollectErrorProcedure)
         # send graph and transmit data needs to be bounded from outside because based
         # on the type of this executor they require different of implementations.
 

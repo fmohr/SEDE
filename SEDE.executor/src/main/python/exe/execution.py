@@ -52,12 +52,14 @@ class Execution:
 
     unfinished_tasks: set
     waiting_tasks: set
+    all_tasks:set
 
     def __init__(self, exec_id, config:'ExecutorConfig'):
         self.exec_id = exec_id
         self.config = config
         self.unfinished_tasks = set()
         self.waiting_tasks = set()
+        self.all_tasks = set()
         self.tasks_observer = Observer(lambda task: True, self.task_update_event, lambda task: False)
         self.env = ExecutionEnvironment(config.executor_id, exec_id)
         self.state = Observable(self)
@@ -102,9 +104,10 @@ class Execution:
         self.has_graph = True
 
     def add_task(self, task):
-        if task not in self.unfinished_tasks:
+        if task not in self.all_tasks:
             self.unfinished_tasks.add(task)
             self.waiting_tasks.add(task)
+            self.all_tasks.add(task)
             task.state.observe(self.tasks_observer)
 
     def interrupt(self):
@@ -133,7 +136,7 @@ class Task:
     state: Observable
     dependecies_observer: Observer
 
-    error: Exception
+    error: Exception = None
 
     dependencies: set
 

@@ -18,6 +18,6 @@ setuptools.setup(name='SEDE-http-executor',
       entry_points=
             {
                   'console_scripts': [
-                        'pyexecutor = plug_http.flask_integration:main'
+                        'pyexecutor = flask_integration:main'
                   ]
             })

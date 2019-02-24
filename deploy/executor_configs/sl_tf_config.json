@@ -1,7 +1,7 @@
 {
-    "executorId": "PY-Scikit-Executor",
+    "executorId": "PY-Scikit-Tensorflow-Executor",
     "capabilities": [],
-    "threadNumber": 4,
+    "threadNumber": 1,
     "services": [
         "sklearn.ensemble.AdaBoostClassifier",
         "sklearn.ensemble.BaggingClassifier",
@@ -33,6 +33,6 @@
         "sklearn.tree.DecisionTreeClassifier",
         "tflib.NeuralNet"
     ],
-    "gateways": ["localhost:6000"],
-    "serviceStoreLocation": "instances"
+    "gateways": [],
+    "serviceStoreLocation": "pyinstances"
 }

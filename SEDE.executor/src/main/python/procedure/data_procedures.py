@@ -8,6 +8,7 @@ from util.com import BasicClientRequest, in_read_string, out_write_bytes, WriteF
 from exe import req as requests
 from os import path
 import pickle
+import traceback
 
 class AcceptDataProcedure(Procedure):
     def __init__(self):
@@ -73,7 +74,7 @@ class FinishProcedure(Procedure):
     def get_finish_flag_request(self, task)-> BasicClientRequest:
         raise Exception("BUG: must be implemented in a subclass.")
 
-class ParseConstatProcedure(Procedure):
+class ParseConstantProcedure(Procedure):
     def process_task(self, task: Task):
         constant = task["constant"]
         if task["isBool"]:
@@ -93,6 +94,33 @@ class ParseConstatProcedure(Procedure):
         primitiveObject = data.SEDEObject.from_primitive(primtype, primdata)
         task.execution.env[constant] = primitiveObject
         task.set_succeeded()
+
+class CollectErrorProcedure(Procedure):
+    def collect_errors(self, task):
+        execution_error_collection = {}
+        for other_task in task.execution.all_tasks:
+            other_task: Task
+            if other_task is task:
+                continue
+            if other_task.error is None:
+                continue
+            error : Exception = other_task.error
+            error_str = ''.join(traceback.format_exception(etype=type(error), value=error, tb=error.__traceback__))
+            execution_error_collection[other_task["description"]] = error_str
+        error_collection = dict()
+        error_collection[task["fieldname"]] = execution_error_collection
+        error_collection_field = data.SEDEObject("builtin.Dict", error_collection)
+        env: ExecutionEnvironment = task.execution.env
+        env[task["fieldname"]] = error_collection_field
+        task.set_succeeded()
+
+
+    def process_task(self, task):
+        self.collect_errors(task)
+
+    def process_fail(self, task):
+        self.collect_errors(task)
+
 
 class SendGraphProcedure(Procedure):
 

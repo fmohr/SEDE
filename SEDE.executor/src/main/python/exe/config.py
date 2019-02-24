@@ -23,6 +23,7 @@ class ExecutorConfig:
         config = cls.empty_config()
         if "executorId" in d:
             config.executor_id = require_not_none(d["executorId"])
+            logging.info("Actual executor id: %s", config.executor_id)
 
         if "threadNumber" in d:
             config.thread_count = require_not_none(d["threadNumber"])

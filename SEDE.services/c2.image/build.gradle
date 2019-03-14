@@ -5,13 +5,28 @@ dependencies {
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
     provided project(":SEDE.core")
     //compile project(":CServices")
-    compile files(
-            'libs/Catalano.Image.jar',
-            'libs/Catalano.Math.jar',
-            'libs/Catalano.Statistics.jar'
-    )
+    //compile files(
+    //        'libs/Catalano.Image.jar',
+    //        'libs/Catalano.Math.jar',
+    //        'libs/Catalano.Statistics.jar',
+    //)
+    compile fileTree(dir: "libs", include: ['*.jar', '*.*.jar'])
 
     testCompile project(":SEDE.http")
     compile group: 'de.upb.isys', name: 'builtins', version: '1.1'
     compile group: 'de.upb.isys', name: 'c2.image', version: '1.2'
+}
+
+task make_cservices(type:Exec) {
+    workingDir 'scripts/'
+
+    commandLine './make_cservices.sh'
+
+    //store the output instead of printing to the console:
+    standardOutput = new ByteArrayOutputStream()
+
+    //extension method stopTomcat.output() can be used to obtain the output:
+    ext.output = {
+        return standardOutput.toString()
+    }
 }

@@ -98,6 +98,7 @@
     "C2Services.C2Service_rotate_FPGA",
     "C2Services.C2Service_rotate_GPU",
     "C2Services.C2Service_rotate_SCPU",
+    "C2Services.C2Service_sobel",
     "C2Services.C2Service_sobel_CPU",
     "C2Services.C2Service_sobel_JAVA",
     "C2Services.C2Service_sobel_FPGA",

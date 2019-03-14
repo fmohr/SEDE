@@ -12,7 +12,7 @@ dependencies {
     provided project(':SEDE.http')
     provided project(':SEDE.terminal')
     provided project(':SEDE.frontend')
-    provided project(':CServices')
+    //provided project(':CServices')
 
     compile group: 'de.upb.isys', name: 'weka.ml', version: '1.5'
     compile group: 'de.upb.isys', name: 'catalano.image', version: '1.6'

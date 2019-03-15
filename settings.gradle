@@ -32,4 +32,4 @@ project(':c2.image').projectDir = new File(serivceFolder, "c2.image")
 /**
  * CServices
  */
-include 'CServices'
+//include 'CServices'

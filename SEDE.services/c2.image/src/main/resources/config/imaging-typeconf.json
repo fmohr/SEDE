@@ -1,0 +1,22 @@
+{
+    "Catalano.Imaging.FastBitmap": {
+        "semantic_type": "Arr",
+        "onthological_caster": "de.upb.sede.casters.FastBitmapCaster"
+    },
+    "Catalano.Imaging.Tools.ImageHistogram" : {
+        "semantic_type": "Arr",
+        "onthological_caster": "de.upb.sede.casters.ImageHistogramCaster"
+    },
+    "C2Data.C2Image": {
+        "semantic_type": "Arr",
+        "onthological_caster": "C2Data.C2ImageCaster"
+    },
+    "C2Data.C2Resource": {
+        "semantic_type": "Arr",
+        "onthological_caster": "C2Data.C2ResourceCaster"
+    },
+    "C2Data.C2Params": {
+        "semantic_type": "Arr",
+        "onthological_caster": "C2Data.C2ParamsCaster"
+    }
+}

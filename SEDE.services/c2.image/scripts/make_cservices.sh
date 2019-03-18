@@ -4,8 +4,7 @@
 cd ${SEDE_ROOT}
 rm -rf SEDE.services/c2.image/libs/CServices.jar
 ln -sf ${SEDE_ROOT}/gradlew ${SEDE_ROOT}/gradle/gradle
-mkdir sede
-ln -sf ${SEDE_ROOT}/deploy/SEDE/SEDE.core-0.0.10.jar sede/SEDE.core-0.0.10.jar
+ln -sf ${SEDE_ROOT}/deploy/SEDE ${SEDE_ROOT}/sede
 PATH=$PATH:${SEDE_ROOT}/gradle
 
 # build CServices

@@ -1,5 +1,14 @@
 #!/bin/bash
 
+CPU_ONLY='false'
+
+while getopts 'c' flag; do
+    case "${flag}" in
+        c) CPU_ONLY='true' ;;
+    esac
+done
+
+
 # create symlinks for gradle and SEDE.core
 cd ${SEDE_ROOT}
 rm -rf SEDE.services/c2.image/libs/CServices.jar
@@ -15,7 +24,11 @@ find . -type f -name '*.sh' | xargs chmod +x
 # mv ServiceCodeProvider/CServices .
 # rm -rf ServiceCodeProvider
 cd ServiceCodeProvider/CServices
-./compile.sh
+if [ $CPU_ONLY = 'true' ] ; then
+    ./compile.sh -c
+else
+    ./compile.sh
+fi
 
 # copy .jar file to c2.image/libs
 cp -r ./build/libs/. ${SEDE_ROOT}/SEDE.services/c2.image/libs/

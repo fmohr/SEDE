@@ -12,8 +12,7 @@ repositories {
 
 dependencies {
     compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
-    provided project(":SEDE.core")
-
+    compile files('../../sede/SEDE.core-0.0.10.jar')
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 

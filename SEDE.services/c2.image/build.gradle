@@ -30,3 +30,24 @@ task make_cservices(type:Exec) {
         return standardOutput.toString()
     }
 }
+
+task make_cservices_cpu_only(type:Exec) {
+    workingDir 'scripts/'
+
+    def str = new LinkedList <String> ();
+    str.add('./make_cservices.sh')
+    str.add('-c')
+    
+    println (str)
+    commandLine str.toArray()
+
+    //commandLine ["./make_cservices.sh", "-c"]
+
+    //store the output instead of printing to the console:
+    standardOutput = new ByteArrayOutputStream()
+
+    //extension method stopTomcat.output() can be used to obtain the output:
+    ext.output = {
+        return standardOutput.toString()
+    }
+}

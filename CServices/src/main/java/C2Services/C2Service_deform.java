@@ -31,10 +31,10 @@ public class C2Service_deform extends Plugin {
         super(serviceFile, linkedFiles);
 
         Map<String, Double> paramsDefaultMap = new HashMap<String, Double>(){{
-            put("radius", 1);
-            put("angle", 2);
-            put("position_x", 0.3);
-            put("position_y", 0.7);
+            put("radius", 5);
+            put("angle", 30);
+            put("position_x", 0.0);
+            put("position_y", 0.0);
             put("mode", 1.0)
         }};;
         setOptions(new C2Params(paramsDefaultMap));

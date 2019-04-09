@@ -29,12 +29,27 @@ public class C2Service_blend extends Plugin {
 
     public C2Service_blend() {
         super(serviceFile, linkedFiles);
+        Map<String, Double> paramsDefaultMap = new HashMap<String, Double>(){{
+            put("dirX", 5);
+            put("dirY", 30);
+            put("position_x", 0.0);
+            put("position_y", 0.0);
+            put("mode", 1.0)
+        }};;
+        setOptions(new C2Params(paramsDefaultMap));
 
         printMethod("__construct");
     }
 
     protected List<Double> getParamList() {
         List<Double> paramList      = new ArrayList<Double>();
+        Map<String,Double> paramMap = getOptions().getParams();
+
+        paramList.add(paramMap.get("dirX"));
+        paramList.add(paramMap.get("dirY"));
+        paramList.add(paramMap.get("position_x"));
+        paramList.add(paramMap.get("position_y"));
+        paramList.add(paramMap.get("mode"));
 
         return paramList;
     }

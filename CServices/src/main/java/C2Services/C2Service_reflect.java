@@ -31,7 +31,7 @@ public class C2Service_reflect extends Plugin {
         super(serviceFile, linkedFiles);
 
         Map<String, Double> paramsDefaultMap = new HashMap<String, Double>();
-        paramsDefaultMap.put("angle", 3.0);
+        paramsDefaultMap.put("angle", 30.0);
         setOptions(new C2Params(paramsDefaultMap));
 
         printMethod("__construct");

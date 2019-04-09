@@ -452,7 +452,7 @@ public class C2ServiceTests {
 
 
 		Map< String,Double> paramsWhitebalance = new HashMap< String,Double>();
-		paramsWhitebalance.put("parameter",6.0);
+		paramsWhitebalance.put("parameter",1.0);
 
 		Map< String,Double> paramsRotate = new HashMap< String,Double>();
         paramsWhitebalance.put("degree",60.0);
@@ -572,7 +572,6 @@ public class C2ServiceTests {
 
 		String composition =
 				"s1 = C2Services.C2Service_radialblur::__construct();\n" +
-                        "s1::setOptions({i1=paramValueRadialblur});\n" +
 						"imageInter1 = s1::processImage({i1=resource1, i2=imageIn});\n" +
 						"s2 = C2Services.C2Service_pixelate::__construct();\n" +
 						"s2::setOptions({i1=paramValuePixelate});\n" +
@@ -581,23 +580,16 @@ public class C2ServiceTests {
 		C2Resource SCPU	= new C2Resource("scpu");
 		C2Resource CPU	= new C2Resource("cpu");
 
-        Map< String,Double> paramsRadialblur= new HashMap< String,Double>();
-        paramsRadialblur.put("rows",3.0);
-        paramsRadialblur.put("columns",3.0);
-
-
 		Map< String,Double> paramsPixelate = new HashMap< String,Double>();
 		paramsPixelate.put("area",5.0);
 
 		C2Params paramValuesPixelate = new C2Params(paramsPixelate);
-        C2Params paramValuesRadialblur = new C2Params(paramsRadialblur);
 
 
 		SEDEObject inputObject_lenna	= new ObjectDataField(C2Image.class.getName(), lenna);
 		SEDEObject inputObject_res1		= new ObjectDataField(C2Resource.class.getName(), SCPU);
 		SEDEObject inputObject_res2		= new ObjectDataField(C2Resource.class.getName(), SCPU);
 		SEDEObject inputObject_paramPixelate	= new ObjectDataField(C2Params.class.getName(), paramValuesPixelate);
-        SEDEObject inputObject_paramRadialblur	= new ObjectDataField(C2Params.class.getName(), paramValuesRadialblur);
 
 		ResolvePolicy policy = new ResolvePolicy();
 		policy.setServicePolicy("None");
@@ -608,8 +600,6 @@ public class C2ServiceTests {
 		inputs.put("resource1", inputObject_res1);
 		inputs.put("resource2", inputObject_res2);
 		inputs.put("paramValuePixelate", inputObject_paramPixelate);
-        inputs.put("paramValueRadialblur", inputObject_paramRadialblur);
-
 
 		RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
 
@@ -719,23 +709,24 @@ public class C2ServiceTests {
     public void testGreyContrast() throws InvocationTargetException, InterruptedException {
 
         String composition =
-                "s1 = C2Services.C2Service_contrast::__construct();\n" +
-                        "imageOut = s1::processImage({i1=resource1, i2=imageIn});\n" ;
+                "s1 = C2Services.C2Service_grey::__construct();\n" +
+                        "imageInter1 = s1::processImage({i1=resource1, i2=imageIn});\n" +
+                        "s2 = C2Services.C2Service_contrast::__construct();\n" +
+                        "imageOut = s2::processImage({i1=resource2, i2=imageInter1});\n";
 
         C2Resource SCPU = new C2Resource("scpu");
-
-        double image_rows = (double)lenna.getRows();
-        double image_cols = (double)lenna.getColumns();
+        C2Resource CPU = new C2Resource("cpu");
 
 
         Map< String,Double> paramsContrast = new HashMap< String,Double>();
-        paramsContrast.put("factor",0.0);
+        paramsContrast.put("factor",10.0);
 
         C2Params paramValuesContrast = new C2Params(paramsContrast);
 
 
         SEDEObject inputObject_lenna = new ObjectDataField(C2Image.class.getName(), lenna);
         SEDEObject inputObject_res1 = new ObjectDataField(C2Resource.class.getName(), SCPU);
+        SEDEObject inputObject_res2 = new ObjectDataField(C2Resource.class.getName(), CPU);
         SEDEObject inputObject_paramContrast = new ObjectDataField(C2Params.class.getName(), paramValuesContrast);
 
         ResolvePolicy policy = new ResolvePolicy();
@@ -745,16 +736,22 @@ public class C2ServiceTests {
         Map<String, SEDEObject> inputs = new HashMap<>();
         inputs.put("imageIn", inputObject_lenna);
         inputs.put("resource1", inputObject_res1);
+        inputs.put("resource2", inputObject_res2);
         inputs.put("paramValueCanny", inputObject_paramContrast);
 
         RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
 
         Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
         Result result = resultMap.get("imageOut");
+        Result inter1 = resultMap.get("imageInter1");
 
+        C2Image lenna_inter1 = inter1.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
         lenna_mod = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 
         JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input Image", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, lenna_inter1.convertToImageIcon(), "Grey Image", JOptionPane.PLAIN_MESSAGE);
         JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Contrast Image", JOptionPane.PLAIN_MESSAGE);
     }
+
+
 }

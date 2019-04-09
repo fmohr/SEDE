@@ -317,8 +317,6 @@ public class C2ServiceTests {
 
 
 		Map< String,Double> paramsCanny = new HashMap< String,Double>();
-		paramsCanny.put("rows",3.0);
-		paramsCanny.put("cols",3.0);
 		paramsCanny.put("Thigh",0.7);
 		paramsCanny.put("Tlow",0.3);
 
@@ -457,7 +455,7 @@ public class C2ServiceTests {
 		paramsWhitebalance.put("parameter",6.0);
 
 		Map< String,Double> paramsRotate = new HashMap< String,Double>();
-        paramsWhitebalance.put("deegre",60.0);
+        paramsWhitebalance.put("degree",60.0);
 
 
 
@@ -589,7 +587,7 @@ public class C2ServiceTests {
 
 
 		Map< String,Double> paramsPixelate = new HashMap< String,Double>();
-		paramsPixelate.put("parameter",5.0);
+		paramsPixelate.put("area",5.0);
 
 		C2Params paramValuesPixelate = new C2Params(paramsPixelate);
         C2Params paramValuesRadialblur = new C2Params(paramsRadialblur);
@@ -628,51 +626,135 @@ public class C2ServiceTests {
 	}
 
 	@Test
-    public void testRadialblur() throws InvocationTargetException, InterruptedException {
+    public void testcanny() throws InvocationTargetException, InterruptedException {
 
         String composition =
-                "s1 = C2Services.C2Service_radialblur::__construct();\n" +
-                        "imageInter1 = s1::processImage({i1=resource1, i2=imageIn});\n" +
-                        "s2 = C2Services.C2Service_pixelate::__construct();\n" +
-                        "s2::setOptions({i1=paramValuePixelate});\n" +
-                        "imageOut = s2::processImage({i1=resource2, i2=imageInter1});\n";
+                "s1 = C2Services.C2Service_canny::__construct();\n" +
+                        "s1::setOptions({i1=paramValueCanny});\n" +
+                        "imageOut = s1::processImage({i1=resource1, i2=imageIn});\n" ;
 
         C2Resource SCPU = new C2Resource("scpu");
         C2Resource CPU = new C2Resource("cpu");
 
+        double image_rows = (double)lenna.getRows();
+        double image_cols = (double)lenna.getColumns();
 
-        Map<String, Double> paramsPixelate = new HashMap<String, Double>();
-        paramsPixelate.put("parameter", 3.0);
 
-        C2Params paramValuesPixelate = new C2Params(paramsPixelate);
+        Map<String, Double> paramsCanny = new HashMap<String, Double>();
+        paramsCanny.put("Tlow",0.1);
+        paramsCanny.put("Thigh",0.3);
+
+        C2Params paramValuesCanny = new C2Params(paramsCanny);
 
 
         SEDEObject inputObject_lenna = new ObjectDataField(C2Image.class.getName(), lenna);
         SEDEObject inputObject_res1 = new ObjectDataField(C2Resource.class.getName(), SCPU);
-        SEDEObject inputObject_res2 = new ObjectDataField(C2Resource.class.getName(), CPU);
-        SEDEObject inputObject_paramPixelate = new ObjectDataField(C2Params.class.getName(), paramValuesPixelate);
+        SEDEObject inputObject_paramCanny = new ObjectDataField(C2Params.class.getName(), paramValuesCanny);
 
         ResolvePolicy policy = new ResolvePolicy();
         policy.setServicePolicy("None");
-        policy.setReturnFieldnames(Arrays.asList("imageInter1", "imageOut"));
+        policy.setReturnFieldnames(Arrays.asList("imageOut"));
 
         Map<String, SEDEObject> inputs = new HashMap<>();
         inputs.put("imageIn", inputObject_lenna);
         inputs.put("resource1", inputObject_res1);
-        inputs.put("resource2", inputObject_res2);
-        inputs.put("paramValuePixelate", inputObject_paramPixelate);
+        inputs.put("paramValueCanny", inputObject_paramCanny);
 
         RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
 
         Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
-        Result inter1 = resultMap.get("imageInter1");
         Result result = resultMap.get("imageOut");
 
-        C2Image lenna_inter1 = inter1.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
         lenna_mod = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 
         JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input Image", JOptionPane.PLAIN_MESSAGE);
-        JOptionPane.showMessageDialog(null, lenna_inter1.convertToImageIcon(), "Radial Blurred Image", JOptionPane.PLAIN_MESSAGE);
         JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Pixelate Image", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    @Test
+    public void testcontrast() throws InvocationTargetException, InterruptedException {
+
+        String composition =
+                "s1 = C2Services.C2Service_contrast::__construct();\n" +
+                        "s1::setOptions({i1=paramValueContrast});\n" +
+                        "imageOut = s1::processImage({i1=resource1, i2=imageIn});\n" ;
+
+        C2Resource SCPU = new C2Resource("scpu");
+
+        double image_rows = (double)lenna.getRows();
+        double image_cols = (double)lenna.getColumns();
+
+
+        Map< String,Double> paramsContrast = new HashMap< String,Double>();
+        paramsContrast.put("factor",5.0);
+
+        C2Params paramValuesContrast = new C2Params(paramsContrast);
+
+
+        SEDEObject inputObject_lenna = new ObjectDataField(C2Image.class.getName(), lenna);
+        SEDEObject inputObject_res1 = new ObjectDataField(C2Resource.class.getName(), SCPU);
+        SEDEObject inputObject_paramContrast = new ObjectDataField(C2Params.class.getName(), paramValuesContrast);
+
+        ResolvePolicy policy = new ResolvePolicy();
+        policy.setServicePolicy("None");
+        policy.setReturnFieldnames(Arrays.asList("imageOut"));
+
+        Map<String, SEDEObject> inputs = new HashMap<>();
+        inputs.put("imageIn", inputObject_lenna);
+        inputs.put("resource1", inputObject_res1);
+        inputs.put("paramValueContrast", inputObject_paramContrast);
+
+        RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
+
+        Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
+        Result result = resultMap.get("imageOut");
+
+        lenna_mod = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
+
+        JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input Image", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Contrast Image", JOptionPane.PLAIN_MESSAGE);
+    }
+
+    @Test
+    public void testGreyContrast() throws InvocationTargetException, InterruptedException {
+
+        String composition =
+                "s1 = C2Services.C2Service_contrast::__construct();\n" +
+                        "imageOut = s1::processImage({i1=resource1, i2=imageIn});\n" ;
+
+        C2Resource SCPU = new C2Resource("scpu");
+
+        double image_rows = (double)lenna.getRows();
+        double image_cols = (double)lenna.getColumns();
+
+
+        Map< String,Double> paramsContrast = new HashMap< String,Double>();
+        paramsContrast.put("factor",0.0);
+
+        C2Params paramValuesContrast = new C2Params(paramsContrast);
+
+
+        SEDEObject inputObject_lenna = new ObjectDataField(C2Image.class.getName(), lenna);
+        SEDEObject inputObject_res1 = new ObjectDataField(C2Resource.class.getName(), SCPU);
+        SEDEObject inputObject_paramContrast = new ObjectDataField(C2Params.class.getName(), paramValuesContrast);
+
+        ResolvePolicy policy = new ResolvePolicy();
+        policy.setServicePolicy("None");
+        policy.setReturnFieldnames(Arrays.asList("imageOut"));
+
+        Map<String, SEDEObject> inputs = new HashMap<>();
+        inputs.put("imageIn", inputObject_lenna);
+        inputs.put("resource1", inputObject_res1);
+        inputs.put("paramValueCanny", inputObject_paramContrast);
+
+        RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
+
+        Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
+        Result result = resultMap.get("imageOut");
+
+        lenna_mod = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
+
+        JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input Image", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Contrast Image", JOptionPane.PLAIN_MESSAGE);
     }
 }

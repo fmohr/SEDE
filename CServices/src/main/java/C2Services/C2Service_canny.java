@@ -29,8 +29,10 @@ public class C2Service_canny extends Plugin {
     public C2Service_canny() {
         super(serviceFile, linkedFiles);
 
-        Map<String, Double> paramsDefaultMap = new HashMap<String, Double>();
-        paramsDefaultMap.put("filter_size", 3.0);
+        Map<String, Double> paramsDefaultMap = new HashMap<String, Double>(){{
+            put("Tlow", 0.3);
+            put("Thigh", 0.7)
+        }};;
         setOptions(new C2Params(paramsDefaultMap));
 
         printMethod("__construct");
@@ -40,7 +42,8 @@ public class C2Service_canny extends Plugin {
         List<Double> paramList      = new ArrayList<Double>();
         Map<String,Double> paramMap = getOptions().getParams();
 
-        paramList.add(paramMap.get("filter_size"));
+        paramList.add(paramMap.get("Tlow"));
+        paramList.add(paramMap.get("Thigh"));
 
         return paramList;
     }

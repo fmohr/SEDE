@@ -30,11 +30,19 @@ public class C2Service_rotate extends Plugin {
     public C2Service_rotate() {
         super(serviceFile, linkedFiles);
 
+        Map<String, Double> paramsDefaultMap = new HashMap<String, Double>();
+        paramsDefaultMap.put("angle", 0.0);
+        setOptions(new C2Params(paramsDefaultMap));
+
         printMethod("__construct");
     }
 
     protected List<Double> getParamList() {
         List<Double> paramList      = new ArrayList<Double>();
+
+        Map<String,Double> paramMap = getOptions().getParams();
+
+        paramList.add(paramMap.get("degree"));
 
         return paramList;
     }

@@ -30,11 +30,19 @@ public class C2Service_whitebalance extends Plugin {
     public C2Service_whitebalance() {
         super(serviceFile, linkedFiles);
 
+        Map<String, Double> paramsDefaultMap = new HashMap<String, Double>();
+        paramsDefaultMap.put("parameter", 6.0);
+        setOptions(new C2Params(paramsDefaultMap));
+
         printMethod("__construct");
     }
 
     protected List<Double> getParamList() {
         List<Double> paramList      = new ArrayList<Double>();
+
+        Map<String,Double> paramMap = getOptions().getParams();
+
+        paramList.add(paramMap.get("parameter"));
 
         return paramList;
     }

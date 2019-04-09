@@ -30,11 +30,19 @@ public class C2Service_pixelate extends Plugin {
     public C2Service_pixelate() {
         super(serviceFile, linkedFiles);
 
+        Map<String, Double> paramsDefaultMap = new HashMap<String, Double>();
+        paramsDefaultMap.put("area", 3.0);
+        setOptions(new C2Params(paramsDefaultMap));
+
         printMethod("__construct");
     }
 
     protected List<Double> getParamList() {
         List<Double> paramList      = new ArrayList<Double>();
+
+        Map<String,Double> paramMap = getOptions().getParams();
+
+        paramList.add(paramMap.get("area"));
 
         return paramList;
     }

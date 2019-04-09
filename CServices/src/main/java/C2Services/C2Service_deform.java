@@ -30,11 +30,27 @@ public class C2Service_deform extends Plugin {
     public C2Service_deform() {
         super(serviceFile, linkedFiles);
 
+        Map<String, Double> paramsDefaultMap = new HashMap<String, Double>(){{
+            put("radius", 1);
+            put("angle", 2);
+            put("position_x", 0.3);
+            put("position_y", 0.7);
+            put("mode", 1.0)
+        }};;
+        setOptions(new C2Params(paramsDefaultMap));
+
         printMethod("__construct");
     }
 
     protected List<Double> getParamList() {
         List<Double> paramList      = new ArrayList<Double>();
+        Map<String,Double> paramMap = getOptions().getParams();
+
+        paramList.add(paramMap.get("radius"));
+        paramList.add(paramMap.get("angle"));
+        paramList.add(paramMap.get("position_x"));
+        paramList.add(paramMap.get("position_y"));
+        paramList.add(paramMap.get("mode"));
 
         return paramList;
     }

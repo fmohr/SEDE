@@ -245,7 +245,13 @@
     "C2Services.C2Service_blend": {
         "methods": {
             "$construct" :{},
-            "setOptions" :{"params": ["C2Data.C2Params"]},
+            "setOptions" :{"params": [
+              "C2Data.C2Params" ,
+              "C2Data.C2Params" ,
+              "C2Data.C2Params" ,
+              "C2Data.C2Params" ,
+              "C2Data.C2Params"
+            ]},
             "processImage": {
                 "params": [
                     "C2Data.C2Resource",
@@ -259,10 +265,13 @@
     "C2Services.C2Service_blend_CPU ": {
         "methods": {
             "$construct" :{},
-            "setOptions" :{
-                "params": [
-                    "C2Data.C2Params"]
-            },
+          "setOptions" :{"params": [
+            "C2Data.C2Params" ,
+            "C2Data.C2Params" ,
+            "C2Data.C2Params" ,
+            "C2Data.C2Params" ,
+            "C2Data.C2Params"
+          ]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"
@@ -273,10 +282,13 @@
     "C2Services.C2Service_blend_FPGA ": {
         "methods": {
             "$construct" :{},
-            "setOptions" :{
-                "params": [
-                    "C2Data.C2Params"]
-            },
+          "setOptions" :{"params": [
+            "C2Data.C2Params" ,
+            "C2Data.C2Params" ,
+            "C2Data.C2Params" ,
+            "C2Data.C2Params" ,
+            "C2Data.C2Params"
+          ]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"
@@ -287,10 +299,13 @@
     "C2Services.C2Service_blend_GPU ": {
         "methods": {
             "$construct" :{},
-            "setOptions" :{
-                "params": [
-                    "C2Data.C2Params"]
-            },
+          "setOptions" :{"params": [
+            "C2Data.C2Params" ,
+            "C2Data.C2Params" ,
+            "C2Data.C2Params" ,
+            "C2Data.C2Params" ,
+            "C2Data.C2Params"
+          ]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"
@@ -301,10 +316,13 @@
     "C2Services.C2Service_blend_SCPU ": {
         "methods": {
             "$construct" :{},
-            "setOptions" :{
-                "params": [
-                    "C2Data.C2Params"]
-            },
+          "setOptions" :{"params": [
+            "C2Data.C2Params" ,
+            "C2Data.C2Params" ,
+            "C2Data.C2Params" ,
+            "C2Data.C2Params" ,
+            "C2Data.C2Params"
+          ]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"
@@ -315,7 +333,9 @@
     "C2Services.C2Service_canny": {
         "methods": {
             "$construct" :{},
-            "setOptions" :{"params": ["C2Data.C2Params"]},
+            "setOptions" :{"params": [
+              "C2Data.C2Params" ,
+              "C2Data.C2Params"]},
             "processImage": {
                 "params": [
                     "C2Data.C2Resource",
@@ -331,8 +351,8 @@
             "$construct" :{},
             "setOptions" :{
                 "params": [
-                    "C2Data.C2Params"]
-            },
+                    "C2Data.C2Params" ,
+                    "C2Data.C2Params"]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"
@@ -343,10 +363,9 @@
     "C2Services.C2Service_canny_GPU ": {
         "methods": {
             "$construct" :{},
-            "setOptions" :{
-                "params": [
-                    "C2Data.C2Params"]
-            },
+          "setOptions" :{"params": [
+            "C2Data.C2Params" ,
+            "C2Data.C2Params"]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"
@@ -357,10 +376,9 @@
     "C2Services.C2Service_canny_SCPU ": {
         "methods": {
             "$construct" :{},
-            "setOptions" :{
-                "params": [
-                    "C2Data.C2Params"]
-            },
+          "setOptions" :{"params": [
+            "C2Data.C2Params" ,
+            "C2Data.C2Params"]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"
@@ -457,8 +475,12 @@
             "$construct" :{},
             "setOptions" :{
                 "params": [
-                    "C2Data.C2Params"]
-            },
+                    "C2Data.C2Params" ,
+                    "C2Data.C2Params",
+                    "C2Data.C2Params",
+                    "C2Data.C2Params",
+                    "C2Data.C2Params"
+                ]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"
@@ -469,10 +491,14 @@
     "C2Services.C2Service_deform_FPGA ": {
         "methods": {
             "$construct" :{},
-            "setOptions" :{
-                "params": [
-                    "C2Data.C2Params"]
-            },
+          "setOptions" :{
+            "params": [
+              "C2Data.C2Params" ,
+              "C2Data.C2Params",
+              "C2Data.C2Params",
+              "C2Data.C2Params",
+              "C2Data.C2Params"
+            ]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"
@@ -483,10 +509,14 @@
     "C2Services.C2Service_deform_GPU ": {
         "methods": {
             "$construct" :{},
-            "setOptions" :{
-                "params": [
-                    "C2Data.C2Params"]
-            },
+          "setOptions" :{
+            "params": [
+              "C2Data.C2Params" ,
+              "C2Data.C2Params",
+              "C2Data.C2Params",
+              "C2Data.C2Params",
+              "C2Data.C2Params"
+            ]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"
@@ -497,10 +527,14 @@
     "C2Services.C2Service_deform_SCPU ": {
         "methods": {
             "$construct" :{},
-            "setOptions" :{
-                "params": [
-                    "C2Data.C2Params"]
-            },
+          "setOptions" :{
+            "params": [
+              "C2Data.C2Params" ,
+              "C2Data.C2Params",
+              "C2Data.C2Params",
+              "C2Data.C2Params",
+              "C2Data.C2Params"
+            ]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"

@@ -758,6 +758,59 @@ public class C2ServiceTests {
     }
 
     @Test
+    public void testdeform() throws InvocationTargetException, InterruptedException {
+
+        String composition =
+                "s1 = C2Services.C2Service_deform::__construct();\n" +
+                        "s1::setOptions({i1=paramValueDeform1});\n" +
+                        "imageOut = s1::processImage({i1=resource1, i2=imageIn});\n" ;
+
+        C2Resource SCPU = new C2Resource("scpu");
+        C2Resource CPU = new C2Resource("cpu");
+
+        double image_rows = (double)lenna.getRows();
+        double image_cols = (double)lenna.getColumns();
+
+
+        Map< String,Double> paramsDeform = new HashMap< String,Double>();
+        paramsDeform.put("radius",3.0);
+        paramsDeform.put("angle",60.0);
+        paramsDeform.put("position_x",10.0);
+        paramsDeform.put("position_y",10.0);
+        paramsDeform.put("mode",0.0);
+
+        C2Params paramValuesDeform1 = new C2Params(paramsDeform);
+        C2Params paramValuesDeform2 = new C2Params(paramsDeform);
+
+        SEDEObject inputObject_lenna = new ObjectDataField(C2Image.class.getName(), lenna);
+        SEDEObject inputObject_res1 = new ObjectDataField(C2Resource.class.getName(), SCPU);
+        SEDEObject inputObject_paramDeform1 = new ObjectDataField(C2Params.class.getName(), paramValuesDeform1.getParams().get("Tlow"));
+        SEDEObject inputObject_paramDeform2 = new ObjectDataField(C2Params.class.getName(), paramValuesDeform2.getParams().get("Thigh"));
+
+
+        ResolvePolicy policy = new ResolvePolicy();
+        policy.setServicePolicy("None");
+        policy.setReturnFieldnames(Arrays.asList("imageOut"));
+
+        Map<String, SEDEObject> inputs = new HashMap<>();
+        inputs.put("imageIn", inputObject_lenna);
+        inputs.put("resource1", inputObject_res1);
+        inputs.put("paramValueDeform1", inputObject_paramDeform1);
+        inputs.put("paramValueDeform2", inputObject_paramDeform2);
+
+        RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
+
+        Map<String, Result> resultMap = coreClient.blockingRun(runRequest);
+        Result result = resultMap.get("imageOut");
+
+        lenna_mod = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
+
+        JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input Image", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Pixelate Image", JOptionPane.PLAIN_MESSAGE);
+    }
+
+
+    @Test
     public void testblend() throws InvocationTargetException, InterruptedException {
 
         String composition =

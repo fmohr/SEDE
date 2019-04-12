@@ -4,6 +4,7 @@ import C2Data.C2Image;
 import C2Data.C2NativeInterface;
 import C2Data.C2Resource;
 import C2Plugins.Plugin;
+import C2Data.C2Params;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,6 +12,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.*;
 
 public class C2Service_whitebalance extends Plugin {
 

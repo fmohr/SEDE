@@ -4,6 +4,8 @@ import C2Data.C2Image;
 import C2Data.C2NativeInterface;
 import C2Data.C2Resource;
 import C2Plugins.Plugin;
+import C2Data.C2Params;
+
 
 import java.io.File;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.*;
 
 public class C2Service_deform extends Plugin {
 
@@ -31,11 +34,11 @@ public class C2Service_deform extends Plugin {
         super(serviceFile, linkedFiles);
 
         Map<String, Double> paramsDefaultMap = new HashMap<String, Double>(){{
-            put("radius", 5);
+            put("radius", 5.0);
             put("angle", 30);
             put("position_x", 0.0);
             put("position_y", 0.0);
-            put("mode", 1.0)
+            put("mode", 1.0);
         }};;
         setOptions(new C2Params(paramsDefaultMap));
 

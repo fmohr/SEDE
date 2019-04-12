@@ -29,10 +29,10 @@ public class C2Service_canny extends Plugin {
     public C2Service_canny() {
         super(serviceFile, linkedFiles);
 
-        Map<String, Double> paramsDefaultMap = new HashMap<String, Double>(){{
-            put("Tlow", 0.3);
-            put("Thigh", 0.7)
-        }};;
+        Map<String, Double> paramsDefaultMap = new HashMap<String, Double>();
+        paramsDefaultMap.put("Tlow", 0.3);
+        paramsDefaultMap.put("Thigh", 0.7);
+
         setOptions(new C2Params(paramsDefaultMap));
 
         printMethod("__construct");

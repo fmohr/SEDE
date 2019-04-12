@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.*;
 
 public class C2Service_blend extends Plugin {
 
@@ -34,7 +35,7 @@ public class C2Service_blend extends Plugin {
             put("dirY", 30);
             put("position_x", 0.0);
             put("position_y", 0.0);
-            put("mode", 1.0)
+            put("mode", 1.0);
         }};;
         setOptions(new C2Params(paramsDefaultMap));
 

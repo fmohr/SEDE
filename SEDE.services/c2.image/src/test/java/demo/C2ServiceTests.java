@@ -620,7 +620,7 @@ public class C2ServiceTests {
 
         String composition =
                 "s1 = C2Services.C2Service_canny::__construct();\n" +
-                        "s1::setOptions({i1=paramValueCanny1, i2=paramValueCanny2});\n" +
+                        "s1::setOptions({i1=paramsValueCanny});\n" +
                         "imageOut = s1::processImage({i1=resource1, i2=imageIn});\n" ;
 
         C2Resource SCPU = new C2Resource("scpu");
@@ -634,14 +634,11 @@ public class C2ServiceTests {
         paramsCanny.put("Tlow",0.1);
         paramsCanny.put("Thigh",0.3);
 
-        C2Params paramValuesCanny1 = new C2Params(paramsCanny);
-        C2Params paramValuesCanny2 = new C2Params(paramsCanny);
+        C2Params paramsValueCanny = new C2Params(paramsCanny);
 
         SEDEObject inputObject_lenna = new ObjectDataField(C2Image.class.getName(), lenna);
         SEDEObject inputObject_res1 = new ObjectDataField(C2Resource.class.getName(), SCPU);
-        SEDEObject inputObject_paramCanny1 = new ObjectDataField(C2Params.class.getName(), paramValuesCanny1.getParams().get("Tlow"));
-        SEDEObject inputObject_paramCanny2 = new ObjectDataField(C2Params.class.getName(), paramValuesCanny2.getParams().get("Thigh"));
-
+        SEDEObject inputObject_paramCanny = new ObjectDataField(C2Params.class.getName(), paramsValueCanny);
 
         ResolvePolicy policy = new ResolvePolicy();
         policy.setServicePolicy("None");
@@ -650,8 +647,7 @@ public class C2ServiceTests {
         Map<String, SEDEObject> inputs = new HashMap<>();
         inputs.put("imageIn", inputObject_lenna);
         inputs.put("resource1", inputObject_res1);
-        inputs.put("paramValueCanny1", inputObject_paramCanny1);
-        inputs.put("paramValueCanny2", inputObject_paramCanny2);
+        inputs.put("paramsValueCanny", inputObject_paramCanny);
 
         RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
 

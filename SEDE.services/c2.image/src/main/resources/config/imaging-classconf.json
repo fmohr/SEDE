@@ -339,8 +339,7 @@
         "methods": {
             "$construct" :{},
             "setOptions" :{"params": [
-              "C2Data.C2Params" ,
-              "C2Data.C2Params"]},
+              "C2Data.C2Params" ]},
             "processImage": {
                 "params": [
                     "C2Data.C2Resource",
@@ -354,10 +353,8 @@
     "C2Services.C2Service_canny_CPU ": {
         "methods": {
             "$construct" :{},
-            "setOptions" :{
-                "params": [
-                    "C2Data.C2Params" ,
-                    "C2Data.C2Params"]},
+          "setOptions" :{"params": [
+            "C2Data.C2Params" ]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"
@@ -369,8 +366,7 @@
         "methods": {
             "$construct" :{},
           "setOptions" :{"params": [
-            "C2Data.C2Params" ,
-            "C2Data.C2Params"]},
+            "C2Data.C2Params" ]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"
@@ -382,8 +378,7 @@
         "methods": {
             "$construct" :{},
           "setOptions" :{"params": [
-            "C2Data.C2Params" ,
-            "C2Data.C2Params"]},
+            "C2Data.C2Params" ]},
             "processImage": {
                 "params": ["C2Data.C2Image"],
                 "returntype": "C2Data.C2Image"

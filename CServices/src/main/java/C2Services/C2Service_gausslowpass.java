@@ -46,7 +46,6 @@ public class C2Service_gausslowpass extends Plugin{
             case "c":
             case "g":
             case "f":
-            case "o":
                 break;
             case "j":
             default:
@@ -58,51 +57,8 @@ public class C2Service_gausslowpass extends Plugin{
 
         List<C2Image> output_images = null;
 
-        if (resource.getResourceString() != "j") {
-            output_images = (ArrayList<C2Image>) process(resource.getResourceChar(), getParamList(), input_images);
-        } else {
-            output_images = (ArrayList<C2Image>) rgb2grey(input_images);
-        }
+        output_images = (ArrayList<C2Image>) process(resource.getResourceChar(), getParamList(), input_images);
 
         return output_images.get(0);
-    }
-
-    private List<C2Image> rgb2grey(List<C2Image> inputImages) {
-        C2Image inputImage  = inputImages.get(0);
-
-        int lrows           = inputImage.getRows();
-        int lcolumns        = inputImage.getColumns();
-
-        short[] pixelsIn    = inputImage.getPixels();
-        short[] pixelsOut   = new short[inputImage.getRows() * inputImage.getColumns() * 4];
-
-        int pos = 0;
-        for (int i = 0; i < lrows; ++i) {
-            for (int j = 0; j < lcolumns; ++j) {
-                pos = (i * lcolumns + j) * 4;
-
-                int blue    = pixelsIn[pos + 0] & 0xffff;
-                int green   = pixelsIn[pos + 1] & 0xffff;
-                int red     = pixelsIn[pos + 2] & 0xffff;
-
-                int value   = blue + green + red;
-
-                // blue
-                pixelsOut[pos + 0] = (short)(value/3);
-                // green
-                pixelsOut[pos + 1] = pixelsOut[pos + 0];
-                // red
-                pixelsOut[pos + 2] = pixelsOut[pos + 0];
-                // alpha
-                pixelsOut[pos + 3] = 0;
-            }
-        }
-
-        C2Image outputImage = new C2Image(pixelsOut, inputImage.getRows(), inputImage.getColumns());
-
-        List<C2Image> outputImages = new ArrayList<C2Image>();
-        outputImages.add(outputImage);
-
-        return outputImages;
     }
 }

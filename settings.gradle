@@ -25,11 +25,6 @@ project(':SEDE.assemblies').projectDir = new File(pluginFolder, "assemblies")
 
 rootProject.name = 'SEDE'
 
-def serivceFolder = "SEDE.services/"
-include 'c2.image'
-project(':c2.image').projectDir = new File(serivceFolder, "c2.image")
-
-/**
- * CServices
- */
-//include 'CServices'
+//def serivceFolder = "SEDE.services/"
+//include 'c2.image'
+//project(':c2.image').projectDir = new File(serivceFolder, "c2.image")

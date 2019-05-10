@@ -3,6 +3,7 @@ package de.upb.sede.util
 import spock.lang.Specification
 
 class MutableWobblyFieldTest extends Specification {
+
     def "test set unset and setNullable"() {
 
         when:
@@ -38,4 +39,5 @@ class MutableWobblyFieldTest extends Specification {
         thrown(NullPointerException)
 
     }
+
 }

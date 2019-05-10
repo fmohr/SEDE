@@ -8,6 +8,7 @@ import java.util.*;
 public final class ClassSpecification implements Serializable {
 
     private final Map<String, Object> configuration;
+    private final List<MethodSpecification> methodSpecifications;
     private final WobblyField<ClassSpecification> wrapper;
     private final String cp;
 
@@ -19,15 +20,13 @@ public final class ClassSpecification implements Serializable {
     }
 
     /**
-     * Creates a classinfo with the given wrapper. The given wrapper is itself another ClassInfo instance.
-     * @param classpath
-     * @param jsonMap
-     * @param wrapper
+     * Creates a ClassSpecification with the given wrapper. The given wrapper is itself another ClassSpecification instance.
      */
-    private ClassSpecification(String classpath, Map<String, Object> jsonMap, ClassesConfig.ClassInfo wrapper) {
+    private ClassSpecification(String classpath, Map<String, Object> jsonMap, ClassesConfig.ClassInfo nullableWrapper) {
         cp = classpath;
         this.configuration = jsonMap;
         this.wrapper = WobblyField.ofNullable(null);
+        this.methodSpecifications = new ArrayList<>();
     }
 
     /**

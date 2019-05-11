@@ -96,13 +96,52 @@ public class GPDirectedGraph<Node, NodeKey> {
         return new ArrayList<>(topologicallySortedList); // copy into a RA list.
     }
 
-    public boolean isDAG() {
-        try {
-            topologicalSort();
-            return true;
-        } catch (CyclicGraphException ex) {
-            return false;
+    public List<Node> cycle() {
+        DefaultMap<NodeKey, Boolean> tempMarks = new DefaultMap<>(() -> false);
+        DefaultMap<NodeKey, Boolean> permMarks = new DefaultMap<>(() -> false);
+
+        List<Node> cycle = new LinkedList<>(); // use linked list for faster first index insertion.
+        Recursive<Function<Node, Node>> visit = new Recursive<>();
+        visit.i = n -> {
+            NodeKey keyN = key(n);
+            if(permMarks.get(keyN)) {
+                return null;
+            }
+            if(tempMarks.get(keyN)) {
+                // cycle detected
+                return n;
+            }
+            tempMarks.put(keyN, true);
+            for (Node m : neighbors(n)) {
+                Node cycleEndPoint = visit.i.apply(m);
+                if(cycleEndPoint == null) {
+                    if(!cycle.isEmpty())
+                        break;
+                } else {
+                    cycle.add(0, n);
+                    if(cycleEndPoint == n) {
+                        return null;
+                    } else {
+                        return cycleEndPoint;
+                    }
+                }
+            }
+            tempMarks.put(keyN, false);
+            permMarks.put(keyN, true);
+            return null;
+        };
+
+        List<Node> allUnmarkedNodes = new ArrayList<>(nodes);
+        while(!allUnmarkedNodes.isEmpty() && cycle.isEmpty()) {
+            Node node = allUnmarkedNodes.get(0);
+            visit.i.apply(node);
+            allUnmarkedNodes.removeIf(n -> permMarks.get(key(n)));
         }
+        return new ArrayList<>(cycle); // copy into a RA list.
+    }
+
+    public boolean isDAG() {
+        return cycle().isEmpty();
     }
 
     public static class CyclicGraphException extends RuntimeException{

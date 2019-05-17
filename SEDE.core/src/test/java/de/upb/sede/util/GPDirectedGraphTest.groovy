@@ -178,7 +178,7 @@ class GPDirectedGraphTest extends Specification {
     }
 
 
-    def "test predicate"() {
+    def "test hasEdge predicate and keyExtractor"() {
         given: "Some NodeLike instances forming a simple DAG"
         def a = new NodeLike("A")
         def b = new NodeLike("B", a)
@@ -192,9 +192,9 @@ class GPDirectedGraphTest extends Specification {
         def hasEdge = {
             NodeLike node, NodeLike other -> other.otherNode == node
         }  as BiPredicate
-        def graph = new GPDirectedGraph(keyExtractor, nodes, hasEdge)
         then:
         nodes.each {it.hashable = false} // disable hashes
+        def graph = new GPDirectedGraph(keyExtractor, nodes, hasEdge)
         graph.isDAG()
         def sorted = graph.topologicalSort()
         nodes.each {it.hashable = true} // enable hashes again
@@ -218,6 +218,12 @@ class GPDirectedGraphTest extends Specification {
 
         then: "Graph has '[B]' as a cycle"
         cycle == ["B"]
+
+        when: "Acyclic"
+        cycle = dag.cycle()
+
+        then: "Cycle is empty"
+        cycle.isEmpty()
 
     }
 }

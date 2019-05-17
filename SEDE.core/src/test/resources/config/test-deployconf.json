@@ -1,0 +1,57 @@
+{
+
+  "AServiceCollection" : {
+    "serivces" : ["A.s1", "A.s2", "A.package1.s2"]
+
+  },
+
+  "weka" : {
+    "aliases" : ["WEKA", "WEKA.CORE"],
+    "services" : ["weka.core.converters.ConverterUtils.DataSource"],
+    "deployment" : [
+      {
+        "method" : "download",
+        "steps" : [
+          {
+            "action" : "git",
+            "authentication" : {
+
+            },
+            "url" : "",
+            "usr" : "",
+            "password": "",
+            "key" : "",
+            "branch" : "develop"
+          }
+        ]
+      },
+      {
+        "method": "build",
+        "steps" : [
+          {
+
+          },
+          {
+
+          },
+          {
+
+          }
+        ]
+      }
+    ]
+  },
+
+  "weka.classifiers" : {
+    "aliases" : [""],
+    "services" : ["weka.classifiers.trees.J48"],
+    "depends" : ["weka"]
+  },
+
+  "weka.filters" : {
+    "aliases" : ["weka.preprocessor"],
+    "services" : [],
+    "depends" : ["weka"]
+  }
+
+}

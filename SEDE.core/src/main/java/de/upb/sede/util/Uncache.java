@@ -15,4 +15,12 @@ public class Uncache<Content> implements Cache<Content> {
     public Content access() {
         return supplier.get();
     }
+
+    @Override
+    public void set(Content content) {
+    }
+
+    @Override
+    public void unset() {
+    }
 }

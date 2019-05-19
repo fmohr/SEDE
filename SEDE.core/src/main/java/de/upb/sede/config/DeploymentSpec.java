@@ -1,12 +1,14 @@
 package de.upb.sede.config;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface DeploymentSpec {
 
-    public boolean isSpecified(String serviceCollection);
+    Collection<String> getAliases();
 
-    public List<String> serviceCollectionList();
+    Collection<String> getServices();
 
+    List<DeploymentMethod> getDeploymentMethods();
 
 }

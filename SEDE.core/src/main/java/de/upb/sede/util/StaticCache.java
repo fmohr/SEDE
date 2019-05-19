@@ -14,4 +14,14 @@ public class StaticCache<Content> implements Cache<Content> {
     public Content access() {
         return content;
     }
+
+    @Override
+    public void set(Content content) {
+        throw new UnsupportedOperationException("Static cache is unmodifiable.");
+    }
+
+    @Override
+    public void unset() {
+        throw new UnsupportedOperationException("Static cache is unmodifiable.");
+    }
 }

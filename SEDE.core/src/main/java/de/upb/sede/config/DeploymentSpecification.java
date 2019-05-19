@@ -15,5 +15,4 @@ public class DeploymentSpecification extends Configuration {
         return this.containsKey(fullClassName);
     }
 
-
 }

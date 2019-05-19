@@ -8,7 +8,7 @@
   "weka" : {
     "aliases" : ["WEKA", "WEKA.CORE"],
     "services" : ["weka.core.converters.ConverterUtils.DataSource"],
-    "deployment" : [
+    "methods" : [
       {
         "method" : "download",
         "steps" : [

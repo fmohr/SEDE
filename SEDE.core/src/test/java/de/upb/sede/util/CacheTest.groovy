@@ -37,7 +37,7 @@ class CacheTest extends Specification {
         when:
         def cache = new Uncache(contentSupplier)
         then:
-        0 * contentSupplier.get() >> 1 // supplier wasnt access yey
+        0 * contentSupplier.get() >> 1 // supplier wasnt accessed yey
         when:
         def content = cache.access()
         then:
@@ -74,11 +74,15 @@ class CacheTest extends Specification {
 
         when:
         def content = cache.access()
-        content = cache.access()
         then:
         content == 1
-        1 *  contentSupplier.get() >> 1// supplier is accessed at first access
+        1 *  contentSupplier.get() >> 1 // supplier is accessed at first access
 
+        when:
+        content = cache.access()
+        then: "supplier isnt accessed anymore"
+        content == 1
+        0 * contentSupplier.get()
     }
 
     def "ttl cache test" () {
@@ -146,7 +150,7 @@ class CacheTest extends Specification {
         content300 == 2
         content350 == 2
     }
-    def "ttl no supplier defined test"() {
+    def "ttl cache, timout, no supplier test"() {
         given:
         AtomicLong time = new AtomicLong(0L)
         TTLCache._TIME_PROVIDER = { time.get() }

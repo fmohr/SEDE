@@ -11,9 +11,10 @@ public class TTLCache<Content> implements Cache<Content> {
 
     private final MutableWobblyField<Supplier<Content>> contentSupplier = MutableWobblyField.empty();
 
-    static Supplier<Long> _TIME_PROVIDER = () -> System.currentTimeMillis();
-
-    private Supplier<Long> timeProvider = _TIME_PROVIDER;
+    /**
+     * Changed by tests.
+     */
+    private static Supplier<Long> _TIME_PROVIDER = System::currentTimeMillis;
 
     private long lastRetrievalTimeStamp;
 
@@ -94,7 +95,7 @@ public class TTLCache<Content> implements Cache<Content> {
 
     public void setContent(Content cacheContent) {
         this.cachedContent.set(cacheContent);
-        lastRetrievalTimeStamp = timeProvider.get();
+        lastRetrievalTimeStamp = _TIME_PROVIDER.get();
     }
 
     public void setContentSupplier(Supplier<Content> contentSupplier) {
@@ -113,7 +114,7 @@ public class TTLCache<Content> implements Cache<Content> {
             retrieveContent();
         } else if(getTTL().isPresent()) {
             long liveTime = lastRetrievalTimeStamp + getTTL().get();
-            long currentTime = timeProvider.get();
+            long currentTime = _TIME_PROVIDER.get();
             if(liveTime <= currentTime) {
                 unsetContent();
                 retrieveContent();
@@ -121,5 +122,15 @@ public class TTLCache<Content> implements Cache<Content> {
             }
         }
         return cachedContent.get();
+    }
+
+    @Override
+    public void set(Content content) {
+        this.setContent(content);
+    }
+
+    @Override
+    public void unset() {
+        this.unsetContent();
     }
 }

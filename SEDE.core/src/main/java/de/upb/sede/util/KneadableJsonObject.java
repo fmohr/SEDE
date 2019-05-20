@@ -1,18 +1,25 @@
 package de.upb.sede.util;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@JsonDeserialize(using = KneadableJsonObject.Deserializer.class)
+@JsonSerialize(using = KneadableJsonObject.Serializer.class)
 public final class KneadableJsonObject implements Kneadable, JsonKnibble {
 
     private static final ObjectMapper _MAPPER = new ObjectMapper()
@@ -147,4 +154,30 @@ public final class KneadableJsonObject implements Kneadable, JsonKnibble {
             throw new IllegalStateException("No data present.");
         }
     }
+
+    static class Deserializer extends StdDeserializer<KneadableJsonObject> {
+
+        public Deserializer() {
+            super(KneadableJsonObject.class);
+        }
+
+        @Override
+        public KneadableJsonObject deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            HashMap map = p.getCodec().readValue(p, HashMap.class);
+            return new KneadableJsonObject(map);
+        }
+    }
+
+    static class Serializer extends StdSerializer<KneadableJsonObject> {
+
+        protected Serializer() {
+            super(KneadableJsonObject.class);
+        }
+
+        @Override
+        public void serialize(KneadableJsonObject value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+            gen.writeObject(value.getData());
+        }
+    }
+
 }

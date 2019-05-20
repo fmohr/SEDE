@@ -1,11 +1,24 @@
 package de.upb.sede.util;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
+
+//@JsonDeserialize(using = KneadForm.Deserializer.class)
+//@JsonSerialize(using = KneadForm.Serializer.class)
 public class KneadForm implements Kneadable, JsonKnibble {
 
     @JsonIgnore
@@ -55,5 +68,42 @@ public class KneadForm implements Kneadable, JsonKnibble {
         }
     }
 
+    Optional<JsonKnibble> getSource(){
+        return source.opt();
+    }
 
+    @Deprecated
+    public static class FormDeserializer<T extends KneadForm> extends StdDeserializer<T> {
+
+        FormDeserializer(Class<?> vc) {
+            super(vc);
+        }
+
+        @Override
+        public T deserialize
+                (JsonParser p, DeserializationContext ctxt)
+                throws IOException, JsonProcessingException {
+            HashMap map = p.getCodec().readValue(p, HashMap.class);
+            return (T) new KneadableJsonObject(map).knead(handledType());
+        }
+    }
+
+    @Deprecated
+    public static class FormSerializer<T extends KneadForm> extends StdSerializer<T> {
+
+        FormSerializer(Class<T> vc) {
+            super(vc);
+        }
+
+        @Override
+        public void serialize
+                (T value, JsonGenerator gen, SerializerProvider provider)
+                throws IOException {
+            if(value.getSource().isPresent())
+                gen.writeObject(value.getSource().get());
+            else {
+                gen.writeObject(value);
+            }
+        }
+    }
 }

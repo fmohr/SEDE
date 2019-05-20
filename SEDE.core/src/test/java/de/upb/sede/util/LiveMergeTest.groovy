@@ -18,7 +18,7 @@ class LiveMergeTest extends Specification {
         def merge = new LiveMerge<Integer, Integer>(10, TimeUnit.MILLISECONDS)
 
         when:
-        def mod = [1:1, 2:2]
+        def mod = [1: 1, 2: 2]
         merge.setModificationDelegation(mod)
         then:
         merge.get(1) == 1
@@ -34,7 +34,7 @@ class LiveMergeTest extends Specification {
         removed2
         merge.get(1) == 0
         merge.get(3) == 3
-        mod == [1:0, 3:3]
+        mod == [1: 0, 3: 3]
 
         when:
         mod[1] = 2
@@ -51,7 +51,7 @@ class LiveMergeTest extends Specification {
         given:
         def merge = new LiveMerge(10, TimeUnit.MILLISECONDS)
         expect:
-        ! merge.isModifiable()
+        !merge.isModifiable()
 
         when:
         merge[1] = 1
@@ -72,29 +72,29 @@ class LiveMergeTest extends Specification {
         merge.getCurrentMerge() == [:]
 
         when:
-        merge.maps().add([1:1])
-        merge.maps().add([1:2, 2:2])
-        merge.maps().add([3:3])
+        merge.maps().add([1: 1])
+        merge.maps().add([1: 2, 2: 2])
+        merge.maps().add([3: 3])
 
         then:
-        merge.getCurrentMerge() == [1:1, 2:2, 3:3]
+        merge.getCurrentMerge() == [1: 1, 2: 2, 3: 3]
 
         when:
         merge.clear()
-        def map1 = [1:1]
-        def map2 = [1:2, 2:3]
+        def map1 = [1: 1]
+        def map2 = [1: 2, 2: 3]
         merge.maps().add(map1)
         merge.maps().add(map2)
         then:
-        merge.getCurrentMerge() == [1:1, 2:3]
+        merge.getCurrentMerge() == [1: 1, 2: 3]
         when:
         map1[2] = 2
         then:
-        merge.getCurrentMerge() == [1:1, 2:3]
+        merge.getCurrentMerge() == [1: 1, 2: 3]
         when:
         time.set(11)
         then:
-        merge.getCurrentMerge() == [1:1, 2:2]
+        merge.getCurrentMerge() == [1: 1, 2: 2]
     }
 
     def "test maps"() {
@@ -104,9 +104,9 @@ class LiveMergeTest extends Specification {
         merge.maps() == []
 
         when:
-        merge = new LiveMerge([1:1], 10, TimeUnit.MILLISECONDS)
+        merge = new LiveMerge([1: 1], 10, TimeUnit.MILLISECONDS)
         then:
-        merge.maps() == [[1:1]]
+        merge.maps() == [[1: 1]]
 
         when:
         merge.clear()
@@ -125,7 +125,7 @@ class LiveMergeTest extends Specification {
         merge.size() == 1
 
         when:
-        def livemap = [1:2, 2:2]
+        def livemap = [1: 2, 2: 2]
         merge.maps() << livemap
         then:
         merge.size() == 2
@@ -157,4 +157,5 @@ class LiveMergeTest extends Specification {
         merge[1] == 1
         merge[2] == null
     }
+
 }

@@ -2,7 +2,6 @@ import java.io.File;
 
 
 include 'SEDE.core'
-include 'SEDE.deployment'
 include 'SEDE.gateway'
 include 'SEDE.executor'
 
@@ -22,6 +21,13 @@ project(':SEDE.frontend').projectDir = new File(pluginFolder, "frontend")
 
 include 'SEDE.assemblies'
 project(':SEDE.assemblies').projectDir = new File(pluginFolder, "assemblies")
+
+/*
+ * Deployment
+ */
+def deployFolder = 'SEDE.deployment/'
+include 'SEDE.deployment'
+project(':SEDE.deployment').projectDir = new File(deployFolder, "deployment")
 
 rootProject.name = 'SEDE'
 

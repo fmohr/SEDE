@@ -1,5 +1,7 @@
 package de.upb.sede.util
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import spock.lang.Specification
 
 import java.util.stream.Collectors
@@ -72,7 +74,7 @@ class KneadableJsonObjectTest extends Specification {
 
     }
 
-    def "test object knead" () {
+    def "test container knead" () {
         given:
         def jsonData = """
         {
@@ -102,6 +104,34 @@ class KneadableJsonObjectTest extends Specification {
         kneadable.knibbleObject("bean").knibbleNumber("a") == 1
         kneadable.knibbleObject("view").knibbleNumber("a") == 10
         kneadable.knibbleObject("clone").knibbleNumber("a") == 100
+
+        // TODO Implement kneadform serialization
+//        when:
+//        def bean = container.bean.knead(ABean)
+//        def view = container.bean.knead(AView)
+//        def clone = container.bean.knead(AClone)
+//        then:
+//        bean.a == 1
+//        view.a == 1
+//        clone.a == 1
+
+//        when:
+//        bean = container.view.knead(ABean)
+//        view = container.view.knead(AView)
+//        clone = container.view.knead(AClone)
+//        then:
+//        bea.a == 10
+//        view.a == 10
+//        clone.a == 10
+//
+//        when:
+//        bean.a = container.clone.knead(ABean)
+//        view.a = container.clone.knead(AView)
+//        clone.a = container.clone.knead(AClone)
+//        then:
+//        bea.a == 100
+//        view.a == 100
+//        clone.a == 100
     }
 
     def "test array knead"(){
@@ -122,7 +152,8 @@ class KneadableJsonObjectTest extends Specification {
         Kneadable object = KneadableJsonObject.fromJson(jsonData)
         List<ABean> aList = object.knibbleList("list")
                 .stream().map {
-            return it.knead(ABean)
+            ABean bean = it.knead(ABean)
+            return bean
         }.collect(Collectors.toList())
 
         then:
@@ -143,7 +174,8 @@ class KneadableJsonObjectTest extends Specification {
         AClone clone
         AView view
     }
-
+//    @JsonDeserialize(using = FormDeserializer.class)
+//    @JsonSerialize(using = FormSerializer.class)
     static class ABean extends KneadForm {
         int a
 

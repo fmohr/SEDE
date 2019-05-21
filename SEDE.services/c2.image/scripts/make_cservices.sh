@@ -8,7 +8,6 @@ while getopts 'c' flag; do
     esac
 done
 
-
 # create symlinks for gradle and SEDE.core
 cd ${SEDE_ROOT}
 rm -rf SEDE.services/c2.image/libs/CServices.jar
@@ -19,6 +18,7 @@ PATH=$PATH:${SEDE_ROOT}/gradle
 
 # build CServices
 rm -rf CServices ServiceCodeProvider
+#rm -rf CServices
 git clone http://gitlab+deploy-token-4:yCTsCsDCsGH9B7spAhxk@git.cs.upb.de/SFB901-Testbed/ServiceCodeProvider.git --branch develop
 find . -type f -name '*.sh' | xargs chmod +x
 # mv ServiceCodeProvider/CServices .
@@ -34,6 +34,7 @@ fi
 cp -r ./build/libs/. ${SEDE_ROOT}/SEDE.services/c2.image/libs/
 cd ../..
 mv ServiceCodeProvider/CServices ./
+#cp -R ServiceCodeProvider/CServices ./
 rm -rf ServiceCodeProvider
 
 # clean

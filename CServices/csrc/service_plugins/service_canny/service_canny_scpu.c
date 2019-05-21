@@ -2,7 +2,7 @@
 
 #include "service_canny.h"
 
-int32_t run_service_canny_scpu(PixelPacket *pixpack_target, PixelPacket *pixpack_source, int32_t rows, int32_t columns, float Thigh, float Tlow) {
+int32_t run_service_canny_scpu(PixelPacket *pixpack_target, PixelPacket *pixpack_source, int32_t rows, int32_t columns, float Tlow, float Thigh) {
 	int32_t i, j, pos;
 	float pixangle;
 	int32_t sobelX, sobelY;

@@ -380,11 +380,11 @@ public class C2ServiceTests {
 
 
 		Map< String,Double> paramsContrast = new HashMap< String,Double>();
-		paramsContrast.put("factor",3.0);
+		paramsContrast.put("factor",5.0);
 
 		Map< String,Double> paramsDeform = new HashMap< String,Double>();
-		paramsDeform.put("radius",3.0);
-		paramsDeform.put("angle",60.0);
+		paramsDeform.put("radius",2.0);
+		paramsDeform.put("angle",30.0);
 		paramsDeform.put("position_x",10.0);
 		paramsDeform.put("position_y",10.0);
 		paramsDeform.put("mode",1.0);
@@ -657,7 +657,7 @@ public class C2ServiceTests {
         lenna_mod = result.castResultData(C2Image.class.getName(), C2ImageCaster.class).getDataField();
 
         JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input Image", JOptionPane.PLAIN_MESSAGE);
-        JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Pixelate Image", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Canny Image", JOptionPane.PLAIN_MESSAGE);
     }
 
     @Test
@@ -811,17 +811,13 @@ public class C2ServiceTests {
 
         String composition =
                 "s1 = C2Services.C2Service_grey::__construct();\n" +
-                        "imageInter = s1::processImage({i1=resource1, i2=imageIn});\n" +
+                        "imageInter = s1::processImage({i1=resource1, i2=imageIn1});\n" +
                         "s2 = C2Services.C2Service_blend::__construct();\n" +
-                        "s2::setOptions({i1=paramValuesBlend1, i2=paramValuesBlend2 , i3=paramValuesBlend3, i4=paramValuesBlend4 , i5=paramValuesBlend5});\n" +
-                        "imageOut = s2::processImage({i1=resource2, i2=imageIn, i3=imageInter});\n" ;
+                        "s2::setOptions({i1=paramValuesBlend});\n" +
+                        "imageOut = s2::processImage({i1=resource2, i2=imageIn2, i3=imageInter});\n" ;
 
         C2Resource SCPU = new C2Resource("scpu");
         C2Resource CPU = new C2Resource("cpu");
-
-        double image_rows = (double)lenna.getRows();
-        double image_cols = (double)lenna.getColumns();
-
 
         Map<String, Double> paramsBlend = new HashMap<String, Double>();
         paramsBlend.put("dirX",0.1);
@@ -830,35 +826,23 @@ public class C2ServiceTests {
         paramsBlend.put("position_y", 0.0);
         paramsBlend.put("mode", 1.0);
 
-        C2Params paramValuesBlend1 = new C2Params(paramsBlend);
-        C2Params paramValuesBlend2 = new C2Params(paramsBlend);
-        C2Params paramValuesBlend3 = new C2Params(paramsBlend);
-        C2Params paramValuesBlend4 = new C2Params(paramsBlend);
-        C2Params paramValuesBlend5 = new C2Params(paramsBlend);
+        C2Params paramValuesBlend = new C2Params(paramsBlend);
 
         SEDEObject inputObject_lenna = new ObjectDataField(C2Image.class.getName(), lenna);
         SEDEObject inputObject_res1 = new ObjectDataField(C2Resource.class.getName(), SCPU);
         SEDEObject inputObject_res2 = new ObjectDataField(C2Resource.class.getName(), CPU);
-        SEDEObject inputObject_paramBlend1 = new ObjectDataField(C2Params.class.getName(), paramValuesBlend1.getParams().get("dirX"));
-        SEDEObject inputObject_paramBlend2 = new ObjectDataField(C2Params.class.getName(), paramValuesBlend2.getParams().get("dirY"));
-        SEDEObject inputObject_paramBlend3 = new ObjectDataField(C2Params.class.getName(), paramValuesBlend3.getParams().get("position_x"));
-        SEDEObject inputObject_paramBlend4 = new ObjectDataField(C2Params.class.getName(), paramValuesBlend4.getParams().get("position_y"));
-        SEDEObject inputObject_paramBlend5 = new ObjectDataField(C2Params.class.getName(), paramValuesBlend5.getParams().get("mode"));
-
+        SEDEObject inputObject_paramBlend = new ObjectDataField(C2Params.class.getName(), paramValuesBlend);
 
         ResolvePolicy policy = new ResolvePolicy();
         policy.setServicePolicy("None");
         policy.setReturnFieldnames(Arrays.asList("imageInter", "imageOut"));
 
         Map<String, SEDEObject> inputs = new HashMap<>();
-        inputs.put("imageIn", inputObject_lenna);
+        inputs.put("imageIn1", inputObject_lenna);
+        inputs.put("imageIn2", inputObject_lenna);
         inputs.put("resource1", inputObject_res1);
         inputs.put("resource2", inputObject_res2);
-        inputs.put("paramValuesBlend1", inputObject_paramBlend1);
-        inputs.put("paramValuesBlend2", inputObject_paramBlend2);
-        inputs.put("paramValuesBlend3", inputObject_paramBlend3);
-        inputs.put("paramValuesBlend4", inputObject_paramBlend4);
-        inputs.put("paramValuesBlend5", inputObject_paramBlend5);
+        inputs.put("paramValuesBlend", inputObject_paramBlend);
 
         RunRequest runRequest = new RunRequest("proc_cservices", composition, policy, inputs);
 
@@ -871,7 +855,7 @@ public class C2ServiceTests {
 
         JOptionPane.showMessageDialog(null, lenna.convertToImageIcon(), "Input Image", JOptionPane.PLAIN_MESSAGE);
         JOptionPane.showMessageDialog(null, lenna_inter.convertToImageIcon(), "Grey Image", JOptionPane.PLAIN_MESSAGE);
-        JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Pixelate Image", JOptionPane.PLAIN_MESSAGE);
+        JOptionPane.showMessageDialog(null, lenna_mod.convertToImageIcon(), "Blend Image", JOptionPane.PLAIN_MESSAGE);
     }
 
 }

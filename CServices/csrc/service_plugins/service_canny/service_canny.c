@@ -11,7 +11,7 @@ void run_service(char resource, void *handler_gpu, Image **target_images, int32_
 		*status_code = -1;
 		return;
 	}
-		
+
 	(*target_images)[0].rows	= source_images[0].rows;
 	(*target_images)[0].columns	= source_images[0].columns;
 	*target_images_size			= 1;

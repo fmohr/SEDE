@@ -15,7 +15,7 @@ public class C2Service_blend_CPU extends C2Service_blend{
 		mResource = new C2Resource("cpu");
 	}
 
-	public C2Image processImage(C2Image sourceImage) {
-		return super.processImage(mResource, sourceImage);
+	public C2Image processImage(C2Image sourceImage1, C2Image sourceImage2) {
+		return super.processImage(mResource, sourceImage1, sourceImage2);
 	}
 }

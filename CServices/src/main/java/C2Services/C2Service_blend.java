@@ -56,7 +56,7 @@ public class C2Service_blend extends Plugin {
         return paramList;
     }
 
-    public C2Image processImage(C2Resource resource, C2Image sourceImage) {
+    public C2Image processImage(C2Resource resource, C2Image sourceImage1, C2Image sourceImage2) {
         printMethod("processImage", resource.getResourceString());
 
         switch (resource.getResourceString()) {
@@ -71,7 +71,8 @@ public class C2Service_blend extends Plugin {
         }
 
         List<C2Image> input_images  = new ArrayList<C2Image>();
-        input_images.add(sourceImage);
+        input_images.add(sourceImage1);
+        input_images.add(sourceImage2);
 
         List<C2Image> output_images = null;
 

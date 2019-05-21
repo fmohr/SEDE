@@ -246,10 +246,6 @@
         "methods": {
             "$construct" :{},
             "setOptions" :{"params": [
-              "C2Data.C2Params" ,
-              "C2Data.C2Params" ,
-              "C2Data.C2Params" ,
-              "C2Data.C2Params" ,
               "C2Data.C2Params"
             ]},
             "processImage": {
@@ -267,10 +263,6 @@
         "methods": {
             "$construct" :{},
           "setOptions" :{"params": [
-            "C2Data.C2Params" ,
-            "C2Data.C2Params" ,
-            "C2Data.C2Params" ,
-            "C2Data.C2Params" ,
             "C2Data.C2Params"
           ]},
             "processImage": {
@@ -285,10 +277,6 @@
         "methods": {
             "$construct" :{},
           "setOptions" :{"params": [
-            "C2Data.C2Params" ,
-            "C2Data.C2Params" ,
-            "C2Data.C2Params" ,
-            "C2Data.C2Params" ,
             "C2Data.C2Params"
           ]},
             "processImage": {
@@ -303,10 +291,6 @@
         "methods": {
             "$construct" :{},
           "setOptions" :{"params": [
-            "C2Data.C2Params" ,
-            "C2Data.C2Params" ,
-            "C2Data.C2Params" ,
-            "C2Data.C2Params" ,
             "C2Data.C2Params"
           ]},
             "processImage": {
@@ -321,10 +305,6 @@
         "methods": {
             "$construct" :{},
           "setOptions" :{"params": [
-            "C2Data.C2Params" ,
-            "C2Data.C2Params" ,
-            "C2Data.C2Params" ,
-            "C2Data.C2Params" ,
             "C2Data.C2Params"
           ]},
             "processImage": {

@@ -1,4 +1,4 @@
-package de.upb.sede.deployment;
+package de.upb.sede.edd;
 
 import de.upb.sede.util.FileUtil;
 import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;

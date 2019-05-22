@@ -15,12 +15,12 @@ eclipse.classpath {
 
 dependencies {
     provided project(':SEDE.core')
-    provided project(':SEDE.http')
+    
     // https://mvnrepository.com/artifact/commons-cli/commons-cli
-    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
+//    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
     // https://mvnrepository.com/artifact/commons-io/commons-io
-    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+//    compile group: 'commons-io', name: 'commons-io', version: '2.6'
     // https://mvnrepository.com/artifact/com.google.guava/guava
-    compile group: 'com.google.guava', name: 'guava', version: '27.1-jre'
+//    compile group: 'com.google.guava', name: 'guava', version: '27.1-jre'
 
 }

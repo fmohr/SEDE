@@ -1,5 +1,16 @@
 package de.upb.sede.util;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.*;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.ser.ContextualSerializer;
+
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -14,6 +25,8 @@ import java.util.function.Supplier;
  * Based on the {@link java.util.Optional} class with the distinction that it is used as a class or instance variable.
  * {@code WobblyField} instances are immutable. Use {@link MutableWobblyField} for mutable wobbly fields.
  */
+@JsonDeserialize(using = WobblyField.UnwrapDeserializer.class)
+@JsonSerialize(using = WobblyField.UnwrapSerializer.class)
 public class WobblyField<T> implements Serializable {
 
     /**
@@ -342,5 +355,37 @@ public class WobblyField<T> implements Serializable {
         return opt.map(WobblyField::of).orElse((WobblyField<T>) EMPTY);
     }
 
+    static class UnwrapDeserializer extends JsonDeserializer<MutableWobblyField> implements
+            ContextualDeserializer {
 
+        private Class<?> wrappedType;
+
+        public JsonDeserializer<?> createContextual(DeserializationContext ctxt,
+                                                    BeanProperty property) throws JsonMappingException {
+            JavaType collectionType = property.getType();
+            JavaType collectedType = collectionType.containedType(0);
+            wrappedType = collectedType.getRawClass();
+            return this;
+        }
+
+        @Override
+        public MutableWobblyField deserialize(JsonParser parser, DeserializationContext ctxt)
+                throws IOException, JsonProcessingException {
+            Object field = parser.getCodec().readValue(parser, wrappedType);
+            return MutableWobblyField.ofNullable(field);
+        }
+    }
+
+    static class UnwrapSerializer extends JsonSerializer<MutableWobblyField> {
+
+        @Override
+        public void serialize(MutableWobblyField value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            if(value.isPresent()) {
+                gen.writeObject(value.get());
+            } else {
+                gen.writeNull();
+            }
+        }
+
+    }
 }

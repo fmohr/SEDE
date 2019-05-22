@@ -1,8 +1,20 @@
 package de.upb.sede.util;
 
-import java.util.List;
+import com.fasterxml.jackson.databind.BeanProperty;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.fasterxml.jackson.databind.util.Converter;
+import com.fasterxml.jackson.databind.util.StdConverter;
 
-public interface JsonKnibble extends Kneadable {
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+
+//@JsonDeserialize(using = KneadableJsonObject.Deserializer.class, converter = JsonKnibble.ToForm.class)
+//@JsonSerialize(using = KneadableJsonObject.Serializer.class, converter = JsonKnibble.FromForm.class)
+public interface JsonKnibble {
 
     List<Kneadable> knibbleList(String field);
 
@@ -17,4 +29,7 @@ public interface JsonKnibble extends Kneadable {
     <T> void setField(String fieldName, T value);
 
     void setSource(JsonKnibble source);
+
+    Optional<JsonKnibble> getSource();
 }
+

@@ -16,13 +16,14 @@ public class ExecutorConfiguration implements JsonSerializable {
 	private static final String UNDEFINED_SERVICE_STORE_LOC = "instances";
 
 	private String serviceStoreLocation = UNDEFINED_SERVICE_STORE_LOC;
-	private String executorId = UUID.randomUUID().toString();
+	private String executorId;
 	private int threadNumber = 4;
 	private List<String> capabilities = new ArrayList<>();
 	private List<String> services = new ArrayList<>();
 	private List<String> gateways = new ArrayList<>();
 
 	private ExecutorConfiguration() {
+        selectRandomID();
 	}
 
 	public static ExecutorConfiguration parseJSONFromFile(String configPath) {
@@ -36,6 +37,10 @@ public class ExecutorConfiguration implements JsonSerializable {
 		newConfigInstance.fromJsonString(jsonString);
 		return newConfigInstance;
 	}
+
+	private void selectRandomID() {
+        executorId = UUID.randomUUID().toString();
+    }
 
 	public static ExecutorConfiguration getDefaultInstance() {
 		return new ExecutorConfiguration();
@@ -89,7 +94,9 @@ public class ExecutorConfiguration implements JsonSerializable {
 		}
 		if (jsonObj.containsKey("executorId")) {
 			executorId = (String) jsonObj.get("executorId");
-		}
+		} else {
+            selectRandomID();
+        }
 		if (jsonObj.containsKey("threadNumber")) {
 			threadNumber =  ((Number) jsonObj.get("threadNumber")).intValue();
 		}

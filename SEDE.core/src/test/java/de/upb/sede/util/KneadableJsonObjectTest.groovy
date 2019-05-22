@@ -92,9 +92,9 @@ class KneadableJsonObjectTest extends Specification {
         container.clone.a == 100
 
         when:
-        container.view.getA()
+        def a = container.view.getA()
         then:
-        thrown(IllegalStateException)
+        a == 10
 
         when:
         container.bean.setA(2)

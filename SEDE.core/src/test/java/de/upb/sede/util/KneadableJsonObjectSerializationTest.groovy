@@ -48,7 +48,7 @@ class KneadableJsonObjectSerializationTest extends Specification {
         def mapper = new ObjectMapper()
         jsonData = mapper.writeValueAsString(container)
 //        print(jsonData)
-        kneadable = mapper.readValue(jsonData, Kneadable)
+        kneadable = mapper.readValue(jsonData, KneadableJsonObject)
 
         container = kneadable.knead(Container)
 
@@ -72,8 +72,8 @@ class KneadableJsonObjectSerializationTest extends Specification {
 
 
     static class Container {
-        Kneadable first
-        Kneadable second
+        KneadableJsonObject first
+        KneadableJsonObject second
     }
 
     static class A {
@@ -85,7 +85,7 @@ class KneadableJsonObjectSerializationTest extends Specification {
     }
 
     static class C {
-        List<Kneadable> c
+        List<KneadableJsonObject> c
     }
 
 }

@@ -6,10 +6,34 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.7.RELEASE'
 }
 
+group = 'de.upb.isys'
+version = '0.0.10'
+
 repositories {
+    mavenLocal()
+
     jcenter()
+    mavenCentral()
+
+    maven {
+        url "https://nexus.cs.upb.de/repository/maven-releases/"
+    }
 }
+
 dependencies {
+    /*
+     * Logging dependencies
+     */
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    testRuntimeOnly group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.1'
+
+
+    /*
+     * SEDE dependencies
+     */
+    implementation 'de.upb.isys:SEDE.core:0.0.10'
+    implementation 'de.upb.isys:SEDE.deployment:0.0.10'
+
     /*
      * Spring boot dependencies
      */
@@ -32,9 +56,18 @@ dependencies {
      * Swagger dependencies
      */
     implementation 'io.springfox:springfox-swagger2:2.7.0'
-    implementation 'io.springfox:springfox-swagger-ui:2.7.0'
     implementation 'com.github.joschi.jackson:jackson-datatype-threetenbp:2.6.4'
     implementation 'javax.validation:validation-api'
+
+    /*
+     * UI dependencies
+     */
+    def experimentalUi = true
+    if (! experimentalUi) {
+        implementation 'io.springfox:springfox-swagger-ui:2.7.0'
+    } else {
+        implementation 'io.springfox.ui:springfox-swagger-ui-rfc6570:1.0.0'
+    }
 
     /*
      * Project dependencies
@@ -48,6 +81,7 @@ dependencies {
     testImplementation 'org.spockframework:spock-core:1.2-groovy-2.5'
     testImplementation 'junit:junit:4.12'
 }
+
 
 bootJar {
     mainClassName = 'de.upb.sede.edd.SpringBootApp'

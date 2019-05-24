@@ -97,7 +97,7 @@ public class Execution implements IExecution {
 			unresolvedTasksObserver, unfinishedTasksObserver);
 	/**
 	 * Default constructor.
-	 * 
+	 *
 	 * @param execId
 	 *            identifier of this execution.
 	 */

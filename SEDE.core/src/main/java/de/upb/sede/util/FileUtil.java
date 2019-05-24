@@ -23,7 +23,7 @@ import de.upb.sede.webinterfaces.client.WriteFileRequest;
 /**
  * Defines methods to access files reading and writing their content. Use this
  * class when you don't want to bother with checked IO-exceptions.
- * 
+ *
  * @author aminfaez
  *
  */
@@ -33,7 +33,7 @@ public class FileUtil {
 
 	/**
 	 * Returns the content of the file located at the given file path as a string.
-	 * 
+	 *
 	 * @param filePath
 	 *            path to the file to be read from
 	 * @return Content of the file as a string
@@ -86,15 +86,15 @@ public class FileUtil {
 	 * Write the given content to the given file. Creates the directory and the file
 	 * if it doesn't exist. Deletes (overwrites) the old content if the file already
 	 * exists
-	 * 
+	 *
 	 * Uses WriteFileRequest.
-	 * 
+	 *
 	 * @param filePath
 	 *            path to the file to be written into
 	 * @param fileContent
 	 *            content that will be written to the file
 	 * @return true, if the writing was successful
-	 * 
+	 *
 	 * @throws UncheckedIOException
 	 *             if an I/O error occurs writing to the file
 	 */
@@ -107,7 +107,7 @@ public class FileUtil {
 	 * Creates a list of all file names in the given directory that match the given
 	 * regex. The list will not contain sub-directories even if their name match the
 	 * given regex.
-	 * 
+	 *
 	 * @param dirPath
 	 *            path to the Directory that is looked into
 	 * @param regex

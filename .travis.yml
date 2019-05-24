@@ -20,5 +20,5 @@ jdk:
 os:
   - linux
 
-script: 
+script:
   - ./gradlew assemble

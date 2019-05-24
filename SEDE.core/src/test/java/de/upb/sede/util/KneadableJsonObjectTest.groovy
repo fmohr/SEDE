@@ -137,9 +137,9 @@ class KneadableJsonObjectTest extends Specification {
     def "test array knead"(){
         given:
         def jsonData = """
-        { 
-            "list" : 
-                [ 
+        {
+            "list" :
+                [
                     { "a" : 1, "b" : 3 },
                     { "a" : 2, "b" : 4 },
                     { "a" : 3, "b" : 5 },

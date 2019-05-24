@@ -10,10 +10,10 @@ import de.upb.sede.util.Iterators;
  * invocation information of one global procedure. A edge between two nodes A ->
  * B denotes that B is dependent on A. This means that in order to execute A, B
  * needs to be executed first.
- * 
+ *
  * This class is only a data-structure that holds nodes and edges. It shall not
  * change any contained node and edge. This way nodes can be in multiple graphs.
- * 
+ *
  */
 public class CompositionGraph {
 	/* node set */
@@ -57,7 +57,7 @@ public class CompositionGraph {
 
 	/**
 	 * Alters this graph by adding the given edge.
-	 * 
+	 *
 	 */
 	public void addEdge(DependencyEdge newEdge) {
 		Objects.requireNonNull(newEdge);

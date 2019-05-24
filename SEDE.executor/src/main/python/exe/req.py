@@ -7,7 +7,7 @@ class RequestIdMixin(JsonSerializable):
     def __init__(self, requestId, *args,**kwargs):
         super().__init__(*args, **kwargs)
         self.requestId = requestId
-            
+
     def to_dict(self, d):
         super().to_dict(d)
         d.update(requestId=self.requestId)
@@ -53,7 +53,7 @@ class CompositionMixin(JsonSerializable):
     def to_dict(self, d):
         super().to_dict(d)
         d.update(composition=self.composition)
-    
+
 # class ResolvePolicy(JsonSerializable):
 #     returnPolicy = "ALL"
 #     servicePolicy = "ALL"

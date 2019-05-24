@@ -18,7 +18,7 @@ import org.json.simple.parser.ParseException;
 
 /**
  * Contains methods to serialize a graph into and from its JSON representation.
- * 
+ *
  * @author aminfaez
  *
  */
@@ -29,7 +29,7 @@ public class GraphJsonSerializer {
 
 	/**
 	 * Serializes the given graph to JSON.
-	 * 
+	 *
 	 * @param graph
 	 *            an arbitrary graph
 	 * @return JSON representation of the graph.
@@ -38,7 +38,7 @@ public class GraphJsonSerializer {
 	public JSONObject toJson(CompositionGraph graph) {
 		/*
 		 * create a json array of nodes.
-		 * 
+		 *
 		 * The order of the nodes can be arbitrary but the order needs to be immutable
 		 * after it was defined because the edges work with indices defined by this
 		 * array.
@@ -51,10 +51,10 @@ public class GraphJsonSerializer {
 		}
 		/*
 		 * serialize the edges by creating an "m":n tuple for each edge:
-		 * 
+		 *
 		 * edges maps the m'th node to the n'th node. A mapping between two nodes, "m":
 		 * n, means that the m'th node has an edge to the n'th node.
-		 * 
+		 *
 		 * Indexes are defined by orderOfNodes list from above.
 		 */
 		JSONObject edges = new JSONObject();
@@ -89,7 +89,7 @@ public class GraphJsonSerializer {
 
 	/**
 	 * Deserializes the given json map into a graph.
-	 * 
+	 *
 	 * @param jsonGraphObject
 	 *            json object which is the serialization of a graph. Needs to define
 	 *            nodes and edges field.

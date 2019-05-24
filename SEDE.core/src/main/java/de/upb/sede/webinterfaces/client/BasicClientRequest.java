@@ -5,25 +5,25 @@ import java.io.*;
 import de.upb.sede.util.Streams;
 
 /**
- * 
+ *
  * @author aminfaez
- * 
+ *
  *         Interface used to abstract frameworks (e.g. http frameworks) for
  *         sending data.
- * 
+ *
  */
 public interface BasicClientRequest extends Closeable{
 
 	/**
 	 * Send returns an outputstream. Writing into it should send the data.
-	 * 
+	 *
 	 */
 	public OutputStream send();
 
 	/**
 	 * Returns an inputstream which contains the answer of the transaction. Might
 	 * block.
-	 * 
+	 *
 	 */
 	public InputStream receive();
 

@@ -11,11 +11,11 @@ import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.exceptions.FMCompositionSyntaxException;
 
 /**
- * 
+ *
  * Defines a set of regex-patterns that parse fmCompositions. Tested
  *
  * @author aminfaez
- * 
+ *
  */
 public final class FMCompositionParser {
 
@@ -55,12 +55,12 @@ public final class FMCompositionParser {
 	/**
 	 * Regex for a complete instruction. Defines named groups: 'leftside', 'host',
 	 * 'context', 'method', 'inputs'.
-	 * 
+	 *
 	 * e.g.:
-	 * 
+	 *
 	 * "s1=127.0.0.1:8000/Catalano.Imaging.Filters.Crop::__construct({i1=0,i2=0,i3=10,i4=10})"
 	 * matches.
-	 * 
+	 *
 	 * Group values in this example: leftside = "s1" host = "127.0.0.1:8000" context
 	 * = "Catalano.Imaging.Filters.Crop" method = "__construct" inputs =
 	 * "i1=0,i2=0,i3=10,i4=10"
@@ -116,9 +116,9 @@ public final class FMCompositionParser {
 	 * Returns list of instruction from the given fmComposition. In fmCompositions
 	 * instructions are separated by ';'. Each instruction is trimmed and its
 	 * whitespaces are removed. Empty instructions are ignored.
-	 * 
+	 *
 	 * The list returned by this method is immutable.
-	 * 
+	 *
 	 * Example: separateInstructions("a;b;;c;d") -> ["a", "b", "c", "d"]
 	 */
 	public static List<String> separateInstructions(final String fmComposition) {
@@ -144,11 +144,11 @@ public final class FMCompositionParser {
 
 	/**
 	 * Returns list of inputs split by ','.
-	 * 
+	 *
 	 * The list returned by this method is immutable.
-	 * 
+	 *
 	 * Returns an empty list if inputString is null.
-	 * 
+	 *
 	 * Example: separateInstructions("a,b,,cd") -> ["a", "b", "cd"]
 	 */
 	@SuppressWarnings("unchecked")
@@ -234,7 +234,7 @@ public final class FMCompositionParser {
 
 			/*
 			 * Extract values from instruction.
-			 * 
+			 *
 			 * e.g.: instruction :
 			 * s1=127.0.0.1:8000/Catalano.Imaging.Filters.Crop::__construct({i1=0,i2=0,i3=10
 			 * ,i4=10})
@@ -246,7 +246,7 @@ public final class FMCompositionParser {
 			String inputs = instructionMatcher.group("inputs");
 			/*
 			 * Values would be:
-			 * 
+			 *
 			 * leftside = "s1" (might be null) host = "127.0.0.1:8000" (might be null)
 			 * context = "Catalano.Imaging.Filters.Crop" method = "__construct" inputs =
 			 * "i1=0,i2=0,i3=10,i4=10" (might be null)

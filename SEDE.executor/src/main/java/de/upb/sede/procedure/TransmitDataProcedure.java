@@ -62,7 +62,7 @@ public abstract class TransmitDataProcedure implements Procedure{
 		task.setFailed();
 	}
 
-	 /** 
+	 /**
 	  * Returns a BasicClientReuqest to send the data over and get a response. The
 	 * implementation is dependent on the used framework to send data.
 	  * @param task Task that demands a data transmission.

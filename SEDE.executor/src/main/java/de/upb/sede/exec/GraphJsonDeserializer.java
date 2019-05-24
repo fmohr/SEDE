@@ -14,7 +14,7 @@ import org.json.simple.parser.ParseException;
 /**
  * Contains methods to deserialize an execution graph from its JSON
  * representation.
- * 
+ *
  * @author aminfaez
  *
  */
@@ -45,7 +45,7 @@ public class GraphJsonDeserializer {
 	/**
 	 * Creates tasks and connects them based on the edges in the graph.
 	 * All tasks are also added to the given execution graph.
-	 * 
+	 *
 	 * @param jsonGraphObject
 	 *            json object which is the serialization of an execution graph. Needs to define
 	 *            nodes and edges field.

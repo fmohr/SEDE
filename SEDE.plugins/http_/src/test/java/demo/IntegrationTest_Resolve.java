@@ -22,15 +22,15 @@ import de.upb.sede.util.FileUtil;
 
 public class IntegrationTest_Resolve {
 
-	
+
 	private static final String rscPath = FileUtil.getPathOfResource("resolve-requests/");
-	
+
 	private static Gateway gateway;
 	private static final GraphJsonSerializer GJS = new GraphJsonSerializer();
 	private static final JSONParser JP = new JSONParser();
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(IntegrationTest_Resolve.class);
-	
+
 
 	@BeforeClass
 	public static void setupGateway() {
@@ -48,7 +48,7 @@ public class IntegrationTest_Resolve {
 				Arrays.asList("demo.math.Gerade"));
 		gateway.register(registration2);
 	}
-	
+
 	@Before
 	public void clearRequest() {
 	}
@@ -84,14 +84,14 @@ public class IntegrationTest_Resolve {
 			String svgGraph = resolution.getDotSvg();
 			String svgPath = outputFolder + ".resolution.svg";
 			FileUtil.writeStringToFile(svgPath, svgGraph);
-			
+
 		} catch (Exception e) {
 			logger.error("Error during " + outputFolder + ":", e);
 		}
 	}
-	
-	
-	
+
+
+
 	private ResolveRequest fromFile(String filename) {
 		ResolveRequest request = new ResolveRequest();
 		request.fromJsonString(FileUtil.readFileAsString(rscPath + filename));

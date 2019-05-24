@@ -10,7 +10,7 @@ import de.upb.sede.util.JsonSerializable;
 
 public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 

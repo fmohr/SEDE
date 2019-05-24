@@ -99,7 +99,7 @@ class ReadFileRequest(BasicClientRequest):
     filepath : str
     def __init__(self, filepath:str):
         self.filepath = filepath
-    
+
     def receive(self) -> IO:
         self.filep = open(self.filepath, "rb")
         return self.filep
@@ -210,7 +210,7 @@ class HttpClientRequest(BasicClientRequest):
 
     def receive(self) -> IO:
         return io.BytesIO(self._response_body())
-        
+
     def _response_body(self) -> bytes:
         if self.method_is_post:
             if is_bytes(self.payload):
@@ -222,7 +222,7 @@ class HttpClientRequest(BasicClientRequest):
         else:
             self.response = httprequests.request("GET", self.url)
         return self.response.content
-        
+
     def __exit__(self, exc_type, exc_value, traceback):
         if self.response is not None:
             try:

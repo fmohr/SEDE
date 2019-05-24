@@ -16,7 +16,7 @@ import de.upb.sede.util.Iterators;
 /**
  * Defines algorithms to traverse a given graph. All algorithms shall not change
  * the state of any node or the graph.
- * 
+ *
  * @author aminfaez
  *
  */

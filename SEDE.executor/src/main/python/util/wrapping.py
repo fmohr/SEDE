@@ -26,7 +26,7 @@ class DelegateFunctionsMixin(object):
         self.delegate = delegate
 
     def __getattr__(self, name):
-        """ Attributes are accessed that aren't defined by the subclass. 
+        """ Attributes are accessed that aren't defined by the subclass.
         Redirect to delegate if it is defined.
         """
         if hasattr(super(), name):

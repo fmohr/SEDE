@@ -5,7 +5,7 @@ import java.io.*;
 /**
  * Implementation of basic client that writes the payload to a file located at
  * destination.
- * 
+ *
  * @author aminfaez
  *
  */

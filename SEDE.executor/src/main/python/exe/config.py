@@ -27,7 +27,7 @@ class ExecutorConfig:
 
         if "threadNumber" in d:
             config.thread_count = require_not_none(d["threadNumber"])
-            
+
         if "capabilities" in d:
             config.capabilities = d["capabilities"]
         if "services" in d:

@@ -84,7 +84,7 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 	}
 	/**
 	 * Returns the path of storage for the requested instance.
-	 * 
+	 *
 	 * @param serviceClasspath
 	 *            class path of the service
 	 * @param instanceid

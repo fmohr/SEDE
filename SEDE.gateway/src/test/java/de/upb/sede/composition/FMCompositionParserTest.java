@@ -23,7 +23,7 @@ import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.exceptions.FMCompositionSyntaxException;
 
 /**
- * 
+ *
  * @author aminfaez
  *
  *         Tests regex patterns in FMCompositionParser.

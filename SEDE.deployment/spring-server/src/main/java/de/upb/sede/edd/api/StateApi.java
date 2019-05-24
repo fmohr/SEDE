@@ -20,7 +20,7 @@ import java.util.Map;
 public interface StateApi {
 
     @ApiOperation(value = "Returns the current state. The returned body serves as a backup and reposting it will restore this state.", nickname = "stateGet", notes = "", tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 200, message = "The current state.") })
     @RequestMapping(value = "/state",
         method = RequestMethod.GET)
@@ -28,7 +28,7 @@ public interface StateApi {
 
 
     @ApiOperation(value = "Restores to the given state. This process is recursive, i.e. all components in every group will be killed and rebooted with the given configuration.", nickname = "statePut", notes = "", tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 200, message = "The state was (partially) restored."),
         @ApiResponse(code = 402, message = "Restoring the state was disabled."),
         @ApiResponse(code = 405, message = "The state was not restored. Another restoration may have been in progess.") })

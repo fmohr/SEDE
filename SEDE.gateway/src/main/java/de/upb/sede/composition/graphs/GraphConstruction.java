@@ -25,7 +25,7 @@ public class GraphConstruction {
 			instructionList.add(instruction);
 		}
 		GraphConstruction gc = new GraphConstruction(resolveInformation, Collections.unmodifiableList(instructionList));
-		
+
 		return gc;
 	}
 
@@ -63,8 +63,8 @@ public class GraphConstruction {
 //		}
 	}
 
-	
-	
+
+
 	private GraphConstruction(ResolveInfo resolveInfo, List<InstructionNode> instructions) {
 		this.dataFlow = new DataFlowAnalysis(resolveInfo, instructions);
 		calcResolvedClientGraph();

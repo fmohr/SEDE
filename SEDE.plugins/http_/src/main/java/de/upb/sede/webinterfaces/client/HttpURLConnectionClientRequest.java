@@ -87,7 +87,7 @@ public class HttpURLConnectionClientRequest implements BasicClientRequest {
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
 			}
-		} 
+		}
 		return httpConnection;
 	}
 

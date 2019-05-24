@@ -204,7 +204,7 @@ public class ServiceSpecTransformer {
 					outputParams.add(output);
 				} else  {
 					/*
-					 * Turn call by reference to call-by-value: 
+					 * Turn call by reference to call-by-value:
 					 */
 					int stateMutatingParamIndex = methodInfo.indexOfNthStateMutatingParam(0);
 					if(stateMutatingParamIndex >=0) {

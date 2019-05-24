@@ -12,7 +12,7 @@ import org.junit.Test;
 
 /**
  * Tests Filtered Iterator class in util package.
- * 
+ *
  * @author aminfaez
  *
  */

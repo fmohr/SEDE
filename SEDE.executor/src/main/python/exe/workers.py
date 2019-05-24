@@ -57,7 +57,7 @@ class TaskRunner:
             self.task.set_done()
 
         logging.trace("worker IS DONE working on task: %s", self.task)
-        
+
 def _async_raise(tid, exctype):
     """
     Helper function which raises an exception in the threads with id tid.
@@ -75,7 +75,7 @@ def _async_raise(tid, exctype):
         raise SystemError("PyThreadState_SetAsyncExc failed")
 
 class WorkerPool:
-    """ 
+    """
     Class which accepts tasks and executes them in parallel using a thread pool.
     Is also able to cancel/interrupt the execution of every task within a given execution object.
     """
@@ -119,7 +119,7 @@ class WorkerPool:
                     _async_raise(runner.thread_id, Interruption())
 
     def bind_procedure(self, procedure_name, procedure_supplier):
-        """ 
+        """
         Binds the given procedure_name which is the same as the task_name to the given supplier.
         """
         self.procedure_supplier[procedure_name] = procedure_supplier
@@ -139,8 +139,8 @@ class WorkerPool:
         Removes the given execution from the futurelist map.
         Use this method when an execution has finished to avoid memory leak.
         """
-        # Although the dict used here is a WeakKeyDictionary testing has shown that entries are still not removed by the gc. 
-        if execution in self.executionFutureMap : 
+        # Although the dict used here is a WeakKeyDictionary testing has shown that entries are still not removed by the gc.
+        if execution in self.executionFutureMap :
             del self.executionFutureMap[execution]
 
     def shutdown(self):

@@ -78,7 +78,7 @@ public class ExecutorConfiguration   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ExecutorConfiguration {\n");
-    
+
     sb.append("    base: ").append(toIndentedString(base)).append("\n");
     sb.append("    workers: ").append(toIndentedString(workers)).append("\n");
     sb.append("}");

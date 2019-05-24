@@ -18,14 +18,14 @@ import de.upb.sede.util.FilteredIterator;
 
 /**
  * Encapsulated configuration about classes, like service names and their methods.
- * 
+ *
  * @author aminfaez
  *
  */
 @SuppressWarnings("unchecked")
 public class ClassesConfig extends Configuration {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -75,17 +75,17 @@ public class ClassesConfig extends Configuration {
 	 * Resolves the inheritance of the given class-config by recursively resolving
 	 * the class-configs which are extended by the given class-config. By the end of
 	 * the method all the extended classes will be contained in the resolved set.
-	 * 
+	 *
 	 * Some examples:
-	 * 
+	 *
 	 * If A extends B, because B doesn't inherit anything, all of the attributes
 	 * from B are immediately added to A. Now A and B are resolved.
-	 * 
+	 *
 	 * If A extends B and B extends C, first B needs to be resolved. So 'A' will be
 	 * added to 'unresolved' and resolveInheritance(B, {A}, {}) will be called.
 	 * Afterwards 'B' will be added to resolved and it's attributes will be added to
 	 * A.
-	 * 
+	 *
 	 * If A extends B and B extends C and C extends A, there is a circled
 	 * dependency. After one recursion steps, resolveInheritance(C, {A, B}, {}) will
 	 * be called. Then because 'C' extends a class from the unresolved set a runtime
@@ -233,7 +233,7 @@ public class ClassesConfig extends Configuration {
 	/**
 	 * Returns an Iterable of all the subconfigurations of the given baseConfig. For
 	 * every classpath in the iterable it holds that it extends baseConfing.
-	 * 
+	 *
 	 * @param baseConfig
 	 *            base configuration
 	 * @return iterable off all configuration that extend the given baseconfig.

@@ -18,6 +18,6 @@ def main():
                     writejson(content, fp, indent=4)
             except Exception as e:
                 print("Error {} working on {}.", e, filename)
-            
+
 
 if __name__ == "__main__": main()

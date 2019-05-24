@@ -13,7 +13,7 @@ public class OnthologicalTypeConfig extends Configuration {
 	private static final String SEMANTIC_TYPE = "semantic_type";
 	private static final String ONTHOLOGICAL_CASTER = "onthological_caster";
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -2009780076326140239L;
 

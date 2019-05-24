@@ -8,7 +8,7 @@ import org.json.simple.parser.ParseException;
 
 /**
  * Interface to offer JSON serialization/deserialization methods.
- * 
+ *
  * @author aminfaez
  *
  */

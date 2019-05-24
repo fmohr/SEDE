@@ -5,9 +5,9 @@ import java.util.Objects;
 import java.util.function.Function;
 
 /**
- * 
+ *
  * A helper class to put a filter on an iterator.
- * 
+ *
  */
 public final class FilteredIterator<E> implements Iterator<E> {
 	private final Iterator<E> iterator;

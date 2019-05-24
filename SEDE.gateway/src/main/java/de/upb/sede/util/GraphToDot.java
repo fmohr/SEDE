@@ -18,11 +18,11 @@ import de.upb.sede.composition.graphs.nodes.BaseNode;
 public class GraphToDot {
 
 	private final static Logger logger = LoggerFactory.getLogger(GraphToDot.class);
-	
+
 	private static final String PATH_TO_DOT;
 
 	private static final boolean DISABLED;
-	
+
 	static {
 		/*
 		 * Read the path to dot from environment variable: 'DOT_PATH'
@@ -113,9 +113,9 @@ public class GraphToDot {
 			return ShellUtil.sh(new String[]{PATH_TO_DOT, "-T" + format}, dot);
 		}
 	}
-	
+
 	private static String formatDotToSVG(String dot) {
 		return formatDot(dot, "svg");
 	}
-	
+
 }

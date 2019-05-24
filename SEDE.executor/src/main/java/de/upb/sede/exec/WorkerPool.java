@@ -35,7 +35,7 @@ public class WorkerPool {
 	private final Map<String, Supplier<Procedure>> procedureSupplierMap = new HashMap<>();
 
 	/**
-	 * Comparator of runnable.  
+	 * Comparator of runnable.
 	 */
 	private final Comparator<Runnable> taskScheduler = Comparator.comparing(r -> ((FutureWithTask)r).getTask(),
 			WorkerPool::lessRemainingTasks);

@@ -1,15 +1,15 @@
 package de.upb.sede.exceptions;
 
 /**
- * 
+ *
  * @author aminfaez
- * 
+ *
  *         Exception used in case of a syntax-error in fmCompositions. (Extends
  *         RuntimeException because checked exceptions are bad!)
  */
 public class FMCompositionSyntaxException extends RuntimeException {
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 

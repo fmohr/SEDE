@@ -28,7 +28,7 @@ class KneadableInterfacesTest extends Specification {
     def "container test" () {
         given:
         def jsonData = """
-        { 
+        {
             "c" : [
                 {
                     "a" : "this is some data",
@@ -38,8 +38,8 @@ class KneadableInterfacesTest extends Specification {
                     "a" : "this is some other data",
                     "b" : 2.1
                 }
-            ] 
-        }   
+            ]
+        }
         """
         when:
         def mapper = new ObjectMapper()

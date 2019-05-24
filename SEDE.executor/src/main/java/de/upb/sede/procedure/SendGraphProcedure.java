@@ -43,7 +43,7 @@ public abstract class SendGraphProcedure implements Procedure {
 	/**
 	 * Returns a BasicClientReuqest to send the graph over and get a response. The
 	 * implementation is dependent on the used framework to send data.
-	 * 
+	 *
 	 * @param task
 	 *            Task to create a BasicClientRequest for.
 	 * @return The BasicClientReuqest to use for communication

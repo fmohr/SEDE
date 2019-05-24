@@ -33,7 +33,7 @@ public class GroupPath   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class GroupPath {\n");
-    
+
     sb.append("}");
     return sb.toString();
   }

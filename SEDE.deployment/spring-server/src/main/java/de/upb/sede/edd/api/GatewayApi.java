@@ -20,16 +20,16 @@ import java.util.Map;
 public interface GatewayApi {
 
     @ApiOperation(value = "Returns the url of the current SEDE Gateway", nickname = "gatewayGroupPathGet", notes = "", response = String.class, tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Gateway url.", response = String.class) })
     @RequestMapping(value = "/gateway/{groupPath}",
-        produces = { "application/json" }, 
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<String> gatewayGroupPathGet(@ApiParam(value = "Group of executors. Group path consists of at least one group name. Sub groups are specified by joining with `-`.",required=true) @PathVariable("groupPath") String groupPath);
 
 
     @ApiOperation(value = "Sets the url of the current SEDE Gateway", nickname = "gatewayGroupPathPost", notes = "", tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Gateway url was set and every executor was.") })
     @RequestMapping(value = "/gateway/{groupPath}",
         consumes = { "application/json" },
@@ -38,7 +38,7 @@ public interface GatewayApi {
 
 
     @ApiOperation(value = "Sets the url of the current SEDE Gateway", nickname = "gatewayGroupPathPut", notes = "", tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Gateway url was set and every executor was.") })
     @RequestMapping(value = "/gateway/{groupPath}",
         consumes = { "application/json" },

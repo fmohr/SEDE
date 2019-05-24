@@ -133,7 +133,7 @@ public class IntegrationTest_PyExecutor {
 		String state_before = (String) resultMap.get("state_before").getResultData().getDataField();
 		String state_after = (String) resultMap.get("state_after").getResultData().getDataField();
 		NummerList n2 = (NummerList) resultMap.get("n2").castResultData("NummerList", DemoCaster.class).getDataField();
-		
+
 		assertThat(state_after, not(equalTo(state_before)));
 		Assert.assertEquals("a = 0 b = 1", state_before);
 		Assert.assertEquals("a = 0 b = 2", state_after);

@@ -35,7 +35,7 @@ def _python_exit():
         q.put(None)
     for t, q in items:
         t.join()
-         
+
 # install exit handler:
 atexit.register(_python_exit)
 
@@ -51,14 +51,14 @@ class Interruption(Exception) :
     Raised while working on a task whose execution has been interrupted.
     """
 
-class _Future(object): 
+class _Future(object):
     def __init__(self):
         self.canceled = False
         self.workingThread = None
 
     def cancel(self):
         self.canceled = True
-        if self.workingThread is not None: 
+        if self.workingThread is not None:
             self.workingThread.raiseExc(Interruption())
 
     def startRun(self, wt):
@@ -87,7 +87,7 @@ class ThreadWithExc(threading.Thread):
     '''A thread class that supports raising exception in the thread from
        another thread.
     '''
-    def _set_tid(self, t_id) : 
+    def _set_tid(self, t_id) :
         self._thread_id = t_id
 
     def _get_tid(self):
@@ -111,7 +111,7 @@ class ThreadWithExc(threading.Thread):
                 self._thread_id = tid
                 return tid
 
-        
+
         raise AssertionError("could not determine the thread's id")
 
     def raiseExc(self, exctype):
@@ -187,7 +187,7 @@ def _worker(executor_reference, task_queue):
                 task_queue.put(None)
                 return
             del executor
-            
+
     except BaseException:
         logging.critical('Exception in worker', exc_info=True)
 
@@ -253,7 +253,7 @@ class WorkerPool():
             t = ThreadWithExc(name=thread_name, target=_worker,
                                  args=(weakref.ref(self, weakref_cb),
                                        self._work_queue)
-            
+
             t.daemon = True
             t.start()
             self._threads.add(t)

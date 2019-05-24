@@ -21,7 +21,7 @@ import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.util.GraphToDot;
 
 /**
- * Implementation of IGateway. 
+ * Implementation of IGateway.
  *
  * This gateway implementation doesn't load services onto the executor.
  *

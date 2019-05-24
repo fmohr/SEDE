@@ -9,7 +9,7 @@ import java.util.Objects;
 
 /**
  * Offers synchronized access to executor handles.
- * 
+ *
  * @author aminfaez
  *
  */

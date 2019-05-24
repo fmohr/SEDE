@@ -5,13 +5,13 @@ import java.io.OutputStream;
 
 /**
  * A handler which is invoked to process server-side exchanges.
- * 
+ *
  * @author aminfaez
  *
  */
 public interface BasicServerResponse {
 	/**
-	 * 
+	 *
 	 * @param payload
 	 *            data from client
 	 * @param answer

@@ -1,10 +1,10 @@
 /**
- * 
- * Taken from: 
- * 
+ *
+ * Taken from:
+ *
  * 	https://github.com/gboersma/jdot/blob/master/src/main/java/info/leadinglight/jdot/impl/Util.java
- * 
- * 
+ *
+ *
     Copyright 2013 Gerald Boersma <gerald dot boersma at gmail dot com>
 
     Licensed under the Apache License, Version 2.0 (the "License");
@@ -255,5 +255,5 @@ public class ShellUtil {
         } catch (InterruptedException e) {
             // Do nothing...
         }
-    } // End of #communicate	
+    } // End of #communicate
 }

@@ -104,7 +104,7 @@ public class Executor   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Executor {\n");
-    
+
     sb.append("    id: ").append(toIndentedString(id)).append("\n");
     sb.append("    entities: ").append(toIndentedString(entities)).append("\n");
     sb.append("    basis: ").append(toIndentedString(basis)).append("\n");

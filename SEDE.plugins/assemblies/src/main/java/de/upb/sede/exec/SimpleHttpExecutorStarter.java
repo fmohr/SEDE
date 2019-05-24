@@ -12,7 +12,7 @@ public class SimpleHttpExecutorStarter {
 		if(args.length < 2) {
 			throw new RuntimeException("Please provide at least 2 arguments:" +
 					"\n\t - The path to the executor configuration." +
-					"\n\t - The port of the http executor." + 
+					"\n\t - The port of the http executor." +
 					"\n\t - (Optional) The address of the http gateway server.");
 		}
 		String pathToConfig = args[0];
@@ -27,12 +27,12 @@ public class SimpleHttpExecutorStarter {
 				pathToConfig, host, port);
 
 		ExecutorHttpServer executorHttpServer = new ExecutorHttpServer(configuration, host, port);
-		
+
 		if(args.length >= 3) {
 			String gatewayAddress = args[2];
 			logger.info("Http executor registers to gateway on {}.", gatewayAddress);
 			executorHttpServer.registerToGateway(gatewayAddress);
 		}
-		
+
 	}
 }

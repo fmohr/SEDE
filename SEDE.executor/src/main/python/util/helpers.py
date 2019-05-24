@@ -32,7 +32,7 @@ class JsonSerializable:
             super().to_dict(d)
             .
             .
-        
+
     In exe.requests you will see this in action.
     """
     def __init__(self, *args, **kwargs):
@@ -44,7 +44,7 @@ class JsonSerializable:
 
     def to_json_string(self):
         d = dict()
-        self.to_dict(d) 
+        self.to_dict(d)
         return json.dumps(d)
 
     @classmethod

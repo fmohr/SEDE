@@ -9,7 +9,7 @@ class B:
     def __init__(self, a , b):
         self.a = a
         self.b = b
-    
+
     def calc(self, c):
         return self.a + self.b * c
 
@@ -21,10 +21,10 @@ class B:
 
     def calc_append(self, numbers, c):
         return Numbers(*(numbers.ns + [self.calc(c)]))
-    
+
     def set_a(self, a):
         self.a = a
-    
+
     def set_b(self, b):
         self.b = b
 

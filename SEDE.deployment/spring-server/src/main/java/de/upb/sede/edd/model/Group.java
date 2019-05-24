@@ -102,7 +102,7 @@ public class Group   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Group {\n");
-    
+
     sb.append("    path: ").append(toIndentedString(path)).append("\n");
     sb.append("    connection: ").append(toIndentedString(connection)).append("\n");
     sb.append("    gateway: ").append(toIndentedString(gateway)).append("\n");

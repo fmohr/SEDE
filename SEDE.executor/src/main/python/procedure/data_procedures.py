@@ -216,7 +216,7 @@ class TransmitDataProcedure(Procedure):
             if answer is not None and len(answer) > 0:
                 raise Exception("Error giving unavailability notice to:\n\t" + str(task["contact-info"]) +
 						"\nReturned message is not empty:\n\t" + answer)
-            
+
 
     def get_put_request(self, task, unavailable)->BasicClientRequest:
         raise Exception("BUG: must be implemented in a subclass.")

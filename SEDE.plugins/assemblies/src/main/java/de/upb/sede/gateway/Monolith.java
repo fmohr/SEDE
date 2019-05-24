@@ -32,14 +32,14 @@ public class Monolith {
 							"config/weka-ml-clusterers-classconf.json",
 							"config/weka-ml-pp-classconf.json",
 							"config/weka-ml-typeconf.json");
-		
+
 
 		ClassesConfig classesConfig = new ClassesConfig();
 		OnthologicalTypeConfig typeConfig = new OnthologicalTypeConfig();
 		loadDefaultConfigs(classesConfig, typeConfig, configsToBeLoaded);
 
 		GatewayHttpServer httpGateway = new GatewayHttpServer(gatewayport, classesConfig, typeConfig);
-		
+
 		String executorConfigFile = "monolith_executor_config.json";
 		String executorConfigString = FileUtil.readResourceAsString(executorConfigFile);
 		ExecutorConfiguration executorConfiguration = ExecutorConfiguration.parseJSON(executorConfigString);

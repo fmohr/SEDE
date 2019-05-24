@@ -6,7 +6,7 @@ import de.upb.sede.composition.graphs.nodes.BaseNode;
 
 /**
  * 2-Tuple of BaseNode. Represents a directed edge in GraphComposition.
- * 
+ *
  * Immutable
  */
 public final class DependencyEdge {

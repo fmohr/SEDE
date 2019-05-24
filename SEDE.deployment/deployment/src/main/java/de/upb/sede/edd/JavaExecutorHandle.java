@@ -3,12 +3,12 @@ package de.upb.sede.edd;
 import de.upb.sede.util.KneadForm;
 import de.upb.sede.util.Kneadable;
 
-public class JavaBase implements ExecutorDeploymentBase{
+public class JavaExecutorHandle implements DeploymentCommandable {
 
     private final JavaExecutorConfiguration configuration;
     private final ExecutorState state;
 
-    public JavaBase(ExecutorState state) {
+    public JavaExecutorHandle(ExecutorState state) {
         this.configuration = state.getConfiguration().knead(JavaExecutorConfiguration.class);
         this.state = state;
     }

@@ -9,12 +9,6 @@ public class NullableCache<Content> implements Cache<Content> {
         return content.orElse(null);
     }
 
-    @Override
-    public void set(Content content) {
-        this.content = WobblyField.ofNullable(content);
-    }
-
-    @Override
     public void unset() {
         content = WobblyField.empty();
     }

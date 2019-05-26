@@ -27,12 +27,6 @@ public class LazyAccessCache<Content> implements Cache<Content>, Serializable {
         return content.get();
     }
 
-    @Override
-    public void set(Content content) {
-        this.content = WobblyField.of(content);
-    }
-
-    @Override
     public void unset() {
         this.content = WobblyField.empty();
     }

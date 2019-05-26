@@ -52,7 +52,8 @@ public class LiveMerge<K,V> implements Map<K, V> {
     private <T> T modify(Callable<T> callable) {
         if(isModifiable()) {
             T returnval =  UncheckedException.call(callable);
-            cachedMerge.unset();
+            if(cachedMerge instanceof TTLCache)
+                ((TTLCache)cachedMerge).unset();
             return returnval;
         } else {
             throw new IllegalStateException("Modification delegation has not been set.");
@@ -64,7 +65,9 @@ public class LiveMerge<K,V> implements Map<K, V> {
     }
 
     public List<Map<K, V>> maps() {
-        cachedMerge.unset();
+        if(cachedMerge instanceof TTLCache) {
+            ((TTLCache)cachedMerge).unset();
+        }
         return maps;
     }
 

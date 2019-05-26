@@ -123,6 +123,8 @@ project(':SEDE.core') {
             exclude module: 'junit'
             exclude group: 'org.hamcrest'
         }
+        // https://mvnrepository.com/artifact/commons-io/commons-io
+        compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
         // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
         compile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8')

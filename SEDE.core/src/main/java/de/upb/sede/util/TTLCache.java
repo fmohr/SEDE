@@ -124,12 +124,10 @@ public class TTLCache<Content> implements Cache<Content> {
         return cachedContent.get();
     }
 
-    @Override
     public void set(Content content) {
         this.setContent(content);
     }
 
-    @Override
     public void unset() {
         this.unsetContent();
     }

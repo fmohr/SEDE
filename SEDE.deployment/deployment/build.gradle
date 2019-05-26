@@ -16,6 +16,10 @@ eclipse.classpath {
 dependencies {
     provided project(':SEDE.core')
 
+    // https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305
+    compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
+
+    testCompile 'com.github.stefanbirkner:system-rules:1.19.0'
     // https://mvnrepository.com/artifact/commons-cli/commons-cli
 //    compile group: 'commons-cli', name: 'commons-cli', version: '1.4'
     // https://mvnrepository.com/artifact/commons-io/commons-io

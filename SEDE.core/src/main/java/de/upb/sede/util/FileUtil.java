@@ -11,10 +11,12 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +33,36 @@ public class FileUtil {
 
 	private static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 
-	/**
+
+    /**
+     * The Unix separator character.
+     */
+    private static final char UNIX_SEPARATOR = '/';
+
+    /**
+     * The Windows separator character.
+     */
+    private static final char WINDOWS_SEPARATOR = '\\';
+
+    /**
+     * The system separator character.
+     */
+    private static final char SYSTEM_SEPARATOR = File.separatorChar;
+
+    /**
+     * The separator character that is the opposite of the system separator.
+     */
+    private static final char OTHER_SEPARATOR;
+    static {
+        if (SYSTEM_SEPARATOR == WINDOWS_SEPARATOR) {
+            OTHER_SEPARATOR = UNIX_SEPARATOR;
+        } else {
+            OTHER_SEPARATOR = WINDOWS_SEPARATOR;
+        }
+    }
+
+
+    /**
 	 * Returns the content of the file located at the given file path as a string.
 	 *
 	 * @param filePath
@@ -181,5 +212,71 @@ public class FileUtil {
 			e.printStackTrace();
 		}
 	}
+
+    /**
+     * Returns a representation of the file path with an alternate extension.  If the file path has no extension,
+     * then the provided extension is simply concatenated.  If the file path has an extension, the extension is
+     * stripped and replaced with the provided extension.
+     *
+     * e.g. with a provided extension of ".bar"
+     * foo -> foo.bar
+     * foo.baz -> foo.bar
+     *
+     * @param filePath the file path to transform
+     * @param extension the extension to use in the transformed path
+     * @return the transformed path
+     */
+    public static String withExtension(String filePath, String extension) {
+        if (filePath.toLowerCase().endsWith(extension)) {
+            return filePath;
+        }
+        return removeExtension(filePath) + extension;
+    }
+
+    /**
+     * Removes the extension (if any) from the file path.  If the file path has no extension, then it returns the same string.
+     *
+     * @param filePath
+     * @return the file path without an extension
+     */
+    public static String removeExtension(String filePath) {
+        int fileNameStart = Math.max(filePath.lastIndexOf('/'), filePath.lastIndexOf('\\'));
+        int extensionPos = filePath.lastIndexOf('.');
+
+        if (extensionPos > fileNameStart) {
+            return filePath.substring(0, extensionPos);
+        }
+        return filePath;
+    }
+
+    /**
+     * Canonicalizes the given file.
+     */
+    public static File canonicalize(File src) {
+        try {
+            return src.getCanonicalFile();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
+
+    /**
+     * Normalizes the given file, removing redundant segments like /../. If normalization
+     * tries to step beyond the file system root, the root is returned.
+     */
+    public static File normalize(File src) {
+        String path = src.getAbsolutePath();
+        String normalizedPath = FilenameUtils.normalize(path);
+        if (normalizedPath != null) {
+            return new File(normalizedPath);
+        }
+        File root = src;
+        File parent = root.getParentFile();
+        while (parent != null) {
+            root = root.getParentFile();
+            parent = root.getParentFile();
+        }
+        return root;
+    }
 
 }

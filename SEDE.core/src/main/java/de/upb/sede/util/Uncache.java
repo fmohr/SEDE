@@ -16,11 +16,4 @@ public class Uncache<Content> implements Cache<Content> {
         return supplier.get();
     }
 
-    @Override
-    public void set(Content content) {
-    }
-
-    @Override
-    public void unset() {
-    }
 }

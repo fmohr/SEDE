@@ -23,32 +23,23 @@
                   "directoryAcronym" : "0"
               }
           ],
-          "build" : [
+          "builds" : [
               {
+                  "type" : "gradle-build",
+                  "tasks" : ["jarjar"],
+                  "working-dir" : "{sources}/",
+                  "out" :
               }
           ],
-          "deploy" : [
-
-
-          ],
-          "actions" : [
+          "deployments" : [
 
           ],
-        "steps" : [
-          {
-            "action" : "git",
-            "authentication" : {
+          "action" : [
 
-            },
-            "url" : "",
-            "usr" : "",
-            "password": "",
-            "key" : "",
-            "branch" : "develop"
-          }
-        ]
+          ]
       }
     ]
+
   },
 
   "weka.classifiers" : {

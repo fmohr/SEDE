@@ -66,14 +66,12 @@ public class SEDECodeBase implements EDDSource {
         return sedeProxyRepository.getLocalRepoDir();
     }
 
-
-
     @Override
-    public File retrieve(boolean update) {
-        Uncheck.callEach(
+    public boolean retrieve(boolean update) {
+        return Uncheck.callEach(
             () -> sedeCoreRepository.retrieve(update),
-            () -> sedeProxyRepository.retrieve(update));
-        return localRepoDir.toFile();
+            () -> sedeProxyRepository.retrieve(update))
+            .contains(true); //  at least one repository was updated
     }
 
 }

@@ -1,5 +1,7 @@
 import org.gradle.plugins.ide.eclipse.model.AccessRule
 
+apply plugin: 'antlr'
+
 /*
  * Allow access rule to sede http.
  */
@@ -14,6 +16,7 @@ eclipse.classpath {
 }
 
 dependencies {
+    antlr "org.antlr:antlr4:4.5.3"
     provided project(':SEDE.core')
 
     // https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305
@@ -28,6 +31,15 @@ dependencies {
 //    compile group: 'commons-io', name: 'commons-io', version: '2.6'
     // https://mvnrepository.com/artifact/com.google.guava/guava
 //    compile group: 'com.google.guava', name: 'guava', version: '27.1-jre'
-    
+
     testCompile 'com.github.stefanbirkner:system-rules:1.19.0'
+}
+
+generateGrammarSource << {
+    println "Copying generated grammar lexer/parser files to main directory."
+    copy {
+        from "${buildDir}/generated-src/antlr/main"
+        into "src/main/java"
+    }
+    delete "${buildDir}/generated-src/antlr/main"
 }

@@ -22,7 +22,6 @@ public class Jvm {
     //discovered java location
     private final File javaHome;
     private final boolean userSupplied;
-    private final JavaVersion javaVersion;
     private static final AtomicReference<JvmImplementation> CURRENT = new AtomicReference<JvmImplementation>();
 
     // Cached resolved executables
@@ -51,8 +50,8 @@ public class Jvm {
         return new JvmImplementation(OperatingSystem.current());
     }
 
-    static Jvm create(File javaBase, @Nullable JavaVersion javaVersion) {
-        Jvm jvm = new Jvm(OperatingSystem.current(), javaBase, javaVersion);
+    static Jvm create(File javaBase){
+        Jvm jvm = new Jvm(OperatingSystem.current(), javaBase);
         Jvm current = current();
         return jvm.getJavaHome().equals(current.getJavaHome()) ? current : jvm;
     }
@@ -61,21 +60,20 @@ public class Jvm {
      * Constructs JVM details by inspecting the current JVM.
      */
     Jvm(OperatingSystem os) {
-        this(os, FileUtil.canonicalize(new File(System.getProperty("java.home"))), JavaVersion.current(), false);
+        this(os, FileUtil.canonicalize(new File(System.getProperty("java.home"))), false);
     }
 
     /**
      * Constructs JVM details from the given values
      */
-    Jvm(OperatingSystem os, File suppliedJavaBase, JavaVersion javaVersion) {
-        this(os, suppliedJavaBase, javaVersion, true);
+    Jvm(OperatingSystem os, File suppliedJavaBase) {
+        this(os, suppliedJavaBase, true);
     }
 
-    private Jvm(OperatingSystem os, File suppliedJavaBase, JavaVersion javaVersion, boolean userSupplied) {
+    private Jvm(OperatingSystem os, File suppliedJavaBase, boolean userSupplied) {
         this.os = os;
         this.javaBase = suppliedJavaBase;
         this.javaHome = findJavaHome(suppliedJavaBase);
-        this.javaVersion = javaVersion;
         this.userSupplied = userSupplied;
     }
 
@@ -91,7 +89,7 @@ public class Jvm {
         if (javaHome == null || !javaHome.isDirectory()) {
             throw new IllegalArgumentException("Supplied javaHome must be a valid directory. You supplied: " + javaHome);
         }
-        Jvm jvm = create(javaHome, null);
+        Jvm jvm = create(javaHome);
         //some validation:
         jvm.getJavaExecutable();
         return jvm;
@@ -100,8 +98,8 @@ public class Jvm {
     /**
      * Creates JVM instance for given values. This method is intended to be used for discovered java homes.
      */
-    public static Jvm discovered(File javaHome, JavaVersion javaVersion) {
-        return create(javaHome, javaVersion);
+    public static Jvm discovered(File javaHome) {
+        return create(javaHome);
     }
 
     @Override
@@ -155,7 +153,6 @@ public class Jvm {
     }
 
     /**
-     * {@inheritDoc}
      */
     public File getJavaExecutable() throws JavaHomeException {
         if (javaExecutable != null) {
@@ -166,7 +163,6 @@ public class Jvm {
     }
 
     /**
-     * {@inheritDoc}
      */
     public File getJavacExecutable() throws JavaHomeException {
         if (javacExecutable != null) {
@@ -177,7 +173,6 @@ public class Jvm {
     }
 
     /**
-     * {@inheritDoc}
      */
     public File getJavadocExecutable() throws JavaHomeException {
         if (javadocExecutable != null) {
@@ -188,22 +183,12 @@ public class Jvm {
     }
 
     /**
-     * {@inheritDoc}
      */
     public File getExecutable(String name) throws JavaHomeException {
         return findExecutable(name);
     }
 
     /**
-     * @return the {@link JavaVersion} information
-     */
-    @Nullable
-    public JavaVersion getJavaVersion() {
-        return javaVersion;
-    }
-
-    /**
-     * {@inheritDoc}
      */
     public File getJavaHome() {
         return javaHome;
@@ -221,7 +206,6 @@ public class Jvm {
     }
 
     /**
-     * {@inheritDoc}
      */
     public File getToolsJar() {
         if (toolsJar != null) {
@@ -258,9 +242,6 @@ public class Jvm {
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public Map<String, ?> getInheritableEnvironmentVariables(Map<String, ?> envVars) {
         return envVars;
     }
@@ -298,7 +279,6 @@ public class Jvm {
         }
 
         /**
-         * {@inheritDoc}
          */
         @Override
         public File getToolsJar() {
@@ -306,7 +286,6 @@ public class Jvm {
         }
 
         /**
-         * {@inheritDoc}
          */
         @Override
         public Map<String, ?> getInheritableEnvironmentVariables(Map<String, ?> envVars) {

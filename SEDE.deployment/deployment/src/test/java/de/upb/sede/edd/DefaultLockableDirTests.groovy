@@ -8,7 +8,7 @@ import spock.lang.Specification
 
 import java.util.concurrent.Semaphore
 
-class LockableDirImplTests extends Specification {
+class DefaultLockableDirTests extends Specification {
 
     @Rule
     public final EnvironmentVariables envs = new EnvironmentVariables()

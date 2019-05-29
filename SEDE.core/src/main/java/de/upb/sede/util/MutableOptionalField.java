@@ -3,30 +3,30 @@ package de.upb.sede.util;
 import java.util.Objects;
 
 /**
- * Mutable version of the {@link WobblyField WobblyField} class.
+ * Mutable version of the {@link OptionalField OptionalField} class.
  *
- * Use {@link MutableWobblyField#set}, {@link MutableWobblyField#setNullable}, {@link MutableWobblyField#unset}
+ * Use {@link MutableOptionalField#set}, {@link MutableOptionalField#setNullable}, {@link MutableOptionalField#unset}
  * to change the capsulated value.
  */
-public class MutableWobblyField<T> extends WobblyField<T> {
+public class MutableOptionalField<T> extends OptionalField<T> {
 
     /**
      * Constructs an empty instance.
      *
      */
-    protected MutableWobblyField() {
+    protected MutableOptionalField() {
         this.value = null;
     }
 
     /**
-     * Returns an empty {@code MutableWobblyField} instance.  No value is present for this
-     * MutableWobblyField.
+     * Returns an empty {@code MutableOptionalField} instance.  No value is present for this
+     * MutableOptionalField.
      *
      * @param <T> Type of the non-existent value
-     * @return an empty {@code MutableWobblyField}
+     * @return an empty {@code MutableOptionalField}
      */
-    public static<T> MutableWobblyField<T> empty() {
-        return new MutableWobblyField<>();
+    public static<T> MutableOptionalField<T> empty() {
+        return new MutableOptionalField<>();
     }
 
     /**
@@ -35,38 +35,38 @@ public class MutableWobblyField<T> extends WobblyField<T> {
      * @param value the non-null value to be present
      * @throws NullPointerException if value is null
      */
-    protected MutableWobblyField(T value) {
+    protected MutableOptionalField(T value) {
         this.value = Objects.requireNonNull(value);
     }
 
     /**
-     * Returns an {@code MutableWobblyField} with the specified present non-null value.
+     * Returns an {@code MutableOptionalField} with the specified present non-null value.
      *
      * @param <T> the class of the value
      * @param value the value to be present, which must be non-null
-     * @return an {@code MutableWobblyField} with the value present
+     * @return an {@code MutableOptionalField} with the value present
      * @throws NullPointerException if value is null
      */
-    public static <T> MutableWobblyField<T> of(T value) {
-        return new MutableWobblyField<>(value);
+    public static <T> MutableOptionalField<T> of(T value) {
+        return new MutableOptionalField<>(value);
     }
 
     /**
-     * Returns an {@code MutableWobblyField} describing the specified value, if non-null,
-     * otherwise returns an empty {@code MutableWobblyField}.
+     * Returns an {@code MutableOptionalField} describing the specified value, if non-null,
+     * otherwise returns an empty {@code MutableOptionalField}.
      *
      * @param <T> the class of the value
      * @param value the possibly-null value to describe
-     * @return an {@code MutableWobblyField} with a present value if the specified value
-     * is non-null, otherwise an empty {@code MutableWobblyField}
+     * @return an {@code MutableOptionalField} with a present value if the specified value
+     * is non-null, otherwise an empty {@code MutableOptionalField}
      */
-    public static <T> MutableWobblyField<T> ofNullable(T value) {
+    public static <T> MutableOptionalField<T> ofNullable(T value) {
         return value == null ? empty() : of(value);
     }
 
     /**
      * Sets the inner value of this instance to the given non-null value.
-     * After calling this method, {@link MutableWobblyField#isPresent()} always returns true.
+     * After calling this method, {@link MutableOptionalField#isPresent()} always returns true.
      *
      * @param value new non-null value of this instance.
      */
@@ -76,7 +76,7 @@ public class MutableWobblyField<T> extends WobblyField<T> {
 
     /**
      * Clears the value of this instance.
-     * After calling this method, {@link MutableWobblyField#isPresent()} always returns false.
+     * After calling this method, {@link MutableOptionalField#isPresent()} always returns false.
      */
     public void unset() {
         this.value = null;

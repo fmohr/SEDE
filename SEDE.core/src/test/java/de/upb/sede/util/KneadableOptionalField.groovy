@@ -1,11 +1,10 @@
 package de.upb.sede.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import groovyjarjarasm.asm.tree.InsnList
 import spock.lang.Specification
 
 
-class KneadableWobblyField extends Specification {
+class KneadableOptionalField extends Specification {
 
     def "simple node test"() {
         given:
@@ -45,8 +44,8 @@ class KneadableWobblyField extends Specification {
         Kneadable kneadable = KneadableJsonObject.fromJson(jsonData)
         AB ab = kneadable.knead(AB)
         then:
-        ab.a instanceof  WobblyField
-        ab.b instanceof  WobblyField
+        ab.a instanceof  OptionalField
+        ab.b instanceof  OptionalField
         ab.a.isPresent()
         ab.b.isPresent()
         ab.a.get().a.get() == "test"
@@ -82,26 +81,26 @@ class KneadableWobblyField extends Specification {
 //       {
 //          "a" : "test"
 //       }
-        WobblyField<String> a;
+        OptionalField<String> a;
     }
     static class B extends KneadForm{
 //        {
 //          "b" : 12
 //        }
-        MutableWobblyField<Integer> b;
+        MutableOptionalField<Integer> b;
     }
     static class AB {
 //      {
 //         "a" : { "a" : "test" }
 //         "b" : { "b" : 11 }
 //      }
-        WobblyField<A> a;
-        WobblyField<B> b;
+        OptionalField<A> a;
+        OptionalField<B> b;
     }
     static class KneadAB {
 //      {
 //         "field" : { "a" : "test", "b" : 1}
 //      }
-        WobblyField<KneadableJsonObject> field;
+        OptionalField<KneadableJsonObject> field;
     }
 }

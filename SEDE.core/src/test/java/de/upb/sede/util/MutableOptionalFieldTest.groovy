@@ -2,12 +2,12 @@ package de.upb.sede.util
 
 import spock.lang.Specification
 
-class MutableWobblyFieldTest extends Specification {
+class MutableOptionalFieldTest extends Specification {
 
     def "test set unset and setNullable"() {
 
         when:
-        def field = MutableWobblyField.of("text")
+        def field = MutableOptionalField.of("text")
         then:
         field.isPresent()
         field.get() == "text"
@@ -34,7 +34,7 @@ class MutableWobblyFieldTest extends Specification {
         field.isAbsent()
 
         when:
-        MutableWobblyField.of("text")set(null)
+        MutableOptionalField.of("text")set(null)
         then:
         thrown(NullPointerException)
 

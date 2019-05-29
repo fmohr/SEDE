@@ -4,15 +4,15 @@ import de.upb.sede.util.FileUtil;
 
 import java.io.File;
 
-public class LockableDirImpl implements LockableDir {
+public class DefaultLockableDir implements LockableDir {
 
     private final File directoryFile;
 
-    public LockableDirImpl(String absolutePath) {
-        this(new File(absolutePath));
+    public DefaultLockableDir(String path) {
+        this(new File(path));
     }
 
-    public LockableDirImpl(File file) {
+    public DefaultLockableDir(File file) {
         this.directoryFile = FileUtil.canonicalize(file);
         if(! directoryFile.isAbsolute()) {
             throw new IllegalArgumentException("File or path is not absolute:" + directoryFile.toString());
@@ -31,7 +31,7 @@ public class LockableDirImpl implements LockableDir {
     public LockableDir getChild(String childDir) {
         File childFile = new File(directoryFile, childDir);
         if(childFile.getParentFile().equals(directoryFile)) {
-            return new LockableDirImpl(childFile);
+            return new DefaultLockableDir(childFile);
         } else {
             throw new IllegalArgumentException("Cannot create a *direct* sub folder called '" + childDir + "' for: " + this);
         }

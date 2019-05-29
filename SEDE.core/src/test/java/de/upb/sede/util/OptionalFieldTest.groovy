@@ -2,16 +2,16 @@ package de.upb.sede.util
 
 import spock.lang.Specification
 
-class WobblyFieldTest extends Specification {
+class OptionalFieldTest extends Specification {
     def "test WobblyField to Optional"() {
 
         given: "2 wobbly fields of strings"
-        def string1 = WobblyField.of("Some Data")
-        def string2 = WobblyField.ofNullable("Some Other Data")
+        def string1 = OptionalField.of("Some Data")
+        def string2 = OptionalField.ofNullable("Some Other Data")
 
         and: "2 empty wobbly fields"
-        def empty1 = WobblyField.empty()
-        def empty2 = WobblyField.ofNullable(null)
+        def empty1 = OptionalField.empty()
+        def empty2 = OptionalField.ofNullable(null)
 
         when: "transforming wobbly fields to optionals"
         def string1Opt = string1.opt()
@@ -35,10 +35,10 @@ class WobblyFieldTest extends Specification {
         def empty2Opt = Optional.ofNullable(null)
 
         when:
-        def string1 = WobblyField.fromOpt(string1Opt)
-        def string2 = WobblyField.fromOpt(string1Opt)
-        def empty1 = WobblyField.fromOpt(empty1Opt)
-        def empty2 = WobblyField.fromOpt(empty2Opt)
+        def string1 = OptionalField.of(string1Opt)
+        def string2 = OptionalField.of(string1Opt)
+        def empty1 = OptionalField.of(empty1Opt)
+        def empty2 = OptionalField.of(empty2Opt)
 
         then:
         string1.isPresent()
@@ -50,13 +50,13 @@ class WobblyFieldTest extends Specification {
     def "test serialization of wobbly fields"() {
 
         given:
-        def fieldList = [WobblyField.of("Hallo"), WobblyField.empty(), WobblyField.of(123) ]
+        def fieldList = [OptionalField.of("Hallo"), OptionalField.empty(), OptionalField.of(123) ]
 
         when:
         def byteStream = new ByteArrayOutputStream()
         new ObjectOutputStream(byteStream).writeObject(fieldList)
         def byteSerialization = byteStream.toByteArray()
-        List<WobblyField<?>> deserializedFieldList =
+        List<OptionalField<?>> deserializedFieldList =
                 new ObjectInputStream(new ByteArrayInputStream(byteSerialization)).readObject()
 
         then:
@@ -71,7 +71,7 @@ class WobblyFieldTest extends Specification {
 
     def "test serialization of a wobbly field with an un-serializable type"() {
         given:
-        def unserializableField = WobblyField.of(Mock(Iterable))
+        def unserializableField = OptionalField.of(Mock(Iterable))
 
         when:
         new ObjectOutputStream(new ByteArrayOutputStream()).writeObject(unserializableField)

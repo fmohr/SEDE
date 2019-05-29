@@ -9,6 +9,7 @@ import javax.annotation.Nullable;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class Jvm {
@@ -140,11 +141,11 @@ public class Jvm {
                 + " I cannot find the %s executable. Tried location: %s", command, executable.getAbsolutePath()));
         }
 
-        File pathExecutable = os.findInPath(command);
-        if (pathExecutable != null) {
+        Optional<File> pathExecutable = os.findExecInPath(command);
+        if (pathExecutable.isPresent()) {
             LOGGER.info(String.format("Unable to find the '%s' executable using home: %s. We found it on the PATH: %s.",
                 command, getJavaHome(), pathExecutable));
-            return pathExecutable;
+            return pathExecutable.get();
         }
 
         LOGGER.warn("Unable to find the '{}' executable. Tried the java home: {} and the PATH."

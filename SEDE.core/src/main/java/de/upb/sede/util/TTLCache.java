@@ -5,11 +5,11 @@ import java.util.function.Supplier;
 
 public class TTLCache<Content> implements Cache<Content> {
 
-    private final MutableWobblyField<Long> ttl = MutableWobblyField.empty();
+    private final MutableOptionalField<Long> ttl = MutableOptionalField.empty();
 
-    private final MutableWobblyField<Content> cachedContent = MutableWobblyField.empty();
+    private final MutableOptionalField<Content> cachedContent = MutableOptionalField.empty();
 
-    private final MutableWobblyField<Supplier<Content>> contentSupplier = MutableWobblyField.empty();
+    private final MutableOptionalField<Supplier<Content>> contentSupplier = MutableOptionalField.empty();
 
     /**
      * Changed by tests.
@@ -62,11 +62,11 @@ public class TTLCache<Content> implements Cache<Content> {
         setContentSupplier(contentSupplier);
     }
 
-    public MutableWobblyField<Long> getTTL() {
+    public MutableOptionalField<Long> getTTL() {
         return ttl;
     }
 
-    public MutableWobblyField<Supplier<Content>> getContentSupplier() {
+    public MutableOptionalField<Supplier<Content>> getContentSupplier() {
         return contentSupplier;
     }
 

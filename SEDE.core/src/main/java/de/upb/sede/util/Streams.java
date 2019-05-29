@@ -2,6 +2,8 @@ package de.upb.sede.util;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Streams {
 
@@ -25,6 +27,21 @@ public class Streams {
 			throw new UncheckedIOException(e);
 		}
 	}
+
+	public static List<String> InReadLines(InputStream is) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+            List<String> lines = new ArrayList<>();
+            String line;
+            while((line = reader.readLine()) != null) {
+                lines.add(line);
+            }
+            return lines;
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+    }
 
 	/**
 	 * Reads the content in the given input stream and fills it into a byte array.

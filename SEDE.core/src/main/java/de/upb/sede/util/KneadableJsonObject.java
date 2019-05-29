@@ -6,7 +6,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.deser.BeanDeserializerFactory;
 import com.fasterxml.jackson.databind.deser.BeanDeserializerModifier;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -18,7 +17,6 @@ import org.json.simple.parser.JSONParser;
 import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
-import java.util.logging.XMLFormatter;
 
 @JsonDeserialize(using = KneadableJsonObject.Deserializer.class)
 @JsonSerialize(using = KneadableJsonObject.Serializer.class)
@@ -45,10 +43,10 @@ public final class KneadableJsonObject implements Kneadable, JsonKnibble {
                 }
             });
 
-    private final WobblyField<Map> data;
+    private final OptionalField<Map> data;
 
     public KneadableJsonObject(Map data) {
-        this.data = WobblyField.of(data);
+        this.data = OptionalField.of(data);
     }
 
     public static KneadableJsonObject fromJson(String jsonString) {

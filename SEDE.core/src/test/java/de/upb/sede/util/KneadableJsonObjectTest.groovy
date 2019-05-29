@@ -105,7 +105,7 @@ class KneadableJsonObjectTest extends Specification {
         kneadable.knibbleObject("view").knibbleNumber("a") == 10
         kneadable.knibbleObject("clone").knibbleNumber("a") == 100
 
-        // TODO Implement kneadform serialization
+        // TODO Implement kneadform transformation
 //        when:
 //        def bean = container.bean.knead(ABean)
 //        def view = container.bean.knead(AView)
@@ -169,6 +169,50 @@ class KneadableJsonObjectTest extends Specification {
 
     }
 
+    def "test default fields"() {
+        when:
+        Kneadable kneadable = KneadableJsonObject.fromJson(jsonData)
+        def object = kneadable.knead(DefaultFields)
+
+        then:
+        object.a == a
+        object.b == b
+        object.c == c
+
+        where:
+        a | b |        c
+        1 | 3 |   "default-c-val"
+        7 | 0 |   "default-c-val"
+        0 | 0 |   "new-value"
+        0 | 0 |    null
+        jsonData << [
+            """
+                {
+                    "a" : 1,
+                    "b" : 3
+                }
+            """,
+            """
+                {
+                    "a" : 7
+                }
+            """,
+            """
+                {
+                    "c" : "new-value"
+                }
+            """,
+            """
+                {
+                    "a" : null,
+                    "b" : null,
+                    "c" : null
+                }
+            """
+        ]
+
+    }
+
     static class AContainer {
         ABean bean
         AClone clone
@@ -201,5 +245,10 @@ class KneadableJsonObjectTest extends Specification {
             return super.setField(a_FIELD, a)
         }
 
+    }
+
+    static class DefaultFields {
+        int a, b
+        String c = "default-c-val"
     }
 }

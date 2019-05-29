@@ -2,15 +2,19 @@ package de.upb.sede.util;
 
 public class NullableCache<Content> implements Cache<Content> {
 
-    private WobblyField<Content> content = WobblyField.empty();
+    private OptionalField<Content> content = OptionalField.empty();
 
     @Override
     public Content access() {
         return content.orElse(null);
     }
 
+    public void set(Content content) {
+        this.content = OptionalField.of(content);
+    }
+
     public void unset() {
-        content = WobblyField.empty();
+        content = OptionalField.empty();
     }
 
     public boolean isNull() {

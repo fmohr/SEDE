@@ -3,17 +3,20 @@ package de.upb.sede.util;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 /**
  * Wraps a checked exception.
  */
-public final class UncheckedException extends RuntimeException {
-    private UncheckedException(Throwable cause) {
+public final class Uncheck extends RuntimeException {
+    private Uncheck(Throwable cause) {
         super(cause);
     }
 
-    private UncheckedException(String message, Throwable cause) {
+    private Uncheck(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -39,18 +42,42 @@ public final class UncheckedException extends RuntimeException {
             }
         }
         if (preserveMessage) {
-            throw new UncheckedException(t.getMessage(), t);
+            throw new Uncheck(t.getMessage(), t);
         } else {
-            throw new UncheckedException(t);
+            throw new Uncheck(t);
         }
     }
 
     public static <T> T call(Callable<T> callable) {
         try {
             return callable.call();
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw throwAsUncheckedException(e);
         }
+    }
+
+    public static <T> List<Object> callEach(final Callable<T>... callables) {
+        if(callables == null || callables.length == 0) {
+            return Collections.EMPTY_LIST;
+        }
+        boolean errorOccured = false;
+        RuntimeException firstError = null;
+        List<Object> results = new ArrayList<>();
+        for (int i = 0; i < callables.length; i++) {
+            T t = null;
+            try {
+                t = call(callables[i]);
+            } catch (RuntimeException ex) {
+                errorOccured = true;
+                firstError = ex;
+            } finally {
+                results.add(t);
+            }
+        }
+        if(errorOccured) {
+            throw firstError;
+        }
+        return results;
     }
 
     /**
@@ -62,7 +89,7 @@ public final class UncheckedException extends RuntimeException {
      * @return an instance of RuntimeException based on the target exception of the parameter.
      */
     public static RuntimeException rewrap(InvocationTargetException e) {
-        return UncheckedException.throwAsUncheckedException(e.getTargetException());
+        return Uncheck.throwAsUncheckedException(e.getTargetException());
     }
 
 }

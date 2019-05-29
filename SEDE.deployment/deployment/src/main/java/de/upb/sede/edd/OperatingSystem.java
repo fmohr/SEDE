@@ -2,10 +2,7 @@ package de.upb.sede.edd;
 
 import javax.annotation.Nullable;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Pattern;
 
 import static de.upb.sede.util.FileUtil.withExtension;
@@ -112,26 +109,75 @@ public abstract class OperatingSystem {
     public abstract String getFamilyName();
 
     /**
-     * Locates the given executable in the system path. Returns null if not found.
+     * Locates the given exact file in the given directory. Returns null if not found.
      */
-    @Nullable
-    public File findInPath(String name) {
+    public Optional<File> findExactInDir(File directory, String name) {
+        File candidate = new File(directory, name);
+        if (candidate.isFile()) {
+            return Optional.of(candidate);
+        }
+        return Optional.empty();
+    }
+
+
+    public Optional<File> findExecInDir(File directory, String name) {
         String exeName = getExecutableName(name);
-        if (exeName.contains(File.separator)) {
-            File candidate = new File(exeName);
+        return findExactInDir(directory, exeName);
+    }
+
+    public Optional<File> findScriptInDir(File directory, String name) {
+        String scriptName = getScriptName(name);
+        return findExactInDir(directory, scriptName);
+    }
+
+    public Optional<File> findAnyInDir(File directory, String name) {
+        return
+            Optional.ofNullable(
+                findExactInDir(directory, name)
+                    .orElse(findExecInDir(directory, name)
+                        .orElse(findScriptInDir(directory, name)
+                            .orElse(null))));
+    }
+
+
+    /**
+     * Locates the given exact file in the system path. Returns empty if not found.
+     */
+    public Optional<File> findExactInPath(String name) {
+        if (name.contains(File.separator)) {
+            File candidate = new File(name);
             if (candidate.isFile()) {
-                return candidate;
+                return Optional.of(candidate);
             }
-            return null;
+            return Optional.empty();
         }
         for (File dir : getPath()) {
-            File candidate = new File(dir, exeName);
+            File candidate = new File(dir, name);
             if (candidate.isFile()) {
-                return candidate;
+                return Optional.of(candidate);
             }
         }
+        return Optional.empty();
+    }
 
-        return null;
+
+    public Optional<File> findExecInPath(String name) {
+        String exeName = getExecutableName(name);
+        return findExactInPath(exeName);
+    }
+
+    public Optional<File> findScriptInPath(String name) {
+        String scriptName = getScriptName(name);
+        return findExactInPath(scriptName);
+    }
+
+    public Optional<File> findAnyInPath(String name) {
+        return
+            Optional.ofNullable(
+                findExactInPath(name)
+                    .orElse(findExecInPath(name)
+                        .orElse(findScriptInPath(name)
+                            .orElse(null))));
     }
 
     public List<File> findAllInPath(String name) {
@@ -162,6 +208,7 @@ public abstract class OperatingSystem {
     public String getPathVar() {
         return "PATH";
     }
+
 
     static class Windows extends OperatingSystem {
         private final String nativePrefix;

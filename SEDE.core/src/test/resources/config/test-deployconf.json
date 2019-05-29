@@ -4,13 +4,36 @@
     "serivces" : ["A.s1", "A.s2", "A.package1.s2"]
 
   },
-
+    "source-validor" : {
+        "alias" : ["VALIDATE"]
+    },
   "weka" : {
     "aliases" : ["WEKA", "WEKA.CORE"],
     "services" : ["weka.core.converters.ConverterUtils.DataSource"],
     "methods" : [
       {
         "method" : "download",
+          "sources" : [
+              {
+                  "directoryAcronym" : "sources",
+                  "type" : "git-repo",
+                  "url" : "https://some.repo.git"
+              },
+              {
+                  "directoryAcronym" : "0"
+              }
+          ],
+          "build" : [
+              {
+              }
+          ],
+          "deploy" : [
+
+
+          ],
+          "actions" : [
+
+          ],
         "steps" : [
           {
             "action" : "git",
@@ -22,20 +45,6 @@
             "password": "",
             "key" : "",
             "branch" : "develop"
-          }
-        ]
-      },
-      {
-        "method": "build",
-        "steps" : [
-          {
-
-          },
-          {
-
-          },
-          {
-
           }
         ]
       }

@@ -51,7 +51,7 @@ public class LiveMerge<K,V> implements Map<K, V> {
 
     private <T> T modify(Callable<T> callable) {
         if(isModifiable()) {
-            T returnval =  UncheckedException.call(callable);
+            T returnval =  Uncheck.call(callable);
             if(cachedMerge instanceof TTLCache)
                 ((TTLCache)cachedMerge).unset();
             return returnval;

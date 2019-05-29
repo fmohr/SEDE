@@ -1,6 +1,6 @@
 package de.upb.sede.edd;
 
-import de.upb.sede.util.UncheckedException;
+import de.upb.sede.util.Uncheck;
 
 import java.io.File;
 import java.io.IOException;
@@ -53,11 +53,16 @@ public class DirectoryLocks {
         return directoryLock; // close this, to release the locks.
     }
 
+    private static File toLock(LockableDir dir) {
+        String dirName = dir.toFile().getName();
+        return new File(dir.toFile().getParent(), "." + dirName + ".lock");
+    }
+
     private static class DirectoryLock implements AutoCloseable {
 
         private final ReentrantLock vmLock;
 
-        private final File file;
+        private final File lockFile;
 
         private FileChannel channel;
 
@@ -65,12 +70,12 @@ public class DirectoryLocks {
 
         public DirectoryLock(ReentrantLock vmLock, LockableDir dir) {
             this.vmLock = vmLock;
-            file = new File(dir.toFile(), ".edd.lock");
-            if(!file.exists()) {
+            lockFile = toLock(dir);
+            if(!lockFile.exists()) {
                 try {
-                    file.createNewFile();
+                    lockFile.createNewFile();
                 } catch (IOException e) {
-                    throw new RuntimeException("Cannot create lock file: " + file.toString());
+                    throw new RuntimeException("Cannot create lock lockFile: " + lockFile.toString());
                 }
             }
         }
@@ -81,7 +86,7 @@ public class DirectoryLocks {
                 return false;
             }
             try {
-                channel = new RandomAccessFile(file, "rw").getChannel();
+                channel = new RandomAccessFile(lockFile, "rw").getChannel();
                 fileLock = channel.tryLock();
                 if(fileLock == null) {
                     vmLock.unlock();
@@ -89,7 +94,7 @@ public class DirectoryLocks {
                 }
             } catch (IOException e) {
                 vmLock.unlock();
-                throw UncheckedException.throwAsUncheckedException(e);
+                throw Uncheck.throwAsUncheckedException(e);
             }
             return true;
         }
@@ -97,14 +102,14 @@ public class DirectoryLocks {
         private void lock() {
             try {
                 vmLock.lockInterruptibly();
-                channel = new RandomAccessFile(file, "rw").getChannel();
+                channel = new RandomAccessFile(lockFile, "rw").getChannel();
                 fileLock = channel.lock();
                 if(fileLock == null)
-                    throw new RuntimeException("Cannot lock file " + file);
+                    throw new RuntimeException("Cannot lock lockFile " + lockFile);
             } catch (Exception e) {
                 if(vmLock.isHeldByCurrentThread())
                     vmLock.unlock();
-                throw UncheckedException.throwAsUncheckedException(e);
+                throw Uncheck.throwAsUncheckedException(e);
             }
         }
 

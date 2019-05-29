@@ -7,8 +7,6 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.ContextualDeserializer;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.ser.ContextualSerializer;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -23,16 +21,16 @@ import java.util.function.Supplier;
 /**
  *
  * Based on the {@link java.util.Optional} class with the distinction that it is used as a class or instance variable.
- * {@code WobblyField} instances are immutable. Use {@link MutableWobblyField} for mutable wobbly fields.
+ * {@code OptionalField} instances are immutable. Use {@link MutableOptionalField} for mutable Optional fields.
  */
-@JsonDeserialize(using = WobblyField.UnwrapDeserializer.class)
-@JsonSerialize(using = WobblyField.UnwrapSerializer.class)
-public class WobblyField<T> implements Serializable {
+@JsonDeserialize(using = OptionalField.UnwrapDeserializer.class)
+@JsonSerialize(using = OptionalField.UnwrapSerializer.class)
+public class OptionalField<T> implements Serializable {
 
     /**
      * Common instance for {@code empty()}.
      */
-    private static final WobblyField<?> EMPTY = new WobblyField<>();
+    private static final OptionalField<?> EMPTY = new OptionalField<>();
 
     /**
      * If non-null, the value; if null, indicates no value is present
@@ -42,16 +40,16 @@ public class WobblyField<T> implements Serializable {
     /**
      * Constructs an empty instance.
      *
-     * @implNote Generally only one empty instance, {@link WobblyField#EMPTY},
+     * @implNote Generally only one empty instance, {@link OptionalField#EMPTY},
      * should exist per VM.
      */
-    protected WobblyField() {
+    protected OptionalField() {
         this.value = null;
     }
 
     /**
-     * Returns an empty {@code WobblyField} instance.  No value is present for this
-     * WobblyField.
+     * Returns an empty {@code OptionalField} instance.  No value is present for this
+     * OptionalField.
      *
      * @apiNote Though it may be tempting to do so, avoid testing if an object
      * is empty by comparing with {@code ==} against instances returned by
@@ -59,11 +57,11 @@ public class WobblyField<T> implements Serializable {
      * Instead, use {@link #isPresent()}.
      *
      * @param <T> Type of the non-existent value
-     * @return an empty {@code WobblyField}
+     * @return an empty {@code OptionalField}
      */
-    public static<T> WobblyField<T> empty() {
+    public static<T> OptionalField<T> empty() {
         @SuppressWarnings("unchecked")
-        WobblyField<T> t = (WobblyField<T>) EMPTY;
+        OptionalField<T> t = (OptionalField<T>) EMPTY;
         return t;
     }
 
@@ -73,43 +71,43 @@ public class WobblyField<T> implements Serializable {
      * @param value the non-null value to be present
      * @throws NullPointerException if value is null
      */
-    protected WobblyField(T value) {
+    protected OptionalField(T value) {
         this.value = Objects.requireNonNull(value);
     }
 
     /**
-     * Returns an {@code WobblyField} with the specified present non-null value.
+     * Returns an {@code OptionalField} with the specified present non-null value.
      *
      * @param <T> the class of the value
      * @param value the value to be present, which must be non-null
-     * @return an {@code WobblyField} with the value present
+     * @return an {@code OptionalField} with the value present
      * @throws NullPointerException if value is null
      */
-    public static <T> WobblyField<T> of(T value) {
-        return new WobblyField<>(value);
+    public static <T> OptionalField<T> of(T value) {
+        return new OptionalField<>(value);
     }
 
     /**
-     * Returns an {@code WobblyField} describing the specified value, if non-null,
-     * otherwise returns an empty {@code WobblyField}.
+     * Returns an {@code OptionalField} describing the specified value, if non-null,
+     * otherwise returns an empty {@code OptionalField}.
      *
      * @param <T> the class of the value
      * @param value the possibly-null value to describe
-     * @return an {@code WobblyField} with a present value if the specified value
-     * is non-null, otherwise an empty {@code WobblyField}
+     * @return an {@code OptionalField} with a present value if the specified value
+     * is non-null, otherwise an empty {@code OptionalField}
      */
-    public static <T> WobblyField<T> ofNullable(T value) {
+    public static <T> OptionalField<T> ofNullable(T value) {
         return value == null ? empty() : of(value);
     }
 
     /**
-     * If a value is present in this {@code WobblyField}, returns the value,
+     * If a value is present in this {@code OptionalField}, returns the value,
      * otherwise throws {@code NoSuchElementException}.
      *
-     * @return the non-null value held by this {@code WobblyField}
+     * @return the non-null value held by this {@code OptionalField}
      * @throws NoSuchElementException if there is no value present
      *
-     * @see WobblyField#isPresent()
+     * @see OptionalField#isPresent()
      */
     public T get() {
         if (value == null) {
@@ -151,16 +149,16 @@ public class WobblyField<T> implements Serializable {
 
     /**
      * If a value is present, and the value matches the given predicate,
-     * return an {@code WobblyField} describing the value, otherwise return an
-     * empty {@code WobblyField}.
+     * return an {@code OptionalField} describing the value, otherwise return an
+     * empty {@code OptionalField}.
      *
      * @param predicate a predicate to apply to the value, if present
-     * @return an {@code WobblyField} describing the value of this {@code WobblyField}
+     * @return an {@code OptionalField} describing the value of this {@code OptionalField}
      * if a value is present and the value matches the given predicate,
-     * otherwise an empty {@code WobblyField}
+     * otherwise an empty {@code OptionalField}
      * @throws NullPointerException if the predicate is null
      */
-    public WobblyField<T> filter(Predicate<? super T> predicate) {
+    public OptionalField<T> filter(Predicate<? super T> predicate) {
         Objects.requireNonNull(predicate);
         if (!isPresent())
             return this;
@@ -170,60 +168,60 @@ public class WobblyField<T> implements Serializable {
 
     /**
      * If a value is present, apply the provided mapping function to it,
-     * and if the result is non-null, return an {@code WobblyField} describing the
-     * result.  Otherwise return an empty {@code WobblyField}.
+     * and if the result is non-null, return an {@code OptionalField} describing the
+     * result.  Otherwise return an empty {@code OptionalField}.
      *
      * @apiNote This method supports post-processing on optional values, without
      * the need to explicitly check for a return status.  For example, the
      * following code traverses a stream of file names, selects one that has
      * not yet been processed, and then opens that file, returning an
-     * {@code WobblyField<FileInputStream>}:
+     * {@code OptionalField<FileInputStream>}:
      *
      * <pre>{@code
-     *     WobblyField<FileInputStream> fis =
+     *     OptionalField<FileInputStream> fis =
      *         names.stream().filter(name -> !isProcessedYet(name))
      *                       .findFirst()
      *                       .map(name -> new FileInputStream(name));
      * }</pre>
      *
-     * Here, {@code findFirst} returns an {@code WobblyField<String>}, and then
-     * {@code map} returns an {@code WobblyField<FileInputStream>} for the desired
+     * Here, {@code findFirst} returns an {@code OptionalField<String>}, and then
+     * {@code map} returns an {@code OptionalField<FileInputStream>} for the desired
      * file if one exists.
      *
      * @param <U> The type of the result of the mapping function
      * @param mapper a mapping function to apply to the value, if present
-     * @return an {@code WobblyField} describing the result of applying a mapping
-     * function to the value of this {@code WobblyField}, if a value is present,
-     * otherwise an empty {@code WobblyField}
+     * @return an {@code OptionalField} describing the result of applying a mapping
+     * function to the value of this {@code OptionalField}, if a value is present,
+     * otherwise an empty {@code OptionalField}
      * @throws NullPointerException if the mapping function is null
      */
-    public<U> WobblyField<U> map(Function<? super T, ? extends U> mapper) {
+    public<U> OptionalField<U> map(Function<? super T, ? extends U> mapper) {
         Objects.requireNonNull(mapper);
         if (!isPresent())
             return empty();
         else {
-            return WobblyField.ofNullable(mapper.apply(value));
+            return OptionalField.ofNullable(mapper.apply(value));
         }
     }
 
     /**
-     * If a value is present, apply the provided {@code WobblyField}-bearing
+     * If a value is present, apply the provided {@code OptionalField}-bearing
      * mapping function to it, return that result, otherwise return an empty
-     * {@code WobblyField}.  This method is similar to {@link #map(Function)},
-     * but the provided mapper is one whose result is already an {@code WobblyField},
+     * {@code OptionalField}.  This method is similar to {@link #map(Function)},
+     * but the provided mapper is one whose result is already an {@code OptionalField},
      * and if invoked, {@code flatMap} does not wrap it with an additional
-     * {@code WobblyField}.
+     * {@code OptionalField}.
      *
-     * @param <U> The type parameter to the {@code WobblyField} returned by
+     * @param <U> The type parameter to the {@code OptionalField} returned by
      * @param mapper a mapping function to apply to the value, if present
      *           the mapping function
-     * @return the result of applying an {@code WobblyField}-bearing mapping
-     * function to the value of this {@code WobblyField}, if a value is present,
-     * otherwise an empty {@code WobblyField}
+     * @return the result of applying an {@code OptionalField}-bearing mapping
+     * function to the value of this {@code OptionalField}, if a value is present,
+     * otherwise an empty {@code OptionalField}
      * @throws NullPointerException if the mapping function is null or returns
      * a null result
      */
-    public<U> WobblyField<U> flatMap(Function<? super T, WobblyField<U>> mapper) {
+    public<U> OptionalField<U> flatMap(Function<? super T, OptionalField<U>> mapper) {
         Objects.requireNonNull(mapper);
         if (!isPresent())
             return empty();
@@ -282,10 +280,10 @@ public class WobblyField<T> implements Serializable {
     }
 
     /**
-     * Indicates whether some other object is "equal to" this WobblyField. The
+     * Indicates whether some other object is "equal to" this OptionalField. The
      * other object is considered equal if:
      * <ul>
-     * <li>it is also an {@code WobblyField} and;
+     * <li>it is also an {@code OptionalField} and;
      * <li>both instances have no value present or;
      * <li>the present values are "equal to" each other via {@code equals()}.
      * </ul>
@@ -300,11 +298,11 @@ public class WobblyField<T> implements Serializable {
             return true;
         }
 
-        if (!(obj instanceof WobblyField)) {
+        if (!(obj instanceof OptionalField)) {
             return false;
         }
 
-        WobblyField<?> other = (WobblyField<?>) obj;
+        OptionalField<?> other = (OptionalField<?>) obj;
         return Objects.equals(value, other.value);
     }
 
@@ -320,12 +318,12 @@ public class WobblyField<T> implements Serializable {
     }
 
     /**
-     * Returns a non-empty string representation of this WobblyField suitable for
+     * Returns a non-empty string representation of this OptionalField suitable for
      * debugging. The exact presentation format is unspecified and may vary
      * between implementations and versions.
      *
      * @implSpec If a value is present the result must include its string
-     * representation in the result. Empty and present WobblyFields must be
+     * representation in the result. Empty and present OptionalFields must be
      * unambiguously differentiable.
      *
      * @return the string representation of this instance
@@ -333,8 +331,8 @@ public class WobblyField<T> implements Serializable {
     @Override
     public String toString() {
         return value != null
-                ? String.format("WobblyField[%s]", value)
-                : "WobblyField.empty";
+                ? String.format("OptionalField[%s]", value)
+                : "OptionalField.empty";
     }
 
     /**
@@ -346,16 +344,16 @@ public class WobblyField<T> implements Serializable {
     }
 
     /**
-     * Converts the given  {@link java.util.Optional Optional} instance to an wobbly field instance.
+     * Converts the given  {@link java.util.Optional Optional} instance to an Optional field instance.
      * @param opt Optional instance
      * @param <T> the Type of the given optional
-     * @return a wobbly field
+     * @return a Optional field
      */
-    public static <T> WobblyField<T> fromOpt(Optional<T> opt) {
-        return opt.map(WobblyField::of).orElse((WobblyField<T>) EMPTY);
+    public static <T> OptionalField<T> of(Optional<T> opt) {
+        return opt.map(OptionalField::of).orElse((OptionalField<T>) EMPTY);
     }
 
-    static class UnwrapDeserializer extends JsonDeserializer<MutableWobblyField> implements
+    static class UnwrapDeserializer extends JsonDeserializer<MutableOptionalField> implements
             ContextualDeserializer {
 
         private Class<?> wrappedType;
@@ -369,17 +367,17 @@ public class WobblyField<T> implements Serializable {
         }
 
         @Override
-        public MutableWobblyField deserialize(JsonParser parser, DeserializationContext ctxt)
+        public MutableOptionalField deserialize(JsonParser parser, DeserializationContext ctxt)
                 throws IOException, JsonProcessingException {
             Object field = parser.getCodec().readValue(parser, wrappedType);
-            return MutableWobblyField.ofNullable(field);
+            return MutableOptionalField.ofNullable(field);
         }
     }
 
-    static class UnwrapSerializer extends JsonSerializer<MutableWobblyField> {
+    static class UnwrapSerializer extends JsonSerializer<MutableOptionalField> {
 
         @Override
-        public void serialize(MutableWobblyField value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(MutableOptionalField value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             if(value.isPresent()) {
                 gen.writeObject(value.get());
             } else {

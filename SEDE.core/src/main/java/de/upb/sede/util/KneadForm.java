@@ -28,6 +28,11 @@ public class KneadForm implements JsonKnibble {
 //    }
 
     @Override
+    public <T> T knead(Class<T> form) {
+        return source.orElseThrow(this::noSourceSet).knead(form);
+    }
+
+    @Override
     public List<Kneadable> knibbleList(String field) {
         return source.orElseThrow(this::noSourceSet).knibbleList(field);
     }
@@ -65,6 +70,9 @@ public class KneadForm implements JsonKnibble {
     public Optional<JsonKnibble> getSource(){
         return source.opt();
     }
+
+
+
 
 //    public static class ToFormConverter<T> extends StdConverter<KneadableJsonObject, T> {
 //

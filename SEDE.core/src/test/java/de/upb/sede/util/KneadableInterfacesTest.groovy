@@ -18,7 +18,7 @@ class KneadableInterfacesTest extends Specification {
         """
         when:
         def mapper = new ObjectMapper()
-        Kneadable kneadable = mapper.readValue(jsonData, KneadableJsonObject)
+        Kneadable kneadable = mapper.readValue(jsonData, KneadableObject)
         KneadableInterfaces.AB ab = kneadable.knead(KneadableInterfaces.AB)
         then:
         ab.getA() == "this is some data"
@@ -43,7 +43,7 @@ class KneadableInterfacesTest extends Specification {
         """
         when:
         def mapper = new ObjectMapper()
-        Kneadable kneadable = mapper.readValue(jsonData, KneadableJsonObject)
+        Kneadable kneadable = mapper.readValue(jsonData, KneadableObject)
         KneadableInterfaces.Container container = kneadable.knead(KneadableInterfaces.Container)
         then:
         container.c[0].getA() == "this is some data"

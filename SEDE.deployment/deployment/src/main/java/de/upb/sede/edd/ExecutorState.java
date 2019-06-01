@@ -2,9 +2,6 @@ package de.upb.sede.edd;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.upb.sede.util.Kneadable;
-import de.upb.sede.util.KneadableJsonObject;
-
-import java.util.HashMap;
 
 public class ExecutorState {
 

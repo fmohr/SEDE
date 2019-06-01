@@ -1,13 +1,8 @@
 package de.upb.sede;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import de.upb.sede.util.JsonKnibble;
 import de.upb.sede.util.KneadForm;
-import de.upb.sede.util.Kneadable;
-import de.upb.sede.util.KneadableJsonObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class KneadableInterfaces {

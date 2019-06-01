@@ -3,9 +3,7 @@ package de.upb.sede.util
 import com.fasterxml.jackson.databind.ObjectMapper
 import spock.lang.Specification
 
-import java.util.stream.Collectors
-
-class KneadableJsonObjectSerializationTest extends Specification {
+class KneadableObjectSerializationTest extends Specification {
 
     def "test kneadjsonobject serialization" () {
         given:
@@ -29,7 +27,7 @@ class KneadableJsonObjectSerializationTest extends Specification {
         }
         """
         when:
-        def kneadable = KneadableJsonObject.fromJson(jsonData)
+        def kneadable = KneadableObject.fromJson(jsonData)
         Container container = kneadable.knead(Container)
 
         then:
@@ -48,7 +46,7 @@ class KneadableJsonObjectSerializationTest extends Specification {
         def mapper = new ObjectMapper()
         jsonData = mapper.writeValueAsString(container)
 //        print(jsonData)
-        kneadable = mapper.readValue(jsonData, KneadableJsonObject)
+        kneadable = mapper.readValue(jsonData, KneadableObject)
 
         container = kneadable.knead(Container)
 
@@ -72,8 +70,8 @@ class KneadableJsonObjectSerializationTest extends Specification {
 
 
     static class Container {
-        KneadableJsonObject first
-        KneadableJsonObject second
+        KneadableObject first
+        KneadableObject second
     }
 
     static class A {
@@ -85,7 +83,7 @@ class KneadableJsonObjectSerializationTest extends Specification {
     }
 
     static class C {
-        List<KneadableJsonObject> c
+        List<KneadableObject> c
     }
 
 }

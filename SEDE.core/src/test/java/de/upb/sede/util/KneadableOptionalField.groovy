@@ -15,7 +15,7 @@ class KneadableOptionalField extends Specification {
         }
         """
         when:
-        Kneadable kneadable = KneadableJsonObject.fromJson(jsonData)
+        Kneadable kneadable = KneadableObject.fromJson(jsonData)
         A a = kneadable.knead(A)
         B b = kneadable.knead(B)
         then:
@@ -41,7 +41,7 @@ class KneadableOptionalField extends Specification {
           }
         """
         when:
-        Kneadable kneadable = KneadableJsonObject.fromJson(jsonData)
+        Kneadable kneadable = KneadableObject.fromJson(jsonData)
         AB ab = kneadable.knead(AB)
         then:
         ab.a instanceof  OptionalField
@@ -64,7 +64,7 @@ class KneadableOptionalField extends Specification {
           }
         """
         when:
-        Kneadable kneadable = KneadableJsonObject.fromJson(jsonData)
+        Kneadable kneadable = KneadableObject.fromJson(jsonData)
         def kneadAB = kneadable.knead(KneadAB)
         then:
         kneadAB.field.isPresent()
@@ -101,6 +101,6 @@ class KneadableOptionalField extends Specification {
 //      {
 //         "field" : { "a" : "test", "b" : 1}
 //      }
-        OptionalField<KneadableJsonObject> field;
+        OptionalField<KneadableObject> field;
     }
 }

@@ -18,12 +18,12 @@ import java.io.IOException;
 import java.util.*;
 import java.util.function.Function;
 
-@JsonDeserialize(using = KneadableJsonObject.Deserializer.class)
-@JsonSerialize(using = KneadableJsonObject.Serializer.class)
-public final class KneadableJsonObject implements Kneadable, JsonKnibble {
+@JsonDeserialize(using = KneadableObject.Deserializer.class)
+@JsonSerialize(using = KneadableObject.Serializer.class)
+public class KneadableObject implements Kneadable, JsonKnibble {
     private static final ObjectMapper _BEAN_MAPPER = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    private static final ObjectMapper _MAPPER = new ObjectMapper()
+    protected static final ObjectMapper _MAPPER = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .registerModule(new SimpleModule(){
                 @Override
@@ -43,16 +43,16 @@ public final class KneadableJsonObject implements Kneadable, JsonKnibble {
                 }
             });
 
-    private final OptionalField<Map> data;
+    private final Map data;
 
-    public KneadableJsonObject(Map data) {
-        this.data = OptionalField.of(data);
+    public KneadableObject(Map data) {
+        this.data = Objects.requireNonNull(data);
     }
 
-    public static KneadableJsonObject fromJson(String jsonString) {
+    public static KneadableObject fromJson(String jsonString) {
         try {
             JSONParser parser = new JSONParser();
-            return new KneadableJsonObject((Map) parser.parse(jsonString));
+            return new KneadableObject((Map) parser.parse(jsonString));
         } catch (Exception ex) {
             throw new NotKneadableException(ex);
         }
@@ -100,7 +100,7 @@ public final class KneadableJsonObject implements Kneadable, JsonKnibble {
         List<Kneadable> kneads = new ArrayList<>();
         try{
             for(JSONObject node : objectNodes) {
-                KneadableJsonObject kneadable = new KneadableJsonObject(node);
+                KneadableObject kneadable = new KneadableObject(node);
                 kneads.add(kneadable);
             }
         } catch(Exception ex) {
@@ -120,7 +120,7 @@ public final class KneadableJsonObject implements Kneadable, JsonKnibble {
         }
         JSONObject jsonObject = (JSONObject) getData().get(field);
         try {
-            return new KneadableJsonObject(jsonObject);
+            return new KneadableObject(jsonObject);
         } catch(Exception ex) {
             throw new NotKneadableException("Cannot form into Kneadable.", ex);
         }
@@ -178,23 +178,19 @@ public final class KneadableJsonObject implements Kneadable, JsonKnibble {
     }
 
     protected Map getData() {
-        if(data.isPresent()) {
-            return data.get();
-        } else {
-            throw new IllegalStateException("No data present.");
-        }
+        return data;
     }
 
-    public static class Deserializer extends StdDeserializer<KneadableJsonObject> {
+    public static class Deserializer extends StdDeserializer<KneadableObject> {
 
         public Deserializer() {
-            super(KneadableJsonObject.class);
+            super(KneadableObject.class);
         }
 
         @Override
-        public KneadableJsonObject deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+        public KneadableObject deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
             HashMap map = p.getCodec().readValue(p, HashMap.class);
-            return new KneadableJsonObject(map);
+            return new KneadableObject(map);
         }
     }
 
@@ -211,19 +207,19 @@ public final class KneadableJsonObject implements Kneadable, JsonKnibble {
         public T deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
             HashMap map = p.getCodec().readValue(p, HashMap.class);
             T t = (T) _BEAN_MAPPER.convertValue(map, handledType());
-            ((JsonKnibble) t).setSource(new KneadableJsonObject(map));
+            ((JsonKnibble) t).setSource(new KneadableObject(map));
             return t;
         }
     }
 
-    public static class Serializer extends StdSerializer<KneadableJsonObject> {
+    public static class Serializer extends StdSerializer<KneadableObject> {
 
         protected Serializer() {
-            super(KneadableJsonObject.class);
+            super(KneadableObject.class);
         }
 
         @Override
-        public void serialize(KneadableJsonObject value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+        public void serialize(KneadableObject value, JsonGenerator gen, SerializerProvider provider) throws IOException {
             gen.writeObject(value.getData());
         }
     }

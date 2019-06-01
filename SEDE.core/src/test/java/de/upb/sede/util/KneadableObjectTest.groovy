@@ -1,12 +1,11 @@
 package de.upb.sede.util
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
+import com.fasterxml.jackson.databind.ObjectMapper
 import spock.lang.Specification
 
 import java.util.stream.Collectors
 
-class KneadableJsonObjectTest extends Specification {
+class KneadableObjectTest extends Specification {
 
     def "test simple knead"(){
         given:
@@ -17,7 +16,7 @@ class KneadableJsonObjectTest extends Specification {
         }
         """
         when:
-        Kneadable object = KneadableJsonObject.fromJson(jsonData)
+        Kneadable object = KneadableObject.fromJson(jsonData)
         ABean aBean = object.knead(ABean)
         AClone aClone = object.knead(AClone)
         AView aView = object.knead(AView)
@@ -53,7 +52,7 @@ class KneadableJsonObjectTest extends Specification {
         }
         """
         when:
-        Kneadable object = KneadableJsonObject.fromJson(jsonData)
+        Kneadable object = KneadableObject.fromJson(jsonData)
         ABean bean = object.knead(ABean)
 
         then:
@@ -84,7 +83,7 @@ class KneadableJsonObjectTest extends Specification {
         }
         """
         when:
-        def kneadable = KneadableJsonObject.fromJson(jsonData)
+        def kneadable = KneadableObject.fromJson(jsonData)
         AContainer container = kneadable.knead(AContainer)
 
         then:
@@ -105,33 +104,32 @@ class KneadableJsonObjectTest extends Specification {
         kneadable.knibbleObject("view").knibbleNumber("a") == 10
         kneadable.knibbleObject("clone").knibbleNumber("a") == 100
 
-        // TODO Implement kneadform transformation
-//        when:
-//        def bean = container.bean.knead(ABean)
-//        def view = container.bean.knead(AView)
-//        def clone = container.bean.knead(AClone)
-//        then:
-//        bean.a == 1
-//        view.a == 1
-//        clone.a == 1
+        when:
+        def bean = container.bean.knead(ABean)
+        def view = container.bean.knead(AView)
+        def clone = container.bean.knead(AClone)
+        then:
+        bean.a == 2
+        view.a == 2
+        clone.a == 2
 
-//        when:
-//        bean = container.view.knead(ABean)
-//        view = container.view.knead(AView)
-//        clone = container.view.knead(AClone)
-//        then:
-//        bea.a == 10
-//        view.a == 10
-//        clone.a == 10
-//
+        when:
+        bean = container.view.knead(ABean)
+        view = container.view.knead(AView)
+        clone = container.view.knead(AClone)
+        then:
+        bean.a == 10
+        view.a == 10
+        clone.a == 10
+
 //        when:
 //        bean.a = container.clone.knead(ABean)
 //        view.a = container.clone.knead(AView)
 //        clone.a = container.clone.knead(AClone)
 //        then:
-//        bea.a == 100
-//        view.a == 100
-//        clone.a == 100
+//        bean.a == 200
+//        view.a == 200
+//        clone.a == 200
     }
 
     def "test array knead"(){
@@ -149,7 +147,7 @@ class KneadableJsonObjectTest extends Specification {
         """
 
         when:
-        Kneadable object = KneadableJsonObject.fromJson(jsonData)
+        Kneadable object = KneadableObject.fromJson(jsonData)
         List<ABean> aList = object.knibbleList("list")
                 .stream().map {
             ABean bean = it.knead(ABean)
@@ -171,7 +169,7 @@ class KneadableJsonObjectTest extends Specification {
 
     def "test default fields"() {
         when:
-        Kneadable kneadable = KneadableJsonObject.fromJson(jsonData)
+        Kneadable kneadable = KneadableObject.fromJson(jsonData)
         def object = kneadable.knead(DefaultFields)
 
         then:
@@ -211,6 +209,60 @@ class KneadableJsonObjectTest extends Specification {
             """
         ]
 
+    }
+
+    def "test jackson serialization" () {
+        when:
+        def kneadable = new ObjectMapper().readValue(jsonData, KneadableObject)
+        then:
+        kneadable.data["a"] == fieldValue
+        fieldClass.isInstance kneadable.data["a"]
+        where:
+        _ | fieldValue  | fieldClass
+        _ | "string"    | String
+        _ | 123         | Number
+        _ | true        | Boolean
+        _ | [1,"abc",true] | List
+        _ | [b: "c"]    | Map
+        _ | [[1,2], 3]       | List
+        _ | [b: [c: "d"]]  | Map
+        jsonData << [
+            """
+                {
+                    "a" : "string"
+                }
+            """,
+            """
+                {
+                    "a" : 123
+                }
+            """,
+            """
+                {
+                    "a" : true
+                }
+            """,
+            """
+                {
+                    "a" : [1, "abc", true]
+                }
+            """,
+            """
+                {
+                    "a" : { "b" : "c" }
+                }
+            """,
+            """
+                {
+                    "a" : [[1,2], 3]
+                }
+            """,
+            """
+                {
+                    "a" : { "b" : { "c" : "d" } }
+                }
+            """
+        ]
     }
 
     static class AContainer {

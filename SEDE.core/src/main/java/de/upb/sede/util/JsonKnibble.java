@@ -16,6 +16,8 @@ import java.util.function.Function;
 //@JsonSerialize(using = KneadableJsonObject.Serializer.class, converter = JsonKnibble.FromForm.class)
 public interface JsonKnibble {
 
+    <T> T knead(Class<T> form);
+
     List<Kneadable> knibbleList(String field);
 
     Kneadable knibbleObject(String field);

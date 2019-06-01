@@ -1,0 +1,75 @@
+[
+  {
+    "name": "ServiceCollection1",
+    "serivces": [
+      "A.s1",
+      "A.s2",
+      "A.package1.s2"
+    ]
+  },
+  {
+    "name": "source-validor",
+    "alias": [
+      "VALIDATE"
+    ]
+  },
+  {
+    "name": "weka",
+    "aliases": [
+      "WEKA",
+      "WEKA.CORE"
+    ],
+    "services": [
+      "weka.core.converters.ConverterUtils.DataSource"
+    ],
+    "methods": [
+      {
+        "output" : {
+          "jars" : ["[sources]/deployment/out"]
+        },
+        "sources": [
+          {
+            "directoryAcronym": "sources",
+            "type": "git-repo",
+            "url": "https://some.repo.git"
+          }
+        ],
+        "builds": [
+          {
+            "type": "gradle-build",
+            "tasks": [
+              "jarjar"
+            ],
+            "working-dir": "{sources}/"
+          }
+        ],
+        "deployments": [
+        ]
+      }
+    ]
+  },
+  {
+    "name": "weka.classifiers",
+    "aliases": [
+      ""
+    ],
+    "services": [
+      "weka.classifiers.trees.J48"
+    ],
+    "methods": [
+      {
+        "dependencies" : ["weka"]
+      }
+    ]
+  },
+  {
+    "name": "weka.filters",
+    "aliases": [
+      "weka.preprocessor"
+    ],
+    "services": [],
+    "depends": [
+      "weka"
+    ]
+  }
+]

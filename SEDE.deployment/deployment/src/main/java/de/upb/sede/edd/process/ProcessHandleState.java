@@ -1,6 +1,6 @@
-package de.upb.sede.edd;
+package de.upb.sede.edd.process;
 
-enum ExecHandleState {
+enum ProcessHandleState {
     INIT(false),
     STARTING(false),
     STARTED(false),
@@ -11,7 +11,7 @@ enum ExecHandleState {
 
     private final boolean terminal;
 
-    ExecHandleState(boolean terminal) {
+    ProcessHandleState(boolean terminal) {
         this.terminal = terminal;
     }
 

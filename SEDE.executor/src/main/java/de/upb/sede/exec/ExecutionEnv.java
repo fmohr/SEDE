@@ -21,7 +21,7 @@ class ExecutionEnv extends ConcurrentHashMap<String, SEDEObject> implements Exec
 	private static final Logger logger = getLogger(ExecutionEnv.class);
 
 	 /**
-	  * This map exists because for accept data procedures can register themselves
+	  * This map exists because to accept data procedures can register themselves
 	  * as a cacher of semantic data and do conversation in place:
 	  */
 	private final DefaultMap<String, Function<SemanticDataField, SEDEObject>> cachers =

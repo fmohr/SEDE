@@ -14,19 +14,21 @@
  * limitations under the License.
  */
 
-package de.upb.sede.edd;
+package de.upb.sede.edd.process;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 public class DefaultProcessHandleBuilder extends AbstractProcessHandleBuilder {
     private final List<Object> arguments = new ArrayList<Object>();
 
-    public DefaultProcessHandleBuilder() {
+    public DefaultProcessHandleBuilder(Executor executor) {
+        super(executor);
     }
 
     @Override

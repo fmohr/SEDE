@@ -4,6 +4,9 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Streams {
 
@@ -114,7 +117,7 @@ public class Streams {
 		return new EmptyIn();
 	}
 
-	private static class EmptyIn extends InputStream {
+    private static class EmptyIn extends InputStream {
 
 		@Override
 		public int read() throws IOException {
@@ -146,4 +149,173 @@ public class Streams {
 		}
 
 	}
+
+
+
+    public static OutputStream safeSystemErr() {
+        return new FilterOutputStream(System.err) {
+            @Override
+            public void close() throws IOException {
+                // Ignore
+            }
+        };
+    }
+
+    public static OutputStream safeSystemOut() {
+        return new FilterOutputStream(System.out) {
+            @Override
+            public void close() throws IOException {
+                // Ignore
+            }
+        };
+    }
+
+    /**
+     * An {@code InputStream} which reads from the source {@code InputStream}. In addition, when the {@code InputStream} is
+     * closed, all threads blocked reading from the stream will receive an end-of-stream.
+     */
+    public static class GraciousCloseInputStream extends InputStream {
+        private final Lock lock = new ReentrantLock();
+        private final Condition condition = lock.newCondition();
+        private final byte[] buffer;
+        private int readPos;
+        private int writePos;
+        private boolean closed;
+        private boolean inputFinished;
+
+
+        public GraciousCloseInputStream(InputStream source) {
+            this(source, 1024);
+        }
+
+        public GraciousCloseInputStream(final InputStream source, int bufferLength) {
+            buffer = new byte[bufferLength];
+            Runnable consume = new Runnable() {
+                public void run() {
+                    try {
+                        while (true) {
+                            int pos;
+                            lock.lock();
+                            try {
+                                while (!closed && writePos == buffer.length && writePos != readPos) {
+                                    // buffer is full, wait until it has been read
+                                    condition.await();
+                                }
+                                assert writePos >= readPos;
+                                if (closed) {
+                                    // stream has been closed, don't bother reading anything else
+                                    inputFinished = true;
+                                    condition.signalAll();
+                                    return;
+                                }
+                                if (readPos == writePos) {
+                                    // buffer has been fully read, start at the beginning
+                                    readPos = 0;
+                                    writePos = 0;
+                                }
+                                pos = writePos;
+                            } finally {
+                                lock.unlock();
+                            }
+
+                            int nread = source.read(buffer, pos, buffer.length - pos);
+
+                            lock.lock();
+                            try {
+                                if (nread > 0) {
+                                    // Have read some data - let readers know
+                                    assert writePos >= readPos;
+                                    writePos += nread;
+                                    assert buffer.length >= writePos;
+                                    condition.signalAll();
+                                }
+                                if (nread < 0) {
+                                    // End of the stream
+                                    inputFinished = true;
+                                    condition.signalAll();
+                                    return;
+                                }
+                            } finally {
+                                lock.unlock();
+                            }
+                        }
+                    } catch (Throwable throwable) {
+                        lock.lock();
+                        try {
+                            inputFinished = true;
+                            condition.signalAll();
+                        } finally {
+                            lock.unlock();
+                        }
+                        throw Uncheck.throwAsUncheckedException(throwable);
+                    }
+                }
+            };
+            Thread thread = new Thread(consume);
+            thread.setName("DisconnectableInputStream source reader");
+            thread.setDaemon(true);
+            thread.start();
+        }
+
+        @Override
+        public int read(byte[] bytes, int pos, int count) throws IOException {
+            lock.lock();
+            try {
+                while (!inputFinished && !closed && readPos == writePos) {
+                    condition.await();
+                }
+                if (closed) {
+                    return -1;
+                }
+
+                // Drain the buffer before returning end-of-stream
+                if (writePos > readPos) {
+                    int nread = Math.min(count, writePos - readPos);
+                    System.arraycopy(buffer, readPos, bytes, pos, nread);
+                    readPos += nread;
+                    assert writePos >= readPos;
+                    condition.signalAll();
+                    return nread;
+                }
+
+                assert inputFinished;
+                return -1;
+            } catch (InterruptedException e) {
+                throw Uncheck.throwAsUncheckedException(e);
+            } finally {
+                lock.unlock();
+            }
+        }
+
+        @Override
+        public int read() throws IOException {
+            byte[] buffer = new byte[1];
+            while (true) {
+                int nread = read(buffer);
+                if (nread < 0) {
+                    return -1;
+                }
+                if (nread == 1) {
+                    return 0xff & buffer[0];
+                }
+            }
+        }
+
+        /**
+         * Closes this {@code InputStream} for reading. Any threads blocked in read() will receive an end-of-stream. Also requests that the
+         * reader thread stop reading, if possible, but does not block waiting for this to happen.
+         *
+         * <p>NOTE: this method does not close the source input stream.</p>
+         */
+        @Override
+        public void close() throws IOException {
+            lock.lock();
+            try {
+                closed = true;
+                condition.signalAll();
+            } finally {
+                lock.unlock();
+            }
+        }
+    }
 }

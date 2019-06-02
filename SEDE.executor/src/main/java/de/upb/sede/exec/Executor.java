@@ -114,6 +114,7 @@ public class Executor implements IExecutor {
 		}
 		if(execution.hasStarted()) {
 			logger.debug("Removing execution: id={}, unfinished tasks={}", execution.getExecutionId(), execution.getUnfinishedTasksCount());
+			execution.getMessenger().shutdownNow();
 			execPool.removeExecution(execution);
 			workerPool.removeExecution(execution);
 		} else {

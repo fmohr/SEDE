@@ -1,5 +1,6 @@
-package de.upb.sede.edd;
+package de.upb.sede.edd.process;
 
+import de.upb.sede.edd.Jvm;
 import de.upb.sede.util.SystemPropsUtil;
 
 import java.io.File;

@@ -21,9 +21,11 @@ public class AsyncObserver<T>  implements Observer<T>{
 		this.asyncExecutor = asyncExecutor;
 	}
 
+    public ExecutorService getAsyncExecutor() {
+        return asyncExecutor;
+    }
 
-
-	public AsyncObserver(Observer<T> synchronizedObserver) {
+    public AsyncObserver(Observer<T> synchronizedObserver) {
 		this.synchronizedObserver = synchronizedObserver;
 		this.asyncExecutor = ExecutorServices.createSingleDaemonThreaded();
 	}

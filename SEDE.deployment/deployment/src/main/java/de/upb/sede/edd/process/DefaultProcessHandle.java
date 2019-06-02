@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.upb.sede.edd;
+package de.upb.sede.edd.process;
 
 import de.upb.sede.util.Streams;
 import de.upb.sede.util.Uncheck;
@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.Nullable;
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -74,11 +75,10 @@ public class DefaultProcessHandle implements ProcessHandle {
      * The variables to set in the environment the executable is run in.
      */
     private final Map<String, String> environment;
-    private final OutputStream outputHandler;
-    private final InputStream inputHandler;
+    private final StreamWorker streamWorker;
     private final boolean redirectErrorStream;
 
-    private int timeoutMillis;
+    private OptionalField<Integer> timeoutMillis;
     private boolean daemon;
 
     /**
@@ -87,34 +87,35 @@ public class DefaultProcessHandle implements ProcessHandle {
     private final Lock lock;
     private final Condition stateChanged;
 
+    private final Executor executor;
     /**
      * State of this ExecHandle.
      */
-    private ExecHandleState state;
+    private ProcessHandleState state;
 
     /**
      * When not null, the runnable that is waiting
      */
     private ProcessHandleRunner processHandleRunner;
 
-    private ExecResultImpl execResult;
+    private ProcessExecResultImpl execResult;
 
     DefaultProcessHandle(String displayName, File directory, String command, List<String> arguments,
-                         Map<String, String> environment, OutputStream outputHandler, InputStream inputHandler,
-                         boolean redirectErrorStream, int timeoutMillis, boolean daemon) {
+                         Map<String, String> environment, StreamWorker outputHandler, StreamWorker inputHandler,
+                         boolean redirectErrorStream, int timeoutMillis, boolean daemon, Executor executor) {
         this.displayName = displayName;
         this.directory = directory;
         this.command = command;
         this.arguments = arguments;
         this.environment = environment;
-        this.outputHandler = outputHandler;
-        this.inputHandler = inputHandler;
+        this.streamWorker = new StreamWorker.Composite(outputHandler, inputHandler);
         this.redirectErrorStream = redirectErrorStream;
-        this.timeoutMillis = timeoutMillis;
+        this.timeoutMillis = timeoutMillis <= 0 ? OptionalField.empty() : OptionalField.of(timeoutMillis);
         this.daemon = daemon;
+        this.executor = executor;
         this.lock = new ReentrantLock();
         this.stateChanged = lock.newCondition();
-        this.state = ExecHandleState.INIT;
+        this.state = ProcessHandleState.INIT;
     }
 
     public File getDirectory() {
@@ -142,7 +143,7 @@ public class DefaultProcessHandle implements ProcessHandle {
         return Collections.unmodifiableMap(environment);
     }
 
-    public ExecHandleState getState() {
+    public ProcessHandleState getState() {
         lock.lock();
         try {
             return state;
@@ -151,7 +152,7 @@ public class DefaultProcessHandle implements ProcessHandle {
         }
     }
 
-    private void setState(ExecHandleState state) {
+    private void setState(ProcessHandleState state) {
         lock.lock();
         try {
             LOGGER.debug("Changing state to: {}", state);
@@ -162,7 +163,7 @@ public class DefaultProcessHandle implements ProcessHandle {
         }
     }
 
-    private boolean stateIn(ExecHandleState... states) {
+    private boolean stateIn(ProcessHandleState... states) {
         lock.lock();
         try {
             return Arrays.asList(states).contains(this.state);
@@ -171,8 +172,8 @@ public class DefaultProcessHandle implements ProcessHandle {
         }
     }
 
-    private void setEndStateInfo(ExecHandleState newState, int exitValue, String output, Throwable failureCause) {
-        ExecHandleState currentState;
+    private void setEndStateInfo(ProcessHandleState newState, int exitValue, Throwable failureCause) {
+        ProcessHandleState currentState;
         lock.lock();
         try {
             currentState = this.state;
@@ -180,7 +181,7 @@ public class DefaultProcessHandle implements ProcessHandle {
             lock.unlock();
         }
 
-        ExecResultImpl newResult = new ExecResultImpl(exitValue, output, execExceptionFor(failureCause, currentState), displayName);
+        ProcessExecResultImpl newResult = new ProcessExecResultImpl(exitValue, execExceptionFor(failureCause, currentState), displayName);
 
         lock.lock();
         try {
@@ -194,14 +195,14 @@ public class DefaultProcessHandle implements ProcessHandle {
     }
 
     @Nullable
-    private RuntimeException execExceptionFor(Throwable failureCause, ExecHandleState currentState) {
+    private RuntimeException execExceptionFor(Throwable failureCause, ProcessHandleState currentState) {
         return failureCause != null
             ? new RuntimeException(failureMessageFor(currentState), failureCause)
             : null;
     }
 
-    private String failureMessageFor(ExecHandleState currentState) {
-        return currentState == ExecHandleState.STARTING
+    private String failureMessageFor(ProcessHandleState currentState) {
+        return currentState == ProcessHandleState.STARTING
             ? format("A problem occurred starting process '%s'", displayName)
             : format("A problem occurred waiting for process '%s' to complete.", displayName);
     }
@@ -214,14 +215,14 @@ public class DefaultProcessHandle implements ProcessHandle {
         }
         lock.lock();
         try {
-            if (!stateIn(ExecHandleState.INIT)) {
+            if (!stateIn(ProcessHandleState.INIT)) {
                 throw new IllegalStateException(format("Cannot start process '%s' because it has already been started", displayName));
             }
-            setState(ExecHandleState.STARTING);
+            setState(ProcessHandleState.STARTING);
 
             processHandleRunner = new ProcessHandleRunner();
-            new Thread(processHandleRunner).start();
-            while (stateIn(ExecHandleState.STARTING)) {
+            executor.execute(processHandleRunner);
+            while (stateIn(ProcessHandleState.STARTING)) {
                 LOGGER.debug("Waiting until process started: {}.", displayName);
                 try {
                     stateChanged.await();
@@ -245,10 +246,10 @@ public class DefaultProcessHandle implements ProcessHandle {
     public void abort() {
         lock.lock();
         try {
-            if (  stateIn(ExecHandleState.SUCCEEDED, ExecHandleState.FAILED, ExecHandleState.ABORTED)) {
+            if (  stateIn(ProcessHandleState.SUCCEEDED, ProcessHandleState.FAILED, ProcessHandleState.ABORTED)) {
                 return;
             }
-            if (! stateIn(ExecHandleState.STARTED, ExecHandleState.DETACHED)) {
+            if (! stateIn(ProcessHandleState.STARTED, ProcessHandleState.DETACHED)) {
                 throw new IllegalStateException(
                     format("Cannot abort process '%s' because it is not in started or detached state", displayName));
             }
@@ -259,7 +260,7 @@ public class DefaultProcessHandle implements ProcessHandle {
         }
     }
 
-    public ExecResult waitForFinish() {
+    public ProcessResult waitForFinish() {
         lock.lock();
         try {
             while (!state.isTerminal()) {
@@ -282,7 +283,7 @@ public class DefaultProcessHandle implements ProcessHandle {
         return result();
     }
 
-    private ExecResult result() {
+    private ProcessResult result() {
         lock.lock();
         try {
             return execResult.rethrowFailure();
@@ -291,32 +292,32 @@ public class DefaultProcessHandle implements ProcessHandle {
         }
     }
 
-    void detached(String output) {
-        setEndStateInfo(ExecHandleState.DETACHED, 0, output,null);
+    void detached() {
+        setEndStateInfo(ProcessHandleState.DETACHED, 0, null);
     }
 
     void started() {
-        setState(ExecHandleState.STARTED);
+        setState(ProcessHandleState.STARTED);
     }
 
-    void finished(int exitCode, String output) {
+    void finished(int exitCode) {
         if (exitCode != 0) {
-            setEndStateInfo(ExecHandleState.FAILED, exitCode, output,null);
+            setEndStateInfo(ProcessHandleState.FAILED, exitCode, null);
         } else {
-            setEndStateInfo(ExecHandleState.SUCCEEDED, 0, output,null);
+            setEndStateInfo(ProcessHandleState.SUCCEEDED, 0, null);
         }
     }
 
-    void aborted(int exitCode, String output) {
+    void aborted(int exitCode) {
         if (exitCode == 0) {
             // This can happen on Windows
             exitCode = -1;
         }
-        setEndStateInfo(ExecHandleState.ABORTED, exitCode, output,null);
+        setEndStateInfo(ProcessHandleState.ABORTED, exitCode, null);
     }
 
-    void failed(Throwable failureCause, String output) {
-        setEndStateInfo(ExecHandleState.FAILED, -1, output, failureCause);
+    void failed(Throwable failureCause) {
+        setEndStateInfo(ProcessHandleState.FAILED, -1, failureCause);
     }
 
     public String getDisplayName() {
@@ -327,20 +328,18 @@ public class DefaultProcessHandle implements ProcessHandle {
         return redirectErrorStream;
     }
 
-    public int getTimeout() {
-        return timeoutMillis;
+    public Optional<Integer> getTimeout() {
+        return timeoutMillis.opt();
     }
 
-    private static class ExecResultImpl implements ExecResult {
+    private static class ProcessExecResultImpl implements ProcessResult {
 
         private final int exitValue;
-        private final String output;
         private final RuntimeException failure;
         private final String displayName;
 
-        ExecResultImpl(int exitValue, String output, RuntimeException failure, String displayName) {
+        ProcessExecResultImpl(int exitValue, RuntimeException failure, String displayName) {
             this.exitValue = exitValue;
-            this.output = output;
             this.failure = failure;
             this.displayName = displayName;
         }
@@ -349,19 +348,14 @@ public class DefaultProcessHandle implements ProcessHandle {
             return exitValue;
         }
 
-        @Override
-        public String getOutput() {
-            return output;
-        }
-
-        public ExecResult assertNormalExitValue() throws RuntimeException {
+        public ProcessResult assertNormalExitValue() throws RuntimeException {
             if (exitValue != 0) {
                 throw new RuntimeException(format("Process '%s' finished with non-zero exit value %d", displayName, exitValue));
             }
             return this;
         }
 
-        public ExecResult rethrowFailure() throws RuntimeException {
+        public ProcessResult rethrowFailure() throws RuntimeException {
             if (failure != null) {
                 throw failure;
             }
@@ -397,18 +391,7 @@ public class DefaultProcessHandle implements ProcessHandle {
 
         private Process process;
         private boolean aborted;
-        private InputStream inputStream;
-        private OutputStream outputStream;
 
-        private OptionalField<String> input;
-        private OptionalField<String> output = OptionalField.empty();
-
-        public ProcessHandleRunner(String input) {
-            this.input = OptionalField.of(input);
-        }
-        public ProcessHandleRunner() {
-            this.input = OptionalField.empty();
-        }
 
         public void abortProcess() {
             lock.lock();
@@ -418,7 +401,7 @@ public class DefaultProcessHandle implements ProcessHandle {
                 }
                 aborted = true;
                 if (process != null) {
-                    stopStreams();
+                    streamWorker.disconnect();
                     LOGGER.debug("Abort requested. Destroying process: {}.", getDisplayName());
                     process.destroy();
                 }
@@ -433,58 +416,23 @@ public class DefaultProcessHandle implements ProcessHandle {
 
                 started();
 
-                LOGGER.debug("writing input onto the input stream...");
-                writeInput();
 
                 LOGGER.debug("waiting until streams are handled...");
-
+                streamWorker.start();
 
                 if (isDaemon()) {
-                    stopStreams();
+                    streamWorker.stop();
                     detached();
                 } else {
-                    readOutput();
-                    stopStreams();
                     int exitValue = process.waitFor();
+                    streamWorker.stop();
                     completed(exitValue);
                 }
             } catch (Throwable t) {
-                failed(t, output.orElse(""));
+                failed(t);
             }
         }
 
-        private void readOutput() {
-            try {
-                output = OptionalField.of(
-                    Streams.InReadLines(inputStream).stream().collect(Collectors.joining("\n"))
-                );
-            } catch (UncheckedIOException e) {
-                LOGGER.error("error reading output.", e);
-            }
-        }
-
-        private void writeInput() {
-            if(input.isPresent()) {
-                try {
-                    Streams.OutWriteString(outputStream, input.get(), true);
-                } catch (UncheckedIOException e) {
-                    LOGGER.debug("error writing input: {}", input.get(), e);
-                }
-            }
-        }
-
-        private void stopStreams() {
-            try {
-                inputStream.close();
-            } catch (IOException e) {
-                LOGGER.error("Closing input stream: ", e);
-            }
-            try {
-                outputStream.close();
-            } catch (IOException e) {
-                LOGGER.error("Closing output stream: ", e);
-            }
-        }
 
         private void startProcess() {
             lock.lock();
@@ -494,8 +442,7 @@ public class DefaultProcessHandle implements ProcessHandle {
                 }
                 ProcessBuilder processBuilder = createProcessBuilder();
                 this.process = processBuilder.start();
-                inputStream = this.process.getInputStream();
-                outputStream = this.process.getOutputStream();
+                streamWorker.connectStreams(process, getDisplayName(), executor);
             } catch (IOException e) {
                 LOGGER.error("error starting process:", e);
             } finally {
@@ -505,18 +452,14 @@ public class DefaultProcessHandle implements ProcessHandle {
 
         private void completed(int exitValue) {
             if (aborted) {
-                aborted(exitValue, output.orElse(""));
+                aborted(exitValue);
             } else {
-                finished(exitValue, output.orElse(""));
+                finished(exitValue);
             }
         }
 
-        Optional<String> output() {
-            return output.opt();
-        }
-
         private void detached() {
-            DefaultProcessHandle.this.detached(output.orElse(""));
+            DefaultProcessHandle.this.detached();
         }
     }
 

@@ -1,4 +1,4 @@
-package de.upb.sede.edd;
+package de.upb.sede.edd.process;
 
 import java.io.InputStream;
 import java.io.OutputStream;

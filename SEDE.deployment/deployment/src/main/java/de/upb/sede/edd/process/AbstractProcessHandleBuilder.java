@@ -1,6 +1,7 @@
-package de.upb.sede.edd;
+package de.upb.sede.edd.process;
 
-import de.upb.sede.util.SafeStreams;
+import com.sun.tools.doclets.internal.toolkit.util.DocFinder;
+import de.upb.sede.util.Streams;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -9,23 +10,32 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 public abstract class AbstractProcessHandleBuilder extends DefaultProcessForkOptions implements ProcessHandleOptions {
+
+    private static final EmptyStdInStreamsWorker DEFAULT_STDIN = new EmptyStdInStreamsWorker();
+
+
     private OutputStream standardOutput;
     private OutputStream errorOutput;
     private InputStream input;
     private String displayName;
     private boolean ignoreExitValue;
     private boolean redirectErrorStream;
-    private OutputStream streamsHandler;
-    private int timeoutMillis = Integer.MAX_VALUE;
+
+    private StreamWorker outputWorker;
+    private StreamWorker inputWorker = DEFAULT_STDIN;
+
+    private int timeoutMillis = 0;
     protected boolean daemon;
     private Executor executor;
 
-    AbstractProcessHandleBuilder() {
+
+
+    AbstractProcessHandleBuilder(Executor executor) {
         super();
         this.executor = executor;
-        standardOutput = SafeStreams.systemOut();
-        errorOutput = SafeStreams.systemErr();
-        input = SafeStreams.emptyInput();
+        standardOutput = Streams.safeSystemOut();
+        errorOutput = Streams.safeSystemErr();
+        input = Streams.EmptyInStream();
     }
 
     public abstract List<String> getAllArguments();
@@ -39,6 +49,7 @@ public abstract class AbstractProcessHandleBuilder extends DefaultProcessForkOpt
 
     public AbstractProcessHandleBuilder setStandardInput(InputStream inputStream) {
         this.input = inputStream;
+        this.inputWorker = new ProcessStdinStreamWorker(inputStream);
         return this;
     }
 
@@ -94,7 +105,24 @@ public abstract class AbstractProcessHandleBuilder extends DefaultProcessForkOpt
             throw new IllegalStateException("execCommand == null!");
         }
 
-        return new DefaultProcessHandle(getDisplayName(), getWorkingDir(), executable, getAllArguments(), getActualEnvironment(), standardOutput, input,  redirectErrorStream, timeoutMillis, daemon);
+        StreamWorker outputWorker = getEffectiveStreamWorker();
+        return new DefaultProcessHandle(
+            getDisplayName(), getWorkingDir(), executable,
+            getAllArguments(), getActualEnvironment(),
+            outputWorker, inputWorker,  redirectErrorStream,
+            timeoutMillis, daemon, executor);
+    }
+
+
+    private StreamWorker getEffectiveStreamWorker() {
+        StreamWorker effectiveHandler;
+        if (this.outputWorker != null) {
+            effectiveHandler = this.outputWorker;
+        } else {
+            boolean shouldReadErrorStream = !redirectErrorStream;
+            effectiveHandler = new ProcessOutputStreamWorker(standardOutput, errorOutput, shouldReadErrorStream);
+        }
+        return effectiveHandler;
     }
 
     /**

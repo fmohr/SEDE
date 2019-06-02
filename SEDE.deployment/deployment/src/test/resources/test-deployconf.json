@@ -24,9 +24,7 @@
     ],
     "methods": [
       {
-        "output" : {
-          "jars" : ["[sources]/deployment/out"]
-        },
+        "output" :  ["[sources]/deployment/out"],
         "sources": [
           {
             "directoryAcronym": "sources",

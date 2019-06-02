@@ -14,31 +14,29 @@
  * limitations under the License.
  */
 
-package de.upb.sede.edd;
+package de.upb.sede.edd.process;
 
 
 /**
  * Represents the result of running an external process.
  */
-public interface ExecResult {
+public interface ProcessResult {
     /**
      * Returns the exit value of the process.
      */
     int getExitValue();
 
-    String getOutput();
-
     /**
      *
      * @return this
      */
-    ExecResult assertNormalExitValue() throws RuntimeException;
+    ProcessResult assertNormalExitValue() throws RuntimeException;
 
     /**
      * Re-throws any failure executing this process.
      *
      * @return this
      */
-    ExecResult rethrowFailure() throws RuntimeException;
+    ProcessResult rethrowFailure() throws RuntimeException;
 
 }

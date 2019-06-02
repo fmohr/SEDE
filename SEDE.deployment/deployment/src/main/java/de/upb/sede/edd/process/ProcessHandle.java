@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package de.upb.sede.edd;
+package de.upb.sede.edd.process;
 
 import java.io.File;
 import java.util.List;
@@ -37,7 +37,7 @@ public interface ProcessHandle {
      */
     ProcessHandle start();
 
-    ExecHandleState getState();
+    ProcessHandleState getState();
 
     /**
      * Aborts the process, blocking until the process has exited. Does nothing if the process has already completed.
@@ -49,7 +49,7 @@ public interface ProcessHandle {
      *
      * @return result
      */
-    ExecResult waitForFinish();
+    ProcessResult waitForFinish();
 
 //    void addListener(ExecHandleListener listener);
 //

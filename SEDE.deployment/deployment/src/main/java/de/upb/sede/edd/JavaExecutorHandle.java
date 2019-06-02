@@ -3,7 +3,7 @@ package de.upb.sede.edd;
 import de.upb.sede.util.KneadForm;
 import de.upb.sede.util.Kneadable;
 
-public class JavaExecutorHandle implements DeploymentCommandable {
+public class JavaExecutorHandle  {
 
     private final JavaExecutorConfiguration configuration;
     private final ExecutorState state;

@@ -272,15 +272,12 @@ public class Execution implements IExecution {
 	}
 
 	public void interrupt() {
-		class Interruption implements Runnable {
-			@Override
-			public void run() {
+		Runnable interruption = () -> {
 				logger.info("Execution {} has been interrupted.", getExecutionId());
 				interrupted = true;
 				state.update(Execution.this);
-			}
-		}
-		performLater(new Interruption());
+		};
+		performLater(interruption);
 	}
 
 
@@ -289,15 +286,12 @@ public class Execution implements IExecution {
 	}
 
 	public void start() {
-		class Start implements Runnable {
-			@Override
-			public void run() {
+	    Runnable start = () -> {
 				logger.info("Execution {} has been started.", getExecutionId());
 				started = true;
 				state.update(Execution.this);
-			}
-		}
-		performLater(new Start());
+		};
+		performLater(start);
 	}
 
 	public boolean hasStarted() {

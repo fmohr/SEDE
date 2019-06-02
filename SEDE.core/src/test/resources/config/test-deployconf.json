@@ -1,57 +1,78 @@
 {
-
-  "AServiceCollection" : {
-    "serivces" : ["A.s1", "A.s2", "A.package1.s2"]
-
+  "AServiceCollection": {
+    "serivces": [
+      "A.s1",
+      "A.s2",
+      "A.package1.s2"
+    ]
   },
-    "source-validor" : {
-        "alias" : ["VALIDATE"]
-    },
-  "weka" : {
-    "aliases" : ["WEKA", "WEKA.CORE"],
-    "services" : ["weka.core.converters.ConverterUtils.DataSource"],
-    "methods" : [
+  "source-validor": {
+    "alias": [
+      "VALIDATE"
+    ]
+  },
+  "weka": {
+    "aliases": [
+      "WEKA",
+      "WEKA.CORE"
+    ],
+    "services": [
+      "weka.core.converters.ConverterUtils.DataSource"
+    ],
+    "methods": [
       {
-        "method" : "download",
-          "sources" : [
-              {
-                  "directoryAcronym" : "sources",
-                  "type" : "git-repo",
-                  "url" : "https://some.repo.git"
-              },
-              {
-                  "directoryAcronym" : "0"
-              }
-          ],
-          "builds" : [
-              {
-                  "type" : "gradle-build",
-                  "tasks" : ["jarjar"],
-                  "working-dir" : "{sources}/",
-                  "out" :
-              }
-          ],
-          "deployments" : [
-
-          ],
-          "action" : [
-
-          ]
+        "method": "download",
+        "sources": [
+          {
+            "directoryAcronym": "sources",
+            "type": "git-repo",
+            "url": "https://some.repo.git"
+          },
+          {
+            "directoryAcronym": "0"
+          }
+        ],
+        "builds": [
+          {
+            "type": "gradle-build",
+            "tasks": [
+              "jarjar"
+            ],
+            "working-dir": "[sources]/"
+          }
+        ],
+        "deployments": [
+        ],
+        "action": [
+        ]
       }
     ]
-
   },
-
-  "weka.classifiers" : {
-    "aliases" : [""],
-    "services" : ["weka.classifiers.trees.J48"],
-    "depends" : ["weka"]
+  "weka.classifiers": {
+    "aliases": [
+      ""
+    ],
+    "services": [
+      "weka.classifiers.trees.J48"
+    ],
+    "methods": [
+      {
+        "method": "build",
+        "dependencies" : ["weka"],
+        "out" : [
+          "[weka:sources]/out/packaged/weka-core.jar",
+          "[weka:sources]/out/packaged/weka-classifiers.jar"
+        ]
+      }
+    ]
   },
-
-  "weka.filters" : {
-    "aliases" : ["weka.preprocessor"],
-    "services" : [],
-    "depends" : ["weka"]
+  "weka.filters": {
+    "aliases": [
+      "weka.preprocessor"
+    ],
+    "services": [],
+    "depends": [
+      "weka"
+    ]
   }
-
 }

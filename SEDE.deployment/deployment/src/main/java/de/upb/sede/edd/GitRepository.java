@@ -1,6 +1,5 @@
 package de.upb.sede.edd;
 
-import de.upb.sede.edd.deploy.EDDSource;
 import de.upb.sede.util.NullableCache;
 import de.upb.sede.util.Uncheck;
 import de.upb.sede.util.OptionalField;
@@ -15,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.Optional;
 
-public class GitRepository implements EDDSource {
+public class GitRepository {
     private final static Logger logger = LoggerFactory.getLogger(GitRepository.class);
     private String remoteURL;
     private OptionalField<String> remoteBranch;
@@ -91,11 +90,12 @@ public class GitRepository implements EDDSource {
         if(logger.isDebugEnabled())
             logger.debug("Pulling new files into repository {} branch {} into directory {}", getRemoteURL(), getRemoteBranch().orElse("DEFAULT"), getLocalRepoDir());
         try(Git git = Git.wrap(getLocalRepo())) {
+
             PullCommand cmd = git.pull();
             cmd.setRemoteBranchName(
                 remoteBranch
                 .orElseGet(() -> Uncheck.call(git.getRepository()::getFullBranch)));
-            cmd.setRemote(remoteURL);
+//            cmd.setRemote(remoteURL);
             Uncheck.call(cmd);
         }
     }
@@ -136,7 +136,6 @@ public class GitRepository implements EDDSource {
         return localRepoDir;
     }
 
-    @Override
     public boolean retrieve(boolean update) {
         if(logger.isDebugEnabled())
             logger.debug("Retrieve repository {} branch {} into directory {}", getRemoteURL(), getRemoteBranch().orElse("DEFAULT"), getLocalRepoDir());

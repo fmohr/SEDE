@@ -39,6 +39,6 @@ public interface GroupsApi {
     @RequestMapping(value = "/groups",
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<Void> groupsPost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody Group body);
+    ResponseEntity<String> groupsPost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody Group body);
 
 }

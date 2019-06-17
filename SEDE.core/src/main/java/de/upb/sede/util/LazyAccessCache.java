@@ -18,7 +18,6 @@ public class LazyAccessCache<Content> implements Cache<Content>, Serializable {
         if(content.isAbsent()) {
             if(supplier.isPresent()) {
                 content = OptionalField.of(supplier.get().get());
-                supplier = OptionalField.empty();
             } else {
                 throw new IllegalStateException("No cache content and no content supplier present. " +
                         "This state shouldn't be reachable.");
@@ -29,5 +28,9 @@ public class LazyAccessCache<Content> implements Cache<Content>, Serializable {
 
     public void unset() {
         this.content = OptionalField.empty();
+    }
+
+    public boolean isSet() {
+        return content.isPresent();
     }
 }

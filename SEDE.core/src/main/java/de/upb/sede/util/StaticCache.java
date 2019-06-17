@@ -15,4 +15,6 @@ public class StaticCache<Content> implements Cache<Content> {
         return content;
     }
 
+
+
 }

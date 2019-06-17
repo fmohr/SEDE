@@ -58,4 +58,13 @@ public class WebUtil {
 		// if the program gets here, no port in the range was found
 		throw new RuntimeException("no free port found");
 	}
+
+	public static boolean isFreePort(int port) {
+        try {
+            new ServerSocket(port).close(); // close it immediately
+            return true;
+        } catch (IOException ex) {
+            return false;
+        }
+    }
 }

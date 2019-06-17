@@ -25,6 +25,7 @@ public class KneadableObject implements Kneadable, JsonKnibble {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     protected static final ObjectMapper _MAPPER = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .enable(SerializationFeature.INDENT_OUTPUT)
             .registerModule(new SimpleModule(){
                 @Override
                 public void setupModule(SetupContext setupContext) {
@@ -64,6 +65,12 @@ public class KneadableObject implements Kneadable, JsonKnibble {
         }
     }
 
+    private <T> void validate(T kneaded) {
+        if(kneaded instanceof Validatable) {
+            ((Validatable) kneaded).validate();
+        }
+    }
+
 
     @Override
     public <T> T knead(Class<T> form) {
@@ -84,6 +91,7 @@ public class KneadableObject implements Kneadable, JsonKnibble {
             throw new NotKneadableException("Cannot knead into form " + type.toString(), ex);
         }
         setSource(kneaded);
+        validate(kneaded);
         return kneaded;
     }
 
@@ -179,6 +187,15 @@ public class KneadableObject implements Kneadable, JsonKnibble {
 
     protected Map getData() {
         return data;
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return _MAPPER.writeValueAsString(getData());
+        } catch (JsonProcessingException e) {
+            throw Uncheck.throwAsUncheckedException(e);
+        }
     }
 
     public static class Deserializer extends StdDeserializer<KneadableObject> {

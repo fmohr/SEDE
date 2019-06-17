@@ -18,6 +18,7 @@ repositories {
     maven {
         url "https://nexus.cs.upb.de/repository/maven-releases/"
     }
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {

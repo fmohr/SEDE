@@ -44,15 +44,15 @@ class DefaultLockableDirTests extends Specification {
         System.properties[EDDHome.EDD_USER_HOME_PROPERTY_KEY] = testHome.getRoot().absolutePath
         when:
         def eddhome = new EDDHome()
-        def subDir = eddhome.getChild("childDir")
+        def subDir = eddhome.getHomeDir().getChild("childDir")
         then:
-        eddhome.toFile() == FileUtil.canonicalize(testHome.getRoot())
+        eddhome.getHomeDir().toFile() == FileUtil.canonicalize(testHome.getRoot())
         subDir.toFile() == FileUtil.canonicalize(new File(testHome.getRoot(), "childDir"))
-        eddhome.toFile().exists()
+        eddhome.getHomeDir().toFile().exists()
         subDir.toFile().exists()
 
         when:
-        eddhome.getChild("a/b")
+        eddhome.getHomeDir().getChild("a/b")
         then:
 //        childAb.toFile().getParentFile() == testHome.getRoot()
         thrown(IllegalArgumentException)
@@ -63,12 +63,12 @@ class DefaultLockableDirTests extends Specification {
         System.properties[EDDHome.EDD_USER_HOME_PROPERTY_KEY] = testHome.getRoot().absolutePath
         when:
         def eddhome = new EDDHome()
-        eddhome.lockDir(false)
+        eddhome.getHomeDir().lockDir(false)
         then:
         thrown(UnsupportedOperationException)
 
         when: "locking again from the same thread"
-        def subFolder = eddhome.getChild("child1")
+        def subFolder = eddhome.getHomeDir().getChild("child1")
         def lock = subFolder.lockDir(false)
         subFolder.lockDir(true) // lock again
         then:

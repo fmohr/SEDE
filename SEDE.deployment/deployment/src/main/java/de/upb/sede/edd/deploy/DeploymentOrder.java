@@ -15,7 +15,7 @@ public class DeploymentOrder extends LazyAccessCache<List<DeploymentSpecificatio
         super(() ->
         {
             GPDirectedGraph<DeploymentSpecification, DeploymentSpecification> graph;
-            graph = new GPDirectedGraph<DeploymentSpecification, DeploymentSpecification>(registry,
+            graph = new GPDirectedGraph<>(registry,
                 (DeploymentSpecification deployment) -> {
                     List<DeploymentSpecification> dependencies;
                     dependencies = ServiceDeployment.findMethod(deployment).getDependencies()

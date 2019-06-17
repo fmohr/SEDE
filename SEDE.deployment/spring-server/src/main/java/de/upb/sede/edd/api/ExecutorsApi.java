@@ -43,7 +43,7 @@ public interface ExecutorsApi {
     @RequestMapping(value = "/executors/{groupPath}",
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<Void> executorsGroupPathPost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody Executor body,@ApiParam(value = "Group of executors. Group path consists of at least one group name. Sub groups are specified by joining with `-`.",required=true) @PathVariable("groupPath") String groupPath);
+    ResponseEntity<String> executorsGroupPathPost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody Executor body,@ApiParam(value = "Group of executors. Group path consists of at least one group name. Sub groups are specified by joining with `-`.",required=true) @PathVariable("groupPath") String groupPath);
 
 
     @ApiOperation(value = "Alters a running executor. If additional entities need to be resolved the executor will be restarted.", nickname = "executorsGroupPathPut", notes = "", tags={  })
@@ -53,6 +53,6 @@ public interface ExecutorsApi {
     @RequestMapping(value = "/executors/{groupPath}",
         consumes = { "application/json" },
         method = RequestMethod.PUT)
-    ResponseEntity<Void> executorsGroupPathPut(@ApiParam(value = "" ,required=true )  @Valid @RequestBody Executor body,@ApiParam(value = "Group of executors. Group path consists of at least one group name. Sub groups are specified by joining with `-`.",required=true) @PathVariable("groupPath") String groupPath);
+    ResponseEntity<String> executorsGroupPathPut(@ApiParam(value = "" ,required=true )  @Valid @RequestBody Executor body,@ApiParam(value = "Group of executors. Group path consists of at least one group name. Sub groups are specified by joining with `-`.",required=true) @PathVariable("groupPath") String groupPath);
 
 }

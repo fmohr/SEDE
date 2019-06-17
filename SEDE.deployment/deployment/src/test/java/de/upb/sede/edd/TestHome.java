@@ -10,6 +10,10 @@ public class TestHome extends DefaultLockableDir {
         super(SystemPropsUtil.getWorkingDir() + "/testhome");
     }
 
+    public EDDHome toEDDHome() {
+        return new EDDHome(toFile());
+    }
+
     @Override
     public AutoCloseable lockDir(boolean tryLock) throws DirLockAlreadyAcquiredException {
         throw new UnsupportedOperationException();

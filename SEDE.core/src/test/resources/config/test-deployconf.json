@@ -34,7 +34,7 @@
         ],
         "builds": [
           {
-            "type": "gradle-build",
+            "type": "gradle",
             "tasks": [
               "jarjar"
             ],

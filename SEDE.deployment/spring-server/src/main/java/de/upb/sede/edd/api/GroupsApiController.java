@@ -1,5 +1,7 @@
 package de.upb.sede.edd.api;
 
+import de.upb.sede.edd.EDD;
+import de.upb.sede.edd.deploy.group.transaction.CreateGroupTransaction;
 import de.upb.sede.edd.model.Group;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.annotations.*;
@@ -24,6 +26,8 @@ public class GroupsApiController implements GroupsApi {
 
     private final HttpServletRequest request;
 
+    private final EDD edd = EDD.getInstance();
+
     @org.springframework.beans.factory.annotation.Autowired
     public GroupsApiController(ObjectMapper objectMapper, HttpServletRequest request) {
         this.objectMapper = objectMapper;
@@ -40,9 +44,16 @@ public class GroupsApiController implements GroupsApi {
         return new ResponseEntity<Group>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<Void> groupsPost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody Group body) {
+    public ResponseEntity<String> groupsPost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody Group body) {
         String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        String group = body.getPath();
+        if(edd.getGroupRepository().getGroup(group).isPresent()) {
+            return new ResponseEntity<String>("Group already exists: " + group, HttpStatus.BAD_REQUEST);
+        }
+        CreateGroupTransaction createGroupTransaction = new CreateGroupTransaction();
+        createGroupTransaction.setGroupName(group);
+        edd.getGroupRepository().createGroup(createGroupTransaction);
+        return new ResponseEntity<String>("Group created.", HttpStatus.CREATED);
     }
 
 }

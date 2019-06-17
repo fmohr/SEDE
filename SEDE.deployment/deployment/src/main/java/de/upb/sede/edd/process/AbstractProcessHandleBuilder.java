@@ -1,6 +1,5 @@
 package de.upb.sede.edd.process;
 
-import com.sun.tools.doclets.internal.toolkit.util.DocFinder;
 import de.upb.sede.util.Streams;
 
 import java.io.InputStream;

@@ -22,6 +22,7 @@ class AcrPathTest extends Specification {
         "-a-b--"            | "empty"           | "-a-b--"
         "./a.file"          | "empty"           | "./a.file"
         "[0]/a"             | "0"               | "a"
+        "[1]/."             | "1"               | "."
         "[1]/a/b/c.txt"     | "1"               | "a/b/c.txt"
         "[2]/a/b/dir/"      | "2"               | "a/b/dir"
         "[234]/a"           | "234"             | "a"
@@ -71,6 +72,7 @@ class AcrPathTest extends Specification {
         then:
         parsed.acr.orElse("empty") == acr
         parsed.path == path
+        parsed.ref.orElse("emptyRef") == ref
 
         where:
         acrPath             | ref           | acr               | path

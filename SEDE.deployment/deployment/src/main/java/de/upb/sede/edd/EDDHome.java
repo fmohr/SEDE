@@ -34,9 +34,30 @@ public class EDDHome {
         return codeBase;
     }
 
+    public LockableDir getPortDir() {
+        return homeDir.getChild("ports");
+    }
+
+    public LockableDir getGroupsDir() {
+        return homeDir.getChild("groups");
+    }
+
+    public LockableDir getGroupDir(String groupname) {
+        return homeDir.getChild("groups").getChild(groupname);
+    }
+
+    public LockableDir getServiceDir() {
+        return homeDir.getChild("serviceinstances");
+    }
+
     public static File lookupHome() {
         return EDD_HOME.lookupFile();
     }
+
+    public File getRegistry() {
+        return new File(homeDir.toFile(), "deployconf.json");
+    }
+
 
     private static class UnlockableHome extends DefaultLockableDir {
 

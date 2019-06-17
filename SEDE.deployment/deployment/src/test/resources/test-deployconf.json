@@ -22,26 +22,31 @@
     "services": [
       "weka.core.converters.ConverterUtils.DataSource"
     ],
-    "methods": [
+    "method": {
+      "sources": [
+        {
+          "directoryAcronym": "sources",
+          "type": "git-repo",
+          "url": "https://some.repo.git"
+        }
+      ],
+      "builds": [
+        {
+          "type": "gradle-build",
+          "tasks": [
+            "jarjar"
+          ],
+          "working-dir": "{sources}/"
+        }
+      ],
+      "deployments": [
+      ]
+    },
+    "output": [
       {
-        "output" :  ["[sources]/deployment/out"],
-        "sources": [
-          {
-            "directoryAcronym": "sources",
-            "type": "git-repo",
-            "url": "https://some.repo.git"
-          }
-        ],
-        "builds": [
-          {
-            "type": "gradle-build",
-            "tasks": [
-              "jarjar"
-            ],
-            "working-dir": "{sources}/"
-          }
-        ],
-        "deployments": [
+        "type": "classpath",
+        "files": [
+          "[sources]/deployment/out"
         ]
       }
     ]
@@ -54,11 +59,11 @@
     "services": [
       "weka.classifiers.trees.J48"
     ],
-    "methods": [
-      {
-        "dependencies" : ["weka"]
-      }
-    ]
+    "method": {
+      "dependencies": [
+        "weka"
+      ]
+    }
   },
   {
     "name": "weka.filters",
@@ -68,6 +73,18 @@
     "services": [],
     "depends": [
       "weka"
+    ],
+    "output": [
+      {
+        "type": "classpath",
+        "files": [
+          "[SEDE.services:repo]/deploy/java_bin/catalano.image-1.6.jar",
+          "[SEDE.services:repo]/deploy/java_resources"
+        ],
+        "jarDirs": [
+          "[SEDE.services:repo]/deploy/jars"
+        ]
+      }
     ]
   }
 ]

@@ -6,13 +6,24 @@ import java.util.List;
 
 public class ExecutorHandle {
 
-    public final List<String> services;
+    private final List<String> services;
 
-    public final ExecutorState state;
+    private final ExecutorState state;
+
+
 
     @JsonCreator
     public ExecutorHandle(List<String> services, ExecutorState state) {
         this.services = services;
         this.state = state;
     }
+
+    public List<String> getServices() {
+        return services;
+    }
+
+    public ExecutorState getState() {
+        return state;
+    }
+
 }

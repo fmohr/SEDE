@@ -25,6 +25,7 @@
             <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="defaultfile"/>
         </Root>
+        <Logger name="org.eclipse.jgit" level="INFO"/>
     </Loggers>
 
 </Configuration>

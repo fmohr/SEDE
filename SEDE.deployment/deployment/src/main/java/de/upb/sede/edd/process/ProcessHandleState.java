@@ -1,6 +1,6 @@
 package de.upb.sede.edd.process;
 
-enum ProcessHandleState {
+public enum ProcessHandleState {
     INIT(false),
     STARTING(false),
     STARTED(false),

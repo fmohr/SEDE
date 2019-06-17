@@ -63,12 +63,43 @@ class KneadableFieldTest extends Specification {
         map == [a: 3, b : "changed"]
     }
 
+    def "test completer" () {
+        given:
+        def jsonData = """
+        {
+            "a" : 1
+        }
+        """
+        when:
+        KneadableField field = new ObjectMapper().readValue(jsonData, KneadableField)
+        def ab = field.knead(AB)
+        then:
+        ab.a == 1
+        ab.b == "default"
+
+        when:
+        def map = new ObjectMapper().convertValue(field, Map)
+        then:
+        map == [a: 1, b: "default"]
+
+        when:
+        ab.b = "new val"
+        map = new ObjectMapper().convertValue(field, Map)
+        then:
+        map == [a: 1, b: "new val"]
+    }
+
     static class A {
         int a
     }
 
     static class B {
         String b
+    }
+
+    static class AB{
+        String b = "default"
+        int a
     }
 
     static class AView extends KneadForm  {

@@ -8,9 +8,8 @@ import de.upb.sede.edd.deploy.model.DeploymentSpecificationRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -21,8 +20,6 @@ public class DeploymentWorkflow {
 
     private List<ServiceDeployment> steps;
 
-    private DeploymentWorkflowSettings settings = new DeploymentWorkflowSettings();
-
     private DeploymentContext context;
 
     public DeploymentWorkflow(DeploymentContext context, List<ServiceDeployment> steps) {
@@ -31,11 +28,16 @@ public class DeploymentWorkflow {
     }
 
     public static DeploymentWorkflow createWorkflow(DeploymentSpecificationRegistry registry, List<String> serviceCollections) {
-        List<DeploymentSpecification> toBeDeployed = new ArrayList<>(registry.collect(serviceCollections,false));
-        toBeDeployed.sort(Ordering.explicit(registry.order().access())); // sort by dependencies
         DeploymentContext context = new DeploymentContext();
+        return createWorkflow(context, registry, serviceCollections);
+    }
+
+    public static DeploymentWorkflow createWorkflow(DeploymentContext context, DeploymentSpecificationRegistry registry, Collection<String> serviceCollections) {
+        Collection<DeploymentSpecification> toBeDeployed = registry.collect(serviceCollections,true, false);
+        ArrayList<DeploymentSpecification> allDeployments = new ArrayList<>(registry.includeDependencies(toBeDeployed));
+        allDeployments.sort(registry.order()); // sort by dependencies
         return new DeploymentWorkflow(context,
-            toBeDeployed.stream()
+            allDeployments.stream()
             .map(spec -> new ServiceDeployment(context, spec))
             .collect(Collectors.toList()));
     }
@@ -45,7 +47,7 @@ public class DeploymentWorkflow {
     }
 
     public void deploy(LockableDir serviceDirs) {
-        try(AutoCloseable closeable = serviceDirs.lockDir(!settings.waitInQueue())) {
+        try(AutoCloseable closeable = serviceDirs.lockDir(!context.getSettings().waitInQueue())) {
             doDeploy(serviceDirs);
         } catch (DeploymentException ex) {
             throw ex;
@@ -62,10 +64,14 @@ public class DeploymentWorkflow {
         }
     }
 
+    public DeploymentContext getContext() {
+        return context;
+    }
+
     private void doDeploy(LockableDir serviceDirs) {
         for(ServiceDeployment deployment : steps) {
             LockableDir serviceDir = serviceDirs.getChild(deployment.getSpecification().getName());
-            LockableDir methodDir = serviceDir.getChild(deployment.getDeploymentMethod().getMethod());
+            LockableDir methodDir = serviceDir.getChild(deployment.getDeploymentMethod().getMethodType());
             context.register(deployment);
             deployment.deploy(methodDir);
         }

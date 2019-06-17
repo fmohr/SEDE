@@ -56,13 +56,13 @@ public final class Uncheck extends RuntimeException {
         }
     }
 
-    public static <T> List<Object> callEach(final Callable<T>... callables) {
+    public static <T> List<T> callEach(final Callable<T>... callables) {
         if(callables == null || callables.length == 0) {
             return Collections.EMPTY_LIST;
         }
         boolean errorOccured = false;
         RuntimeException firstError = null;
-        List<Object> results = new ArrayList<>();
+        List<T> results = new ArrayList<>();
         for (int i = 0; i < callables.length; i++) {
             T t = null;
             try {

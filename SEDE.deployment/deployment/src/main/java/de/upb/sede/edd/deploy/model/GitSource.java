@@ -1,10 +1,15 @@
 package de.upb.sede.edd.deploy.model;
 
-public class GitSource implements DeploymentSource {
+import de.upb.sede.util.OptionalField;
+import de.upb.sede.util.Validatable;
+
+import java.util.Optional;
+
+public class GitSource implements DeploymentSource, Validatable {
 
     private String url;
 
-    private String branch;
+    private OptionalField<String> branch = OptionalField.empty();
 
     public String getUrl() {
         return url;
@@ -14,12 +19,18 @@ public class GitSource implements DeploymentSource {
         this.url = url;
     }
 
-    public String getBranch() {
-        return branch;
+    public Optional<String> getBranch() {
+        return branch.opt();
     }
 
     public void setBranch(String branch) {
-        this.branch = branch;
+        this.branch = OptionalField.ofNullable(branch);
     }
 
+    @Override
+    public void validate() throws RuntimeException {
+        if(url == null) {
+            throw new IllegalStateException("Git source does not specify the url of the remote repository.");
+        }
+    }
 }

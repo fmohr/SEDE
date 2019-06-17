@@ -18,7 +18,7 @@ public class SimpleHttpExecutorStarter {
 		String pathToConfig = args[0];
 		ExecutorConfiguration configuration = ExecutorConfiguration.parseJSONFromFile(pathToConfig);
 
-		String host = WebUtil.HostIpAddress();
+		String host = WebUtil.HostPublicIpAddress();
 
 		int port = Integer.parseInt(args[1]);
 

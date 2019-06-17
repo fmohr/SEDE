@@ -1,11 +1,20 @@
 package de.upb.sede.edd;
 
+import de.upb.sede.edd.deploy.DeploymentContext;
+import de.upb.sede.edd.deploy.DeploymentException;
 import de.upb.sede.edd.deploy.EDDSource;
+import de.upb.sede.edd.deploy.GradleProjectBuild;
+import de.upb.sede.edd.process.DefaultProcessHandle;
+import de.upb.sede.edd.process.DefaultProcessHandleBuilder;
+import de.upb.sede.edd.process.ProcessResult;
 import de.upb.sede.util.Uncheck;
 
 import java.io.File;
+import java.io.OutputStream;
+import java.util.Arrays;
+import java.util.concurrent.Executor;
 
-public class SEDECodeBase implements EDDSource {
+public class SEDECodeBase {
 
     private final static SystemSettingLookup CODE_BASE_DIR = new SystemSettingLookup(
         "sede",
@@ -13,7 +22,7 @@ public class SEDECodeBase implements EDDSource {
         "SEDE_CODE_BASE_LOCAL_DIR");
 
     private final static SystemSettingLookup REPOSITORY_BRANCH = new SystemSettingLookup(
-        "develop",
+        "dev-edd",
         "edd.sede.repository.branch",
         "SEDE_REPOSITORY_BRANCH");
 
@@ -33,7 +42,6 @@ public class SEDECodeBase implements EDDSource {
         "https://github.com/aminfa/SEDE.proxy.git",
         "edd.sedeProxy.repository.url",
         "SEDEPROXY_REPOSITORY_URL");
-
 
     private final LockableDir localRepoDir;
 
@@ -66,12 +74,28 @@ public class SEDECodeBase implements EDDSource {
         return sedeProxyRepository.getLocalRepoDir();
     }
 
-    @Override
-    public boolean retrieve(boolean update) {
+    public synchronized boolean retrieve( boolean update) {
         return Uncheck.callEach(
             () -> sedeCoreRepository.retrieve(update),
             () -> sedeProxyRepository.retrieve(update))
             .contains(true); //  at least one repository was updated
+    }
+
+    public synchronized void buildSEDE(Executor executor) {
+        DefaultProcessHandleBuilder processBuilder = new DefaultProcessHandleBuilder(executor);
+        processBuilder.setDisplayName("Build SEDE");
+
+        File workingDir = sedeCoreRepository.getLocalRepoDir();
+        processBuilder.setWorkingDir(workingDir);
+
+        String gradleExecPath = GradleProjectBuild.findGradleExecutable(workingDir);
+        processBuilder.setExecutable(gradleExecPath);
+        processBuilder.setArgs(Arrays.asList("jarjar"));
+
+        DefaultProcessHandle handle = processBuilder.build().start();
+        ProcessResult result = handle.waitForFinish();
+        result.rethrowFailure();
+        result.assertNormalExitValue();
     }
 
 }

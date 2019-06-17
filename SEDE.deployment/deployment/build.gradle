@@ -1,9 +1,10 @@
 
-apply plugin: 'antlr'
+//apply plugin: 'antlr'
 
 dependencies {
-    antlr "org.antlr:antlr4:4.5.3"
+//    antlr "org.antlr:antlr4:4.5.3"
     provided project(':SEDE.core')
+    provided project(':SEDE.http')
 
     // https://mvnrepository.com/artifact/com.google.code.findbugs/jsr305
     compile group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'
@@ -23,11 +24,24 @@ dependencies {
     testCompile 'com.github.stefanbirkner:system-rules:1.19.0'
 }
 
-generateGrammarSource << {
-    println "Copying generated grammar lexer/parser files to main directory."
-    copy {
-        from "${buildDir}/generated-src/antlr/main"
-        into "src/main/java"
+//generateGrammarSource << {
+//    println "Copying generated grammar lexer/parser files to main directory."
+//    copy {
+//        from "${buildDir}/generated-src/antlr/main"
+//        into "src/main/java"
+//    }
+//    delete "${buildDir}/generated-src/antlr/main"
+//}
+
+task jarTestBasic(type: Jar) {
+    from sourceSets.main.runtimeClasspath
+    from sourceSets.test.runtimeClasspath
+    destinationDir = file("${projectDir}/testrsc")
+    archiveName = "test.jar"
+//    archiveFile = "${projectDir}/testrsc/test.jar"
+    manifest {
+        attributes 'Implementation-Title': 'TestApp',
+            'Implementation-Version': 1.0,
+            'Main-Class': 'de.upb.sede.edd.deploy.test.TestJavaBasicApp'
     }
-    delete "${buildDir}/generated-src/antlr/main"
 }

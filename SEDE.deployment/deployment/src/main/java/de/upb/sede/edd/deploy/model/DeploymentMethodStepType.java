@@ -1,6 +1,8 @@
 package de.upb.sede.edd.deploy.model;
 
-public class DeploymentMethodStepType {
+import de.upb.sede.util.Validatable;
+
+public class DeploymentMethodStepType implements Validatable {
     private String type;
 
     public String getType() {
@@ -9,5 +11,12 @@ public class DeploymentMethodStepType {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    @Override
+    public void validate() throws RuntimeException {
+        if(type == null || type.isEmpty()) {
+            throw new IllegalStateException("Not type was specified.");
+        }
     }
 }

@@ -1,12 +1,12 @@
 package de.upb.sede.edd.deploy;
 
-import org.aeonbits.owner.Config;
-import org.aeonbits.owner.Mutable;
-
 public class DeploymentWorkflowSettings {
 
     private boolean waitInQueue = true;
+
     private boolean update = false;
+
+    private boolean incurIncludedServices = false;
 
     public boolean waitInQueue() {
         return waitInQueue;
@@ -16,4 +16,27 @@ public class DeploymentWorkflowSettings {
         return update;
     }
 
+    public void setWaitInQueue(boolean waitInQueue) {
+        this.waitInQueue = waitInQueue;
+    }
+
+    public void setUpdate(boolean update) {
+        this.update = update;
+    }
+
+    public boolean isIncurIncludedServices() {
+        return incurIncludedServices;
+    }
+
+    public void setIncurIncludedServices(boolean incurIncludedServices) {
+        this.incurIncludedServices = incurIncludedServices;
+    }
+
+    public boolean isWaitInQueue() {
+        return waitInQueue;
+    }
+
+    public boolean isUpdate() {
+        return update;
+    }
 }

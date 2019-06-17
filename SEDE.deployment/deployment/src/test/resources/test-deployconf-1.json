@@ -1,0 +1,83 @@
+[
+  {
+    "name": "ServiceCollection1",
+    "target": "JavaExecutor",
+    "alias": [
+      "Collection1",
+      "Services1"
+    ],
+    "services": [
+      "SC1.s1",
+      "SC1.s2",
+      "SC1.s3"
+    ],
+    "method": {
+      "methodType": "default",
+      "dependencies": [
+        "ServiceCollection3"
+      ],
+      "sources": [
+        {
+          "directoryAcronym": "sources",
+          "type": "git-repo",
+          "url": "https://some.repo/collection1.git"
+        }
+      ],
+      "builds": [
+        {
+          "type": "gradle",
+          "tasks": [
+            "jar"
+          ],
+          "working-dir": "[sources]/."
+        }
+      ]
+    },
+    "output": [
+      {
+        "type": "classpath",
+        "files": [
+          "[ServiceCollection3:sources]/resources/pre-built.jar"
+        ],
+        "jarDirs": [
+          "[sources]/deploy/java-jars"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "ServiceCollection2",
+    "target": "JavaExecutor",
+    "alias": [
+      "CoolCollection",
+      "RealCoolCollection"
+    ],
+    "services": [
+      "SC2.s1",
+      "SC2.s2",
+      "SC2.s3"
+    ],
+    "method": [
+      {
+      }
+    ]
+  },
+  {
+    "name": "ServiceCollection3",
+    "alias": [
+      "EmptyCollection",
+      "KindaUselessCollection"
+    ],
+    "services": [
+    ],
+    "method": {
+      "sources": [
+        {
+          "directoryAcronym": "sources",
+          "type": "git-repo",
+          "url": "https://some.repo/collection3.git"
+        }
+      ]
+    }
+  }
+]

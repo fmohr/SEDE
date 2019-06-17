@@ -1,0 +1,41 @@
+[
+  {
+    "name": "EDD-TestRepo-GradleProject",
+    "target": "JavaExecutor",
+    "alias": [
+      "GradleTestProject"
+    ],
+    "services": [
+      "EDD.TestRepo.GradleProject.Library"
+    ],
+    "method": {
+      "methodTypes": "default",
+      "sources": [
+        {
+          "directoryAcronym": "repo",
+          "type": "git-repo",
+          "url": "https://github.com/aminfa/EDD-TestRepo-GradleProject.git"
+        }
+      ],
+      "builds": [
+        {
+          "type": "gradle",
+          "tasks": [
+            "clean",
+            "check",
+            "assemble"
+          ],
+          "workingDir": "[repo]/."
+        }
+      ]
+    },
+    "output": [
+      {
+        "type": "classpath",
+        "files": [
+          "[repo]/build/libs/EDD-TestRepo-GradleProject.jar"
+        ]
+      }
+    ]
+  }
+]

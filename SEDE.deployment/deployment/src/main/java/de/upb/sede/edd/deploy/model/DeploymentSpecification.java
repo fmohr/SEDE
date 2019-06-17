@@ -1,7 +1,10 @@
 package de.upb.sede.edd.deploy.model;
 
+import de.upb.sede.util.KneadableField;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 
 public class DeploymentSpecification implements Predicate<String> {
@@ -10,7 +13,9 @@ public class DeploymentSpecification implements Predicate<String> {
 
     private List<String> alias = new ArrayList<>();
     private List<String> services = new ArrayList<>();
-    private List<DeploymentMethod> methods = new ArrayList<>();
+    private DeploymentMethod method = null;
+
+    private List<KneadableField> output = new ArrayList<>();
 
     public boolean validate() {
         return name != null  && target != null;
@@ -40,8 +45,12 @@ public class DeploymentSpecification implements Predicate<String> {
         return target;
     }
 
-    public List<DeploymentMethod> getMethods() {
-        return methods;
+    public DeploymentMethod getMethod() {
+        return method;
+    }
+
+    public Optional<DeploymentMethod> getMethodOptional() {
+        return Optional.ofNullable(method);
     }
 
     public void setName(String name) {
@@ -60,8 +69,17 @@ public class DeploymentSpecification implements Predicate<String> {
         this.target = target;
     }
 
-    public void setMethods(List<DeploymentMethod> methods) {
-        this.methods = methods == null ? new ArrayList<>() : methods;
+    public void setMethod(DeploymentMethod method) {
+        this.method = method;
+    }
+
+
+    public List<KneadableField> getOutput() {
+        return output;
+    }
+
+    public void setOutput(List<KneadableField> output) {
+        this.output = output;
     }
 
     @Override

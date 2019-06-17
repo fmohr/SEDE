@@ -210,8 +210,8 @@ public class DefaultProcessHandle implements ProcessHandle {
     public DefaultProcessHandle start() {
         LOGGER.info("Starting process '{}'. Working directory: {} Command: {}",
                 displayName, directory, command + ' ' + arguments .stream().map(s -> s == null? "null" : s).collect(Collectors.joining(" ")));
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("Environment for process '{}': {}", displayName, environment);
+        if (LOGGER.isTraceEnabled()) {
+            LOGGER.trace("Environment for process '{}': {}", displayName, environment);
         }
         lock.lock();
         try {
@@ -230,10 +230,6 @@ public class DefaultProcessHandle implements ProcessHandle {
                     processHandleRunner.abortProcess();
                     throw Uncheck.throwAsUncheckedException(e);
                 }
-            }
-
-            if (execResult != null) {
-                execResult.rethrowFailure();
             }
 
             LOGGER.info("Successfully started process '{}'", displayName);
@@ -286,7 +282,8 @@ public class DefaultProcessHandle implements ProcessHandle {
     private ProcessResult result() {
         lock.lock();
         try {
-            return execResult.rethrowFailure();
+            return execResult;
+            // return execResult.rethrowFailure();
         } finally {
             lock.unlock();
         }
@@ -357,7 +354,7 @@ public class DefaultProcessHandle implements ProcessHandle {
 
         public ProcessResult rethrowFailure() throws RuntimeException {
             if (failure != null) {
-                throw failure;
+                throw new RuntimeException(displayName + " error of process.", failure);
             }
             return this;
         }

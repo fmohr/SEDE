@@ -6,6 +6,8 @@ import org.eclipse.jgit.lib.AnyObjectId
 import org.eclipse.jgit.lib.Ref
 import spock.lang.Specification
 
+import java.util.concurrent.Executors
+
 class GitRepositoryTest extends Specification {
 
     void setupClass() {

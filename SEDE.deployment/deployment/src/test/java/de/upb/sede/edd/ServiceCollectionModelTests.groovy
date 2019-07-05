@@ -37,7 +37,7 @@ class ServiceCollectionModelTests extends Specification {
         registry.findByService("SC2.s2").get().name == "ServiceCollection2"
 
 //        when:
-//        def set = registry.collect(names, services, quite)
+//        def set = specSrc.collect(names, services, quite)
 //        then:
 //        set.size() == size
 //        where:

@@ -107,6 +107,7 @@ public class FileUtil {
 		//Get file from resources folder
 		ClassLoader classLoader = FileUtil.class.getClassLoader();
 		try (InputStream inputStream = classLoader.getResourceAsStream(resourceFilePath)) {
+		    Objects.requireNonNull(inputStream, "Could not open stream to resource file: " + resourceFilePath);
 			return Streams.InReadString(inputStream);
 		} catch (IOException e) {
 			throw new UncheckedIOException(e);

@@ -40,11 +40,19 @@ public class GatewayServerStarter {
 		GatewayHttpServer httpGateway = new GatewayHttpServer(serverPort, classesConfig, typeConfig);
 		Gateway gateway = httpGateway.getBasis();
 
+		try {
+		    logger.info("Reading deployconf from resources: \"sede.services-deployconf.json\"");
+		    String deployConf = FileUtil.readResourceAsString("sede.services-deployconf.json");
+            gateway.getDeploymentConfig().appendConfigFromJsonStrings(deployConf);
+        } catch(Exception ex) {
+            logger.warn("Couldnt find deployconf in resources..", ex);
+        }
+
 		/*
 		 * Enable plugins:
 		 */
 
-		WhatIsMyAddressHandler.enablePlugin(httpGateway);
+//		WhatIsMyAddressHandler.enablePlugin(httpGateway);
 
 		ImServerCommandListener httpListener = new ImServerCommandListener(httpGateway);
 		TerminalCommandListener terminalListener = new TerminalCommandListener();

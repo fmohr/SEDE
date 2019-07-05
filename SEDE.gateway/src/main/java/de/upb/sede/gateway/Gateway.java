@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.upb.sede.composition.RoundRobinScheduler;
+import de.upb.sede.config.DeploymentConfig;
+import de.upb.sede.spec.DeploymentSpecification;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,10 @@ public class Gateway implements IGateway{
 	 * type configuration.
 	 */
 	private final OnthologicalTypeConfig typeConfig;
+    /**
+     * deployment configuration
+     */
+    private final DeploymentConfig deploymentConfig;
 
 	/**
 	 * Constructor that accepts defined classes and type configuration.
@@ -55,6 +61,7 @@ public class Gateway implements IGateway{
 		this.execCoordinator = new ExecutorCoordinator();
 		this.classesConfig = classesConfig;
 		this.typeConfig = typeConfig;
+		this.deploymentConfig = new DeploymentConfig();
 	}
 
 	/**
@@ -180,5 +187,9 @@ public class Gateway implements IGateway{
 	public final ExecutorCoordinator getExecutorCoord() {
 		return execCoordinator;
 	}
+
+	public final DeploymentConfig getDeploymentConfig() {
+	    return deploymentConfig;
+    }
 
 }

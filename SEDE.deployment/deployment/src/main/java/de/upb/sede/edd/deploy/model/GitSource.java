@@ -5,7 +5,7 @@ import de.upb.sede.util.Validatable;
 
 import java.util.Optional;
 
-public class GitSource implements DeploymentSource, Validatable {
+public class GitSource extends DeploymentSource implements Validatable {
 
     private String url;
 

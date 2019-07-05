@@ -1,7 +1,7 @@
 package de.upb.sede.edd.deploy;
 
 import de.upb.sede.edd.deploy.model.DeploymentMethodStepType;
-import de.upb.sede.util.Kneadable;
+import de.upb.sede.util.DynType;
 import de.upb.sede.util.NotKneadableException;
 
 import java.io.File;
@@ -14,10 +14,10 @@ public class DeploymentStepRegistry {
         return instance;
     }
 
-    private String getStepType(String displayName, Kneadable definition) {
+    private String getStepType(String displayName, DynType definition) {
         String type;
         try {
-            type = definition.knead(DeploymentMethodStepType.class).getType();
+            type = definition.cast(DeploymentMethodStepType.class).getType();
         } catch (NotKneadableException ex) {
             throw new DeploymentException(displayName + " has malformed type field.");
         }
@@ -27,7 +27,7 @@ public class DeploymentStepRegistry {
         return type;
     }
 
-    public EDDSource toSourceStep(String displayName, File sourceFolder, Kneadable definition) {
+    public EDDSource toSourceStep(String displayName, File sourceFolder, DynType definition) {
         String type = getStepType(displayName, definition);
         switch (type) {
             case GitSourceDeployment.TYPE:
@@ -36,7 +36,7 @@ public class DeploymentStepRegistry {
         throw new DeploymentException(displayName + " source type not recognized: " + type);
     }
 
-    public EDDBuild toBuildStep(String displayName, Kneadable definition) {
+    public EDDBuild toBuildStep(String displayName, DynType definition) {
         String type = getStepType(displayName, definition);
         switch (type) {
             case GradleProjectBuild.TYPE:

@@ -1,6 +1,6 @@
 package de.upb.sede.util;
 
-public class NullableCache<Content> implements Cache<Content> {
+public class NullableCache<Content> implements SettableCache<Content> {
 
     private OptionalField<Content> content = OptionalField.empty();
 
@@ -9,8 +9,9 @@ public class NullableCache<Content> implements Cache<Content> {
         return content.orElse(null);
     }
 
-    public void set(Content content) {
+    public boolean set(Content content) {
         this.content = OptionalField.of(content);
+        return true;
     }
 
     public void unset() {

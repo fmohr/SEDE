@@ -2,6 +2,7 @@ package de.upb.sede.edd.api;
 
 import javax.xml.bind.annotation.XmlTransient;
 
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-07-03T11:35:15.474Z[GMT]")
 @javax.xml.bind.annotation.XmlRootElement
 public class ApiResponseMessage {
     public static final int ERROR = 1;

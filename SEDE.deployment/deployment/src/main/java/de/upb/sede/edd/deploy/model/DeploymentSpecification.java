@@ -1,6 +1,6 @@
 package de.upb.sede.edd.deploy.model;
 
-import de.upb.sede.util.KneadableField;
+import de.upb.sede.util.DynTypeField;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ public class DeploymentSpecification implements Predicate<String> {
     private List<String> services = new ArrayList<>();
     private DeploymentMethod method = null;
 
-    private List<KneadableField> output = new ArrayList<>();
+    private List<DynTypeField> output = new ArrayList<>();
 
     public boolean validate() {
         return name != null  && target != null;
@@ -74,11 +74,11 @@ public class DeploymentSpecification implements Predicate<String> {
     }
 
 
-    public List<KneadableField> getOutput() {
+    public List<DynTypeField> getOutput() {
         return output;
     }
 
-    public void setOutput(List<KneadableField> output) {
+    public void setOutput(List<DynTypeField> output) {
         this.output = output;
     }
 

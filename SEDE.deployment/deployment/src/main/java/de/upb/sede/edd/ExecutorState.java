@@ -1,24 +1,24 @@
 package de.upb.sede.edd;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import de.upb.sede.util.Kneadable;
+import de.upb.sede.util.DynType;
 
 public class ExecutorState {
 
-    private final Kneadable configuration;
+    private final DynType configuration;
 
     private ExecutorBaseType base;
 
     private ExecutorLifecycle lifecycle;
 
     @JsonCreator
-    public ExecutorState(Kneadable configuration, ExecutorBaseType base, ExecutorLifecycle lifecycle) {
+    public ExecutorState(DynType configuration, ExecutorBaseType base, ExecutorLifecycle lifecycle) {
         this.configuration = configuration;
         this.base = base;
         this.lifecycle = lifecycle;
     }
 
-    public static ExecutorState initialize(Kneadable configuration, ExecutorBaseType base) {
+    public static ExecutorState initialize(DynType configuration, ExecutorBaseType base) {
         return new ExecutorState(configuration, base, ExecutorLifecycle.INITIALIZED);
     }
 
@@ -27,7 +27,7 @@ public class ExecutorState {
         PYTHON
     }
 
-    public Kneadable getConfiguration() {
+    public DynType getConfiguration() {
         return configuration;
     }
 

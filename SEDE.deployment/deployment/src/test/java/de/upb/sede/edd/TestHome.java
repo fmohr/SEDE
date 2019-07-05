@@ -19,11 +19,16 @@ public class TestHome extends DefaultLockableDir {
         throw new UnsupportedOperationException();
     }
 
-    public static void clear() {
-        System.out.println("Clearing test home..");
-        DirectoryLocks.resetLocks();
-        Uncheck.<Void>call(() -> {
-            FileUtils.deleteDirectory(new TestHome().toFile()); return null;});
-    }
+//    public static void clear() {
+//        System.out.println("Clearing test home..");
+//        DirectoryLocks.resetLocks();
+//        Uncheck.<Void>call(() -> {
+//            FileUtils.deleteDirectory(new TestHome().toFile()); return null;});
+//    }
 
+
+    public static EDD edd() {
+        System.setProperty(EDDHome.EDD_USER_HOME_PROPERTY_KEY, new TestHome().toFile().getPath());
+        return EDD.getInstance();
+    }
 }

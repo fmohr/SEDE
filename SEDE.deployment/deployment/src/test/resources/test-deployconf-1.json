@@ -18,7 +18,7 @@
       ],
       "sources": [
         {
-          "directoryAcronym": "sources",
+          "directoryName": "sources",
           "type": "git-repo",
           "url": "https://some.repo/collection1.git"
         }
@@ -73,7 +73,7 @@
     "method": {
       "sources": [
         {
-          "directoryAcronym": "sources",
+          "directoryName": "sources",
           "type": "git-repo",
           "url": "https://some.repo/collection3.git"
         }

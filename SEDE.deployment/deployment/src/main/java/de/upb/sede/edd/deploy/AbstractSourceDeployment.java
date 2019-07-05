@@ -1,6 +1,6 @@
 package de.upb.sede.edd.deploy;
 
-import de.upb.sede.util.Kneadable;
+import de.upb.sede.util.DynType;
 
 import java.io.File;
 
@@ -8,9 +8,9 @@ public abstract class AbstractSourceDeployment implements EDDSource {
 
     private String displayName;
     private File sourceHome;
-    private Kneadable sourceDefinition;
+    private DynType sourceDefinition;
 
-    public AbstractSourceDeployment(String displayName, File sourceHome, Kneadable sourceDefinition) {
+    public AbstractSourceDeployment(String displayName, File sourceHome, DynType sourceDefinition) {
         this.displayName  = displayName;
         this.sourceHome = sourceHome;
         this.sourceDefinition = sourceDefinition;
@@ -20,7 +20,7 @@ public abstract class AbstractSourceDeployment implements EDDSource {
         return sourceHome;
     }
 
-    public Kneadable getSourceDefinition() {
+    public DynType getSourceDefinition() {
         return sourceDefinition;
     }
 

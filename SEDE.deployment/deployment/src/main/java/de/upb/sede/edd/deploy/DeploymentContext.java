@@ -1,11 +1,8 @@
 package de.upb.sede.edd.deploy;
 
 
-import de.upb.sede.edd.deploy.group.transaction.GroupComponents;
-import de.upb.sede.util.Cache;
-import de.upb.sede.util.ExtendedByteArrayOutputStream;
-import de.upb.sede.util.LazyAccessCache;
-import de.upb.sede.util.Streams;
+import de.upb.sede.edd.deploy.target.GroupComponents;
+import de.upb.sede.util.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
@@ -21,9 +18,11 @@ public class DeploymentContext {
 
     private Cache<ExecutorService> executor = new LazyAccessCache<>(Executors::newCachedThreadPool);
 
-    private OutputStream outputStream = Streams.safeSystemOut();
 
-    private OutputStream errOut = Streams.safeSystemErr();
+    public DeploymentContext(DeploymentWorkflowSettings settings, ExecutorService executorService) {
+        this.executor = new StaticCache<>(executorService);
+        this.settings = settings;
+    }
 
     public DeploymentContext(DeploymentWorkflowSettings settings) {
         this.settings = settings;
@@ -55,14 +54,6 @@ public class DeploymentContext {
 
     public ExecutorService getExecutor() {
         return executor.access();
-    }
-
-    public OutputStream getOutputStream() {
-        return outputStream;
-    }
-
-    public OutputStream getErrOut() {
-        return errOut;
     }
 
     public void collectOutputs(GroupComponents gc) {

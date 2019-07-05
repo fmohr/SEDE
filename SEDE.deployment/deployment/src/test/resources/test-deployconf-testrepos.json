@@ -9,10 +9,10 @@
       "EDD.TestRepo.GradleProject.Library"
     ],
     "method": {
-      "methodTypes": "default",
+      "methodType": "default",
       "sources": [
         {
-          "directoryAcronym": "repo",
+          "directoryName": "repo",
           "type": "git-repo",
           "url": "https://github.com/aminfa/EDD-TestRepo-GradleProject.git"
         }

@@ -2,7 +2,6 @@ package de.upb.sede.edd.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import org.springframework.validation.annotation.Validated;
 
@@ -10,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
  * ExecutorConfiguration
  */
 @Validated
+@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-07-03T11:35:15.474Z[GMT]")
 public class ExecutorConfiguration   {
   @JsonProperty("base")
   private String base = null;
@@ -57,7 +57,7 @@ public class ExecutorConfiguration   {
 
 
   @Override
-  public boolean equals(java.lang.Object o) {
+  public boolean equals(Object o) {
     if (this == o) {
       return true;
     }
@@ -78,7 +78,7 @@ public class ExecutorConfiguration   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ExecutorConfiguration {\n");
-
+    
     sb.append("    base: ").append(toIndentedString(base)).append("\n");
     sb.append("    workers: ").append(toIndentedString(workers)).append("\n");
     sb.append("}");
@@ -89,7 +89,7 @@ public class ExecutorConfiguration   {
    * Convert the given object to string with each line indented by 4 spaces
    * (except the first line).
    */
-  private String toIndentedString(java.lang.Object o) {
+  private String toIndentedString(Object o) {
     if (o == null) {
       return "null";
     }

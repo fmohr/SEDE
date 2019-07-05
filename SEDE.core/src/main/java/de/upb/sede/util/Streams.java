@@ -318,4 +318,38 @@ public class Streams {
             }
         }
     }
+
+    public static OutputStream both(OutputStream os1, OutputStream os2) {
+        return new OutputStream() {
+            @Override
+            public void write(int b) throws IOException {
+                os1.write(b);
+                os2.write(b);
+            }
+
+            @Override
+            public void write(byte[] b) throws IOException {
+                os1.write(b);
+                os2.write(b);
+            }
+
+            @Override
+            public void write(byte[] b, int off, int len) throws IOException {
+                os1.write(b, off, len);
+                os2.write(b, off, len);
+            }
+
+            @Override
+            public void flush() throws IOException {
+                os1.flush();
+                os2.flush();
+            }
+
+            @Override
+            public void close() throws IOException {
+                os1.close();
+                os2.close();
+            }
+        };
+    }
 }

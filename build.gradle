@@ -127,7 +127,8 @@ project(':SEDE.core') {
         compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
         // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
-        compile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.8')
+        compile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9')
+        compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
     }
 
     task jarTransformer(type: Jar, dependsOn: assemble) {

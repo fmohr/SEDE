@@ -46,6 +46,14 @@ public class EDDHome {
         return homeDir.getChild("groups").getChild(groupname);
     }
 
+    public LockableDir getMarketDir(String marketName) {
+        return homeDir.getChild("markets").getChild(marketName);
+    }
+
+    public LockableDir getAppDir(String appName) {
+        return homeDir.getChild("apps").getChild(appName);
+    }
+
     public LockableDir getServiceDir() {
         return homeDir.getChild("serviceinstances");
     }
@@ -56,6 +64,10 @@ public class EDDHome {
 
     public File getRegistry() {
         return new File(homeDir.toFile(), "deployconf.json");
+    }
+
+    public LockableDir getLocalDeplDir() {
+        return homeDir.getChild("localdepl");
     }
 
 

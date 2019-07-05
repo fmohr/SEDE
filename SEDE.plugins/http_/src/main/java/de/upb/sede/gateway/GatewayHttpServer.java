@@ -25,9 +25,12 @@ import de.upb.sede.webinterfaces.server.SunHttpHandler;
 public final class GatewayHttpServer implements ImServer {
 
 	private final static Logger logger = LoggerFactory.getLogger(GatewayHttpServer.class);
+
 	private final static int DEFAULT_PORT = 6060;
 
+
 	private final Gateway basis;
+
 	private final HttpServer server;
 
 	public static GatewayHttpServer enablePlugin(Gateway basis, int port) {
@@ -48,7 +51,9 @@ public final class GatewayHttpServer implements ImServer {
 		addHandle("/register", ExecutorRegistrationHandler::new);
 		addHandle("/resolve", ResolveCompositionHandler::new);
 		addHandle("/add-conf/classes", ClassConfigAdditionHandler::new);
-		addHandle("/add-conf/types", TypeConfigAdditionHandler::new);
+        addHandle("/add-conf/types", TypeConfigAdditionHandler::new);
+        addHandle("/add-conf/deployments", DeplConfigAdditionHandler::new);
+        addHandle("/get-conf/deployments", GetDeplConfigHandler::new);
 		server.setExecutor(Executors.newCachedThreadPool());
 		server.start();
 	}
@@ -152,18 +157,50 @@ public final class GatewayHttpServer implements ImServer {
 			}
 		}
 	}
-	class TypeConfigAdditionHandler extends StringServerResponse {
-		@Override
-		public String receive(String configurationJson) {
+    class TypeConfigAdditionHandler extends StringServerResponse {
+        @Override
+        public String receive(String configurationJson) {
 
-			logger.info("Received request to add type configuration.");
-			logger.trace("Added config:\n" + configurationJson);
-			try{
-				basis.getTypeConfig().appendConfigFromJsonStrings(configurationJson);
-				return "";
-			} catch (Exception ex){
-				return Streams.ErrToString(ex);
-			}
-		}
-	}
+            logger.info("Received request to add type configuration.");
+            logger.trace("Added config:\n" + configurationJson);
+            try{
+                basis.getTypeConfig().appendConfigFromJsonStrings(configurationJson);
+                return "";
+            } catch (Exception ex){
+                return Streams.ErrToString(ex);
+            }
+        }
+    }
+
+    class DeplConfigAdditionHandler extends StringServerResponse {
+
+        @Override
+        public String receive(String configurationJson) {
+
+            logger.info("Received request to add deployment configuration.");
+            logger.trace("Added config:\n {}", configurationJson);
+            try{
+                basis.getDeploymentConfig().appendConfigFromJsonStrings(configurationJson);
+                return "";
+            } catch (Exception ex){
+                return Streams.ErrToString(ex);
+            }
+        }
+
+    }
+
+    class GetDeplConfigHandler extends StringServerResponse {
+
+        @Override
+        public String receive(String configurationJson) {
+
+            logger.info("Received GET request for deployment configuration.");
+            try{
+                return basis.getDeploymentConfig().serialize();
+            } catch (Exception ex){
+                return Streams.ErrToString(ex);
+            }
+        }
+
+    }
 }

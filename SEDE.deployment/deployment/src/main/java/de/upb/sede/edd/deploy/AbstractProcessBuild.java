@@ -3,21 +3,21 @@ package de.upb.sede.edd.deploy;
 import de.upb.sede.edd.process.DefaultProcessHandle;
 import de.upb.sede.edd.process.DefaultProcessHandleBuilder;
 import de.upb.sede.edd.process.ProcessResult;
-import de.upb.sede.util.Kneadable;
+import de.upb.sede.util.DynType;
 
 public abstract class AbstractProcessBuild implements EDDBuild {
 
     private String displayName;
 
-    private Kneadable buildDef;
+    private DynType buildDef;
 
 
-    public AbstractProcessBuild(String displayName, Kneadable buildDef) {
+    public AbstractProcessBuild(String displayName, DynType buildDef) {
         this.displayName  = displayName;
         this.buildDef = buildDef;
     }
 
-    public Kneadable getBuildDef() {
+    public DynType getBuildDef() {
         return buildDef;
     }
 

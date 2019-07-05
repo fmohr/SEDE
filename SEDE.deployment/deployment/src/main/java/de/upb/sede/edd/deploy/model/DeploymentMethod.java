@@ -1,7 +1,6 @@
 package de.upb.sede.edd.deploy.model;
 
-import de.upb.sede.edd.deploy.AcrPath;
-import de.upb.sede.util.KneadableField;
+import de.upb.sede.util.DynTypeField;
 import de.upb.sede.util.Validatable;
 
 import java.util.ArrayList;
@@ -13,13 +12,13 @@ public class DeploymentMethod implements Validatable {
 
     private String methodType = "";
 
-    private List<KneadableField> sources    =   new ArrayList<>();
+    private List<DynTypeField> sources    =   new ArrayList<>();
 
-    private List<KneadableField> builds     =   new ArrayList<>();
+    private List<DynTypeField> builds     =   new ArrayList<>();
 
-    private List<KneadableField> deployments = new ArrayList<>();
+    private List<DynTypeField> deployments = new ArrayList<>();
 
-    private List<KneadableField> actions = new ArrayList<>();
+    private List<DynTypeField> actions = new ArrayList<>();
 
     private List<String> dependencies = new ArrayList<>();
 
@@ -27,19 +26,19 @@ public class DeploymentMethod implements Validatable {
         return methodType == null? "" : methodType;
     }
 
-    public List<KneadableField> getSources() {
+    public List<DynTypeField> getSources() {
         return sources;
     }
 
-    public List<KneadableField> getBuilds() {
+    public List<DynTypeField> getBuilds() {
         return builds;
     }
 
-    public List<KneadableField> getDeployments() {
+    public List<DynTypeField> getDeployments() {
         return deployments;
     }
 
-    public List<KneadableField> getActions() {
+    public List<DynTypeField> getActions() {
         return actions;
     }
 
@@ -52,19 +51,19 @@ public class DeploymentMethod implements Validatable {
         this.methodType = methodtype;
     }
 
-    public void setSources(List<KneadableField> sources) {
+    public void setSources(List<DynTypeField> sources) {
         this.sources = sources;
     }
 
-    public void setBuilds(List<KneadableField> builds) {
+    public void setBuilds(List<DynTypeField> builds) {
         this.builds = builds;
     }
 
-    public void setDeployments(List<KneadableField> deployments) {
+    public void setDeployments(List<DynTypeField> deployments) {
         this.deployments = deployments;
     }
 
-    public void setActions(List<KneadableField> actions) {
+    public void setActions(List<DynTypeField> actions) {
         this.actions = actions;
     }
 
@@ -75,10 +74,10 @@ public class DeploymentMethod implements Validatable {
     @Override
     public void validate() throws RuntimeException {
         Set<String> sourceDirAcrs = new HashSet<>();
-        for(KneadableField source : getSources()) {
-            boolean newDirName = sourceDirAcrs.add(source.knead(DeploymentSourceDirAcr.class).getDirectoryAcronym());
+        for(DynTypeField source : getSources()) {
+            boolean newDirName = sourceDirAcrs.add(source.cast(DeploymentSourceDirName.class).getDirectoryName());
             if(!newDirName) {
-                throw new RuntimeException("Source directory with name " + source.knead(DeploymentSourceDirAcr.class) + " was specified multiple times.");
+                throw new RuntimeException("Source directory with name " + source.cast(DeploymentSourceDirName.class) + " was specified multiple times.");
             }
         }
     }

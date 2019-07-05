@@ -1,47 +1,63 @@
 package de.upb.sede.edd;
 
-import de.upb.sede.edd.deploy.*;
-import de.upb.sede.edd.deploy.group.GroupRepository;
-import de.upb.sede.edd.deploy.model.DeploymentSpecification;
+import de.upb.sede.edd.deploy.deplengine.DeplEngineRegistry;
 import de.upb.sede.edd.deploy.model.DeploymentSpecificationRegistry;
-import de.upb.sede.edd.process.ClassPath;
-import de.upb.sede.edd.process.DefaultProcessHandle;
-import de.upb.sede.edd.process.JavaProcessHandleBuilder;
+import de.upb.sede.edd.deploy.specsrc.SpecSourceRegistry;
 import de.upb.sede.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class EDD {
 
+    private final static Logger logger = LoggerFactory.getLogger(EDD.class);
+
     private static final EDD instance = new EDD();
 
     public static EDD getInstance() {
+        if(!instance.initialized)
+            instance.initialize();
         return instance;
     }
 
     private EDDHome home = new EDDHome();
 
-    private TTLCache<DeploymentSpecificationRegistry> registryTTLCache = new TTLCache<>(20, TimeUnit.SECONDS, () -> {
-       File homeRegistryFile = home.getRegistry();
-       String registryJsonString;
-       if(homeRegistryFile.exists()) {
-           registryJsonString = FileUtil.readFileAsString(homeRegistryFile.getPath());
-       } else {
-           registryJsonString = FileUtil.readResourceAsString("deployment/sede.services-deployconf.json");
-       }
-        return DeploymentSpecificationRegistry
-            .fromString(registryJsonString);
-    });
+    private EDDVersion version = new EDDVersion(home);
 
-    private GroupRepository groupRepository = new GroupRepository(home, registryTTLCache);
+    private SpecSourceRegistry specSrc = new SpecSourceRegistry(home);
 
-    public TTLCache<DeploymentSpecificationRegistry> getRegistryCache() {
-        return registryTTLCache;
+    private DeplEngineRegistry deplEngineRegistry = new DeplEngineRegistry(this);
+
+    private boolean initialized = false;
+
+
+    private synchronized void initialize() {
+        if(initialized) {
+            logger.error("EDD was already initialized. Restart the application for reinitialization.");
+            return;
+        }
+
+        logger.info("EDD initializing...");
+        version.migrateToLatest();
+        this.initialized = true;
     }
 
-    public GroupRepository getGroupRepository() {
-        return groupRepository;
+
+    public EDDHome getHome() {
+        return home;
+    }
+
+    public SpecSourceRegistry getSpecSrc() {
+        return specSrc;
+    }
+
+    public DeplEngineRegistry getDeploymentEngine() {
+        return deplEngineRegistry;
+    }
+
+    public EDDVersion getVersion() {
+        return version;
     }
 }

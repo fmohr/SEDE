@@ -2,7 +2,7 @@ package de.upb.sede.edd.deploy;
 
 import de.upb.sede.edd.GitRepository;
 import de.upb.sede.edd.deploy.model.GitSource;
-import de.upb.sede.util.Kneadable;
+import de.upb.sede.util.DynType;
 
 import java.io.File;
 import java.util.Objects;
@@ -13,9 +13,9 @@ public class GitSourceDeployment extends AbstractSourceDeployment implements EDD
 
     public static final String TYPE = "git-repo";
 
-    public GitSourceDeployment(String displayName, File sourceHome, Kneadable spec) {
+    public GitSourceDeployment(String displayName, File sourceHome, DynType spec) {
         super(displayName, sourceHome, spec);
-        gitSource = Objects.requireNonNull(getSourceDefinition().knead(GitSource.class));
+        gitSource = Objects.requireNonNull(getSourceDefinition().cast(GitSource.class));
     }
 
     @Override

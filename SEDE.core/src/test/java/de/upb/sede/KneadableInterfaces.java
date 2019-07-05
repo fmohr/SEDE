@@ -1,13 +1,13 @@
 package de.upb.sede;
 
-import de.upb.sede.util.JsonKnibble;
-import de.upb.sede.util.KneadForm;
+import de.upb.sede.util.RecordForm;
+import de.upb.sede.util.TypeForm;
 
 import java.util.List;
 
 public class KneadableInterfaces {
 
-    interface A extends JsonKnibble {
+    interface A extends RecordForm {
 
         default void setA(String a) {
             setField("a", a);
@@ -19,7 +19,7 @@ public class KneadableInterfaces {
 
     }
 
-    interface B extends JsonKnibble {
+    interface B extends RecordForm {
 
         default void setB(float b) {
             setField("b", b);
@@ -33,7 +33,7 @@ public class KneadableInterfaces {
 
 //    @JsonDeserialize(using = KneadableJsonObject.Deserializer.class, converter = AB.DC.class)
 //    @JsonSerialize(using = KneadableJsonObject.Serializer.class, converter = AB.SC.class)
-    public static class AB extends KneadForm implements A, B {
+    public static class AB extends TypeForm implements A, B {
         public AB() {
         }
 //        static class DC extends KneadForm.ToFormConverter<AB> {}

@@ -2,7 +2,7 @@ package de.upb.sede.edd.deploy.model;
 
 import de.upb.sede.util.Validatable;
 
-public class DeploymentMethodStepType implements Validatable {
+public class  DeploymentMethodStepType implements Validatable {
     private String type;
 
     public String getType() {

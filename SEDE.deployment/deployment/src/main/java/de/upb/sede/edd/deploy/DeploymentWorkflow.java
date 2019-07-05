@@ -5,6 +5,7 @@ import de.upb.sede.edd.DirLockAlreadyAcquiredException;
 import de.upb.sede.edd.LockableDir;
 import de.upb.sede.edd.deploy.model.DeploymentSpecification;
 import de.upb.sede.edd.deploy.model.DeploymentSpecificationRegistry;
+import de.upb.sede.util.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,12 +35,16 @@ public class DeploymentWorkflow {
 
     public static DeploymentWorkflow createWorkflow(DeploymentContext context, DeploymentSpecificationRegistry registry, Collection<String> serviceCollections) {
         Collection<DeploymentSpecification> toBeDeployed = registry.collect(serviceCollections,true, false);
+        return createWorkflowFromSpecs(context, registry, toBeDeployed);
+    }
+
+    public static DeploymentWorkflow createWorkflowFromSpecs(DeploymentContext context, DeploymentSpecificationRegistry registry, Collection<DeploymentSpecification> toBeDeployed) {
         ArrayList<DeploymentSpecification> allDeployments = new ArrayList<>(registry.includeDependencies(toBeDeployed));
-        allDeployments.sort(registry.order()); // sort by dependencies
+        allDeployments.sort(registry.getDependencyOrder()); // sort by dependencies
         return new DeploymentWorkflow(context,
             allDeployments.stream()
-            .map(spec -> new ServiceDeployment(context, spec))
-            .collect(Collectors.toList()));
+                .map(spec -> new ServiceDeployment(context, spec))
+                .collect(Collectors.toList()));
     }
 
     public List<ServiceDeployment> getSteps() {
@@ -73,7 +78,15 @@ public class DeploymentWorkflow {
             LockableDir serviceDir = serviceDirs.getChild(deployment.getSpecification().getName());
             LockableDir methodDir = serviceDir.getChild(deployment.getDeploymentMethod().getMethodType());
             context.register(deployment);
-            deployment.deploy(methodDir);
+            try {
+                deployment.deploy(methodDir);
+                deployment.setSuccess(true);
+            } catch (DeploymentException ex) {
+                logger.error("Error trying to deploy {}:", deployment.getSpecification().getName(), ex);
+                deployment.setSuccess(false);
+                Streams.OutWriteString(deployment.getErrOut(),
+                        "Error while deploying " + deployment.getSpecification().getName() + ": \n" + Streams.ErrToString(ex), false);
+            }
         }
     }
 

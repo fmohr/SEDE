@@ -3,14 +3,14 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # find the next free port
-export port=6000
+export port=7000
 while lsof -Pi :"$port" -sTCP:LISTEN -t >/dev/null ; do
     echo port "$port" is not open
     port=$((port + 1))
 done
 echo Port: "$port"
 
-java -cp "$DIR"/../SEDE/'*':"$DIR"/../SEDE_logging_lib/'*':"$DIR"  de.upb.sede.gateway.GatewayServerStarter "$port" \
+java -cp "$DIR"/resources/'*':"$DIR"/resources:"$DIR"/../SEDE/'*':"$DIR"/../SEDE_logging_lib/'*':"$DIR"  de.upb.sede.gateway.GatewayServerStarter "$port" \
         config/builtin-classconf.json \
         config/builtin-typeconf.json \
         config/c2imaging-classconf.json \

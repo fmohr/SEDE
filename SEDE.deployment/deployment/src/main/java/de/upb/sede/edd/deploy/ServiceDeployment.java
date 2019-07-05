@@ -2,12 +2,13 @@ package de.upb.sede.edd.deploy;
 
 import de.upb.sede.edd.LockableDir;
 import de.upb.sede.edd.SystemSettingLookup;
-import de.upb.sede.edd.deploy.group.transaction.GroupComponents;
+import de.upb.sede.edd.deploy.deplengine.InstallationState;
 import de.upb.sede.edd.deploy.model.DeploymentMethod;
-import de.upb.sede.edd.deploy.model.DeploymentSourceDirAcr;
+import de.upb.sede.edd.deploy.model.DeploymentSourceDirName;
 import de.upb.sede.edd.deploy.model.DeploymentSpecification;
-import de.upb.sede.edd.deploy.model.output.ClassPathOutput;
-import de.upb.sede.edd.deploy.model.output.OutputCollectionType;
+import de.upb.sede.edd.deploy.model.ClassPathOutput;
+import de.upb.sede.edd.deploy.model.OutputCollectionType;
+import de.upb.sede.edd.deploy.target.GroupComponents;
 import de.upb.sede.edd.deploy.target.JExecutorTarget;
 import de.upb.sede.edd.process.ClassPath;
 import de.upb.sede.util.*;
@@ -19,7 +20,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.*;
 import java.util.concurrent.Executor;
-import java.util.stream.Collectors;
 
 public class ServiceDeployment {
 
@@ -44,6 +44,17 @@ public class ServiceDeployment {
 
     private OptionalField<DeploymentReportHandle> result = OptionalField.empty();
 
+
+    private ExtendedByteArrayOutputStream
+        outBytes = new ExtendedByteArrayOutputStream(),
+    errBytes = new ExtendedByteArrayOutputStream();
+
+    private OutputStream stdOut = Streams.both(Streams.safeSystemOut(), outBytes);
+
+    private OutputStream errOut = Streams.both(Streams.safeSystemErr(), errBytes);
+
+    private boolean success = false;
+
     private Cache<Map<String, File>> sourceAcronyms = new LazyAccessCache<>(this::createSourceAcronyms);
 
 
@@ -56,6 +67,7 @@ public class ServiceDeployment {
     }
 
     public void deploy(LockableDir deployRootDirectory) {
+        ensureSuccessfulDependencies();
         deploymentDir = OptionalField.of(deployRootDirectory.toFile());
         try {
             result = OptionalField.of(DeploymentReportHandle.load(deploymentDir.get()));
@@ -73,26 +85,36 @@ public class ServiceDeployment {
         }
     }
 
+    private void ensureSuccessfulDependencies() {
+        for(String dependencies : getDeploymentMethod().getDependencies()) {
+            if(!context.findByName(dependencies).wasSuccessfull()) {
+                throw new DeploymentException("Dependency has failed: " + dependencies);
+            }
+        }
+    }
+
     public Executor getExecutor() {
         return context.getExecutor();
     }
 
     public OutputStream getOutputStream() {
-        return context.getOutputStream();
+        return stdOut;
     }
 
     public OutputStream getErrOut() {
-        return context.getErrOut();
+        return errOut;
     }
 
     private Map<String, File> createSourceAcronyms() {
         Map<String, File> sourceAcrs = new HashMap<>();
         for (int i = 0; i < deploymentMethod.getSources().size(); i++) {
             String defaultSourceAcr = "" + i;
-            String sourceDirName = deploymentMethod.getSources().get(i).knead(DeploymentSourceDirAcr.class).getDirectoryAcronym();
+            String sourceDirName = deploymentMethod.getSources()
+                .get(i).cast(DeploymentSourceDirName.class)
+                .getDirectoryName();
             File sourceDir = sourceDirectory(sourceDirName);
             sourceAcrs.put(defaultSourceAcr, sourceDir);
-            DeploymentSourceDirAcr dirAcr = deploymentMethod.getSources().get(i).knead(DeploymentSourceDirAcr.class);
+            DeploymentSourceDirName dirAcr = deploymentMethod.getSources().get(i).cast(DeploymentSourceDirName.class);
             if(dirAcr.getAcr().isPresent()) {
                 sourceAcrs.put(dirAcr.getAcr().get(), sourceDir);
             }
@@ -147,7 +169,7 @@ public class ServiceDeployment {
 
     private void build() {
         logger.info("Starting building steps of {}", getDisplayName());
-        for(Kneadable buildDef : deploymentMethod.getBuilds()) {
+        for(DynType buildDef : deploymentMethod.getBuilds()) {
             String displayName = getDisplayName()
                 + " build:\n\t\t"
                 + buildDef.toString().replaceAll("\n", "\n\t\t") + "\n";
@@ -160,7 +182,8 @@ public class ServiceDeployment {
         logger.info("Retrieving sources of {}", getDisplayName());
         boolean sourcesUpdated = false;
         for (int i = 0; i < deploymentMethod.getSources().size(); i++) {
-            String sourceDirName = deploymentMethod.getSources().get(i).knead(DeploymentSourceDirAcr.class).getDirectoryAcronym();
+            String sourceDirName = deploymentMethod.getSources().get(i).cast(DeploymentSourceDirName.class).getDirectoryName();
+            Objects.requireNonNull(sourceDirName);
             File sourceDir = sourceDirectory(sourceDirName);
             String displayName = getDisplayName() + " sources " + i + " into " + sourceDir;
             EDDSource source = DeploymentStepRegistry.getInstance().toSourceStep(displayName, sourceDir, deploymentMethod.getSources().get(i));
@@ -172,7 +195,7 @@ public class ServiceDeployment {
 
     public static DeploymentMethod findMethod(DeploymentSpecification specification) {
         if(!specification.getMethodOptional().isPresent()) {
-            String message = String.format("%s has no deployment methods.", specification.toString());
+            String message = String.format("%s has no deployment methods.", specification.getName());
             throw new DeploymentException(message);
         } else {
 //            String defaultMethod = DEPL_METHOD_LOOKUP.lookup();
@@ -192,10 +215,10 @@ public class ServiceDeployment {
 
     public void collectOutputs(GroupComponents gc) {
         logger.info("{}: collecting deployment outputs.", getDisplayName());
-        List<KneadableField> outputs = specification.getOutput();
+        List<DynTypeField> outputs = specification.getOutput();
         // should do nothing if outputs is empty.
-        for(KneadableField output : outputs) {
-            Optional<String> type = output.knead(OutputCollectionType.class).getType();
+        for(DynTypeField output : outputs) {
+            Optional<String> type = output.cast(OutputCollectionType.class).getType();
             if(type.isPresent()) {
                 collectOutput(gc, output, type.get());
             } else {
@@ -207,9 +230,9 @@ public class ServiceDeployment {
         target.getExecutorConfig().getServices().addAll(specification.getServices());
     }
 
-    private void collectOutput(GroupComponents gc, KneadableField output, String type) {
+    private void collectOutput(GroupComponents gc, DynTypeField output, String type) {
         if(ClassPathOutput.OUTPUT_TYPE.equals(type)) {
-            ClassPathOutput classPathOutput = output.knead(ClassPathOutput.class);
+            ClassPathOutput classPathOutput = output.cast(ClassPathOutput.class);
             JExecutorTarget target = gc.getJavaExecutor(specification.getName());
             ClassPath cp = target.getExecutorProcess().getJavaProcessBuilder().getClasspath();
             for(AcrPath path : classPathOutput.getFiles()) {
@@ -226,5 +249,33 @@ public class ServiceDeployment {
             logger.warn("{}: output type was not recognized: {}", getDisplayName(), type);
         }
 
+    }
+
+    public ExtendedByteArrayOutputStream getOutBytes() {
+        return outBytes;
+    }
+
+    public ExtendedByteArrayOutputStream getErrBytes() {
+        return errBytes;
+    }
+
+    public void setSuccess(boolean b) {
+        this.success = b;
+    }
+
+    public boolean wasSuccessfull() {
+        return success;
+    }
+
+    public InstallationState state() {
+        InstallationState state = new InstallationState();
+        if(this.wasSuccessfull())
+            state.setState(InstallationState.State.Success);
+        else
+            state.setState(InstallationState.State.Error);
+        state.setServiceCollectionName(this.getSpecification().getName());
+
+        state.setIncludedServices(getSpecification().getServices());
+        return state;
     }
 }

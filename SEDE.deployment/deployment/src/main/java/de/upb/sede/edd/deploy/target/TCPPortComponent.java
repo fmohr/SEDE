@@ -6,7 +6,7 @@ import de.upb.sede.edd.LockableDir;
 import de.upb.sede.edd.SystemSettingLookup;
 import de.upb.sede.edd.deploy.DeploymentException;
 import de.upb.sede.util.FileUtil;
-import de.upb.sede.util.KneadableObject;
+import de.upb.sede.util.DynTypeObject;
 import de.upb.sede.util.MutableOptionalField;
 import de.upb.sede.util.WebUtil;
 import org.slf4j.Logger;
@@ -80,7 +80,7 @@ public class TCPPortComponent extends TargetComponent{
         PortMappings mappings;
         try {
             String mappingsString = FileUtil.readFileAsString(portMappingsFile.getPath());
-            mappings = KneadableObject.fromJson(mappingsString).knead(PortMappings.class);
+            mappings = DynTypeObject.fromJson(mappingsString).cast(PortMappings.class);
         } catch(Exception ex) {
             logger.error("{}: error trying to read port mappings: ", getDisplayName(), ex);
             return Optional.empty();
@@ -159,8 +159,8 @@ public class TCPPortComponent extends TargetComponent{
                     return new Port(((Number) portMappingList.get(0)).intValue(), ((Number) portMappingList.get(1)).intValue());
                 } else if(port instanceof Map) {
                     Map<String, Object> portMapping = (Map<String, Object>) port;
-                    KneadableObject object = new KneadableObject(portMapping);
-                    return object.knead(Port.class);
+                    DynTypeObject object = new DynTypeObject(portMapping);
+                    return object.cast(Port.class);
                 } else {
                     throw new RuntimeException("Port mapping not recognized: " + port.toString());
                 }

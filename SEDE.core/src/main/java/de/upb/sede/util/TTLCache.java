@@ -3,7 +3,7 @@ package de.upb.sede.util;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
-public class TTLCache<Content> implements Cache<Content> {
+public class TTLCache<Content> implements SettableCache<Content> {
 
     private final MutableOptionalField<Long> ttl = MutableOptionalField.empty();
 
@@ -124,8 +124,9 @@ public class TTLCache<Content> implements Cache<Content> {
         return cachedContent.get();
     }
 
-    public void set(Content content) {
+    public boolean set(Content content) {
         this.setContent(content);
+        return true;
     }
 
     public void unset() {

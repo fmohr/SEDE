@@ -2,23 +2,50 @@ package de.upb.sede.edd.deploy.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Ordering;
 import de.upb.sede.edd.deploy.DeploymentException;
-import de.upb.sede.edd.deploy.DeploymentOrder;
 import de.upb.sede.edd.deploy.ServiceDeployment;
-import de.upb.sede.util.Uncheck;
+import de.upb.sede.util.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class DeploymentSpecificationRegistry extends ArrayList<DeploymentSpecification> {
+public class DeploymentSpecificationRegistry implements Validatable {
 
     @JsonIgnore
-    private DeploymentOrder deploymentOrder = new DeploymentOrder(this);
+    private Cache<Comparator<DeploymentSpecification>> deploymentOrder =
+        new LazyAccessCache<>(this::doOrder);
+
+    private List<DeploymentSpecification> specs = new ArrayList<>();
+
+    public DeploymentSpecificationRegistry(List<DeploymentSpecification> specs) {
+        this.specs = specs;
+    }
+
+    public DeploymentSpecificationRegistry() {
+    }
+
+
+    public List<DeploymentSpecification> getSpecs() {
+        return Collections.unmodifiableList(specs);
+    }
+
+    public void setSpecs(List<DeploymentSpecification> specs){
+        this.specs = specs;
+    }
+
+    @Override
+    public void validate() throws RuntimeException {
+        if(specs == null) {
+            throw new IllegalStateException("No spec was defined.");
+        }
+    }
+
 
     public Optional<DeploymentSpecification> findByName(String serviceCollectionName) {
-        for(DeploymentSpecification spec : this) {
+        for(DeploymentSpecification spec : specs) {
             if(spec.test(serviceCollectionName)) {
                 return Optional.of(spec);
             }
@@ -26,7 +53,7 @@ public class DeploymentSpecificationRegistry extends ArrayList<DeploymentSpecifi
         return Optional.empty();
     }
     public Optional<DeploymentSpecification> findByService(String serviceName) {
-        for(DeploymentSpecification spec : this) {
+        for(DeploymentSpecification spec : specs) {
             if(spec.getServices().contains(serviceName)) {
                 return Optional.of(spec);
             }
@@ -76,13 +103,42 @@ public class DeploymentSpecificationRegistry extends ArrayList<DeploymentSpecifi
         }
     }
 
-    public Comparator<DeploymentSpecification> order() {
-        return Ordering.explicit(deploymentOrder.access()).reversed();
-    }
-
     public static DeploymentSpecificationRegistry fromString(String jsonString) {
         ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        return Uncheck.call(() -> mapper.readValue(jsonString, DeploymentSpecificationRegistry.class));
+        JavaType type_ = mapper.getTypeFactory().constructCollectionType(ArrayList.class, DeploymentSpecification.class);
+        List<DeploymentSpecification> specs =  Uncheck.call(
+            () -> mapper.readValue(jsonString, type_)
+        );
+        return new DeploymentSpecificationRegistry(specs);
+    }
+
+
+    public Comparator<DeploymentSpecification> getDependencyOrder() {
+        return deploymentOrder.get();
+    }
+
+    private Ordering<DeploymentSpecification> doOrder() {
+        GPDirectedGraph<DeploymentSpecification, DeploymentSpecification> graph;
+        graph = new GPDirectedGraph<DeploymentSpecification, DeploymentSpecification>(this.getSpecs(),
+            (DeploymentSpecification deployment) -> {
+                List<DeploymentSpecification> dependencies;
+                dependencies = ServiceDeployment.findMethod(deployment).getDependencies()
+                    .stream()
+                    .map(dependencyName ->
+                        this.findByName(dependencyName).orElseThrow(() ->
+                            new DeploymentException(
+                                String.format("Cannot find dependency of %s named %s.",
+                                    deployment.getName(),
+                                    dependencyName))))
+                    .collect(Collectors.toList());
+                return dependencies;
+            });
+        if(graph.isDAG()) {
+            return Ordering.explicit(graph.topologicalSort()).reverse();
+        } else {
+            throw new IllegalStateException(
+                String.format("Deployment has a dependency cycle: %s", graph.cycle().toString()));
+        }
     }
 }

@@ -29,7 +29,8 @@ public class DirectoryLocks {
     public static AutoCloseable lockDir(LockableDir dir) {
         DirectoryLock directoryLock = new DirectoryLock(getDirectoryLock(dir), dir);
         if(directoryLock.isHeldByCurrentThread()) {
-            throw new IllegalStateException("The directory lock is being locked twice by the same thread: " + dir);
+//            throw new IllegalStateException("The directory lock is being locked twice by the same thread: " + dir);
+            return directoryLock;
         }
         directoryLock.lock(); // this statement blocks until the lock has been acquired.
         if(directoryLock.vmLock == null || directoryLock.fileLock == null) {
@@ -120,10 +121,14 @@ public class DirectoryLocks {
         @Override
         public void close() throws Exception {
             try {
-                fileLock.close();
-                channel.close();
+                if(fileLock != null) {
+                    fileLock.close();
+                    channel.close();
+                }
             } finally {
-                vmLock.unlock();
+                if(vmLock.isLocked()) {
+                    vmLock.unlock();
+                }
             }
         }
     }

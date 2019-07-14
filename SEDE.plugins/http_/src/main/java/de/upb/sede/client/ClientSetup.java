@@ -10,7 +10,6 @@ import de.upb.sede.exec.ProxySetup;
 import de.upb.sede.gateway.Gateway;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
-import jdk.nashorn.internal.runtime.ParserException;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
@@ -52,7 +51,7 @@ public class ClientSetup {
 					/*
 					 * One element wasn't string:
 					 */
-					throw new ParserException("All elements must be string!");
+					throw new IllegalArgumentException("All elements must be string!");
 				}
 				clientConfigCreator.withSupportedServices(supportedService);
 				clientServicesAdded = true;
@@ -110,7 +109,7 @@ public class ClientSetup {
 					/*
 					 * One element wasn't string:
 					 */
-					throw new ParserException("All elements must be string!");
+					throw new IllegalArgumentException("All elements must be string!");
 				}
 			} catch (ParseException e) {
 				logger.error("Error while parsing {}={}: ", properties.serviceConfigFilesKey, properties.serviceConfigFiles(), e);

@@ -11,11 +11,15 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-07-03T11:35:15.474Z[GMT]")
 public class PrepareRequest   {
-  @JsonProperty("update")
-  private Boolean update = null;
+    @JsonProperty("update")
+    private Boolean update = false;
 
-  public PrepareRequest update(Boolean update) {
+    @JsonProperty("register")
+    private Boolean register = true;
+
+  public PrepareRequest update(Boolean update, Boolean register) {
     this.update = update;
+    this.register = register;
     return this;
   }
 
@@ -33,8 +37,15 @@ public class PrepareRequest   {
     this.update = update;
   }
 
+    public Boolean getRegister() {
+        return register;
+    }
 
-  @Override
+    public void setRegister(Boolean register) {
+        this.register = register;
+    }
+
+    @Override
   public boolean equals(Object o) {
     if (this == o) {
       return true;
@@ -43,20 +54,23 @@ public class PrepareRequest   {
       return false;
     }
     PrepareRequest prepareRequest = (PrepareRequest) o;
-    return Objects.equals(this.update, prepareRequest.update);
+    return Objects.equals(this.update, prepareRequest.update) &&
+            Objects.equals(this.register, prepareRequest.register);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(update);
+    return Objects.hash(update & register);
   }
 
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class PrepareRequest {\n");
-    
-    sb.append("    update: ").append(toIndentedString(update)).append("\n");
+
+      sb.append("    update: ").append(toIndentedString(update)).append("\n");
+
+      sb.append("    register: ").append(toIndentedString(register)).append("\n");
     sb.append("}");
     return sb.toString();
   }

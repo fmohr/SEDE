@@ -5,6 +5,7 @@
  */
 package de.upb.sede.edd.api;
 
+import de.upb.sede.edd.deploy.deplengine.InstallationReport;
 import de.upb.sede.edd.model.Installation;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,6 @@ public interface PreparationsApi {
     @RequestMapping(value = "/preparations",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
-    ResponseEntity<List<Installation>> preparationsGet();
+    ResponseEntity<List<InstallationReport>> preparationsGet();
 
 }

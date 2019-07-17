@@ -1,7 +1,8 @@
 package de.upb.sede.edd.deploy;
 
 import de.upb.sede.edd.LockableDir;
-import de.upb.sede.edd.SystemSettingLookup;
+import de.upb.sede.util.SystemSettingLookup;
+import de.upb.sede.edd.deploy.deplengine.InstallationReport;
 import de.upb.sede.edd.deploy.deplengine.InstallationState;
 import de.upb.sede.edd.deploy.model.DeploymentMethod;
 import de.upb.sede.edd.deploy.model.DeploymentSourceDirName;
@@ -267,12 +268,12 @@ public class ServiceDeployment {
         return success;
     }
 
-    public InstallationState state() {
-        InstallationState state = new InstallationState();
+    public InstallationReport state() {
+        InstallationReport state = new InstallationReport();
         if(this.wasSuccessfull())
-            state.setState(InstallationState.State.Success);
+            state.setState(InstallationState.Success);
         else
-            state.setState(InstallationState.State.Error);
+            state.setState(InstallationState.Error);
         state.setServiceCollectionName(this.getSpecification().getName());
 
         state.setIncludedServices(getSpecification().getServices());

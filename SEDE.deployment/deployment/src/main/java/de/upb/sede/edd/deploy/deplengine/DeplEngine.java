@@ -12,7 +12,7 @@ public abstract class DeplEngine {
 
     public abstract void prepareDeployment(boolean update);
 
-    public abstract List<InstallationState> getCurrentState();
+    public abstract List<InstallationReport> getCurrentState();
 
     public abstract void removeServices(List<AscribedService> services);
 

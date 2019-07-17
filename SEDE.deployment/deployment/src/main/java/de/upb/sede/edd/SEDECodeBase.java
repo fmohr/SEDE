@@ -1,16 +1,13 @@
 package de.upb.sede.edd;
 
-import de.upb.sede.edd.deploy.DeploymentContext;
-import de.upb.sede.edd.deploy.DeploymentException;
-import de.upb.sede.edd.deploy.EDDSource;
 import de.upb.sede.edd.deploy.GradleProjectBuild;
 import de.upb.sede.edd.process.DefaultProcessHandle;
 import de.upb.sede.edd.process.DefaultProcessHandleBuilder;
 import de.upb.sede.edd.process.ProcessResult;
+import de.upb.sede.util.SystemSettingLookup;
 import de.upb.sede.util.Uncheck;
 
 import java.io.File;
-import java.io.OutputStream;
 import java.util.Arrays;
 import java.util.concurrent.Executor;
 

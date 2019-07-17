@@ -64,8 +64,8 @@ public class LocalDeplEngine extends DeplEngine {
     }
 
     @Override
-    public List<InstallationState> getCurrentState() {
-        List<InstallationState> states = new ArrayList<>();
+    public List<InstallationReport> getCurrentState() {
+        List<InstallationReport> states = new ArrayList<>();
         for(InstallationEnv env : envs) {
             states.addAll(env.getCurrentState());
         }

@@ -6,6 +6,8 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.upb.sede.requests.deploy.EDDRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +51,7 @@ public final class GatewayHttpServer implements ImServer {
 			throw new UncheckedIOException(e);
 		}
 		addHandle("/register", ExecutorRegistrationHandler::new);
+		addHandle("/registerEDD", EDDRegistrationHandler::new);
 		addHandle("/resolve", ResolveCompositionHandler::new);
 		addHandle("/add-conf/classes", ClassConfigAdditionHandler::new);
         addHandle("/add-conf/types", TypeConfigAdditionHandler::new);
@@ -118,6 +121,31 @@ public final class GatewayHttpServer implements ImServer {
 		}
 
 	}
+
+	class EDDRegistrationHandler extends StringServerResponse {
+
+        @Override
+        public String receive(String jsonRegistration)  {
+            logger.debug("Received edd registration.");
+            ObjectMapper mapper = new ObjectMapper();
+            EDDRegistration eddRegistration;
+            try {
+                eddRegistration = mapper.readValue(jsonRegistration, EDDRegistration.class);
+
+            } catch (IOException e) {
+                logger.error("EDD registration body cannot be parsed.", e);
+                return Streams.ErrToString(e);
+            }
+            boolean success = basis.registerEDD(eddRegistration);
+            if(success) {
+                return "";
+            }
+            else {
+                return "Registration was unsuccessful";
+            }
+        }
+    }
+
 
 	class ResolveCompositionHandler extends StringServerResponse {
 		@Override
@@ -203,4 +231,5 @@ public final class GatewayHttpServer implements ImServer {
         }
 
     }
+
 }

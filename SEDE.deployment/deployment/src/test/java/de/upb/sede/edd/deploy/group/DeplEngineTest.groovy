@@ -3,7 +3,6 @@ package de.upb.sede.edd.deploy.group
 
 import de.upb.sede.edd.TestHome
 import de.upb.sede.edd.deploy.AscribedService
-import de.upb.sede.edd.deploy.SpecURI
 import de.upb.sede.edd.deploy.deplengine.InstallationState
 import spock.lang.Specification
 
@@ -27,12 +26,12 @@ class DeplEngineTest extends Specification {
         engine.currentState.size() == 1
         engine.currentState[0].serviceCollectionName == "EDD-TestRepo-GradleProject"
         engine.currentState[0].includedServices.size() == 1
-        engine.currentState[0].state == InstallationState.State.Init
+        engine.currentState[0].state == InstallationState.Init
 
         when:
         engine.prepareDeployment(true)
         then:
-        engine.currentState[0].state == InstallationState.State.Success
+        engine.currentState[0].state == InstallationState.Success
         when:
         def weka = AscribedService.fromClasspath("deployment/sede.services-deployconf.json", "Weka.ml")
 
@@ -41,12 +40,12 @@ class DeplEngineTest extends Specification {
         then:
         engine.currentState.size() == 3
         engine.currentState[1].serviceCollectionName == "Weka.ml"
-        engine.currentState[1].state == InstallationState.State.Init
+        engine.currentState[1].state == InstallationState.Init
         when:
         engine.prepareDeployment(true)
         then:
-        engine.currentState[1].state == InstallationState.State.Success
-        engine.currentState[2].state == InstallationState.State.Success
+        engine.currentState[1].state == InstallationState.Success
+        engine.currentState[2].state == InstallationState.Success
     }
 
     def "test http source deployment"() {
@@ -68,12 +67,12 @@ class DeplEngineTest extends Specification {
         engine.currentState.size() == 1
         engine.currentState[0].serviceCollectionName == "Catalano.image"
 //        engine.currentState[0].includedServices.size() == 33
-        engine.currentState[0].state == InstallationState.State.Init
+        engine.currentState[0].state == InstallationState.Init
 
         when:
         engine.prepareDeployment(true)
         then:
-        engine.currentState[0].state == InstallationState.State.Success
+        engine.currentState[0].state == InstallationState.Success
     }
 
 }

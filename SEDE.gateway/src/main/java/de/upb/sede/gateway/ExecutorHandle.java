@@ -1,7 +1,12 @@
 package de.upb.sede.gateway;
 
+import de.upb.sede.requests.ExecutorRegistration;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ExecutorHandle {
 
@@ -14,6 +19,14 @@ public class ExecutorHandle {
 		this.contactInfo = Objects.requireNonNull(contactInfo);
 		this.capabilities = new ExecutorCapabilities(executorCapabilities);
 	}
+
+	public static ExecutorHandle fromRegistration(ExecutorRegistration registration) {
+        ExecutorHandle execHandle = new ExecutorHandle(registration.getId(),
+            registration.getContactInfo(),
+            registration.getCapabilities().toArray(new String[0]));
+        execHandle.getExecutionerCapabilities().addAllServiceClasses(registration.getSupportedServices().toArray(new String[0]));
+        return execHandle;
+    }
 
 	public ExecutorCapabilities getExecutionerCapabilities() {
 		return capabilities;

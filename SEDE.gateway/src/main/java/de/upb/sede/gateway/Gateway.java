@@ -2,11 +2,12 @@ package de.upb.sede.gateway;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-import de.upb.sede.composition.RoundRobinScheduler;
 import de.upb.sede.config.DeploymentConfig;
-import de.upb.sede.spec.DeploymentSpecification;
+import de.upb.sede.gateway.edd.CachedExecutorHandleSupplier;
+import de.upb.sede.requests.deploy.EDDRegistration;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,7 +40,7 @@ public class Gateway implements IGateway{
 	/**
 	 * Has the task to offer coordination over registered executors.
 	 */
-	private final ExecutorCoordinator execCoordinator;
+	private final ExecutorSupplyCoordinator execCoordinator;
 	/**
 	 * classes configuration.
 	 */
@@ -58,7 +59,7 @@ public class Gateway implements IGateway{
 	 */
 	public Gateway(ClassesConfig classesConfig,
 				   OnthologicalTypeConfig typeConfig) {
-		this.execCoordinator = new ExecutorCoordinator();
+		this.execCoordinator = new ExecutorSupplyCoordinator();
 		this.classesConfig = classesConfig;
 		this.typeConfig = typeConfig;
 		this.deploymentConfig = new DeploymentConfig();
@@ -105,20 +106,21 @@ public class Gateway implements IGateway{
 		return gatewayResolution;
 	}
 
-	private final ExecutorHandle createExecHandle(ExecutorRegistration execRegister){
-		ExecutorHandle execHandle = new ExecutorHandle(execRegister.getId(), execRegister.getContactInfo(),
-				execRegister.getCapabilities().toArray(new String[0]));
-		/*
-		 * Remove all the supported Services from the executor that are not supported by
-		 * this gateway:
-		 */
-		List<String> supportedServices = new ArrayList<>(execRegister.getSupportedServices());
-		if(supportedServices.stream().anyMatch(classesConfig::classunknown)) {
-			logger.warn("Executor registered with services that are unknown to the gateway. These services will be ignored:\n\t{}",
-					supportedServices.stream().filter(classesConfig::classunknown).collect(Collectors.joining("\n\t")));
-			supportedServices.removeIf(classesConfig::classunknown);
+	private final ExecutorHandle createExecHandle(ExecutorRegistration registration){
+		ExecutorHandle execHandle = ExecutorHandle.fromRegistration(registration);
+
+        /*
+         * Remove all the supported Services from the executor that are not supported by
+         * this gateway:
+         */
+        boolean unsupportedServicesFound = execHandle.getExecutionerCapabilities().removeServices(classesConfig::classunknown);
+		if(logger.isWarnEnabled() && unsupportedServicesFound) {
+			logger.warn("Executor registered with services that are unknown to the gateway. " +
+                    "These services will be ignored:\n\t{}",
+                    registration.getSupportedServices()
+                        .stream().filter(classesConfig::classunknown)
+                        .collect(Collectors.joining("\n\t")));
 		}
-		execHandle.getExecutionerCapabilities().addAllServiceClasses(supportedServices.toArray(new String[0]));
 		return execHandle;
 	}
 
@@ -145,12 +147,52 @@ public class Gateway implements IGateway{
 			return false;
 
 		}  else {
-			execCoordinator.addExecutor(execHandle);
+		    StandaloneExecutor standaloneExecutor = new StandaloneExecutor(execHandle);
+			execCoordinator.addSupplier(standaloneExecutor);
 			logger.info("Executor registered successfully with {} services. Executor's id: {}", execHandle.getExecutionerCapabilities().supportedServices().size(), execRegister.getId());
 			logger.trace("Supported service of executor with id {} are {}.", execRegister.getId(), execHandle.getExecutionerCapabilities().supportedServices());
 			return true;
 		}
 	}
+
+	public synchronized final boolean registerEDD(EDDRegistration registration) {
+        Objects.requireNonNull(registration, "EDD registration was null..");
+        if(execCoordinator.hasExecutor(registration.getEddId())) {
+            logger.warn("EDD registration with an known id. {} \n Replacing the registration.", registration.toString());
+            execCoordinator.removeExecutor(registration.getEddId());
+        }
+
+        EDDRegistration sanitisedReg = registration.copy();
+        boolean unknownServicesFound =
+            sanitisedReg.getOfferedServices().removeIf(classesConfig::classunknown);
+
+        if(unknownServicesFound) {
+            List<String> unknownClasses = registration.getOfferedServices()
+                .stream()
+                .filter(classesConfig::classunknown)
+                .collect(Collectors.toList());
+
+            logger.warn("EDD {} registered with unknown services: {}. " +
+                "Removed them from the registration.", registration, unknownClasses);
+        }
+
+        if(sanitisedReg.getOfferedServices().isEmpty()) {
+            logger.error("Couldn't register EDD {} with 0 known services.", sanitisedReg);
+            return false;
+        }
+
+        CachedExecutorHandleSupplier cachedExecutorHandleSupplier =
+            new CachedExecutorHandleSupplier(sanitisedReg);
+	    execCoordinator.addSupplier(cachedExecutorHandleSupplier);
+	    if(!logger.isTraceEnabled()){
+            logger.info("EDD successfully registered: {}.", registration);
+        } else {
+            logger.trace("EDD successfully registered: {}." +
+                "\n Supported services are: {}.", registration, registration.getOfferedServices());
+        }
+	    return true;
+
+    }
 
 
 	/**
@@ -160,7 +202,7 @@ public class Gateway implements IGateway{
 	private final ResolveInfo resolveInfoFromRequest(ResolveRequest resolveRequest) {
 		ResolveInfo info = new ResolveInfo();
 		info.setClassesConfiguration(classesConfig);
-		info.setExecutorCoordinator(execCoordinator);
+		info.setExecutorSupplyCoordinator(execCoordinator);
 		info.setTypeConfig(typeConfig);
 		info.setResolvePolicy(resolveRequest.getPolicy());
 		info.setInputFields(resolveRequest.getInputFields());
@@ -184,7 +226,7 @@ public class Gateway implements IGateway{
 		return typeConfig;
 	}
 
-	public final ExecutorCoordinator getExecutorCoord() {
+	public final ExecutorSupplyCoordinator getExecutorCoord() {
 		return execCoordinator;
 	}
 

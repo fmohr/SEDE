@@ -2,6 +2,7 @@ package de.upb.sede.edd.api;
 
 import de.upb.sede.edd.EDD;
 import de.upb.sede.edd.deploy.deplengine.DeplEngine;
+import de.upb.sede.edd.deploy.deplengine.InstallationReport;
 import de.upb.sede.edd.deploy.deplengine.InstallationState;
 import de.upb.sede.edd.model.Installation;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -32,8 +33,31 @@ public class PreparationsApiController implements PreparationsApi {
         this.request = request;
     }
 
-    public ResponseEntity<List<Installation>> preparationsGet() {
-        return preparations();
+    public ResponseEntity<List<InstallationReport>> preparationsGet() {
+        return reports();
+    }
+
+
+    private ResponseEntity<List<InstallationReport>> reports() {
+        try {
+            List<InstallationReport> reports = new ArrayList<>();
+            for (DeplEngine engine : EDD.getInstance().getDeploymentEngine().getEngines()) {
+
+                List<InstallationReport> states;
+                try {
+                    states = engine.getCurrentState();
+                } catch (Exception ex) {
+                    log.error("Error current retriving state of engine: " + engine);
+                    continue;
+                }
+
+                reports.addAll(states);
+            }
+            return new ResponseEntity<List<InstallationReport>>(reports, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Couldn't calculate preparations", e);
+            return new ResponseEntity<List<InstallationReport>>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     private ResponseEntity<List<Installation>> preparations() {
@@ -41,7 +65,7 @@ public class PreparationsApiController implements PreparationsApi {
             List<Installation> installations = new ArrayList<>();
             for(DeplEngine engine : EDD.getInstance().getDeploymentEngine().getEngines()) {
 
-                List<InstallationState> states;
+                List<InstallationReport> states;
                 try {
                     states = engine.getCurrentState();
                 }catch(Exception ex) {
@@ -58,7 +82,7 @@ public class PreparationsApiController implements PreparationsApi {
                             inst.setIncludedServices(state.getIncludedServices());
                             inst.setRequestedServices(state.getRequestedServices());
                             inst.setServiceCollectionName(state.getServiceCollectionName());
-                            inst.setSuccess(state.getState() == InstallationState.State.Success);
+                            inst.setSuccess(state.getState() == InstallationState.Success);
                             inst.setMachine(engine.getName());
                             return inst;
                         })

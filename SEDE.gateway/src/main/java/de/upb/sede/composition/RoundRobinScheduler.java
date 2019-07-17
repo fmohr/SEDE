@@ -1,10 +1,13 @@
 package de.upb.sede.composition;
 
 import de.upb.sede.gateway.ExecutorHandle;
+import de.upb.sede.util.Cache;
+import de.upb.sede.util.ExpiringCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -13,41 +16,41 @@ import java.util.stream.Collectors;
 public class RoundRobinScheduler {
 	private final static Logger logger = LoggerFactory.getLogger(RoundRobinScheduler.class);
 
-	private Map<String, ExecutorAccessMonitor> executorAccess =
+	private Map<String, ExpiringCache<ExecutorAccessMonitor>> executorAccess =
 			new HashMap<>();
 
-	public synchronized void updateExecutors(Collection<ExecutorHandle> updatedList) {
-		Iterator<String> iterator = executorAccess.keySet().iterator();
-		/*
-		 * Iterate over all executors and update handles and remove unretained executors.
-		 */
-		while(iterator.hasNext()) {
-			String executorId = iterator.next();
-			ExecutorAccessMonitor executor = executorAccess.get(executorId);
-			Optional<ExecutorHandle> updatedHandle = Optional.empty();
-			/*
-			 * Find the executor in the updated list
-			 */
-			for (ExecutorHandle executorHandle : updatedList) {
-				if (executorId.equals(executorHandle.getExecutorId())) {
-					updatedHandle = Optional.of(executorHandle);
-					break;
-				}
-			}
-			logger.info("Kicking `{}` out of Round robin scheduler.", executor);
-			iterator.remove();
-		}
-		/*
-		 * Add new executor handles
-		 */
-		for (ExecutorHandle executorHandle : updatedList) {
-			if(!executorAccess.keySet().contains(executorHandle.getExecutorId())) {
-				ExecutorAccessMonitor executorAccessMonitor = new ExecutorAccessMonitor(executorHandle.getExecutorId());
-				executorAccess.put(executorHandle.getExecutorId(), executorAccessMonitor);
-				logger.info("Added new executor to Round Robing scheduling `{}`.", executorAccessMonitor);
-			}
-		}
-	}
+//	public synchronized void updateExecutors(Collection<ExecutorHandle> updatedList) {
+//		Iterator<String> iterator = executorAccess.keySet().iterator();
+//		/*
+//		 * Iterate over all executors and update handles and remove unretained executors.
+//		 */
+//		while(iterator.hasNext()) {
+//			String executorId = iterator.next();
+//			ExecutorAccessMonitor executor = executorAccess.get(executorId);
+//			Optional<ExecutorHandle> updatedHandle = Optional.empty();
+//			/*
+//			 * Find the executor in the updated list
+//			 */
+//			for (ExecutorHandle executorHandle : updatedList) {
+//				if (executorId.equals(executorHandle.getExecutorId())) {
+//					updatedHandle = Optional.of(executorHandle);
+//					break;
+//				}
+//			}
+//			logger.info("Kicking `{}` out of Round robin scheduler.", executor);
+//			iterator.remove();
+//		}
+//		/*
+//		 * Add new executor handles
+//		 */
+//		for (ExecutorHandle executorHandle : updatedList) {
+//			if(!executorAccess.keySet().contains(executorHandle.getExecutorId())) {
+//				ExecutorAccessMonitor executorAccessMonitor = new ExecutorAccessMonitor(executorHandle.getExecutorId());
+//				executorAccess.put(executorHandle.getExecutorId(), executorAccessMonitor);
+//				logger.info("Added new executor to Round Robing scheduling `{}`.", executorAccessMonitor);
+//			}
+//		}
+//	}
 
 	public synchronized String scheduleNextAmong(List<ExecutorHandle> candidates) {
 		if(candidates.isEmpty()) {
@@ -56,10 +59,19 @@ public class RoundRobinScheduler {
 
 		ExecutorAccessMonitor highestPriority = null;
 		for(ExecutorHandle handle : candidates) {
-			ExecutorAccessMonitor monitor = executorAccess.get(handle.getExecutorId());
-			if(monitor == null) {
-				logger.error("Candidate not recognized: " + handle.getExecutorId());
-			} else if (highestPriority == null) {
+			ExecutorAccessMonitor monitor;
+            ExpiringCache<ExecutorAccessMonitor> monitorCache = executorAccess.get(handle.getExecutorId());
+
+            if(monitorCache == null || monitorCache.isExpired()) {
+                monitor = new ExecutorAccessMonitor(handle.getExecutorId());
+                monitorCache = new ExpiringCache<ExecutorAccessMonitor>(10, TimeUnit.MINUTES, monitor);
+                executorAccess.put(handle.getExecutorId(), monitorCache);
+            } else {
+                monitorCache.prolong();
+                monitor = monitorCache.forceAccess();
+            }
+
+            if (highestPriority == null) {
 				highestPriority = monitor;
 			} else {
 				if(monitor.compareTo(highestPriority) < 0) {
@@ -80,19 +92,34 @@ public class RoundRobinScheduler {
 
 	public synchronized String toString() {
 		StringBuilder builder = new StringBuilder("Round-robin table:");
-		for(ExecutorAccessMonitor monitor : executorAccess.values()) {
-			builder.append("\n\t").append(monitor);
+		for(ExpiringCache<ExecutorAccessMonitor> monitorCache : executorAccess.values()) {
+		    if(!monitorCache.isExpired()) {
+                builder.append("\n\t").append(monitorCache.forceAccess());
+            }
 		}
 		return builder.toString();
 	}
 
+	public synchronized void clean() {
+        Iterator<String> iterator = executorAccess.keySet().iterator();
+        while(iterator.hasNext()) {
+            ExpiringCache<ExecutorAccessMonitor> cache = executorAccess.get(iterator.next());
+            if(cache.isExpired()) {
+                iterator.remove();
+            }
+        }
+    }
+
 	public synchronized void reset() {
-		for(ExecutorAccessMonitor monitor : executorAccess.values()) {
-			monitor.reset();
+	    clean();
+		for(ExpiringCache<ExecutorAccessMonitor> monitorCache : executorAccess.values()) {
+		    if(!monitorCache.isExpired()) {
+		        monitorCache.forceAccess().reset();
+            }
 		}
 	}
 
-	static class ExecutorAccessMonitor implements Comparable<ExecutorAccessMonitor> {
+	static class ExecutorAccessMonitor implements Comparable<ExecutorAccessMonitor>, Cache<String> {
 
 		String executorId;
 		long accessCount = 0;
@@ -101,7 +128,7 @@ public class RoundRobinScheduler {
 			this.executorId = executorId;
 		}
 
-		String access() {
+		public String access() {
 			accessCount++;
 			return executorId;
 		}

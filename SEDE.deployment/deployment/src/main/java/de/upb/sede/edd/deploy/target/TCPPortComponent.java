@@ -3,7 +3,7 @@ package de.upb.sede.edd.deploy.target;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.upb.sede.edd.DirLockAlreadyAcquiredException;
 import de.upb.sede.edd.LockableDir;
-import de.upb.sede.edd.SystemSettingLookup;
+import de.upb.sede.util.SystemSettingLookup;
 import de.upb.sede.edd.deploy.DeploymentException;
 import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.DynTypeObject;

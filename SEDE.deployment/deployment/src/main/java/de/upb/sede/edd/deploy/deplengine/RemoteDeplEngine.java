@@ -1,12 +1,10 @@
 package de.upb.sede.edd.deploy.deplengine;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.AnnotationIntrospector;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.upb.sede.edd.deploy.AscribedService;
 import de.upb.sede.edd.deploy.DeploymentException;
-import de.upb.sede.util.DynTypeObject;
 import de.upb.sede.util.Uncheck;
 import okhttp3.*;
 
@@ -15,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class RemoteDeplEngine extends DeplEngine{
@@ -40,9 +39,17 @@ public class RemoteDeplEngine extends DeplEngine{
         return name;
     }
 
+    private OkHttpClient getClient() {
+        return new OkHttpClient.Builder()
+            .connectTimeout(10, TimeUnit.SECONDS)
+            .writeTimeout(10, TimeUnit.SECONDS)
+            .readTimeout(30, TimeUnit.MINUTES)
+            .build();
+    }
+
     @Override
     public void addServices(List<AscribedService> services) {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = getClient();
 
         MediaType mediaType = MediaType.parse("application/json");
         RequestBody body = null;
@@ -55,6 +62,7 @@ public class RemoteDeplEngine extends DeplEngine{
         Request request = new Request.Builder()
             .url(address + "/requireService")
             .post(body)
+
             .addHeader("Content-Type", "application/json")
             .build();
 
@@ -74,7 +82,7 @@ public class RemoteDeplEngine extends DeplEngine{
 
     @Override
     public void prepareDeployment(boolean update) {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = getClient();
 
         MediaType mediaType = MediaType.parse("application/json");
         Map<String, Boolean> requestContent = new HashMap<>();
@@ -101,8 +109,8 @@ public class RemoteDeplEngine extends DeplEngine{
     }
 
     @Override
-    public List<InstallationState> getCurrentState() {
-        OkHttpClient client = new OkHttpClient();
+    public List<InstallationReport> getCurrentState() {
+        OkHttpClient client = getClient();
 
         Request request = new Request.Builder()
             .url(address + "/preparations")
@@ -126,12 +134,12 @@ public class RemoteDeplEngine extends DeplEngine{
             throw Uncheck.throwAsUncheckedException(e);
         }
         return remoteStateList.stream().map(map -> {
-            InstallationState state = new InstallationState();
+            InstallationReport state = new InstallationReport();
             state.setServiceCollectionName((String) map.get("serviceCollectionName"));
             state.setIncludedServices((List<String>) map.get("includedServices"));
             state.setRequestedServices((List<String>) map.get("requestedServices"));
             if((Boolean)map.get("success")) {
-                state.setState(InstallationState.State.Success);
+                state.setState(InstallationState.Success);
             }
             state.setOut((String) map.get("out"));
             state.setErr((String) map.get("errOut"));
@@ -143,35 +151,10 @@ public class RemoteDeplEngine extends DeplEngine{
         return address;
     }
 
-    /*
-      @JsonProperty("serviceCollectionName")
-      private String serviceCollectionName = null;
-
-      @JsonProperty("includedServices")
-      @Valid
-      private List<String> includedServices = null;
-
-      @JsonProperty("requestedServices")
-      @Valid
-      private List<String> requestedServices = null;
-
-      @JsonProperty("success")
-      private Boolean success = null;
-
-      @JsonProperty("out")
-      private String out = null;
-
-        @JsonProperty("errOut")
-        private String errOut = null;
-
-        @JsonProperty("machine")
-        private String machine = null;
-     */
-
 
 
     @Override
     public void removeServices(List<AscribedService> services) {
-
     }
+
 }

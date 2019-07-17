@@ -215,8 +215,8 @@ public class DataFlowAnalysis {
 				 * no execution in the list supports the required service. find a new executor
 				 * that supports the service and add it to the exections.
 				 */
-				List<ExecutorHandle> executors = resolveInfo.getExecutorCoordinator()
-						.executorsSupportingServiceClass(serviceClasspath);
+				List<ExecutorHandle> executors = resolveInfo.getExecutorSupplyCoordinator()
+						.supplyExecutor(serviceClasspath);
 				if(executors.size()==0) {
 					throw new RuntimeException("No registered execution supports the requested service: " + serviceClasspath);
 				}
@@ -719,7 +719,7 @@ public class DataFlowAnalysis {
 			if(plan == getClientExecPlan()) {
 				continue;
 			}
-			ExecutorHandle chosedTarget = resolveInfo.getExecutorCoordinator().scheduleNextAmong(plan.candidates());
+			ExecutorHandle chosedTarget = resolveInfo.getExecutorSupplyCoordinator().scheduleNextAmong(plan.candidates());
 			/*
 				Remove every other executor:
 			 */
@@ -955,8 +955,8 @@ public class DataFlowAnalysis {
 		 * No involved executor has the given id.
 		 * Search in the registered executors list:
 		 */
-		if (resolveInfo.getExecutorCoordinator().hasExecutor(executorId)) {
-			ExecutorHandle executor = resolveInfo.getExecutorCoordinator().getExecutorFor(executorId);
+		if (resolveInfo.getExecutorSupplyCoordinator().hasExecutor(executorId)) {
+			ExecutorHandle executor = resolveInfo.getExecutorSupplyCoordinator().getExecutorFor(executorId);
 
 			/*
 			 * Add a new executor to the involved list of executors:
@@ -964,9 +964,9 @@ public class DataFlowAnalysis {
 			ExecPlan exec = new ExecPlan(executor);
 			execPlans.add(exec);
 			return exec;
-
 		} else {
-			throw new RuntimeException("BUG: Cannot resolve executor with id: \"" + executorId + "\". No such executor is registered.");
+			throw new RuntimeException("An unknown executor with id: \"" + executorId + "\" in referenced in the composition." +
+                " No such executor is registered.");
 		}
 	}
 

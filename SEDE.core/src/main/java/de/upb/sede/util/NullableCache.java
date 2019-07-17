@@ -4,6 +4,13 @@ public class NullableCache<Content> implements SettableCache<Content> {
 
     private OptionalField<Content> content = OptionalField.empty();
 
+    public NullableCache(Content content) {
+        this.content = OptionalField.of(content);
+    }
+
+    public NullableCache() {
+    }
+
     @Override
     public Content access() {
         return content.orElse(null);

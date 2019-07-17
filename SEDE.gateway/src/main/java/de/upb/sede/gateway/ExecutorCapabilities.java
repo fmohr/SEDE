@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class ExecutorCapabilities {
 	public static final String javalibs = "JAVA-LIB";
@@ -31,6 +32,10 @@ public class ExecutorCapabilities {
 	public List<String> supportedServices(){
 		return Collections.unmodifiableList(supportedServiceClasses);
 	}
+
+	public boolean removeServices(Predicate<String> servicePredicate) {
+	    return supportedServiceClasses.removeIf(servicePredicate);
+    }
 
 	public boolean supportsServiceClass(String serviceClasspath) {
 		return supportedServiceClasses.contains(serviceClasspath);

@@ -86,8 +86,8 @@ class InstallationEnv {
         }, true);
     }
 
-    List<InstallationState> getCurrentState() {
-        List<InstallationState> states = new ArrayList<>();
+    List<InstallationReport> getCurrentState() {
+        List<InstallationReport> states = new ArrayList<>();
         List<DeploymentSpecification> specs = new ArrayList<>(deployments);
         if(latestInstallations.isPresent()) {
             Installations installations = latestInstallations.get();
@@ -100,7 +100,7 @@ class InstallationEnv {
                         continue;
                     }
 
-                    InstallationState state = serviceDeployment.state();
+                    InstallationReport state = serviceDeployment.state();
                     state.setRequestedServices(requestedServicesForSpec(serviceDeployment.getSpecification()));
 
                     state.setSpecSource(specSource.getName());
@@ -117,11 +117,11 @@ class InstallationEnv {
             }
         }
         specs.forEach(undeployedSpec -> {
-            InstallationState state = new InstallationState();
+            InstallationReport state = new InstallationReport();
             state.setServiceCollectionName(undeployedSpec.getName());
             state.setIncludedServices(undeployedSpec.getServices());
             state.setRequestedServices(requestedServicesForSpec(undeployedSpec));
-            state.setState(InstallationState.State.Init);
+            state.setState(InstallationState.Init);
             states.add(state);
         });
         return states;
@@ -129,8 +129,16 @@ class InstallationEnv {
 
     private List<String> requestedServicesForSpec(DeploymentSpecification spec ){
         ArrayList<String> requestedServices = new ArrayList<>(spec.getServices());
-        requestedServices.retainAll(this.requestedServices);
-        return requestedServices;
+        if(this.requestedServices.stream().anyMatch(spec)){
+            /*
+             * The spec name or one of its aliases were requested.
+             * Therefore all of its services are implicitly requested.
+             */
+            return requestedServices;
+        } else {
+            requestedServices.retainAll(this.requestedServices);
+            return requestedServices;
+        }
     }
 
     public SpecSource getSpecSource() {

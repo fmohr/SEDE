@@ -1,4 +1,4 @@
-package de.upb.sede.edd;
+package de.upb.sede.util;
 
 import de.upb.sede.util.Cache;
 

@@ -33,6 +33,11 @@ public class SpecURI {
         return DefaultLockableDir.urlEncode(getAddress());
     }
 
+    @Override
+    public String toString() {
+        return scheme + "://" + getAddress();
+    }
+
     public String getScheme() {
         return scheme;
     }

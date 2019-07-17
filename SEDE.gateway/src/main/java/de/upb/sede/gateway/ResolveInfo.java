@@ -14,7 +14,7 @@ public class ResolveInfo {
 	private ClassesConfig classesConfiguration;
 	private InputFields inputFields;
 	private ResolvePolicy resolvePolicy;
-	private ExecutorCoordinator executorCoordinator;
+	private ExecutorSupplyCoordinator executorSupplyCoordinator;
 	private ExecutorHandle clientExecutor;
 	private OnthologicalTypeConfig typeConfig;
 
@@ -42,12 +42,12 @@ public class ResolveInfo {
 		this.resolvePolicy = resolvePolicy;
 	}
 
-	public ExecutorCoordinator getExecutorCoordinator() {
-		return executorCoordinator;
+	public ExecutorSupplyCoordinator getExecutorSupplyCoordinator() {
+		return executorSupplyCoordinator;
 	}
 
-	public void setExecutorCoordinator(ExecutorCoordinator executorCoordinator) {
-		this.executorCoordinator = executorCoordinator;
+	public void setExecutorSupplyCoordinator(ExecutorSupplyCoordinator executorSupplyCoordinator) {
+		this.executorSupplyCoordinator = executorSupplyCoordinator;
 	}
 
 	public ExecutorHandle getClientExecutor() {

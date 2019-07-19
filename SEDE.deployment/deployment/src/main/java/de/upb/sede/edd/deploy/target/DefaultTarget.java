@@ -2,7 +2,7 @@ package de.upb.sede.edd.deploy.target;
 
 import java.util.concurrent.Executor;
 
-public abstract class DefaultTarget implements Target{
+public abstract class DefaultTarget implements Target {
 
     private String displayName;
 

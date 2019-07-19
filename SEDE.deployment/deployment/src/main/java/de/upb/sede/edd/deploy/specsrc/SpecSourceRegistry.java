@@ -40,7 +40,7 @@ public class SpecSourceRegistry {
     public Optional<SpecSource> find(String sourceName) {
         return sources
             .stream()
-            .filter(specSource -> specSource.getName().equalsIgnoreCase(sourceName))
+            .filter(specSource -> specSource.getServiceNamespace().equalsIgnoreCase(sourceName))
             .findFirst();
     }
 

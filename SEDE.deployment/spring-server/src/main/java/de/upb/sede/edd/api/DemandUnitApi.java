@@ -7,6 +7,8 @@ package de.upb.sede.edd.api;
 
 import de.upb.sede.edd.model.Body;
 import de.upb.sede.edd.model.ServiceFulfillment;
+import de.upb.sede.requests.deploy.ExecutorDemandFulfillment;
+import de.upb.sede.requests.deploy.ExecutorDemandRequest;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,13 +22,13 @@ import java.util.List;
 @Api(value = "demandUnit", description = "the demandUnit API")
 public interface DemandUnitApi {
 
-    @ApiOperation(value = "Demand executors that fullfill the requested services.", nickname = "demandUnitPost", notes = "", response = ServiceFulfillment.class, responseContainer = "List", tags={  })
+    @ApiOperation(value = "Demand executors that fullfill the requested services.", nickname = "demandUnitPost", notes = "", response = ExecutorDemandRequest.class, tags={  })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Returns a potentially partial service fullfillment.", response = ServiceFulfillment.class, responseContainer = "List") })
+        @ApiResponse(code = 200, message = "Returns a potentially partial service fullfillment.", response = ExecutorDemandFulfillment.class) })
     @RequestMapping(value = "/demandUnit",
         produces = { "application/json" }, 
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<List<ServiceFulfillment>> demandUnitPost(@ApiParam(value = "", required = true) @Valid @RequestBody Body body);
+    ResponseEntity<ExecutorDemandFulfillment> demandUnitPost(@ApiParam(value = "", required = true) @Valid @RequestBody ExecutorDemandRequest body);
 
 }

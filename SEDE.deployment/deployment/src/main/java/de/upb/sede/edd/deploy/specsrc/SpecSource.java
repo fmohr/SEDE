@@ -5,7 +5,7 @@ import de.upb.sede.util.Cache;
 
 public interface SpecSource extends Cache<DeploymentSpecificationRegistry> {
 
-    String getName();
+    String getServiceNamespace();
 
     boolean equals(Object o);
 }

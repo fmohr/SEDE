@@ -374,10 +374,10 @@ public class OptionalField<T> implements Serializable {
         }
     }
 
-    static class UnwrapSerializer extends JsonSerializer<MutableOptionalField> {
+    static class UnwrapSerializer extends JsonSerializer<OptionalField> {
 
         @Override
-        public void serialize(MutableOptionalField value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+        public void serialize(OptionalField value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             if(value.isPresent()) {
                 gen.writeObject(value.get());
             } else {

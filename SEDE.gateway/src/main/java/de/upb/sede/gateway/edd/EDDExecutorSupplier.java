@@ -11,7 +11,6 @@ import de.upb.sede.util.URIMod;
 import okhttp3.*;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
@@ -56,7 +55,8 @@ public class EDDExecutorSupplier implements OnDemandExecutorSupplier {
 
 
         ExecutorDemandRequest demandRequest = new ExecutorDemandRequest(services);
-        demandRequest.setDemandSatModes(Spawn, Reuse, AllAvailable);
+        demandRequest.setServiceNamespace(registration.getServiceNamespace());
+        demandRequest.setModi(Spawn, Reuse, AllAvailable);
         ObjectMapper mapper = new ObjectMapper();
         String requestBodyContent;
         try {

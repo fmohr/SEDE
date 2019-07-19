@@ -1,4 +1,4 @@
-package de.upb.sede.edd.deploy.target;
+package de.upb.sede.edd.deploy.target.components;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import de.upb.sede.edd.DirLockAlreadyAcquiredException;

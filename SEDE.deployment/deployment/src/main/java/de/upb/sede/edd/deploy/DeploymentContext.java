@@ -1,11 +1,9 @@
 package de.upb.sede.edd.deploy;
 
 
-import de.upb.sede.edd.deploy.target.GroupComponents;
+import de.upb.sede.edd.runtime.ExecutorRuntimeSupplier;
 import de.upb.sede.util.*;
 
-import java.io.ByteArrayOutputStream;
-import java.io.OutputStream;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -56,9 +54,9 @@ public class DeploymentContext {
         return executor.access();
     }
 
-    public void collectOutputs(GroupComponents gc) {
+    public void collectOutputs(ExecutorRuntimeSupplier gc) {
         for(ServiceDeployment deployment : getDeployment()) {
-            deployment.collectOutputs(gc);
+            deployment.collectOutputs(gc, "JExecutor");
         }
     }
 }

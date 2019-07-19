@@ -48,6 +48,9 @@ public class FileCache<T> implements SettableCache<T> {
         if(!wasCleared) {
             return false;
         }
+        if(t == null) {
+            return true;
+        }
         FileUtil.writeStringToFile(file.getPath(),
             encoder.apply(t));
         return true;

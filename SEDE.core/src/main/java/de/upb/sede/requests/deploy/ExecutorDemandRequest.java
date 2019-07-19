@@ -17,10 +17,14 @@ public class ExecutorDemandRequest {
         AllAvailable // This mode instructs to return all running executors.
     }
 
+    private String serviceNamespace;
+
+    public ExecutorDemandRequest() {
+    }
+
     public ExecutorDemandRequest(List<String> services) {
         this.services = services;
     }
-
 
     public ExecutorDemandRequest(List<String> services, List<SatMode> demandSatModes) {
         this.services = services;
@@ -43,9 +47,21 @@ public class ExecutorDemandRequest {
         this.demandSatModes = demandSatModes;
     }
 
-    public void setDemandSatModes(SatMode... demandSatModes) {
+    public boolean isSet(SatMode  mode) {
+        return demandSatModes.contains(mode);
+    }
+
+    public void setModi(SatMode... demandSatModes) {
         this.demandSatModes.clear();
         Collections.addAll(this.demandSatModes, demandSatModes);
+    }
+
+    public String getServiceNamespace() {
+        return serviceNamespace;
+    }
+
+    public void setServiceNamespace(String serviceNamespace) {
+        this.serviceNamespace = serviceNamespace;
     }
 
     @Override

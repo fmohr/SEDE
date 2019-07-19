@@ -2,7 +2,6 @@ package de.upb.sede.requests.deploy;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class EDDRegistration {
 
@@ -10,16 +9,22 @@ public class EDDRegistration {
 
     private String address;
 
+    private String serviceNamespace;
+
     private List<String> offeredServices;
 
-    public EDDRegistration(String eddId, String address, List<String> offeredServices) {
+    public EDDRegistration(String eddId, String address, String serviceNamespace, List<String> offeredServices) {
         this.eddId = eddId;
         this.address = address;
         this.offeredServices = offeredServices;
+        this.serviceNamespace = serviceNamespace;
+    }
+
+    public EDDRegistration() {
     }
 
     public EDDRegistration copy() {
-        return new EDDRegistration(eddId, address, new ArrayList<>(offeredServices));
+        return new EDDRegistration(eddId, address, serviceNamespace, new ArrayList<>(offeredServices));
     }
 
     public String getAddress() {
@@ -44,6 +49,14 @@ public class EDDRegistration {
 
     public void setEddId(String eddId) {
         this.eddId = eddId;
+    }
+
+    public String getServiceNamespace() {
+        return serviceNamespace;
+    }
+
+    public void setServiceNamespace(String serviceNamespace) {
+        this.serviceNamespace = serviceNamespace;
     }
 
     @Override

@@ -3,16 +3,19 @@ package de.upb.sede.edd.deploy.target;
 import de.upb.sede.edd.LockableDir;
 import de.upb.sede.edd.SEDECodeBase;
 import de.upb.sede.edd.deploy.DeploymentException;
+import de.upb.sede.edd.deploy.target.components.*;
 import de.upb.sede.edd.process.JavaProcessHandleBuilder;
+import de.upb.sede.requests.ExecutorRegistration;
+import de.upb.sede.util.URIMod;
+import de.upb.sede.util.WebUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.Executor;
 
-public class JExecutorTarget extends DefaultTarget {
+public class JExecutorTarget extends DefaultTarget implements ExecutorTarget {
 
     private final static Logger logger = LoggerFactory.getLogger(JExecutorTarget.class);
 
@@ -22,20 +25,24 @@ public class JExecutorTarget extends DefaultTarget {
 
     private ExecutorConfigComponent executorConfig;
 
-    private ExecutorSecretaryComponent executorSecretary;
+    private HostAddressInfoComponent addressInfo;
 
     private TCPPortComponent tcpPortComponent;
 
     private String id;
 
-    public JExecutorTarget(Executor executor, String id, SEDECodeBase sedeCodeBase, File executorDir, File serviceDir, LockableDir portsDir) {
-        this(null, id, executor, sedeCodeBase, executorDir, serviceDir, portsDir);
+    public JExecutorTarget(Executor executor, String id, SEDECodeBase sedeCodeBase, File executorDir, File serviceDir, LockableDir portsDir, String address) {
+        this(null, id, executor, sedeCodeBase, executorDir, serviceDir, portsDir, address);
     }
 
-    public JExecutorTarget(String displayName, String id,
+    public JExecutorTarget(String displayName,
+                           String id,
                            Executor executor,
                            SEDECodeBase sedeCodeBase,
-                           File executorDir, File serviceDir, LockableDir portsDir)  {
+                           File executorDir,
+                           File serviceDir,
+                           LockableDir portsDir,
+                           String address)  {
         super(displayName, executor);
         this.id = Objects.requireNonNull(id);
         Objects.requireNonNull(executor);
@@ -50,7 +57,7 @@ public class JExecutorTarget extends DefaultTarget {
         this.executorConfig = new ExecutorConfigComponent(getDisplayName(), executorDir, id, serviceDir);
         executorProcess.getJavaProcessBuilder().setDisplayName("Java Executor " + id);
         this.tcpPortComponent = new TCPPortComponent(getDisplayName(), portsDir);
-        this.executorSecretary = new ExecutorSecretaryComponent(getDisplayName());
+        this.addressInfo = new HostAddressInfoComponent(getDisplayName(), address);
     }
 
     public JavaAppComponent getExecutorProcess() {
@@ -61,16 +68,48 @@ public class JExecutorTarget extends DefaultTarget {
         return sedeCodeBase;
     }
 
+    @Override
+    public List<String> getServiceCollections() {
+        return new ArrayList<>(executorConfig.getServices());
+    }
+
+
+
+    private Map<String, Object> contactInfo(String id, String address) {
+        Map<String, Object> contactInfo = new HashMap<>();
+        contactInfo.put("id", id);
+        contactInfo.put("host-address", address);
+        return contactInfo;
+    }
+
+    @Override
+    public ExecutorRegistration getRegistration() {
+        String address = URIMod.setPort(
+            this.addressInfo.getAddress(),
+            tcpPortComponent.getAllocatedTcpPort().orElseThrow(() -> new IllegalStateException("No port was allocated yet.")).advertisedPort);
+
+        ExecutorRegistration registration = new ExecutorRegistration(contactInfo(id, address),
+            Collections.emptyList(),
+            new ArrayList<>(executorConfig.getServices()));
+        return registration;
+    }
+
     public ExecutorConfigComponent getExecutorConfig() {
         return executorConfig;
     }
 
-    public TCPPortComponent getTcpPortComponent() {
+    @Override
+    public TCPPortComponent getPort() {
         return tcpPortComponent;
     }
 
-    public ExecutorSecretaryComponent getExecutorSecretary() {
-        return executorSecretary;
+    @Override
+    public HostAddressInfoComponent getHostAddress() {
+        return addressInfo;
+    }
+
+    public TCPPortComponent getTcpPortComponent() {
+        return tcpPortComponent;
     }
 
     @Override
@@ -107,9 +146,31 @@ public class JExecutorTarget extends DefaultTarget {
         this.executorProcess = new JavaAppComponent(getDisplayName(), getExecutor());
     }
 
-    public void registerToGateway(String gatewayAddress) {
-        executorSecretary.registerToGateway(getExecutorConfig().getExecutorId(),
-            new ArrayList<>(getExecutorConfig().getServices()),
-            getTcpPortComponent().getAllocatedTcpPort().get().advertisedPort + "");
+    @Override
+    public JavaAppComponent getApplication() {
+        return executorProcess;
     }
+
+
+//    public void registerToGateway(String id, List<String> services, String port) {
+//        if(gatewayAddress.isAbsent()) {
+//            logger.warn("{}: cannot register executor. No gateway defined.", getDisplayName());
+//            return;
+//        }
+//        logger.info("{}: registering to gateway: {}", getDisplayName(), gatewayAddress.get());
+//        String address = WebUtil.HostPublicIpAddress() + ":" + port;
+//
+//        ExecutorRegistration registration = new ExecutorRegistration(contactInfo(id, address), Collections.emptyList(), services);
+//
+//        // TODO registration
+//
+//        HttpURLConnectionClientRequest httpRegistration = new HttpURLConnectionClientRequest(gatewayAddress.get() + "/register");
+//
+//        String registrationAnswer = httpRegistration.send(registration.toJsonString());
+//        if (!registrationAnswer.isEmpty()) {
+//            throw new RuntimeException("Registration to gateway \"" + gatewayAddress.get()
+//                + "\" failed with non empty return message:\n" + registrationAnswer);
+//        }
+//        logger.debug("{} registered to gateway: {}", getDisplayName(), getGatewayAddress().get());
+//    }
 }

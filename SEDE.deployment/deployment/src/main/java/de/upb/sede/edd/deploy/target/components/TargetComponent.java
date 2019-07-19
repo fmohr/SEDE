@@ -1,4 +1,4 @@
-package de.upb.sede.edd.deploy.target;
+package de.upb.sede.edd.deploy.target.components;
 
 public class TargetComponent {
 

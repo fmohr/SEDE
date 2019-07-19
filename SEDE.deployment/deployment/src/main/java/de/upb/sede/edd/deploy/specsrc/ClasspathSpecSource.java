@@ -13,13 +13,13 @@ public class ClasspathSpecSource extends SpecSourceFromURI implements SpecSource
         super(specURI);
         String scheme = Objects.requireNonNull(getSpecUri().getScheme());
         if(!scheme.equals("classpath") && !scheme.equals("cp")){
-            throw new IllegalArgumentException("The given url " + getName()  + " has an unknown scheme: " + scheme);
+            throw new IllegalArgumentException("The given url " + getServiceNamespace()  + " has an unknown scheme: " + scheme);
         }
     }
 
     @Override
-    public String getName() {
-        return "classpath:///" + super.getName();
+    public String getServiceNamespace() {
+        return "classpath:///" + super.getServiceNamespace();
     }
 
     @Override

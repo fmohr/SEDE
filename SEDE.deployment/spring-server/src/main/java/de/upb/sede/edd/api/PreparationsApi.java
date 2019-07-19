@@ -6,7 +6,6 @@
 package de.upb.sede.edd.api;
 
 import de.upb.sede.edd.deploy.deplengine.InstallationReport;
-import de.upb.sede.edd.model.Installation;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,9 +17,9 @@ import java.util.List;
 @Api(value = "preparations", description = "the preparations API")
 public interface PreparationsApi {
 
-    @ApiOperation(value = "Returns the last prepare logs and the currenty installed versions.", nickname = "preparationsGet", notes = "", response = Installation.class, responseContainer = "List", tags={  })
+    @ApiOperation(value = "Returns the last prepare logs and the currenty installed versions.", nickname = "preparationsGet", notes = "", response = InstallationReport.class, responseContainer = "List", tags={  })
     @ApiResponses(value = { 
-        @ApiResponse(code = 200, message = "Installation description for each installed service collection.", response = Installation.class, responseContainer = "List") })
+        @ApiResponse(code = 200, message = "Installation description for each installed service collection.", response = InstallationReport.class, responseContainer = "List") })
     @RequestMapping(value = "/preparations",
         produces = { "application/json" }, 
         method = RequestMethod.GET)

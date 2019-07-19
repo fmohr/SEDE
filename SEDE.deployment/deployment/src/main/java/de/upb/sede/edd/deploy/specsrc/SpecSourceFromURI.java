@@ -1,16 +1,10 @@
 package de.upb.sede.edd.deploy.specsrc;
 
 import de.upb.sede.edd.deploy.SpecURI;
-import de.upb.sede.edd.deploy.model.DeploymentSpecification;
 import de.upb.sede.edd.deploy.model.DeploymentSpecificationRegistry;
 import de.upb.sede.util.Cache;
 import de.upb.sede.util.TTLCache;
-import de.upb.sede.util.Uncheck;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
-import java.io.IOException;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -34,17 +28,17 @@ public abstract class SpecSourceFromURI implements SpecSource{
     }
 
     @Override
-    public String getName() {
+    public String getServiceNamespace() {
         return specURI.getEncodedAddress();
     }
 
     @Override
     public String toString() {
-        return getName();
+        return getServiceNamespace();
     }
 
 
-    protected SpecURI getSpecUri() {
+    public SpecURI getSpecUri() {
         return specURI;
     }
 

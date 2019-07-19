@@ -1,4 +1,4 @@
-package de.upb.sede.edd.deploy.target;
+package de.upb.sede.edd.deploy.target.components;
 
 import de.upb.sede.edd.process.JavaProcessHandleBuilder;
 import de.upb.sede.edd.process.ProcessHandle;

@@ -1,8 +1,11 @@
 package de.upb.sede.edd.api;
 
+import de.upb.sede.edd.EDD;
 import de.upb.sede.edd.model.Body;
 import de.upb.sede.edd.model.ServiceFulfillment;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.upb.sede.requests.deploy.ExecutorDemandFulfillment;
+import de.upb.sede.requests.deploy.ExecutorDemandRequest;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,18 +34,14 @@ public class DemandUnitApiController implements DemandUnitApi {
         this.request = request;
     }
 
-    public ResponseEntity<List<ServiceFulfillment>> demandUnitPost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody Body body) {
-        String accept = request.getHeader("Accept");
-        if (accept != null && accept.contains("application/json")) {
-            try {
-                return new ResponseEntity<List<ServiceFulfillment>>(HttpStatus.NOT_IMPLEMENTED);
-            } catch (Exception e) {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<ServiceFulfillment>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    public ResponseEntity<ExecutorDemandFulfillment> demandUnitPost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody ExecutorDemandRequest body) {
+        try {
+            ExecutorDemandFulfillment fulfillment = EDD.getInstance().getRuntimeRegistry().demand(body);
+            return ResponseEntity.ok(fulfillment);
+        } catch (Exception e) {
+            log.error("Couldn't serialize response for content type application/json", e);
+            return new ResponseEntity<ExecutorDemandFulfillment>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        return new ResponseEntity<List<ServiceFulfillment>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
 }

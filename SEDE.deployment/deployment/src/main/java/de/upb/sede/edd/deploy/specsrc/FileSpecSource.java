@@ -13,13 +13,13 @@ public class FileSpecSource extends SpecSourceFromURI implements SpecSource {
         super(specURI);
         String scheme = Objects.requireNonNull(getSpecUri().getScheme());
         if(!scheme.equals("file")){
-            throw new IllegalArgumentException("The given url " + getName()  + " has an unknown scheme: " + scheme);
+            throw new IllegalArgumentException("The given url " + getServiceNamespace()  + " has an unknown scheme: " + scheme);
         }
     }
 
     @Override
-    public String getName() {
-        return "file:///" + super.getName();
+    public String getServiceNamespace() {
+        return "file:///" + super.getServiceNamespace();
     }
 
     @Override

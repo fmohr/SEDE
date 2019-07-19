@@ -3,18 +3,24 @@ package de.upb.sede.edd.deploy.deplengine;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.upb.sede.edd.EDD;
 import de.upb.sede.edd.deploy.AscribedService;
 import de.upb.sede.edd.deploy.DeploymentException;
+import de.upb.sede.requests.deploy.EDDRegistration;
+import de.upb.sede.requests.deploy.ExecutorDemandFulfillment;
+import de.upb.sede.requests.deploy.ExecutorDemandRequest;
+import de.upb.sede.util.URIMod;
 import de.upb.sede.util.Uncheck;
 import okhttp3.*;
+import org.eclipse.jgit.transport.Daemon;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.UncheckedIOException;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static de.upb.sede.requests.deploy.ExecutorDemandRequest.SatMode.*;
 
 public class RemoteDeplEngine extends DeplEngine{
 
@@ -85,8 +91,11 @@ public class RemoteDeplEngine extends DeplEngine{
         OkHttpClient client = getClient();
 
         MediaType mediaType = MediaType.parse("application/json");
+
+
         Map<String, Boolean> requestContent = new HashMap<>();
         requestContent.put("update", update);
+        requestContent.put("register", false);
         String bodyContent;
         try {
             bodyContent = mapper.writeValueAsString(requestContent);
@@ -126,25 +135,26 @@ public class RemoteDeplEngine extends DeplEngine{
         } catch (IOException e) {
             throw Uncheck.throwAsUncheckedException(e);
         }
-        JavaType type = mapper.getTypeFactory().constructCollectionType(ArrayList.class, HashMap.class);
-        List<HashMap<String, Object>> remoteStateList;
+        JavaType type = mapper.getTypeFactory().constructCollectionType(ArrayList.class, InstallationReport.class);
+        List<InstallationReport> remoteStateList;
         try {
             remoteStateList = mapper.readValue(remoteState, type);
         } catch (IOException e) {
             throw Uncheck.throwAsUncheckedException(e);
         }
-        return remoteStateList.stream().map(map -> {
-            InstallationReport state = new InstallationReport();
-            state.setServiceCollectionName((String) map.get("serviceCollectionName"));
-            state.setIncludedServices((List<String>) map.get("includedServices"));
-            state.setRequestedServices((List<String>) map.get("requestedServices"));
-            if((Boolean)map.get("success")) {
-                state.setState(InstallationState.Success);
-            }
-            state.setOut((String) map.get("out"));
-            state.setErr((String) map.get("errOut"));
-            return state;
-        }).collect(Collectors.toList());
+        return remoteStateList;
+//        return remoteStateList.stream().map(map -> {
+//            InstallationReport state = new InstallationReport();
+//            state.setServiceCollectionName((String) map.get("serviceCollectionName"));
+//            state.setIncludedServices((List<String>) map.get("includedServices"));
+//            state.setRequestedServices((List<String>) map.get("requestedServices"));
+//            if((Boolean)map.get("success")) {
+//                state.setState(InstallationState.Success);
+//            }
+//            state.setOut((String) map.get("out"));
+//            state.setErr((String) map.get("errOut"));
+//            return state;
+//        }).collect(Collectors.toList());
     }
 
     public String getAddress() {
@@ -155,6 +165,67 @@ public class RemoteDeplEngine extends DeplEngine{
 
     @Override
     public void removeServices(List<AscribedService> services) {
+    }
+
+    @Override
+    public ExecutorDemandFulfillment demand(ExecutorDemandRequest demandRequest) {
+        /*
+         * Request a handle from the edd server using the demand request.
+         */
+        String url = address;
+        url = URIMod.setHTTPScheme(url);
+        url = URIMod.addPath(url, "demandUnit");
+
+
+        ObjectMapper mapper = new ObjectMapper();
+        String requestBodyContent;
+        try {
+            requestBodyContent = mapper.writeValueAsString(demandRequest);
+        } catch (JsonProcessingException e) {
+            // this shouldn't be reached.
+            throw new IllegalArgumentException(e);
+        }
+
+        OkHttpClient client = new OkHttpClient();
+        MediaType mediaType = MediaType.parse("application/json");
+
+        RequestBody body = RequestBody.create(mediaType, requestBodyContent);
+
+        Request request = new Request.Builder()
+            .url(url)
+            .post(body)
+            .addHeader("Content-Type", "application/json")
+            .build();
+
+        Response response;
+        String responseBody;
+        try {
+            response = client.newCall(request).execute();
+            responseBody = response.body().string();
+        } catch (IOException e) {
+            throw new RuntimeException("Error connecting to edd " + name
+                + " with address: " + address, e);
+        }
+
+
+        if(response.isSuccessful()) {
+            try {
+                ExecutorDemandFulfillment fulfillment = mapper.readValue(responseBody, ExecutorDemandFulfillment.class);
+                return fulfillment;
+            } catch (IOException e) {
+                throw new RuntimeException("edd " + name
+                    + " with address: " + address
+                    + ", returned body of executor fulfillment cannot be parsed. Body:\n"
+                    + responseBody);
+            }
+        } else {
+            Exception serverSideError = new Exception("Edd return message: \n" + responseBody);
+            throw new RuntimeException(
+                "edd " + name
+                + " with address: " + address
+                    + ", doesn't fulfill demand for the services it registered for: " + demandRequest.getServices(),
+                serverSideError);
+        }
     }
 
 }

@@ -1,8 +1,8 @@
-package de.upb.sede.edd.deploy.target;
+package de.upb.sede.edd.deploy.target.components;
 
-import de.upb.sede.util.ExecutorConfigurationCreator;
-import de.upb.sede.util.FileUtil;
-import de.upb.sede.util.OptionalField;
+import de.upb.sede.edd.deploy.specsrc.SpecSource;
+import de.upb.sede.requests.ExecutorRegistration;
+import de.upb.sede.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +25,10 @@ public class ExecutorConfigComponent extends TargetComponent {
 
     private File serviceDir;
 
-    public ExecutorConfigComponent(String displayName, File executorDir, String executorID, File serviceDir) {
+//    private SpecSource specSource;
+
+    public ExecutorConfigComponent(String displayName, File executorDir, String executorID, File serviceDir ){
+                                   //, SpecSource specSource) { TODO do we need spec source
         this.executorDir = executorDir;
         this.executorId = executorID;
         executorConfigFile = new File(executorDir,
@@ -33,6 +36,11 @@ public class ExecutorConfigComponent extends TargetComponent {
         super.setDisplayName(displayName);
         gateway = OptionalField.empty();
         this.serviceDir = serviceDir;
+//        this.specSource = specSource;
+    }
+
+    public String getExecutorId() {
+        return executorId;
     }
 
     public File getExecutorDir() {
@@ -51,8 +59,12 @@ public class ExecutorConfigComponent extends TargetComponent {
         this.gateway = OptionalField.ofNullable(gateway);
     }
 
-    public String getExecutorId() {
-        return executorId;
+    private Map<String, Object> contactInfo(String id, String address) {
+        Map<String, Object> contactInfo = new HashMap<>();
+        contactInfo.put("id", id);
+        contactInfo.put("host-address", address);
+        return contactInfo;
+
     }
 
     public File getExecutorConfigFile() {

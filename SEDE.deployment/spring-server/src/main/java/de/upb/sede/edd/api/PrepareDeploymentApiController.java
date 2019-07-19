@@ -39,23 +39,29 @@ public class PrepareDeploymentApiController implements PrepareDeploymentApi {
     }
 
     public ResponseEntity<String> prepareDeploymentPost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody PrepareRequest body) {
-        return prepare(EDD.getInstance().getDeploymentEngine().getDefault(), body.isUpdate());
+        return prepare(EDD.getInstance().getDeploymentEngine().getDefault(), body.isUpdate(), body.getRegister());
     }
 
     public ResponseEntity<String> prepareDeploymentRemoteNamePost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody PrepareRequest body, @ApiParam(value = "Remote name of a previosuly managed machine with an EDD server.",required=true) @PathVariable("remoteName") String remoteName) {
         Optional<DeplEngine> deplEngine = EDD.getInstance().getDeploymentEngine().getDeplEngine(remoteName);
         if(deplEngine.isPresent())
-            return prepare(deplEngine.get(), body.isUpdate());
+            return prepare(deplEngine.get(), body.isUpdate(), body.getRegister());
         else
             return new ResponseEntity<>("Remote name " + remoteName + " is not known.", HttpStatus.BAD_REQUEST);
+
+
     }
 
 
-    private ResponseEntity<String> prepare(DeplEngine engine, boolean update) {
+    private ResponseEntity<String> prepare(DeplEngine engine, boolean update, boolean register) {
         try {
             engine.prepareDeployment(update);
+            if(register) {
+                engine.registerAll(EDD.getInstance());
+            }
             return new ResponseEntity<String>(HttpStatus.CREATED);
         } catch(Exception ex) {
+            log.error("Error preparing", ex);
             return new ResponseEntity<String>("Error trying to install services: " + Streams.ErrToString(ex),
                     HttpStatus.INTERNAL_SERVER_ERROR);
         }

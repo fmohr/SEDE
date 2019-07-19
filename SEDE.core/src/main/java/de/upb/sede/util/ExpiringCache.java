@@ -2,7 +2,7 @@ package de.upb.sede.util;
 
 import java.util.concurrent.TimeUnit;
 
-public class ExpiringCache<Content> implements Cache<Content> {
+public class ExpiringCache<Content> implements SettableCache<Content> {
 
     private MutableOptionalField<Long> expirationTimeMillis = MutableOptionalField.empty();
 
@@ -12,13 +12,13 @@ public class ExpiringCache<Content> implements Cache<Content> {
 
     public ExpiringCache(long servicePeriod, TimeUnit timeUnit, Content content) {
         this.servicePeriod.set(timeUnit.toMillis(servicePeriod));
-        this.innerCache = new StaticCache<>(content);
+        this.innerCache = new NullableCache<>(content);
         prolong();
     }
 
     public ExpiringCache(long expirationTimeMillis, Content content) {
         this.expirationTimeMillis.set(expirationTimeMillis);
-        this.innerCache = new StaticCache<>(content);
+        this.innerCache = new NullableCache<>(content);
     }
 
     public ExpiringCache(long servicePeriod, TimeUnit timeUnit, Cache<Content> innerCache) {
@@ -88,5 +88,13 @@ public class ExpiringCache<Content> implements Cache<Content> {
      */
     public Content forceAccess() {
         return innerCache.access();
+    }
+
+    @Override
+    public boolean set(Content content) {
+        if(innerCache instanceof SettableCache) {
+            return ((SettableCache<Content>) innerCache).set(content);
+        }
+        return false;
     }
 }

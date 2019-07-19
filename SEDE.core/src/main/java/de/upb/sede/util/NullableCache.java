@@ -17,7 +17,7 @@ public class NullableCache<Content> implements SettableCache<Content> {
     }
 
     public boolean set(Content content) {
-        this.content = OptionalField.of(content);
+        this.content = OptionalField.ofNullable(content);
         return true;
     }
 

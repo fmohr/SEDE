@@ -1,6 +1,7 @@
 package de.upb.sede.edd.deploy;
 
 import de.upb.sede.edd.LockableDir;
+import de.upb.sede.edd.runtime.ExecutorRuntimeSupplier;
 import de.upb.sede.util.SystemSettingLookup;
 import de.upb.sede.edd.deploy.deplengine.InstallationReport;
 import de.upb.sede.edd.deploy.deplengine.InstallationState;
@@ -9,7 +10,6 @@ import de.upb.sede.edd.deploy.model.DeploymentSourceDirName;
 import de.upb.sede.edd.deploy.model.DeploymentSpecification;
 import de.upb.sede.edd.deploy.model.ClassPathOutput;
 import de.upb.sede.edd.deploy.model.OutputCollectionType;
-import de.upb.sede.edd.deploy.target.GroupComponents;
 import de.upb.sede.edd.deploy.target.JExecutorTarget;
 import de.upb.sede.edd.process.ClassPath;
 import de.upb.sede.util.*;
@@ -214,27 +214,27 @@ public class ServiceDeployment {
         return deploymentMethod;
     }
 
-    public void collectOutputs(GroupComponents gc) {
+    public void collectOutputs(ExecutorRuntimeSupplier gc, String name) {
         logger.info("{}: collecting deployment outputs.", getDisplayName());
         List<DynTypeField> outputs = specification.getOutput();
         // should do nothing if outputs is empty.
         for(DynTypeField output : outputs) {
             Optional<String> type = output.cast(OutputCollectionType.class).getType();
             if(type.isPresent()) {
-                collectOutput(gc, output, type.get());
+                collectOutput(gc, name, output, type.get());
             } else {
                 logger.warn("{}: output has no type: {}", getDisplayName(), output);
             }
         }
-        JExecutorTarget target = gc.getJavaExecutor(specification.getName());
+        JExecutorTarget target = gc.getJavaExecutor(name);
         logger.debug("{}: adding services of {} to {}.", getDisplayName(), specification.getName(), target.getDisplayName());
         target.getExecutorConfig().getServices().addAll(specification.getServices());
     }
 
-    private void collectOutput(GroupComponents gc, DynTypeField output, String type) {
+    private void collectOutput(ExecutorRuntimeSupplier gc, String name, DynTypeField output, String type) {
         if(ClassPathOutput.OUTPUT_TYPE.equals(type)) {
             ClassPathOutput classPathOutput = output.cast(ClassPathOutput.class);
-            JExecutorTarget target = gc.getJavaExecutor(specification.getName());
+            JExecutorTarget target = gc.getJavaExecutor(name);
             ClassPath cp = target.getExecutorProcess().getJavaProcessBuilder().getClasspath();
             for(AcrPath path : classPathOutput.getFiles()) {
                 File cpFile = resolvePath(path);

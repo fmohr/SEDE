@@ -8,6 +8,7 @@ import de.upb.sede.edd.deploy.DeploymentException;
 import de.upb.sede.edd.deploy.ServiceDeployment;
 import de.upb.sede.edd.deploy.model.DeploymentSpecification;
 import de.upb.sede.edd.deploy.specsrc.SpecSource;
+import de.upb.sede.edd.deploy.specsrc.SpecSourceFromURI;
 import de.upb.sede.util.MutableOptionalField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +36,7 @@ class InstallationEnv {
     }
 
     private LockableDir getLocalDir() {
-        return daemon.getHome().getLocalDeplDir().getChild(specSource.getName());
+        return daemon.getHome().getLocalDeplDir().getChild(specSource.getServiceNamespace());
     }
 
     private LockableDir getInstallDir() {
@@ -59,7 +60,7 @@ class InstallationEnv {
     }
 
     void addRequestedServices(Collection<String> services) {
-        logger.info("New services {} were requested from src {}.", services, specSource.getName());
+        logger.info("New services {} were requested from src {}.", services, specSource.getServiceNamespace());
         synchronizeCall(() -> {
             Set<DeploymentSpecification> requestedSpec = specSource
                 .access()
@@ -68,12 +69,12 @@ class InstallationEnv {
             deployments.addAll(requestedSpec);
             return null;
         }, true);
-        logger.info("Requested services were accepted. All requested services from src : \n {} \n are:\n {}", specSource.getName(), requestedServices);
+        logger.info("Requested services were accepted. All requested services from src : \n {} \n are:\n {}", specSource.getServiceNamespace(), requestedServices);
     }
 
     void install(boolean update) {
         synchronizeCall(() -> {
-            String installlationDisplayName = " {src:'" + specSource.getName() + "'} installation: ";
+            String installlationDisplayName = " {src:'" + specSource.getServiceNamespace() + "'} installation: ";
             Installations installations = new Installations(
                 installlationDisplayName,
                 getInstallDir(),
@@ -103,7 +104,11 @@ class InstallationEnv {
                     InstallationReport state = serviceDeployment.state();
                     state.setRequestedServices(requestedServicesForSpec(serviceDeployment.getSpecification()));
 
-                    state.setSpecSource(specSource.getName());
+                    if(specSource instanceof SpecSourceFromURI)
+                        state.setSpecSource(((SpecSourceFromURI) specSource).getSpecUri().getAddress());
+
+                    else
+                        state.setSpecSource(specSource.getServiceNamespace());
 
                     String stdOut = new String(serviceDeployment.getOutBytes().toByteArray());
                     String errOut = new String(serviceDeployment.getOutBytes().toByteArray());
@@ -122,6 +127,12 @@ class InstallationEnv {
             state.setIncludedServices(undeployedSpec.getServices());
             state.setRequestedServices(requestedServicesForSpec(undeployedSpec));
             state.setState(InstallationState.Init);
+
+            if(specSource instanceof SpecSourceFromURI)
+                state.setSpecSource(((SpecSourceFromURI) specSource).getSpecUri().getAddress());
+
+            else
+                state.setSpecSource(specSource.getServiceNamespace());
             states.add(state);
         });
         return states;
@@ -147,5 +158,16 @@ class InstallationEnv {
 
     public Set<String> getRequestedServices() {
         return requestedServices;
+    }
+
+    public Optional<Installations> getLatestInstallations() {
+        return latestInstallations.opt();
+    }
+
+    @Override
+    public String toString() {
+        return "InstallationEnv{" +
+            "requestedServices=" + requestedServices +
+            '}';
     }
 }

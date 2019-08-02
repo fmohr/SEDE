@@ -59,8 +59,11 @@ public class DeplEngineRegistry {
         return engines;
     }
 
-    public DeplEngine createRemoteEngine(String name, String remoteAddress) {
-        RemoteDeplEngine remoteDeplEngine = new RemoteDeplEngine(name, remoteAddress);
+    public DeplEngine createRemoteEngine(String name, String remoteHostAddress) {
+        if(getDeplEngine(name).isPresent()) {
+            throw new IllegalArgumentException("The given engine name is already used: " + name);
+        }
+        RemoteDeplEngine remoteDeplEngine = new RemoteDeplEngine(name, remoteHostAddress);
         engines.add(remoteDeplEngine);
         return remoteDeplEngine;
     }
@@ -70,8 +73,17 @@ public class DeplEngineRegistry {
     }
 
     public boolean disconnectEngine(String name) {
-        // TODO disconnect remote engine
-        return true;
+        Optional<DeplEngine> deplEngine = getDeplEngine(name);
+        if(deplEngine.isPresent()) {
+            DeplEngine engine = deplEngine.get();
+            if(engine instanceof RemoteDeplEngine)
+                return engines.remove(engine);
+            else
+                return false;
+        }
+        else {
+            return false;
+        }
     }
 
 }

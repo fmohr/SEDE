@@ -1,6 +1,7 @@
 package de.upb.sede.edd.runtime;
 
 import de.upb.sede.edd.EDD;
+import de.upb.sede.edd.deploy.AscribedService;
 import de.upb.sede.edd.deploy.deplengine.DeplEngine;
 import de.upb.sede.edd.process.ProcessHandle;
 import de.upb.sede.edd.process.ProcessHandleState;
@@ -37,7 +38,14 @@ public class LocalRuntimeRegistry implements RuntimeRegistry {
                 ExecutorDemandFulfillment all = new ExecutorDemandFulfillment(
                     getAllRunning()
                     .filter(er ->
-                        er.getSource().getServiceNamespace().equals(request.getServiceNamespace())
+                        request.getServices()
+                            .stream()
+                            .map(AscribedService::parseURI)
+                            .anyMatch(ascribedService -> {
+                                String requestedNS = ascribedService.getNamespace().buildString();
+                                String runtimeNS = er.getSource().getServiceNamespace();
+                                return requestedNS.equals(runtimeNS);
+                            })
                     )
                     .map(er -> er.getTarget().getRegistration())
                     .collect(Collectors.toList()));
@@ -73,13 +81,22 @@ public class LocalRuntimeRegistry implements RuntimeRegistry {
         if(request.getServices().isEmpty()) {
             return new ExecutorDemandFulfillment(Collections.EMPTY_LIST);
         }
-
-        ExecutorDemandFulfillment reused = new ExecutorDemandFulfillment(getAllRunning()
+            ExecutorDemandFulfillment reused = new ExecutorDemandFulfillment(getAllRunning()
             .filter(er ->
-                er.getSource().getServiceNamespace().equals(request.getServiceNamespace())
+                    request.getServices()
+                        .stream()
+                        .map(AscribedService::parseURI)
+                        .anyMatch(ascribedService ->
+                         er.getSource()
+                             .getServiceNamespace()
+                             .equals(ascribedService.getNamespace().buildString()))
+
             )
             .filter(er ->
-                er.getTarget().getExecutorConfig().getServices().stream().anyMatch(request.getServices()::contains)
+                er.getTarget().getExecutorConfig().getServices().stream().anyMatch( service ->
+                    request.getServices().stream().map(AscribedService::parseURI).anyMatch( requestedService
+                        -> requestedService.getService().equals(service))
+                )
             )
             .peek(this::accessRuntime)
             .map(er -> er.getTarget().getRegistration())

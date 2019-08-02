@@ -130,7 +130,7 @@ public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
          */
         cleanupExpiredRequests();
         boolean servicePreviouslyRequested = prolongServiceRequest(service);
-        if(servicePreviouslyRequested) {
+        if(!servicePreviouslyRequested) {
             addService(service);
         }
         List<ExecutorHandle> executorHandles = execHandleCache.access().stream()

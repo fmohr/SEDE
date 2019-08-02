@@ -1,5 +1,6 @@
 package de.upb.sede.edd.deploy.deplengine;
 
+import de.upb.sede.edd.DefaultLockableDir;
 import de.upb.sede.edd.DirLockAlreadyAcquiredException;
 import de.upb.sede.edd.EDD;
 import de.upb.sede.edd.LockableDir;
@@ -36,7 +37,9 @@ class InstallationEnv {
     }
 
     private LockableDir getLocalDir() {
-        return daemon.getHome().getLocalDeplDir().getChild(specSource.getServiceNamespace());
+        String dirName = specSource.getServiceNamespace();
+        dirName = DefaultLockableDir.urlEncode(dirName);
+        return daemon.getHome().getLocalDeplDir().getChild(dirName);
     }
 
     private LockableDir getInstallDir() {
@@ -104,11 +107,7 @@ class InstallationEnv {
                     InstallationReport state = serviceDeployment.state();
                     state.setRequestedServices(requestedServicesForSpec(serviceDeployment.getSpecification()));
 
-                    if(specSource instanceof SpecSourceFromURI)
-                        state.setSpecSource(((SpecSourceFromURI) specSource).getSpecUri().getAddress());
-
-                    else
-                        state.setSpecSource(specSource.getServiceNamespace());
+                    state.setSpecSource(specSource.getServiceNamespace());
 
                     String stdOut = new String(serviceDeployment.getOutBytes().toByteArray());
                     String errOut = new String(serviceDeployment.getOutBytes().toByteArray());
@@ -128,11 +127,7 @@ class InstallationEnv {
             state.setRequestedServices(requestedServicesForSpec(undeployedSpec));
             state.setState(InstallationState.Init);
 
-            if(specSource instanceof SpecSourceFromURI)
-                state.setSpecSource(((SpecSourceFromURI) specSource).getSpecUri().getAddress());
-
-            else
-                state.setSpecSource(specSource.getServiceNamespace());
+            state.setSpecSource(specSource.getServiceNamespace());
             states.add(state);
         });
         return states;

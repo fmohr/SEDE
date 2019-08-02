@@ -5,6 +5,7 @@
  */
 package de.upb.sede.edd.api;
 
+import de.upb.sede.edd.reports.ServiceRequirementReport;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +27,7 @@ public interface RequireServiceApi {
     @RequestMapping(value = "/requireService",
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<String> requireServicePost(@ApiParam(value = "", required = true) @Valid @RequestBody List<String> body);
+    ResponseEntity<List<ServiceRequirementReport>> requireServicePost(@ApiParam(value = "", required = true) @Valid @RequestBody List<String> body);
 
 
     @ApiOperation(value = "Require the given services from the given remote. It will be added to the required services and deployed the next time prepare deployment is called.", nickname = "requireServiceRemoteNamePost", notes = "", tags={  })
@@ -36,6 +37,6 @@ public interface RequireServiceApi {
     @RequestMapping(value = "/requireService/{remoteName}",
         consumes = { "application/json" },
         method = RequestMethod.POST)
-    ResponseEntity<String> requireServiceRemoteNamePost(@ApiParam(value = "", required = true) @Valid @RequestBody List<String> body, @ApiParam(value = "Remote name of a previosuly managed machine with an EDD server.", required = true) @PathVariable("remoteName") String remoteName);
+    ResponseEntity<List<ServiceRequirementReport>> requireServiceRemoteNamePost(@ApiParam(value = "", required = true) @Valid @RequestBody List<String> body, @ApiParam(value = "Remote name of a previosuly managed machine with an EDD server.", required = true) @PathVariable("remoteName") String remoteName);
 
 }

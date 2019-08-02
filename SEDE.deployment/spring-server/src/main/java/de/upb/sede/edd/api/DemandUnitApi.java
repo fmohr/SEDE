@@ -5,8 +5,6 @@
  */
 package de.upb.sede.edd.api;
 
-import de.upb.sede.edd.model.Body;
-import de.upb.sede.edd.model.ServiceFulfillment;
 import de.upb.sede.requests.deploy.ExecutorDemandFulfillment;
 import de.upb.sede.requests.deploy.ExecutorDemandRequest;
 import io.swagger.annotations.*;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-07-03T11:35:15.474Z[GMT]")
 @Api(value = "demandUnit", description = "the demandUnit API")

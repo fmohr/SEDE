@@ -1,14 +1,24 @@
 package de.upb.sede.requests.deploy;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import de.upb.sede.util.OptionalField;
+import de.upb.sede.util.UnmodifiableURI;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ExecutorDemandRequest {
 
+    @JsonProperty("services")
     private List<String> services;
 
+    @JsonProperty("modi")
     private List<SatMode> demandSatModes = new ArrayList<>(Arrays.asList(SatMode.Reuse, SatMode.Spawn));
 
     public enum SatMode {
@@ -17,7 +27,8 @@ public class ExecutorDemandRequest {
         AllAvailable // This mode instructs to return all running executors.
     }
 
-    private String serviceNamespace;
+    @JsonIgnore
+    private OptionalField<UnmodifiableURI> serviceNamespace = OptionalField.empty();
 
     public ExecutorDemandRequest() {
     }
@@ -32,36 +43,51 @@ public class ExecutorDemandRequest {
     }
 
     public List<String> getServices() {
-        return services;
+        if(serviceNamespace.isPresent()) {
+            UnmodifiableURI namespace = serviceNamespace.get();
+            return services.stream()
+                .map(service -> namespace.mod().fragment(service))
+                .map(UnmodifiableURI::buildString)
+                .collect(Collectors.toList());
+        } else {
+            return services;
+        }
     }
 
     public void setServices(List<String> services) {
         this.services = services;
     }
 
+    @JsonGetter("modi")
     public List<SatMode> getDemandSatModes() {
         return demandSatModes;
     }
 
+    @JsonSetter("modi")
     public void setDemandSatModes(List<SatMode> demandSatModes) {
         this.demandSatModes = demandSatModes;
     }
 
+    @JsonIgnore
     public boolean isSet(SatMode  mode) {
         return demandSatModes.contains(mode);
     }
 
+
+    @JsonIgnore
     public void setModi(SatMode... demandSatModes) {
         this.demandSatModes.clear();
         Collections.addAll(this.demandSatModes, demandSatModes);
     }
 
-    public String getServiceNamespace() {
-        return serviceNamespace;
+    @JsonIgnore
+    public UnmodifiableURI getServiceNamespace() {
+        return serviceNamespace.orElse(null);
     }
 
-    public void setServiceNamespace(String serviceNamespace) {
-        this.serviceNamespace = serviceNamespace;
+    @JsonIgnore
+    public void setServiceNamespace(UnmodifiableURI serviceNamespace) {
+        this.serviceNamespace = OptionalField.ofNullable(serviceNamespace);
     }
 
     @Override

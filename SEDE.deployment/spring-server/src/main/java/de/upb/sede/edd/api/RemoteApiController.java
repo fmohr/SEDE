@@ -5,6 +5,7 @@ import de.upb.sede.edd.deploy.deplengine.DeplEngineRegistry;
 import de.upb.sede.edd.deploy.deplengine.RemoteDeplEngine;
 import de.upb.sede.edd.model.Remote;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.upb.sede.util.Streams;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +46,7 @@ public class RemoteApiController implements RemoteApi {
                 .map(remoteEngine -> {
                     Remote remote = new Remote();
                     remote.setName(remoteEngine.getName());
-                    remote.connection(remoteEngine.getAddress());
+                    remote.connection(remoteEngine.getAddress().buildString());
                     return remote;
                 })
                 .collect(Collectors.toList());
@@ -64,9 +65,22 @@ public class RemoteApiController implements RemoteApi {
         return new ResponseEntity<Void>(HttpStatus.OK);
     }
 
-    public ResponseEntity<Void> remoteRemoteNameDelete(@ApiParam(value = "Remote name of a previosuly managed machine with an EDD server.",required=true) @PathVariable("remoteName") Remote remoteName) {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+    public ResponseEntity<String> remoteRemoteNameDelete(
+            @ApiParam(value = "Remote name of a previosuly managed machine with an EDD server.",required=true) @PathVariable("remoteName")
+                    String remoteName) {
+        boolean deleted;
+        try {
+            DeplEngineRegistry engReg = EDD.getInstance().getDeploymentEngine();
+            deleted = engReg.disconnectEngine(remoteName);
+        }
+        catch(Exception ex) {
+            return ResponseEntity.status(500).body("Internal server error: \n" + Streams.ErrToString(ex));
+        }
+        if(deleted) {
+            return ResponseEntity.ok().body("Removed remote engine " + remoteName);
+        } else {
+            return ResponseEntity.status(404).body("Remote engine not found.");
+        }
     }
 
 }

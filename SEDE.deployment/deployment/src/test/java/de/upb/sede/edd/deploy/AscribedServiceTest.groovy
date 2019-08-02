@@ -12,17 +12,17 @@ class AscribedServiceTest extends Specification {
         def ms = AscribedService.parseURI(ipMarketService)
         then:
         ms.service == "service"
-        ms.getSpecUri().getEncodedAddress() == "0.1.2.3%3A7000"
-        ms.getSpecUri().getAddress() == "0.1.2.3:7000"
+        ms.getNamespace().getEncodedAddress() == "0.1.2.3%3A7000"
+        ms.getNamespace().getAddress() == "0.1.2.3:7000"
 
         when:
         ipMarketService = "http://localhost:7000#service"
         ms = AscribedService.parseURI(ipMarketService)
         then:
         ms.service == "service"
-        ms.specUri.scheme == "http"
-        ms.getSpecUri().getEncodedAddress() == "localhost%3A7000"
-        ms.getSpecUri().getAddress() == "localhost:7000"
+        ms.namespace.scheme == "http"
+        ms.getNamespace().getEncodedAddress() == "localhost%3A7000"
+        ms.getNamespace().getAddress() == "localhost:7000"
     }
 
     def "test parsing file and cp fragments" () {
@@ -31,10 +31,10 @@ class AscribedServiceTest extends Specification {
         def ms = AscribedService.parseURI(ipMarketService)
         then:
         ms.service == "Weka.ml"
-        ms.getSpecUri().scheme == "classpath"
-        ms.getSpecUri().getAddress() == "deployment/sede.services-deployconf.json"
-        ms.getSpecUri().getEncodedAddress() == "deployment%2Fsede.services-deployconf.json"
-        FileUtil.readResourceAsString(ms.getSpecUri().getAddress()).size() > 0
+        ms.getNamespace().scheme == "classpath"
+        ms.getNamespace().getAddress() == "deployment/sede.services-deployconf.json"
+        ms.getNamespace().getEncodedAddress() == "deployment%2Fsede.services-deployconf.json"
+        FileUtil.readResourceAsString(ms.getNamespace().getAddress()).size() > 0
     }
 
     def "test json serialization"() {
@@ -45,9 +45,9 @@ class AscribedServiceTest extends Specification {
         ObjectMapper mapper = new ObjectMapper()
         def ascribedService = mapper.readValue(jsonData, AscribedService)
         then:
-        ascribedService.specUri.toString() == "http://some.host.address/subpath"
-        ascribedService.specUri.scheme == "http"
-        ascribedService.specUri.address == "some.host.address/subpath"
+        ascribedService.namespace.toString() == "http://some.host.address/subpath"
+        ascribedService.namespace.scheme == "http"
+        ascribedService.namespace.address == "some.host.address/subpath"
         ascribedService.service == "service.framework"
 
         when:

@@ -1,0 +1,117 @@
+plugins {
+	id 'org.springframework.boot' version '2.1.6.RELEASE'
+	id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+
+group = 'de.upb.isys'
+version = '0.0.10'
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+    mavenLocal()
+
+    flatDir {
+        dirs 'configlib'
+    }
+    
+    jcenter()
+    mavenCentral()
+
+    maven {
+        url "https://nexus.cs.upb.de/repository/maven-releases/"
+    }
+    maven { url 'https://jitpack.io' }
+}
+
+dependencies {
+    
+    // Config dependencies
+
+    compile name: 'builtins-1.1-serviceconf'
+    compile name: 'c2.image-1.1-serviceconf'
+    compile name: 'catalano.image-1.6-serviceconf'
+    compile name: 'demolib-1.1-serviceconf'
+    compile name: 'scikit.ml-1.2-serviceconf'
+    compile name: 'weka.ml-1.5-serviceconf'
+    
+    /*
+     * Logging dependencies
+     */
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+    testRuntimeOnly group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.1'
+
+
+    /*
+     * SEDE dependencies
+     */
+    implementation 'de.upb.isys:SEDE.core:0.0.10'
+    implementation 'de.upb.isys:SEDE.gateway:0.0.10'
+
+
+    /*
+     * Spring dependencies
+     */
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+    implementation 'org.springframework.boot:spring-boot-dependencies:2.1.6.RELEASE'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+    components {
+        withModule('org.springframework:spring-beans') {
+            allVariants {
+                withDependencyConstraints {
+                    // Need to patch constraints because snakeyaml is an optional dependency
+                    it.findAll { it.name == 'snakeyaml' }.each { it.version { strictly '1.19' } }
+                }
+            }
+        }
+    }
+
+
+    /*
+     * Swagger dependencies
+     */
+    implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    implementation 'com.github.joschi.jackson:jackson-datatype-threetenbp:2.6.4'
+    implementation 'javax.validation:validation-api'
+
+
+    /*
+     * UI dependencies
+     */
+    def experimentalUi = false
+    if (! experimentalUi) {
+        compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+//        implementation 'io.springfox:springfox-swagger-ui:2.7.0'
+//        compile group: 'org.webjars', name: 'swagger-ui', version: '3.23.2'
+    } else {
+        implementation 'io.springfox.ui:springfox-swagger-ui-rfc6570:1.0.0'
+//        compile group: 'org.webjars', name: 'swagger-ui', version: '3.23.2'
+    }
+
+    /*
+     * Project dependencies
+     */
+    implementation 'com.google.guava:guava:26.0-jre'
+
+
+    compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+
+    /*
+     * Test framework dependencies
+     */
+    testImplementation 'org.codehaus.groovy:groovy-all:2.5.4'
+    testImplementation 'org.spockframework:spock-core:1.2-groovy-2.5'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}

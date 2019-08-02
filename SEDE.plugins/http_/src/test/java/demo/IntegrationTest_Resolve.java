@@ -47,6 +47,8 @@ public class IntegrationTest_Resolve {
 		ExecutorRegistration registration2 = new ExecutorRegistration(contactInfo, Arrays.asList("java"),
 				Arrays.asList("demo.math.Gerade"));
 		gateway.register(registration2);
+
+
 	}
 
 	@Before

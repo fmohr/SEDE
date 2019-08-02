@@ -126,6 +126,8 @@ project(':SEDE.core') {
         // https://mvnrepository.com/artifact/commons-io/commons-io
         compile group: 'commons-io', name: 'commons-io', version: '2.6'
 
+        compile 'com.google.guava:guava:28.0-jre'
+
         // https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind
         compile(group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9')
         compile 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9'
@@ -158,7 +160,7 @@ project(':SEDE.gateway') {
         // dependend on the builtin service configurations
         compile group: 'de.upb.isys', name: 'builtins', version: '1.1'
 
-        compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.2.0'
+        compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.14.2'
     }
 }
 

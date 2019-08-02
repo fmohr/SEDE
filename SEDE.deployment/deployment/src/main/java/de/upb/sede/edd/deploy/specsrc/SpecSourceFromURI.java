@@ -1,21 +1,20 @@
 package de.upb.sede.edd.deploy.specsrc;
 
-import de.upb.sede.edd.deploy.SpecURI;
 import de.upb.sede.edd.deploy.model.DeploymentSpecificationRegistry;
 import de.upb.sede.util.Cache;
 import de.upb.sede.util.TTLCache;
+import de.upb.sede.util.UnmodifiableURI;
 
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public abstract class SpecSourceFromURI implements SpecSource{
 
-
-    private SpecURI specURI;
+    private UnmodifiableURI specURI;
 
     protected Cache<DeploymentSpecificationRegistry> deploymentRegistry;
 
-    public SpecSourceFromURI(SpecURI specURI) {
+    public SpecSourceFromURI(UnmodifiableURI specURI) {
         this.specURI = Objects.requireNonNull(specURI);
         this.deploymentRegistry = new TTLCache<>(60, TimeUnit.SECONDS, this::fetch);
     }
@@ -29,7 +28,7 @@ public abstract class SpecSourceFromURI implements SpecSource{
 
     @Override
     public String getServiceNamespace() {
-        return specURI.getEncodedAddress();
+        return specURI.buildString();
     }
 
     @Override
@@ -38,7 +37,7 @@ public abstract class SpecSourceFromURI implements SpecSource{
     }
 
 
-    public SpecURI getSpecUri() {
+    public UnmodifiableURI getSpecUri() {
         return specURI;
     }
 

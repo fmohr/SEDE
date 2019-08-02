@@ -8,7 +8,6 @@ import org.threeten.bp.Instant;
 import org.threeten.bp.OffsetDateTime;
 import org.threeten.bp.ZonedDateTime;
 
-@Configuration
 public class JacksonConfiguration {
 
   @Bean

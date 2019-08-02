@@ -3,6 +3,7 @@ package de.upb.sede.edd.deploy.deplengine;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.upb.sede.edd.EDD;
+import de.upb.sede.edd.reports.ServiceRequirementReport;
 import de.upb.sede.edd.deploy.AscribedService;
 import de.upb.sede.requests.deploy.EDDRegistration;
 import de.upb.sede.requests.deploy.ExecutorDemandFulfillment;
@@ -25,7 +26,7 @@ public abstract class DeplEngine {
 
     public abstract String getName();
 
-    public abstract void addServices(List<AscribedService> services);
+    public abstract List<ServiceRequirementReport> addServices(List<AscribedService> services);
 
     public abstract void prepareDeployment(boolean update);
 
@@ -44,8 +45,13 @@ public abstract class DeplEngine {
             List<String> services = currentState
                 .stream()
                 .filter(state -> state.getSpecSource().equals(gwAddress))
+                .filter(state -> state.getState() == InstallationState.Success)
                 .flatMap(state -> state.getIncludedServices().stream())
                 .collect(Collectors.toList());
+
+            if(services.isEmpty()) {
+                logger.warn("Didn't register to {} because no service from this gateway is installed.", gwAddress);
+            }
 
             EDDRegistration registration = new EDDRegistration(
                 deamon.getInfo().getIdentifier(),

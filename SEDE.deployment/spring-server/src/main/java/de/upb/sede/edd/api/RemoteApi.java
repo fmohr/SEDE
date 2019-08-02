@@ -39,12 +39,12 @@ public interface RemoteApi {
     ResponseEntity<Void> remotePost(@ApiParam(value = "", required = true) @Valid @RequestBody Remote body);
 
 
-    @ApiOperation(value = "Disconnects the remote machine. Shuts down running machines.", nickname = "remoteRemoteNameDelete", notes = "", tags={  })
+    @ApiOperation(value = "Disconnects the remote machine.", nickname = "remoteRemoteNameDelete", notes = "", tags={  })
     @ApiResponses(value = { 
         @ApiResponse(code = 200, message = "The disconnected group. Connect by posting this object to `/groups`."),
         @ApiResponse(code = 404, message = "The given remote name was not found") })
     @RequestMapping(value = "/remote/{remoteName}",
         method = RequestMethod.DELETE)
-    ResponseEntity<Void> remoteRemoteNameDelete(@ApiParam(value = "Remote name of a previosuly managed machine with an EDD server.", required = true) @PathVariable("remoteName") Remote remoteName);
+    ResponseEntity<String> remoteRemoteNameDelete(@ApiParam(value = "Remote name of a previosuly managed machine with an EDD server.", required = true) @PathVariable("remoteName") String remoteName);
 
 }

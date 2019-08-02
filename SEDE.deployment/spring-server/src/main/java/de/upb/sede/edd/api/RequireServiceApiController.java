@@ -1,9 +1,11 @@
 package de.upb.sede.edd.api;
 
 import de.upb.sede.edd.EDD;
+import de.upb.sede.edd.ctrl.ServiceRequirementCtrl;
 import de.upb.sede.edd.deploy.AscribedService;
 import de.upb.sede.edd.deploy.deplengine.DeplEngine;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.upb.sede.edd.reports.ServiceRequirementReport;
 import de.upb.sede.util.Streams;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -32,45 +34,32 @@ public class RequireServiceApiController implements RequireServiceApi {
 
     private EDD edd = EDD.getInstance();
 
+    private ServiceRequirementCtrl ctrl;
+
     @org.springframework.beans.factory.annotation.Autowired
-    public RequireServiceApiController(ObjectMapper objectMapper, HttpServletRequest request) {
+    public RequireServiceApiController(ObjectMapper objectMapper, HttpServletRequest request, ServiceRequirementCtrl serviceRequirementCtrl) {
         this.objectMapper = objectMapper;
         this.request = request;
+        this.ctrl = serviceRequirementCtrl;
     }
 
-    public ResponseEntity<String> requireServicePost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody List<String> body) {
+    public ResponseEntity<List<ServiceRequirementReport>> requireServicePost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody List<String> body) {
         return addServices(body, edd.getDeploymentEngine().getDefault());
     }
 
-    public ResponseEntity<String> requireServiceRemoteNamePost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody List<String> body, @ApiParam(value = "Remote name of a previosuly managed machine with an EDD server.",required=true) @PathVariable("remoteName") String remoteName) {
+    public ResponseEntity<List<ServiceRequirementReport>> requireServiceRemoteNamePost(@ApiParam(value = "" ,required=true )  @Valid @RequestBody List<String> body, @ApiParam(value = "Remote name of a previosuly managed machine with an EDD server.",required=true) @PathVariable("remoteName") String remoteName) {
         Optional<DeplEngine> deplEngine = EDD.getInstance().getDeploymentEngine().getDeplEngine(remoteName);
         if(deplEngine.isPresent())
             return addServices(body, deplEngine.get());
         else
-            return new ResponseEntity<>("Remote name " + remoteName + " is not known.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    private ResponseEntity<String> addServices(List<String> requistedServices, DeplEngine engine) {
-        String accept = request.getHeader("Accept");
-
+    private ResponseEntity<List<ServiceRequirementReport>> addServices(List<String> requistedServices, DeplEngine engine) {
+        List<ServiceRequirementReport> reports = ctrl.requireServices(engine, requistedServices);
         List<AscribedService> services;
-        try {
-            services = requistedServices.stream()
-                    .map(AscribedService::parseURI)
-                    .collect(Collectors.toList());
-        }catch (Exception ex){
-            return new ResponseEntity<String>("The required services are ascribed correctly.. "
-                    + ex.getMessage(), HttpStatus.BAD_REQUEST);
-        }
 
-        try {
-            engine.addServices(services);
-        } catch (Exception ex) {
-            return new ResponseEntity<String>("Error adding required services:  "
-                    + Streams.ErrToString(ex), HttpStatus.BAD_REQUEST);
-        }
-
-        return new ResponseEntity<String>(HttpStatus.CREATED);
+        return ResponseEntity.status(201).body(reports);
     }
 
 }

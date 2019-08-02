@@ -7,7 +7,9 @@ import de.upb.sede.gateway.OnDemandExecutorSupplier;
 import de.upb.sede.requests.deploy.EDDRegistration;
 import de.upb.sede.requests.deploy.ExecutorDemandFulfillment;
 import de.upb.sede.requests.deploy.ExecutorDemandRequest;
+import de.upb.sede.util.ModifiableURI;
 import de.upb.sede.util.URIMod;
+import de.upb.sede.util.UnmodifiableURI;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -55,7 +57,8 @@ public class EDDExecutorSupplier implements OnDemandExecutorSupplier {
 
 
         ExecutorDemandRequest demandRequest = new ExecutorDemandRequest(services);
-        demandRequest.setServiceNamespace(registration.getServiceNamespace());
+        UnmodifiableURI namespace = registration.getNamespaceURI();
+        demandRequest.setServiceNamespace(namespace);
         demandRequest.setModi(Spawn, Reuse, AllAvailable);
         ObjectMapper mapper = new ObjectMapper();
         String requestBodyContent;
@@ -97,7 +100,7 @@ public class EDDExecutorSupplier implements OnDemandExecutorSupplier {
             } catch (IOException e) {
                 throw new UnsuppliedExecutorException(getEDDDisplayName()
                     + ", returned body of executor fulfillment cannot be parsed. Body:\n"
-                    + responseBody);
+                    + responseBody, e);
             }
         } else {
             Exception serverSideError = new Exception("Edd return message: \n" + responseBody);

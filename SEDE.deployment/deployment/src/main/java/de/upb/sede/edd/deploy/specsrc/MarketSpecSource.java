@@ -1,9 +1,9 @@
 package de.upb.sede.edd.deploy.specsrc;
 
-import de.upb.sede.edd.deploy.SpecURI;
 import de.upb.sede.edd.deploy.model.DeploymentSpecificationRegistry;
 import de.upb.sede.util.Cache;
 import de.upb.sede.util.Uncheck;
+import de.upb.sede.util.UnmodifiableURI;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -16,13 +16,13 @@ public class MarketSpecSource extends SpecSourceFromURI implements Cache<Deploym
 
     private final static Logger logger = LoggerFactory.getLogger(MarketSpecSource.class);
 
-    public MarketSpecSource(SpecURI specURI) {
+    public MarketSpecSource(UnmodifiableURI specURI) {
         super(specURI);
     }
 
     protected DeploymentSpecificationRegistry fetch() {
         OkHttpClient client = new OkHttpClient();
-        String getRequestURL = "http://" + getSpecUri().getAddress() + "/get-conf/deployments";
+        String getRequestURL = getSpecUri().mod().replacePath("get-conf/deployments").buildString();
         Request request = new Request.Builder()
             .url(getRequestURL)
             .get()

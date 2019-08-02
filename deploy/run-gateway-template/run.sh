@@ -23,3 +23,5 @@ java -cp "$DIR"/resources/'*':"$DIR"/resources:"$DIR"/../SEDE/'*':"$DIR"/../SEDE
         config/weka-ml-clusterers-classconf.json \
         config/weka-ml-pp-classconf.json \
         config/weka-ml-typeconf.json \
+        config/demo-classconf.json \
+        config/demo-typeconf.json \

@@ -1,8 +1,6 @@
 package de.upb.sede.edd.api;
 
 import de.upb.sede.edd.EDD;
-import de.upb.sede.edd.model.Body;
-import de.upb.sede.edd.model.ServiceFulfillment;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.upb.sede.requests.deploy.ExecutorDemandFulfillment;
 import de.upb.sede.requests.deploy.ExecutorDemandRequest;
@@ -16,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2019-07-03T11:35:15.474Z[GMT]")
 @Controller

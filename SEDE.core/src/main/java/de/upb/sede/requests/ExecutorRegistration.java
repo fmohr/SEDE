@@ -1,12 +1,25 @@
 package de.upb.sede.requests;
 
+import java.io.IOException;
 import java.util.*;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import de.upb.sede.util.DynTypeField;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import de.upb.sede.util.JsonSerializable;
 
+@JsonSerialize(using = ExecutorRegistration.Serializer.class)
+@JsonDeserialize(using = ExecutorRegistration.Deserializer.class)
 public class ExecutorRegistration implements JsonSerializable {
 
 	private Optional<Map<String, Object>> contactInformation = Optional.empty();
@@ -90,4 +103,38 @@ public class ExecutorRegistration implements JsonSerializable {
 		setCapabilities((List<String>) data.get("capabilities"));
 		setSupportedServices((List<String>) data.get("supported-services"));
 	}
+
+    static class Serializer extends StdSerializer<ExecutorRegistration> {
+
+        protected Serializer() {
+            super(ExecutorRegistration.class);
+        }
+
+        protected Serializer(Class<ExecutorRegistration> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(ExecutorRegistration value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+            gen.writeObject(new HashMap<>(value.toJson()));
+        }
+    }
+    static class Deserializer extends StdDeserializer<ExecutorRegistration> {
+
+        protected Deserializer() {
+            super(ExecutorRegistration.class);
+        }
+
+        protected Deserializer(Class<?> vc) {
+            super(vc);
+        }
+
+        @Override
+        public ExecutorRegistration deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            HashMap map = p.getCodec().readValue(p, HashMap.class);
+            ExecutorRegistration reg =  new ExecutorRegistration();
+            reg.fromJson(map);
+            return reg;
+        }
+    }
 }

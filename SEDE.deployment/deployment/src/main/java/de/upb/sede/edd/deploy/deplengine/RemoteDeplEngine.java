@@ -3,40 +3,38 @@ package de.upb.sede.edd.deploy.deplengine;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.upb.sede.edd.EDD;
 import de.upb.sede.edd.deploy.AscribedService;
 import de.upb.sede.edd.deploy.DeploymentException;
-import de.upb.sede.requests.deploy.EDDRegistration;
+import de.upb.sede.edd.reports.ServiceRequirementReport;
 import de.upb.sede.requests.deploy.ExecutorDemandFulfillment;
 import de.upb.sede.requests.deploy.ExecutorDemandRequest;
-import de.upb.sede.util.URIMod;
+import de.upb.sede.util.ModifiableURI;
 import de.upb.sede.util.Uncheck;
+import de.upb.sede.util.UnmodifiableURI;
 import okhttp3.*;
-import org.eclipse.jgit.transport.Daemon;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import static de.upb.sede.requests.deploy.ExecutorDemandRequest.SatMode.*;
 
 public class RemoteDeplEngine extends DeplEngine{
 
     private String name;
-    private String address;
+    private UnmodifiableURI address;
     private ObjectMapper mapper = new ObjectMapper();
 
     public RemoteDeplEngine(String name, String address) {
         this.name = name;
-        if(!address.startsWith("http://")) {
-            address = "http://" + address;
+
+        ModifiableURI modUri = ModifiableURI.fromUriString(address)
+                .interpretPathAsHost()
+                .amendHttpScheme();
+
+        if(!modUri.isHTTPHostAddress()) {
+            throw new IllegalArgumentException("The host address is not a http host address: "  + modUri);
         }
-        if(address.endsWith("/")) {
-            address = address.substring(0, address.length()-1);
-        }
-        this.address = address;
+
+        this.address = modUri.unmodifiableCopy();
     }
 
 
@@ -54,7 +52,7 @@ public class RemoteDeplEngine extends DeplEngine{
     }
 
     @Override
-    public void addServices(List<AscribedService> services) {
+    public List<ServiceRequirementReport> addServices(List<AscribedService> services) {
         OkHttpClient client = getClient();
 
         MediaType mediaType = MediaType.parse("application/json");
@@ -65,19 +63,32 @@ public class RemoteDeplEngine extends DeplEngine{
         } catch (JsonProcessingException e) {
             throw Uncheck.throwAsUncheckedException(e);
         }
+
+        ModifiableURI uri = new ModifiableURI(address);
+        uri.path("requireService");
+
+
         Request request = new Request.Builder()
-            .url(address + "/requireService")
+            .url(uri.buildString())
             .post(body)
 
             .addHeader("Content-Type", "application/json")
             .build();
 
+
+        List<ServiceRequirementReport> returnedReports;
         try {
-            Response response = client.newCall(request).execute();
+            Response response;
+            response = client.newCall(request).execute();
             assertSuccess(response);
+            String returnedReportsStr = response.body().string();
+            returnedReports = mapper.readValue(returnedReportsStr,
+                mapper.getTypeFactory().constructArrayType(ServiceRequirementReport.class).getContentType());
         } catch (IOException e) {
             throw Uncheck.throwAsUncheckedException(e);
         }
+
+        return returnedReports;
     }
 
     private void assertSuccess(Response response) throws IOException {
@@ -103,8 +114,13 @@ public class RemoteDeplEngine extends DeplEngine{
             throw Uncheck.throwAsUncheckedException(e);
         }
         RequestBody body = RequestBody.create(mediaType, bodyContent);
+
+        ModifiableURI uri = new ModifiableURI(address);
+        uri.path("prepareDeployment");
+
+
         Request request = new Request.Builder()
-            .url(address + "/prepareDeployment")
+            .url(uri.buildString())
             .post(body)
             .addHeader("Content-Type", "application/json")
             .build();
@@ -157,11 +173,9 @@ public class RemoteDeplEngine extends DeplEngine{
 //        }).collect(Collectors.toList());
     }
 
-    public String getAddress() {
+    public UnmodifiableURI getAddress() {
         return address;
     }
-
-
 
     @Override
     public void removeServices(List<AscribedService> services) {
@@ -172,9 +186,8 @@ public class RemoteDeplEngine extends DeplEngine{
         /*
          * Request a handle from the edd server using the demand request.
          */
-        String url = address;
-        url = URIMod.setHTTPScheme(url);
-        url = URIMod.addPath(url, "demandUnit");
+
+        String url = address.mod().path("demandUnit").buildString();
 
 
         ObjectMapper mapper = new ObjectMapper();

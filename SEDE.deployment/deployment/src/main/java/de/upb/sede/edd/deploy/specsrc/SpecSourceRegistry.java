@@ -1,10 +1,10 @@
 package de.upb.sede.edd.deploy.specsrc;
 
 import de.upb.sede.edd.EDDHome;
-import de.upb.sede.edd.deploy.SpecURI;
 import de.upb.sede.edd.deploy.model.DeploymentSpecificationRegistry;
 import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.TTLCache;
+import de.upb.sede.util.UnmodifiableURI;
 
 import java.io.File;
 import java.util.*;
@@ -33,8 +33,8 @@ public class SpecSourceRegistry {
         this.home = home;
     }
 
-    public Optional<SpecSource> find(SpecURI specURI) {
-        return find(specURI.getAddress());
+    public Optional<SpecSource> find(UnmodifiableURI specURI) {
+        return find(specURI.buildString());
     }
 
     public Optional<SpecSource> find(String sourceName) {
@@ -44,9 +44,10 @@ public class SpecSourceRegistry {
             .findFirst();
     }
 
-    public SpecSource createSpecSource(SpecURI specURI) {
+    public SpecSource createSpecSource(UnmodifiableURI specURI) {
         SpecSource specSource;
-        switch(specURI.getScheme()) {
+        specURI = stripService(specURI);
+        switch(specURI.getScheme().orElse("")) {
             case "cp":
             case "classpath":
                 specSource = new ClasspathSpecSource(specURI);
@@ -58,13 +59,17 @@ public class SpecSourceRegistry {
                 specSource = new FileSpecSource(specURI);
                 break;
             default:
-                throw new IllegalArgumentException("Unkown uri scheme: " + specURI.getScheme() + " of given uri: " + specURI.getURI());
+                throw new IllegalArgumentException("Unknown uri scheme: " + specURI.getScheme().orElse("null") + " of given uri: " + specURI.toString());
         }
         sources.add(specSource);
         return specSource;
     }
 
-    public SpecSource findOrCreate(SpecURI specURI) {
+    private UnmodifiableURI stripService(UnmodifiableURI specURI) {
+        return specURI.mod().fragment(null).unmod();
+    }
+
+    public SpecSource findOrCreate(UnmodifiableURI specURI) {
         return find (
             specURI
                 )

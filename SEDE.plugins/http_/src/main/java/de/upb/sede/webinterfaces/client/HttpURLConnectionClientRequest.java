@@ -1,5 +1,7 @@
 package de.upb.sede.webinterfaces.client;
 
+import de.upb.sede.util.Streams;
+
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -57,6 +59,12 @@ public class HttpURLConnectionClientRequest implements BasicClientRequest {
 			httpConnection.connect();
 
 			payload.writeTo(httpConnection.getOutputStream());
+			int code = httpConnection.getResponseCode();
+			if(code >= 400) {
+                String errorMsg = Streams.InReadString(httpConnection.getErrorStream());
+			    throw new RuntimeException("Server returned error code: " +code + ", error message: " + errorMsg);
+
+            }
 			return httpConnection.getInputStream();
 		} catch (IOException e) {
 			throw new UncheckedIOException("Error during http request to address: " + url.toString(), e);

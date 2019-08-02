@@ -5,6 +5,7 @@ import de.upb.sede.edd.EDDHome;
 import de.upb.sede.edd.deploy.specsrc.SpecSource;
 import de.upb.sede.edd.deploy.target.JExecutorTarget;
 import de.upb.sede.util.ExpiringCache;
+import de.upb.sede.util.NullableCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +26,7 @@ public class ExecutorRuntime {
 
     private JExecutorTarget target;
 
-    private ExpiringCache<TimerTask> timeToLive = new ExpiringCache<>(5, TimeUnit.MINUTES, null);
+    private ExpiringCache<TimerTask> timeToLive = new ExpiringCache<>(5, TimeUnit.MINUTES, new NullableCache<>());
 
     public ExecutorRuntime(SpecSource source, JExecutorTarget target) {
         this.source = source;

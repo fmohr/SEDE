@@ -15,7 +15,7 @@ public class RandomArbiter<T> implements Function<List<T>, Optional<T>> {
             return Optional.empty();
         } else {
             int randomIndex = random.nextInt(ts.size());
-            return Optional.of(ts.get(randomIndex));
+            return Optional.ofNullable(ts.get(randomIndex));
         }
     }
 }

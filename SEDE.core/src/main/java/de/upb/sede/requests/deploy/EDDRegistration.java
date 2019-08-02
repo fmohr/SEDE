@@ -1,5 +1,9 @@
 package de.upb.sede.requests.deploy;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.upb.sede.util.ModifiableURI;
+import de.upb.sede.util.UnmodifiableURI;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +22,7 @@ public class EDDRegistration {
         this.address = address;
         this.offeredServices = offeredServices;
         this.serviceNamespace = serviceNamespace;
+        this.getNamespaceURI(); // check if the uri is correct.
     }
 
     public EDDRegistration() {
@@ -57,6 +62,12 @@ public class EDDRegistration {
 
     public void setServiceNamespace(String serviceNamespace) {
         this.serviceNamespace = serviceNamespace;
+        getNamespaceURI();
+    }
+
+    @JsonIgnore
+    public UnmodifiableURI getNamespaceURI() {
+        return ModifiableURI.fromUriString(serviceNamespace).unmodifiableCopy();
     }
 
     @Override

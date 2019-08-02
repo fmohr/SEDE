@@ -20,7 +20,7 @@ public class SEDECodeBaseComponent extends TargetComponent {
     public void deploy(boolean update, Executor executor) {
         logger.info("{}: fetching sede code base.", getDisplayName());
         boolean updated = this.codeBase.retrieve(update);
-        if(updated) {
+        if(updated && update) {
             logger.info("{}: new updates in sede code base. building sede", getDisplayName());
             this.codeBase.buildSEDE(executor);
         }

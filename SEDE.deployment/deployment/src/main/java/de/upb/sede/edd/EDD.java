@@ -6,6 +6,9 @@ import de.upb.sede.edd.runtime.LocalRuntimeRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class EDD {
 
     private final static Logger logger = LoggerFactory.getLogger(EDD.class);
@@ -31,7 +34,7 @@ public class EDD {
 
     private DeplEngineRegistry deplEngineRegistry = new DeplEngineRegistry(this);
 
-    private LocalRuntimeRegistry runtimeRegistry = new LocalRuntimeRegistry(this);
+    private LocalRuntimeRegistry  runtimeRegistry = new LocalRuntimeRegistry(this);
 
 
 
@@ -48,6 +51,9 @@ public class EDD {
         version.migrateToLatest();
         this.initialized = true;
         this.info = new LocalEDDInfo(home);
+
+        this.home.getSEDECodeBase().retrieve(false);
+        this.home.getSEDECodeBase().buildSEDE(Executors.newCachedThreadPool());
     }
 
     public EDDHome getHome() {

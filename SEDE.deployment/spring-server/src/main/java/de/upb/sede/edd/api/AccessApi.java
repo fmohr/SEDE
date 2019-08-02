@@ -1,9 +1,6 @@
 package de.upb.sede.edd.api;
 
 import de.upb.sede.edd.EDDInfoModel;
-import de.upb.sede.edd.model.Body;
-import de.upb.sede.edd.model.PrepareRequest;
-import de.upb.sede.edd.model.ServiceFulfillment;
 import io.swagger.annotations.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -11,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @Api(value = "Accessibility")
 public interface AccessApi {

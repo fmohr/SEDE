@@ -31,7 +31,7 @@ import de.upb.sede.util.GraphToDot;
  * @author aminfaez
  *
  */
-public class Gateway implements IGateway{
+public class Gateway implements IGateway {
 	/**
 	 * basic logger
 	 */

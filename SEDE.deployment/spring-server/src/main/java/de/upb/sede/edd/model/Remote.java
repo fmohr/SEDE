@@ -78,7 +78,7 @@ public class Remote   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class Remote {\n");
-    
+
     sb.append("    name: ").append(toIndentedString(name)).append("\n");
     sb.append("    connection: ").append(toIndentedString(connection)).append("\n");
     sb.append("}");

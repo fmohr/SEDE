@@ -55,7 +55,7 @@ public class ExecutorContactInfo   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ExecutorContactInfo {\n");
-    
+
     sb.append("    httpAddress: ").append(toIndentedString(httpAddress)).append("\n");
     sb.append("}");
     return sb.toString();

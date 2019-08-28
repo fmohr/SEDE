@@ -49,11 +49,11 @@ class DynTypeTest extends Specification {
             ["StringVal", 12, false]
             """,
             """
-            - 
+            -
                StringVal
-            - 
+            -
                12
-            - 
+            -
                false
             """,
             """
@@ -66,12 +66,12 @@ class DynTypeTest extends Specification {
             """
             "field a": 12
             "field b": true
-            "field c": 
-             - 
+            "field c":
+             -
                a
-             - 
+             -
                b
-             - 
+             -
                c
             """
         ]

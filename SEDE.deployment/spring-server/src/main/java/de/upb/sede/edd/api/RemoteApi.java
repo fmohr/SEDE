@@ -21,16 +21,16 @@ import java.util.List;
 public interface RemoteApi {
 
     @ApiOperation(value = "Returns all remotes.", nickname = "remoteGet", notes = "", response = Remote.class, responseContainer = "List", tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Connected remotes.", response = Remote.class, responseContainer = "List") })
     @RequestMapping(value = "/remote",
-        produces = { "application/json" }, 
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<List<Remote>> remoteGet();
 
 
     @ApiOperation(value = "Connects to the specified remote.", nickname = "remotePost", notes = "", tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Group was created."),
         @ApiResponse(code = 405, message = "Parent group doesn't exist.") })
     @RequestMapping(value = "/remote",
@@ -40,7 +40,7 @@ public interface RemoteApi {
 
 
     @ApiOperation(value = "Disconnects the remote machine.", nickname = "remoteRemoteNameDelete", notes = "", tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 200, message = "The disconnected group. Connect by posting this object to `/groups`."),
         @ApiResponse(code = 404, message = "The given remote name was not found") })
     @RequestMapping(value = "/remote/{remoteName}",

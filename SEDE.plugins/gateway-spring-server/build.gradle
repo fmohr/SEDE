@@ -22,7 +22,7 @@ repositories {
     flatDir {
         dirs 'configlib'
     }
-    
+
     jcenter()
     mavenCentral()
 
@@ -33,7 +33,7 @@ repositories {
 }
 
 dependencies {
-    
+
     // Config dependencies
 
     compile name: 'builtins-1.1-serviceconf'
@@ -42,7 +42,7 @@ dependencies {
     compile name: 'demolib-1.1-serviceconf'
     compile name: 'scikit.ml-1.2-serviceconf'
     compile name: 'weka.ml-1.5-serviceconf'
-    
+
     /*
      * Logging dependencies
      */

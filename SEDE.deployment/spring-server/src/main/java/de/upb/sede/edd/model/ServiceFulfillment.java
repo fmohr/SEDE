@@ -103,7 +103,7 @@ public class ServiceFulfillment   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class ServiceFulfillment {\n");
-    
+
     sb.append("    service: ").append(toIndentedString(service)).append("\n");
     sb.append("    executorAddress: ").append(toIndentedString(executorAddress)).append("\n");
     sb.append("    executor: ").append(toIndentedString(executor)).append("\n");

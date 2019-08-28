@@ -18,10 +18,10 @@ import java.util.List;
 public interface PreparationsApi {
 
     @ApiOperation(value = "Returns the last prepare logs and the currenty installed versions.", nickname = "preparationsGet", notes = "", response = InstallationReport.class, responseContainer = "List", tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Installation description for each installed service collection.", response = InstallationReport.class, responseContainer = "List") })
     @RequestMapping(value = "/preparations",
-        produces = { "application/json" }, 
+        produces = { "application/json" },
         method = RequestMethod.GET)
     ResponseEntity<List<InstallationReport>> preparationsGet();
 

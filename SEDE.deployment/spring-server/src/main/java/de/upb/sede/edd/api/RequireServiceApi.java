@@ -21,7 +21,7 @@ import java.util.List;
 public interface RequireServiceApi {
 
     @ApiOperation(value = "Require the given services. It will be added to the required services and deployed the next time prepare deployment is called.", nickname = "requireServicePost", notes = "", tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created"),
         @ApiResponse(code = 404, message = "Requested services were not found.") })
     @RequestMapping(value = "/requireService",
@@ -31,7 +31,7 @@ public interface RequireServiceApi {
 
 
     @ApiOperation(value = "Require the given services from the given remote. It will be added to the required services and deployed the next time prepare deployment is called.", nickname = "requireServiceRemoteNamePost", notes = "", tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Created"),
         @ApiResponse(code = 404, message = "Requested services were not found.") })
     @RequestMapping(value = "/requireService/{remoteName}",

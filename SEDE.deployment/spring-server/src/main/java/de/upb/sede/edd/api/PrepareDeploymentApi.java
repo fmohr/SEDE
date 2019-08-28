@@ -21,7 +21,7 @@ import javax.validation.Valid;
 public interface PrepareDeploymentApi {
 
     @ApiOperation(value = "Prepares the required services by installing them.", nickname = "prepareDeploymentPost", notes = "", tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Installed"),
         @ApiResponse(code = 404, message = "Services could not all be installed.") })
     @RequestMapping(value = "/prepareDeployment",
@@ -31,7 +31,7 @@ public interface PrepareDeploymentApi {
 
 
     @ApiOperation(value = "Prepares the required services by installing them on the given remote.", nickname = "prepareDeploymentRemoteNamePost", notes = "", tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 201, message = "Installed"),
         @ApiResponse(code = 404, message = "Services could not all be installed.") })
     @RequestMapping(value = "/prepareDeployment/{remoteName}",

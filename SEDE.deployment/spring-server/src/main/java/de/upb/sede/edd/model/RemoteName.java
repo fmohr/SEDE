@@ -34,7 +34,7 @@ public class RemoteName   {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("class RemoteName {\n");
-    
+
     sb.append("}");
     return sb.toString();
   }

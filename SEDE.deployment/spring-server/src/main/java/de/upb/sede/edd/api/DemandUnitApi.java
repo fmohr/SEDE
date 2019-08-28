@@ -20,10 +20,10 @@ import javax.validation.Valid;
 public interface DemandUnitApi {
 
     @ApiOperation(value = "Demand executors that fullfill the requested services.", nickname = "demandUnitPost", notes = "", response = ExecutorDemandRequest.class, tags={  })
-    @ApiResponses(value = { 
+    @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Returns a potentially partial service fullfillment.", response = ExecutorDemandFulfillment.class) })
     @RequestMapping(value = "/demandUnit",
-        produces = { "application/json" }, 
+        produces = { "application/json" },
         consumes = { "application/json" },
         method = RequestMethod.POST)
     ResponseEntity<ExecutorDemandFulfillment> demandUnitPost(@ApiParam(value = "", required = true) @Valid @RequestBody ExecutorDemandRequest body);

@@ -41,7 +41,7 @@ class ServiceCollectionModelTests extends Specification {
 //        then:
 //        set.size() == size
 //        where:
-//        services | quite | 
+//        services | quite |
         registry.collect([], false, true).isEmpty()
         registry.collect(["ServiceCollection1"], false, true).size() == 1
         registry.collect(["ServiceCollection1", "ServiceCollection2"], false, true).size() == 2

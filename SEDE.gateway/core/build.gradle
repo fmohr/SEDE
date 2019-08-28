@@ -1,0 +1,13 @@
+dependencies {
+    provided project(':SEDE.core')
+
+    compile 'com.github.aminfa:TinyJavaDot:v1.3'
+
+    // dependend on the builtin service configurations
+    compile group: 'de.upb.isys', name: 'builtins', version: '1.1'
+
+    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.14.2'
+
+    // https://mvnrepository.com/artifact/org.skyscreamer/jsonassert
+    testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
+}

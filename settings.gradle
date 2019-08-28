@@ -1,36 +1,45 @@
-import java.io.File;
-
-
-include 'SEDE.core'
-include 'SEDE.gateway'
-include 'SEDE.executor'
-
-/*
- * Plugin Projects.
- */
-def pluginFolder = 'SEDE.plugins/'
-
-include 'SEDE.http'
-project(':SEDE.http').projectDir = new File(pluginFolder, "http_")
-
-include 'SEDE.terminal'
-project(':SEDE.terminal').projectDir = new File(pluginFolder, "terminal")
-
-include 'SEDE.frontend'
-project(':SEDE.frontend').projectDir = new File(pluginFolder, "frontend")
-
-include 'SEDE.assemblies'
-project(':SEDE.assemblies').projectDir = new File(pluginFolder, "assemblies")
-
-/*
- * Deployment
- */
-def deployFolder = 'SEDE.deployment/'
-include 'SEDE.deployment'
-project(':SEDE.deployment').projectDir = new File(deployFolder, "deployment")
 
 rootProject.name = 'SEDE'
 
-//def serivceFolder = "SEDE.services/"
-//include 'c2.image'
-//project(':c2.image').projectDir = new File(serivceFolder, "c2.image")
+/**
+ * This function adds a sub project to the given top project directory.
+ * @param subProjectName sub project name
+ * @param subProjectDir subproject directory
+ */
+def includeAt(String topProjectDir, String name, String dir = ".") {
+    include name
+    settings.project(":" + name).projectDir = new File(topProjectDir, dir)
+}
+
+/*
+ * Core and Executor are both gradle subprojects:
+ */
+include ("SEDE.core")
+include "SEDE.executor"
+
+
+/*
+ * Gateway projects:
+ *
+ * ./SEDE.gateway/core contains the gateway code
+ *
+ */
+def gatewayProjects = "SEDE.gateway"
+includeAt gatewayProjects, "SEDE.gateway", "core"
+
+
+/*
+ * Plugin Projects:
+ */
+def plugins = "SEDE.plugins"
+includeAt plugins, "SEDE.http", "http_"
+includeAt plugins, "SEDE.terminal", "terminal"
+includeAt plugins, "SEDE.frontend", "frontend"
+includeAt plugins, "SEDE.assemblies", "assemblies"
+
+/*
+ * Deployment Projects:
+ */
+def deployment = "SEDE.deployment"
+includeAt deployment, "SEDE.deployment", "deployment"
+

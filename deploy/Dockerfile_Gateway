@@ -11,6 +11,7 @@ RUN apk update && apk add \
 
 COPY ./run-gateway-template/log4j2.xml /log4j2.xml
 COPY ./SEDE /SEDE
+COPY ./run-gateway-template/resources /resources
 COPY ./SEDE_logging_lib /SEDE_logging_lib
 
 
@@ -21,7 +22,7 @@ ENV DOT_PATH=/usr/bin/dot
 EXPOSE 8080
 EXPOSE 2200
 
-ENTRYPOINT java -cp SEDE/*:SEDE_logging_lib/*:. de.upb.sede.gateway.GatewayServerStarter 8080 \
+ENTRYPOINT java -cp SEDE/*:resources:resources/*:SEDE_logging_lib/*:. de.upb.sede.gateway.GatewayServerStarter 8080 \
         config/builtin-classconf.json \
         config/builtin-typeconf.json \
         config/c2imaging-classconf.json \

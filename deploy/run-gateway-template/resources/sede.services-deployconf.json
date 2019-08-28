@@ -1,0 +1,237 @@
+[
+  {
+    "name": "SEDE.services",
+    "alias": [
+      "Default Service Collection Repository"
+    ],
+    "method": {
+      "methodType": "default",
+      "sources": [
+        {
+          "directoryName": "repo",
+          "type": "git-repo",
+          "url": "https://github.com/fmohr/SEDE.services.git"
+        }
+      ]
+    }
+  },
+  {
+    "name": "Java.Builtins",
+    "alias": [
+      "Builtin java services"
+    ],
+    "target": "JavaExecutor",
+    "method": {
+      "methodType": "default",
+      "dependencies": [
+        "SEDE.services"
+      ],
+      "builds": [
+        {
+          "type": "gradle",
+          "tasks": [
+            ":builtins:jarjar"
+          ],
+          "workingDir": "[SEDE.services:repo]/."
+        }
+      ]
+    },
+    "output": [
+      {
+        "type": "classpath",
+        "files": [
+          "[SEDE.services:repo]/deploy/java_bin/builtins-1.1.jar"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Catalano.image",
+    "alias": [
+      "Default java image processing framework"
+    ],
+    "target": "JavaExecutor",
+    "services" : [
+      "$Image_Processor$",
+      "$Feature_Extractor$",
+      "$dict_option_handler_config$",
+      "$In_Place_Applier$",
+      "Catalano.Imaging.wrappers.Crop",
+      "Catalano.Imaging.Filters.Crop",
+      "Catalano.Imaging.wrappers.Resize",
+      "Catalano.Imaging.Filters.Resize_",
+      "Catalano.Imaging.Filters.Resize",
+      "Catalano.Imaging.sede.CropFrom0",
+      "Catalano.Imaging.wrappers.CannyEdgeDetector",
+      "Catalano.Imaging.Filters.CannyEdgeDetector_",
+      "Catalano.Imaging.Filters.CannyEdgeDetector",
+      "Catalano.Imaging.Filters.CannyEdgeDetector_Threshold",
+      "Catalano.Imaging.Filters.CannyEdgeDetector_Threshold_Sigma",
+      "Catalano.Imaging.Filters.CannyEdgeDetector_Threshold_Sigma_Size",
+      "Catalano.Imaging.Filters.CannyEdgeDetectorFactory",
+      "Catalano.Imaging.wrappers.SobelEdgeDetector",
+      "Catalano.Imaging.Filters.SobelEdgeDetector",
+      "Catalano.Imaging.wrappers.LocalBinaryPattern",
+      "Catalano.Imaging.Texture.BinaryPattern.LocalBinaryPattern",
+      "de.upb.sede.services.Image2Feature",
+      "Catalano.Imaging.wrappers.Grayscale",
+      "Catalano.Imaging.wrappers.GrayScaleByAlgorithm",
+      "Catalano.Imaging.Filters.GrayScale",
+      "Catalano.Imaging.Filters.Grayscale_RGBCoeff",
+      "Catalano.Imaging.Filters.GrayScale_Lightness",
+      "Catalano.Imaging.Filters.GrayScale_Average",
+      "Catalano.Imaging.Filters.GrayScale_GeometricMean",
+      "Catalano.Imaging.Filters.GrayScale_Luminosity",
+      "Catalano.Imaging.Filters.GrayScale_MinimumDecomposition",
+      "Catalano.Imaging.Filters.GrayScale_MaximumDecomposition",
+      "de.upb.sede.services.ImageArchive"
+    ],
+    "method": {
+      "methodType": "default",
+      "dependencies": [
+        "SEDE.services",
+        "Java.Builtins"
+      ],
+      "builds": [
+        {
+          "type": "gradle",
+          "tasks": [
+            ":catalano.image:jarjar"
+          ],
+          "workingDir": "[SEDE.services:repo]/."
+        }
+      ]
+    },
+    "output": [
+      {
+        "type": "classpath",
+        "files": [
+          "[SEDE.services:repo]/deploy/java_bin/catalano.image-1.6.jar"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Weka.ml",
+    "alias": [
+      "Default java machine learning framework"
+    ],
+    "services" : [
+      "de.upb.sede.services.mls.Labeler",
+      "de.upb.sede.services.mls.DataSetService",
+      "$list_option_handler_config$",
+      "$dict_option_handler_config$",
+      "$base_classifier_config$",
+      "de.upb.sede.services.mls.WekaBClassifierWrapper",
+      "$Basic_Weka_Distribution_Classifier$",
+      "$Basic_Weka_Index_Classifier$",
+      "weka.classifiers.bayes.BayesNet",
+      "weka.classifiers.bayes.NaiveBayes",
+      "weka.classifiers.bayes.NaiveBayesMultinomial",
+      "weka.classifiers.functions.GaussianProcesses",
+      "weka.classifiers.functions.LinearRegression",
+      "weka.classifiers.functions.Logistic",
+      "weka.classifiers.functions.MultilayerPerceptron",
+      "weka.classifiers.functions.SGD",
+      "weka.classifiers.functions.LibSVM",
+      "weka.classifiers.functions.SimpleLinearRegression",
+      "weka.classifiers.functions.SimpleLogistic",
+      "weka.classifiers.functions.SMO",
+      "weka.classifiers.functions.SMOreg",
+      "weka.classifiers.functions.VotedPerceptron",
+      "weka.classifiers.lazy.IBk",
+      "weka.classifiers.lazy.KStar",
+      "weka.classifiers.rules.DecisionTable",
+      "weka.classifiers.rules.JRip",
+      "weka.classifiers.rules.M5Rules",
+      "weka.classifiers.rules.OneR",
+      "weka.classifiers.rules.PART",
+      "weka.classifiers.rules.ZeroR",
+      "weka.classifiers.trees.DecisionStump",
+      "weka.classifiers.trees.J48",
+      "weka.classifiers.trees.LMT",
+      "weka.classifiers.trees.M5P",
+      "weka.classifiers.trees.RandomForest",
+      "weka.classifiers.trees.RandomTree",
+      "weka.classifiers.trees.REPTree",
+      "weka.classifiers.meta.nestedDichotomies.ND",
+      "weka.classifiers.meta.nestedDichotomies.RandomPairND",
+      "weka.classifiers.meta.nestedDichotomies.ClassBalancedND",
+      "weka.classifiers.meta.nestedDichotomies.DataNearBalancedND",
+      "weka.classifiers.meta.nestedDichotomies.FurthestCentroidND",
+      "weka.classifiers.lazy.LWL",
+      "weka.classifiers.meta.AdditiveRegression",
+      "weka.classifiers.meta.AdaBoostM1",
+      "weka.classifiers.meta.AttributeSelectedClassifier",
+      "weka.classifiers.meta.Bagging",
+      "weka.classifiers.meta.ClassificationViaRegression",
+      "weka.classifiers.meta.LogitBoost",
+      "weka.classifiers.meta.MultiClassClassifier",
+      "weka.classifiers.meta.RandomCommittee",
+      "weka.classifiers.meta.RandomSubSpace",
+      "weka.classifiers.meta.Vote",
+      "weka.classifiers.meta.Stacking",
+      "weka.classifiers.meta.MultiBoostAB"
+    ],
+    "target": "JavaExecutor",
+    "method": {
+      "methodType": "default",
+      "dependencies": [
+        "SEDE.services",
+        "Java.Builtins"
+      ],
+      "builds": [
+        {
+          "type": "gradle",
+          "tasks": [
+            ":weka.ml:jarjar"
+          ],
+          "workingDir": "[SEDE.services:repo]/."
+        }
+      ]
+    },
+    "output": [
+      {
+        "type": "classpath",
+        "files": [
+          "[SEDE.services:repo]/deploy/java_bin/weka.ml-1.5.jar"
+        ]
+      }
+    ]
+  },
+  {
+    "name": "Demolib",
+    "alias": [
+      "Demonstration library"
+    ],
+    "services": [
+      "demo.math.Addierer",
+      "demo.math.Gerade"
+    ],
+    "target": "JavaExecutor",
+    "method": {
+      "methodType": "default",
+      "dependencies": [
+        "SEDE.services",
+        "Java.Builtins"
+      ],
+      "builds": [
+        {
+          "type": "gradle",
+          "tasks": [
+            ":demolib:jarjar"
+          ],
+          "workingDir": "[SEDE.services:repo]/."
+        }
+      ]
+    },
+    "output": [
+      {
+        "type": "classpath",
+        "files": [
+          "[SEDE.services:repo]/deploy/java_bin/demolib-1.1.jar"
+        ]
+      }
+    ]
+  }
+]

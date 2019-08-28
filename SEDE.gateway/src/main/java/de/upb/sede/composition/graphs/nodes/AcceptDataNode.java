@@ -1,5 +1,8 @@
 package de.upb.sede.composition.graphs.nodes;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.upb.sede.util.OptionalField;
+
 import java.util.Objects;
 import java.util.Optional;
 
@@ -7,7 +10,7 @@ public class AcceptDataNode extends BaseNode {
 
 	private final String fieldname;
 
-	private Optional<CastTypeNode> castInPlace = Optional.empty();
+	private OptionalField<CastTypeNode> castInPlace = OptionalField.empty();
 
 	public AcceptDataNode(String fieldname) {
 		this.fieldname = Objects.requireNonNull(fieldname);
@@ -17,12 +20,14 @@ public class AcceptDataNode extends BaseNode {
 		return fieldname;
 	}
 
+	@JsonIgnore
 	public Optional<CastTypeNode> getCastInPlace() {
-		return castInPlace;
+		return castInPlace.opt();
 	}
 
+	@JsonIgnore
 	public void setCastInPlace(CastTypeNode castInPlace) {
-		this.castInPlace = Optional.of(castInPlace);
+		this.castInPlace = OptionalField.of(castInPlace);
 		/*
 		 * check if caster matches:
 		 */

@@ -141,7 +141,7 @@ public final class GraphTraversal {
 	 * node.
 	 */
 	public static boolean isIndependent(CompositionGraph graph, BaseNode baseNode) {
-		return graph.getEdges().stream().allMatch(e -> !e.getTo().equals(baseNode));
+		return graph.getEdges().stream().noneMatch(e -> e.getTo().equals(baseNode));
 	}
 
 	/**

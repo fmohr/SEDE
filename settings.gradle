@@ -1,6 +1,5 @@
 
 rootProject.name = 'SEDE'
-
 /**
  * This function adds a sub project to the given top project directory.
  * @param subProjectName sub project name
@@ -11,10 +10,18 @@ def includeAt(String topProjectDir, String name, String dir = ".") {
     settings.project(":" + name).projectDir = new File(topProjectDir, dir)
 }
 
+
+
 /*
- * Core and Executor are both gradle subprojects:
+ * Core projects:
  */
-include ("SEDE.core")
+def coreProjects = "SEDE.core"
+includeAt coreProjects, "SEDE.core", "base"
+includeAt coreProjects, "SEDE.servicedesc", "servicedesc"
+
+/*
+ * Executor is a gradle subproject
+ */
 include "SEDE.executor"
 
 
@@ -25,7 +32,7 @@ include "SEDE.executor"
  *
  */
 def gatewayProjects = "SEDE.gateway"
-includeAt gatewayProjects, "SEDE.gateway", "core"
+includeAt gatewayProjects, "SEDE.gateway", "base"
 
 
 /*

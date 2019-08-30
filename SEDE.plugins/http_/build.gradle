@@ -1,4 +1,5 @@
 import org.gradle.plugins.ide.eclipse.model.AccessRule
+
 dependencies {
 
     compile group: 'org.aeonbits.owner', name: 'owner', version: '1.0.10'

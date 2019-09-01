@@ -3,10 +3,20 @@ package de.upb.sede.exec;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.base.MoreObjects;
+import com.google.common.primitives.Booleans;
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import com.google.errorprone.annotations.Var;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import javax.annotation.CheckReturnValue;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
+import javax.annotation.concurrent.Immutable;
+import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
@@ -17,14 +27,36 @@ import org.immutables.value.Generated;
  */
 @Generated(from = "IVariableDesc", generator = "Immutables")
 @SuppressWarnings({"all"})
+@ParametersAreNonnullByDefault
 @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
+@Immutable
+@CheckReturnValue
 public final class VariableDesc implements IVariableDesc {
-  private final String name;
+  private final boolean isMutable;
+  private final @Nullable String name;
   private final String type;
 
-  private VariableDesc(String name, String type) {
+  private VariableDesc(VariableDesc.Builder builder) {
+    this.name = builder.name;
+    this.type = builder.type;
+    this.isMutable = builder.isMutableIsSet()
+        ? builder.isMutable
+        : IVariableDesc.super.isMutable();
+  }
+
+  private VariableDesc(boolean isMutable, @Nullable String name, String type) {
+    this.isMutable = isMutable;
     this.name = name;
     this.type = type;
+  }
+
+  /**
+   * @return The value of the {@code isMutable} attribute
+   */
+  @JsonProperty("isMutable")
+  @Override
+  public boolean isMutable() {
+    return isMutable;
   }
 
   /**
@@ -46,14 +78,25 @@ public final class VariableDesc implements IVariableDesc {
   }
 
   /**
+   * Copy the current immutable object by setting a value for the {@link IVariableDesc#isMutable() isMutable} attribute.
+   * A value equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for isMutable
+   * @return A modified copy of the {@code this} object
+   */
+  public final VariableDesc withIsMutable(boolean value) {
+    if (this.isMutable == value) return this;
+    return new VariableDesc(value, this.name, this.type);
+  }
+
+  /**
    * Copy the current immutable object by setting a <i>present</i> value for the optional {@link IVariableDesc#getName() name} attribute.
    * @param value The value for name
    * @return A modified copy of {@code this} object
    */
   public final VariableDesc withName(String value) {
-    String newValue = Objects.requireNonNull(value, "name");
+    @Nullable String newValue = Objects.requireNonNull(value, "name");
     if (Objects.equals(this.name, newValue)) return this;
-    return new VariableDesc(newValue, this.type);
+    return new VariableDesc(this.isMutable, newValue, this.type);
   }
 
   /**
@@ -63,9 +106,9 @@ public final class VariableDesc implements IVariableDesc {
    * @return A modified copy of {@code this} object
    */
   public final VariableDesc withName(Optional<String> optional) {
-    String value = optional.orElse(null);
+    @Nullable String value = optional.orElse(null);
     if (Objects.equals(this.name, value)) return this;
-    return new VariableDesc(value, this.type);
+    return new VariableDesc(this.isMutable, value, this.type);
   }
 
   /**
@@ -77,7 +120,7 @@ public final class VariableDesc implements IVariableDesc {
   public final VariableDesc withType(String value) {
     String newValue = Objects.requireNonNull(value, "type");
     if (this.type.equals(newValue)) return this;
-    return new VariableDesc(this.name, newValue);
+    return new VariableDesc(this.isMutable, this.name, newValue);
   }
 
   /**
@@ -85,24 +128,26 @@ public final class VariableDesc implements IVariableDesc {
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
-  public boolean equals(Object another) {
+  public boolean equals(@Nullable Object another) {
     if (this == another) return true;
     return another instanceof VariableDesc
         && equalTo((VariableDesc) another);
   }
 
   private boolean equalTo(VariableDesc another) {
-    return Objects.equals(name, another.name)
+    return isMutable == another.isMutable
+        && Objects.equals(name, another.name)
         && type.equals(another.type);
   }
 
   /**
-   * Computes a hash code from attributes: {@code name}, {@code type}.
+   * Computes a hash code from attributes: {@code isMutable}, {@code name}, {@code type}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
-    int h = 5381;
+    @Var int h = 5381;
+    h += (h << 5) + Booleans.hashCode(isMutable);
     h += (h << 5) + Objects.hashCode(name);
     h += (h << 5) + type.hashCode();
     return h;
@@ -114,13 +159,12 @@ public final class VariableDesc implements IVariableDesc {
    */
   @Override
   public String toString() {
-    StringBuilder builder = new StringBuilder("VariableDesc{");
-    if (name != null) {
-      builder.append("name=").append(name);
-    }
-    if (builder.length() > 13) builder.append(", ");
-    builder.append("type=").append(type);
-    return builder.append("}").toString();
+    return MoreObjects.toStringHelper("VariableDesc")
+        .omitNullValues()
+        .add("isMutable", isMutable)
+        .add("name", name)
+        .add("type", type)
+        .toString();
   }
 
   /**
@@ -129,10 +173,19 @@ public final class VariableDesc implements IVariableDesc {
    */
   @Generated(from = "IVariableDesc", generator = "Immutables")
   @Deprecated
+  @SuppressWarnings("Immutable")
+  @JsonDeserialize
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IVariableDesc {
-    Optional<String> name = Optional.empty();
-    String type;
+    boolean isMutable;
+    boolean isMutableIsSet;
+    @Nullable Optional<String> name = Optional.empty();
+    @Nullable String type;
+    @JsonProperty("isMutable")
+    public void setIsMutable(boolean isMutable) {
+      this.isMutable = isMutable;
+      this.isMutableIsSet = true;
+    }
     @JsonProperty("name")
     public void setName(Optional<String> name) {
       this.name = name;
@@ -141,6 +194,8 @@ public final class VariableDesc implements IVariableDesc {
     public void setType(String type) {
       this.type = type;
     }
+    @Override
+    public boolean isMutable() { throw new UnsupportedOperationException(); }
     @Override
     public Optional<String> getName() { throw new UnsupportedOperationException(); }
     @Override
@@ -156,6 +211,9 @@ public final class VariableDesc implements IVariableDesc {
   @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
   static VariableDesc fromJson(Json json) {
     VariableDesc.Builder builder = VariableDesc.builder();
+    if (json.isMutableIsSet) {
+      builder.isMutable(json.isMutable);
+    }
     if (json.name != null) {
       builder.name(json.name);
     }
@@ -185,6 +243,7 @@ public final class VariableDesc implements IVariableDesc {
    * Creates a builder for {@link VariableDesc VariableDesc}.
    * <pre>
    * VariableDesc.builder()
+   *    .isMutable(boolean) // optional {@link IVariableDesc#isMutable() isMutable}
    *    .name(String) // optional {@link IVariableDesc#getName() name}
    *    .type(String) // required {@link IVariableDesc#getType() type}
    *    .build();
@@ -203,12 +262,16 @@ public final class VariableDesc implements IVariableDesc {
    * but instead used immediately to create instances.</em>
    */
   @Generated(from = "IVariableDesc", generator = "Immutables")
+  @NotThreadSafe
   public static final class Builder {
     private static final long INIT_BIT_TYPE = 0x1L;
+    private static final long OPT_BIT_IS_MUTABLE = 0x1L;
     private long initBits = 0x1L;
+    private long optBits;
 
-    private String name;
-    private String type;
+    private boolean isMutable;
+    private @Nullable String name;
+    private @Nullable String type;
 
     private Builder() {
     }
@@ -220,8 +283,10 @@ public final class VariableDesc implements IVariableDesc {
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
+    @CanIgnoreReturnValue 
     public final Builder from(IVariableDesc instance) {
       Objects.requireNonNull(instance, "instance");
+      isMutable(instance.isMutable());
       Optional<String> nameOptional = instance.getName();
       if (nameOptional.isPresent()) {
         name(nameOptional);
@@ -231,10 +296,25 @@ public final class VariableDesc implements IVariableDesc {
     }
 
     /**
+     * Initializes the value for the {@link IVariableDesc#isMutable() isMutable} attribute.
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IVariableDesc#isMutable() isMutable}.</em>
+     * @param isMutable The value for isMutable 
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("isMutable")
+    public final Builder isMutable(boolean isMutable) {
+      this.isMutable = isMutable;
+      optBits |= OPT_BIT_IS_MUTABLE;
+      return this;
+    }
+
+    /**
      * Initializes the optional value {@link IVariableDesc#getName() name} to name.
      * @param name The value for name
      * @return {@code this} builder for chained invocation
      */
+    @CanIgnoreReturnValue 
     public final Builder name(String name) {
       this.name = Objects.requireNonNull(name, "name");
       return this;
@@ -245,6 +325,8 @@ public final class VariableDesc implements IVariableDesc {
      * @param name The value for name
      * @return {@code this} builder for use in a chained invocation
      */
+    @CanIgnoreReturnValue 
+    @JsonProperty("name")
     public final Builder name(Optional<String> name) {
       this.name = name.orElse(null);
       return this;
@@ -255,6 +337,8 @@ public final class VariableDesc implements IVariableDesc {
      * @param type The value for type 
      * @return {@code this} builder for use in a chained invocation
      */
+    @CanIgnoreReturnValue 
+    @JsonProperty("type")
     public final Builder type(String type) {
       this.type = Objects.requireNonNull(type, "type");
       initBits &= ~INIT_BIT_TYPE;
@@ -270,7 +354,11 @@ public final class VariableDesc implements IVariableDesc {
       if (initBits != 0) {
         throw new IllegalStateException(formatRequiredAttributesMessage());
       }
-      return new VariableDesc(name, type);
+      return new VariableDesc(this);
+    }
+
+    private boolean isMutableIsSet() {
+      return (optBits & OPT_BIT_IS_MUTABLE) != 0;
     }
 
     private String formatRequiredAttributesMessage() {

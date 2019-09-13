@@ -32,7 +32,7 @@ public class ServiceDescSchemaGenerator {
         ObjectMapper mapper = new ObjectMapper();
         mapper.enable(SerializationFeature.INDENT_OUTPUT);
         JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper);
-        JsonSchema schema = schemaGen.generateSchema(ServiceCollectionDesc.class);
+        JsonSchema schema = schemaGen.generateSchema(IServiceCollectionDesc.class);
         /*
          *  TODO Json Object properties in the schema are not marked as required.
          *  Fields that aren't annotated as Nullable should be marked required.

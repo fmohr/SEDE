@@ -18,7 +18,7 @@ def includeAt(String topProjectDir, String name, String dir = ".") {
 def coreProjects = "SEDE.core"
 includeAt coreProjects, "SEDE.core", "base"
 includeAt coreProjects, "SEDE.servicedesc", "servicedesc"
-includeAt coreProjects, "SEDE.servicedesc-dsl", "servicedesc-dsl"
+includeAt coreProjects, "SEDE.sdl", "servicedesc-dsl"
 
 /*
  * Executor is a gradle subproject

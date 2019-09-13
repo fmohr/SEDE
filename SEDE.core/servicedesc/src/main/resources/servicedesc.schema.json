@@ -1,6 +1,6 @@
 {
   "type" : "object",
-  "id" : "urn:jsonschema:de:upb:sede:ServiceCollectionDesc",
+  "id" : "urn:jsonschema:de:upb:sede:IServiceCollectionDesc",
   "properties" : {
     "services" : {
       "type" : "array",
@@ -94,15 +94,15 @@
           "abstract" : {
             "type" : "boolean"
           },
+          "javaClassAuxiliaries" : {
+            "type" : "object",
+            "id" : "urn:jsonschema:de:upb:sede:exec:IJavaClassAux"
+          },
           "fieldTypes" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
-          },
-          "javaClassAuxiliaries" : {
-            "type" : "object",
-            "id" : "urn:jsonschema:de:upb:sede:exec:IJavaClassAux"
           },
           "pythonClassAuxiliaries" : {
             "type" : "object",
@@ -129,12 +129,12 @@
         "type" : "object",
         "id" : "urn:jsonschema:de:upb:sede:types:IDataTypeDesc",
         "properties" : {
+          "semanticType" : {
+            "type" : "string"
+          },
           "javaTypeAuxiliaries" : {
             "type" : "object",
             "id" : "urn:jsonschema:de:upb:sede:types:IJavaTypeAux"
-          },
-          "semanticType" : {
-            "type" : "string"
           },
           "pythonTypeAuxiliaries" : {
             "type" : "object",
@@ -161,10 +161,10 @@
         "type" : "string"
       }
     },
-    "qualifier" : {
+    "simpleName" : {
       "type" : "string"
     },
-    "simpleName" : {
+    "qualifier" : {
       "type" : "string"
     }
   }

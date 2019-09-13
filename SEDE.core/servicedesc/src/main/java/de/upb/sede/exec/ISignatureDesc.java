@@ -1,19 +1,30 @@
 package de.upb.sede.exec;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.IComment;
+import de.upb.sede.ICommented;
 import de.upb.sede.SModelStyle;
 import org.immutables.value.Value;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 @SModelStyle
 @Value.Immutable
+@Value.Modifiable
 @JsonDeserialize(builder = SignatureDesc.Builder.class)
-public interface ISignatureDesc extends IComment {
+public interface ISignatureDesc extends ICommented {
 
-    List<IVariableDesc> getInputs();
+    List<IMethodParameterDesc> getInputs();
 
-    List<IVariableDesc> getOutputs();
+    List<IMethodParameterDesc> getOutputs();
+
+
+    @Value.Default
+    default boolean isStatic() {
+        return false;
+    }
+
+    @Nullable
+    IJavaMethodAux getJavaMethodAux();
 
 }

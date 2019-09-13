@@ -20,34 +20,41 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
- * Immutable implementation of {@link IVariableDesc}.
+ * Immutable implementation of {@link IMethodParameterDesc}.
  * <p>
  * Use the builder to create immutable instances:
- * {@code VariableDesc.builder()}.
+ * {@code MethodParameterDesc.builder()}.
  */
-@Generated(from = "IVariableDesc", generator = "Immutables")
+@Generated(from = "IMethodParameterDesc", generator = "Immutables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
 @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
 @Immutable
 @CheckReturnValue
-public final class VariableDesc implements IVariableDesc {
+public final class MethodParameterDesc implements IMethodParameterDesc {
   private final boolean isMutable;
   private final @Nullable String name;
   private final String type;
+  private final @Nullable String fixedValue;
 
-  private VariableDesc(VariableDesc.Builder builder) {
+  private MethodParameterDesc(MethodParameterDesc.Builder builder) {
     this.name = builder.name;
     this.type = builder.type;
+    this.fixedValue = builder.fixedValue;
     this.isMutable = builder.isMutableIsSet()
         ? builder.isMutable
-        : IVariableDesc.super.isMutable();
+        : IMethodParameterDesc.super.isMutable();
   }
 
-  private VariableDesc(boolean isMutable, @Nullable String name, String type) {
+  private MethodParameterDesc(
+      boolean isMutable,
+      @Nullable String name,
+      String type,
+      @Nullable String fixedValue) {
     this.isMutable = isMutable;
     this.name = name;
     this.type = type;
+    this.fixedValue = fixedValue;
   }
 
   /**
@@ -78,70 +85,91 @@ public final class VariableDesc implements IVariableDesc {
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IVariableDesc#isMutable() isMutable} attribute.
+   * @return The value of the {@code fixedValue} attribute
+   */
+  @JsonProperty("fixedValue")
+  @Override
+  public @Nullable String getFixedValue() {
+    return fixedValue;
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link IMethodParameterDesc#isMutable() isMutable} attribute.
    * A value equality check is used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for isMutable
    * @return A modified copy of the {@code this} object
    */
-  public final VariableDesc withIsMutable(boolean value) {
+  public final MethodParameterDesc withIsMutable(boolean value) {
     if (this.isMutable == value) return this;
-    return new VariableDesc(value, this.name, this.type);
+    return new MethodParameterDesc(value, this.name, this.type, this.fixedValue);
   }
 
   /**
-   * Copy the current immutable object by setting a <i>present</i> value for the optional {@link IVariableDesc#getName() name} attribute.
+   * Copy the current immutable object by setting a <i>present</i> value for the optional {@link IMethodParameterDesc#getName() name} attribute.
    * @param value The value for name
    * @return A modified copy of {@code this} object
    */
-  public final VariableDesc withName(String value) {
+  public final MethodParameterDesc withName(String value) {
     @Nullable String newValue = Objects.requireNonNull(value, "name");
     if (Objects.equals(this.name, newValue)) return this;
-    return new VariableDesc(this.isMutable, newValue, this.type);
+    return new MethodParameterDesc(this.isMutable, newValue, this.type, this.fixedValue);
   }
 
   /**
-   * Copy the current immutable object by setting an optional value for the {@link IVariableDesc#getName() name} attribute.
+   * Copy the current immutable object by setting an optional value for the {@link IMethodParameterDesc#getName() name} attribute.
    * An equality check is used on inner nullable value to prevent copying of the same value by returning {@code this}.
    * @param optional A value for name
    * @return A modified copy of {@code this} object
    */
-  public final VariableDesc withName(Optional<String> optional) {
+  public final MethodParameterDesc withName(Optional<String> optional) {
     @Nullable String value = optional.orElse(null);
     if (Objects.equals(this.name, value)) return this;
-    return new VariableDesc(this.isMutable, value, this.type);
+    return new MethodParameterDesc(this.isMutable, value, this.type, this.fixedValue);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IVariableDesc#getType() type} attribute.
+   * Copy the current immutable object by setting a value for the {@link IMethodParameterDesc#getType() type} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for type
    * @return A modified copy of the {@code this} object
    */
-  public final VariableDesc withType(String value) {
+  public final MethodParameterDesc withType(String value) {
     String newValue = Objects.requireNonNull(value, "type");
     if (this.type.equals(newValue)) return this;
-    return new VariableDesc(this.isMutable, this.name, newValue);
+    return new MethodParameterDesc(this.isMutable, this.name, newValue, this.fixedValue);
   }
 
   /**
-   * This instance is equal to all instances of {@code VariableDesc} that have equal attribute values.
+   * Copy the current immutable object by setting a value for the {@link IMethodParameterDesc#getFixedValue() fixedValue} attribute.
+   * An equals check used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for fixedValue (can be {@code null})
+   * @return A modified copy of the {@code this} object
+   */
+  public final MethodParameterDesc withFixedValue(@Nullable String value) {
+    if (Objects.equals(this.fixedValue, value)) return this;
+    return new MethodParameterDesc(this.isMutable, this.name, this.type, value);
+  }
+
+  /**
+   * This instance is equal to all instances of {@code MethodParameterDesc} that have equal attribute values.
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
   public boolean equals(@Nullable Object another) {
     if (this == another) return true;
-    return another instanceof VariableDesc
-        && equalTo((VariableDesc) another);
+    return another instanceof MethodParameterDesc
+        && equalTo((MethodParameterDesc) another);
   }
 
-  private boolean equalTo(VariableDesc another) {
+  private boolean equalTo(MethodParameterDesc another) {
     return isMutable == another.isMutable
         && Objects.equals(name, another.name)
-        && type.equals(another.type);
+        && type.equals(another.type)
+        && Objects.equals(fixedValue, another.fixedValue);
   }
 
   /**
-   * Computes a hash code from attributes: {@code isMutable}, {@code name}, {@code type}.
+   * Computes a hash code from attributes: {@code isMutable}, {@code name}, {@code type}, {@code fixedValue}.
    * @return hashCode value
    */
   @Override
@@ -150,20 +178,22 @@ public final class VariableDesc implements IVariableDesc {
     h += (h << 5) + Booleans.hashCode(isMutable);
     h += (h << 5) + Objects.hashCode(name);
     h += (h << 5) + type.hashCode();
+    h += (h << 5) + Objects.hashCode(fixedValue);
     return h;
   }
 
   /**
-   * Prints the immutable value {@code VariableDesc} with attribute values.
+   * Prints the immutable value {@code MethodParameterDesc} with attribute values.
    * @return A string representation of the value
    */
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper("VariableDesc")
+    return MoreObjects.toStringHelper("MethodParameterDesc")
         .omitNullValues()
         .add("isMutable", isMutable)
         .add("name", name)
         .add("type", type)
+        .add("fixedValue", fixedValue)
         .toString();
   }
 
@@ -171,16 +201,17 @@ public final class VariableDesc implements IVariableDesc {
    * Utility type used to correctly read immutable object from JSON representation.
    * @deprecated Do not use this type directly, it exists only for the <em>Jackson</em>-binding infrastructure
    */
-  @Generated(from = "IVariableDesc", generator = "Immutables")
+  @Generated(from = "IMethodParameterDesc", generator = "Immutables")
   @Deprecated
   @SuppressWarnings("Immutable")
   @JsonDeserialize
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
-  static final class Json implements IVariableDesc {
+  static final class Json implements IMethodParameterDesc {
     boolean isMutable;
     boolean isMutableIsSet;
     @Nullable Optional<String> name = Optional.empty();
     @Nullable String type;
+    @Nullable String fixedValue;
     @JsonProperty("isMutable")
     public void setIsMutable(boolean isMutable) {
       this.isMutable = isMutable;
@@ -194,12 +225,18 @@ public final class VariableDesc implements IVariableDesc {
     public void setType(String type) {
       this.type = type;
     }
+    @JsonProperty("fixedValue")
+    public void setFixedValue(@Nullable String fixedValue) {
+      this.fixedValue = fixedValue;
+    }
     @Override
     public boolean isMutable() { throw new UnsupportedOperationException(); }
     @Override
     public Optional<String> getName() { throw new UnsupportedOperationException(); }
     @Override
     public String getType() { throw new UnsupportedOperationException(); }
+    @Override
+    public String getFixedValue() { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -209,8 +246,8 @@ public final class VariableDesc implements IVariableDesc {
    */
   @Deprecated
   @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-  static VariableDesc fromJson(Json json) {
-    VariableDesc.Builder builder = VariableDesc.builder();
+  static MethodParameterDesc fromJson(Json json) {
+    MethodParameterDesc.Builder builder = MethodParameterDesc.builder();
     if (json.isMutableIsSet) {
       builder.isMutable(json.isMutable);
     }
@@ -220,48 +257,52 @@ public final class VariableDesc implements IVariableDesc {
     if (json.type != null) {
       builder.type(json.type);
     }
+    if (json.fixedValue != null) {
+      builder.fixedValue(json.fixedValue);
+    }
     return builder.build();
   }
 
   /**
-   * Creates an immutable copy of a {@link IVariableDesc} value.
+   * Creates an immutable copy of a {@link IMethodParameterDesc} value.
    * Uses accessors to get values to initialize the new immutable instance.
    * If an instance is already immutable, it is returned as is.
    * @param instance The instance to copy
-   * @return A copied immutable VariableDesc instance
+   * @return A copied immutable MethodParameterDesc instance
    */
-  public static VariableDesc copyOf(IVariableDesc instance) {
-    if (instance instanceof VariableDesc) {
-      return (VariableDesc) instance;
+  public static MethodParameterDesc copyOf(IMethodParameterDesc instance) {
+    if (instance instanceof MethodParameterDesc) {
+      return (MethodParameterDesc) instance;
     }
-    return VariableDesc.builder()
+    return MethodParameterDesc.builder()
         .from(instance)
         .build();
   }
 
   /**
-   * Creates a builder for {@link VariableDesc VariableDesc}.
+   * Creates a builder for {@link MethodParameterDesc MethodParameterDesc}.
    * <pre>
-   * VariableDesc.builder()
-   *    .isMutable(boolean) // optional {@link IVariableDesc#isMutable() isMutable}
-   *    .name(String) // optional {@link IVariableDesc#getName() name}
-   *    .type(String) // required {@link IVariableDesc#getType() type}
+   * MethodParameterDesc.builder()
+   *    .isMutable(boolean) // optional {@link IMethodParameterDesc#isMutable() isMutable}
+   *    .name(String) // optional {@link IMethodParameterDesc#getName() name}
+   *    .type(String) // required {@link IMethodParameterDesc#getType() type}
+   *    .fixedValue(String | null) // nullable {@link IMethodParameterDesc#getFixedValue() fixedValue}
    *    .build();
    * </pre>
-   * @return A new VariableDesc builder
+   * @return A new MethodParameterDesc builder
    */
-  public static VariableDesc.Builder builder() {
-    return new VariableDesc.Builder();
+  public static MethodParameterDesc.Builder builder() {
+    return new MethodParameterDesc.Builder();
   }
 
   /**
-   * Builds instances of type {@link VariableDesc VariableDesc}.
+   * Builds instances of type {@link MethodParameterDesc MethodParameterDesc}.
    * Initialize attributes and then invoke the {@link #build()} method to create an
    * immutable instance.
    * <p><em>{@code Builder} is not thread-safe and generally should not be stored in a field or collection,
    * but instead used immediately to create instances.</em>
    */
-  @Generated(from = "IVariableDesc", generator = "Immutables")
+  @Generated(from = "IMethodParameterDesc", generator = "Immutables")
   @NotThreadSafe
   public static final class Builder {
     private static final long INIT_BIT_TYPE = 0x1L;
@@ -272,32 +313,63 @@ public final class VariableDesc implements IVariableDesc {
     private boolean isMutable;
     private @Nullable String name;
     private @Nullable String type;
+    private @Nullable String fixedValue;
 
     private Builder() {
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code IVariableDesc} instance.
-     * Regular attribute values will be replaced with those from the given instance.
-     * Absent optional values will not replace present values.
+     * Fill a builder with attribute values from the provided {@code MutableMethodParameterDesc} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(IVariableDesc instance) {
+    public final Builder from(MutableMethodParameterDesc instance) {
       Objects.requireNonNull(instance, "instance");
       isMutable(instance.isMutable());
       Optional<String> nameOptional = instance.getName();
       if (nameOptional.isPresent()) {
         name(nameOptional);
       }
-      type(instance.getType());
+      if (instance.typeIsSet()) {
+        type(instance.getType());
+      }
+      @Nullable String fixedValueValue = instance.getFixedValue();
+      if (fixedValueValue != null) {
+        fixedValue(fixedValueValue);
+      }
       return this;
     }
 
     /**
-     * Initializes the value for the {@link IVariableDesc#isMutable() isMutable} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IVariableDesc#isMutable() isMutable}.</em>
+     * Fill a builder with attribute values from the provided {@code IMethodParameterDesc} instance.
+     * Regular attribute values will be replaced with those from the given instance.
+     * Absent optional values will not replace present values.
+     * @param instance The instance from which to copy values
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder from(IMethodParameterDesc instance) {
+      Objects.requireNonNull(instance, "instance");
+      if (instance instanceof MutableMethodParameterDesc) {
+        return from((MutableMethodParameterDesc) instance);
+      }
+      isMutable(instance.isMutable());
+      Optional<String> nameOptional = instance.getName();
+      if (nameOptional.isPresent()) {
+        name(nameOptional);
+      }
+      type(instance.getType());
+      @Nullable String fixedValueValue = instance.getFixedValue();
+      if (fixedValueValue != null) {
+        fixedValue(fixedValueValue);
+      }
+      return this;
+    }
+
+    /**
+     * Initializes the value for the {@link IMethodParameterDesc#isMutable() isMutable} attribute.
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IMethodParameterDesc#isMutable() isMutable}.</em>
      * @param isMutable The value for isMutable 
      * @return {@code this} builder for use in a chained invocation
      */
@@ -310,7 +382,7 @@ public final class VariableDesc implements IVariableDesc {
     }
 
     /**
-     * Initializes the optional value {@link IVariableDesc#getName() name} to name.
+     * Initializes the optional value {@link IMethodParameterDesc#getName() name} to name.
      * @param name The value for name
      * @return {@code this} builder for chained invocation
      */
@@ -321,7 +393,7 @@ public final class VariableDesc implements IVariableDesc {
     }
 
     /**
-     * Initializes the optional value {@link IVariableDesc#getName() name} to name.
+     * Initializes the optional value {@link IMethodParameterDesc#getName() name} to name.
      * @param name The value for name
      * @return {@code this} builder for use in a chained invocation
      */
@@ -333,7 +405,7 @@ public final class VariableDesc implements IVariableDesc {
     }
 
     /**
-     * Initializes the value for the {@link IVariableDesc#getType() type} attribute.
+     * Initializes the value for the {@link IMethodParameterDesc#getType() type} attribute.
      * @param type The value for type 
      * @return {@code this} builder for use in a chained invocation
      */
@@ -346,15 +418,27 @@ public final class VariableDesc implements IVariableDesc {
     }
 
     /**
-     * Builds a new {@link VariableDesc VariableDesc}.
-     * @return An immutable instance of VariableDesc
+     * Initializes the value for the {@link IMethodParameterDesc#getFixedValue() fixedValue} attribute.
+     * @param fixedValue The value for fixedValue (can be {@code null})
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("fixedValue")
+    public final Builder fixedValue(@Nullable String fixedValue) {
+      this.fixedValue = fixedValue;
+      return this;
+    }
+
+    /**
+     * Builds a new {@link MethodParameterDesc MethodParameterDesc}.
+     * @return An immutable instance of MethodParameterDesc
      * @throws java.lang.IllegalStateException if any required attributes are missing
      */
-    public VariableDesc build() {
+    public MethodParameterDesc build() {
       if (initBits != 0) {
         throw new IllegalStateException(formatRequiredAttributesMessage());
       }
-      return new VariableDesc(this);
+      return new MethodParameterDesc(this);
     }
 
     private boolean isMutableIsSet() {
@@ -364,7 +448,7 @@ public final class VariableDesc implements IVariableDesc {
     private String formatRequiredAttributesMessage() {
       List<String> attributes = new ArrayList<>();
       if ((initBits & INIT_BIT_TYPE) != 0) attributes.add("type");
-      return "Cannot build VariableDesc, some of required attributes are not set " + attributes;
+      return "Cannot build MethodParameterDesc, some of required attributes are not set " + attributes;
     }
   }
 }

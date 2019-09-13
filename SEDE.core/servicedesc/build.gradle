@@ -6,9 +6,10 @@ dependencies {
 
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9.3'
+    compile 'com.fasterxml.jackson.module:jackson-module-jsonSchema:2.10.0.pr2'
 
     compileOnly 'org.immutables:value:2.7.4'
-    annotationProcessor 'org.immutables:value:2.7.4'
+//    annotationProcessor 'org.immutables:value:2.7.4'
 
     // mandatory dependencies for using Spock
     testCompile "org.codehaus.groovy:groovy-all:2.5.7"
@@ -22,4 +23,13 @@ sourceSets {
             srcDirs +=  'src/main/generated'
         }
     }
+}
+
+task genServiceDeskJsonSchema(type: JavaExec) {
+    classpath += sourceSets.main.runtimeClasspath
+    classpath += sourceSets.test.runtimeClasspath
+
+    main = 'de.upb.sede.ServiceDescSchemaGenerator'
+
+    args 'src/main/resources/servicedesc.schema.json'
 }

@@ -1,0 +1,68 @@
+package de.upb.sede
+
+import de.upb.sede.exec.MutableServiceDesc
+import de.upb.sede.types.MutableDataTypeDesc
+import groovy.transform.PackageScope
+
+class ServiceCollectionDomain implements ModelAware{
+
+    def service(String qualifier, @DelegatesTo(ServiceDomain) Closure describer) {
+        def service = MutableServiceDesc.create()
+            .setQualifier(qualifier)
+
+        /*
+         * Overwrite old service description
+         */
+        collection().services.stream()
+            .filter { it.qualifier == qualifier }
+            .findAny()
+            .ifPresent { service.from(it) }
+
+        def serviceDom = new ServiceDomain(collectionDom: this, model: service)
+        serviceDom.run(describer)
+
+        def serviceDesc = serviceDom.service().toImmutable()
+        collection().services.removeIf {it.qualifier == qualifier}
+        collection().services += serviceDesc
+        return serviceDesc
+    }
+
+    def service(String qualifier) {
+        collection().services.find {it.qualifier == qualifier}
+    }
+
+    @PackageScope
+    MutableServiceCollectionDesc collection() {
+        this.model as MutableServiceCollectionDesc
+    }
+
+
+    def type(String qualifier, @DelegatesTo(DataTypeDomain) Closure describer) {
+        def dataType = MutableDataTypeDesc.create()
+            .setQualifier(qualifier)
+            .setSemanticType(qualifier)
+
+
+        /*
+         * Overwrite old type description
+         */
+        collection().dataTypes.stream()
+            .filter { it.qualifier == qualifier }
+            .findAny()
+            .ifPresent { dataType.from(it) }
+
+        def typeDom = new DataTypeDomain(collectionDom: this,
+            model: dataType)
+        typeDom.run(describer)
+
+        def dataTypeDesc = typeDom.type().toImmutable()
+        collection().dataTypes.removeIf {it.qualifier == qualifier}
+        collection().dataTypes += dataTypeDesc
+        return dataType
+    }
+
+    def type(String qualifier) {
+        collection().dataTypes.find {it.qualifier == qualifier}
+    }
+
+}

@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.SModelStyle;
 import org.immutables.value.Value;
 
+import javax.annotation.Nullable;
 import java.util.Optional;
 
 @SModelStyle
 @Value.Immutable
-@JsonDeserialize(builder = VariableDesc.Builder.class)
-public interface IVariableDesc {
+@Value.Modifiable
+@JsonDeserialize(builder = MethodParameterDesc.Builder.class)
+public interface IMethodParameterDesc {
 
     @Value.Default
     default boolean isMutable(){
@@ -19,4 +21,7 @@ public interface IVariableDesc {
     Optional<String> getName();
 
     String getType();
+
+    @Nullable
+    String getFixedValue();
 }

@@ -8,6 +8,7 @@ import org.immutables.value.Value;
 @Value.Style(
     typeAbstract = "I*",
     typeImmutable = "*",
+    typeModifiable = "Mutable*",
     builder = "builder",
     visibility = Value.Style.ImplementationVisibility.PUBLIC)
 public @interface SModelStyle {}

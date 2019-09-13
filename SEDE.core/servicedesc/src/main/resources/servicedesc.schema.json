@@ -1,0 +1,171 @@
+{
+  "type" : "object",
+  "id" : "urn:jsonschema:de:upb:sede:ServiceCollectionDesc",
+  "properties" : {
+    "services" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "id" : "urn:jsonschema:de:upb:sede:exec:IServiceDesc",
+        "properties" : {
+          "interfaces" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "methods" : {
+            "type" : "array",
+            "items" : {
+              "type" : "object",
+              "id" : "urn:jsonschema:de:upb:sede:exec:IMethodDesc",
+              "properties" : {
+                "signatures" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "id" : "urn:jsonschema:de:upb:sede:exec:ISignatureDesc",
+                    "properties" : {
+                      "static" : {
+                        "type" : "boolean"
+                      },
+                      "inputs" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "id" : "urn:jsonschema:de:upb:sede:exec:IMethodParameterDesc",
+                          "properties" : {
+                            "name" : {
+                              "type" : "object",
+                              "id" : "urn:jsonschema:java:util:Optional<java:lang:String>",
+                              "properties" : {
+                                "present" : {
+                                  "type" : "boolean"
+                                }
+                              }
+                            },
+                            "type" : {
+                              "type" : "string"
+                            },
+                            "fixedValue" : {
+                              "type" : "string"
+                            },
+                            "mutable" : {
+                              "type" : "boolean"
+                            }
+                          }
+                        }
+                      },
+                      "outputs" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "object",
+                          "$ref" : "urn:jsonschema:de:upb:sede:exec:IMethodParameterDesc"
+                        }
+                      },
+                      "javaMethodAux" : {
+                        "type" : "object",
+                        "id" : "urn:jsonschema:de:upb:sede:exec:IJavaMethodAux"
+                      },
+                      "comments" : {
+                        "type" : "array",
+                        "items" : {
+                          "type" : "string"
+                        }
+                      }
+                    }
+                  }
+                },
+                "simpleName" : {
+                  "type" : "string"
+                },
+                "qualifier" : {
+                  "type" : "string"
+                },
+                "comments" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
+                  }
+                }
+              }
+            }
+          },
+          "abstract" : {
+            "type" : "boolean"
+          },
+          "fieldTypes" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "javaClassAuxiliaries" : {
+            "type" : "object",
+            "id" : "urn:jsonschema:de:upb:sede:exec:IJavaClassAux"
+          },
+          "pythonClassAuxiliaries" : {
+            "type" : "object",
+            "id" : "urn:jsonschema:de:upb:sede:exec:IPythonClassAux"
+          },
+          "simpleName" : {
+            "type" : "string"
+          },
+          "qualifier" : {
+            "type" : "string"
+          },
+          "comments" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "dataTypes" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "id" : "urn:jsonschema:de:upb:sede:types:IDataTypeDesc",
+        "properties" : {
+          "javaTypeAuxiliaries" : {
+            "type" : "object",
+            "id" : "urn:jsonschema:de:upb:sede:types:IJavaTypeAux"
+          },
+          "semanticType" : {
+            "type" : "string"
+          },
+          "pythonTypeAuxiliaries" : {
+            "type" : "object",
+            "id" : "urn:jsonschema:de:upb:sede:types:IPythonTypeAux"
+          },
+          "simpleName" : {
+            "type" : "string"
+          },
+          "qualifier" : {
+            "type" : "string"
+          },
+          "comments" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          }
+        }
+      }
+    },
+    "comments" : {
+      "type" : "array",
+      "items" : {
+        "type" : "string"
+      }
+    },
+    "qualifier" : {
+      "type" : "string"
+    },
+    "simpleName" : {
+      "type" : "string"
+    }
+  }
+}

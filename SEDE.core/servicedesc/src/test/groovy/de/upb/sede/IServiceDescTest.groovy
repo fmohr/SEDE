@@ -52,16 +52,4 @@ class IServiceDescTest extends Specification {
         true
     }
 
-    def "test json schema"() {
-        // TODO write a gradle task that generates a json schema and writes it as a file.
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.enable(SerializationFeature.INDENT_OUTPUT);
-// configure mapper, if necessary, then create schema generator
-        JsonSchemaGenerator schemaGen = new JsonSchemaGenerator(mapper);
-        JsonSchema schema = schemaGen.generateSchema(ServiceCollectionDesc.class);
-
-        println(mapper.writeValueAsString(schema))
-        expect:
-        true
-    }
 }

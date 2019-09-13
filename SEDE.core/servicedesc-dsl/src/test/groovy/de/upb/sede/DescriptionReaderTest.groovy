@@ -17,9 +17,10 @@ class DescriptionReaderTest extends Specification {
 
 
     def "test read services1"() {
-        def serviceCollection = reader.read(new File("service-descriptions/services1.servicedesc.groovy"))["services1"]
-        println(mapper.writeValueAsString(serviceCollection))
+        def serviceCollections = reader.read(new File("service-descriptions/services1.servicedesc.groovy"))
+        println(mapper.writeValueAsString(serviceCollections))
 
+        def serviceCollection = serviceCollections["services1"]
 
         expect:
         serviceCollection.comments.size() == 1

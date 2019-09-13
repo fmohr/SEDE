@@ -2,7 +2,6 @@ package de.upb.sede.exec;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import de.upb.sede.ICommented;
 import java.util.ArrayList;
@@ -26,12 +25,8 @@ import org.immutables.value.Generated;
 @javax.annotation.Generated({"Modifiables.generator", "ISignatureDesc"})
 @NotThreadSafe
 public final class MutableSignatureDesc implements ISignatureDesc {
-  private static final long OPT_BIT_IS_STATIC = 0x1L;
-  private long optBits;
-
   private final ArrayList<IMethodParameterDesc> inputs = new ArrayList<IMethodParameterDesc>();
   private final ArrayList<IMethodParameterDesc> outputs = new ArrayList<IMethodParameterDesc>();
-  private boolean isStatic;
   private @Nullable IJavaMethodAux javaMethodAux;
   private final ArrayList<String> comments = new ArrayList<String>();
 
@@ -64,17 +59,6 @@ public final class MutableSignatureDesc implements ISignatureDesc {
   }
 
   /**
-   * @return assigned or, otherwise, newly computed, not cached value of {@code isStatic} attribute
-   */
-  @JsonProperty("isStatic")
-  @Override
-  public final boolean isStatic() {
-    return isStaticIsSet()
-        ? isStatic
-        : ISignatureDesc.super.isStatic();
-  }
-
-  /**
    * @return value of {@code javaMethodAux} attribute, may be {@code null}
    */
   @JsonProperty("javaMethodAux")
@@ -98,10 +82,8 @@ public final class MutableSignatureDesc implements ISignatureDesc {
    */
   @CanIgnoreReturnValue
   public MutableSignatureDesc clear() {
-    optBits = 0;
     inputs.clear();
     outputs.clear();
-    isStatic = false;
     javaMethodAux = null;
     comments.clear();
     return this;
@@ -150,7 +132,6 @@ public final class MutableSignatureDesc implements ISignatureDesc {
       MutableSignatureDesc instance = (MutableSignatureDesc) object;
       addAllInputs(instance.getInputs());
       addAllOutputs(instance.getOutputs());
-      setIsStatic(instance.isStatic());
       @Nullable IJavaMethodAux javaMethodAuxValue = instance.getJavaMethodAux();
       if (javaMethodAuxValue != null) {
         setJavaMethodAux(javaMethodAuxValue);
@@ -169,7 +150,6 @@ public final class MutableSignatureDesc implements ISignatureDesc {
       if (javaMethodAuxValue != null) {
         setJavaMethodAux(javaMethodAuxValue);
       }
-      setIsStatic(instance.isStatic());
       addAllInputs(instance.getInputs());
     }
   }
@@ -275,19 +255,6 @@ public final class MutableSignatureDesc implements ISignatureDesc {
   }
 
   /**
-   * Assigns a value to the {@link ISignatureDesc#isStatic() isStatic} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link ISignatureDesc#isStatic() isStatic}.</em>
-   * @param isStatic The value for isStatic
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableSignatureDesc setIsStatic(boolean isStatic) {
-    this.isStatic = isStatic;
-    optBits |= OPT_BIT_IS_STATIC;
-    return this;
-  }
-
-  /**
    * Assigns a value to the {@link ISignatureDesc#getJavaMethodAux() javaMethodAux} attribute.
    * @param javaMethodAux The value for javaMethodAux, can be {@code null}
    * @return {@code this} for use in a chained invocation
@@ -348,24 +315,6 @@ public final class MutableSignatureDesc implements ISignatureDesc {
     return this;
   }
 
-  /**
-   * Returns {@code true} if the default attribute {@link ISignatureDesc#isStatic() isStatic} is set.
-   * @return {@code true} if set
-   */
-  public final boolean isStaticIsSet() {
-    return (optBits & OPT_BIT_IS_STATIC) != 0;
-  }
-
-  /**
-   * Reset an attribute to its initial value.
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public final MutableSignatureDesc unsetIsStatic() {
-    optBits |= 0;
-    isStatic = false;
-    return this;
-  }
 
   /**
    * Returns {@code true} if all required attributes are set, indicating that the object is initialized.
@@ -396,16 +345,14 @@ public final class MutableSignatureDesc implements ISignatureDesc {
   }
 
   private boolean equalTo(MutableSignatureDesc another) {
-    boolean isStatic = isStatic();
     return inputs.equals(another.inputs)
         && outputs.equals(another.outputs)
-        && isStatic == another.isStatic()
         && Objects.equals(javaMethodAux, another.javaMethodAux)
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code isStatic}, {@code javaMethodAux}, {@code comments}.
+   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaMethodAux}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -413,8 +360,6 @@ public final class MutableSignatureDesc implements ISignatureDesc {
     int h = 5381;
     h += (h << 5) + inputs.hashCode();
     h += (h << 5) + outputs.hashCode();
-    boolean isStatic = isStatic();
-    h += (h << 5) + Booleans.hashCode(isStatic);
     h += (h << 5) + Objects.hashCode(javaMethodAux);
     h += (h << 5) + comments.hashCode();
     return h;
@@ -430,7 +375,6 @@ public final class MutableSignatureDesc implements ISignatureDesc {
     return MoreObjects.toStringHelper("MutableSignatureDesc")
         .add("inputs", getInputs())
         .add("outputs", getOutputs())
-        .add("isStatic", isStatic())
         .add("javaMethodAux", getJavaMethodAux())
         .add("comments", getComments())
         .toString();

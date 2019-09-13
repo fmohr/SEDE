@@ -20,8 +20,7 @@ class ServiceDomain implements ModelAware {
     }
 
     def setStateType(String dataTypeQualifier, Closure typeDescriber = Closure.IDENTITY) {
-        def qualifier = service().getQualifier()
-        def stateType = collectionDom.type(dataTypeQualifier, typeDescriber)
+        collectionDom.type(dataTypeQualifier, typeDescriber)
         service().fieldTypes[IServiceDesc.STATE_FIELD] = dataTypeQualifier
     }
 

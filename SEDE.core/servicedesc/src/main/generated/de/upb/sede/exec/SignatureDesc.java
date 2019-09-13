@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.ICommented;
@@ -34,29 +33,16 @@ import org.immutables.value.Generated;
 public final class SignatureDesc implements ISignatureDesc {
   private final ImmutableList<IMethodParameterDesc> inputs;
   private final ImmutableList<IMethodParameterDesc> outputs;
-  private final boolean isStatic;
   private final @Nullable IJavaMethodAux javaMethodAux;
   private final ImmutableList<String> comments;
-
-  private SignatureDesc(SignatureDesc.Builder builder) {
-    this.inputs = builder.inputs.build();
-    this.outputs = builder.outputs.build();
-    this.javaMethodAux = builder.javaMethodAux;
-    this.comments = builder.comments.build();
-    this.isStatic = builder.isStaticIsSet()
-        ? builder.isStatic
-        : ISignatureDesc.super.isStatic();
-  }
 
   private SignatureDesc(
       ImmutableList<IMethodParameterDesc> inputs,
       ImmutableList<IMethodParameterDesc> outputs,
-      boolean isStatic,
       @Nullable IJavaMethodAux javaMethodAux,
       ImmutableList<String> comments) {
     this.inputs = inputs;
     this.outputs = outputs;
-    this.isStatic = isStatic;
     this.javaMethodAux = javaMethodAux;
     this.comments = comments;
   }
@@ -77,15 +63,6 @@ public final class SignatureDesc implements ISignatureDesc {
   @Override
   public ImmutableList<IMethodParameterDesc> getOutputs() {
     return outputs;
-  }
-
-  /**
-   * @return The value of the {@code isStatic} attribute
-   */
-  @JsonProperty("isStatic")
-  @Override
-  public boolean isStatic() {
-    return isStatic;
   }
 
   /**
@@ -113,7 +90,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withInputs(IMethodParameterDesc... elements) {
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(newValue, this.outputs, this.isStatic, this.javaMethodAux, this.comments);
+    return new SignatureDesc(newValue, this.outputs, this.javaMethodAux, this.comments);
   }
 
   /**
@@ -125,7 +102,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withInputs(Iterable<? extends IMethodParameterDesc> elements) {
     if (this.inputs == elements) return this;
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(newValue, this.outputs, this.isStatic, this.javaMethodAux, this.comments);
+    return new SignatureDesc(newValue, this.outputs, this.javaMethodAux, this.comments);
   }
 
   /**
@@ -135,7 +112,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withOutputs(IMethodParameterDesc... elements) {
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, newValue, this.isStatic, this.javaMethodAux, this.comments);
+    return new SignatureDesc(this.inputs, newValue, this.javaMethodAux, this.comments);
   }
 
   /**
@@ -147,18 +124,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withOutputs(Iterable<? extends IMethodParameterDesc> elements) {
     if (this.outputs == elements) return this;
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, newValue, this.isStatic, this.javaMethodAux, this.comments);
-  }
-
-  /**
-   * Copy the current immutable object by setting a value for the {@link ISignatureDesc#isStatic() isStatic} attribute.
-   * A value equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for isStatic
-   * @return A modified copy of the {@code this} object
-   */
-  public final SignatureDesc withIsStatic(boolean value) {
-    if (this.isStatic == value) return this;
-    return new SignatureDesc(this.inputs, this.outputs, value, this.javaMethodAux, this.comments);
+    return new SignatureDesc(this.inputs, newValue, this.javaMethodAux, this.comments);
   }
 
   /**
@@ -169,7 +135,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withJavaMethodAux(@Nullable IJavaMethodAux value) {
     if (this.javaMethodAux == value) return this;
-    return new SignatureDesc(this.inputs, this.outputs, this.isStatic, value, this.comments);
+    return new SignatureDesc(this.inputs, this.outputs, value, this.comments);
   }
 
   /**
@@ -179,7 +145,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withComments(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, this.outputs, this.isStatic, this.javaMethodAux, newValue);
+    return new SignatureDesc(this.inputs, this.outputs, this.javaMethodAux, newValue);
   }
 
   /**
@@ -191,7 +157,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withComments(Iterable<String> elements) {
     if (this.comments == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, this.outputs, this.isStatic, this.javaMethodAux, newValue);
+    return new SignatureDesc(this.inputs, this.outputs, this.javaMethodAux, newValue);
   }
 
   /**
@@ -208,13 +174,12 @@ public final class SignatureDesc implements ISignatureDesc {
   private boolean equalTo(SignatureDesc another) {
     return inputs.equals(another.inputs)
         && outputs.equals(another.outputs)
-        && isStatic == another.isStatic
         && Objects.equals(javaMethodAux, another.javaMethodAux)
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code isStatic}, {@code javaMethodAux}, {@code comments}.
+   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaMethodAux}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -222,7 +187,6 @@ public final class SignatureDesc implements ISignatureDesc {
     @Var int h = 5381;
     h += (h << 5) + inputs.hashCode();
     h += (h << 5) + outputs.hashCode();
-    h += (h << 5) + Booleans.hashCode(isStatic);
     h += (h << 5) + Objects.hashCode(javaMethodAux);
     h += (h << 5) + comments.hashCode();
     return h;
@@ -238,7 +202,6 @@ public final class SignatureDesc implements ISignatureDesc {
         .omitNullValues()
         .add("inputs", inputs)
         .add("outputs", outputs)
-        .add("isStatic", isStatic)
         .add("javaMethodAux", javaMethodAux)
         .add("comments", comments)
         .toString();
@@ -256,8 +219,6 @@ public final class SignatureDesc implements ISignatureDesc {
   static final class Json implements ISignatureDesc {
     @Nullable List<IMethodParameterDesc> inputs = ImmutableList.of();
     @Nullable List<IMethodParameterDesc> outputs = ImmutableList.of();
-    boolean isStatic;
-    boolean isStaticIsSet;
     @Nullable IJavaMethodAux javaMethodAux;
     @Nullable List<String> comments = ImmutableList.of();
     @JsonProperty("inputs")
@@ -267,11 +228,6 @@ public final class SignatureDesc implements ISignatureDesc {
     @JsonProperty("outputs")
     public void setOutputs(List<IMethodParameterDesc> outputs) {
       this.outputs = outputs;
-    }
-    @JsonProperty("isStatic")
-    public void setIsStatic(boolean isStatic) {
-      this.isStatic = isStatic;
-      this.isStaticIsSet = true;
     }
     @JsonProperty("javaMethodAux")
     public void setJavaMethodAux(@Nullable IJavaMethodAux javaMethodAux) {
@@ -285,8 +241,6 @@ public final class SignatureDesc implements ISignatureDesc {
     public List<IMethodParameterDesc> getInputs() { throw new UnsupportedOperationException(); }
     @Override
     public List<IMethodParameterDesc> getOutputs() { throw new UnsupportedOperationException(); }
-    @Override
-    public boolean isStatic() { throw new UnsupportedOperationException(); }
     @Override
     public IJavaMethodAux getJavaMethodAux() { throw new UnsupportedOperationException(); }
     @Override
@@ -307,9 +261,6 @@ public final class SignatureDesc implements ISignatureDesc {
     }
     if (json.outputs != null) {
       builder.addAllOutputs(json.outputs);
-    }
-    if (json.isStaticIsSet) {
-      builder.isStatic(json.isStatic);
     }
     if (json.javaMethodAux != null) {
       builder.javaMethodAux(json.javaMethodAux);
@@ -342,7 +293,6 @@ public final class SignatureDesc implements ISignatureDesc {
    * SignatureDesc.builder()
    *    .addInputs|addAllInputs(de.upb.sede.exec.IMethodParameterDesc) // {@link ISignatureDesc#getInputs() inputs} elements
    *    .addOutputs|addAllOutputs(de.upb.sede.exec.IMethodParameterDesc) // {@link ISignatureDesc#getOutputs() outputs} elements
-   *    .isStatic(boolean) // optional {@link ISignatureDesc#isStatic() isStatic}
    *    .javaMethodAux(de.upb.sede.exec.IJavaMethodAux | null) // nullable {@link ISignatureDesc#getJavaMethodAux() javaMethodAux}
    *    .addComments|addAllComments(String) // {@link ISignatureDesc#getComments() comments} elements
    *    .build();
@@ -363,12 +313,8 @@ public final class SignatureDesc implements ISignatureDesc {
   @Generated(from = "ISignatureDesc", generator = "Immutables")
   @NotThreadSafe
   public static final class Builder {
-    private static final long OPT_BIT_IS_STATIC = 0x1L;
-    private long optBits;
-
     private ImmutableList.Builder<IMethodParameterDesc> inputs = ImmutableList.builder();
     private ImmutableList.Builder<IMethodParameterDesc> outputs = ImmutableList.builder();
-    private boolean isStatic;
     private @Nullable IJavaMethodAux javaMethodAux;
     private ImmutableList.Builder<String> comments = ImmutableList.builder();
 
@@ -385,7 +331,6 @@ public final class SignatureDesc implements ISignatureDesc {
       Objects.requireNonNull(instance, "instance");
       addAllInputs(instance.getInputs());
       addAllOutputs(instance.getOutputs());
-      isStatic(instance.isStatic());
       @Nullable IJavaMethodAux javaMethodAuxValue = instance.getJavaMethodAux();
       if (javaMethodAuxValue != null) {
         javaMethodAux(javaMethodAuxValue);
@@ -434,7 +379,6 @@ public final class SignatureDesc implements ISignatureDesc {
         if (javaMethodAuxValue != null) {
           javaMethodAux(javaMethodAuxValue);
         }
-        isStatic(instance.isStatic());
         addAllInputs(instance.getInputs());
       }
     }
@@ -532,20 +476,6 @@ public final class SignatureDesc implements ISignatureDesc {
     }
 
     /**
-     * Initializes the value for the {@link ISignatureDesc#isStatic() isStatic} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link ISignatureDesc#isStatic() isStatic}.</em>
-     * @param isStatic The value for isStatic 
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("isStatic")
-    public final Builder isStatic(boolean isStatic) {
-      this.isStatic = isStatic;
-      optBits |= OPT_BIT_IS_STATIC;
-      return this;
-    }
-
-    /**
      * Initializes the value for the {@link ISignatureDesc#getJavaMethodAux() javaMethodAux} attribute.
      * @param javaMethodAux The value for javaMethodAux (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
@@ -609,11 +539,7 @@ public final class SignatureDesc implements ISignatureDesc {
      * @throws java.lang.IllegalStateException if any required attributes are missing
      */
     public SignatureDesc build() {
-      return new SignatureDesc(this);
-    }
-
-    private boolean isStaticIsSet() {
-      return (optBits & OPT_BIT_IS_STATIC) != 0;
+      return new SignatureDesc(inputs.build(), outputs.build(), javaMethodAux, comments.build());
     }
   }
 }

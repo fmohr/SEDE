@@ -13,15 +13,17 @@ import java.util.Optional;
 @JsonDeserialize(builder = MethodParameterDesc.Builder.class)
 public interface IMethodParameterDesc {
 
+    String getType();
+
+    @Nullable
+    String getName();
+
+    @Nullable
+    String getFixedValue();
+
     @Value.Default
     default boolean isMutable(){
         return false;
     }
 
-    Optional<String> getName();
-
-    String getType();
-
-    @Nullable
-    String getFixedValue();
 }

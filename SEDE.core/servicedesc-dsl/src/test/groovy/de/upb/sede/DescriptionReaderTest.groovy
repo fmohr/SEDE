@@ -17,7 +17,6 @@ class DescriptionReaderTest extends Specification {
 
 
     def "test read services1"() {
-
         def serviceCollection = reader.read(new File("service-descriptions/services1.servicedesc.groovy"))["services1"]
         println(mapper.writeValueAsString(serviceCollection))
 
@@ -53,6 +52,24 @@ class DescriptionReaderTest extends Specification {
 
         then:
         method1.simpleName == "method 1"
+        method1.signatures.size() == 3
 
+        when:
+        def sig1 = method1.signatures[0]
+        then:
+        sig1.inputs.size() == 3
+        sig1.inputs[0].type == "t1"
+        sig1.inputs[1].type == "t2"
+        sig1.inputs[2].type == "t3"
+        sig1.outputs.size() == 2
+        sig1.outputs[0].type == "t4"
+
+        when:
+        def sig3 = method1.signatures[2]
+        then:
+        sig3.inputs[1].type == "t2"
+        sig3.inputs[1].name == null
+        !sig3.inputs[1].isMutable()
+        sig3.inputs[1].fixedValue == "SOME_FIXED_VALUE"
     }
 }

@@ -18,12 +18,6 @@ public interface ISignatureDesc extends ICommented {
 
     List<IMethodParameterDesc> getOutputs();
 
-
-    @Value.Default
-    default boolean isStatic() {
-        return false;
-    }
-
     @Nullable
     IJavaMethodAux getJavaMethodAux();
 

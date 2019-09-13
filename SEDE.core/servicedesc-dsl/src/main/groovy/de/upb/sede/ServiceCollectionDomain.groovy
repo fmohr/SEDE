@@ -27,7 +27,7 @@ class ServiceCollectionDomain implements ModelAware{
         return serviceDesc
     }
 
-    def service(String qualifier) {
+    def getService(String qualifier) {
         collection().services.find {it.qualifier == qualifier}
     }
 
@@ -61,7 +61,7 @@ class ServiceCollectionDomain implements ModelAware{
         return dataType
     }
 
-    def type(String qualifier) {
+    def getType(String qualifier) {
         collection().dataTypes.find {it.qualifier == qualifier}
     }
 

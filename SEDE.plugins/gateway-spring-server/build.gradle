@@ -43,8 +43,8 @@ dependencies {
     /*
      * SEDE dependencies
      */
-    implementation 'de.upb.isys:SEDE.core:0.0.10'
-    implementation 'de.upb.isys:SEDE.gateway:0.0.10'
+    implementation project(':SEDE.core')
+    implementation project(':SEDE.gateway')
 
 
     /*

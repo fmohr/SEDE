@@ -4,7 +4,7 @@ import de.upb.sede.exec.MutableServiceDesc
 import de.upb.sede.types.MutableDataTypeDesc
 import groovy.transform.PackageScope
 
-class ServiceCollectionDomain implements ModelAware{
+class ServiceCollectionDomain extends DomainAware {
 
     def service(String qualifier, @DelegatesTo(ServiceDomain) Closure describer) {
         def service = MutableServiceDesc.create()
@@ -19,9 +19,9 @@ class ServiceCollectionDomain implements ModelAware{
             .ifPresent { service.from(it) }
 
         def serviceDom = new ServiceDomain(collectionDom: this, model: service)
-        serviceDom.run(describer)
+        delegateDown(serviceDom, describer)
 
-        def serviceDesc = serviceDom.service().toImmutable()
+        def serviceDesc = serviceDom.service ()
         collection().services.removeIf {it.qualifier == qualifier}
         collection().services += serviceDesc
         return serviceDesc
@@ -53,9 +53,9 @@ class ServiceCollectionDomain implements ModelAware{
 
         def typeDom = new DataTypeDomain(collectionDom: this,
             model: dataType)
-        typeDom.run(describer)
+        delegateDown(typeDom, describer)
 
-        def dataTypeDesc = typeDom.type().toImmutable()
+        def dataTypeDesc = typeDom.type()
         collection().dataTypes.removeIf {it.qualifier == qualifier}
         collection().dataTypes += dataTypeDesc
         return dataType
@@ -65,4 +65,8 @@ class ServiceCollectionDomain implements ModelAware{
         collection().dataTypes.find {it.qualifier == qualifier}
     }
 
+    @Override
+    String getBindingName() {
+        return "collection"
+    }
 }

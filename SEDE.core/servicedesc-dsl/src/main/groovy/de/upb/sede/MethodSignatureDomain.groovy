@@ -1,16 +1,18 @@
 package de.upb.sede
 
-import de.upb.sede.exec.MethodParameterDesc
+import de.upb.sede.exec.IJavaMethodAux
+import de.upb.sede.exec.IMethodParameterDesc
+import de.upb.sede.exec.MutableJavaMethodAux
 import de.upb.sede.exec.MutableMethodParameterDesc
 import de.upb.sede.exec.MutableSignatureDesc
 import groovy.transform.NamedVariant
 import groovy.transform.PackageScope
 
-class MethodSignatureDomain implements ModelAware{
+class MethodSignatureDomain extends DomainAware {
 
     @PackageScope
     MutableSignatureDesc signature() {
-        return model
+        return model as MutableSignatureDesc
     }
 
     void setInputTypes(String... inputTypes) {
@@ -51,22 +53,80 @@ class MethodSignatureDomain implements ModelAware{
         signature().outputs += param type: type, name: name
     }
 
-    static MethodParameterDesc param(String t, String n) {
+    static MutableMethodParameterDesc param(String t, String n) {
         return param {
             type = t
             name = n
         }
     }
 
-    static MethodParameterDesc param(Map<String, String> paramDesc) {
+    static MutableMethodParameterDesc param(Map<String, String> paramDesc) {
         return param(paramDesc["type"], paramDesc["name"])
     }
 
-    static MethodParameterDesc param(@DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
+    static MutableMethodParameterDesc param(@DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
         def parameter = MutableMethodParameterDesc.create()
         paramDescriber.delegate = parameter
         paramDescriber.resolveStrategy = Closure.DELEGATE_ONLY
         paramDescriber.run()
-        return parameter.toImmutable()
+        return parameter
+    }
+
+    MutableMethodParameterDesc input(int paramIndex,
+                                     @DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
+        return redefineParameter(signature().inputs, paramIndex, paramDescriber)
+    }
+
+
+    MutableMethodParameterDesc output(int paramIndex,
+                                @DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
+        return redefineParameter(signature().outputs, paramIndex, paramDescriber)
+    }
+
+    MutableMethodParameterDesc output(@DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
+        return output(0, paramDescriber)
+    }
+
+    private MutableMethodParameterDesc redefineParameter(List<IMethodParameterDesc> paramList,
+                             int paramIndex,
+                             @DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
+        if(paramIndex >= paramList.size()) {
+            /*
+             * Parameter doesnt exists
+             */
+            throw new IllegalArgumentException("Parameter index exceeds bounds: " + paramIndex + "." +
+                " First define the parameter before configuring it.")
+        }
+
+        def parameter = MutableMethodParameterDesc.create().from(paramList[paramIndex])
+
+        paramDescriber.delegate = parameter
+        paramDescriber.resolveStrategy = Closure.DELEGATE_FIRST
+        paramDescriber.run()
+
+        def newParameter = parameter
+        paramList.set(paramIndex, newParameter)
+        return newParameter
+    }
+
+
+    private IJavaMethodAux java (@DelegatesTo(MutableJavaMethodAux) Closure javaAuxDescriber) {
+        def javaAux = MutableJavaMethodAux.create()
+        if(signature().javaMethodAux != null) {
+            javaAux.from(signature().javaMethodAux)
+        }
+
+        javaAuxDescriber.delegate = javaAux
+        javaAuxDescriber.resolveStrategy = Closure.DELEGATE_ONLY
+        javaAuxDescriber.run()
+
+        def newJavaAux = javaAux
+        signature().javaMethodAux = newJavaAux
+        return newJavaAux
+    }
+
+    @Override
+    def String getBindingName() {
+        "signature"
     }
 }

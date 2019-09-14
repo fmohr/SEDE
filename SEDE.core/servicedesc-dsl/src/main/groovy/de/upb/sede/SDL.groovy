@@ -2,7 +2,10 @@ package de.upb.sede
 
 abstract class SDL extends Script {
 
-    Map<String, ServiceCollectionDesc> cols = new HashMap<>()
+    Binding binding
+
+    private Map<String, MutableServiceCollectionDesc> cols = new LinkedHashMap<>()
+
 
     def collection(String qualifier, @DelegatesTo(ServiceCollectionDomain) Closure describer) {
         /*
@@ -15,28 +18,32 @@ abstract class SDL extends Script {
              * Overwrite the old definition of the collection
              */
 
-            colDomain = new ServiceCollectionDomain(model:
-                MutableServiceCollectionDesc.create()
-                .from(col))
+            colDomain = new ServiceCollectionDomain(
+                model: MutableServiceCollectionDesc.create().from(col))
         } else {
             /*
              * Define new collection
              */
-            colDomain = new ServiceCollectionDomain(model:
-                MutableServiceCollectionDesc.create()
-                .setQualifier(qualifier))
+            colDomain = new ServiceCollectionDomain(
+                model: MutableServiceCollectionDesc.create().setQualifier(qualifier))
         }
         /*
          * Apply user script
          */
-        colDomain.run(describer)
+        colDomain.delegateDown(describer)
 
         /*
          * Add the new collection and return it
          */
-        def newCol = colDomain.model.toImmutable()
-        cols[qualifier] = newCol
-        newCol
+        def newCol = colDomain.collection()
+        cols.put(qualifier, newCol)
+        return newCol
+    }
+
+    List<ServiceCollectionDesc> getResult() {
+        return cols.values().collect { mutableCollection ->
+            DescriptionReader.MAPPER.convertValue(mutableCollection, ServiceCollectionDesc)
+        }
     }
 
 

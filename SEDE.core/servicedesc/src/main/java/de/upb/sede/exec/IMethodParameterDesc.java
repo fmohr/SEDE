@@ -22,8 +22,8 @@ public interface IMethodParameterDesc {
     String getFixedValue();
 
     @Value.Default
-    default boolean isMutable(){
-        return false;
+    default boolean callByValue(){
+        return true;
     }
 
 }

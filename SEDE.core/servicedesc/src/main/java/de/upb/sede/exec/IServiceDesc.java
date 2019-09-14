@@ -29,7 +29,6 @@ public interface IServiceDesc extends IQualifiable, ICommented {
 
     Map<String, String> getFieldTypes();
 
-
     @Nullable
     IJavaClassAux getJavaClassAuxiliaries();
 

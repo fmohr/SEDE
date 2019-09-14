@@ -1,10 +1,10 @@
 package de.upb.sede
 
-import de.upb.sede.exec.MutableServiceDesc
+
 import de.upb.sede.types.MutableDataTypeDesc
 import groovy.transform.PackageScope
 
-class DataTypeDomain implements ModelAware {
+class DataTypeDomain extends DomainAware {
 
     ServiceCollectionDomain collectionDom
 
@@ -13,5 +13,8 @@ class DataTypeDomain implements ModelAware {
         model as MutableDataTypeDesc
     }
 
-
+    @Override
+    def String getBindingName() {
+        "type"
+    }
 }

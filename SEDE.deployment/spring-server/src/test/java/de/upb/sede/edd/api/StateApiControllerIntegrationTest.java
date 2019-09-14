@@ -14,20 +14,20 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest
 public class StateApiControllerIntegrationTest {
-
-    @Autowired
-    private StateApi api;
-
-    @Test
-    public void stateGetTest() throws Exception {
-        ResponseEntity<Void> responseEntity = api.stateGet();
-        assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
-    }
-
-    @Test
-    public void statePutTest() throws Exception {
-        ResponseEntity<Void> responseEntity = api.statePut();
-        assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
-    }
+//
+//    @Autowired
+//    private StateApi api;
+//
+//    @Test
+//    public void stateGetTest() throws Exception {
+//        ResponseEntity<Void> responseEntity = api.stateGet();
+//        assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
+//    }
+//
+//    @Test
+//    public void statePutTest() throws Exception {
+//        ResponseEntity<Void> responseEntity = api.statePut();
+//        assertEquals(HttpStatus.NOT_IMPLEMENTED, responseEntity.getStatusCode());
+//    }
 
 }

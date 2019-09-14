@@ -1,5 +1,8 @@
 package de.upb.sede.exec;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
+import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.Objects;
 import javax.annotation.Nullable;
@@ -20,6 +23,12 @@ import org.immutables.value.Generated;
 @javax.annotation.Generated({"Modifiables.generator", "IJavaMethodAux"})
 @NotThreadSafe
 public final class MutableJavaMethodAux implements IJavaMethodAux {
+  private static final long OPT_BIT_STATIC_INVOCATION = 0x1L;
+  private static final long OPT_BIT_REDIRECT_ARG = 0x2L;
+  private long optBits;
+
+  private boolean staticInvocation;
+  private int redirectArg;
 
   private MutableJavaMethodAux() {}
 
@@ -32,11 +41,36 @@ public final class MutableJavaMethodAux implements IJavaMethodAux {
   }
 
   /**
+   * @return assigned or, otherwise, newly computed, not cached value of {@code staticInvocation} attribute
+   */
+  @JsonProperty("staticInvocation")
+  @Override
+  public final boolean staticInvocation() {
+    return staticInvocationIsSet()
+        ? staticInvocation
+        : IJavaMethodAux.super.staticInvocation();
+  }
+
+  /**
+   * @return assigned or, otherwise, newly computed, not cached value of {@code redirectArg} attribute
+   */
+  @JsonProperty("redirectArg")
+  @Override
+  public final int redirectArg() {
+    return redirectArgIsSet()
+        ? redirectArg
+        : IJavaMethodAux.super.redirectArg();
+  }
+
+  /**
    * Clears the object by setting all attributes to their initial values.
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
   public MutableJavaMethodAux clear() {
+    optBits = 0;
+    staticInvocation = false;
+    redirectArg = 0;
     return this;
   }
 
@@ -53,6 +87,8 @@ public final class MutableJavaMethodAux implements IJavaMethodAux {
       from((MutableJavaMethodAux) instance);
       return this;
     }
+    setStaticInvocation(instance.staticInvocation());
+    setRedirectArg(instance.redirectArg());
     return this;
   }
 
@@ -65,9 +101,73 @@ public final class MutableJavaMethodAux implements IJavaMethodAux {
    */
   public MutableJavaMethodAux from(MutableJavaMethodAux instance) {
     Objects.requireNonNull(instance, "instance");
+    setStaticInvocation(instance.staticInvocation());
+    setRedirectArg(instance.redirectArg());
     return this;
   }
 
+  /**
+   * Assigns a value to the {@link IJavaMethodAux#staticInvocation() staticInvocation} attribute.
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IJavaMethodAux#staticInvocation() staticInvocation}.</em>
+   * @param staticInvocation The value for staticInvocation
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableJavaMethodAux setStaticInvocation(boolean staticInvocation) {
+    this.staticInvocation = staticInvocation;
+    optBits |= OPT_BIT_STATIC_INVOCATION;
+    return this;
+  }
+
+  /**
+   * Assigns a value to the {@link IJavaMethodAux#redirectArg() redirectArg} attribute.
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IJavaMethodAux#redirectArg() redirectArg}.</em>
+   * @param redirectArg The value for redirectArg
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableJavaMethodAux setRedirectArg(int redirectArg) {
+    this.redirectArg = redirectArg;
+    optBits |= OPT_BIT_REDIRECT_ARG;
+    return this;
+  }
+
+  /**
+   * Returns {@code true} if the default attribute {@link IJavaMethodAux#staticInvocation() staticInvocation} is set.
+   * @return {@code true} if set
+   */
+  public final boolean staticInvocationIsSet() {
+    return (optBits & OPT_BIT_STATIC_INVOCATION) != 0;
+  }
+
+  /**
+   * Returns {@code true} if the default attribute {@link IJavaMethodAux#redirectArg() redirectArg} is set.
+   * @return {@code true} if set
+   */
+  public final boolean redirectArgIsSet() {
+    return (optBits & OPT_BIT_REDIRECT_ARG) != 0;
+  }
+
+  /**
+   * Reset an attribute to its initial value.
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableJavaMethodAux unsetStaticInvocation() {
+    optBits |= 0;
+    staticInvocation = false;
+    return this;
+  }
+  /**
+   * Reset an attribute to its initial value.
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableJavaMethodAux unsetRedirectArg() {
+    optBits |= 0;
+    redirectArg = 0;
+    return this;
+  }
 
   /**
    * Returns {@code true} if all required attributes are set, indicating that the object is initialized.
@@ -97,18 +197,25 @@ public final class MutableJavaMethodAux implements IJavaMethodAux {
     return equalTo(other);
   }
 
-  @SuppressWarnings("MethodCanBeStatic")
   private boolean equalTo(MutableJavaMethodAux another) {
-    return true;
+    boolean staticInvocation = staticInvocation();
+    int redirectArg = redirectArg();
+    return staticInvocation == another.staticInvocation()
+        && redirectArg == another.redirectArg();
   }
 
   /**
-   * Returns a constant hash code value.
+   * Computes a hash code from attributes: {@code staticInvocation}, {@code redirectArg}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
-    return 1222259853;
+    int h = 5381;
+    boolean staticInvocation = staticInvocation();
+    h += (h << 5) + Booleans.hashCode(staticInvocation);
+    int redirectArg = redirectArg();
+    h += (h << 5) + redirectArg;
+    return h;
   }
 
   /**
@@ -118,6 +225,9 @@ public final class MutableJavaMethodAux implements IJavaMethodAux {
    */
   @Override
   public String toString() {
-    return "MutableJavaMethodAux{}";
+    return MoreObjects.toStringHelper("MutableJavaMethodAux")
+        .add("staticInvocation", staticInvocation())
+        .add("redirectArg", redirectArg())
+        .toString();
   }
 }

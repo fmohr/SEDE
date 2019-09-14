@@ -1,6 +1,8 @@
 package de.upb.sede;
 
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.upb.sede.util.FileUtil;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
@@ -9,7 +11,7 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 
 public class DescriptionReader {
 
@@ -29,6 +31,10 @@ public class DescriptionReader {
     private Binding binding;
     private GroovyShell shell;
 
+
+    public static ObjectMapper MAPPER = new ObjectMapper()
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
     public DescriptionReader() {
         binding = new Binding();
         shell = new GroovyShell(this.getClass().getClassLoader(), binding, createConfig());
@@ -46,19 +52,29 @@ public class DescriptionReader {
         return config;
     }
 
-    public Map<String, ServiceCollectionDesc> readFromFilePath(String serviceDescFilePath) {
+    public List<ServiceCollectionDesc> readFromFilePath(String serviceDescFilePath) {
         return this.read(FileUtil.readFileAsString(serviceDescFilePath));
     }
 
 
-    public Map<String, ServiceCollectionDesc> read(String serviceDesc) {
+    public synchronized  List<ServiceCollectionDesc> read(String serviceDesc) {
         SDL collector = (SDL) shell.parse(serviceDesc);
-        return collector.getCols();
+        runSDL(collector);
+        return collector.getResult();
     }
 
-    public Map<String, ServiceCollectionDesc> read(File serviceDesc) throws IOException {
+    public synchronized List<ServiceCollectionDesc> read(File serviceDesc) throws IOException {
         SDL collector = (SDL) shell.parse(serviceDesc);
-        collector.run();
-        return collector.getCols();
+        runSDL(collector);
+        return collector.getResult();
     }
+
+    private synchronized void runSDL(SDL sdl) {
+        sdl.setBinding(binding);
+        sdl.run();
+        binding.getVariables().clear();
+
+    }
+
+
 }

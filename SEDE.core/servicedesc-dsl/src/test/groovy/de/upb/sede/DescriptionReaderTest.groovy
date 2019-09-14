@@ -2,6 +2,7 @@ package de.upb.sede
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import de.upb.sede.exec.MutableJavaMethodAux
 import de.upb.sede.exec.ServiceDesc
 import spock.lang.Specification
 
@@ -20,7 +21,7 @@ class DescriptionReaderTest extends Specification {
         def serviceCollections = reader.read(new File("service-descriptions/services1.servicedesc.groovy"))
         println(mapper.writeValueAsString(serviceCollections))
 
-        def serviceCollection = serviceCollections["services1"]
+        def serviceCollection = serviceCollections[0]
 
         expect:
         serviceCollection.comments.size() == 1
@@ -46,14 +47,17 @@ class DescriptionReaderTest extends Specification {
         typeA.qualifier == serviceA.qualifier
         typeA.semanticType == 'semantics.A'
 
-        serviceA.methods.size() == 1
-
         when:
         def method1 = serviceA.methods[0]
+        def aux = MutableJavaMethodAux.create()
+        aux.staticInvocation = true
 
         then:
         method1.simpleName == "method 1"
-        method1.signatures.size() == 3
+        method1.signatures.size() == 4
+        aux.staticInvocation()
+        method1.signatures.every {it.javaMethodAux.staticInvocation()}
+
 
         when:
         def sig1 = method1.signatures[0]
@@ -70,7 +74,27 @@ class DescriptionReaderTest extends Specification {
         then:
         sig3.inputs[1].type == "t2"
         sig3.inputs[1].name == null
-        !sig3.inputs[1].isMutable()
+        !sig3.inputs[1].callByValue()
         sig3.inputs[1].fixedValue == "SOME_FIXED_VALUE"
+
+        when:
+        def sig4 = method1.signatures[3]
+        then:
+        sig4.inputs[0].name == "First Input Parameter"
+        !sig4.inputs[1].callByValue()
+        sig4.outputs[0].name == "Return Value"
+        sig4.inputs[0].type == "t1"
+        sig4.inputs[1].type == "t2"
+        sig4.outputs[0].type == "t3"
+
+        when:
+        def method2 = serviceA.methods[1]
+        def m2sig1 = method2.signatures[0]
+        then:
+        method2.signatures.size() == 1
+        method2.qualifier == "m2"
+        m2sig1.inputs[0].type == "t1"
+        m2sig1.inputs[0].name == "First Input Parameter of m2"
+
     }
 }

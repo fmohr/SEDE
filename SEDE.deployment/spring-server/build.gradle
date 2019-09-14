@@ -6,9 +6,6 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.7.RELEASE'
 }
 
-group = 'de.upb.isys'
-version = '0.0.10'
-
 repositories {
     mavenLocal()
 
@@ -32,8 +29,8 @@ dependencies {
     /*
      * SEDE dependencies
      */
-    implementation 'de.upb.isys:SEDE.core:0.0.10'
-    implementation 'de.upb.isys:SEDE.deployment:0.0.10'
+    implementation project(':SEDE.core')
+    implementation project(':SEDE.deployment')
 
     /*
      * Spring boot dependencies

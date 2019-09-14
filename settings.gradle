@@ -44,10 +44,11 @@ includeAt plugins, "SEDE.http", "http_"
 includeAt plugins, "SEDE.terminal", "terminal"
 includeAt plugins, "SEDE.frontend", "frontend"
 includeAt plugins, "SEDE.assemblies", "assemblies"
+includeAt plugins, "SEDE.gateway-spring-server", "gateway-spring-server"
 
 /*
  * Deployment Projects:
  */
 def deployment = "SEDE.deployment"
 includeAt deployment, "SEDE.deployment", "deployment"
-
+includeAt deployment, "SEDE.deployment-spring-server", "spring-server"

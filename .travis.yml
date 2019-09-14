@@ -26,4 +26,4 @@ os:
 
 script:
   - ./gradlew assemble
-  - sonar-scanner -X
+#  - sonar-scanner -X

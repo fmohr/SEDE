@@ -6,16 +6,6 @@ plugins {
 apply plugin: 'io.spring.dependency-management'
 
 
-group = 'de.upb.isys'
-version = '0.0.10'
-sourceCompatibility = '1.8'
-
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
-}
-
 repositories {
     mavenLocal()
 
@@ -103,8 +93,8 @@ dependencies {
     implementation 'com.google.guava:guava:26.0-jre'
 
 
-    compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+//    compileOnly 'org.projectlombok:lombok'
+//	annotationProcessor 'org.projectlombok:lombok'
 
 
     /*

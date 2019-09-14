@@ -26,12 +26,12 @@ dependencies {
 
     // Config dependencies
 
-    compile name: 'builtins-1.1-serviceconf'
-    compile name: 'c2.image-1.1-serviceconf'
-    compile name: 'catalano.image-1.6-serviceconf'
-    compile name: 'demolib-1.1-serviceconf'
-    compile name: 'scikit.ml-1.2-serviceconf'
-    compile name: 'weka.ml-1.5-serviceconf'
+//    compile name: 'builtins-1.1-serviceconf'
+//    compile name: 'c2.image-1.1-serviceconf'
+//    compile name: 'catalano.image-1.6-serviceconf'
+//    compile name: 'demolib-1.1-serviceconf'
+//    compile name: 'scikit.ml-1.2-serviceconf'
+//    compile name: 'weka.ml-1.5-serviceconf'
 
     /*
      * Logging dependencies

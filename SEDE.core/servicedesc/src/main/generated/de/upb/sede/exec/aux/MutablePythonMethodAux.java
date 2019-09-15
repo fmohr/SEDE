@@ -1,4 +1,4 @@
-package de.upb.sede.exec;
+package de.upb.sede.exec.aux;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.Objects;
@@ -8,27 +8,27 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
- * A modifiable implementation of the {@link IJavaParameterizationAux IJavaParameterizationAux} type.
+ * A modifiable implementation of the {@link IPythonMethodAux IPythonMethodAux} type.
  * <p>Use the {@link #create()} static factory methods to create new instances.
  * Use the {@link #toImmutable()} method to convert to canonical immutable instances.
- * <p><em>MutableJavaParameterizationAux is not thread-safe</em>
- * @see JavaParameterizationAux
+ * <p><em>MutablePythonMethodAux is not thread-safe</em>
+ * @see PythonMethodAux
  */
-@Generated(from = "IJavaParameterizationAux", generator = "Modifiables")
+@Generated(from = "IPythonMethodAux", generator = "Modifiables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
-@javax.annotation.Generated({"Modifiables.generator", "IJavaParameterizationAux"})
+@javax.annotation.Generated({"Modifiables.generator", "IPythonMethodAux"})
 @NotThreadSafe
-public final class MutableJavaParameterizationAux implements IJavaParameterizationAux {
+public final class MutablePythonMethodAux implements IPythonMethodAux {
 
-  private MutableJavaParameterizationAux() {}
+  private MutablePythonMethodAux() {}
 
   /**
-   * Construct a modifiable instance of {@code IJavaParameterizationAux}.
+   * Construct a modifiable instance of {@code IPythonMethodAux}.
    * @return A new modifiable instance
    */
-  public static MutableJavaParameterizationAux create() {
-    return new MutableJavaParameterizationAux();
+  public static MutablePythonMethodAux create() {
+    return new MutablePythonMethodAux();
   }
 
   /**
@@ -36,34 +36,34 @@ public final class MutableJavaParameterizationAux implements IJavaParameterizati
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableJavaParameterizationAux clear() {
+  public MutablePythonMethodAux clear() {
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link IJavaParameterizationAux} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link IPythonMethodAux} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  public MutableJavaParameterizationAux from(IJavaParameterizationAux instance) {
+  public MutablePythonMethodAux from(IPythonMethodAux instance) {
     Objects.requireNonNull(instance, "instance");
-    if (instance instanceof MutableJavaParameterizationAux) {
-      from((MutableJavaParameterizationAux) instance);
+    if (instance instanceof MutablePythonMethodAux) {
+      from((MutablePythonMethodAux) instance);
       return this;
     }
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link IJavaParameterizationAux} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link IPythonMethodAux} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  public MutableJavaParameterizationAux from(MutableJavaParameterizationAux instance) {
+  public MutablePythonMethodAux from(MutablePythonMethodAux instance) {
     Objects.requireNonNull(instance, "instance");
     return this;
   }
@@ -78,27 +78,27 @@ public final class MutableJavaParameterizationAux implements IJavaParameterizati
   }
 
   /**
-   * Converts to {@link JavaParameterizationAux JavaParameterizationAux}.
-   * @return An immutable instance of JavaParameterizationAux
+   * Converts to {@link PythonMethodAux PythonMethodAux}.
+   * @return An immutable instance of PythonMethodAux
    */
-  public final JavaParameterizationAux toImmutable() {
-    return JavaParameterizationAux.copyOf(this);
+  public final PythonMethodAux toImmutable() {
+    return PythonMethodAux.copyOf(this);
   }
 
   /**
-   * This instance is equal to all instances of {@code MutableJavaParameterizationAux} that have equal attribute values.
+   * This instance is equal to all instances of {@code MutablePythonMethodAux} that have equal attribute values.
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
   public boolean equals(@Nullable Object another) {
     if (this == another) return true;
-    if (!(another instanceof MutableJavaParameterizationAux)) return false;
-    MutableJavaParameterizationAux other = (MutableJavaParameterizationAux) another;
+    if (!(another instanceof MutablePythonMethodAux)) return false;
+    MutablePythonMethodAux other = (MutablePythonMethodAux) another;
     return equalTo(other);
   }
 
   @SuppressWarnings("MethodCanBeStatic")
-  private boolean equalTo(MutableJavaParameterizationAux another) {
+  private boolean equalTo(MutablePythonMethodAux another) {
     return true;
   }
 
@@ -108,16 +108,16 @@ public final class MutableJavaParameterizationAux implements IJavaParameterizati
    */
   @Override
   public int hashCode() {
-    return 469549267;
+    return -371994947;
   }
 
   /**
-   * Generates a string representation of this {@code IJavaParameterizationAux}.
+   * Generates a string representation of this {@code IPythonMethodAux}.
    * If uninitialized, some attribute values may appear as question marks.
    * @return A string representation
    */
   @Override
   public String toString() {
-    return "MutableJavaParameterizationAux{}";
+    return "MutablePythonMethodAux{}";
   }
 }

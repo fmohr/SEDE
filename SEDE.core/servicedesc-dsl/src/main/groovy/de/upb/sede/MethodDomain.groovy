@@ -6,14 +6,7 @@ import de.upb.sede.exec.MutableMethodDesc
 import de.upb.sede.exec.MutableSignatureDesc
 import groovy.transform.PackageScope
 
-class MethodDomain extends DomainAware {
-
-    ServiceDomain serviceDom
-
-    @PackageScope
-    MutableMethodDesc method() {
-        model as MutableMethodDesc
-    }
+class MethodDomain extends DomainAware<MutableMethodDesc, ServiceDomain> {
 
     MutableSignatureDesc signature(@DelegatesTo(MutableSignatureDesc) Closure signatureDescriber) {
         return addSignature(MutableSignatureDesc.create(), signatureDescriber)
@@ -34,18 +27,17 @@ class MethodDomain extends DomainAware {
     }
 
     private MutableSignatureDesc addSignature(MutableSignatureDesc signatureDesc, @DelegatesTo(MutableSignatureDesc) Closure signatureDescriber) {
-        def signatureDom = new MethodSignatureDomain( model: signatureDesc)
-        delegateDown(signatureDom, signatureDescriber)
+        delegateDown(new MethodSignatureDomain(), signatureDesc, signatureDescriber)
 
-        // TODO check if the signature is already existing
-        method().signatures += signatureDesc
+        // TODO check if the signature already exists
+        model.signatures += signatureDesc
         return signatureDesc
     }
 
-    def signatures(@DelegatesTo(MethodSignatureDomain) Closure describer) {
-        method().signatures.each {
-            def signatureDom = new MethodSignatureDomain(model: it)
-            delegateDown(signatureDom, describer)
+    def eachSignature(@DelegatesTo(MethodSignatureDomain) Closure describer) {
+        model.signatures.each {
+            def signatureDom = new MethodSignatureDomain()
+            delegateDown(signatureDom, it, describer)
         }
     }
 

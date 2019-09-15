@@ -53,7 +53,7 @@ collection ("weka.ml") {
             outputs: [list]
             
         // All methods are statically invoked:
-        methods { signatures { java { staticInvocation = true } } }
+        eachMethod { eachSignature { java { staticInvocation = true } } }
     }
 
     service('de.upb.sede.services.mls.DataSetService') {

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import de.upb.sede.ICommented;
+import de.upb.sede.exec.aux.IJavaReflectionAux;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +28,7 @@ import org.immutables.value.Generated;
 public final class MutableSignatureDesc implements ISignatureDesc {
   private final ArrayList<IMethodParameterDesc> inputs = new ArrayList<IMethodParameterDesc>();
   private final ArrayList<IMethodParameterDesc> outputs = new ArrayList<IMethodParameterDesc>();
-  private @Nullable IJavaMethodAux javaMethodAux;
+  private @Nullable IJavaReflectionAux javaAux;
   private final ArrayList<String> comments = new ArrayList<String>();
 
   private MutableSignatureDesc() {}
@@ -59,12 +60,12 @@ public final class MutableSignatureDesc implements ISignatureDesc {
   }
 
   /**
-   * @return value of {@code javaMethodAux} attribute, may be {@code null}
+   * @return value of {@code javaAux} attribute, may be {@code null}
    */
-  @JsonProperty("javaMethodAux")
+  @JsonProperty("javaAux")
   @Override
-  public final @Nullable IJavaMethodAux getJavaMethodAux() {
-    return javaMethodAux;
+  public final @Nullable IJavaReflectionAux getJavaAux() {
+    return javaAux;
   }
 
   /**
@@ -84,7 +85,7 @@ public final class MutableSignatureDesc implements ISignatureDesc {
   public MutableSignatureDesc clear() {
     inputs.clear();
     outputs.clear();
-    javaMethodAux = null;
+    javaAux = null;
     comments.clear();
     return this;
   }
@@ -132,9 +133,9 @@ public final class MutableSignatureDesc implements ISignatureDesc {
       MutableSignatureDesc instance = (MutableSignatureDesc) object;
       addAllInputs(instance.getInputs());
       addAllOutputs(instance.getOutputs());
-      @Nullable IJavaMethodAux javaMethodAuxValue = instance.getJavaMethodAux();
-      if (javaMethodAuxValue != null) {
-        setJavaMethodAux(javaMethodAuxValue);
+      @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+      if (javaAuxValue != null) {
+        setJavaAux(javaAuxValue);
       }
       addAllComments(instance.getComments());
       return;
@@ -146,9 +147,9 @@ public final class MutableSignatureDesc implements ISignatureDesc {
     if (object instanceof ISignatureDesc) {
       ISignatureDesc instance = (ISignatureDesc) object;
       addAllOutputs(instance.getOutputs());
-      @Nullable IJavaMethodAux javaMethodAuxValue = instance.getJavaMethodAux();
-      if (javaMethodAuxValue != null) {
-        setJavaMethodAux(javaMethodAuxValue);
+      @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+      if (javaAuxValue != null) {
+        setJavaAux(javaAuxValue);
       }
       addAllInputs(instance.getInputs());
     }
@@ -255,13 +256,13 @@ public final class MutableSignatureDesc implements ISignatureDesc {
   }
 
   /**
-   * Assigns a value to the {@link ISignatureDesc#getJavaMethodAux() javaMethodAux} attribute.
-   * @param javaMethodAux The value for javaMethodAux, can be {@code null}
+   * Assigns a value to the {@link ISignatureDesc#getJavaAux() javaAux} attribute.
+   * @param javaAux The value for javaAux, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableSignatureDesc setJavaMethodAux(@Nullable IJavaMethodAux javaMethodAux) {
-    this.javaMethodAux = javaMethodAux;
+  public MutableSignatureDesc setJavaAux(@Nullable IJavaReflectionAux javaAux) {
+    this.javaAux = javaAux;
     return this;
   }
 
@@ -347,12 +348,12 @@ public final class MutableSignatureDesc implements ISignatureDesc {
   private boolean equalTo(MutableSignatureDesc another) {
     return inputs.equals(another.inputs)
         && outputs.equals(another.outputs)
-        && Objects.equals(javaMethodAux, another.javaMethodAux)
+        && Objects.equals(javaAux, another.javaAux)
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaMethodAux}, {@code comments}.
+   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaAux}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -360,7 +361,7 @@ public final class MutableSignatureDesc implements ISignatureDesc {
     int h = 5381;
     h += (h << 5) + inputs.hashCode();
     h += (h << 5) + outputs.hashCode();
-    h += (h << 5) + Objects.hashCode(javaMethodAux);
+    h += (h << 5) + Objects.hashCode(javaAux);
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -375,7 +376,7 @@ public final class MutableSignatureDesc implements ISignatureDesc {
     return MoreObjects.toStringHelper("MutableSignatureDesc")
         .add("inputs", getInputs())
         .add("outputs", getOutputs())
-        .add("javaMethodAux", getJavaMethodAux())
+        .add("javaAux", getJavaAux())
         .add("comments", getComments())
         .toString();
   }

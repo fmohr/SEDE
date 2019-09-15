@@ -3,6 +3,7 @@ package de.upb.sede.exec;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.ICommented;
 import de.upb.sede.SModelStyle;
+import de.upb.sede.exec.aux.IJavaReflectionAux;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
@@ -19,6 +20,6 @@ public interface ISignatureDesc extends ICommented {
     List<IMethodParameterDesc> getOutputs();
 
     @Nullable
-    IJavaMethodAux getJavaMethodAux();
+    IJavaReflectionAux getJavaAux();
 
 }

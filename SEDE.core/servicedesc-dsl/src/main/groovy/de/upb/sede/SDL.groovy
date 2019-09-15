@@ -12,32 +12,21 @@ abstract class SDL extends Script {
          * Search for an existing collection with the given qualifier.
          */
         def col = cols[qualifier]
-        def colDomain
-        if(col != null) {
-            /*
-             * Overwrite the old definition of the collection
-             */
-
-            colDomain = new ServiceCollectionDomain(
-                model: MutableServiceCollectionDesc.create().from(col))
-        } else {
+        if(col == null) {
             /*
              * Define new collection
              */
-            colDomain = new ServiceCollectionDomain(
-                model: MutableServiceCollectionDesc.create().setQualifier(qualifier))
+            col = MutableServiceCollectionDesc.create().setQualifier(qualifier)
+            cols[qualifier] = col
         }
+
+        def colDomain = new ServiceCollectionDomain(model: col)
         /*
          * Apply user script
          */
-        colDomain.delegateDown(describer)
+        colDomain.read(describer)
 
-        /*
-         * Add the new collection and return it
-         */
-        def newCol = colDomain.collection()
-        cols.put(qualifier, newCol)
-        return newCol
+        return col
     }
 
     List<ServiceCollectionDesc> getResult() {

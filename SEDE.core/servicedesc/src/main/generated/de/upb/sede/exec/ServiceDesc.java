@@ -12,6 +12,8 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
+import de.upb.sede.exec.aux.IJavaReflectionAux;
+import de.upb.sede.exec.aux.IPythonClassAux;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +42,7 @@ public final class ServiceDesc implements IServiceDesc {
   private final ImmutableList<String> interfaces;
   private final boolean isAbstract;
   private final ImmutableMap<String, String> fieldTypes;
-  private final @Nullable IJavaClassAux javaClassAuxiliaries;
+  private final @Nullable IJavaReflectionAux javaAux;
   private final @Nullable IPythonClassAux pythonClassAuxiliaries;
   private final String qualifier;
   private final String simpleName;
@@ -50,7 +52,7 @@ public final class ServiceDesc implements IServiceDesc {
     this.methods = builder.methods.build();
     this.interfaces = builder.interfaces.build();
     this.fieldTypes = builder.fieldTypes.build();
-    this.javaClassAuxiliaries = builder.javaClassAuxiliaries;
+    this.javaAux = builder.javaAux;
     this.pythonClassAuxiliaries = builder.pythonClassAuxiliaries;
     this.qualifier = builder.qualifier;
     this.comments = builder.comments.build();
@@ -70,7 +72,7 @@ public final class ServiceDesc implements IServiceDesc {
       ImmutableList<String> interfaces,
       boolean isAbstract,
       ImmutableMap<String, String> fieldTypes,
-      @Nullable IJavaClassAux javaClassAuxiliaries,
+      @Nullable IJavaReflectionAux javaAux,
       @Nullable IPythonClassAux pythonClassAuxiliaries,
       String qualifier,
       String simpleName,
@@ -79,7 +81,7 @@ public final class ServiceDesc implements IServiceDesc {
     this.interfaces = interfaces;
     this.isAbstract = isAbstract;
     this.fieldTypes = fieldTypes;
-    this.javaClassAuxiliaries = javaClassAuxiliaries;
+    this.javaAux = javaAux;
     this.pythonClassAuxiliaries = pythonClassAuxiliaries;
     this.qualifier = qualifier;
     this.simpleName = simpleName;
@@ -187,12 +189,12 @@ public final class ServiceDesc implements IServiceDesc {
   }
 
   /**
-   * @return The value of the {@code javaClassAuxiliaries} attribute
+   * @return The value of the {@code javaAux} attribute
    */
-  @JsonProperty("javaClassAuxiliaries")
+  @JsonProperty("javaAux")
   @Override
-  public @Nullable IJavaClassAux getJavaClassAuxiliaries() {
-    return javaClassAuxiliaries;
+  public @Nullable IJavaReflectionAux getJavaAux() {
+    return javaAux;
   }
 
   /**
@@ -246,7 +248,7 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaClassAuxiliaries,
+        this.javaAux,
         this.pythonClassAuxiliaries,
         this.qualifier,
         this.simpleName,
@@ -267,7 +269,7 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaClassAuxiliaries,
+        this.javaAux,
         this.pythonClassAuxiliaries,
         this.qualifier,
         this.simpleName,
@@ -286,7 +288,7 @@ public final class ServiceDesc implements IServiceDesc {
         newValue,
         this.isAbstract,
         this.fieldTypes,
-        this.javaClassAuxiliaries,
+        this.javaAux,
         this.pythonClassAuxiliaries,
         this.qualifier,
         this.simpleName,
@@ -307,7 +309,7 @@ public final class ServiceDesc implements IServiceDesc {
         newValue,
         this.isAbstract,
         this.fieldTypes,
-        this.javaClassAuxiliaries,
+        this.javaAux,
         this.pythonClassAuxiliaries,
         this.qualifier,
         this.simpleName,
@@ -327,7 +329,7 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         value,
         this.fieldTypes,
-        this.javaClassAuxiliaries,
+        this.javaAux,
         this.pythonClassAuxiliaries,
         this.qualifier,
         this.simpleName,
@@ -349,7 +351,7 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         newValue,
-        this.javaClassAuxiliaries,
+        this.javaAux,
         this.pythonClassAuxiliaries,
         this.qualifier,
         this.simpleName,
@@ -357,13 +359,13 @@ public final class ServiceDesc implements IServiceDesc {
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IServiceDesc#getJavaClassAuxiliaries() javaClassAuxiliaries} attribute.
+   * Copy the current immutable object by setting a value for the {@link IServiceDesc#getJavaAux() javaAux} attribute.
    * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for javaClassAuxiliaries (can be {@code null})
+   * @param value A new value for javaAux (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final ServiceDesc withJavaClassAuxiliaries(@Nullable IJavaClassAux value) {
-    if (this.javaClassAuxiliaries == value) return this;
+  public final ServiceDesc withJavaAux(@Nullable IJavaReflectionAux value) {
+    if (this.javaAux == value) return this;
     return new ServiceDesc(
         this.methods,
         this.interfaces,
@@ -389,7 +391,7 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaClassAuxiliaries,
+        this.javaAux,
         value,
         this.qualifier,
         this.simpleName,
@@ -410,7 +412,7 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaClassAuxiliaries,
+        this.javaAux,
         this.pythonClassAuxiliaries,
         newValue,
         this.simpleName,
@@ -431,7 +433,7 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaClassAuxiliaries,
+        this.javaAux,
         this.pythonClassAuxiliaries,
         this.qualifier,
         newValue,
@@ -450,7 +452,7 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaClassAuxiliaries,
+        this.javaAux,
         this.pythonClassAuxiliaries,
         this.qualifier,
         this.simpleName,
@@ -471,7 +473,7 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaClassAuxiliaries,
+        this.javaAux,
         this.pythonClassAuxiliaries,
         this.qualifier,
         this.simpleName,
@@ -494,7 +496,7 @@ public final class ServiceDesc implements IServiceDesc {
         && interfaces.equals(another.interfaces)
         && isAbstract == another.isAbstract
         && fieldTypes.equals(another.fieldTypes)
-        && Objects.equals(javaClassAuxiliaries, another.javaClassAuxiliaries)
+        && Objects.equals(javaAux, another.javaAux)
         && Objects.equals(pythonClassAuxiliaries, another.pythonClassAuxiliaries)
         && qualifier.equals(another.qualifier)
         && simpleName.equals(another.simpleName)
@@ -502,7 +504,7 @@ public final class ServiceDesc implements IServiceDesc {
   }
 
   /**
-   * Computes a hash code from attributes: {@code methods}, {@code interfaces}, {@code isAbstract}, {@code fieldTypes}, {@code javaClassAuxiliaries}, {@code pythonClassAuxiliaries}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code methods}, {@code interfaces}, {@code isAbstract}, {@code fieldTypes}, {@code javaAux}, {@code pythonClassAuxiliaries}, {@code qualifier}, {@code simpleName}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -512,7 +514,7 @@ public final class ServiceDesc implements IServiceDesc {
     h += (h << 5) + interfaces.hashCode();
     h += (h << 5) + Booleans.hashCode(isAbstract);
     h += (h << 5) + fieldTypes.hashCode();
-    h += (h << 5) + Objects.hashCode(javaClassAuxiliaries);
+    h += (h << 5) + Objects.hashCode(javaAux);
     h += (h << 5) + Objects.hashCode(pythonClassAuxiliaries);
     h += (h << 5) + qualifier.hashCode();
     h += (h << 5) + simpleName.hashCode();
@@ -532,7 +534,7 @@ public final class ServiceDesc implements IServiceDesc {
         .add("interfaces", interfaces)
         .add("isAbstract", isAbstract)
         .add("fieldTypes", fieldTypes)
-        .add("javaClassAuxiliaries", javaClassAuxiliaries)
+        .add("javaAux", javaAux)
         .add("pythonClassAuxiliaries", pythonClassAuxiliaries)
         .add("qualifier", qualifier)
         .add("simpleName", simpleName)
@@ -555,7 +557,7 @@ public final class ServiceDesc implements IServiceDesc {
     boolean isAbstract;
     boolean isAbstractIsSet;
     @Nullable Map<String, String> fieldTypes = ImmutableMap.of();
-    @Nullable IJavaClassAux javaClassAuxiliaries;
+    @Nullable IJavaReflectionAux javaAux;
     @Nullable IPythonClassAux pythonClassAuxiliaries;
     @Nullable String qualifier;
     @Nullable String simpleName;
@@ -577,9 +579,9 @@ public final class ServiceDesc implements IServiceDesc {
     public void setFieldTypes(Map<String, String> fieldTypes) {
       this.fieldTypes = fieldTypes;
     }
-    @JsonProperty("javaClassAuxiliaries")
-    public void setJavaClassAuxiliaries(@Nullable IJavaClassAux javaClassAuxiliaries) {
-      this.javaClassAuxiliaries = javaClassAuxiliaries;
+    @JsonProperty("javaAux")
+    public void setJavaAux(@Nullable IJavaReflectionAux javaAux) {
+      this.javaAux = javaAux;
     }
     @JsonProperty("pythonClassAuxiliaries")
     public void setPythonClassAuxiliaries(@Nullable IPythonClassAux pythonClassAuxiliaries) {
@@ -606,7 +608,7 @@ public final class ServiceDesc implements IServiceDesc {
     @Override
     public Map<String, String> getFieldTypes() { throw new UnsupportedOperationException(); }
     @Override
-    public IJavaClassAux getJavaClassAuxiliaries() { throw new UnsupportedOperationException(); }
+    public IJavaReflectionAux getJavaAux() { throw new UnsupportedOperationException(); }
     @Override
     public IPythonClassAux getPythonClassAuxiliaries() { throw new UnsupportedOperationException(); }
     @Override
@@ -638,8 +640,8 @@ public final class ServiceDesc implements IServiceDesc {
     if (json.fieldTypes != null) {
       builder.putAllFieldTypes(json.fieldTypes);
     }
-    if (json.javaClassAuxiliaries != null) {
-      builder.javaClassAuxiliaries(json.javaClassAuxiliaries);
+    if (json.javaAux != null) {
+      builder.javaAux(json.javaAux);
     }
     if (json.pythonClassAuxiliaries != null) {
       builder.pythonClassAuxiliaries(json.pythonClassAuxiliaries);
@@ -680,8 +682,8 @@ public final class ServiceDesc implements IServiceDesc {
    *    .addInterfaces|addAllInterfaces(String) // {@link IServiceDesc#getInterfaces() interfaces} elements
    *    .isAbstract(boolean) // optional {@link IServiceDesc#isAbstract() isAbstract}
    *    .putFieldTypes|putAllFieldTypes(String => String) // {@link IServiceDesc#getFieldTypes() fieldTypes} mappings
-   *    .javaClassAuxiliaries(de.upb.sede.exec.IJavaClassAux | null) // nullable {@link IServiceDesc#getJavaClassAuxiliaries() javaClassAuxiliaries}
-   *    .pythonClassAuxiliaries(de.upb.sede.exec.IPythonClassAux | null) // nullable {@link IServiceDesc#getPythonClassAuxiliaries() pythonClassAuxiliaries}
+   *    .javaAux(de.upb.sede.exec.aux.IJavaReflectionAux | null) // nullable {@link IServiceDesc#getJavaAux() javaAux}
+   *    .pythonClassAuxiliaries(de.upb.sede.exec.aux.IPythonClassAux | null) // nullable {@link IServiceDesc#getPythonClassAuxiliaries() pythonClassAuxiliaries}
    *    .qualifier(String) // required {@link IServiceDesc#getQualifier() qualifier}
    *    .simpleName(String) // optional {@link IServiceDesc#getSimpleName() simpleName}
    *    .addComments|addAllComments(String) // {@link IServiceDesc#getComments() comments} elements
@@ -712,7 +714,7 @@ public final class ServiceDesc implements IServiceDesc {
     private ImmutableList.Builder<String> interfaces = ImmutableList.builder();
     private boolean isAbstract;
     private ImmutableMap.Builder<String, String> fieldTypes = ImmutableMap.builder();
-    private @Nullable IJavaClassAux javaClassAuxiliaries;
+    private @Nullable IJavaReflectionAux javaAux;
     private @Nullable IPythonClassAux pythonClassAuxiliaries;
     private @Nullable String qualifier;
     private @Nullable String simpleName;
@@ -733,9 +735,9 @@ public final class ServiceDesc implements IServiceDesc {
       addAllInterfaces(instance.getInterfaces());
       isAbstract(instance.isAbstract());
       putAllFieldTypes(instance.getFieldTypes());
-      @Nullable IJavaClassAux javaClassAuxiliariesValue = instance.getJavaClassAuxiliaries();
-      if (javaClassAuxiliariesValue != null) {
-        javaClassAuxiliaries(javaClassAuxiliariesValue);
+      @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+      if (javaAuxValue != null) {
+        javaAux(javaAuxValue);
       }
       @Nullable IPythonClassAux pythonClassAuxiliariesValue = instance.getPythonClassAuxiliaries();
       if (pythonClassAuxiliariesValue != null) {
@@ -797,6 +799,10 @@ public final class ServiceDesc implements IServiceDesc {
       if (object instanceof IServiceDesc) {
         IServiceDesc instance = (IServiceDesc) object;
         addAllInterfaces(instance.getInterfaces());
+        @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+        if (javaAuxValue != null) {
+          javaAux(javaAuxValue);
+        }
         isAbstract(instance.isAbstract());
         @Nullable IPythonClassAux pythonClassAuxiliariesValue = instance.getPythonClassAuxiliaries();
         if (pythonClassAuxiliariesValue != null) {
@@ -804,10 +810,6 @@ public final class ServiceDesc implements IServiceDesc {
         }
         addAllMethods(instance.getMethods());
         putAllFieldTypes(instance.getFieldTypes());
-        @Nullable IJavaClassAux javaClassAuxiliariesValue = instance.getJavaClassAuxiliaries();
-        if (javaClassAuxiliariesValue != null) {
-          javaClassAuxiliaries(javaClassAuxiliariesValue);
-        }
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
@@ -969,14 +971,14 @@ public final class ServiceDesc implements IServiceDesc {
     }
 
     /**
-     * Initializes the value for the {@link IServiceDesc#getJavaClassAuxiliaries() javaClassAuxiliaries} attribute.
-     * @param javaClassAuxiliaries The value for javaClassAuxiliaries (can be {@code null})
+     * Initializes the value for the {@link IServiceDesc#getJavaAux() javaAux} attribute.
+     * @param javaAux The value for javaAux (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    @JsonProperty("javaClassAuxiliaries")
-    public final Builder javaClassAuxiliaries(@Nullable IJavaClassAux javaClassAuxiliaries) {
-      this.javaClassAuxiliaries = javaClassAuxiliaries;
+    @JsonProperty("javaAux")
+    public final Builder javaAux(@Nullable IJavaReflectionAux javaAux) {
+      this.javaAux = javaAux;
       return this;
     }
 

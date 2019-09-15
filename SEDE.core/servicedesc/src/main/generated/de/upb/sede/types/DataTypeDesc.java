@@ -10,6 +10,8 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
+import de.upb.sede.types.aux.IJavaTypeAux;
+import de.upb.sede.types.aux.IPythonTypeAux;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -400,8 +402,8 @@ public final class DataTypeDesc implements IDataTypeDesc {
    * <pre>
    * DataTypeDesc.builder()
    *    .semanticType(String) // required {@link IDataTypeDesc#getSemanticType() semanticType}
-   *    .javaTypeAuxiliaries(de.upb.sede.types.IJavaTypeAux | null) // nullable {@link IDataTypeDesc#getJavaTypeAuxiliaries() javaTypeAuxiliaries}
-   *    .pythonTypeAuxiliaries(de.upb.sede.types.IPythonTypeAux | null) // nullable {@link IDataTypeDesc#getPythonTypeAuxiliaries() pythonTypeAuxiliaries}
+   *    .javaTypeAuxiliaries(de.upb.sede.types.aux.IJavaTypeAux | null) // nullable {@link IDataTypeDesc#getJavaTypeAuxiliaries() javaTypeAuxiliaries}
+   *    .pythonTypeAuxiliaries(de.upb.sede.types.aux.IPythonTypeAux | null) // nullable {@link IDataTypeDesc#getPythonTypeAuxiliaries() pythonTypeAuxiliaries}
    *    .qualifier(String) // required {@link IDataTypeDesc#getQualifier() qualifier}
    *    .simpleName(String) // optional {@link IDataTypeDesc#getSimpleName() simpleName}
    *    .addComments|addAllComments(String) // {@link IDataTypeDesc#getComments() comments} elements

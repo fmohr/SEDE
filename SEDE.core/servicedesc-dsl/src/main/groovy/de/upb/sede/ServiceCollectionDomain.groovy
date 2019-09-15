@@ -2,67 +2,61 @@ package de.upb.sede
 
 import de.upb.sede.exec.MutableServiceDesc
 import de.upb.sede.types.MutableDataTypeDesc
-import groovy.transform.PackageScope
 
-class ServiceCollectionDomain extends DomainAware {
+class ServiceCollectionDomain extends DomainAware<MutableServiceCollectionDesc, Object> {
 
+    /**
+     * Redefines the service with the given qualifier by running the given describer against it.
+     * A new service will be created if the qualifier is unused in this service collection.
+     */
     def service(String qualifier, @DelegatesTo(ServiceDomain) Closure describer) {
-        def service = MutableServiceDesc.create()
-            .setQualifier(qualifier)
+        /*
+         * Find or create service:
+         */
+        def service = model.services.find {it.qualifier == qualifier}
+
+        if(service == null) {
+            service = MutableServiceDesc.create().setQualifier(qualifier)
+            model.services += service
+        }
 
         /*
-         * Overwrite old service description
+         * Redefine service:
          */
-        collection().services.stream()
-            .filter { it.qualifier == qualifier }
-            .findAny()
-            .ifPresent { service.from(it) }
+        delegateDown(new ServiceDomain(), service,  describer)
 
-        def serviceDom = new ServiceDomain(collectionDom: this, model: service)
-        delegateDown(serviceDom, describer)
-
-        def serviceDesc = serviceDom.service ()
-        collection().services.removeIf {it.qualifier == qualifier}
-        collection().services += serviceDesc
-        return serviceDesc
+        return service
     }
 
-    def getService(String qualifier) {
-        collection().services.find {it.qualifier == qualifier}
-    }
-
-    @PackageScope
-    MutableServiceCollectionDesc collection() {
-        this.model as MutableServiceCollectionDesc
-    }
-
-
+    /**
+     * Redefines the type with the given qualifier by running the given describer against it.
+     * A new type will be created if the qualifier is unused in this service collection.
+     */
     def type(String qualifier, @DelegatesTo(DataTypeDomain) Closure describer) {
-        def dataType = MutableDataTypeDesc.create()
-            .setQualifier(qualifier)
-            .setSemanticType(qualifier)
-
-
         /*
-         * Overwrite old type description
+         * Find or create datatype:
          */
-        collection().dataTypes.stream()
-            .filter { it.qualifier == qualifier }
-            .findAny()
-            .ifPresent { dataType.from(it) }
+        def dataType = model.dataTypes.find{ it.qualifier == qualifier }
 
-        def typeDom = new DataTypeDomain(collectionDom: this,
-            model: dataType)
-        delegateDown(typeDom, describer)
+        if(dataType == null) {
+            dataType = MutableDataTypeDesc.create()
+                .setQualifier(qualifier)
+                .setSemanticType(qualifier)
+            model.dataTypes += dataType
+        }
 
-        def dataTypeDesc = typeDom.type()
-        collection().dataTypes.removeIf {it.qualifier == qualifier}
-        collection().dataTypes += dataTypeDesc
+        delegateDown(new DataTypeDomain(), dataType, describer)
+
         return dataType
     }
 
+    def getService(String qualifier) {
+        model.services.find {it.qualifier == qualifier}
+    }
+
+    
     def getType(String qualifier) {
-        collection().dataTypes.find {it.qualifier == qualifier}
+        model.dataTypes.find {it.qualifier == qualifier}
     }
 
     @Override

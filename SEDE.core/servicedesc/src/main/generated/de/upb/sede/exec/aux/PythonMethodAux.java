@@ -1,4 +1,4 @@
-package de.upb.sede.exec;
+package de.upb.sede.exec.aux;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -51,7 +51,7 @@ public final class PythonMethodAux implements IPythonMethodAux {
    */
   @Override
   public int hashCode() {
-    return -1130741805;
+    return -371994947;
   }
 
   /**

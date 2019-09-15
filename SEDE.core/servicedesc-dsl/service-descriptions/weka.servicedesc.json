@@ -1,0 +1,219 @@
+[ {
+  "services" : [ {
+    "stateType" : {
+      "present" : false
+    },
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : false
+        }, {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : 0,
+          "methodName" : null,
+          "className" : null
+        },
+        "comments" : [ ]
+      } ],
+      "qualifier" : "labelDataset",
+      "simpleName" : "labelDataset",
+      "comments" : [ ],
+      "isPure" : false
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : false
+        }, {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : 0,
+          "methodName" : null,
+          "className" : null
+        },
+        "comments" : [ ]
+      } ],
+      "qualifier" : "setClassIndex",
+      "simpleName" : "setClassIndex",
+      "comments" : [ ],
+      "isPure" : false
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null
+        },
+        "comments" : [ ]
+      } ],
+      "qualifier" : "classIndicesToNames",
+      "simpleName" : "classIndicesToNames",
+      "comments" : [ ],
+      "isPure" : false
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null
+        },
+        "comments" : [ ]
+      } ],
+      "qualifier" : "classIndicesPrettify",
+      "simpleName" : "classIndicesPrettify",
+      "comments" : [ ],
+      "isPure" : false
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null
+        },
+        "comments" : [ ]
+      } ],
+      "qualifier" : "categorize",
+      "simpleName" : "categorize",
+      "comments" : [ ],
+      "isPure" : false
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : { },
+    "javaAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "qualifier" : "de.upb.sede.services.mls.Labeler",
+    "simpleName" : "de.upb.sede.services.mls.Labeler",
+    "comments" : [ ],
+    "isAbstract" : false
+  }, {
+    "stateType" : {
+      "present" : true
+    },
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "String",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "de.upb.sede.services.mls.DataSetService",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaAux" : null,
+        "comments" : [ ]
+      } ],
+      "qualifier" : "$construct",
+      "simpleName" : "$construct",
+      "comments" : [ ],
+      "isPure" : false
+    }, {
+      "signatures" : [ {
+        "inputs" : [ ],
+        "outputs" : [ ],
+        "javaAux" : null,
+        "comments" : [ ]
+      } ],
+      "qualifier" : "createUnique",
+      "simpleName" : "createUnique",
+      "comments" : [ ],
+      "isPure" : false
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : {
+      "state" : "de.upb.sede.services.mls.DataSetService"
+    },
+    "javaAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "qualifier" : "de.upb.sede.services.mls.DataSetService",
+    "simpleName" : "de.upb.sede.services.mls.DataSetService",
+    "comments" : [ ],
+    "isAbstract" : false
+  } ],
+  "dataTypes" : [ {
+    "semanticType" : "de.upb.sede.services.mls.DataSetService",
+    "javaTypeAuxiliaries" : null,
+    "pythonTypeAuxiliaries" : null,
+    "qualifier" : "de.upb.sede.services.mls.DataSetService",
+    "simpleName" : "de.upb.sede.services.mls.DataSetService",
+    "comments" : [ ]
+  } ],
+  "comments" : [ "Weka is a collection of machine learning algorithms for data mining tasks. It contains tools for data preparation, classification, regression, clustering, association rules mining, and visualization.", "Weka is open source software issued under the GNU General Public License.", "Website: https://www.cs.waikato.ac.nz/~ml/weka/index.html" ],
+  "qualifier" : "weka.ml",
+  "simpleName" : "Weka Library"
+} ]

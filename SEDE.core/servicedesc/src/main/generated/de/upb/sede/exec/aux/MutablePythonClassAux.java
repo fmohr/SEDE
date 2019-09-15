@@ -1,4 +1,4 @@
-package de.upb.sede.exec;
+package de.upb.sede.exec.aux;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.Objects;
@@ -8,27 +8,27 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
- * A modifiable implementation of the {@link IPythonMethodAux IPythonMethodAux} type.
+ * A modifiable implementation of the {@link IPythonClassAux IPythonClassAux} type.
  * <p>Use the {@link #create()} static factory methods to create new instances.
  * Use the {@link #toImmutable()} method to convert to canonical immutable instances.
- * <p><em>MutablePythonMethodAux is not thread-safe</em>
- * @see PythonMethodAux
+ * <p><em>MutablePythonClassAux is not thread-safe</em>
+ * @see PythonClassAux
  */
-@Generated(from = "IPythonMethodAux", generator = "Modifiables")
+@Generated(from = "IPythonClassAux", generator = "Modifiables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
-@javax.annotation.Generated({"Modifiables.generator", "IPythonMethodAux"})
+@javax.annotation.Generated({"Modifiables.generator", "IPythonClassAux"})
 @NotThreadSafe
-public final class MutablePythonMethodAux implements IPythonMethodAux {
+public final class MutablePythonClassAux implements IPythonClassAux {
 
-  private MutablePythonMethodAux() {}
+  private MutablePythonClassAux() {}
 
   /**
-   * Construct a modifiable instance of {@code IPythonMethodAux}.
+   * Construct a modifiable instance of {@code IPythonClassAux}.
    * @return A new modifiable instance
    */
-  public static MutablePythonMethodAux create() {
-    return new MutablePythonMethodAux();
+  public static MutablePythonClassAux create() {
+    return new MutablePythonClassAux();
   }
 
   /**
@@ -36,34 +36,34 @@ public final class MutablePythonMethodAux implements IPythonMethodAux {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutablePythonMethodAux clear() {
+  public MutablePythonClassAux clear() {
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link IPythonMethodAux} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link IPythonClassAux} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  public MutablePythonMethodAux from(IPythonMethodAux instance) {
+  public MutablePythonClassAux from(IPythonClassAux instance) {
     Objects.requireNonNull(instance, "instance");
-    if (instance instanceof MutablePythonMethodAux) {
-      from((MutablePythonMethodAux) instance);
+    if (instance instanceof MutablePythonClassAux) {
+      from((MutablePythonClassAux) instance);
       return this;
     }
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link IPythonMethodAux} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link IPythonClassAux} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  public MutablePythonMethodAux from(MutablePythonMethodAux instance) {
+  public MutablePythonClassAux from(MutablePythonClassAux instance) {
     Objects.requireNonNull(instance, "instance");
     return this;
   }
@@ -78,27 +78,27 @@ public final class MutablePythonMethodAux implements IPythonMethodAux {
   }
 
   /**
-   * Converts to {@link PythonMethodAux PythonMethodAux}.
-   * @return An immutable instance of PythonMethodAux
+   * Converts to {@link PythonClassAux PythonClassAux}.
+   * @return An immutable instance of PythonClassAux
    */
-  public final PythonMethodAux toImmutable() {
-    return PythonMethodAux.copyOf(this);
+  public final PythonClassAux toImmutable() {
+    return PythonClassAux.copyOf(this);
   }
 
   /**
-   * This instance is equal to all instances of {@code MutablePythonMethodAux} that have equal attribute values.
+   * This instance is equal to all instances of {@code MutablePythonClassAux} that have equal attribute values.
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
   public boolean equals(@Nullable Object another) {
     if (this == another) return true;
-    if (!(another instanceof MutablePythonMethodAux)) return false;
-    MutablePythonMethodAux other = (MutablePythonMethodAux) another;
+    if (!(another instanceof MutablePythonClassAux)) return false;
+    MutablePythonClassAux other = (MutablePythonClassAux) another;
     return equalTo(other);
   }
 
   @SuppressWarnings("MethodCanBeStatic")
-  private boolean equalTo(MutablePythonMethodAux another) {
+  private boolean equalTo(MutablePythonClassAux another) {
     return true;
   }
 
@@ -108,16 +108,16 @@ public final class MutablePythonMethodAux implements IPythonMethodAux {
    */
   @Override
   public int hashCode() {
-    return -1130741805;
+    return 985069168;
   }
 
   /**
-   * Generates a string representation of this {@code IPythonMethodAux}.
+   * Generates a string representation of this {@code IPythonClassAux}.
    * If uninitialized, some attribute values may appear as question marks.
    * @return A string representation
    */
   @Override
   public String toString() {
-    return "MutablePythonMethodAux{}";
+    return "MutablePythonClassAux{}";
   }
 }

@@ -1,6 +1,25 @@
 [ {
   "services" : [ {
+    "stateType" : {
+      "present" : true
+    },
     "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "a.A",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaAux" : null,
+        "comments" : [ ]
+      } ],
+      "qualifier" : "$construct",
+      "simpleName" : "$construct",
+      "comments" : [ ],
+      "isPure" : false
+    }, {
       "signatures" : [ {
         "inputs" : [ {
           "type" : "t1",
@@ -29,7 +48,12 @@
           "fixedValue" : null,
           "callByValue" : true
         } ],
-        "javaMethodAux" : null,
+        "javaAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null
+        },
         "comments" : [ ]
       }, {
         "inputs" : [ {
@@ -49,7 +73,12 @@
           "fixedValue" : null,
           "callByValue" : true
         } ],
-        "javaMethodAux" : null,
+        "javaAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null
+        },
         "comments" : [ ]
       }, {
         "inputs" : [ {
@@ -64,7 +93,12 @@
           "callByValue" : false
         } ],
         "outputs" : [ ],
-        "javaMethodAux" : null,
+        "javaAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null
+        },
         "comments" : [ ]
       }, {
         "inputs" : [ {
@@ -84,9 +118,11 @@
           "fixedValue" : null,
           "callByValue" : true
         } ],
-        "javaMethodAux" : {
+        "javaAux" : {
+          "staticInvocation" : true,
           "redirectArg" : -1,
-          "isStatic" : false
+          "methodName" : null,
+          "className" : null
         },
         "comments" : [ ]
       } ],
@@ -98,7 +134,7 @@
       "signatures" : [ {
         "inputs" : [ {
           "type" : "t1",
-          "name" : "First Input Parameter",
+          "name" : "First Input Parameter of m2",
           "fixedValue" : null,
           "callByValue" : true
         }, {
@@ -113,7 +149,7 @@
           "fixedValue" : null,
           "callByValue" : true
         } ],
-        "javaMethodAux" : null,
+        "javaAux" : null,
         "comments" : [ ]
       } ],
       "qualifier" : "m2",
@@ -125,7 +161,7 @@
     "fieldTypes" : {
       "state" : "a.A"
     },
-    "javaClassAuxiliaries" : null,
+    "javaAux" : null,
     "pythonClassAuxiliaries" : null,
     "qualifier" : "a.A",
     "simpleName" : "Service A",

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
+import de.upb.sede.exec.aux.IJavaParameterizationAux;
 import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
@@ -147,7 +148,7 @@ public final class ServiceParameterDesc implements IServiceParameterDesc {
    * Creates a builder for {@link ServiceParameterDesc ServiceParameterDesc}.
    * <pre>
    * ServiceParameterDesc.builder()
-   *    .javaParameterizationAuxiliaries(de.upb.sede.exec.IJavaParameterizationAux | null) // nullable {@link IServiceParameterDesc#getJavaParameterizationAuxiliaries() javaParameterizationAuxiliaries}
+   *    .javaParameterizationAuxiliaries(de.upb.sede.exec.aux.IJavaParameterizationAux | null) // nullable {@link IServiceParameterDesc#getJavaParameterizationAuxiliaries() javaParameterizationAuxiliaries}
    *    .build();
    * </pre>
    * @return A new ServiceParameterDesc builder

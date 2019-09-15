@@ -1,28 +1,23 @@
 package de.upb.sede
 
-import de.upb.sede.exec.IJavaMethodAux
+
 import de.upb.sede.exec.IMethodParameterDesc
-import de.upb.sede.exec.MutableJavaMethodAux
+
 import de.upb.sede.exec.MutableMethodParameterDesc
 import de.upb.sede.exec.MutableSignatureDesc
+import de.upb.sede.exec.aux.MutableJavaReflectionAux
 import groovy.transform.NamedVariant
-import groovy.transform.PackageScope
 
-class MethodSignatureDomain extends DomainAware {
-
-    @PackageScope
-    MutableSignatureDesc signature() {
-        return model as MutableSignatureDesc
-    }
+class MethodSignatureDomain extends DomainAware<MutableSignatureDesc, MethodDomain> {
 
     void setInputTypes(String... inputTypes) {
-        signature().inputs.clear()
+        model.inputs.clear()
         addInputTypes(inputTypes)
     }
 
     void addInputTypes(String... inputTypes) {
         for(String inputType: inputTypes) {
-            signature().inputs += param {
+            model.inputs += param {
                 type = inputType
             }
         }
@@ -35,7 +30,7 @@ class MethodSignatureDomain extends DomainAware {
 
     void addOutputTypes(String... outputTypes) {
         for(String outputType: outputTypes) {
-            signature().outputs += param {
+            model.outputs += param {
                 type = outputType
             }
         }
@@ -45,12 +40,12 @@ class MethodSignatureDomain extends DomainAware {
     void addInput(String type, String name) {
         String t = type
         String n = name
-        signature().inputs += param type: type, name: name
+        model.inputs += param type: type, name: name
     }
 
     @NamedVariant
     void addOutput(String type, String name) {
-        signature().outputs += param type: type, name: name
+        model.outputs += param type: type, name: name
     }
 
     static MutableMethodParameterDesc param(String t, String n) {
@@ -74,13 +69,13 @@ class MethodSignatureDomain extends DomainAware {
 
     MutableMethodParameterDesc input(int paramIndex,
                                      @DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
-        return redefineParameter(signature().inputs, paramIndex, paramDescriber)
+        return redefineParameter(model.inputs, paramIndex, paramDescriber)
     }
 
 
     MutableMethodParameterDesc output(int paramIndex,
                                 @DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
-        return redefineParameter(signature().outputs, paramIndex, paramDescriber)
+        return redefineParameter(model.outputs, paramIndex, paramDescriber)
     }
 
     MutableMethodParameterDesc output(@DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
@@ -110,10 +105,10 @@ class MethodSignatureDomain extends DomainAware {
     }
 
 
-    private IJavaMethodAux java (@DelegatesTo(MutableJavaMethodAux) Closure javaAuxDescriber) {
-        def javaAux = MutableJavaMethodAux.create()
-        if(signature().javaMethodAux != null) {
-            javaAux.from(signature().javaMethodAux)
+    private MutableJavaReflectionAux java (@DelegatesTo(MutableJavaReflectionAux) Closure javaAuxDescriber) {
+        def javaAux = MutableJavaReflectionAux.create()
+        if(model.javaAux != null) {
+            javaAux.from(model.javaAux)
         }
 
         javaAuxDescriber.delegate = javaAux
@@ -121,7 +116,7 @@ class MethodSignatureDomain extends DomainAware {
         javaAuxDescriber.run()
 
         def newJavaAux = javaAux
-        signature().javaMethodAux = newJavaAux
+        model.javaAux = newJavaAux
         return newJavaAux
     }
 

@@ -16,3 +16,14 @@ dependencies {
 
 
 }
+
+task compileServiceDescs(type: JavaExec, dependsOn: [compileGroovy]) {
+    classpath += sourceSets.main.runtimeClasspath
+    classpath += sourceSets.test.runtimeClasspath
+
+    main = 'de.upb.sede.SDLCompiler'
+
+    args 'service-descriptions'
+}
+
+assemble.dependsOn(compileServiceDescs)

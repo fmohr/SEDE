@@ -1,4 +1,4 @@
-package de.upb.sede.exec;
+package de.upb.sede.exec.aux;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.SModelStyle;

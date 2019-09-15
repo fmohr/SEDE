@@ -5,6 +5,8 @@ import com.google.common.base.MoreObjects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
+import de.upb.sede.types.aux.IJavaTypeAux;
+import de.upb.sede.types.aux.IPythonTypeAux;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

@@ -19,14 +19,18 @@ collection ("services1") {
         }
         /*
          * Declare an empty constructor:
-         * This is the the same as: method('$construct')
+         * This is the the same as:
+         *
+         * method(name: '$construct', outputs: ['a.A']) {
+         *      java { constructorInvocation = true }
+         * }
          */
-        constructor
+        constructor()
 
         /*
          * Declare a method with multiple signatures:
          */
-        method ('m1') {
+        overloadMethod ('m1') {
             simpleName = 'method 1'
             /*
              * Each signature block creates a new method signature for a.A::m1
@@ -53,7 +57,7 @@ collection ("services1") {
             /*
              * This signature block first defines the input and output types.
              */
-            signature(inputs: ['t1', 't2'], outputs: ['t3']) {
+            signature inputs: ['t1', 't2'], outputs: ['t3'], {
                 /*
                  * And here it continues to configure the signature.
                  */
@@ -87,15 +91,15 @@ collection ("services1") {
          * Some post processing AFTER the declarations.
          * Iterate over all methods created above:
          */
-        methods {
+        eachMethod {
             /*
-             * Filter by method name:
+             * Filter by method qualifier, ie. name:
              */
             if(qualifier == "m1") {
                 /*
                  * Iterate over all signatures and change some properties:
                  */
-                signatures {
+                eachSignature {
                     java {
                         staticInvocation = true
                     }

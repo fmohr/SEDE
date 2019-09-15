@@ -1,4 +1,4 @@
-package de.upb.sede.exec;
+package de.upb.sede.exec.aux;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -19,22 +19,26 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
- * Immutable implementation of {@link IJavaMethodAux}.
+ * Immutable implementation of {@link IJavaReflectionAux}.
  * <p>
  * Use the builder to create immutable instances:
- * {@code JavaMethodAux.builder()}.
+ * {@code JavaReflectionAux.builder()}.
  */
-@Generated(from = "IJavaMethodAux", generator = "Immutables")
+@Generated(from = "IJavaReflectionAux", generator = "Immutables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
 @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
 @Immutable
 @CheckReturnValue
-public final class JavaMethodAux implements IJavaMethodAux {
+public final class JavaReflectionAux implements IJavaReflectionAux {
   private final boolean staticInvocation;
   private final int redirectArg;
+  private final @Nullable String methodName;
+  private final @Nullable String className;
 
-  private JavaMethodAux(JavaMethodAux.Builder builder) {
+  private JavaReflectionAux(JavaReflectionAux.Builder builder) {
+    this.methodName = builder.methodName;
+    this.className = builder.className;
     if (builder.staticInvocationIsSet()) {
       initShim.staticInvocation(builder.staticInvocation);
     }
@@ -46,9 +50,15 @@ public final class JavaMethodAux implements IJavaMethodAux {
     this.initShim = null;
   }
 
-  private JavaMethodAux(boolean staticInvocation, int redirectArg) {
+  private JavaReflectionAux(
+      boolean staticInvocation,
+      int redirectArg,
+      @Nullable String methodName,
+      @Nullable String className) {
     this.staticInvocation = staticInvocation;
     this.redirectArg = redirectArg;
+    this.methodName = methodName;
+    this.className = className;
     this.initShim = null;
   }
 
@@ -58,7 +68,7 @@ public final class JavaMethodAux implements IJavaMethodAux {
   @SuppressWarnings("Immutable")
   private transient volatile InitShim initShim = new InitShim();
 
-  @Generated(from = "IJavaMethodAux", generator = "Immutables")
+  @Generated(from = "IJavaReflectionAux", generator = "Immutables")
   private final class InitShim {
     private byte staticInvocationBuildStage = STAGE_UNINITIALIZED;
     private boolean staticInvocation;
@@ -100,16 +110,16 @@ public final class JavaMethodAux implements IJavaMethodAux {
       List<String> attributes = new ArrayList<>();
       if (staticInvocationBuildStage == STAGE_INITIALIZING) attributes.add("staticInvocation");
       if (redirectArgBuildStage == STAGE_INITIALIZING) attributes.add("redirectArg");
-      return "Cannot build JavaMethodAux, attribute initializers form cycle " + attributes;
+      return "Cannot build JavaReflectionAux, attribute initializers form cycle " + attributes;
     }
   }
 
   private boolean staticInvocationInitialize() {
-    return IJavaMethodAux.super.staticInvocation();
+    return IJavaReflectionAux.super.staticInvocation();
   }
 
   private int redirectArgInitialize() {
-    return IJavaMethodAux.super.redirectArg();
+    return IJavaReflectionAux.super.redirectArg();
   }
 
   /**
@@ -137,45 +147,87 @@ public final class JavaMethodAux implements IJavaMethodAux {
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IJavaMethodAux#staticInvocation() staticInvocation} attribute.
+   * @return The value of the {@code methodName} attribute
+   */
+  @JsonProperty("methodName")
+  @Override
+  public @Nullable String methodName() {
+    return methodName;
+  }
+
+  /**
+   * @return The value of the {@code className} attribute
+   */
+  @JsonProperty("className")
+  @Override
+  public @Nullable String className() {
+    return className;
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link IJavaReflectionAux#staticInvocation() staticInvocation} attribute.
    * A value equality check is used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for staticInvocation
    * @return A modified copy of the {@code this} object
    */
-  public final JavaMethodAux withStaticInvocation(boolean value) {
+  public final JavaReflectionAux withStaticInvocation(boolean value) {
     if (this.staticInvocation == value) return this;
-    return new JavaMethodAux(value, this.redirectArg);
+    return new JavaReflectionAux(value, this.redirectArg, this.methodName, this.className);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IJavaMethodAux#redirectArg() redirectArg} attribute.
+   * Copy the current immutable object by setting a value for the {@link IJavaReflectionAux#redirectArg() redirectArg} attribute.
    * A value equality check is used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for redirectArg
    * @return A modified copy of the {@code this} object
    */
-  public final JavaMethodAux withRedirectArg(int value) {
+  public final JavaReflectionAux withRedirectArg(int value) {
     if (this.redirectArg == value) return this;
-    return new JavaMethodAux(this.staticInvocation, value);
+    return new JavaReflectionAux(this.staticInvocation, value, this.methodName, this.className);
   }
 
   /**
-   * This instance is equal to all instances of {@code JavaMethodAux} that have equal attribute values.
+   * Copy the current immutable object by setting a value for the {@link IJavaReflectionAux#methodName() methodName} attribute.
+   * An equals check used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for methodName (can be {@code null})
+   * @return A modified copy of the {@code this} object
+   */
+  public final JavaReflectionAux withMethodName(@Nullable String value) {
+    if (Objects.equals(this.methodName, value)) return this;
+    return new JavaReflectionAux(this.staticInvocation, this.redirectArg, value, this.className);
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link IJavaReflectionAux#className() className} attribute.
+   * An equals check used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for className (can be {@code null})
+   * @return A modified copy of the {@code this} object
+   */
+  public final JavaReflectionAux withClassName(@Nullable String value) {
+    if (Objects.equals(this.className, value)) return this;
+    return new JavaReflectionAux(this.staticInvocation, this.redirectArg, this.methodName, value);
+  }
+
+  /**
+   * This instance is equal to all instances of {@code JavaReflectionAux} that have equal attribute values.
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
   public boolean equals(@Nullable Object another) {
     if (this == another) return true;
-    return another instanceof JavaMethodAux
-        && equalTo((JavaMethodAux) another);
+    return another instanceof JavaReflectionAux
+        && equalTo((JavaReflectionAux) another);
   }
 
-  private boolean equalTo(JavaMethodAux another) {
+  private boolean equalTo(JavaReflectionAux another) {
     return staticInvocation == another.staticInvocation
-        && redirectArg == another.redirectArg;
+        && redirectArg == another.redirectArg
+        && Objects.equals(methodName, another.methodName)
+        && Objects.equals(className, another.className);
   }
 
   /**
-   * Computes a hash code from attributes: {@code staticInvocation}, {@code redirectArg}.
+   * Computes a hash code from attributes: {@code staticInvocation}, {@code redirectArg}, {@code methodName}, {@code className}.
    * @return hashCode value
    */
   @Override
@@ -183,19 +235,23 @@ public final class JavaMethodAux implements IJavaMethodAux {
     @Var int h = 5381;
     h += (h << 5) + Booleans.hashCode(staticInvocation);
     h += (h << 5) + redirectArg;
+    h += (h << 5) + Objects.hashCode(methodName);
+    h += (h << 5) + Objects.hashCode(className);
     return h;
   }
 
   /**
-   * Prints the immutable value {@code JavaMethodAux} with attribute values.
+   * Prints the immutable value {@code JavaReflectionAux} with attribute values.
    * @return A string representation of the value
    */
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper("JavaMethodAux")
+    return MoreObjects.toStringHelper("JavaReflectionAux")
         .omitNullValues()
         .add("staticInvocation", staticInvocation)
         .add("redirectArg", redirectArg)
+        .add("methodName", methodName)
+        .add("className", className)
         .toString();
   }
 
@@ -203,16 +259,18 @@ public final class JavaMethodAux implements IJavaMethodAux {
    * Utility type used to correctly read immutable object from JSON representation.
    * @deprecated Do not use this type directly, it exists only for the <em>Jackson</em>-binding infrastructure
    */
-  @Generated(from = "IJavaMethodAux", generator = "Immutables")
+  @Generated(from = "IJavaReflectionAux", generator = "Immutables")
   @Deprecated
   @SuppressWarnings("Immutable")
   @JsonDeserialize
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
-  static final class Json implements IJavaMethodAux {
+  static final class Json implements IJavaReflectionAux {
     boolean staticInvocation;
     boolean staticInvocationIsSet;
     int redirectArg;
     boolean redirectArgIsSet;
+    @Nullable String methodName;
+    @Nullable String className;
     @JsonProperty("staticInvocation")
     public void setStaticInvocation(boolean staticInvocation) {
       this.staticInvocation = staticInvocation;
@@ -223,10 +281,22 @@ public final class JavaMethodAux implements IJavaMethodAux {
       this.redirectArg = redirectArg;
       this.redirectArgIsSet = true;
     }
+    @JsonProperty("methodName")
+    public void setMethodName(@Nullable String methodName) {
+      this.methodName = methodName;
+    }
+    @JsonProperty("className")
+    public void setClassName(@Nullable String className) {
+      this.className = className;
+    }
     @Override
     public boolean staticInvocation() { throw new UnsupportedOperationException(); }
     @Override
     public int redirectArg() { throw new UnsupportedOperationException(); }
+    @Override
+    public String methodName() { throw new UnsupportedOperationException(); }
+    @Override
+    public String className() { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -236,55 +306,63 @@ public final class JavaMethodAux implements IJavaMethodAux {
    */
   @Deprecated
   @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-  static JavaMethodAux fromJson(Json json) {
-    JavaMethodAux.Builder builder = JavaMethodAux.builder();
+  static JavaReflectionAux fromJson(Json json) {
+    JavaReflectionAux.Builder builder = JavaReflectionAux.builder();
     if (json.staticInvocationIsSet) {
       builder.staticInvocation(json.staticInvocation);
     }
     if (json.redirectArgIsSet) {
       builder.redirectArg(json.redirectArg);
     }
+    if (json.methodName != null) {
+      builder.methodName(json.methodName);
+    }
+    if (json.className != null) {
+      builder.className(json.className);
+    }
     return builder.build();
   }
 
   /**
-   * Creates an immutable copy of a {@link IJavaMethodAux} value.
+   * Creates an immutable copy of a {@link IJavaReflectionAux} value.
    * Uses accessors to get values to initialize the new immutable instance.
    * If an instance is already immutable, it is returned as is.
    * @param instance The instance to copy
-   * @return A copied immutable JavaMethodAux instance
+   * @return A copied immutable JavaReflectionAux instance
    */
-  public static JavaMethodAux copyOf(IJavaMethodAux instance) {
-    if (instance instanceof JavaMethodAux) {
-      return (JavaMethodAux) instance;
+  public static JavaReflectionAux copyOf(IJavaReflectionAux instance) {
+    if (instance instanceof JavaReflectionAux) {
+      return (JavaReflectionAux) instance;
     }
-    return JavaMethodAux.builder()
+    return JavaReflectionAux.builder()
         .from(instance)
         .build();
   }
 
   /**
-   * Creates a builder for {@link JavaMethodAux JavaMethodAux}.
+   * Creates a builder for {@link JavaReflectionAux JavaReflectionAux}.
    * <pre>
-   * JavaMethodAux.builder()
-   *    .staticInvocation(boolean) // optional {@link IJavaMethodAux#staticInvocation() staticInvocation}
-   *    .redirectArg(int) // optional {@link IJavaMethodAux#redirectArg() redirectArg}
+   * JavaReflectionAux.builder()
+   *    .staticInvocation(boolean) // optional {@link IJavaReflectionAux#staticInvocation() staticInvocation}
+   *    .redirectArg(int) // optional {@link IJavaReflectionAux#redirectArg() redirectArg}
+   *    .methodName(String | null) // nullable {@link IJavaReflectionAux#methodName() methodName}
+   *    .className(String | null) // nullable {@link IJavaReflectionAux#className() className}
    *    .build();
    * </pre>
-   * @return A new JavaMethodAux builder
+   * @return A new JavaReflectionAux builder
    */
-  public static JavaMethodAux.Builder builder() {
-    return new JavaMethodAux.Builder();
+  public static JavaReflectionAux.Builder builder() {
+    return new JavaReflectionAux.Builder();
   }
 
   /**
-   * Builds instances of type {@link JavaMethodAux JavaMethodAux}.
+   * Builds instances of type {@link JavaReflectionAux JavaReflectionAux}.
    * Initialize attributes and then invoke the {@link #build()} method to create an
    * immutable instance.
    * <p><em>{@code Builder} is not thread-safe and generally should not be stored in a field or collection,
    * but instead used immediately to create instances.</em>
    */
-  @Generated(from = "IJavaMethodAux", generator = "Immutables")
+  @Generated(from = "IJavaReflectionAux", generator = "Immutables")
   @NotThreadSafe
   public static final class Builder {
     private static final long OPT_BIT_STATIC_INVOCATION = 0x1L;
@@ -293,44 +371,62 @@ public final class JavaMethodAux implements IJavaMethodAux {
 
     private boolean staticInvocation;
     private int redirectArg;
+    private @Nullable String methodName;
+    private @Nullable String className;
 
     private Builder() {
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code MutableJavaMethodAux} instance.
+     * Fill a builder with attribute values from the provided {@code MutableJavaReflectionAux} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(MutableJavaMethodAux instance) {
+    public final Builder from(MutableJavaReflectionAux instance) {
       Objects.requireNonNull(instance, "instance");
       staticInvocation(instance.staticInvocation());
       redirectArg(instance.redirectArg());
+      @Nullable String methodNameValue = instance.methodName();
+      if (methodNameValue != null) {
+        methodName(methodNameValue);
+      }
+      @Nullable String classNameValue = instance.className();
+      if (classNameValue != null) {
+        className(classNameValue);
+      }
       return this;
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code IJavaMethodAux} instance.
+     * Fill a builder with attribute values from the provided {@code IJavaReflectionAux} instance.
      * Regular attribute values will be replaced with those from the given instance.
      * Absent optional values will not replace present values.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(IJavaMethodAux instance) {
+    public final Builder from(IJavaReflectionAux instance) {
       Objects.requireNonNull(instance, "instance");
-      if (instance instanceof MutableJavaMethodAux) {
-        return from((MutableJavaMethodAux) instance);
+      if (instance instanceof MutableJavaReflectionAux) {
+        return from((MutableJavaReflectionAux) instance);
       }
       staticInvocation(instance.staticInvocation());
       redirectArg(instance.redirectArg());
+      @Nullable String methodNameValue = instance.methodName();
+      if (methodNameValue != null) {
+        methodName(methodNameValue);
+      }
+      @Nullable String classNameValue = instance.className();
+      if (classNameValue != null) {
+        className(classNameValue);
+      }
       return this;
     }
 
     /**
-     * Initializes the value for the {@link IJavaMethodAux#staticInvocation() staticInvocation} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IJavaMethodAux#staticInvocation() staticInvocation}.</em>
+     * Initializes the value for the {@link IJavaReflectionAux#staticInvocation() staticInvocation} attribute.
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IJavaReflectionAux#staticInvocation() staticInvocation}.</em>
      * @param staticInvocation The value for staticInvocation 
      * @return {@code this} builder for use in a chained invocation
      */
@@ -343,8 +439,8 @@ public final class JavaMethodAux implements IJavaMethodAux {
     }
 
     /**
-     * Initializes the value for the {@link IJavaMethodAux#redirectArg() redirectArg} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IJavaMethodAux#redirectArg() redirectArg}.</em>
+     * Initializes the value for the {@link IJavaReflectionAux#redirectArg() redirectArg} attribute.
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IJavaReflectionAux#redirectArg() redirectArg}.</em>
      * @param redirectArg The value for redirectArg 
      * @return {@code this} builder for use in a chained invocation
      */
@@ -357,12 +453,36 @@ public final class JavaMethodAux implements IJavaMethodAux {
     }
 
     /**
-     * Builds a new {@link JavaMethodAux JavaMethodAux}.
-     * @return An immutable instance of JavaMethodAux
+     * Initializes the value for the {@link IJavaReflectionAux#methodName() methodName} attribute.
+     * @param methodName The value for methodName (can be {@code null})
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("methodName")
+    public final Builder methodName(@Nullable String methodName) {
+      this.methodName = methodName;
+      return this;
+    }
+
+    /**
+     * Initializes the value for the {@link IJavaReflectionAux#className() className} attribute.
+     * @param className The value for className (can be {@code null})
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("className")
+    public final Builder className(@Nullable String className) {
+      this.className = className;
+      return this;
+    }
+
+    /**
+     * Builds a new {@link JavaReflectionAux JavaReflectionAux}.
+     * @return An immutable instance of JavaReflectionAux
      * @throws java.lang.IllegalStateException if any required attributes are missing
      */
-    public JavaMethodAux build() {
-      return new JavaMethodAux(this);
+    public JavaReflectionAux build() {
+      return new JavaReflectionAux(this);
     }
 
     private boolean staticInvocationIsSet() {

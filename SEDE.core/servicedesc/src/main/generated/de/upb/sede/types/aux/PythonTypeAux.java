@@ -1,4 +1,4 @@
-package de.upb.sede.exec;
+package de.upb.sede.types.aux;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -13,35 +13,35 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
- * Immutable implementation of {@link IJavaClassAux}.
+ * Immutable implementation of {@link IPythonTypeAux}.
  * <p>
  * Use the builder to create immutable instances:
- * {@code JavaClassAux.builder()}.
+ * {@code PythonTypeAux.builder()}.
  */
-@Generated(from = "IJavaClassAux", generator = "Immutables")
+@Generated(from = "IPythonTypeAux", generator = "Immutables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
 @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
 @Immutable
 @CheckReturnValue
-public final class JavaClassAux implements IJavaClassAux {
+public final class PythonTypeAux implements IPythonTypeAux {
 
-  private JavaClassAux(JavaClassAux.Builder builder) {
+  private PythonTypeAux(PythonTypeAux.Builder builder) {
   }
 
   /**
-   * This instance is equal to all instances of {@code JavaClassAux} that have equal attribute values.
+   * This instance is equal to all instances of {@code PythonTypeAux} that have equal attribute values.
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
   public boolean equals(@Nullable Object another) {
     if (this == another) return true;
-    return another instanceof JavaClassAux
-        && equalTo((JavaClassAux) another);
+    return another instanceof PythonTypeAux
+        && equalTo((PythonTypeAux) another);
   }
 
   @SuppressWarnings("MethodCanBeStatic")
-  private boolean equalTo(JavaClassAux another) {
+  private boolean equalTo(PythonTypeAux another) {
     return true;
   }
 
@@ -51,28 +51,28 @@ public final class JavaClassAux implements IJavaClassAux {
    */
   @Override
   public int hashCode() {
-    return -1318807904;
+    return 1504174474;
   }
 
   /**
-   * Prints the immutable value {@code JavaClassAux}.
+   * Prints the immutable value {@code PythonTypeAux}.
    * @return A string representation of the value
    */
   @Override
   public String toString() {
-    return "JavaClassAux{}";
+    return "PythonTypeAux{}";
   }
 
   /**
    * Utility type used to correctly read immutable object from JSON representation.
    * @deprecated Do not use this type directly, it exists only for the <em>Jackson</em>-binding infrastructure
    */
-  @Generated(from = "IJavaClassAux", generator = "Immutables")
+  @Generated(from = "IPythonTypeAux", generator = "Immutables")
   @Deprecated
   @SuppressWarnings("Immutable")
   @JsonDeserialize
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
-  static final class Json implements IJavaClassAux {
+  static final class Json implements IPythonTypeAux {
   }
 
   /**
@@ -82,47 +82,47 @@ public final class JavaClassAux implements IJavaClassAux {
    */
   @Deprecated
   @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-  static JavaClassAux fromJson(Json json) {
-    JavaClassAux.Builder builder = JavaClassAux.builder();
+  static PythonTypeAux fromJson(Json json) {
+    PythonTypeAux.Builder builder = PythonTypeAux.builder();
     return builder.build();
   }
 
   /**
-   * Creates an immutable copy of a {@link IJavaClassAux} value.
+   * Creates an immutable copy of a {@link IPythonTypeAux} value.
    * Uses accessors to get values to initialize the new immutable instance.
    * If an instance is already immutable, it is returned as is.
    * @param instance The instance to copy
-   * @return A copied immutable JavaClassAux instance
+   * @return A copied immutable PythonTypeAux instance
    */
-  public static JavaClassAux copyOf(IJavaClassAux instance) {
-    if (instance instanceof JavaClassAux) {
-      return (JavaClassAux) instance;
+  public static PythonTypeAux copyOf(IPythonTypeAux instance) {
+    if (instance instanceof PythonTypeAux) {
+      return (PythonTypeAux) instance;
     }
-    return JavaClassAux.builder()
+    return PythonTypeAux.builder()
         .from(instance)
         .build();
   }
 
   /**
-   * Creates a builder for {@link JavaClassAux JavaClassAux}.
+   * Creates a builder for {@link PythonTypeAux PythonTypeAux}.
    * <pre>
-   * JavaClassAux.builder()
+   * PythonTypeAux.builder()
    *    .build();
    * </pre>
-   * @return A new JavaClassAux builder
+   * @return A new PythonTypeAux builder
    */
-  public static JavaClassAux.Builder builder() {
-    return new JavaClassAux.Builder();
+  public static PythonTypeAux.Builder builder() {
+    return new PythonTypeAux.Builder();
   }
 
   /**
-   * Builds instances of type {@link JavaClassAux JavaClassAux}.
+   * Builds instances of type {@link PythonTypeAux PythonTypeAux}.
    * Initialize attributes and then invoke the {@link #build()} method to create an
    * immutable instance.
    * <p><em>{@code Builder} is not thread-safe and generally should not be stored in a field or collection,
    * but instead used immediately to create instances.</em>
    */
-  @Generated(from = "IJavaClassAux", generator = "Immutables")
+  @Generated(from = "IPythonTypeAux", generator = "Immutables")
   @NotThreadSafe
   public static final class Builder {
 
@@ -130,39 +130,39 @@ public final class JavaClassAux implements IJavaClassAux {
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code MutableJavaClassAux} instance.
+     * Fill a builder with attribute values from the provided {@code MutablePythonTypeAux} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(MutableJavaClassAux instance) {
+    public final Builder from(MutablePythonTypeAux instance) {
       Objects.requireNonNull(instance, "instance");
       return this;
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code IJavaClassAux} instance.
+     * Fill a builder with attribute values from the provided {@code IPythonTypeAux} instance.
      * Regular attribute values will be replaced with those from the given instance.
      * Absent optional values will not replace present values.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(IJavaClassAux instance) {
+    public final Builder from(IPythonTypeAux instance) {
       Objects.requireNonNull(instance, "instance");
-      if (instance instanceof MutableJavaClassAux) {
-        return from((MutableJavaClassAux) instance);
+      if (instance instanceof MutablePythonTypeAux) {
+        return from((MutablePythonTypeAux) instance);
       }
       return this;
     }
 
     /**
-     * Builds a new {@link JavaClassAux JavaClassAux}.
-     * @return An immutable instance of JavaClassAux
+     * Builds a new {@link PythonTypeAux PythonTypeAux}.
+     * @return An immutable instance of PythonTypeAux
      * @throws java.lang.IllegalStateException if any required attributes are missing
      */
-    public JavaClassAux build() {
-      return new JavaClassAux(this);
+    public PythonTypeAux build() {
+      return new PythonTypeAux(this);
     }
   }
 }

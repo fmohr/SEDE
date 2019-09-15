@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.ICommented;
+import de.upb.sede.exec.aux.IJavaReflectionAux;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.CheckReturnValue;
@@ -33,17 +34,17 @@ import org.immutables.value.Generated;
 public final class SignatureDesc implements ISignatureDesc {
   private final ImmutableList<IMethodParameterDesc> inputs;
   private final ImmutableList<IMethodParameterDesc> outputs;
-  private final @Nullable IJavaMethodAux javaMethodAux;
+  private final @Nullable IJavaReflectionAux javaAux;
   private final ImmutableList<String> comments;
 
   private SignatureDesc(
       ImmutableList<IMethodParameterDesc> inputs,
       ImmutableList<IMethodParameterDesc> outputs,
-      @Nullable IJavaMethodAux javaMethodAux,
+      @Nullable IJavaReflectionAux javaAux,
       ImmutableList<String> comments) {
     this.inputs = inputs;
     this.outputs = outputs;
-    this.javaMethodAux = javaMethodAux;
+    this.javaAux = javaAux;
     this.comments = comments;
   }
 
@@ -66,12 +67,12 @@ public final class SignatureDesc implements ISignatureDesc {
   }
 
   /**
-   * @return The value of the {@code javaMethodAux} attribute
+   * @return The value of the {@code javaAux} attribute
    */
-  @JsonProperty("javaMethodAux")
+  @JsonProperty("javaAux")
   @Override
-  public @Nullable IJavaMethodAux getJavaMethodAux() {
-    return javaMethodAux;
+  public @Nullable IJavaReflectionAux getJavaAux() {
+    return javaAux;
   }
 
   /**
@@ -90,7 +91,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withInputs(IMethodParameterDesc... elements) {
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(newValue, this.outputs, this.javaMethodAux, this.comments);
+    return new SignatureDesc(newValue, this.outputs, this.javaAux, this.comments);
   }
 
   /**
@@ -102,7 +103,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withInputs(Iterable<? extends IMethodParameterDesc> elements) {
     if (this.inputs == elements) return this;
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(newValue, this.outputs, this.javaMethodAux, this.comments);
+    return new SignatureDesc(newValue, this.outputs, this.javaAux, this.comments);
   }
 
   /**
@@ -112,7 +113,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withOutputs(IMethodParameterDesc... elements) {
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, newValue, this.javaMethodAux, this.comments);
+    return new SignatureDesc(this.inputs, newValue, this.javaAux, this.comments);
   }
 
   /**
@@ -124,17 +125,17 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withOutputs(Iterable<? extends IMethodParameterDesc> elements) {
     if (this.outputs == elements) return this;
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, newValue, this.javaMethodAux, this.comments);
+    return new SignatureDesc(this.inputs, newValue, this.javaAux, this.comments);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link ISignatureDesc#getJavaMethodAux() javaMethodAux} attribute.
+   * Copy the current immutable object by setting a value for the {@link ISignatureDesc#getJavaAux() javaAux} attribute.
    * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for javaMethodAux (can be {@code null})
+   * @param value A new value for javaAux (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final SignatureDesc withJavaMethodAux(@Nullable IJavaMethodAux value) {
-    if (this.javaMethodAux == value) return this;
+  public final SignatureDesc withJavaAux(@Nullable IJavaReflectionAux value) {
+    if (this.javaAux == value) return this;
     return new SignatureDesc(this.inputs, this.outputs, value, this.comments);
   }
 
@@ -145,7 +146,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withComments(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, this.outputs, this.javaMethodAux, newValue);
+    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, newValue);
   }
 
   /**
@@ -157,7 +158,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withComments(Iterable<String> elements) {
     if (this.comments == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, this.outputs, this.javaMethodAux, newValue);
+    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, newValue);
   }
 
   /**
@@ -174,12 +175,12 @@ public final class SignatureDesc implements ISignatureDesc {
   private boolean equalTo(SignatureDesc another) {
     return inputs.equals(another.inputs)
         && outputs.equals(another.outputs)
-        && Objects.equals(javaMethodAux, another.javaMethodAux)
+        && Objects.equals(javaAux, another.javaAux)
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaMethodAux}, {@code comments}.
+   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaAux}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -187,7 +188,7 @@ public final class SignatureDesc implements ISignatureDesc {
     @Var int h = 5381;
     h += (h << 5) + inputs.hashCode();
     h += (h << 5) + outputs.hashCode();
-    h += (h << 5) + Objects.hashCode(javaMethodAux);
+    h += (h << 5) + Objects.hashCode(javaAux);
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -202,7 +203,7 @@ public final class SignatureDesc implements ISignatureDesc {
         .omitNullValues()
         .add("inputs", inputs)
         .add("outputs", outputs)
-        .add("javaMethodAux", javaMethodAux)
+        .add("javaAux", javaAux)
         .add("comments", comments)
         .toString();
   }
@@ -219,7 +220,7 @@ public final class SignatureDesc implements ISignatureDesc {
   static final class Json implements ISignatureDesc {
     @Nullable List<IMethodParameterDesc> inputs = ImmutableList.of();
     @Nullable List<IMethodParameterDesc> outputs = ImmutableList.of();
-    @Nullable IJavaMethodAux javaMethodAux;
+    @Nullable IJavaReflectionAux javaAux;
     @Nullable List<String> comments = ImmutableList.of();
     @JsonProperty("inputs")
     public void setInputs(List<IMethodParameterDesc> inputs) {
@@ -229,9 +230,9 @@ public final class SignatureDesc implements ISignatureDesc {
     public void setOutputs(List<IMethodParameterDesc> outputs) {
       this.outputs = outputs;
     }
-    @JsonProperty("javaMethodAux")
-    public void setJavaMethodAux(@Nullable IJavaMethodAux javaMethodAux) {
-      this.javaMethodAux = javaMethodAux;
+    @JsonProperty("javaAux")
+    public void setJavaAux(@Nullable IJavaReflectionAux javaAux) {
+      this.javaAux = javaAux;
     }
     @JsonProperty("comments")
     public void setComments(List<String> comments) {
@@ -242,7 +243,7 @@ public final class SignatureDesc implements ISignatureDesc {
     @Override
     public List<IMethodParameterDesc> getOutputs() { throw new UnsupportedOperationException(); }
     @Override
-    public IJavaMethodAux getJavaMethodAux() { throw new UnsupportedOperationException(); }
+    public IJavaReflectionAux getJavaAux() { throw new UnsupportedOperationException(); }
     @Override
     public List<String> getComments() { throw new UnsupportedOperationException(); }
   }
@@ -262,8 +263,8 @@ public final class SignatureDesc implements ISignatureDesc {
     if (json.outputs != null) {
       builder.addAllOutputs(json.outputs);
     }
-    if (json.javaMethodAux != null) {
-      builder.javaMethodAux(json.javaMethodAux);
+    if (json.javaAux != null) {
+      builder.javaAux(json.javaAux);
     }
     if (json.comments != null) {
       builder.addAllComments(json.comments);
@@ -293,7 +294,7 @@ public final class SignatureDesc implements ISignatureDesc {
    * SignatureDesc.builder()
    *    .addInputs|addAllInputs(de.upb.sede.exec.IMethodParameterDesc) // {@link ISignatureDesc#getInputs() inputs} elements
    *    .addOutputs|addAllOutputs(de.upb.sede.exec.IMethodParameterDesc) // {@link ISignatureDesc#getOutputs() outputs} elements
-   *    .javaMethodAux(de.upb.sede.exec.IJavaMethodAux | null) // nullable {@link ISignatureDesc#getJavaMethodAux() javaMethodAux}
+   *    .javaAux(de.upb.sede.exec.aux.IJavaReflectionAux | null) // nullable {@link ISignatureDesc#getJavaAux() javaAux}
    *    .addComments|addAllComments(String) // {@link ISignatureDesc#getComments() comments} elements
    *    .build();
    * </pre>
@@ -315,7 +316,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public static final class Builder {
     private ImmutableList.Builder<IMethodParameterDesc> inputs = ImmutableList.builder();
     private ImmutableList.Builder<IMethodParameterDesc> outputs = ImmutableList.builder();
-    private @Nullable IJavaMethodAux javaMethodAux;
+    private @Nullable IJavaReflectionAux javaAux;
     private ImmutableList.Builder<String> comments = ImmutableList.builder();
 
     private Builder() {
@@ -331,9 +332,9 @@ public final class SignatureDesc implements ISignatureDesc {
       Objects.requireNonNull(instance, "instance");
       addAllInputs(instance.getInputs());
       addAllOutputs(instance.getOutputs());
-      @Nullable IJavaMethodAux javaMethodAuxValue = instance.getJavaMethodAux();
-      if (javaMethodAuxValue != null) {
-        javaMethodAux(javaMethodAuxValue);
+      @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+      if (javaAuxValue != null) {
+        javaAux(javaAuxValue);
       }
       addAllComments(instance.getComments());
       return this;
@@ -375,9 +376,9 @@ public final class SignatureDesc implements ISignatureDesc {
       if (object instanceof ISignatureDesc) {
         ISignatureDesc instance = (ISignatureDesc) object;
         addAllOutputs(instance.getOutputs());
-        @Nullable IJavaMethodAux javaMethodAuxValue = instance.getJavaMethodAux();
-        if (javaMethodAuxValue != null) {
-          javaMethodAux(javaMethodAuxValue);
+        @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+        if (javaAuxValue != null) {
+          javaAux(javaAuxValue);
         }
         addAllInputs(instance.getInputs());
       }
@@ -476,14 +477,14 @@ public final class SignatureDesc implements ISignatureDesc {
     }
 
     /**
-     * Initializes the value for the {@link ISignatureDesc#getJavaMethodAux() javaMethodAux} attribute.
-     * @param javaMethodAux The value for javaMethodAux (can be {@code null})
+     * Initializes the value for the {@link ISignatureDesc#getJavaAux() javaAux} attribute.
+     * @param javaAux The value for javaAux (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    @JsonProperty("javaMethodAux")
-    public final Builder javaMethodAux(@Nullable IJavaMethodAux javaMethodAux) {
-      this.javaMethodAux = javaMethodAux;
+    @JsonProperty("javaAux")
+    public final Builder javaAux(@Nullable IJavaReflectionAux javaAux) {
+      this.javaAux = javaAux;
       return this;
     }
 
@@ -539,7 +540,7 @@ public final class SignatureDesc implements ISignatureDesc {
      * @throws java.lang.IllegalStateException if any required attributes are missing
      */
     public SignatureDesc build() {
-      return new SignatureDesc(inputs.build(), outputs.build(), javaMethodAux, comments.build());
+      return new SignatureDesc(inputs.build(), outputs.build(), javaAux, comments.build());
     }
   }
 }

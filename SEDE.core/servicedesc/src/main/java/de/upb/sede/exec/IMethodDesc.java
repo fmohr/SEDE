@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
 import de.upb.sede.SModelStyle;
+import de.upb.sede.exec.aux.IJavaReflectionAux;
 import org.immutables.value.Value;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 @SModelStyle
@@ -24,6 +26,5 @@ public interface IMethodDesc extends IQualifiable, ICommented {
     default boolean isPure() {
         return false;
     }
-
 
 }

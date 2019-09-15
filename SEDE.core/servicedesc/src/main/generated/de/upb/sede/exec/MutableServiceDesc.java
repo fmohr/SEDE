@@ -6,6 +6,8 @@ import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
+import de.upb.sede.exec.aux.IJavaReflectionAux;
+import de.upb.sede.exec.aux.IPythonClassAux;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,7 +40,7 @@ public final class MutableServiceDesc implements IServiceDesc {
   private final ArrayList<String> interfaces = new ArrayList<String>();
   private boolean isAbstract;
   private final Map<String, String> fieldTypes = new LinkedHashMap<String, String>();
-  private @Nullable IJavaClassAux javaClassAuxiliaries;
+  private @Nullable IJavaReflectionAux javaAux;
   private @Nullable IPythonClassAux pythonClassAuxiliaries;
   private String qualifier;
   private String simpleName;
@@ -93,12 +95,12 @@ public final class MutableServiceDesc implements IServiceDesc {
   }
 
   /**
-   * @return value of {@code javaClassAuxiliaries} attribute, may be {@code null}
+   * @return value of {@code javaAux} attribute, may be {@code null}
    */
-  @JsonProperty("javaClassAuxiliaries")
+  @JsonProperty("javaAux")
   @Override
-  public final @Nullable IJavaClassAux getJavaClassAuxiliaries() {
-    return javaClassAuxiliaries;
+  public final @Nullable IJavaReflectionAux getJavaAux() {
+    return javaAux;
   }
 
   /**
@@ -154,7 +156,7 @@ public final class MutableServiceDesc implements IServiceDesc {
     interfaces.clear();
     isAbstract = false;
     fieldTypes.clear();
-    javaClassAuxiliaries = null;
+    javaAux = null;
     pythonClassAuxiliaries = null;
     qualifier = null;
     simpleName = null;
@@ -219,9 +221,9 @@ public final class MutableServiceDesc implements IServiceDesc {
       addAllInterfaces(instance.getInterfaces());
       setIsAbstract(instance.isAbstract());
       putAllFieldTypes(instance.getFieldTypes());
-      @Nullable IJavaClassAux javaClassAuxiliariesValue = instance.getJavaClassAuxiliaries();
-      if (javaClassAuxiliariesValue != null) {
-        setJavaClassAuxiliaries(javaClassAuxiliariesValue);
+      @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+      if (javaAuxValue != null) {
+        setJavaAux(javaAuxValue);
       }
       @Nullable IPythonClassAux pythonClassAuxiliariesValue = instance.getPythonClassAuxiliaries();
       if (pythonClassAuxiliariesValue != null) {
@@ -241,6 +243,10 @@ public final class MutableServiceDesc implements IServiceDesc {
     if (object instanceof IServiceDesc) {
       IServiceDesc instance = (IServiceDesc) object;
       addAllInterfaces(instance.getInterfaces());
+      @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+      if (javaAuxValue != null) {
+        setJavaAux(javaAuxValue);
+      }
       setIsAbstract(instance.isAbstract());
       @Nullable IPythonClassAux pythonClassAuxiliariesValue = instance.getPythonClassAuxiliaries();
       if (pythonClassAuxiliariesValue != null) {
@@ -248,10 +254,6 @@ public final class MutableServiceDesc implements IServiceDesc {
       }
       addAllMethods(instance.getMethods());
       putAllFieldTypes(instance.getFieldTypes());
-      @Nullable IJavaClassAux javaClassAuxiliariesValue = instance.getJavaClassAuxiliaries();
-      if (javaClassAuxiliariesValue != null) {
-        setJavaClassAuxiliaries(javaClassAuxiliariesValue);
-      }
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
@@ -425,13 +427,13 @@ public final class MutableServiceDesc implements IServiceDesc {
   }
 
   /**
-   * Assigns a value to the {@link IServiceDesc#getJavaClassAuxiliaries() javaClassAuxiliaries} attribute.
-   * @param javaClassAuxiliaries The value for javaClassAuxiliaries, can be {@code null}
+   * Assigns a value to the {@link IServiceDesc#getJavaAux() javaAux} attribute.
+   * @param javaAux The value for javaAux, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableServiceDesc setJavaClassAuxiliaries(@Nullable IJavaClassAux javaClassAuxiliaries) {
-    this.javaClassAuxiliaries = javaClassAuxiliaries;
+  public MutableServiceDesc setJavaAux(@Nullable IJavaReflectionAux javaAux) {
+    this.javaAux = javaAux;
     return this;
   }
 
@@ -618,7 +620,7 @@ public final class MutableServiceDesc implements IServiceDesc {
         && interfaces.equals(another.interfaces)
         && isAbstract == another.isAbstract()
         && fieldTypes.equals(another.fieldTypes)
-        && Objects.equals(javaClassAuxiliaries, another.javaClassAuxiliaries)
+        && Objects.equals(javaAux, another.javaAux)
         && Objects.equals(pythonClassAuxiliaries, another.pythonClassAuxiliaries)
         && qualifier.equals(another.qualifier)
         && simpleName.equals(another.getSimpleName())
@@ -626,7 +628,7 @@ public final class MutableServiceDesc implements IServiceDesc {
   }
 
   /**
-   * Computes a hash code from attributes: {@code methods}, {@code interfaces}, {@code isAbstract}, {@code fieldTypes}, {@code javaClassAuxiliaries}, {@code pythonClassAuxiliaries}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code methods}, {@code interfaces}, {@code isAbstract}, {@code fieldTypes}, {@code javaAux}, {@code pythonClassAuxiliaries}, {@code qualifier}, {@code simpleName}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -637,7 +639,7 @@ public final class MutableServiceDesc implements IServiceDesc {
     boolean isAbstract = isAbstract();
     h += (h << 5) + Booleans.hashCode(isAbstract);
     h += (h << 5) + fieldTypes.hashCode();
-    h += (h << 5) + Objects.hashCode(javaClassAuxiliaries);
+    h += (h << 5) + Objects.hashCode(javaAux);
     h += (h << 5) + Objects.hashCode(pythonClassAuxiliaries);
     h += (h << 5) + qualifier.hashCode();
     String simpleName = getSimpleName();
@@ -658,7 +660,7 @@ public final class MutableServiceDesc implements IServiceDesc {
         .add("interfaces", getInterfaces())
         .add("isAbstract", isAbstract())
         .add("fieldTypes", getFieldTypes())
-        .add("javaClassAuxiliaries", getJavaClassAuxiliaries())
+        .add("javaAux", getJavaAux())
         .add("pythonClassAuxiliaries", getPythonClassAuxiliaries())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
         .add("simpleName", getSimpleName())

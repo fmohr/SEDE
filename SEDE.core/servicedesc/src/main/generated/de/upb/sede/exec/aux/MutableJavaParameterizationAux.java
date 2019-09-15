@@ -1,4 +1,4 @@
-package de.upb.sede.types;
+package de.upb.sede.exec.aux;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.Objects;
@@ -8,27 +8,27 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
- * A modifiable implementation of the {@link IJavaTypeAux IJavaTypeAux} type.
+ * A modifiable implementation of the {@link IJavaParameterizationAux IJavaParameterizationAux} type.
  * <p>Use the {@link #create()} static factory methods to create new instances.
  * Use the {@link #toImmutable()} method to convert to canonical immutable instances.
- * <p><em>MutableJavaTypeAux is not thread-safe</em>
- * @see JavaTypeAux
+ * <p><em>MutableJavaParameterizationAux is not thread-safe</em>
+ * @see JavaParameterizationAux
  */
-@Generated(from = "IJavaTypeAux", generator = "Modifiables")
+@Generated(from = "IJavaParameterizationAux", generator = "Modifiables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
-@javax.annotation.Generated({"Modifiables.generator", "IJavaTypeAux"})
+@javax.annotation.Generated({"Modifiables.generator", "IJavaParameterizationAux"})
 @NotThreadSafe
-public final class MutableJavaTypeAux implements IJavaTypeAux {
+public final class MutableJavaParameterizationAux implements IJavaParameterizationAux {
 
-  private MutableJavaTypeAux() {}
+  private MutableJavaParameterizationAux() {}
 
   /**
-   * Construct a modifiable instance of {@code IJavaTypeAux}.
+   * Construct a modifiable instance of {@code IJavaParameterizationAux}.
    * @return A new modifiable instance
    */
-  public static MutableJavaTypeAux create() {
-    return new MutableJavaTypeAux();
+  public static MutableJavaParameterizationAux create() {
+    return new MutableJavaParameterizationAux();
   }
 
   /**
@@ -36,34 +36,34 @@ public final class MutableJavaTypeAux implements IJavaTypeAux {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableJavaTypeAux clear() {
+  public MutableJavaParameterizationAux clear() {
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link IJavaTypeAux} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link IJavaParameterizationAux} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  public MutableJavaTypeAux from(IJavaTypeAux instance) {
+  public MutableJavaParameterizationAux from(IJavaParameterizationAux instance) {
     Objects.requireNonNull(instance, "instance");
-    if (instance instanceof MutableJavaTypeAux) {
-      from((MutableJavaTypeAux) instance);
+    if (instance instanceof MutableJavaParameterizationAux) {
+      from((MutableJavaParameterizationAux) instance);
       return this;
     }
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link IJavaTypeAux} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link IJavaParameterizationAux} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  public MutableJavaTypeAux from(MutableJavaTypeAux instance) {
+  public MutableJavaParameterizationAux from(MutableJavaParameterizationAux instance) {
     Objects.requireNonNull(instance, "instance");
     return this;
   }
@@ -78,27 +78,27 @@ public final class MutableJavaTypeAux implements IJavaTypeAux {
   }
 
   /**
-   * Converts to {@link JavaTypeAux JavaTypeAux}.
-   * @return An immutable instance of JavaTypeAux
+   * Converts to {@link JavaParameterizationAux JavaParameterizationAux}.
+   * @return An immutable instance of JavaParameterizationAux
    */
-  public final JavaTypeAux toImmutable() {
-    return JavaTypeAux.copyOf(this);
+  public final JavaParameterizationAux toImmutable() {
+    return JavaParameterizationAux.copyOf(this);
   }
 
   /**
-   * This instance is equal to all instances of {@code MutableJavaTypeAux} that have equal attribute values.
+   * This instance is equal to all instances of {@code MutableJavaParameterizationAux} that have equal attribute values.
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
   public boolean equals(@Nullable Object another) {
     if (this == another) return true;
-    if (!(another instanceof MutableJavaTypeAux)) return false;
-    MutableJavaTypeAux other = (MutableJavaTypeAux) another;
+    if (!(another instanceof MutableJavaParameterizationAux)) return false;
+    MutableJavaParameterizationAux other = (MutableJavaParameterizationAux) another;
     return equalTo(other);
   }
 
   @SuppressWarnings("MethodCanBeStatic")
-  private boolean equalTo(MutableJavaTypeAux another) {
+  private boolean equalTo(MutableJavaParameterizationAux another) {
     return true;
   }
 
@@ -108,16 +108,16 @@ public final class MutableJavaTypeAux implements IJavaTypeAux {
    */
   @Override
   public int hashCode() {
-    return -1149880358;
+    return 2085995965;
   }
 
   /**
-   * Generates a string representation of this {@code IJavaTypeAux}.
+   * Generates a string representation of this {@code IJavaParameterizationAux}.
    * If uninitialized, some attribute values may appear as question marks.
    * @return A string representation
    */
   @Override
   public String toString() {
-    return "MutableJavaTypeAux{}";
+    return "MutableJavaParameterizationAux{}";
   }
 }

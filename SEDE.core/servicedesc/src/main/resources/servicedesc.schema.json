@@ -26,46 +26,34 @@
                     "type" : "object",
                     "id" : "urn:jsonschema:de:upb:sede:exec:ISignatureDesc",
                     "properties" : {
-                      "static" : {
-                        "type" : "boolean"
+                      "javaAux" : {
+                        "type" : "object",
+                        "id" : "urn:jsonschema:de:upb:sede:exec:aux:IJavaReflectionAux"
                       },
-                      "inputs" : {
+                      "outputs" : {
                         "type" : "array",
                         "items" : {
                           "type" : "object",
                           "id" : "urn:jsonschema:de:upb:sede:exec:IMethodParameterDesc",
                           "properties" : {
                             "name" : {
-                              "type" : "object",
-                              "id" : "urn:jsonschema:java:util:Optional<java:lang:String>",
-                              "properties" : {
-                                "present" : {
-                                  "type" : "boolean"
-                                }
-                              }
+                              "type" : "string"
                             },
                             "type" : {
                               "type" : "string"
                             },
                             "fixedValue" : {
                               "type" : "string"
-                            },
-                            "mutable" : {
-                              "type" : "boolean"
                             }
                           }
                         }
                       },
-                      "outputs" : {
+                      "inputs" : {
                         "type" : "array",
                         "items" : {
                           "type" : "object",
                           "$ref" : "urn:jsonschema:de:upb:sede:exec:IMethodParameterDesc"
                         }
-                      },
-                      "javaMethodAux" : {
-                        "type" : "object",
-                        "id" : "urn:jsonschema:de:upb:sede:exec:IJavaMethodAux"
                       },
                       "comments" : {
                         "type" : "array",
@@ -75,6 +63,9 @@
                       }
                     }
                   }
+                },
+                "pure" : {
+                  "type" : "boolean"
                 },
                 "simpleName" : {
                   "type" : "string"
@@ -94,9 +85,14 @@
           "abstract" : {
             "type" : "boolean"
           },
-          "javaClassAuxiliaries" : {
+          "stateType" : {
             "type" : "object",
-            "id" : "urn:jsonschema:de:upb:sede:exec:IJavaClassAux"
+            "id" : "urn:jsonschema:java:util:Optional<java:lang:String>",
+            "properties" : {
+              "present" : {
+                "type" : "boolean"
+              }
+            }
           },
           "fieldTypes" : {
             "type" : "object",
@@ -104,9 +100,13 @@
               "type" : "string"
             }
           },
+          "javaAux" : {
+            "type" : "object",
+            "$ref" : "urn:jsonschema:de:upb:sede:exec:aux:IJavaReflectionAux"
+          },
           "pythonClassAuxiliaries" : {
             "type" : "object",
-            "id" : "urn:jsonschema:de:upb:sede:exec:IPythonClassAux"
+            "id" : "urn:jsonschema:de:upb:sede:exec:aux:IPythonClassAux"
           },
           "simpleName" : {
             "type" : "string"
@@ -129,16 +129,16 @@
         "type" : "object",
         "id" : "urn:jsonschema:de:upb:sede:types:IDataTypeDesc",
         "properties" : {
+          "javaTypeAuxiliaries" : {
+            "type" : "object",
+            "id" : "urn:jsonschema:de:upb:sede:types:aux:IJavaTypeAux"
+          },
           "semanticType" : {
             "type" : "string"
           },
-          "javaTypeAuxiliaries" : {
-            "type" : "object",
-            "id" : "urn:jsonschema:de:upb:sede:types:IJavaTypeAux"
-          },
           "pythonTypeAuxiliaries" : {
             "type" : "object",
-            "id" : "urn:jsonschema:de:upb:sede:types:IPythonTypeAux"
+            "id" : "urn:jsonschema:de:upb:sede:types:aux:IPythonTypeAux"
           },
           "simpleName" : {
             "type" : "string"

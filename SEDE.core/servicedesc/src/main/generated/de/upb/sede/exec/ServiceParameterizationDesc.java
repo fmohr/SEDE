@@ -8,6 +8,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
+import de.upb.sede.exec.aux.IJavaParameterizationAux;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.CheckReturnValue;
@@ -197,7 +198,7 @@ public final class ServiceParameterizationDesc implements IServiceParameterizati
    * <pre>
    * ServiceParameterizationDesc.builder()
    *    .addServiceParameterDesc|addAllServiceParameterDesc(de.upb.sede.exec.IServiceParameterDesc) // {@link IServiceParameterizationDesc#getServiceParameterDesc() serviceParameterDesc} elements
-   *    .javaParameterizationAuxiliaries(de.upb.sede.exec.IJavaParameterizationAux | null) // nullable {@link IServiceParameterizationDesc#getJavaParameterizationAuxiliaries() javaParameterizationAuxiliaries}
+   *    .javaParameterizationAuxiliaries(de.upb.sede.exec.aux.IJavaParameterizationAux | null) // nullable {@link IServiceParameterizationDesc#getJavaParameterizationAuxiliaries() javaParameterizationAuxiliaries}
    *    .build();
    * </pre>
    * @return A new ServiceParameterizationDesc builder

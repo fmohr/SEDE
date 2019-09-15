@@ -1,4 +1,4 @@
-package de.upb.sede.exec;
+package de.upb.sede.exec.aux;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -51,7 +51,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
    */
   @Override
   public int hashCode() {
-    return 469549267;
+    return 2085995965;
   }
 
   /**

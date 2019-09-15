@@ -2,7 +2,7 @@ package de.upb.sede
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import de.upb.sede.exec.MutableJavaMethodAux
+
 import de.upb.sede.exec.ServiceDesc
 import spock.lang.Specification
 
@@ -43,20 +43,23 @@ class DescriptionReaderTest extends Specification {
         serviceA.isAbstract()
         serviceA.interfaces == ['abstracts.A']
 
+        serviceA.stateType.isPresent()
+        serviceA.stateType.get() == "a.A"
         serviceA.fieldTypes == ['state' : 'a.A']
         typeA.qualifier == serviceA.qualifier
         typeA.semanticType == 'semantics.A'
 
         when:
-        def method1 = serviceA.methods[0]
-        def aux = MutableJavaMethodAux.create()
-        aux.staticInvocation = true
+        def constructor = serviceA.methods[0]
+        def method1 = serviceA.methods[1]
 
         then:
+        constructor.qualifier == '$construct'
+        constructor.signatures[0].inputs.isEmpty()
+        constructor.signatures[0].outputs[0].type == "a.A"
         method1.simpleName == "method 1"
         method1.signatures.size() == 4
-        aux.staticInvocation()
-        method1.signatures.every {it.javaMethodAux.staticInvocation()}
+        method1.signatures.every {it.javaAux.staticInvocation()}
 
 
         when:
@@ -88,7 +91,7 @@ class DescriptionReaderTest extends Specification {
         sig4.outputs[0].type == "t3"
 
         when:
-        def method2 = serviceA.methods[1]
+        def method2 = serviceA.methods[2]
         def m2sig1 = method2.signatures[0]
         then:
         method2.signatures.size() == 1

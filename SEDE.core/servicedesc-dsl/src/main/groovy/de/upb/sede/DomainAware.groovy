@@ -1,32 +1,44 @@
 package de.upb.sede
 
+import de.upb.sede.exec.MutableSignatureDesc
+import de.upb.sede.exec.aux.JavaReflectionAux
 import groovy.transform.PackageScope
 
-abstract class DomainAware implements GroovyObject{
+abstract class DomainAware<M, T> implements GroovyObject{
 
-    @PackageScope Object model
+    @PackageScope M model
 
     @PackageScope Map binding = new HashMap()
 
     @PackageScope
     abstract String getBindingName();
 
-    @PackageScope
-    void delegateDown(Closure describer) {
+    @PackageScope T topDomain
+
+    def defaults = new Defaults()
+
+    // TODO add tags or extension. An Expando which can be filled with extra informations
+
+    @PackageScope void read(Closure describer) {
         def code = describer.rehydrate(model, this, this)
         code.resolveStrategy = Closure.DELEGATE_FIRST
         code.run()
     }
 
     @PackageScope
-    void delegateDown(DomainAware subDomain, Closure describer) {
+    void delegateDown(DomainAware subDomain, m, Closure describer) {
+        subDomain.topDomain = this
+        subDomain.model = m
         subDomain.binding.putAll(binding)
-        subDomain.binding[getBindingName()] = model
+        subDomain.binding[getBindingName()] = this.model
+        subDomain.defaults = defaults
 
-        subDomain.delegateDown(describer)
+        subDomain.read(describer)
 
         subDomain.binding.remove(getBindingName())
         subDomain.binding.removeAll {it in binding.keySet()}
+        subDomain.model = null
+        subDomain.topDomain = null
     }
 
     def comment(String ... comments) {
@@ -42,5 +54,6 @@ abstract class DomainAware implements GroovyObject{
             throw new MissingPropertyException("No property '" + name + "' in " + getBindingName())
         }
     }
+
 
 }

@@ -1,4 +1,4 @@
-package de.upb.sede.types;
+package de.upb.sede.types.aux;
 
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.Objects;
@@ -108,7 +108,7 @@ public final class MutablePythonTypeAux implements IPythonTypeAux {
    */
   @Override
   public int hashCode() {
-    return 314905376;
+    return 1504174474;
   }
 
   /**

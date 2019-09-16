@@ -138,7 +138,7 @@ public class SDLCompiler {
         List<ServiceCollectionDesc> output = colList.stream()
             .map(col -> SDLUtil.toImmutable(col, ServiceCollectionDesc.class))
             .collect(Collectors.toList());
-        Uncheck.run(() -> { MAPPER.writeValue(outputFile, output); return null; });
+        Uncheck.call(() -> { MAPPER.writeValue(outputFile, output); return null; });
     }
 
     private static String jsonExtension(String fileName) {

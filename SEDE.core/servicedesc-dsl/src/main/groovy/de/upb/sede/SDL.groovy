@@ -1,10 +1,10 @@
 package de.upb.sede
 
+import de.upb.sede.util.SDLUtil
+
 abstract class SDL extends Script {
 
-    Binding binding
-
-    private Map<String, MutableServiceCollectionDesc> cols = new LinkedHashMap<>()
+    Map<String, MutableServiceCollectionDesc> cols = new LinkedHashMap<>()
 
 
     def collection(String qualifier, @DelegatesTo(ServiceCollectionDomain) Closure describer) {
@@ -28,13 +28,6 @@ abstract class SDL extends Script {
 
         return col
     }
-
-    List<ServiceCollectionDesc> getResult() {
-        return cols.values().collect { mutableCollection ->
-            DescriptionReader.MAPPER.convertValue(mutableCollection, ServiceCollectionDesc)
-        }
-    }
-
 
 
 }

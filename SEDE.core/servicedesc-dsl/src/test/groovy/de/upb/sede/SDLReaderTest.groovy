@@ -6,10 +6,10 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import de.upb.sede.exec.ServiceDesc
 import spock.lang.Specification
 
-class DescriptionReaderTest extends Specification {
+class SDLReaderTest extends Specification {
 
 
-    DescriptionReader reader = new DescriptionReader()
+    SDLReader reader = new SDLReader()
 
     static def mapper = new ObjectMapper()
     static  {
@@ -18,7 +18,8 @@ class DescriptionReaderTest extends Specification {
 
 
     def "test read services1"() {
-        def serviceCollections = reader.read(new File("service-descriptions/services1.servicedesc.groovy"))
+        reader.read(new File("service-descriptions/services1.servicedesc.groovy"))
+        def serviceCollections = reader.collections
         println(mapper.writeValueAsString(serviceCollections))
 
         def serviceCollection = serviceCollections[0]

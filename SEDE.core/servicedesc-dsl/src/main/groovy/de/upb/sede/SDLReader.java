@@ -1,19 +1,17 @@
 package de.upb.sede;
 
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.upb.sede.util.FileUtil;
-import groovy.lang.Binding;
+import de.upb.sede.util.*;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class DescriptionReader {
+public class SDLReader {
 
         // TODO use script engine if there are dependencies between the service descriptions
 //    private GroovyScriptEngine scriptEngine;
@@ -28,16 +26,16 @@ public class DescriptionReader {
 //        scriptEngine.setConfig(createConfig());
 //    }
 
-    private Binding binding;
     private GroovyShell shell;
 
+    private final Map<String, MutableServiceCollectionDesc> database;
 
-    public static ObjectMapper MAPPER = new ObjectMapper()
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-    public DescriptionReader() {
-        binding = new Binding();
-        shell = new GroovyShell(this.getClass().getClassLoader(), binding, createConfig());
+    public SDLReader() {
+        this(new HashMap<>());
+    }
+    public SDLReader(Map<String, MutableServiceCollectionDesc> database) {
+        shell = new GroovyShell(this.getClass().getClassLoader(), createConfig());
+        this.database = database;
     }
 
     public static CompilerConfiguration createConfig() {
@@ -52,29 +50,37 @@ public class DescriptionReader {
         return config;
     }
 
-    public List<ServiceCollectionDesc> readFromFilePath(String serviceDescFilePath) {
-        return this.read(FileUtil.readFileAsString(serviceDescFilePath));
+    public void readFromFilePath(String serviceDescFilePath) {
+        this.read(FileUtil.readFileAsString(serviceDescFilePath));
     }
 
 
-    public synchronized  List<ServiceCollectionDesc> read(String serviceDesc) {
+    public void read(String serviceDesc) {
         SDL collector = (SDL) shell.parse(serviceDesc);
         runSDL(collector);
-        return collector.getResult();
     }
 
-    public synchronized List<ServiceCollectionDesc> read(File serviceDesc) throws IOException {
+    public void read(File serviceDesc) throws IOException {
         SDL collector = (SDL) shell.parse(serviceDesc);
         runSDL(collector);
-        return collector.getResult();
     }
 
     private synchronized void runSDL(SDL sdl) {
-        sdl.setBinding(binding);
-        sdl.run();
-        binding.getVariables().clear();
+        if(database != null)
+            sdl.setCols(database);
 
+        sdl.run();
     }
 
+    public List<ServiceCollectionDesc> getCollections() {
+        return database.values()
+            .stream()
+            .map( it ->  SDLUtil.toImmutable(it, ServiceCollectionDesc.class))
+            .collect(Collectors.toList());
+    }
+
+    public  List<MutableServiceCollectionDesc> getMutableCollections() {
+        return new ArrayList<>(database.values());
+    }
 
 }

@@ -1,79 +1,149 @@
 package de.upb.sede;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.json.JsonMapper;
-import de.upb.sede.util.FileUtil;
+import de.upb.sede.util.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class SDLCompiler {
 
+    private final static Logger logger = LoggerFactory.getLogger(SDLCompiler.class);
+
     private  static ObjectMapper MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
 
-    public static void main(String[] args) {
-        // TODO parse compiler options
-        if(args.length!=1) {
-            exit("Provide compile file or directory.");
-        }
+    private boolean mergeInputs;
 
-        String input = args[0];
-        File inputFile = new File(input);
+    private List<File> inputFiles;
+
+    private List<File> outputFiles;
+
+    private LayeredCache<Map<String, MutableServiceCollectionDesc>> collections = Cache.nullableDefaultCache(LinkedHashMap::new);
+
+    public SDLCompiler(List<File> inputFiles, List<File> outputFiles, boolean mergeInputs) {
+        this.inputFiles = new ArrayList<>(Objects.requireNonNull(inputFiles));
+        if(inputFiles.isEmpty()) {
+            throw new IllegalArgumentException("empty input list");
+        }
+        this.outputFiles = new ArrayList<>(Objects.requireNonNull(outputFiles));
+        this.mergeInputs = mergeInputs;
+
+
+        if(mergeInputs){
+            if(outputFiles.isEmpty())
+                throw new IllegalArgumentException("Merging inputs was requested but no output file was provided.");
+            if(outputFiles.size() > 1) {
+                throw new IllegalArgumentException("Merging inputs was requested but multiple output files were provided.");
+            }
+        } else {
+            if(outputFiles.size() > 0 && outputFiles.size() != inputFiles.size()){
+                throw new IllegalArgumentException("Unequal amount of input and output files were defined");
+            }
+        }
+    }
+
+    public synchronized void compile() {
+        while(!inputFiles.isEmpty()) {
+            compileNext();
+        }
+        if(mergeInputs) {
+            dump(nextOutput());
+        }
+    }
+
+    private void compileNext() {
+        File inputFile = nextInput();
+
         if(!inputFile.exists()) {
-            exit("Input file or directory doesn't exist.");
+            throw new IllegalArgumentException("Input file or directory doesn't exist: " + inputFile);
         }
         if(!inputFile.canRead()) {
-            exit("Input file or directory cannot be read.");
+            throw new IllegalArgumentException("Input file or directory cannot be read."  + inputFile);
         }
 
         if(inputFile.isDirectory()) {
-            File inputDir = inputFile;
-            for(String sDFileName : FileUtil.listAllFilesInDir(inputDir.getAbsolutePath(), "(.*?)\\.servicedesc.groovy$")) {
-                String outputFileName = renameEnding(sDFileName, ".groovy", ".json");
-                File sDFile = new File(inputDir, sDFileName);
-                File outputFile = new File(inputDir, outputFileName);
-                try {
-                    compileGroovyToJson(sDFile, outputFile);
-                } catch(Exception ex) {
-                    ex.printStackTrace(System.err);
-                }
-            }
+            compileDir(inputFile);
         } else {
-            String inputFileName = inputFile.getName();
-            if(!inputFileName.endsWith(".servicedesc.groovy")) {
-                exit("Unrecognized input file ending: " + inputFileName);
-            }
-            String outputFileName = renameEnding(inputFileName, ".groovy", ".json");
-            File outputFile = new File(inputFile.getParent(), outputFileName);
+            read(inputFile);
+            if(!mergeInputs)
+                dump(nextOutput(inputFile));
+        }
+    }
 
-            try {
-                compileGroovyToJson(inputFile, outputFile);
-            } catch(Exception ex) {
-                ex.printStackTrace(System.err);
-                exit(ex.getMessage());
+    private void compileDir(File inputDir) {
+        for(String sDFileName : FileUtil.listAllFilesInDir(inputDir.getAbsolutePath(),
+            "(.*?)\\.servicedesc.groovy$")) {
+            File sDFile = new File(inputDir, sDFileName);
+            read(sDFile);
+            if(!mergeInputs) {
+                dump(nextOutputInDir(inputDir, sDFile));
             }
         }
     }
 
-    private static String renameEnding(String fileName, String oldEnding, String newEnding) {
-        return fileName.substring(0, fileName.length() - oldEnding.length()) + newEnding;
+    private void read(File inputFile) {
+        if(!inputFile.getName().endsWith(".servicedesc.groovy")) {
+            throw new IllegalArgumentException("Unknown file ending: " + inputFile);
+        }
+        SDLReader reader = new SDLReader(collections.get());
+        Uncheck.call(() -> {reader.read(inputFile); return null;});
+
+    }
+
+    private File nextInput() {
+        return inputFiles.remove(0);
+    }
+
+    private File nextOutput() {
+        if(outputFiles.isEmpty()) {
+            throw new IllegalStateException("No output files defined.");
+        }
+        return outputFiles.remove(0);
+    }
+
+    private File nextOutput(File inputFile) {
+        if(outputFiles.isEmpty()) {
+            String outputFileName = jsonExtension(inputFile.getName());
+            return new File(inputFile.getParent(), outputFileName);
+        } else {
+            return nextOutput();
+        }
+    }
+
+    private File nextOutputInDir(File inputDir, File inputFile) {
+        File outputDir;
+        if(outputFiles.isEmpty()) {
+            outputDir = inputDir;
+        } else {
+            outputDir = nextOutput();
+            if(!outputDir.exists()) {
+                outputDir.mkdirs();
+            } else if(!outputDir.isDirectory()) {
+                throw new IllegalArgumentException("Expected output directory, got: " + outputDir.getPath());
+            }
+        }
+        return new File(outputDir, jsonExtension(inputFile.getName()));
     }
 
 
-
-    public static void compileGroovyToJson(File sDFile, File outputFile) throws IOException {
-        DescriptionReader reader = new DescriptionReader();
-        List<ServiceCollectionDesc> collections = reader.read(sDFile);
-        MAPPER.writeValue(outputFile, collections);
+    private void dump(File outputFile)  {
+        Map<String, MutableServiceCollectionDesc> colMap = collections.get();
+        collections.set(null);
+        FileUtil.prepareOutputFile(outputFile);
+        List<MutableServiceCollectionDesc> colList = new ArrayList<>(colMap.values());
+        List<ServiceCollectionDesc> output = colList.stream()
+            .map(col -> SDLUtil.toImmutable(col, ServiceCollectionDesc.class))
+            .collect(Collectors.toList());
+        Uncheck.run(() -> { MAPPER.writeValue(outputFile, output); return null; });
     }
 
-
-    public static void exit(String errorMessage) {
-        System.err.println(errorMessage);
-        System.exit(1);
+    private static String jsonExtension(String fileName) {
+        return FileUtil.withExtension(fileName, ".json");
     }
+
 
 }

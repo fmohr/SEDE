@@ -56,15 +56,6 @@ public final class Uncheck extends RuntimeException {
         }
     }
 
-    public static void run(Callable runnable) {
-        try{
-            runnable.call();
-        } catch (Throwable e) {
-            throw throwAsUncheckedException(e);
-        }
-    }
-
-
     public static <T> List<T> callEach(final Callable<T>... callables) {
         if(callables == null || callables.length == 0) {
             return Collections.EMPTY_LIST;

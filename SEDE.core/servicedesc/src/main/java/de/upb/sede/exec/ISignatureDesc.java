@@ -22,4 +22,9 @@ public interface ISignatureDesc extends ICommented {
     @Nullable
     IJavaReflectionAux getJavaAux();
 
+    @Value.Default
+    default boolean isPure() {
+        return false;
+    }
+
 }

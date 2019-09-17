@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.ICommented;
@@ -35,16 +36,29 @@ public final class SignatureDesc implements ISignatureDesc {
   private final ImmutableList<IMethodParameterDesc> inputs;
   private final ImmutableList<IMethodParameterDesc> outputs;
   private final @Nullable IJavaReflectionAux javaAux;
+  private final boolean isPure;
   private final ImmutableList<String> comments;
+
+  private SignatureDesc(SignatureDesc.Builder builder) {
+    this.inputs = builder.inputs.build();
+    this.outputs = builder.outputs.build();
+    this.javaAux = builder.javaAux;
+    this.comments = builder.comments.build();
+    this.isPure = builder.isPureIsSet()
+        ? builder.isPure
+        : ISignatureDesc.super.isPure();
+  }
 
   private SignatureDesc(
       ImmutableList<IMethodParameterDesc> inputs,
       ImmutableList<IMethodParameterDesc> outputs,
       @Nullable IJavaReflectionAux javaAux,
+      boolean isPure,
       ImmutableList<String> comments) {
     this.inputs = inputs;
     this.outputs = outputs;
     this.javaAux = javaAux;
+    this.isPure = isPure;
     this.comments = comments;
   }
 
@@ -76,6 +90,15 @@ public final class SignatureDesc implements ISignatureDesc {
   }
 
   /**
+   * @return The value of the {@code isPure} attribute
+   */
+  @JsonProperty("isPure")
+  @Override
+  public boolean isPure() {
+    return isPure;
+  }
+
+  /**
    * @return The value of the {@code comments} attribute
    */
   @JsonProperty("comments")
@@ -91,7 +114,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withInputs(IMethodParameterDesc... elements) {
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(newValue, this.outputs, this.javaAux, this.comments);
+    return new SignatureDesc(newValue, this.outputs, this.javaAux, this.isPure, this.comments);
   }
 
   /**
@@ -103,7 +126,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withInputs(Iterable<? extends IMethodParameterDesc> elements) {
     if (this.inputs == elements) return this;
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(newValue, this.outputs, this.javaAux, this.comments);
+    return new SignatureDesc(newValue, this.outputs, this.javaAux, this.isPure, this.comments);
   }
 
   /**
@@ -113,7 +136,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withOutputs(IMethodParameterDesc... elements) {
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, newValue, this.javaAux, this.comments);
+    return new SignatureDesc(this.inputs, newValue, this.javaAux, this.isPure, this.comments);
   }
 
   /**
@@ -125,7 +148,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withOutputs(Iterable<? extends IMethodParameterDesc> elements) {
     if (this.outputs == elements) return this;
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, newValue, this.javaAux, this.comments);
+    return new SignatureDesc(this.inputs, newValue, this.javaAux, this.isPure, this.comments);
   }
 
   /**
@@ -136,7 +159,18 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withJavaAux(@Nullable IJavaReflectionAux value) {
     if (this.javaAux == value) return this;
-    return new SignatureDesc(this.inputs, this.outputs, value, this.comments);
+    return new SignatureDesc(this.inputs, this.outputs, value, this.isPure, this.comments);
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link ISignatureDesc#isPure() isPure} attribute.
+   * A value equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for isPure
+   * @return A modified copy of the {@code this} object
+   */
+  public final SignatureDesc withIsPure(boolean value) {
+    if (this.isPure == value) return this;
+    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, value, this.comments);
   }
 
   /**
@@ -146,7 +180,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withComments(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, newValue);
+    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, this.isPure, newValue);
   }
 
   /**
@@ -158,7 +192,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withComments(Iterable<String> elements) {
     if (this.comments == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, newValue);
+    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, this.isPure, newValue);
   }
 
   /**
@@ -176,11 +210,12 @@ public final class SignatureDesc implements ISignatureDesc {
     return inputs.equals(another.inputs)
         && outputs.equals(another.outputs)
         && Objects.equals(javaAux, another.javaAux)
+        && isPure == another.isPure
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaAux}, {@code comments}.
+   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaAux}, {@code isPure}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -189,6 +224,7 @@ public final class SignatureDesc implements ISignatureDesc {
     h += (h << 5) + inputs.hashCode();
     h += (h << 5) + outputs.hashCode();
     h += (h << 5) + Objects.hashCode(javaAux);
+    h += (h << 5) + Booleans.hashCode(isPure);
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -204,6 +240,7 @@ public final class SignatureDesc implements ISignatureDesc {
         .add("inputs", inputs)
         .add("outputs", outputs)
         .add("javaAux", javaAux)
+        .add("isPure", isPure)
         .add("comments", comments)
         .toString();
   }
@@ -221,6 +258,8 @@ public final class SignatureDesc implements ISignatureDesc {
     @Nullable List<IMethodParameterDesc> inputs = ImmutableList.of();
     @Nullable List<IMethodParameterDesc> outputs = ImmutableList.of();
     @Nullable IJavaReflectionAux javaAux;
+    boolean isPure;
+    boolean isPureIsSet;
     @Nullable List<String> comments = ImmutableList.of();
     @JsonProperty("inputs")
     public void setInputs(List<IMethodParameterDesc> inputs) {
@@ -234,6 +273,11 @@ public final class SignatureDesc implements ISignatureDesc {
     public void setJavaAux(@Nullable IJavaReflectionAux javaAux) {
       this.javaAux = javaAux;
     }
+    @JsonProperty("isPure")
+    public void setIsPure(boolean isPure) {
+      this.isPure = isPure;
+      this.isPureIsSet = true;
+    }
     @JsonProperty("comments")
     public void setComments(List<String> comments) {
       this.comments = comments;
@@ -244,6 +288,8 @@ public final class SignatureDesc implements ISignatureDesc {
     public List<IMethodParameterDesc> getOutputs() { throw new UnsupportedOperationException(); }
     @Override
     public IJavaReflectionAux getJavaAux() { throw new UnsupportedOperationException(); }
+    @Override
+    public boolean isPure() { throw new UnsupportedOperationException(); }
     @Override
     public List<String> getComments() { throw new UnsupportedOperationException(); }
   }
@@ -265,6 +311,9 @@ public final class SignatureDesc implements ISignatureDesc {
     }
     if (json.javaAux != null) {
       builder.javaAux(json.javaAux);
+    }
+    if (json.isPureIsSet) {
+      builder.isPure(json.isPure);
     }
     if (json.comments != null) {
       builder.addAllComments(json.comments);
@@ -295,6 +344,7 @@ public final class SignatureDesc implements ISignatureDesc {
    *    .addInputs|addAllInputs(de.upb.sede.exec.IMethodParameterDesc) // {@link ISignatureDesc#getInputs() inputs} elements
    *    .addOutputs|addAllOutputs(de.upb.sede.exec.IMethodParameterDesc) // {@link ISignatureDesc#getOutputs() outputs} elements
    *    .javaAux(de.upb.sede.exec.aux.IJavaReflectionAux | null) // nullable {@link ISignatureDesc#getJavaAux() javaAux}
+   *    .isPure(boolean) // optional {@link ISignatureDesc#isPure() isPure}
    *    .addComments|addAllComments(String) // {@link ISignatureDesc#getComments() comments} elements
    *    .build();
    * </pre>
@@ -314,9 +364,13 @@ public final class SignatureDesc implements ISignatureDesc {
   @Generated(from = "ISignatureDesc", generator = "Immutables")
   @NotThreadSafe
   public static final class Builder {
+    private static final long OPT_BIT_IS_PURE = 0x1L;
+    private long optBits;
+
     private ImmutableList.Builder<IMethodParameterDesc> inputs = ImmutableList.builder();
     private ImmutableList.Builder<IMethodParameterDesc> outputs = ImmutableList.builder();
     private @Nullable IJavaReflectionAux javaAux;
+    private boolean isPure;
     private ImmutableList.Builder<String> comments = ImmutableList.builder();
 
     private Builder() {
@@ -336,6 +390,7 @@ public final class SignatureDesc implements ISignatureDesc {
       if (javaAuxValue != null) {
         javaAux(javaAuxValue);
       }
+      isPure(instance.isPure());
       addAllComments(instance.getComments());
       return this;
     }
@@ -380,6 +435,7 @@ public final class SignatureDesc implements ISignatureDesc {
         if (javaAuxValue != null) {
           javaAux(javaAuxValue);
         }
+        isPure(instance.isPure());
         addAllInputs(instance.getInputs());
       }
     }
@@ -489,6 +545,20 @@ public final class SignatureDesc implements ISignatureDesc {
     }
 
     /**
+     * Initializes the value for the {@link ISignatureDesc#isPure() isPure} attribute.
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link ISignatureDesc#isPure() isPure}.</em>
+     * @param isPure The value for isPure 
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("isPure")
+    public final Builder isPure(boolean isPure) {
+      this.isPure = isPure;
+      optBits |= OPT_BIT_IS_PURE;
+      return this;
+    }
+
+    /**
      * Adds one element to {@link ISignatureDesc#getComments() comments} list.
      * @param element A comments element
      * @return {@code this} builder for use in a chained invocation
@@ -540,7 +610,11 @@ public final class SignatureDesc implements ISignatureDesc {
      * @throws java.lang.IllegalStateException if any required attributes are missing
      */
     public SignatureDesc build() {
-      return new SignatureDesc(inputs.build(), outputs.build(), javaAux, comments.build());
+      return new SignatureDesc(this);
+    }
+
+    private boolean isPureIsSet() {
+      return (optBits & OPT_BIT_IS_PURE) != 0;
     }
   }
 }

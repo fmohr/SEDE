@@ -145,5 +145,4 @@ public class SDLCompiler {
         return FileUtil.withExtension(fileName, ".json");
     }
 
-
 }

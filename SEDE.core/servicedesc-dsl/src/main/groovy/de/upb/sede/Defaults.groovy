@@ -9,7 +9,7 @@ class Defaults {
     /**
      * Default constructor signature describer.
      */
-    def Closure constructor = {
+    def static final Closure DEFAULT_CONSTRUCTOR = {
         /*
          * Add constructor invocation hint:
          */
@@ -29,11 +29,19 @@ class Defaults {
         )
     }
 
-    def Closure method = Closure.IDENTITY
+    static final Closure DEFAULT_METHOD = Closure.IDENTITY
 
-//    TODO clean this up.
-//        { MutableSignatureDesc desc ->
-//
-//    }
+
+    def constructor = DEFAULT_CONSTRUCTOR
+
+    def method = DEFAULT_METHOD
+
+    def clearMethod() {
+        method = DEFAULT_CONSTRUCTOR
+    }
+
+    def clearConstructor() {
+        constructor = DEFAULT_CONSTRUCTOR
+    }
 
 }

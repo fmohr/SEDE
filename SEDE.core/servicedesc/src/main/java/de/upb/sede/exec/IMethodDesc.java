@@ -22,9 +22,4 @@ public interface IMethodDesc extends IQualifiable, ICommented {
 
     List<ISignatureDesc> getSignatures();
 
-    @Value.Default
-    default boolean isPure() {
-        return false;
-    }
-
 }

@@ -2,6 +2,7 @@ package de.upb.sede.exec;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import de.upb.sede.ICommented;
 import de.upb.sede.exec.aux.IJavaReflectionAux;
@@ -26,9 +27,13 @@ import org.immutables.value.Generated;
 @javax.annotation.Generated({"Modifiables.generator", "ISignatureDesc"})
 @NotThreadSafe
 public final class MutableSignatureDesc implements ISignatureDesc {
+  private static final long OPT_BIT_IS_PURE = 0x1L;
+  private long optBits;
+
   private final ArrayList<IMethodParameterDesc> inputs = new ArrayList<IMethodParameterDesc>();
   private final ArrayList<IMethodParameterDesc> outputs = new ArrayList<IMethodParameterDesc>();
   private @Nullable IJavaReflectionAux javaAux;
+  private boolean isPure;
   private final ArrayList<String> comments = new ArrayList<String>();
 
   private MutableSignatureDesc() {}
@@ -69,6 +74,17 @@ public final class MutableSignatureDesc implements ISignatureDesc {
   }
 
   /**
+   * @return assigned or, otherwise, newly computed, not cached value of {@code isPure} attribute
+   */
+  @JsonProperty("isPure")
+  @Override
+  public final boolean isPure() {
+    return isPureIsSet()
+        ? isPure
+        : ISignatureDesc.super.isPure();
+  }
+
+  /**
    * @return modifiable list {@code comments}
    */
   @JsonProperty("comments")
@@ -83,9 +99,11 @@ public final class MutableSignatureDesc implements ISignatureDesc {
    */
   @CanIgnoreReturnValue
   public MutableSignatureDesc clear() {
+    optBits = 0;
     inputs.clear();
     outputs.clear();
     javaAux = null;
+    isPure = false;
     comments.clear();
     return this;
   }
@@ -137,6 +155,7 @@ public final class MutableSignatureDesc implements ISignatureDesc {
       if (javaAuxValue != null) {
         setJavaAux(javaAuxValue);
       }
+      setIsPure(instance.isPure());
       addAllComments(instance.getComments());
       return;
     }
@@ -151,6 +170,7 @@ public final class MutableSignatureDesc implements ISignatureDesc {
       if (javaAuxValue != null) {
         setJavaAux(javaAuxValue);
       }
+      setIsPure(instance.isPure());
       addAllInputs(instance.getInputs());
     }
   }
@@ -267,6 +287,19 @@ public final class MutableSignatureDesc implements ISignatureDesc {
   }
 
   /**
+   * Assigns a value to the {@link ISignatureDesc#isPure() isPure} attribute.
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link ISignatureDesc#isPure() isPure}.</em>
+   * @param isPure The value for isPure
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableSignatureDesc setIsPure(boolean isPure) {
+    this.isPure = isPure;
+    optBits |= OPT_BIT_IS_PURE;
+    return this;
+  }
+
+  /**
    * Adds one element to {@link ISignatureDesc#getComments() comments} list.
    * @param element The comments element
    * @return {@code this} for use in a chained invocation
@@ -316,6 +349,24 @@ public final class MutableSignatureDesc implements ISignatureDesc {
     return this;
   }
 
+  /**
+   * Returns {@code true} if the default attribute {@link ISignatureDesc#isPure() isPure} is set.
+   * @return {@code true} if set
+   */
+  public final boolean isPureIsSet() {
+    return (optBits & OPT_BIT_IS_PURE) != 0;
+  }
+
+  /**
+   * Reset an attribute to its initial value.
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableSignatureDesc unsetIsPure() {
+    optBits |= 0;
+    isPure = false;
+    return this;
+  }
 
   /**
    * Returns {@code true} if all required attributes are set, indicating that the object is initialized.
@@ -346,14 +397,16 @@ public final class MutableSignatureDesc implements ISignatureDesc {
   }
 
   private boolean equalTo(MutableSignatureDesc another) {
+    boolean isPure = isPure();
     return inputs.equals(another.inputs)
         && outputs.equals(another.outputs)
         && Objects.equals(javaAux, another.javaAux)
+        && isPure == another.isPure()
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaAux}, {@code comments}.
+   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaAux}, {@code isPure}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -362,6 +415,8 @@ public final class MutableSignatureDesc implements ISignatureDesc {
     h += (h << 5) + inputs.hashCode();
     h += (h << 5) + outputs.hashCode();
     h += (h << 5) + Objects.hashCode(javaAux);
+    boolean isPure = isPure();
+    h += (h << 5) + Booleans.hashCode(isPure);
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -377,6 +432,7 @@ public final class MutableSignatureDesc implements ISignatureDesc {
         .add("inputs", getInputs())
         .add("outputs", getOutputs())
         .add("javaAux", getJavaAux())
+        .add("isPure", isPure())
         .add("comments", getComments())
         .toString();
   }

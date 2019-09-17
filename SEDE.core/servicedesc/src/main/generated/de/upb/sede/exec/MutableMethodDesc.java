@@ -2,7 +2,6 @@ package de.upb.sede.exec;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
@@ -28,12 +27,9 @@ import org.immutables.value.Generated;
 @NotThreadSafe
 public final class MutableMethodDesc implements IMethodDesc {
   private static final long INIT_BIT_QUALIFIER = 0x1L;
-  private static final long OPT_BIT_IS_PURE = 0x1L;
   private long initBits = 0x1L;
-  private long optBits;
 
   private final ArrayList<ISignatureDesc> signatures = new ArrayList<ISignatureDesc>();
-  private boolean isPure;
   private String qualifier;
   private String simpleName;
   private final ArrayList<String> comments = new ArrayList<String>();
@@ -55,17 +51,6 @@ public final class MutableMethodDesc implements IMethodDesc {
   @Override
   public final List<ISignatureDesc> getSignatures() {
     return signatures;
-  }
-
-  /**
-   * @return assigned or, otherwise, newly computed, not cached value of {@code isPure} attribute
-   */
-  @JsonProperty("isPure")
-  @Override
-  public final boolean isPure() {
-    return isPureIsSet()
-        ? isPure
-        : IMethodDesc.super.isPure();
   }
 
   /**
@@ -107,9 +92,7 @@ public final class MutableMethodDesc implements IMethodDesc {
   @CanIgnoreReturnValue
   public MutableMethodDesc clear() {
     initBits = 0x1L;
-    optBits = 0;
     signatures.clear();
-    isPure = false;
     qualifier = null;
     simpleName = null;
     comments.clear();
@@ -170,7 +153,6 @@ public final class MutableMethodDesc implements IMethodDesc {
     if (object instanceof MutableMethodDesc) {
       MutableMethodDesc instance = (MutableMethodDesc) object;
       addAllSignatures(instance.getSignatures());
-      setIsPure(instance.isPure());
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
@@ -184,7 +166,6 @@ public final class MutableMethodDesc implements IMethodDesc {
     }
     if (object instanceof IMethodDesc) {
       IMethodDesc instance = (IMethodDesc) object;
-      setIsPure(instance.isPure());
       addAllSignatures(instance.getSignatures());
     }
     if (object instanceof IQualifiable) {
@@ -241,19 +222,6 @@ public final class MutableMethodDesc implements IMethodDesc {
     for (ISignatureDesc e : elements) {
       addSignatures(e);
     }
-    return this;
-  }
-
-  /**
-   * Assigns a value to the {@link IMethodDesc#isPure() isPure} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IMethodDesc#isPure() isPure}.</em>
-   * @param isPure The value for isPure
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableMethodDesc setIsPure(boolean isPure) {
-    this.isPure = isPure;
-    optBits |= OPT_BIT_IS_PURE;
     return this;
   }
 
@@ -340,14 +308,6 @@ public final class MutableMethodDesc implements IMethodDesc {
   }
 
   /**
-   * Returns {@code true} if the default attribute {@link IMethodDesc#isPure() isPure} is set.
-   * @return {@code true} if set
-   */
-  public final boolean isPureIsSet() {
-    return (optBits & OPT_BIT_IS_PURE) != 0;
-  }
-
-  /**
    * Returns {@code true} if the default attribute {@link IMethodDesc#getSimpleName() simpleName} is set.
    * @return {@code true} if set
    */
@@ -364,16 +324,6 @@ public final class MutableMethodDesc implements IMethodDesc {
   public final MutableMethodDesc unsetQualifier() {
     initBits |= INIT_BIT_QUALIFIER;
     qualifier = null;
-    return this;
-  }
-  /**
-   * Reset an attribute to its initial value.
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public final MutableMethodDesc unsetIsPure() {
-    optBits |= 0;
-    isPure = false;
     return this;
   }
 
@@ -423,25 +373,21 @@ public final class MutableMethodDesc implements IMethodDesc {
   }
 
   private boolean equalTo(MutableMethodDesc another) {
-    boolean isPure = isPure();
     String simpleName = getSimpleName();
     return signatures.equals(another.signatures)
-        && isPure == another.isPure()
         && qualifier.equals(another.qualifier)
         && simpleName.equals(another.getSimpleName())
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code signatures}, {@code isPure}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code signatures}, {@code qualifier}, {@code simpleName}, {@code comments}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
     h += (h << 5) + signatures.hashCode();
-    boolean isPure = isPure();
-    h += (h << 5) + Booleans.hashCode(isPure);
     h += (h << 5) + qualifier.hashCode();
     String simpleName = getSimpleName();
     h += (h << 5) + simpleName.hashCode();
@@ -458,7 +404,6 @@ public final class MutableMethodDesc implements IMethodDesc {
   public String toString() {
     return MoreObjects.toStringHelper("MutableMethodDesc")
         .add("signatures", getSignatures())
-        .add("isPure", isPure())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
         .add("simpleName", getSimpleName())
         .add("comments", getComments())

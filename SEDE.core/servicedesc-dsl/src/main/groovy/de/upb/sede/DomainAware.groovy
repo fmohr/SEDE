@@ -47,7 +47,14 @@ abstract class DomainAware<M, T> implements GroovyObject{
         }
     }
 
+    def setInfo(String commentBlock) {
+        model.comments += commentBlock.trim()
+    }
+
     def propertyMissing(String name) {
+        if(name == this.bindingName) {
+            return model
+        }
         if(name in binding) {
             return binding[name]
         } else {

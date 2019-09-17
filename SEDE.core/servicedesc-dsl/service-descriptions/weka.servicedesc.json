@@ -1,8 +1,6 @@
 [ {
   "services" : [ {
-    "stateType" : {
-      "present" : false
-    },
+    "stateType" : null,
     "methods" : [ {
       "signatures" : [ {
         "inputs" : [ {
@@ -28,12 +26,12 @@
           "methodName" : null,
           "className" : null
         },
-        "comments" : [ ]
+        "comments" : [ ],
+        "isPure" : false
       } ],
       "qualifier" : "labelDataset",
       "simpleName" : "labelDataset",
-      "comments" : [ ],
-      "isPure" : false
+      "comments" : [ ]
     }, {
       "signatures" : [ {
         "inputs" : [ {
@@ -59,12 +57,12 @@
           "methodName" : null,
           "className" : null
         },
-        "comments" : [ ]
+        "comments" : [ ],
+        "isPure" : false
       } ],
       "qualifier" : "setClassIndex",
       "simpleName" : "setClassIndex",
-      "comments" : [ ],
-      "isPure" : false
+      "comments" : [ ]
     }, {
       "signatures" : [ {
         "inputs" : [ {
@@ -90,12 +88,12 @@
           "methodName" : null,
           "className" : null
         },
-        "comments" : [ ]
+        "comments" : [ ],
+        "isPure" : false
       } ],
       "qualifier" : "classIndicesToNames",
       "simpleName" : "classIndicesToNames",
-      "comments" : [ ],
-      "isPure" : false
+      "comments" : [ ]
     }, {
       "signatures" : [ {
         "inputs" : [ {
@@ -116,12 +114,12 @@
           "methodName" : null,
           "className" : null
         },
-        "comments" : [ ]
+        "comments" : [ ],
+        "isPure" : false
       } ],
       "qualifier" : "classIndicesPrettify",
       "simpleName" : "classIndicesPrettify",
-      "comments" : [ ],
-      "isPure" : false
+      "comments" : [ ]
     }, {
       "signatures" : [ {
         "inputs" : [ {
@@ -142,12 +140,12 @@
           "methodName" : null,
           "className" : null
         },
-        "comments" : [ ]
+        "comments" : [ ],
+        "isPure" : false
       } ],
       "qualifier" : "categorize",
       "simpleName" : "categorize",
-      "comments" : [ ],
-      "isPure" : false
+      "comments" : [ ]
     } ],
     "interfaces" : [ ],
     "fieldTypes" : { },
@@ -158,9 +156,7 @@
     "comments" : [ ],
     "isAbstract" : false
   }, {
-    "stateType" : {
-      "present" : true
-    },
+    "stateType" : "de.upb.sede.services.mls.DataSetService",
     "methods" : [ {
       "signatures" : [ {
         "inputs" : [ {
@@ -176,23 +172,148 @@
           "callByValue" : true
         } ],
         "javaAux" : null,
-        "comments" : [ ]
+        "comments" : [ ],
+        "isPure" : false
       } ],
       "qualifier" : "$construct",
       "simpleName" : "$construct",
-      "comments" : [ ],
-      "isPure" : false
+      "comments" : [ ]
     }, {
       "signatures" : [ {
-        "inputs" : [ ],
+        "inputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
         "outputs" : [ ],
-        "javaAux" : null,
-        "comments" : [ ]
+        "javaAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null
+        },
+        "comments" : [ ],
+        "isPure" : false
       } ],
       "qualifier" : "createUnique",
       "simpleName" : "createUnique",
-      "comments" : [ ],
-      "isPure" : false
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "String",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "de.upb.sede.services.mls.DataSetService",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null
+        },
+        "comments" : [ ],
+        "isPure" : false
+      } ],
+      "qualifier" : "createNamed",
+      "simpleName" : "createNamed",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaAux" : null,
+        "comments" : [ ],
+        "isPure" : true
+      } ],
+      "qualifier" : "all",
+      "simpleName" : "all",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaAux" : null,
+        "comments" : [ ],
+        "isPure" : true
+      } ],
+      "qualifier" : "allLabeled",
+      "simpleName" : "allLabeled",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaAux" : null,
+        "comments" : [ ],
+        "isPure" : true
+      } ],
+      "qualifier" : "fromIndices",
+      "simpleName" : "fromIndices",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaAux" : null,
+        "comments" : [ ],
+        "isPure" : true
+      } ],
+      "qualifier" : "fromIndicesLabeled",
+      "simpleName" : "fromIndicesLabeled",
+      "comments" : [ ]
     } ],
     "interfaces" : [ ],
     "fieldTypes" : {
@@ -204,6 +325,33 @@
     "simpleName" : "de.upb.sede.services.mls.DataSetService",
     "comments" : [ ],
     "isAbstract" : false
+  }, {
+    "stateType" : null,
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ ],
+        "javaAux" : null,
+        "comments" : [ ],
+        "isPure" : false
+      } ],
+      "qualifier" : "set_options",
+      "simpleName" : "set_options",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : { },
+    "javaAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "qualifier" : "$list_option_handler_config$",
+    "simpleName" : "$list_option_handler_config$",
+    "comments" : [ ],
+    "isAbstract" : true
   } ],
   "dataTypes" : [ {
     "semanticType" : "de.upb.sede.services.mls.DataSetService",

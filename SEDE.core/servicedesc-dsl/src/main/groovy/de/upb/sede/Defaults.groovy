@@ -21,12 +21,9 @@ class Defaults {
         /*
          * Add output type:
          */
-        def serviceName = service.qualifier as String
-        addOutputTypes( service.stateType
-            .orElseThrow({
-                new IllegalStateException("Cannot declare constructor before declaring state type: " + serviceName)
-            })
-        )
+        if(service.stateType != null) {
+            addOutputTypes(service.stateType)
+        }
     }
 
     static final Closure DEFAULT_METHOD = Closure.IDENTITY

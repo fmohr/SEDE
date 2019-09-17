@@ -38,8 +38,10 @@ public interface IServiceDesc extends IQualifiable, ICommented {
     @Nullable
     IPythonClassAux getPythonClassAuxiliaries();
 
-    default Optional<String> getStateType() {
-        return Optional.ofNullable(getFieldTypes().getOrDefault(STATE_FIELD, null));
+    @Nullable
+    @Value.Auxiliary
+    default String getStateType() {
+        return getFieldTypes().getOrDefault(STATE_FIELD, null);
     }
 
 }

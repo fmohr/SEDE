@@ -16,6 +16,14 @@ class SDLReaderTest extends Specification {
         mapper.enable(SerializationFeature.INDENT_OUTPUT)
     };
 
+    def "sdl compile weka"() {
+        SDLCli.main(
+            "-i service-descriptions/weka.servicedesc.groovy".split()
+        )
+        expect:
+        true
+    }
+
 
     def "test read services1"() {
         reader.read(new File("service-descriptions/services1.servicedesc.groovy"))
@@ -44,8 +52,8 @@ class SDLReaderTest extends Specification {
         serviceA.isAbstract()
         serviceA.interfaces == ['abstracts.A']
 
-        serviceA.stateType.isPresent()
-        serviceA.stateType.get() == "a.A"
+        serviceA.stateType != null
+        serviceA.stateType == "a.A"
         serviceA.fieldTypes == ['state' : 'a.A']
         typeA.qualifier == serviceA.qualifier
         typeA.semanticType == 'semantics.A'

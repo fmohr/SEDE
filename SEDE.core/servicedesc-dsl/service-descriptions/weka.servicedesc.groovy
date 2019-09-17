@@ -4,17 +4,15 @@ def str = 'String'
 def list = 'builtin.List'
 
 collection ("weka.ml") {
+    simpleName = "Weka Library"
 
-    comment """
-        Weka is a collection of machine learning algorithms for data mining tasks. It contains tools for data preparation, classification, regression, clustering, association rules mining, and visualization.""",
-    """
-        Weka is open source software issued under the GNU General Public License.""",
-    """
+    info = """
+        Weka is a collection of machine learning algorithms for data mining tasks. It contains tools for data preparation, classification, regression, clustering, association rules mining, and visualization.
+        
+        Weka is open source software issued under the GNU General Public License.
+        
         Website: https://www.cs.waikato.ac.nz/~ml/weka/index.html
     """
-    comments = comments.collect { it.trim() }
-
-    simpleName = "Weka Library"
 
     /*
      * Services:
@@ -78,7 +76,7 @@ collection ("weka.ml") {
          * All following methods are pure.
          * Set a default method configuration:
          */
-        defaults.method = { pure = true }
+        defaults.method = { isPure = true }
         method name: 'all',
                 outputs: [Instances]
 
@@ -99,7 +97,7 @@ collection ("weka.ml") {
     }
 
     service('$list_option_handler_config$') {
-        abstact = true
+        isAbstract = true
         method name: 'set_options',
                 inputs:[list]
     }

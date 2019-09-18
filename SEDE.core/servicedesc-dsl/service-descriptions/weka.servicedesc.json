@@ -352,6 +352,118 @@
     "simpleName" : "$list_option_handler_config$",
     "comments" : [ ],
     "isAbstract" : true
+  }, {
+    "stateType" : null,
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.Dict",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ ],
+        "javaAux" : null,
+        "comments" : [ ],
+        "isPure" : false
+      } ],
+      "qualifier" : "set_options_dict",
+      "simpleName" : "set_options_dict",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : { },
+    "javaAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "qualifier" : "$dict_option_handler_config$",
+    "simpleName" : "$dict_option_handler_config$",
+    "comments" : [ ],
+    "isAbstract" : true
+  }, {
+    "stateType" : null,
+    "methods" : [ {
+      "signatures" : [ ],
+      "qualifier" : "train",
+      "simpleName" : "train",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ ],
+      "qualifier" : "predict",
+      "simpleName" : "predict",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : { },
+    "javaAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "qualifier" : "$base_classifier_config$",
+    "simpleName" : "$base_classifier_config$",
+    "comments" : [ ],
+    "isAbstract" : true
+  }, {
+    "stateType" : null,
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "String",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ ],
+        "javaAux" : null,
+        "comments" : [ ],
+        "isPure" : false
+      } ],
+      "qualifier" : "$construct",
+      "simpleName" : "$construct",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ ],
+        "javaAux" : null,
+        "comments" : [ ],
+        "isPure" : false
+      } ],
+      "qualifier" : "train",
+      "simpleName" : "train",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "Bool",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ ],
+        "javaAux" : null,
+        "comments" : [ ],
+        "isPure" : false
+      } ],
+      "qualifier" : "predict",
+      "simpleName" : "predict",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ "$list_option_handler_config$", "$dict_option_handler_config$", "$base_classifier_config$" ],
+    "fieldTypes" : { },
+    "javaAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "qualifier" : "de.upb.sede.services.mls.WekaBClassifierWrapper",
+    "simpleName" : "de.upb.sede.services.mls.WekaBClassifierWrapper",
+    "comments" : [ ],
+    "isAbstract" : false
   } ],
   "dataTypes" : [ {
     "semanticType" : "de.upb.sede.services.mls.DataSetService",
@@ -361,7 +473,7 @@
     "simpleName" : "de.upb.sede.services.mls.DataSetService",
     "comments" : [ ]
   } ],
-  "comments" : [ "Weka is a collection of machine learning algorithms for data mining tasks. It contains tools for data preparation, classification, regression, clustering, association rules mining, and visualization.", "Weka is open source software issued under the GNU General Public License.", "Website: https://www.cs.waikato.ac.nz/~ml/weka/index.html" ],
+  "comments" : [ "Weka is a collection of machine learning algorithms for data mining tasks. It contains tools for data preparation, classification, regression, clustering, association rules mining, and visualization.\n        \n        Weka is open source software issued under the GNU General Public License.\n        \n        Website: https://www.cs.waikato.ac.nz/~ml/weka/index.html" ],
   "qualifier" : "weka.ml",
   "simpleName" : "Weka Library"
 } ]

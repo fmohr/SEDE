@@ -18,10 +18,20 @@ class MethodDomain extends DomainAware<MutableMethodDesc, ServiceDomain> {
         if("inputs" in types || "ins" in types) {
             List<String> inputs = "inputs" in types? types["inputs"] : types["ins"]
             newSign.inputs += inputs.collect { MethodParameterDesc.builder().type(it).build() }
+        } else if("input" in types) {
+            def inputType = MethodParameterDesc.builder()
+                .type(types["input"] as String)
+                .build()
+            newSign.inputs += inputType
         }
         if("outputs" in types || "outs" in types) {
             List<String> outputs = "outputs" in types? types["outputs"] : types["outs"]
             newSign.outputs += outputs.collect { MethodParameterDesc.builder().type(it).build() }
+        } else if("output" in types) {
+            def outputType = MethodParameterDesc.builder()
+                .type(types["output"] as String)
+                .build()
+            newSign.outputs += outputType
         }
         return addSignature(newSign, signatureDescriber)
     }

@@ -1,7 +1,9 @@
 def Instances = 'LabeledInstances'
 def number = 'Number'
 def str = 'String'
+def bool = 'Bool'
 def list = 'builtin.List'
+def dict = 'builtin.Dict'
 
 collection ("weka.ml") {
     simpleName = "Weka Library"
@@ -96,10 +98,32 @@ collection ("weka.ml") {
         defaults.clearMethod()
     }
 
-    service('$list_option_handler_config$') {
+    def ListOptionHandler = service('$list_option_handler_config$') {
         isAbstract = true
         method name: 'set_options',
                 inputs:[list]
+    }
+
+    def DictOptionHandler = service('$dict_option_handler_config$') {
+        isAbstract = true
+        method name: "set_options_dict",
+                inputs: [dict]
+    }
+
+    def BaseClassifier = service ('$base_classifier_config$') {
+        isAbstract = true
+        overloadMethod 'train'
+        overloadMethod 'predict'
+    }
+
+    service ('de.upb.sede.services.mls.WekaBClassifierWrapper'){
+        implemented ListOptionHandler, DictOptionHandler, BaseClassifier
+        constructor(input: str)
+        method name: 'train',
+            input: Instances
+
+        method name: 'predict',
+            inputs: [bool, Instances]
     }
 
 }

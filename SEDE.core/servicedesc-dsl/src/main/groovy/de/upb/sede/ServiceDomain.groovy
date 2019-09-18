@@ -74,6 +74,14 @@ class ServiceDomain extends DomainAware<MutableServiceDesc, ServiceCollectionDom
         }
     }
 
+    def implemented(String... additionalInterfaces) {
+        model.interfaces += additionalInterfaces
+    }
+
+    def implemented(IServiceDesc... additionalInterfaces) {
+        model.interfaces += additionalInterfaces.collect {it.qualifier}
+    }
+
     @Override
     def String getBindingName() {
         "service"

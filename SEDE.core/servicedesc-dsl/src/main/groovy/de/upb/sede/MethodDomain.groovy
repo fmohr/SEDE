@@ -3,10 +3,13 @@ package de.upb.sede
 
 import de.upb.sede.exec.MethodParameterDesc
 import de.upb.sede.exec.MutableMethodDesc
+import de.upb.sede.exec.MutableMethodParameterDesc
 import de.upb.sede.exec.MutableSignatureDesc
 import groovy.transform.PackageScope
 
-class MethodDomain extends DomainAware<MutableMethodDesc, ServiceDomain> {
+class MethodDomain
+    extends DomainAware<MutableMethodDesc, ServiceDomain>
+    implements Shared.CommentAware {
 
     MutableSignatureDesc signature(@DelegatesTo(MutableSignatureDesc) Closure signatureDescriber) {
         return addSignature(MutableSignatureDesc.create(), signatureDescriber)
@@ -15,25 +18,42 @@ class MethodDomain extends DomainAware<MutableMethodDesc, ServiceDomain> {
     MutableSignatureDesc signature(Map<String, List<String>> types,
                             @DelegatesTo(MutableSignatureDesc) Closure signatureDescriber) {
         def newSign = MutableSignatureDesc.create()
-        if("inputs" in types || "ins" in types) {
-            List<String> inputs = "inputs" in types? types["inputs"] : types["ins"]
-            newSign.inputs += inputs.collect { MethodParameterDesc.builder().type(it).build() }
-        } else if("input" in types) {
-            def inputType = MethodParameterDesc.builder()
-                .type(types["input"] as String)
-                .build()
-            newSign.inputs += inputType
-        }
-        if("outputs" in types || "outs" in types) {
-            List<String> outputs = "outputs" in types? types["outputs"] : types["outs"]
-            newSign.outputs += outputs.collect { MethodParameterDesc.builder().type(it).build() }
-        } else if("output" in types) {
-            def outputType = MethodParameterDesc.builder()
-                .type(types["output"] as String)
-                .build()
-            newSign.outputs += outputType
-        }
+
+        def inputParamReader = (this.&readSignatureParam).curry(newSign, types, true)
+        if('inputs' in types)
+            inputParamReader("inputs")
+        else if('ins' in types)
+            inputParamReader('ins')
+        else if('input' in types)
+            inputParamReader('input')
+
+        def outputParamReader = (this.&readSignatureParam).curry(newSign, types, false)
+        if('outputs' in types)
+            outputParamReader("outputs")
+        else if('outs' in types)
+            outputParamReader('outs')
+        else if('output' in types)
+            outputParamReader('output')
+
         return addSignature(newSign, signatureDescriber)
+    }
+
+    private void readSignatureParam(MutableSignatureDesc signature, Map types, boolean isInput, String key) {
+        if(!(key in types) || (types[key] == null)) {
+            return
+        }
+        def dictParams = new ArrayList()
+        // append list or a single entry.
+        // Shared::readQualifier will check if the elements are of the right type.
+        dictParams += types[key]
+        def newParams = dictParams.collect {
+            def param = MutableMethodParameterDesc.create()
+            def typeQualifier = Shared.readQualifier(it)
+            param.type = typeQualifier
+            return param
+        }
+
+        (isInput ? signature.inputs : signature.outputs).addAll(newParams)
     }
 
     private MutableSignatureDesc addSignature(MutableSignatureDesc signatureDesc, @DelegatesTo(MutableSignatureDesc) Closure signatureDescriber) {

@@ -12,7 +12,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
-import de.upb.sede.exec.aux.IJavaReflectionAux;
+import de.upb.sede.exec.aux.IJavaDispatchAux;
 import de.upb.sede.exec.aux.IPythonClassAux;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public final class ServiceDesc implements IServiceDesc {
   private final ImmutableList<String> interfaces;
   private final boolean isAbstract;
   private final ImmutableMap<String, String> fieldTypes;
-  private final @Nullable IJavaReflectionAux javaAux;
+  private final @Nullable IJavaDispatchAux javaAux;
   private final @Nullable IPythonClassAux pythonClassAuxiliaries;
   private final String qualifier;
   private final String simpleName;
@@ -72,7 +72,7 @@ public final class ServiceDesc implements IServiceDesc {
       ImmutableList<String> interfaces,
       boolean isAbstract,
       ImmutableMap<String, String> fieldTypes,
-      @Nullable IJavaReflectionAux javaAux,
+      @Nullable IJavaDispatchAux javaAux,
       @Nullable IPythonClassAux pythonClassAuxiliaries,
       String qualifier,
       String simpleName,
@@ -193,7 +193,7 @@ public final class ServiceDesc implements IServiceDesc {
    */
   @JsonProperty("javaAux")
   @Override
-  public @Nullable IJavaReflectionAux getJavaAux() {
+  public @Nullable IJavaDispatchAux getJavaAux() {
     return javaAux;
   }
 
@@ -364,7 +364,7 @@ public final class ServiceDesc implements IServiceDesc {
    * @param value A new value for javaAux (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final ServiceDesc withJavaAux(@Nullable IJavaReflectionAux value) {
+  public final ServiceDesc withJavaAux(@Nullable IJavaDispatchAux value) {
     if (this.javaAux == value) return this;
     return new ServiceDesc(
         this.methods,
@@ -557,7 +557,7 @@ public final class ServiceDesc implements IServiceDesc {
     boolean isAbstract;
     boolean isAbstractIsSet;
     @Nullable Map<String, String> fieldTypes = ImmutableMap.of();
-    @Nullable IJavaReflectionAux javaAux;
+    @Nullable IJavaDispatchAux javaAux;
     @Nullable IPythonClassAux pythonClassAuxiliaries;
     @Nullable String qualifier;
     @Nullable String simpleName;
@@ -580,7 +580,7 @@ public final class ServiceDesc implements IServiceDesc {
       this.fieldTypes = fieldTypes;
     }
     @JsonProperty("javaAux")
-    public void setJavaAux(@Nullable IJavaReflectionAux javaAux) {
+    public void setJavaAux(@Nullable IJavaDispatchAux javaAux) {
       this.javaAux = javaAux;
     }
     @JsonProperty("pythonClassAuxiliaries")
@@ -608,7 +608,7 @@ public final class ServiceDesc implements IServiceDesc {
     @Override
     public Map<String, String> getFieldTypes() { throw new UnsupportedOperationException(); }
     @Override
-    public IJavaReflectionAux getJavaAux() { throw new UnsupportedOperationException(); }
+    public IJavaDispatchAux getJavaAux() { throw new UnsupportedOperationException(); }
     @Override
     public IPythonClassAux getPythonClassAuxiliaries() { throw new UnsupportedOperationException(); }
     @Override
@@ -682,7 +682,7 @@ public final class ServiceDesc implements IServiceDesc {
    *    .addInterfaces|addAllInterfaces(String) // {@link IServiceDesc#getInterfaces() interfaces} elements
    *    .isAbstract(boolean) // optional {@link IServiceDesc#isAbstract() isAbstract}
    *    .putFieldTypes|putAllFieldTypes(String => String) // {@link IServiceDesc#getFieldTypes() fieldTypes} mappings
-   *    .javaAux(de.upb.sede.exec.aux.IJavaReflectionAux | null) // nullable {@link IServiceDesc#getJavaAux() javaAux}
+   *    .javaAux(de.upb.sede.exec.aux.IJavaDispatchAux | null) // nullable {@link IServiceDesc#getJavaAux() javaAux}
    *    .pythonClassAuxiliaries(de.upb.sede.exec.aux.IPythonClassAux | null) // nullable {@link IServiceDesc#getPythonClassAuxiliaries() pythonClassAuxiliaries}
    *    .qualifier(String) // required {@link IServiceDesc#getQualifier() qualifier}
    *    .simpleName(String) // optional {@link IServiceDesc#getSimpleName() simpleName}
@@ -714,7 +714,7 @@ public final class ServiceDesc implements IServiceDesc {
     private ImmutableList.Builder<String> interfaces = ImmutableList.builder();
     private boolean isAbstract;
     private ImmutableMap.Builder<String, String> fieldTypes = ImmutableMap.builder();
-    private @Nullable IJavaReflectionAux javaAux;
+    private @Nullable IJavaDispatchAux javaAux;
     private @Nullable IPythonClassAux pythonClassAuxiliaries;
     private @Nullable String qualifier;
     private @Nullable String simpleName;
@@ -735,7 +735,7 @@ public final class ServiceDesc implements IServiceDesc {
       addAllInterfaces(instance.getInterfaces());
       isAbstract(instance.isAbstract());
       putAllFieldTypes(instance.getFieldTypes());
-      @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+      @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
       if (javaAuxValue != null) {
         javaAux(javaAuxValue);
       }
@@ -799,7 +799,7 @@ public final class ServiceDesc implements IServiceDesc {
       if (object instanceof IServiceDesc) {
         IServiceDesc instance = (IServiceDesc) object;
         addAllInterfaces(instance.getInterfaces());
-        @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+        @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
         if (javaAuxValue != null) {
           javaAux(javaAuxValue);
         }
@@ -977,7 +977,7 @@ public final class ServiceDesc implements IServiceDesc {
      */
     @CanIgnoreReturnValue 
     @JsonProperty("javaAux")
-    public final Builder javaAux(@Nullable IJavaReflectionAux javaAux) {
+    public final Builder javaAux(@Nullable IJavaDispatchAux javaAux) {
       this.javaAux = javaAux;
       return this;
     }

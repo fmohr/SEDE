@@ -34,7 +34,7 @@ class SDLCli {
 
     static void main(String[] args) {
 //        args= """
-//            SEDE.core/servicedesc-dsl/service-descriptions
+//            SEDE.core/servicedesc-dsl/src/main/servicedesc
 //        """.trim().split()
 //        log.info "Working directory: ${new File(".").absolutePath}"
 

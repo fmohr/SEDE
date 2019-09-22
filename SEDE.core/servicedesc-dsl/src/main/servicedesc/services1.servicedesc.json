@@ -1,8 +1,6 @@
 [ {
   "services" : [ {
-    "stateType" : {
-      "present" : true
-    },
+    "stateType" : "a.A",
     "methods" : [ {
       "signatures" : [ {
         "inputs" : [ ],
@@ -13,12 +11,13 @@
           "callByValue" : true
         } ],
         "javaAux" : null,
-        "comments" : [ ]
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
       } ],
       "qualifier" : "$construct",
       "simpleName" : "$construct",
-      "comments" : [ ],
-      "isPure" : false
+      "comments" : [ ]
     }, {
       "signatures" : [ {
         "inputs" : [ {
@@ -52,9 +51,12 @@
           "staticInvocation" : true,
           "redirectArg" : -1,
           "methodName" : null,
-          "className" : null
+          "className" : null,
+          "metaclass" : null
         },
-        "comments" : [ ]
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
       }, {
         "inputs" : [ {
           "type" : "t1",
@@ -77,9 +79,12 @@
           "staticInvocation" : true,
           "redirectArg" : -1,
           "methodName" : null,
-          "className" : null
+          "className" : null,
+          "metaclass" : null
         },
-        "comments" : [ ]
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
       }, {
         "inputs" : [ {
           "type" : "t1",
@@ -97,9 +102,12 @@
           "staticInvocation" : true,
           "redirectArg" : -1,
           "methodName" : null,
-          "className" : null
+          "className" : null,
+          "metaclass" : null
         },
-        "comments" : [ ]
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
       }, {
         "inputs" : [ {
           "type" : "t1",
@@ -122,14 +130,16 @@
           "staticInvocation" : true,
           "redirectArg" : -1,
           "methodName" : null,
-          "className" : null
+          "className" : null,
+          "metaclass" : null
         },
-        "comments" : [ ]
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
       } ],
       "qualifier" : "m1",
       "simpleName" : "method 1",
-      "comments" : [ ],
-      "isPure" : false
+      "comments" : [ ]
     }, {
       "signatures" : [ {
         "inputs" : [ {
@@ -150,12 +160,13 @@
           "callByValue" : true
         } ],
         "javaAux" : null,
-        "comments" : [ ]
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
       } ],
       "qualifier" : "m2",
       "simpleName" : "m2",
-      "comments" : [ ],
-      "isPure" : false
+      "comments" : [ ]
     } ],
     "interfaces" : [ "abstracts.A" ],
     "fieldTypes" : {
@@ -170,8 +181,7 @@
   } ],
   "dataTypes" : [ {
     "semanticType" : "semantics.A",
-    "javaTypeAuxiliaries" : null,
-    "pythonTypeAuxiliaries" : null,
+    "javaAux" : null,
     "qualifier" : "a.A",
     "simpleName" : "a.A",
     "comments" : [ ]

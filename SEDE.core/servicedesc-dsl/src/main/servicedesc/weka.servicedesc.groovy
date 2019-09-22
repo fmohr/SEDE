@@ -117,13 +117,23 @@ collection ("weka.ml") {
     }
 
     service ('de.upb.sede.services.mls.WekaBClassifierWrapper'){
-        implemented ListOptionHandler, DictOptionHandler, BaseClassifier
+        implement ListOptionHandler, DictOptionHandler, BaseClassifier
         constructor(input: str)
+
         method name: 'train',
             input: Instances
 
         method name: 'predict',
-            inputs: [bool, Instances]
+            inputs: [bool, Instances],
+            output: list, {
+            isPure = true
+        }
+    }
+
+    service ('$Basic_Weka_Distribution_Classifier$') {
+        java {
+            metaclass = 'Wrapper'
+        }
     }
 
 }

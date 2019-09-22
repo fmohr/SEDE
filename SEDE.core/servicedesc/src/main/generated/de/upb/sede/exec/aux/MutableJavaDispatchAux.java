@@ -11,18 +11,18 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
- * A modifiable implementation of the {@link IJavaReflectionAux IJavaReflectionAux} type.
+ * A modifiable implementation of the {@link IJavaDispatchAux IJavaDispatchAux} type.
  * <p>Use the {@link #create()} static factory methods to create new instances.
  * Use the {@link #toImmutable()} method to convert to canonical immutable instances.
- * <p><em>MutableJavaReflectionAux is not thread-safe</em>
- * @see JavaReflectionAux
+ * <p><em>MutableJavaDispatchAux is not thread-safe</em>
+ * @see JavaDispatchAux
  */
-@Generated(from = "IJavaReflectionAux", generator = "Modifiables")
+@Generated(from = "IJavaDispatchAux", generator = "Modifiables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
-@javax.annotation.Generated({"Modifiables.generator", "IJavaReflectionAux"})
+@javax.annotation.Generated({"Modifiables.generator", "IJavaDispatchAux"})
 @NotThreadSafe
-public final class MutableJavaReflectionAux implements IJavaReflectionAux {
+public final class MutableJavaDispatchAux implements IJavaDispatchAux {
   private static final long OPT_BIT_STATIC_INVOCATION = 0x1L;
   private static final long OPT_BIT_REDIRECT_ARG = 0x2L;
   private long optBits;
@@ -31,15 +31,16 @@ public final class MutableJavaReflectionAux implements IJavaReflectionAux {
   private int redirectArg;
   private @Nullable String methodName;
   private @Nullable String className;
+  private @Nullable String metaclass;
 
-  private MutableJavaReflectionAux() {}
+  private MutableJavaDispatchAux() {}
 
   /**
-   * Construct a modifiable instance of {@code IJavaReflectionAux}.
+   * Construct a modifiable instance of {@code IJavaDispatchAux}.
    * @return A new modifiable instance
    */
-  public static MutableJavaReflectionAux create() {
-    return new MutableJavaReflectionAux();
+  public static MutableJavaDispatchAux create() {
+    return new MutableJavaDispatchAux();
   }
 
   /**
@@ -50,7 +51,7 @@ public final class MutableJavaReflectionAux implements IJavaReflectionAux {
   public final boolean staticInvocation() {
     return staticInvocationIsSet()
         ? staticInvocation
-        : IJavaReflectionAux.super.staticInvocation();
+        : IJavaDispatchAux.super.staticInvocation();
   }
 
   /**
@@ -61,7 +62,7 @@ public final class MutableJavaReflectionAux implements IJavaReflectionAux {
   public final int redirectArg() {
     return redirectArgIsSet()
         ? redirectArg
-        : IJavaReflectionAux.super.redirectArg();
+        : IJavaDispatchAux.super.redirectArg();
   }
 
   /**
@@ -83,30 +84,40 @@ public final class MutableJavaReflectionAux implements IJavaReflectionAux {
   }
 
   /**
+   * @return value of {@code metaclass} attribute, may be {@code null}
+   */
+  @JsonProperty("metaclass")
+  @Override
+  public final @Nullable String getMetaclass() {
+    return metaclass;
+  }
+
+  /**
    * Clears the object by setting all attributes to their initial values.
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableJavaReflectionAux clear() {
+  public MutableJavaDispatchAux clear() {
     optBits = 0;
     staticInvocation = false;
     redirectArg = 0;
     methodName = null;
     className = null;
+    metaclass = null;
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link IJavaReflectionAux} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link IJavaDispatchAux} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  public MutableJavaReflectionAux from(IJavaReflectionAux instance) {
+  public MutableJavaDispatchAux from(IJavaDispatchAux instance) {
     Objects.requireNonNull(instance, "instance");
-    if (instance instanceof MutableJavaReflectionAux) {
-      from((MutableJavaReflectionAux) instance);
+    if (instance instanceof MutableJavaDispatchAux) {
+      from((MutableJavaDispatchAux) instance);
       return this;
     }
     setStaticInvocation(instance.staticInvocation());
@@ -119,17 +130,21 @@ public final class MutableJavaReflectionAux implements IJavaReflectionAux {
     if (classNameValue != null) {
       setClassName(classNameValue);
     }
+    @Nullable String metaclassValue = instance.getMetaclass();
+    if (metaclassValue != null) {
+      setMetaclass(metaclassValue);
+    }
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link IJavaReflectionAux} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link IJavaDispatchAux} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  public MutableJavaReflectionAux from(MutableJavaReflectionAux instance) {
+  public MutableJavaDispatchAux from(MutableJavaDispatchAux instance) {
     Objects.requireNonNull(instance, "instance");
     setStaticInvocation(instance.staticInvocation());
     setRedirectArg(instance.redirectArg());
@@ -141,59 +156,74 @@ public final class MutableJavaReflectionAux implements IJavaReflectionAux {
     if (classNameValue != null) {
       setClassName(classNameValue);
     }
+    @Nullable String metaclassValue = instance.getMetaclass();
+    if (metaclassValue != null) {
+      setMetaclass(metaclassValue);
+    }
     return this;
   }
 
   /**
-   * Assigns a value to the {@link IJavaReflectionAux#staticInvocation() staticInvocation} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IJavaReflectionAux#staticInvocation() staticInvocation}.</em>
+   * Assigns a value to the {@link IJavaDispatchAux#staticInvocation() staticInvocation} attribute.
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IJavaDispatchAux#staticInvocation() staticInvocation}.</em>
    * @param staticInvocation The value for staticInvocation
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableJavaReflectionAux setStaticInvocation(boolean staticInvocation) {
+  public MutableJavaDispatchAux setStaticInvocation(boolean staticInvocation) {
     this.staticInvocation = staticInvocation;
     optBits |= OPT_BIT_STATIC_INVOCATION;
     return this;
   }
 
   /**
-   * Assigns a value to the {@link IJavaReflectionAux#redirectArg() redirectArg} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IJavaReflectionAux#redirectArg() redirectArg}.</em>
+   * Assigns a value to the {@link IJavaDispatchAux#redirectArg() redirectArg} attribute.
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IJavaDispatchAux#redirectArg() redirectArg}.</em>
    * @param redirectArg The value for redirectArg
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableJavaReflectionAux setRedirectArg(int redirectArg) {
+  public MutableJavaDispatchAux setRedirectArg(int redirectArg) {
     this.redirectArg = redirectArg;
     optBits |= OPT_BIT_REDIRECT_ARG;
     return this;
   }
 
   /**
-   * Assigns a value to the {@link IJavaReflectionAux#methodName() methodName} attribute.
+   * Assigns a value to the {@link IJavaDispatchAux#methodName() methodName} attribute.
    * @param methodName The value for methodName, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableJavaReflectionAux setMethodName(@Nullable String methodName) {
+  public MutableJavaDispatchAux setMethodName(@Nullable String methodName) {
     this.methodName = methodName;
     return this;
   }
 
   /**
-   * Assigns a value to the {@link IJavaReflectionAux#className() className} attribute.
+   * Assigns a value to the {@link IJavaDispatchAux#className() className} attribute.
    * @param className The value for className, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableJavaReflectionAux setClassName(@Nullable String className) {
+  public MutableJavaDispatchAux setClassName(@Nullable String className) {
     this.className = className;
     return this;
   }
 
   /**
-   * Returns {@code true} if the default attribute {@link IJavaReflectionAux#staticInvocation() staticInvocation} is set.
+   * Assigns a value to the {@link IJavaDispatchAux#getMetaclass() metaclass} attribute.
+   * @param metaclass The value for metaclass, can be {@code null}
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableJavaDispatchAux setMetaclass(@Nullable String metaclass) {
+    this.metaclass = metaclass;
+    return this;
+  }
+
+  /**
+   * Returns {@code true} if the default attribute {@link IJavaDispatchAux#staticInvocation() staticInvocation} is set.
    * @return {@code true} if set
    */
   public final boolean staticInvocationIsSet() {
@@ -201,7 +231,7 @@ public final class MutableJavaReflectionAux implements IJavaReflectionAux {
   }
 
   /**
-   * Returns {@code true} if the default attribute {@link IJavaReflectionAux#redirectArg() redirectArg} is set.
+   * Returns {@code true} if the default attribute {@link IJavaDispatchAux#redirectArg() redirectArg} is set.
    * @return {@code true} if set
    */
   public final boolean redirectArgIsSet() {
@@ -213,7 +243,7 @@ public final class MutableJavaReflectionAux implements IJavaReflectionAux {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public final MutableJavaReflectionAux unsetStaticInvocation() {
+  public final MutableJavaDispatchAux unsetStaticInvocation() {
     optBits |= 0;
     staticInvocation = false;
     return this;
@@ -223,7 +253,7 @@ public final class MutableJavaReflectionAux implements IJavaReflectionAux {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public final MutableJavaReflectionAux unsetRedirectArg() {
+  public final MutableJavaDispatchAux unsetRedirectArg() {
     optBits |= 0;
     redirectArg = 0;
     return this;
@@ -238,36 +268,37 @@ public final class MutableJavaReflectionAux implements IJavaReflectionAux {
   }
 
   /**
-   * Converts to {@link JavaReflectionAux JavaReflectionAux}.
-   * @return An immutable instance of JavaReflectionAux
+   * Converts to {@link JavaDispatchAux JavaDispatchAux}.
+   * @return An immutable instance of JavaDispatchAux
    */
-  public final JavaReflectionAux toImmutable() {
-    return JavaReflectionAux.copyOf(this);
+  public final JavaDispatchAux toImmutable() {
+    return JavaDispatchAux.copyOf(this);
   }
 
   /**
-   * This instance is equal to all instances of {@code MutableJavaReflectionAux} that have equal attribute values.
+   * This instance is equal to all instances of {@code MutableJavaDispatchAux} that have equal attribute values.
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
   public boolean equals(@Nullable Object another) {
     if (this == another) return true;
-    if (!(another instanceof MutableJavaReflectionAux)) return false;
-    MutableJavaReflectionAux other = (MutableJavaReflectionAux) another;
+    if (!(another instanceof MutableJavaDispatchAux)) return false;
+    MutableJavaDispatchAux other = (MutableJavaDispatchAux) another;
     return equalTo(other);
   }
 
-  private boolean equalTo(MutableJavaReflectionAux another) {
+  private boolean equalTo(MutableJavaDispatchAux another) {
     boolean staticInvocation = staticInvocation();
     int redirectArg = redirectArg();
     return staticInvocation == another.staticInvocation()
         && redirectArg == another.redirectArg()
         && Objects.equals(methodName, another.methodName)
-        && Objects.equals(className, another.className);
+        && Objects.equals(className, another.className)
+        && Objects.equals(metaclass, another.metaclass);
   }
 
   /**
-   * Computes a hash code from attributes: {@code staticInvocation}, {@code redirectArg}, {@code methodName}, {@code className}.
+   * Computes a hash code from attributes: {@code staticInvocation}, {@code redirectArg}, {@code methodName}, {@code className}, {@code metaclass}.
    * @return hashCode value
    */
   @Override
@@ -279,21 +310,23 @@ public final class MutableJavaReflectionAux implements IJavaReflectionAux {
     h += (h << 5) + redirectArg;
     h += (h << 5) + Objects.hashCode(methodName);
     h += (h << 5) + Objects.hashCode(className);
+    h += (h << 5) + Objects.hashCode(metaclass);
     return h;
   }
 
   /**
-   * Generates a string representation of this {@code IJavaReflectionAux}.
+   * Generates a string representation of this {@code IJavaDispatchAux}.
    * If uninitialized, some attribute values may appear as question marks.
    * @return A string representation
    */
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper("MutableJavaReflectionAux")
+    return MoreObjects.toStringHelper("MutableJavaDispatchAux")
         .add("staticInvocation", staticInvocation())
         .add("redirectArg", redirectArg())
         .add("methodName", methodName())
         .add("className", className())
+        .add("metaclass", getMetaclass())
         .toString();
   }
 }

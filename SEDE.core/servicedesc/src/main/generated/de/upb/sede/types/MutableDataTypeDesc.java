@@ -5,8 +5,7 @@ import com.google.common.base.MoreObjects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
-import de.upb.sede.types.aux.IJavaTypeAux;
-import de.upb.sede.types.aux.IPythonTypeAux;
+import de.upb.sede.exec.aux.IJavaDispatchAux;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -33,8 +32,7 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   private long initBits = 0x3L;
 
   private String semanticType;
-  private @Nullable IJavaTypeAux javaTypeAuxiliaries;
-  private @Nullable IPythonTypeAux pythonTypeAuxiliaries;
+  private @Nullable IJavaDispatchAux javaAux;
   private String qualifier;
   private String simpleName;
   private final ArrayList<String> comments = new ArrayList<String>();
@@ -62,21 +60,12 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   }
 
   /**
-   * @return value of {@code javaTypeAuxiliaries} attribute, may be {@code null}
+   * @return value of {@code javaAux} attribute, may be {@code null}
    */
-  @JsonProperty("javaTypeAuxiliaries")
+  @JsonProperty("javaAux")
   @Override
-  public final @Nullable IJavaTypeAux getJavaTypeAuxiliaries() {
-    return javaTypeAuxiliaries;
-  }
-
-  /**
-   * @return value of {@code pythonTypeAuxiliaries} attribute, may be {@code null}
-   */
-  @JsonProperty("pythonTypeAuxiliaries")
-  @Override
-  public final @Nullable IPythonTypeAux getPythonTypeAuxiliaries() {
-    return pythonTypeAuxiliaries;
+  public final @Nullable IJavaDispatchAux getJavaAux() {
+    return javaAux;
   }
 
   /**
@@ -119,8 +108,7 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   public MutableDataTypeDesc clear() {
     initBits = 0x3L;
     semanticType = null;
-    javaTypeAuxiliaries = null;
-    pythonTypeAuxiliaries = null;
+    javaAux = null;
     qualifier = null;
     simpleName = null;
     comments.clear();
@@ -183,13 +171,9 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
       if (instance.semanticTypeIsSet()) {
         setSemanticType(instance.getSemanticType());
       }
-      @Nullable IJavaTypeAux javaTypeAuxiliariesValue = instance.getJavaTypeAuxiliaries();
-      if (javaTypeAuxiliariesValue != null) {
-        setJavaTypeAuxiliaries(javaTypeAuxiliariesValue);
-      }
-      @Nullable IPythonTypeAux pythonTypeAuxiliariesValue = instance.getPythonTypeAuxiliaries();
-      if (pythonTypeAuxiliariesValue != null) {
-        setPythonTypeAuxiliaries(pythonTypeAuxiliariesValue);
+      @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
+      if (javaAuxValue != null) {
+        setJavaAux(javaAuxValue);
       }
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
@@ -204,13 +188,9 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
     }
     if (object instanceof IDataTypeDesc) {
       IDataTypeDesc instance = (IDataTypeDesc) object;
-      @Nullable IPythonTypeAux pythonTypeAuxiliariesValue = instance.getPythonTypeAuxiliaries();
-      if (pythonTypeAuxiliariesValue != null) {
-        setPythonTypeAuxiliaries(pythonTypeAuxiliariesValue);
-      }
-      @Nullable IJavaTypeAux javaTypeAuxiliariesValue = instance.getJavaTypeAuxiliaries();
-      if (javaTypeAuxiliariesValue != null) {
-        setJavaTypeAuxiliaries(javaTypeAuxiliariesValue);
+      @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
+      if (javaAuxValue != null) {
+        setJavaAux(javaAuxValue);
       }
       setSemanticType(instance.getSemanticType());
     }
@@ -234,24 +214,13 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   }
 
   /**
-   * Assigns a value to the {@link IDataTypeDesc#getJavaTypeAuxiliaries() javaTypeAuxiliaries} attribute.
-   * @param javaTypeAuxiliaries The value for javaTypeAuxiliaries, can be {@code null}
+   * Assigns a value to the {@link IDataTypeDesc#getJavaAux() javaAux} attribute.
+   * @param javaAux The value for javaAux, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableDataTypeDesc setJavaTypeAuxiliaries(@Nullable IJavaTypeAux javaTypeAuxiliaries) {
-    this.javaTypeAuxiliaries = javaTypeAuxiliaries;
-    return this;
-  }
-
-  /**
-   * Assigns a value to the {@link IDataTypeDesc#getPythonTypeAuxiliaries() pythonTypeAuxiliaries} attribute.
-   * @param pythonTypeAuxiliaries The value for pythonTypeAuxiliaries, can be {@code null}
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableDataTypeDesc setPythonTypeAuxiliaries(@Nullable IPythonTypeAux pythonTypeAuxiliaries) {
-    this.pythonTypeAuxiliaries = pythonTypeAuxiliaries;
+  public MutableDataTypeDesc setJavaAux(@Nullable IJavaDispatchAux javaAux) {
+    this.javaAux = javaAux;
     return this;
   }
 
@@ -425,23 +394,21 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   private boolean equalTo(MutableDataTypeDesc another) {
     String simpleName = getSimpleName();
     return semanticType.equals(another.semanticType)
-        && Objects.equals(javaTypeAuxiliaries, another.javaTypeAuxiliaries)
-        && Objects.equals(pythonTypeAuxiliaries, another.pythonTypeAuxiliaries)
+        && Objects.equals(javaAux, another.javaAux)
         && qualifier.equals(another.qualifier)
         && simpleName.equals(another.getSimpleName())
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code semanticType}, {@code javaTypeAuxiliaries}, {@code pythonTypeAuxiliaries}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code semanticType}, {@code javaAux}, {@code qualifier}, {@code simpleName}, {@code comments}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
     h += (h << 5) + semanticType.hashCode();
-    h += (h << 5) + Objects.hashCode(javaTypeAuxiliaries);
-    h += (h << 5) + Objects.hashCode(pythonTypeAuxiliaries);
+    h += (h << 5) + Objects.hashCode(javaAux);
     h += (h << 5) + qualifier.hashCode();
     String simpleName = getSimpleName();
     h += (h << 5) + simpleName.hashCode();
@@ -458,8 +425,7 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   public String toString() {
     return MoreObjects.toStringHelper("MutableDataTypeDesc")
         .add("semanticType", semanticTypeIsSet() ? getSemanticType() : "?")
-        .add("javaTypeAuxiliaries", getJavaTypeAuxiliaries())
-        .add("pythonTypeAuxiliaries", getPythonTypeAuxiliaries())
+        .add("javaAux", getJavaAux())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
         .add("simpleName", getSimpleName())
         .add("comments", getComments())

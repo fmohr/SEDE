@@ -3,7 +3,9 @@ package de.upb.sede
 import de.upb.sede.exec.MutableServiceDesc
 import de.upb.sede.types.MutableDataTypeDesc
 
-class ServiceCollectionDomain extends DomainAware<MutableServiceCollectionDesc, Object> {
+class ServiceCollectionDomain
+    extends DomainAware<MutableServiceCollectionDesc, Object>
+    implements Shared.CommentAware{
 
     /**
      * Redefines the service with the given qualifier by running the given describer against it.

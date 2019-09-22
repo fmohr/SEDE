@@ -4,8 +4,11 @@ import de.upb.sede.exec.IMethodDesc
 import de.upb.sede.exec.IServiceDesc
 import de.upb.sede.exec.MutableMethodDesc
 import de.upb.sede.exec.MutableServiceDesc
+import de.upb.sede.exec.aux.MutableJavaDispatchAux
 
-class ServiceDomain extends DomainAware<MutableServiceDesc, ServiceCollectionDomain> {
+class ServiceDomain
+    extends DomainAware<MutableServiceDesc, ServiceCollectionDomain>
+    implements Shared.JavaDispatchAware, Shared.CommentAware {
 
     def setStateful(Closure typeDescriber = Closure.IDENTITY) {
         setStateType(model.qualifier, typeDescriber)
@@ -16,7 +19,7 @@ class ServiceDomain extends DomainAware<MutableServiceDesc, ServiceCollectionDom
         model.fieldTypes[IServiceDesc.STATE_FIELD] = dataTypeQualifier
     }
 
-    def method(String name, Map signatureDef,  @DelegatesTo(MethodSignatureDomain) Closure signatureDescriber = defaults.method) {
+    def method(Map signatureDef,  String name, @DelegatesTo(MethodSignatureDomain) Closure signatureDescriber = defaults.method) {
         def methodDef = new HashMap(signatureDef)
         methodDef["name"] = name
         return method(methodDef, signatureDescriber)
@@ -74,11 +77,11 @@ class ServiceDomain extends DomainAware<MutableServiceDesc, ServiceCollectionDom
         }
     }
 
-    def implemented(String... additionalInterfaces) {
+    def implement(String... additionalInterfaces) {
         model.interfaces += additionalInterfaces
     }
 
-    def implemented(IServiceDesc... additionalInterfaces) {
+    def implement(IServiceDesc... additionalInterfaces) {
         model.interfaces += additionalInterfaces.collect {it.qualifier}
     }
 

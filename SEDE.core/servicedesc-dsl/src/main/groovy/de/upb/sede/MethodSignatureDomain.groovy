@@ -5,10 +5,12 @@ import de.upb.sede.exec.IMethodParameterDesc
 
 import de.upb.sede.exec.MutableMethodParameterDesc
 import de.upb.sede.exec.MutableSignatureDesc
-import de.upb.sede.exec.aux.MutableJavaReflectionAux
+import de.upb.sede.exec.aux.MutableJavaDispatchAux
 import groovy.transform.NamedVariant
 
-class MethodSignatureDomain extends DomainAware<MutableSignatureDesc, MethodDomain> {
+class MethodSignatureDomain
+    extends DomainAware<MutableSignatureDesc, MethodDomain>
+    implements Shared.JavaDispatchAware, Shared.CommentAware {
 
     void setInputTypes(String... inputTypes) {
         model.inputs.clear()
@@ -102,22 +104,6 @@ class MethodSignatureDomain extends DomainAware<MutableSignatureDesc, MethodDoma
         def newParameter = parameter
         paramList.set(paramIndex, newParameter)
         return newParameter
-    }
-
-
-    private MutableJavaReflectionAux java (@DelegatesTo(MutableJavaReflectionAux) Closure javaAuxDescriber) {
-        def javaAux = MutableJavaReflectionAux.create()
-        if(model.javaAux != null) {
-            javaAux.from(model.javaAux)
-        }
-
-        javaAuxDescriber.delegate = javaAux
-        javaAuxDescriber.resolveStrategy = Closure.DELEGATE_ONLY
-        javaAuxDescriber.run()
-
-        def newJavaAux = javaAux
-        model.javaAux = newJavaAux
-        return newJavaAux
     }
 
     @Override

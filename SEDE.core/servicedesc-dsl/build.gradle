@@ -25,20 +25,11 @@ task compileServiceDescs(type: JavaExec, dependsOn: [compileGroovy]) {
 
     main = 'de.upb.sede.SDLCli'
 
-    args "-i", "${projectDir}/service-descriptions"
+    args "-i", "${projectDir}/src/main/servicedesc/"
 }
 
-task compileMergeServiceDescs(type: JavaExec, dependsOn: [compileGroovy]) {
-    classpath += sourceSets.main.runtimeClasspath
-    classpath += sourceSets.test.runtimeClasspath
-
-    main = 'de.upb.sede.SDLCli'
-
-    args "-m", '-i', "${projectDir}/service-descriptions", '-o', "${projectDir}/service-descriptions/all.servicedesc.json"
-}
 
 assemble.dependsOn(compileServiceDescs)
-assemble.dependsOn(compileMergeServiceDescs)
 
 shadowJar {
     archiveFileName = "sdlc.jar"

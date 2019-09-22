@@ -3,7 +3,7 @@ package de.upb.sede.exec;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.ICommented;
 import de.upb.sede.SModelStyle;
-import de.upb.sede.exec.aux.IJavaReflectionAux;
+import de.upb.sede.exec.aux.IJavaDispatchAux;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
@@ -20,11 +20,15 @@ public interface ISignatureDesc extends ICommented {
     List<IMethodParameterDesc> getOutputs();
 
     @Nullable
-    IJavaReflectionAux getJavaAux();
+    IJavaDispatchAux getJavaAux();
 
     @Value.Default
     default boolean isPure() {
         return false;
     }
 
+    @Value.Default
+    default boolean isContextFree() {
+        return false;
+    }
 }

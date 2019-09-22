@@ -19,26 +19,28 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
- * Immutable implementation of {@link IJavaReflectionAux}.
+ * Immutable implementation of {@link IJavaDispatchAux}.
  * <p>
  * Use the builder to create immutable instances:
- * {@code JavaReflectionAux.builder()}.
+ * {@code JavaDispatchAux.builder()}.
  */
-@Generated(from = "IJavaReflectionAux", generator = "Immutables")
+@Generated(from = "IJavaDispatchAux", generator = "Immutables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
 @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
 @Immutable
 @CheckReturnValue
-public final class JavaReflectionAux implements IJavaReflectionAux {
+public final class JavaDispatchAux implements IJavaDispatchAux {
   private final boolean staticInvocation;
   private final int redirectArg;
   private final @Nullable String methodName;
   private final @Nullable String className;
+  private final @Nullable String metaclass;
 
-  private JavaReflectionAux(JavaReflectionAux.Builder builder) {
+  private JavaDispatchAux(JavaDispatchAux.Builder builder) {
     this.methodName = builder.methodName;
     this.className = builder.className;
+    this.metaclass = builder.metaclass;
     if (builder.staticInvocationIsSet()) {
       initShim.staticInvocation(builder.staticInvocation);
     }
@@ -50,15 +52,17 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
     this.initShim = null;
   }
 
-  private JavaReflectionAux(
+  private JavaDispatchAux(
       boolean staticInvocation,
       int redirectArg,
       @Nullable String methodName,
-      @Nullable String className) {
+      @Nullable String className,
+      @Nullable String metaclass) {
     this.staticInvocation = staticInvocation;
     this.redirectArg = redirectArg;
     this.methodName = methodName;
     this.className = className;
+    this.metaclass = metaclass;
     this.initShim = null;
   }
 
@@ -68,7 +72,7 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
   @SuppressWarnings("Immutable")
   private transient volatile InitShim initShim = new InitShim();
 
-  @Generated(from = "IJavaReflectionAux", generator = "Immutables")
+  @Generated(from = "IJavaDispatchAux", generator = "Immutables")
   private final class InitShim {
     private byte staticInvocationBuildStage = STAGE_UNINITIALIZED;
     private boolean staticInvocation;
@@ -110,16 +114,16 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
       List<String> attributes = new ArrayList<>();
       if (staticInvocationBuildStage == STAGE_INITIALIZING) attributes.add("staticInvocation");
       if (redirectArgBuildStage == STAGE_INITIALIZING) attributes.add("redirectArg");
-      return "Cannot build JavaReflectionAux, attribute initializers form cycle " + attributes;
+      return "Cannot build JavaDispatchAux, attribute initializers form cycle " + attributes;
     }
   }
 
   private boolean staticInvocationInitialize() {
-    return IJavaReflectionAux.super.staticInvocation();
+    return IJavaDispatchAux.super.staticInvocation();
   }
 
   private int redirectArgInitialize() {
-    return IJavaReflectionAux.super.redirectArg();
+    return IJavaDispatchAux.super.redirectArg();
   }
 
   /**
@@ -165,69 +169,90 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IJavaReflectionAux#staticInvocation() staticInvocation} attribute.
+   * @return The value of the {@code metaclass} attribute
+   */
+  @JsonProperty("metaclass")
+  @Override
+  public @Nullable String getMetaclass() {
+    return metaclass;
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link IJavaDispatchAux#staticInvocation() staticInvocation} attribute.
    * A value equality check is used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for staticInvocation
    * @return A modified copy of the {@code this} object
    */
-  public final JavaReflectionAux withStaticInvocation(boolean value) {
+  public final JavaDispatchAux withStaticInvocation(boolean value) {
     if (this.staticInvocation == value) return this;
-    return new JavaReflectionAux(value, this.redirectArg, this.methodName, this.className);
+    return new JavaDispatchAux(value, this.redirectArg, this.methodName, this.className, this.metaclass);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IJavaReflectionAux#redirectArg() redirectArg} attribute.
+   * Copy the current immutable object by setting a value for the {@link IJavaDispatchAux#redirectArg() redirectArg} attribute.
    * A value equality check is used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for redirectArg
    * @return A modified copy of the {@code this} object
    */
-  public final JavaReflectionAux withRedirectArg(int value) {
+  public final JavaDispatchAux withRedirectArg(int value) {
     if (this.redirectArg == value) return this;
-    return new JavaReflectionAux(this.staticInvocation, value, this.methodName, this.className);
+    return new JavaDispatchAux(this.staticInvocation, value, this.methodName, this.className, this.metaclass);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IJavaReflectionAux#methodName() methodName} attribute.
+   * Copy the current immutable object by setting a value for the {@link IJavaDispatchAux#methodName() methodName} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for methodName (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final JavaReflectionAux withMethodName(@Nullable String value) {
+  public final JavaDispatchAux withMethodName(@Nullable String value) {
     if (Objects.equals(this.methodName, value)) return this;
-    return new JavaReflectionAux(this.staticInvocation, this.redirectArg, value, this.className);
+    return new JavaDispatchAux(this.staticInvocation, this.redirectArg, value, this.className, this.metaclass);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IJavaReflectionAux#className() className} attribute.
+   * Copy the current immutable object by setting a value for the {@link IJavaDispatchAux#className() className} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for className (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final JavaReflectionAux withClassName(@Nullable String value) {
+  public final JavaDispatchAux withClassName(@Nullable String value) {
     if (Objects.equals(this.className, value)) return this;
-    return new JavaReflectionAux(this.staticInvocation, this.redirectArg, this.methodName, value);
+    return new JavaDispatchAux(this.staticInvocation, this.redirectArg, this.methodName, value, this.metaclass);
   }
 
   /**
-   * This instance is equal to all instances of {@code JavaReflectionAux} that have equal attribute values.
+   * Copy the current immutable object by setting a value for the {@link IJavaDispatchAux#getMetaclass() metaclass} attribute.
+   * An equals check used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for metaclass (can be {@code null})
+   * @return A modified copy of the {@code this} object
+   */
+  public final JavaDispatchAux withMetaclass(@Nullable String value) {
+    if (Objects.equals(this.metaclass, value)) return this;
+    return new JavaDispatchAux(this.staticInvocation, this.redirectArg, this.methodName, this.className, value);
+  }
+
+  /**
+   * This instance is equal to all instances of {@code JavaDispatchAux} that have equal attribute values.
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
   public boolean equals(@Nullable Object another) {
     if (this == another) return true;
-    return another instanceof JavaReflectionAux
-        && equalTo((JavaReflectionAux) another);
+    return another instanceof JavaDispatchAux
+        && equalTo((JavaDispatchAux) another);
   }
 
-  private boolean equalTo(JavaReflectionAux another) {
+  private boolean equalTo(JavaDispatchAux another) {
     return staticInvocation == another.staticInvocation
         && redirectArg == another.redirectArg
         && Objects.equals(methodName, another.methodName)
-        && Objects.equals(className, another.className);
+        && Objects.equals(className, another.className)
+        && Objects.equals(metaclass, another.metaclass);
   }
 
   /**
-   * Computes a hash code from attributes: {@code staticInvocation}, {@code redirectArg}, {@code methodName}, {@code className}.
+   * Computes a hash code from attributes: {@code staticInvocation}, {@code redirectArg}, {@code methodName}, {@code className}, {@code metaclass}.
    * @return hashCode value
    */
   @Override
@@ -237,21 +262,23 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
     h += (h << 5) + redirectArg;
     h += (h << 5) + Objects.hashCode(methodName);
     h += (h << 5) + Objects.hashCode(className);
+    h += (h << 5) + Objects.hashCode(metaclass);
     return h;
   }
 
   /**
-   * Prints the immutable value {@code JavaReflectionAux} with attribute values.
+   * Prints the immutable value {@code JavaDispatchAux} with attribute values.
    * @return A string representation of the value
    */
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper("JavaReflectionAux")
+    return MoreObjects.toStringHelper("JavaDispatchAux")
         .omitNullValues()
         .add("staticInvocation", staticInvocation)
         .add("redirectArg", redirectArg)
         .add("methodName", methodName)
         .add("className", className)
+        .add("metaclass", metaclass)
         .toString();
   }
 
@@ -259,18 +286,19 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
    * Utility type used to correctly read immutable object from JSON representation.
    * @deprecated Do not use this type directly, it exists only for the <em>Jackson</em>-binding infrastructure
    */
-  @Generated(from = "IJavaReflectionAux", generator = "Immutables")
+  @Generated(from = "IJavaDispatchAux", generator = "Immutables")
   @Deprecated
   @SuppressWarnings("Immutable")
   @JsonDeserialize
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
-  static final class Json implements IJavaReflectionAux {
+  static final class Json implements IJavaDispatchAux {
     boolean staticInvocation;
     boolean staticInvocationIsSet;
     int redirectArg;
     boolean redirectArgIsSet;
     @Nullable String methodName;
     @Nullable String className;
+    @Nullable String metaclass;
     @JsonProperty("staticInvocation")
     public void setStaticInvocation(boolean staticInvocation) {
       this.staticInvocation = staticInvocation;
@@ -289,6 +317,10 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
     public void setClassName(@Nullable String className) {
       this.className = className;
     }
+    @JsonProperty("metaclass")
+    public void setMetaclass(@Nullable String metaclass) {
+      this.metaclass = metaclass;
+    }
     @Override
     public boolean staticInvocation() { throw new UnsupportedOperationException(); }
     @Override
@@ -297,6 +329,8 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
     public String methodName() { throw new UnsupportedOperationException(); }
     @Override
     public String className() { throw new UnsupportedOperationException(); }
+    @Override
+    public String getMetaclass() { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -306,8 +340,8 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
    */
   @Deprecated
   @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-  static JavaReflectionAux fromJson(Json json) {
-    JavaReflectionAux.Builder builder = JavaReflectionAux.builder();
+  static JavaDispatchAux fromJson(Json json) {
+    JavaDispatchAux.Builder builder = JavaDispatchAux.builder();
     if (json.staticInvocationIsSet) {
       builder.staticInvocation(json.staticInvocation);
     }
@@ -320,49 +354,53 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
     if (json.className != null) {
       builder.className(json.className);
     }
+    if (json.metaclass != null) {
+      builder.metaclass(json.metaclass);
+    }
     return builder.build();
   }
 
   /**
-   * Creates an immutable copy of a {@link IJavaReflectionAux} value.
+   * Creates an immutable copy of a {@link IJavaDispatchAux} value.
    * Uses accessors to get values to initialize the new immutable instance.
    * If an instance is already immutable, it is returned as is.
    * @param instance The instance to copy
-   * @return A copied immutable JavaReflectionAux instance
+   * @return A copied immutable JavaDispatchAux instance
    */
-  public static JavaReflectionAux copyOf(IJavaReflectionAux instance) {
-    if (instance instanceof JavaReflectionAux) {
-      return (JavaReflectionAux) instance;
+  public static JavaDispatchAux copyOf(IJavaDispatchAux instance) {
+    if (instance instanceof JavaDispatchAux) {
+      return (JavaDispatchAux) instance;
     }
-    return JavaReflectionAux.builder()
+    return JavaDispatchAux.builder()
         .from(instance)
         .build();
   }
 
   /**
-   * Creates a builder for {@link JavaReflectionAux JavaReflectionAux}.
+   * Creates a builder for {@link JavaDispatchAux JavaDispatchAux}.
    * <pre>
-   * JavaReflectionAux.builder()
-   *    .staticInvocation(boolean) // optional {@link IJavaReflectionAux#staticInvocation() staticInvocation}
-   *    .redirectArg(int) // optional {@link IJavaReflectionAux#redirectArg() redirectArg}
-   *    .methodName(String | null) // nullable {@link IJavaReflectionAux#methodName() methodName}
-   *    .className(String | null) // nullable {@link IJavaReflectionAux#className() className}
+   * JavaDispatchAux.builder()
+   *    .staticInvocation(boolean) // optional {@link IJavaDispatchAux#staticInvocation() staticInvocation}
+   *    .redirectArg(int) // optional {@link IJavaDispatchAux#redirectArg() redirectArg}
+   *    .methodName(String | null) // nullable {@link IJavaDispatchAux#methodName() methodName}
+   *    .className(String | null) // nullable {@link IJavaDispatchAux#className() className}
+   *    .metaclass(String | null) // nullable {@link IJavaDispatchAux#getMetaclass() metaclass}
    *    .build();
    * </pre>
-   * @return A new JavaReflectionAux builder
+   * @return A new JavaDispatchAux builder
    */
-  public static JavaReflectionAux.Builder builder() {
-    return new JavaReflectionAux.Builder();
+  public static JavaDispatchAux.Builder builder() {
+    return new JavaDispatchAux.Builder();
   }
 
   /**
-   * Builds instances of type {@link JavaReflectionAux JavaReflectionAux}.
+   * Builds instances of type {@link JavaDispatchAux JavaDispatchAux}.
    * Initialize attributes and then invoke the {@link #build()} method to create an
    * immutable instance.
    * <p><em>{@code Builder} is not thread-safe and generally should not be stored in a field or collection,
    * but instead used immediately to create instances.</em>
    */
-  @Generated(from = "IJavaReflectionAux", generator = "Immutables")
+  @Generated(from = "IJavaDispatchAux", generator = "Immutables")
   @NotThreadSafe
   public static final class Builder {
     private static final long OPT_BIT_STATIC_INVOCATION = 0x1L;
@@ -373,17 +411,18 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
     private int redirectArg;
     private @Nullable String methodName;
     private @Nullable String className;
+    private @Nullable String metaclass;
 
     private Builder() {
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code MutableJavaReflectionAux} instance.
+     * Fill a builder with attribute values from the provided {@code MutableJavaDispatchAux} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(MutableJavaReflectionAux instance) {
+    public final Builder from(MutableJavaDispatchAux instance) {
       Objects.requireNonNull(instance, "instance");
       staticInvocation(instance.staticInvocation());
       redirectArg(instance.redirectArg());
@@ -395,21 +434,25 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
       if (classNameValue != null) {
         className(classNameValue);
       }
+      @Nullable String metaclassValue = instance.getMetaclass();
+      if (metaclassValue != null) {
+        metaclass(metaclassValue);
+      }
       return this;
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code IJavaReflectionAux} instance.
+     * Fill a builder with attribute values from the provided {@code IJavaDispatchAux} instance.
      * Regular attribute values will be replaced with those from the given instance.
      * Absent optional values will not replace present values.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(IJavaReflectionAux instance) {
+    public final Builder from(IJavaDispatchAux instance) {
       Objects.requireNonNull(instance, "instance");
-      if (instance instanceof MutableJavaReflectionAux) {
-        return from((MutableJavaReflectionAux) instance);
+      if (instance instanceof MutableJavaDispatchAux) {
+        return from((MutableJavaDispatchAux) instance);
       }
       staticInvocation(instance.staticInvocation());
       redirectArg(instance.redirectArg());
@@ -421,12 +464,16 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
       if (classNameValue != null) {
         className(classNameValue);
       }
+      @Nullable String metaclassValue = instance.getMetaclass();
+      if (metaclassValue != null) {
+        metaclass(metaclassValue);
+      }
       return this;
     }
 
     /**
-     * Initializes the value for the {@link IJavaReflectionAux#staticInvocation() staticInvocation} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IJavaReflectionAux#staticInvocation() staticInvocation}.</em>
+     * Initializes the value for the {@link IJavaDispatchAux#staticInvocation() staticInvocation} attribute.
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IJavaDispatchAux#staticInvocation() staticInvocation}.</em>
      * @param staticInvocation The value for staticInvocation 
      * @return {@code this} builder for use in a chained invocation
      */
@@ -439,8 +486,8 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
     }
 
     /**
-     * Initializes the value for the {@link IJavaReflectionAux#redirectArg() redirectArg} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IJavaReflectionAux#redirectArg() redirectArg}.</em>
+     * Initializes the value for the {@link IJavaDispatchAux#redirectArg() redirectArg} attribute.
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IJavaDispatchAux#redirectArg() redirectArg}.</em>
      * @param redirectArg The value for redirectArg 
      * @return {@code this} builder for use in a chained invocation
      */
@@ -453,7 +500,7 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
     }
 
     /**
-     * Initializes the value for the {@link IJavaReflectionAux#methodName() methodName} attribute.
+     * Initializes the value for the {@link IJavaDispatchAux#methodName() methodName} attribute.
      * @param methodName The value for methodName (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
@@ -465,7 +512,7 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
     }
 
     /**
-     * Initializes the value for the {@link IJavaReflectionAux#className() className} attribute.
+     * Initializes the value for the {@link IJavaDispatchAux#className() className} attribute.
      * @param className The value for className (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
@@ -477,12 +524,24 @@ public final class JavaReflectionAux implements IJavaReflectionAux {
     }
 
     /**
-     * Builds a new {@link JavaReflectionAux JavaReflectionAux}.
-     * @return An immutable instance of JavaReflectionAux
+     * Initializes the value for the {@link IJavaDispatchAux#getMetaclass() metaclass} attribute.
+     * @param metaclass The value for metaclass (can be {@code null})
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("metaclass")
+    public final Builder metaclass(@Nullable String metaclass) {
+      this.metaclass = metaclass;
+      return this;
+    }
+
+    /**
+     * Builds a new {@link JavaDispatchAux JavaDispatchAux}.
+     * @return An immutable instance of JavaDispatchAux
      * @throws java.lang.IllegalStateException if any required attributes are missing
      */
-    public JavaReflectionAux build() {
-      return new JavaReflectionAux(this);
+    public JavaDispatchAux build() {
+      return new JavaDispatchAux(this);
     }
 
     private boolean staticInvocationIsSet() {

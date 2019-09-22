@@ -10,7 +10,8 @@ import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.ICommented;
-import de.upb.sede.exec.aux.IJavaReflectionAux;
+import de.upb.sede.exec.aux.IJavaDispatchAux;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.annotation.CheckReturnValue;
@@ -35,8 +36,9 @@ import org.immutables.value.Generated;
 public final class SignatureDesc implements ISignatureDesc {
   private final ImmutableList<IMethodParameterDesc> inputs;
   private final ImmutableList<IMethodParameterDesc> outputs;
-  private final @Nullable IJavaReflectionAux javaAux;
+  private final @Nullable IJavaDispatchAux javaAux;
   private final boolean isPure;
+  private final boolean isContextFree;
   private final ImmutableList<String> comments;
 
   private SignatureDesc(SignatureDesc.Builder builder) {
@@ -44,22 +46,91 @@ public final class SignatureDesc implements ISignatureDesc {
     this.outputs = builder.outputs.build();
     this.javaAux = builder.javaAux;
     this.comments = builder.comments.build();
-    this.isPure = builder.isPureIsSet()
-        ? builder.isPure
-        : ISignatureDesc.super.isPure();
+    if (builder.isPureIsSet()) {
+      initShim.isPure(builder.isPure);
+    }
+    if (builder.isContextFreeIsSet()) {
+      initShim.isContextFree(builder.isContextFree);
+    }
+    this.isPure = initShim.isPure();
+    this.isContextFree = initShim.isContextFree();
+    this.initShim = null;
   }
 
   private SignatureDesc(
       ImmutableList<IMethodParameterDesc> inputs,
       ImmutableList<IMethodParameterDesc> outputs,
-      @Nullable IJavaReflectionAux javaAux,
+      @Nullable IJavaDispatchAux javaAux,
       boolean isPure,
+      boolean isContextFree,
       ImmutableList<String> comments) {
     this.inputs = inputs;
     this.outputs = outputs;
     this.javaAux = javaAux;
     this.isPure = isPure;
+    this.isContextFree = isContextFree;
     this.comments = comments;
+    this.initShim = null;
+  }
+
+  private static final byte STAGE_INITIALIZING = -1;
+  private static final byte STAGE_UNINITIALIZED = 0;
+  private static final byte STAGE_INITIALIZED = 1;
+  @SuppressWarnings("Immutable")
+  private transient volatile InitShim initShim = new InitShim();
+
+  @Generated(from = "ISignatureDesc", generator = "Immutables")
+  private final class InitShim {
+    private byte isPureBuildStage = STAGE_UNINITIALIZED;
+    private boolean isPure;
+
+    boolean isPure() {
+      if (isPureBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
+      if (isPureBuildStage == STAGE_UNINITIALIZED) {
+        isPureBuildStage = STAGE_INITIALIZING;
+        this.isPure = isPureInitialize();
+        isPureBuildStage = STAGE_INITIALIZED;
+      }
+      return this.isPure;
+    }
+
+    void isPure(boolean isPure) {
+      this.isPure = isPure;
+      isPureBuildStage = STAGE_INITIALIZED;
+    }
+
+    private byte isContextFreeBuildStage = STAGE_UNINITIALIZED;
+    private boolean isContextFree;
+
+    boolean isContextFree() {
+      if (isContextFreeBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
+      if (isContextFreeBuildStage == STAGE_UNINITIALIZED) {
+        isContextFreeBuildStage = STAGE_INITIALIZING;
+        this.isContextFree = isContextFreeInitialize();
+        isContextFreeBuildStage = STAGE_INITIALIZED;
+      }
+      return this.isContextFree;
+    }
+
+    void isContextFree(boolean isContextFree) {
+      this.isContextFree = isContextFree;
+      isContextFreeBuildStage = STAGE_INITIALIZED;
+    }
+
+    private String formatInitCycleMessage() {
+      List<String> attributes = new ArrayList<>();
+      if (isPureBuildStage == STAGE_INITIALIZING) attributes.add("isPure");
+      if (isContextFreeBuildStage == STAGE_INITIALIZING) attributes.add("isContextFree");
+      return "Cannot build SignatureDesc, attribute initializers form cycle " + attributes;
+    }
+  }
+
+  private boolean isPureInitialize() {
+    return ISignatureDesc.super.isPure();
+  }
+
+  private boolean isContextFreeInitialize() {
+    return ISignatureDesc.super.isContextFree();
   }
 
   /**
@@ -85,7 +156,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   @JsonProperty("javaAux")
   @Override
-  public @Nullable IJavaReflectionAux getJavaAux() {
+  public @Nullable IJavaDispatchAux getJavaAux() {
     return javaAux;
   }
 
@@ -95,7 +166,22 @@ public final class SignatureDesc implements ISignatureDesc {
   @JsonProperty("isPure")
   @Override
   public boolean isPure() {
-    return isPure;
+    InitShim shim = this.initShim;
+    return shim != null
+        ? shim.isPure()
+        : this.isPure;
+  }
+
+  /**
+   * @return The value of the {@code isContextFree} attribute
+   */
+  @JsonProperty("isContextFree")
+  @Override
+  public boolean isContextFree() {
+    InitShim shim = this.initShim;
+    return shim != null
+        ? shim.isContextFree()
+        : this.isContextFree;
   }
 
   /**
@@ -114,7 +200,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withInputs(IMethodParameterDesc... elements) {
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(newValue, this.outputs, this.javaAux, this.isPure, this.comments);
+    return new SignatureDesc(newValue, this.outputs, this.javaAux, this.isPure, this.isContextFree, this.comments);
   }
 
   /**
@@ -126,7 +212,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withInputs(Iterable<? extends IMethodParameterDesc> elements) {
     if (this.inputs == elements) return this;
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(newValue, this.outputs, this.javaAux, this.isPure, this.comments);
+    return new SignatureDesc(newValue, this.outputs, this.javaAux, this.isPure, this.isContextFree, this.comments);
   }
 
   /**
@@ -136,7 +222,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withOutputs(IMethodParameterDesc... elements) {
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, newValue, this.javaAux, this.isPure, this.comments);
+    return new SignatureDesc(this.inputs, newValue, this.javaAux, this.isPure, this.isContextFree, this.comments);
   }
 
   /**
@@ -148,7 +234,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withOutputs(Iterable<? extends IMethodParameterDesc> elements) {
     if (this.outputs == elements) return this;
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, newValue, this.javaAux, this.isPure, this.comments);
+    return new SignatureDesc(this.inputs, newValue, this.javaAux, this.isPure, this.isContextFree, this.comments);
   }
 
   /**
@@ -157,9 +243,9 @@ public final class SignatureDesc implements ISignatureDesc {
    * @param value A new value for javaAux (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final SignatureDesc withJavaAux(@Nullable IJavaReflectionAux value) {
+  public final SignatureDesc withJavaAux(@Nullable IJavaDispatchAux value) {
     if (this.javaAux == value) return this;
-    return new SignatureDesc(this.inputs, this.outputs, value, this.isPure, this.comments);
+    return new SignatureDesc(this.inputs, this.outputs, value, this.isPure, this.isContextFree, this.comments);
   }
 
   /**
@@ -170,7 +256,18 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withIsPure(boolean value) {
     if (this.isPure == value) return this;
-    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, value, this.comments);
+    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, value, this.isContextFree, this.comments);
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link ISignatureDesc#isContextFree() isContextFree} attribute.
+   * A value equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for isContextFree
+   * @return A modified copy of the {@code this} object
+   */
+  public final SignatureDesc withIsContextFree(boolean value) {
+    if (this.isContextFree == value) return this;
+    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, this.isPure, value, this.comments);
   }
 
   /**
@@ -180,7 +277,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withComments(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, this.isPure, newValue);
+    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, this.isPure, this.isContextFree, newValue);
   }
 
   /**
@@ -192,7 +289,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withComments(Iterable<String> elements) {
     if (this.comments == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, this.isPure, newValue);
+    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, this.isPure, this.isContextFree, newValue);
   }
 
   /**
@@ -211,11 +308,12 @@ public final class SignatureDesc implements ISignatureDesc {
         && outputs.equals(another.outputs)
         && Objects.equals(javaAux, another.javaAux)
         && isPure == another.isPure
+        && isContextFree == another.isContextFree
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaAux}, {@code isPure}, {@code comments}.
+   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaAux}, {@code isPure}, {@code isContextFree}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -225,6 +323,7 @@ public final class SignatureDesc implements ISignatureDesc {
     h += (h << 5) + outputs.hashCode();
     h += (h << 5) + Objects.hashCode(javaAux);
     h += (h << 5) + Booleans.hashCode(isPure);
+    h += (h << 5) + Booleans.hashCode(isContextFree);
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -241,6 +340,7 @@ public final class SignatureDesc implements ISignatureDesc {
         .add("outputs", outputs)
         .add("javaAux", javaAux)
         .add("isPure", isPure)
+        .add("isContextFree", isContextFree)
         .add("comments", comments)
         .toString();
   }
@@ -257,9 +357,11 @@ public final class SignatureDesc implements ISignatureDesc {
   static final class Json implements ISignatureDesc {
     @Nullable List<IMethodParameterDesc> inputs = ImmutableList.of();
     @Nullable List<IMethodParameterDesc> outputs = ImmutableList.of();
-    @Nullable IJavaReflectionAux javaAux;
+    @Nullable IJavaDispatchAux javaAux;
     boolean isPure;
     boolean isPureIsSet;
+    boolean isContextFree;
+    boolean isContextFreeIsSet;
     @Nullable List<String> comments = ImmutableList.of();
     @JsonProperty("inputs")
     public void setInputs(List<IMethodParameterDesc> inputs) {
@@ -270,13 +372,18 @@ public final class SignatureDesc implements ISignatureDesc {
       this.outputs = outputs;
     }
     @JsonProperty("javaAux")
-    public void setJavaAux(@Nullable IJavaReflectionAux javaAux) {
+    public void setJavaAux(@Nullable IJavaDispatchAux javaAux) {
       this.javaAux = javaAux;
     }
     @JsonProperty("isPure")
     public void setIsPure(boolean isPure) {
       this.isPure = isPure;
       this.isPureIsSet = true;
+    }
+    @JsonProperty("isContextFree")
+    public void setIsContextFree(boolean isContextFree) {
+      this.isContextFree = isContextFree;
+      this.isContextFreeIsSet = true;
     }
     @JsonProperty("comments")
     public void setComments(List<String> comments) {
@@ -287,9 +394,11 @@ public final class SignatureDesc implements ISignatureDesc {
     @Override
     public List<IMethodParameterDesc> getOutputs() { throw new UnsupportedOperationException(); }
     @Override
-    public IJavaReflectionAux getJavaAux() { throw new UnsupportedOperationException(); }
+    public IJavaDispatchAux getJavaAux() { throw new UnsupportedOperationException(); }
     @Override
     public boolean isPure() { throw new UnsupportedOperationException(); }
+    @Override
+    public boolean isContextFree() { throw new UnsupportedOperationException(); }
     @Override
     public List<String> getComments() { throw new UnsupportedOperationException(); }
   }
@@ -314,6 +423,9 @@ public final class SignatureDesc implements ISignatureDesc {
     }
     if (json.isPureIsSet) {
       builder.isPure(json.isPure);
+    }
+    if (json.isContextFreeIsSet) {
+      builder.isContextFree(json.isContextFree);
     }
     if (json.comments != null) {
       builder.addAllComments(json.comments);
@@ -343,8 +455,9 @@ public final class SignatureDesc implements ISignatureDesc {
    * SignatureDesc.builder()
    *    .addInputs|addAllInputs(de.upb.sede.exec.IMethodParameterDesc) // {@link ISignatureDesc#getInputs() inputs} elements
    *    .addOutputs|addAllOutputs(de.upb.sede.exec.IMethodParameterDesc) // {@link ISignatureDesc#getOutputs() outputs} elements
-   *    .javaAux(de.upb.sede.exec.aux.IJavaReflectionAux | null) // nullable {@link ISignatureDesc#getJavaAux() javaAux}
+   *    .javaAux(de.upb.sede.exec.aux.IJavaDispatchAux | null) // nullable {@link ISignatureDesc#getJavaAux() javaAux}
    *    .isPure(boolean) // optional {@link ISignatureDesc#isPure() isPure}
+   *    .isContextFree(boolean) // optional {@link ISignatureDesc#isContextFree() isContextFree}
    *    .addComments|addAllComments(String) // {@link ISignatureDesc#getComments() comments} elements
    *    .build();
    * </pre>
@@ -365,12 +478,14 @@ public final class SignatureDesc implements ISignatureDesc {
   @NotThreadSafe
   public static final class Builder {
     private static final long OPT_BIT_IS_PURE = 0x1L;
+    private static final long OPT_BIT_IS_CONTEXT_FREE = 0x2L;
     private long optBits;
 
     private ImmutableList.Builder<IMethodParameterDesc> inputs = ImmutableList.builder();
     private ImmutableList.Builder<IMethodParameterDesc> outputs = ImmutableList.builder();
-    private @Nullable IJavaReflectionAux javaAux;
+    private @Nullable IJavaDispatchAux javaAux;
     private boolean isPure;
+    private boolean isContextFree;
     private ImmutableList.Builder<String> comments = ImmutableList.builder();
 
     private Builder() {
@@ -386,11 +501,12 @@ public final class SignatureDesc implements ISignatureDesc {
       Objects.requireNonNull(instance, "instance");
       addAllInputs(instance.getInputs());
       addAllOutputs(instance.getOutputs());
-      @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+      @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
       if (javaAuxValue != null) {
         javaAux(javaAuxValue);
       }
       isPure(instance.isPure());
+      isContextFree(instance.isContextFree());
       addAllComments(instance.getComments());
       return this;
     }
@@ -431,11 +547,12 @@ public final class SignatureDesc implements ISignatureDesc {
       if (object instanceof ISignatureDesc) {
         ISignatureDesc instance = (ISignatureDesc) object;
         addAllOutputs(instance.getOutputs());
-        @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+        @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
         if (javaAuxValue != null) {
           javaAux(javaAuxValue);
         }
         isPure(instance.isPure());
+        isContextFree(instance.isContextFree());
         addAllInputs(instance.getInputs());
       }
     }
@@ -539,7 +656,7 @@ public final class SignatureDesc implements ISignatureDesc {
      */
     @CanIgnoreReturnValue 
     @JsonProperty("javaAux")
-    public final Builder javaAux(@Nullable IJavaReflectionAux javaAux) {
+    public final Builder javaAux(@Nullable IJavaDispatchAux javaAux) {
       this.javaAux = javaAux;
       return this;
     }
@@ -555,6 +672,20 @@ public final class SignatureDesc implements ISignatureDesc {
     public final Builder isPure(boolean isPure) {
       this.isPure = isPure;
       optBits |= OPT_BIT_IS_PURE;
+      return this;
+    }
+
+    /**
+     * Initializes the value for the {@link ISignatureDesc#isContextFree() isContextFree} attribute.
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link ISignatureDesc#isContextFree() isContextFree}.</em>
+     * @param isContextFree The value for isContextFree 
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("isContextFree")
+    public final Builder isContextFree(boolean isContextFree) {
+      this.isContextFree = isContextFree;
+      optBits |= OPT_BIT_IS_CONTEXT_FREE;
       return this;
     }
 
@@ -615,6 +746,10 @@ public final class SignatureDesc implements ISignatureDesc {
 
     private boolean isPureIsSet() {
       return (optBits & OPT_BIT_IS_PURE) != 0;
+    }
+
+    private boolean isContextFreeIsSet() {
+      return (optBits & OPT_BIT_IS_CONTEXT_FREE) != 0;
     }
   }
 }

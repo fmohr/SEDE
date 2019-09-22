@@ -52,15 +52,19 @@
               "type" : "object",
               "id" : "urn:jsonschema:de:upb:sede:exec:IMethodDesc",
               "properties" : {
-                "pure" : {
-                  "type" : "boolean"
-                },
                 "signatures" : {
                   "type" : "array",
                   "items" : {
                     "type" : "object",
                     "id" : "urn:jsonschema:de:upb:sede:exec:ISignatureDesc",
                     "properties" : {
+                      "javaAux" : {
+                        "type" : "object",
+                        "id" : "urn:jsonschema:de:upb:sede:exec:aux:IJavaReflectionAux"
+                      },
+                      "pure" : {
+                        "type" : "boolean"
+                      },
                       "inputs" : {
                         "type" : "array",
                         "items" : {
@@ -85,10 +89,6 @@
                           "type" : "object",
                           "$ref" : "urn:jsonschema:de:upb:sede:exec:IMethodParameterDesc"
                         }
-                      },
-                      "javaAux" : {
-                        "type" : "object",
-                        "id" : "urn:jsonschema:de:upb:sede:exec:aux:IJavaReflectionAux"
                       },
                       "comments" : {
                         "type" : "array",
@@ -127,18 +127,12 @@
             "type" : "object",
             "$ref" : "urn:jsonschema:de:upb:sede:exec:aux:IJavaReflectionAux"
           },
-          "stateType" : {
-            "type" : "object",
-            "id" : "urn:jsonschema:java:util:Optional<java:lang:String>",
-            "properties" : {
-              "present" : {
-                "type" : "boolean"
-              }
-            }
-          },
           "pythonClassAuxiliaries" : {
             "type" : "object",
             "id" : "urn:jsonschema:de:upb:sede:exec:aux:IPythonClassAux"
+          },
+          "stateType" : {
+            "type" : "string"
           },
           "simpleName" : {
             "type" : "string"

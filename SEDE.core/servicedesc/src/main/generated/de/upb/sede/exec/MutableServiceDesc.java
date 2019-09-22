@@ -6,7 +6,7 @@ import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
-import de.upb.sede.exec.aux.IJavaReflectionAux;
+import de.upb.sede.exec.aux.IJavaDispatchAux;
 import de.upb.sede.exec.aux.IPythonClassAux;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -40,7 +40,7 @@ public final class MutableServiceDesc implements IServiceDesc {
   private final ArrayList<String> interfaces = new ArrayList<String>();
   private boolean isAbstract;
   private final Map<String, String> fieldTypes = new LinkedHashMap<String, String>();
-  private @Nullable IJavaReflectionAux javaAux;
+  private @Nullable IJavaDispatchAux javaAux;
   private @Nullable IPythonClassAux pythonClassAuxiliaries;
   private String qualifier;
   private String simpleName;
@@ -99,7 +99,7 @@ public final class MutableServiceDesc implements IServiceDesc {
    */
   @JsonProperty("javaAux")
   @Override
-  public final @Nullable IJavaReflectionAux getJavaAux() {
+  public final @Nullable IJavaDispatchAux getJavaAux() {
     return javaAux;
   }
 
@@ -221,7 +221,7 @@ public final class MutableServiceDesc implements IServiceDesc {
       addAllInterfaces(instance.getInterfaces());
       setIsAbstract(instance.isAbstract());
       putAllFieldTypes(instance.getFieldTypes());
-      @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+      @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
       if (javaAuxValue != null) {
         setJavaAux(javaAuxValue);
       }
@@ -243,7 +243,7 @@ public final class MutableServiceDesc implements IServiceDesc {
     if (object instanceof IServiceDesc) {
       IServiceDesc instance = (IServiceDesc) object;
       addAllInterfaces(instance.getInterfaces());
-      @Nullable IJavaReflectionAux javaAuxValue = instance.getJavaAux();
+      @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
       if (javaAuxValue != null) {
         setJavaAux(javaAuxValue);
       }
@@ -432,7 +432,7 @@ public final class MutableServiceDesc implements IServiceDesc {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableServiceDesc setJavaAux(@Nullable IJavaReflectionAux javaAux) {
+  public MutableServiceDesc setJavaAux(@Nullable IJavaDispatchAux javaAux) {
     this.javaAux = javaAux;
     return this;
   }

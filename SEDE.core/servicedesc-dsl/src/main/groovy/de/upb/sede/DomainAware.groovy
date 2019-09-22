@@ -1,7 +1,6 @@
 package de.upb.sede
 
-import de.upb.sede.exec.MutableSignatureDesc
-import de.upb.sede.exec.aux.JavaReflectionAux
+
 import groovy.transform.PackageScope
 
 abstract class DomainAware<M, T> implements GroovyObject{
@@ -41,15 +40,6 @@ abstract class DomainAware<M, T> implements GroovyObject{
         subDomain.topDomain = null
     }
 
-    def comment(String ... comments) {
-        for(def comment : comments) {
-            model.comments += comment
-        }
-    }
-
-    def setInfo(String commentBlock) {
-        model.comments += commentBlock.trim()
-    }
 
     def propertyMissing(String name) {
         if(name == this.bindingName) {

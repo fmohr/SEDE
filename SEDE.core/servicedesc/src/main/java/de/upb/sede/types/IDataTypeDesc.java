@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
 import de.upb.sede.SModelStyle;
+import de.upb.sede.exec.aux.IJavaDispatchAux;
 import de.upb.sede.types.aux.IJavaTypeAux;
 import de.upb.sede.types.aux.IPythonTypeAux;
 import org.immutables.value.Value;
@@ -18,9 +19,8 @@ public interface IDataTypeDesc extends IQualifiable, ICommented {
 
     String getSemanticType();
 
-    @Nullable
-    IJavaTypeAux getJavaTypeAuxiliaries();
 
     @Nullable
-    IPythonTypeAux getPythonTypeAuxiliaries();
+    IJavaDispatchAux getJavaAux();
+
 }

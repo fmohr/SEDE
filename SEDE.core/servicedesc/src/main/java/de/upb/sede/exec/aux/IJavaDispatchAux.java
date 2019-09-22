@@ -2,11 +2,9 @@ package de.upb.sede.exec.aux;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.SModelStyle;
-import de.upb.sede.exec.IServiceDesc;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
-import java.util.Map;
 import java.util.Objects;
 
 import static de.upb.sede.exec.IMethodDesc.CONSTRUCTOR_METHOD_NAME;
@@ -14,8 +12,8 @@ import static de.upb.sede.exec.IMethodDesc.CONSTRUCTOR_METHOD_NAME;
 @SModelStyle
 @Value.Immutable
 @Value.Modifiable
-@JsonDeserialize(builder = JavaReflectionAux.Builder.class)
-public interface IJavaReflectionAux {
+@JsonDeserialize(builder = JavaDispatchAux.Builder.class)
+public interface IJavaDispatchAux {
 
     @Value.Default
     default boolean staticInvocation() {
@@ -38,5 +36,8 @@ public interface IJavaReflectionAux {
 
     @Nullable
     String className();
+
+    @Nullable
+    String getMetaclass();
 
 }

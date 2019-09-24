@@ -17,4 +17,4 @@ import java.lang.annotation.RetentionPolicy;
     visibility = Value.Style.ImplementationVisibility.PUBLIC)
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface SModelStyle {}
+public @interface SEDEModelStyle {}

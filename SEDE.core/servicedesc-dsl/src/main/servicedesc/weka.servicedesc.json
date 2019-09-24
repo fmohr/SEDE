@@ -28,8 +28,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "labelDataset",
       "simpleName" : "labelDataset",
@@ -61,8 +61,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "setClassIndex",
       "simpleName" : "setClassIndex",
@@ -94,8 +94,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "classIndicesToNames",
       "simpleName" : "classIndicesToNames",
@@ -122,8 +122,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "classIndicesPrettify",
       "simpleName" : "classIndicesPrettify",
@@ -150,8 +150,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "categorize",
       "simpleName" : "categorize",
@@ -183,8 +183,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "$construct",
       "simpleName" : "$construct",
@@ -206,8 +206,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "createUnique",
       "simpleName" : "createUnique",
@@ -239,8 +239,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "createNamed",
       "simpleName" : "createNamed",
@@ -256,8 +256,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "all",
       "simpleName" : "all",
@@ -278,8 +278,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "allLabeled",
       "simpleName" : "allLabeled",
@@ -300,8 +300,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "fromIndices",
       "simpleName" : "fromIndices",
@@ -327,8 +327,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "fromIndicesLabeled",
       "simpleName" : "fromIndicesLabeled",
@@ -357,8 +357,8 @@
         "outputs" : [ ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "set_options",
       "simpleName" : "set_options",
@@ -385,8 +385,8 @@
         "outputs" : [ ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "set_options_dict",
       "simpleName" : "set_options_dict",
@@ -434,8 +434,8 @@
         "outputs" : [ ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "$construct",
       "simpleName" : "$construct",
@@ -451,8 +451,8 @@
         "outputs" : [ ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "train",
       "simpleName" : "train",
@@ -478,8 +478,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "predict",
       "simpleName" : "predict",

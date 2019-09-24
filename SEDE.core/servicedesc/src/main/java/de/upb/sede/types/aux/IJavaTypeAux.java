@@ -1,10 +1,10 @@
 package de.upb.sede.types.aux;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SModelStyle;
+import de.upb.sede.SEDEModelStyle;
 import org.immutables.value.Value;
 
-@SModelStyle
+@SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = JavaTypeAux.Builder.class)

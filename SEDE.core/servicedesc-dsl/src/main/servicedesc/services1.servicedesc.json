@@ -12,8 +12,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "$construct",
       "simpleName" : "$construct",
@@ -55,8 +55,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       }, {
         "inputs" : [ {
           "type" : "t1",
@@ -83,8 +83,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       }, {
         "inputs" : [ {
           "type" : "t1",
@@ -106,8 +106,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       }, {
         "inputs" : [ {
           "type" : "t1",
@@ -134,8 +134,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "m1",
       "simpleName" : "method 1",
@@ -161,8 +161,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "m2",
       "simpleName" : "m2",

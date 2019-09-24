@@ -2,7 +2,7 @@ package de.upb.sede.util;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.upb.sede.SModelStyle;
+import de.upb.sede.SEDEModelStyle;
 
 import java.util.stream.Stream;
 
@@ -22,6 +22,6 @@ public class SDLUtil {
     }
 
     private static <T> boolean isSMStyleAnnotated(Class<T> tClass) {
-        return Stream.of(tClass.getInterfaces()).anyMatch(i -> i.isAnnotationPresent(SModelStyle.class));
+        return Stream.of(tClass.getInterfaces()).anyMatch(i -> i.isAnnotationPresent(SEDEModelStyle.class));
     }
 }

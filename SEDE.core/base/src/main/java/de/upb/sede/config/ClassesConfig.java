@@ -639,7 +639,6 @@ public class ClassesConfig extends Configuration {
 			return false;
 		}
 
-
 	}
 
 }

@@ -3,7 +3,7 @@ package de.upb.sede.exec;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
-import de.upb.sede.SModelStyle;
+import de.upb.sede.SEDEModelStyle;
 import de.upb.sede.exec.aux.IJavaDispatchAux;
 import de.upb.sede.exec.aux.IPythonClassAux;
 import org.immutables.value.Value;
@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-@SModelStyle
+@SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = ServiceDesc.Builder.class)

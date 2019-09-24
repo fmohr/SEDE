@@ -17,8 +17,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       }, {
         "inputs" : [ ],
         "outputs" : [ {
@@ -29,8 +29,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "$construct",
       "simpleName" : "$construct",
@@ -51,8 +51,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "addier",
       "simpleName" : "addier",
@@ -73,8 +73,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "addierListe",
       "simpleName" : "addierListe",
@@ -100,8 +100,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : true
+        "isContextFree" : true,
+        "isPure" : true
       } ],
       "qualifier" : "summierListe",
       "simpleName" : "summierListe",
@@ -122,8 +122,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "summier",
       "simpleName" : "summier",
@@ -139,8 +139,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : true
+        "isContextFree" : true,
+        "isPure" : false
       } ],
       "qualifier" : "fail",
       "simpleName" : "fail",
@@ -151,8 +151,8 @@
         "outputs" : [ ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : true
+        "isContextFree" : true,
+        "isPure" : false
       } ],
       "qualifier" : "sleep",
       "simpleName" : "sleep",
@@ -178,8 +178,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : true
+        "isContextFree" : true,
+        "isPure" : false
       } ],
       "qualifier" : "addierBuiltIn",
       "simpleName" : "addierBuiltIn",
@@ -218,8 +218,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "$construct",
       "simpleName" : "$construct",
@@ -240,8 +240,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "calc",
       "simpleName" : "calc",
@@ -262,8 +262,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "liagtAufGerade",
       "simpleName" : "liagtAufGerade",
@@ -279,8 +279,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "achsenabschnitt",
       "simpleName" : "achsenabschnitt",
@@ -296,8 +296,8 @@
         } ],
         "javaAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "nullstelle",
       "simpleName" : "nullstelle",

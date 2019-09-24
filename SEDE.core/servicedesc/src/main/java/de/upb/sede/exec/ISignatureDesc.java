@@ -2,14 +2,14 @@ package de.upb.sede.exec;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.ICommented;
-import de.upb.sede.SModelStyle;
+import de.upb.sede.SEDEModelStyle;
 import de.upb.sede.exec.aux.IJavaDispatchAux;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
 import java.util.List;
 
-@SModelStyle
+@SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = SignatureDesc.Builder.class)

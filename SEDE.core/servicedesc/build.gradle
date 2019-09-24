@@ -1,6 +1,11 @@
+plugins {
+    id 'java'
+    id 'groovy'
+}
+ 
 dependencies {
-
     compile project(":SEDE.core")
+    compile project(":SEDE.core-models")
 
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9.3'
@@ -23,7 +28,7 @@ sourceSets {
     }
 }
 
-task genServiceDeskJsonSchema(type: JavaExec) {
+task genJsonSchema(type: JavaExec) {
     classpath += sourceSets.main.runtimeClasspath
     classpath += sourceSets.test.runtimeClasspath
 
@@ -32,4 +37,4 @@ task genServiceDeskJsonSchema(type: JavaExec) {
     args 'src/main/resources/servicedesc.schema.json'
 }
 
-assemble.dependsOn genServiceDeskJsonSchema
+assemble.dependsOn genJsonSchema

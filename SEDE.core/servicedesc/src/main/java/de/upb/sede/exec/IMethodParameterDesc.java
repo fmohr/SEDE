@@ -1,13 +1,12 @@
 package de.upb.sede.exec;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SModelStyle;
+import de.upb.sede.SEDEModelStyle;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
 
-@SModelStyle
+@SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = MethodParameterDesc.Builder.class)

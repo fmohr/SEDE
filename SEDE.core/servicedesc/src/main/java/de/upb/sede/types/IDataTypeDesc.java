@@ -3,15 +3,13 @@ package de.upb.sede.types;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
-import de.upb.sede.SModelStyle;
+import de.upb.sede.SEDEModelStyle;
 import de.upb.sede.exec.aux.IJavaDispatchAux;
-import de.upb.sede.types.aux.IJavaTypeAux;
-import de.upb.sede.types.aux.IPythonTypeAux;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
 
-@SModelStyle
+@SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = DataTypeDesc.Builder.class)

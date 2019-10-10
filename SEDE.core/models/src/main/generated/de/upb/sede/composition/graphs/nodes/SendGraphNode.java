@@ -33,10 +33,23 @@ import org.immutables.value.Generated;
 public final class SendGraphNode implements ISendGraphNode {
   private final String graph;
   private final IExecutorContactInfo contactInfo;
+  private final String nodeType;
 
-  private SendGraphNode(String graph, IExecutorContactInfo contactInfo) {
+  private SendGraphNode(SendGraphNode.Builder builder) {
+    this.graph = builder.graph;
+    this.contactInfo = builder.contactInfo;
+    this.nodeType = builder.nodeType != null
+        ? builder.nodeType
+        : Objects.requireNonNull(ISendGraphNode.super.getNodeType(), "nodeType");
+  }
+
+  private SendGraphNode(
+      String graph,
+      IExecutorContactInfo contactInfo,
+      String nodeType) {
     this.graph = graph;
     this.contactInfo = contactInfo;
+    this.nodeType = nodeType;
   }
 
   /**
@@ -58,6 +71,15 @@ public final class SendGraphNode implements ISendGraphNode {
   }
 
   /**
+   * @return The value of the {@code nodeType} attribute
+   */
+  @JsonProperty("nodeType")
+  @Override
+  public String getNodeType() {
+    return nodeType;
+  }
+
+  /**
    * Copy the current immutable object by setting a value for the {@link ISendGraphNode#getGraph() graph} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for graph
@@ -66,7 +88,7 @@ public final class SendGraphNode implements ISendGraphNode {
   public final SendGraphNode withGraph(String value) {
     String newValue = Objects.requireNonNull(value, "graph");
     if (this.graph.equals(newValue)) return this;
-    return new SendGraphNode(newValue, this.contactInfo);
+    return new SendGraphNode(newValue, this.contactInfo, this.nodeType);
   }
 
   /**
@@ -78,7 +100,19 @@ public final class SendGraphNode implements ISendGraphNode {
   public final SendGraphNode withContactInfo(IExecutorContactInfo value) {
     if (this.contactInfo == value) return this;
     IExecutorContactInfo newValue = Objects.requireNonNull(value, "contactInfo");
-    return new SendGraphNode(this.graph, newValue);
+    return new SendGraphNode(this.graph, newValue, this.nodeType);
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link ISendGraphNode#getNodeType() nodeType} attribute.
+   * An equals check used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for nodeType
+   * @return A modified copy of the {@code this} object
+   */
+  public final SendGraphNode withNodeType(String value) {
+    String newValue = Objects.requireNonNull(value, "nodeType");
+    if (this.nodeType.equals(newValue)) return this;
+    return new SendGraphNode(this.graph, this.contactInfo, newValue);
   }
 
   /**
@@ -94,11 +128,12 @@ public final class SendGraphNode implements ISendGraphNode {
 
   private boolean equalTo(SendGraphNode another) {
     return graph.equals(another.graph)
-        && contactInfo.equals(another.contactInfo);
+        && contactInfo.equals(another.contactInfo)
+        && nodeType.equals(another.nodeType);
   }
 
   /**
-   * Computes a hash code from attributes: {@code graph}, {@code contactInfo}.
+   * Computes a hash code from attributes: {@code graph}, {@code contactInfo}, {@code nodeType}.
    * @return hashCode value
    */
   @Override
@@ -106,6 +141,7 @@ public final class SendGraphNode implements ISendGraphNode {
     @Var int h = 5381;
     h += (h << 5) + graph.hashCode();
     h += (h << 5) + contactInfo.hashCode();
+    h += (h << 5) + nodeType.hashCode();
     return h;
   }
 
@@ -119,6 +155,7 @@ public final class SendGraphNode implements ISendGraphNode {
         .omitNullValues()
         .add("graph", graph)
         .add("contactInfo", contactInfo)
+        .add("nodeType", nodeType)
         .toString();
   }
 
@@ -134,6 +171,7 @@ public final class SendGraphNode implements ISendGraphNode {
   static final class Json implements ISendGraphNode {
     @Nullable String graph;
     @Nullable IExecutorContactInfo contactInfo;
+    @Nullable String nodeType;
     @JsonProperty("graph")
     public void setGraph(String graph) {
       this.graph = graph;
@@ -142,10 +180,16 @@ public final class SendGraphNode implements ISendGraphNode {
     public void setContactInfo(IExecutorContactInfo contactInfo) {
       this.contactInfo = contactInfo;
     }
+    @JsonProperty("nodeType")
+    public void setNodeType(String nodeType) {
+      this.nodeType = nodeType;
+    }
     @Override
     public String getGraph() { throw new UnsupportedOperationException(); }
     @Override
     public IExecutorContactInfo getContactInfo() { throw new UnsupportedOperationException(); }
+    @Override
+    public String getNodeType() { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -162,6 +206,9 @@ public final class SendGraphNode implements ISendGraphNode {
     }
     if (json.contactInfo != null) {
       builder.contactInfo(json.contactInfo);
+    }
+    if (json.nodeType != null) {
+      builder.nodeType(json.nodeType);
     }
     return builder.build();
   }
@@ -188,6 +235,7 @@ public final class SendGraphNode implements ISendGraphNode {
    * SendGraphNode.builder()
    *    .graph(String) // required {@link ISendGraphNode#getGraph() graph}
    *    .contactInfo(de.upb.sede.exec.IExecutorContactInfo) // required {@link ISendGraphNode#getContactInfo() contactInfo}
+   *    .nodeType(String) // optional {@link ISendGraphNode#getNodeType() nodeType}
    *    .build();
    * </pre>
    * @return A new SendGraphNode builder
@@ -212,6 +260,7 @@ public final class SendGraphNode implements ISendGraphNode {
 
     private @Nullable String graph;
     private @Nullable IExecutorContactInfo contactInfo;
+    private @Nullable String nodeType;
 
     private Builder() {
     }
@@ -230,25 +279,48 @@ public final class SendGraphNode implements ISendGraphNode {
       if (instance.contactInfoIsSet()) {
         contactInfo(instance.getContactInfo());
       }
+      nodeType(instance.getNodeType());
       return this;
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code ISendGraphNode} instance.
-     * Regular attribute values will be replaced with those from the given instance.
-     * Absent optional values will not replace present values.
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.ISendGraphNode} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
     public final Builder from(ISendGraphNode instance) {
       Objects.requireNonNull(instance, "instance");
-      if (instance instanceof MutableSendGraphNode) {
-        return from((MutableSendGraphNode) instance);
-      }
-      graph(instance.getGraph());
-      contactInfo(instance.getContactInfo());
+      from((Object) instance);
       return this;
+    }
+
+    /**
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.BaseNode} instance.
+     * @param instance The instance from which to copy values
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder from(BaseNode instance) {
+      Objects.requireNonNull(instance, "instance");
+      from((Object) instance);
+      return this;
+    }
+
+    private void from(Object object) {
+      if (object instanceof MutableSendGraphNode) {
+        from((MutableSendGraphNode) object);
+        return;
+      }
+      if (object instanceof ISendGraphNode) {
+        ISendGraphNode instance = (ISendGraphNode) object;
+        contactInfo(instance.getContactInfo());
+        graph(instance.getGraph());
+      }
+      if (object instanceof BaseNode) {
+        BaseNode instance = (BaseNode) object;
+        nodeType(instance.getNodeType());
+      }
     }
 
     /**
@@ -278,6 +350,19 @@ public final class SendGraphNode implements ISendGraphNode {
     }
 
     /**
+     * Initializes the value for the {@link ISendGraphNode#getNodeType() nodeType} attribute.
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link ISendGraphNode#getNodeType() nodeType}.</em>
+     * @param nodeType The value for nodeType 
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("nodeType")
+    public final Builder nodeType(String nodeType) {
+      this.nodeType = Objects.requireNonNull(nodeType, "nodeType");
+      return this;
+    }
+
+    /**
      * Builds a new {@link SendGraphNode SendGraphNode}.
      * @return An immutable instance of SendGraphNode
      * @throws java.lang.IllegalStateException if any required attributes are missing
@@ -286,7 +371,7 @@ public final class SendGraphNode implements ISendGraphNode {
       if (initBits != 0) {
         throw new IllegalStateException(formatRequiredAttributesMessage());
       }
-      return new SendGraphNode(graph, contactInfo);
+      return new SendGraphNode(this);
     }
 
     private String formatRequiredAttributesMessage() {

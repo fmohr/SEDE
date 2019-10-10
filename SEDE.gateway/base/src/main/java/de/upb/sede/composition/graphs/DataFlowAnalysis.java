@@ -10,12 +10,12 @@ import de.upb.sede.config.ClassesConfig.MethodInfo;
 import de.upb.sede.core.SEDEObject;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exceptions.CompositionSemanticException;
-import de.upb.sede.gateway.ExecutorHandle;
 import de.upb.sede.gateway.ResolveInfo;
 import de.upb.sede.requests.resolve.InputFields;
 import de.upb.sede.util.DefaultMap;
 
 public class DataFlowAnalysis {
+
 	private final ResolveInfo resolveInfo;
 
 	// private final List<AcceptDataNode> clientInputNodes = new ArrayList<>();
@@ -33,7 +33,7 @@ public class DataFlowAnalysis {
 
 	private final DefaultMap<BaseNode, List<FieldType>> nodeConsumingFields = new DefaultMap<>(ArrayList::new);
 
-//	private final DefaultMap<FieldType, List<BaseNode>> fieldProducers = new DefaultMap<>(ArrayList::new);
+//	private final DefaultMap<FieldType, List<IBaseNode>> fieldProducers = new DefaultMap<>(ArrayList::new);
 
 	private final Map<BaseNode, ExecPlan> nodeExecutionAssignment = new HashMap<>();
 
@@ -691,7 +691,7 @@ public class DataFlowAnalysis {
 //		 	Iterate over all the transmit nodes in the client graph
 //		 	and remove every fieldname that is used by a transmit node.
 //		  */
-//		for(BaseNode baseNode :
+//		for(IBaseNode baseNode :
 //				GraphTraversal.iterateNodesWithClassname(getClientExecPlan().getGraph(), TransmitDataNode.class.getName())) {
 //			TransmitDataNode transmitDataNode = (TransmitDataNode) baseNode;
 //			notUsedInputs.remove(transmitDataNode.getSendingFieldName());
@@ -1068,7 +1068,7 @@ public class DataFlowAnalysis {
 	/*
 		(Not needed)
 	 */
-//	List<BaseNode> getProducers(FieldType fieldType) {
+//	List<IBaseNode> getProducers(FieldType fieldType) {
 //		return Collections.unmodifiableList(fieldProducers.get(fieldType));
 //	}
 

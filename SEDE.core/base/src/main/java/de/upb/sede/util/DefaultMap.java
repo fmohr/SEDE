@@ -3,6 +3,7 @@ package de.upb.sede.util;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class DefaultMap<K, V> {
@@ -43,4 +44,14 @@ public class DefaultMap<K, V> {
 	public String toString() {
 		return innerMap.toString();
 	}
+
+
+    public void clear() {
+        innerMap.clear();
+    }
+
+    public Set<K> keySey() {
+        return innerMap.keySet();
+    }
+
 }

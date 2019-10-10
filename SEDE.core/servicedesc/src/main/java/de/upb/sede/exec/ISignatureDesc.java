@@ -1,7 +1,7 @@
 package de.upb.sede.exec;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.ICommented;
+import de.upb.sede.CommentAware;
 import de.upb.sede.SEDEModelStyle;
 import de.upb.sede.exec.aux.IJavaDispatchAux;
 import org.immutables.value.Value;
@@ -13,7 +13,7 @@ import java.util.List;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = SignatureDesc.Builder.class)
-public interface ISignatureDesc extends ICommented {
+public interface ISignatureDesc extends CommentAware {
 
     List<IMethodParameterDesc> getInputs();
 

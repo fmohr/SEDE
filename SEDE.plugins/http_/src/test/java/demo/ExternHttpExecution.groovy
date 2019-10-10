@@ -1,22 +1,18 @@
 package demo
 
-import com.fasterxml.jackson.databind.ObjectMapper
+
 import de.upb.sede.client.CoreClient
 import de.upb.sede.client.HttpCoreClient
 import de.upb.sede.config.ExecutorConfiguration
-import de.upb.sede.core.ObjectDataField
 import de.upb.sede.core.PrimitiveDataField
-import de.upb.sede.core.SEDEObject
 import de.upb.sede.requests.ExecutorRegistration
 import de.upb.sede.requests.RunRequest
 import de.upb.sede.requests.resolve.InputFields
-import de.upb.sede.requests.resolve.ResolvePolicy
+
 import de.upb.sede.requests.resolve.ResolveRequest
 import de.upb.sede.util.ExecutorConfigurationCreator
 import demo.types.DemoCaster
-import demo.types.NummerList
 import demo.types.Punkt
-import org.junit.Assert
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import spock.lang.Specification

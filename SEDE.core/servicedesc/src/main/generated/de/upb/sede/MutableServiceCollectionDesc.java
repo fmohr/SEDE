@@ -111,18 +111,6 @@ public final class MutableServiceCollectionDesc implements IServiceCollectionDes
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.ICommented} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableServiceCollectionDesc from(ICommented instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
-    return this;
-  }
-
-  /**
    * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.IServiceCollectionDesc} instance.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
@@ -141,6 +129,18 @@ public final class MutableServiceCollectionDesc implements IServiceCollectionDes
    */
   @CanIgnoreReturnValue
   public MutableServiceCollectionDesc from(IQualifiable instance) {
+    Objects.requireNonNull(instance, "instance");
+    from((Object) instance);
+    return this;
+  }
+
+  /**
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.CommentAware} instance.
+   * @param instance The instance from which to copy values
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceCollectionDesc from(CommentAware instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
@@ -172,10 +172,6 @@ public final class MutableServiceCollectionDesc implements IServiceCollectionDes
       setSimpleName(instance.getSimpleName());
       return;
     }
-    if (object instanceof ICommented) {
-      ICommented instance = (ICommented) object;
-      addAllComments(instance.getComments());
-    }
     if (object instanceof IServiceCollectionDesc) {
       IServiceCollectionDesc instance = (IServiceCollectionDesc) object;
       addAllDataTypes(instance.getDataTypes());
@@ -185,6 +181,10 @@ public final class MutableServiceCollectionDesc implements IServiceCollectionDes
       IQualifiable instance = (IQualifiable) object;
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
+    }
+    if (object instanceof CommentAware) {
+      CommentAware instance = (CommentAware) object;
+      addAllComments(instance.getComments());
     }
   }
 
@@ -436,16 +436,14 @@ public final class MutableServiceCollectionDesc implements IServiceCollectionDes
   }
 
   private boolean equalTo(MutableServiceCollectionDesc another) {
-    String simpleName = getSimpleName();
     return services.equals(another.services)
         && dataTypes.equals(another.dataTypes)
         && comments.equals(another.comments)
-        && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.getSimpleName());
+        && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code services}, {@code dataTypes}, {@code comments}, {@code qualifier}, {@code simpleName}.
+   * Computes a hash code from attributes: {@code services}, {@code dataTypes}, {@code comments}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -455,8 +453,6 @@ public final class MutableServiceCollectionDesc implements IServiceCollectionDes
     h += (h << 5) + dataTypes.hashCode();
     h += (h << 5) + comments.hashCode();
     h += (h << 5) + qualifier.hashCode();
-    String simpleName = getSimpleName();
-    h += (h << 5) + simpleName.hashCode();
     return h;
   }
 
@@ -472,7 +468,6 @@ public final class MutableServiceCollectionDesc implements IServiceCollectionDes
         .add("dataTypes", getDataTypes())
         .add("comments", getComments())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
-        .add("simpleName", getSimpleName())
         .toString();
   }
 }

@@ -1,6 +1,6 @@
 package de.upb.sede.composition.graphs;
 
-import de.upb.sede.gateway.ExecutorHandle;
+import de.upb.sede.exec.ExecutorHandle;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -212,12 +212,11 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
     return services.equals(another.services)
         && dataTypes.equals(another.dataTypes)
         && comments.equals(another.comments)
-        && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.simpleName);
+        && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code services}, {@code dataTypes}, {@code comments}, {@code qualifier}, {@code simpleName}.
+   * Computes a hash code from attributes: {@code services}, {@code dataTypes}, {@code comments}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -227,7 +226,6 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
     h += (h << 5) + dataTypes.hashCode();
     h += (h << 5) + comments.hashCode();
     h += (h << 5) + qualifier.hashCode();
-    h += (h << 5) + simpleName.hashCode();
     return h;
   }
 
@@ -243,7 +241,6 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
         .add("dataTypes", dataTypes)
         .add("comments", comments)
         .add("qualifier", qualifier)
-        .add("simpleName", simpleName)
         .toString();
   }
 
@@ -395,18 +392,6 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.ICommented} instance.
-     * @param instance The instance from which to copy values
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder from(ICommented instance) {
-      Objects.requireNonNull(instance, "instance");
-      from((Object) instance);
-      return this;
-    }
-
-    /**
      * Fill a builder with attribute values from the provided {@code de.upb.sede.IServiceCollectionDesc} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
@@ -430,14 +415,22 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
       return this;
     }
 
+    /**
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.CommentAware} instance.
+     * @param instance The instance from which to copy values
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder from(CommentAware instance) {
+      Objects.requireNonNull(instance, "instance");
+      from((Object) instance);
+      return this;
+    }
+
     private void from(Object object) {
       if (object instanceof MutableServiceCollectionDesc) {
         from((MutableServiceCollectionDesc) object);
         return;
-      }
-      if (object instanceof ICommented) {
-        ICommented instance = (ICommented) object;
-        addAllComments(instance.getComments());
       }
       if (object instanceof IServiceCollectionDesc) {
         IServiceCollectionDesc instance = (IServiceCollectionDesc) object;
@@ -448,6 +441,10 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
         IQualifiable instance = (IQualifiable) object;
         simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
+      }
+      if (object instanceof CommentAware) {
+        CommentAware instance = (CommentAware) object;
+        addAllComments(instance.getComments());
       }
     }
 

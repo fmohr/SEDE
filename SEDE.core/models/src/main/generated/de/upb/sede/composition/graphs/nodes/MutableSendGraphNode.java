@@ -31,6 +31,7 @@ public final class MutableSendGraphNode implements ISendGraphNode {
 
   private String graph;
   private IExecutorContactInfo contactInfo;
+  private String nodeType;
 
   private MutableSendGraphNode() {}
 
@@ -67,6 +68,17 @@ public final class MutableSendGraphNode implements ISendGraphNode {
   }
 
   /**
+   * @return assigned or, otherwise, newly computed, not cached value of {@code nodeType} attribute
+   */
+  @JsonProperty("nodeType")
+  @Override
+  public final String getNodeType() {
+    return nodeTypeIsSet()
+        ? nodeType
+        : ISendGraphNode.super.getNodeType();
+  }
+
+  /**
    * Clears the object by setting all attributes to their initial values.
    * @return {@code this} for use in a chained invocation
    */
@@ -75,24 +87,31 @@ public final class MutableSendGraphNode implements ISendGraphNode {
     initBits = 0x3L;
     graph = null;
     contactInfo = null;
+    nodeType = null;
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link ISendGraphNode} instance.
-   * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
-   * Any of the instance's absent optional values will not be copied (will not override current values).
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.nodes.ISendGraphNode} instance.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
+  @CanIgnoreReturnValue
   public MutableSendGraphNode from(ISendGraphNode instance) {
     Objects.requireNonNull(instance, "instance");
-    if (instance instanceof MutableSendGraphNode) {
-      from((MutableSendGraphNode) instance);
-      return this;
-    }
-    setGraph(instance.getGraph());
-    setContactInfo(instance.getContactInfo());
+    from((Object) instance);
+    return this;
+  }
+
+  /**
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.nodes.BaseNode} instance.
+   * @param instance The instance from which to copy values
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableSendGraphNode from(BaseNode instance) {
+    Objects.requireNonNull(instance, "instance");
+    from((Object) instance);
     return this;
   }
 
@@ -105,13 +124,31 @@ public final class MutableSendGraphNode implements ISendGraphNode {
    */
   public MutableSendGraphNode from(MutableSendGraphNode instance) {
     Objects.requireNonNull(instance, "instance");
-    if (instance.graphIsSet()) {
+    from((Object) instance);
+    return this;
+  }
+
+  private void from(Object object) {
+    if (object instanceof MutableSendGraphNode) {
+      MutableSendGraphNode instance = (MutableSendGraphNode) object;
+      if (instance.graphIsSet()) {
+        setGraph(instance.getGraph());
+      }
+      if (instance.contactInfoIsSet()) {
+        setContactInfo(instance.getContactInfo());
+      }
+      setNodeType(instance.getNodeType());
+      return;
+    }
+    if (object instanceof ISendGraphNode) {
+      ISendGraphNode instance = (ISendGraphNode) object;
+      setContactInfo(instance.getContactInfo());
       setGraph(instance.getGraph());
     }
-    if (instance.contactInfoIsSet()) {
-      setContactInfo(instance.getContactInfo());
+    if (object instanceof BaseNode) {
+      BaseNode instance = (BaseNode) object;
+      setNodeType(instance.getNodeType());
     }
-    return this;
   }
 
   /**
@@ -139,6 +176,18 @@ public final class MutableSendGraphNode implements ISendGraphNode {
   }
 
   /**
+   * Assigns a value to the {@link ISendGraphNode#getNodeType() nodeType} attribute.
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link ISendGraphNode#getNodeType() nodeType}.</em>
+   * @param nodeType The value for nodeType
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableSendGraphNode setNodeType(String nodeType) {
+    this.nodeType = Objects.requireNonNull(nodeType, "nodeType");
+    return this;
+  }
+
+  /**
    * Returns {@code true} if the required attribute {@link ISendGraphNode#getGraph() graph} is set.
    * @return {@code true} if set
    */
@@ -152,6 +201,14 @@ public final class MutableSendGraphNode implements ISendGraphNode {
    */
   public final boolean contactInfoIsSet() {
     return (initBits & INIT_BIT_CONTACT_INFO) == 0;
+  }
+
+  /**
+   * Returns {@code true} if the default attribute {@link ISendGraphNode#getNodeType() nodeType} is set.
+   * @return {@code true} if set
+   */
+  public final boolean nodeTypeIsSet() {
+    return nodeType != null;
   }
 
 
@@ -224,12 +281,14 @@ public final class MutableSendGraphNode implements ISendGraphNode {
   }
 
   private boolean equalTo(MutableSendGraphNode another) {
+    String nodeType = getNodeType();
     return graph.equals(another.graph)
-        && contactInfo.equals(another.contactInfo);
+        && contactInfo.equals(another.contactInfo)
+        && nodeType.equals(another.getNodeType());
   }
 
   /**
-   * Computes a hash code from attributes: {@code graph}, {@code contactInfo}.
+   * Computes a hash code from attributes: {@code graph}, {@code contactInfo}, {@code nodeType}.
    * @return hashCode value
    */
   @Override
@@ -237,6 +296,8 @@ public final class MutableSendGraphNode implements ISendGraphNode {
     int h = 5381;
     h += (h << 5) + graph.hashCode();
     h += (h << 5) + contactInfo.hashCode();
+    String nodeType = getNodeType();
+    h += (h << 5) + nodeType.hashCode();
     return h;
   }
 
@@ -250,6 +311,7 @@ public final class MutableSendGraphNode implements ISendGraphNode {
     return MoreObjects.toStringHelper("MutableSendGraphNode")
         .add("graph", graphIsSet() ? getGraph() : "?")
         .add("contactInfo", contactInfoIsSet() ? getContactInfo() : "?")
+        .add("nodeType", getNodeType())
         .toString();
   }
 }

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import de.upb.sede.ICommented;
+import de.upb.sede.CommentAware;
 import de.upb.sede.exec.aux.IJavaDispatchAux;
 import java.util.ArrayList;
 import java.util.List;
@@ -123,24 +123,24 @@ public final class MutableSignatureDesc implements ISignatureDesc {
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.ICommented} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableSignatureDesc from(ICommented instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
-    return this;
-  }
-
-  /**
    * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.exec.ISignatureDesc} instance.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
   public MutableSignatureDesc from(ISignatureDesc instance) {
+    Objects.requireNonNull(instance, "instance");
+    from((Object) instance);
+    return this;
+  }
+
+  /**
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.CommentAware} instance.
+   * @param instance The instance from which to copy values
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableSignatureDesc from(CommentAware instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
@@ -174,10 +174,6 @@ public final class MutableSignatureDesc implements ISignatureDesc {
       addAllComments(instance.getComments());
       return;
     }
-    if (object instanceof ICommented) {
-      ICommented instance = (ICommented) object;
-      addAllComments(instance.getComments());
-    }
     if (object instanceof ISignatureDesc) {
       ISignatureDesc instance = (ISignatureDesc) object;
       addAllOutputs(instance.getOutputs());
@@ -188,6 +184,10 @@ public final class MutableSignatureDesc implements ISignatureDesc {
       setIsPure(instance.isPure());
       setIsContextFree(instance.isContextFree());
       addAllInputs(instance.getInputs());
+    }
+    if (object instanceof CommentAware) {
+      CommentAware instance = (CommentAware) object;
+      addAllComments(instance.getComments());
     }
   }
 

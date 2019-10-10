@@ -16,6 +16,7 @@ import de.upb.sede.util.Iterators;
  *
  */
 public class CompositionGraph {
+
 	/* node set */
 	private final Set<BaseNode> nodes;
 	/* edge set */
@@ -177,7 +178,7 @@ public class CompositionGraph {
 	 * This method connects node1 to every target node of node2.
 	 * Basically:
 	 * <pre>
-	 * for(BaseNode bn : GraphTraversal.targetingNodes(this, node2)) {
+	 * for(IBaseNode bn : GraphTraversal.targetingNodes(this, node2)) {
 	 * 		connectNodes(node1, bn);
 	 * }
 	 * </pre>

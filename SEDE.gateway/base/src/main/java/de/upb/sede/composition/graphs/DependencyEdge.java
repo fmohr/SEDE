@@ -5,7 +5,7 @@ import java.util.Objects;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 
 /**
- * 2-Tuple of BaseNode. Represents a directed edge in GraphComposition.
+ * 2-Tuple of IBaseNode. Represents a directed edge in GraphComposition.
  *
  * Immutable
  */

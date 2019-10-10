@@ -4,7 +4,6 @@ plugins {
 }
 
 dependencies {
-
     compile project(":SEDE.core")
 
     compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'

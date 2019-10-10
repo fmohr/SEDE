@@ -30,7 +30,6 @@ import de.upb.sede.gateway.Gateway;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.requests.Result;
 import de.upb.sede.requests.RunRequest;
-import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.util.ExecutorConfigurationCreator;
 import de.upb.sede.util.FileUtil;
 import demo.types.DemoCaster;

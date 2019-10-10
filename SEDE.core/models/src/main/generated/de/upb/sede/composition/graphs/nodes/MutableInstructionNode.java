@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import de.upb.sede.IFieldContainer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -26,20 +27,18 @@ import org.immutables.value.Generated;
 @NotThreadSafe
 public final class MutableInstructionNode implements IInstructionNode {
   private static final long INIT_BIT_F_M_INSTRUCTION = 0x1L;
-  private static final long INIT_BIT_FIELD_TYPE = 0x2L;
-  private static final long INIT_BIT_FIELD_CLASS = 0x4L;
-  private static final long INIT_BIT_HOST = 0x8L;
-  private static final long INIT_BIT_CONTEXT = 0x10L;
-  private static final long INIT_BIT_CONTEXT_IS_FIELD_FLAG = 0x20L;
-  private static final long INIT_BIT_METHOD = 0x40L;
-  private static final long INIT_BIT_FIELD_NAME = 0x80L;
+  private static final long INIT_BIT_HOST = 0x2L;
+  private static final long INIT_BIT_CONTEXT = 0x4L;
+  private static final long INIT_BIT_CONTEXT_IS_FIELD_FLAG = 0x8L;
+  private static final long INIT_BIT_METHOD = 0x10L;
   private static final long OPT_BIT_OUTPUT_INDEX = 0x1L;
-  private long initBits = 0xffL;
+  private long initBits = 0x1fL;
   private long optBits;
 
   private String fMInstruction;
-  private String fieldType;
-  private String fieldClass;
+  private @Nullable String fieldName;
+  private @Nullable String fieldType;
+  private @Nullable String fieldClass;
   private String host;
   private String context;
   private boolean contextIsFieldFlag;
@@ -48,7 +47,6 @@ public final class MutableInstructionNode implements IInstructionNode {
   private final ArrayList<String> parameterFields = new ArrayList<String>();
   private final ArrayList<String> parameterTypes = new ArrayList<String>();
   private String nodeType;
-  private String fieldName;
 
   private MutableInstructionNode() {}
 
@@ -73,26 +71,29 @@ public final class MutableInstructionNode implements IInstructionNode {
   }
 
   /**
-   * @return value of {@code fieldType} attribute
+   * @return value of {@code fieldName} attribute, may be {@code null}
+   */
+  @JsonProperty("fieldName")
+  @Override
+  public final @Nullable String getFieldName() {
+    return fieldName;
+  }
+
+  /**
+   * @return value of {@code fieldType} attribute, may be {@code null}
    */
   @JsonProperty("fieldType")
   @Override
-  public final String getFieldType() {
-    if (!fieldTypeIsSet()) {
-      checkRequiredAttributes();
-    }
+  public final @Nullable String getFieldType() {
     return fieldType;
   }
 
   /**
-   * @return value of {@code fieldClass} attribute
+   * @return value of {@code fieldClass} attribute, may be {@code null}
    */
   @JsonProperty("fieldClass")
   @Override
-  public final String getFieldClass() {
-    if (!fieldClassIsSet()) {
-      checkRequiredAttributes();
-    }
+  public final @Nullable String getFieldClass() {
     return fieldClass;
   }
 
@@ -195,27 +196,15 @@ public final class MutableInstructionNode implements IInstructionNode {
   }
 
   /**
-   * Returns the field name that this node is referencing.
-   * @return Referenced field name
-   */
-  @JsonProperty("fieldName")
-  @Override
-  public final String getFieldName() {
-    if (!fieldNameIsSet()) {
-      checkRequiredAttributes();
-    }
-    return fieldName;
-  }
-
-  /**
    * Clears the object by setting all attributes to their initial values.
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
   public MutableInstructionNode clear() {
-    initBits = 0xffL;
+    initBits = 0x1fL;
     optBits = 0;
     fMInstruction = null;
+    fieldName = null;
     fieldType = null;
     fieldClass = null;
     host = null;
@@ -226,17 +215,16 @@ public final class MutableInstructionNode implements IInstructionNode {
     parameterFields.clear();
     parameterTypes.clear();
     nodeType = null;
-    fieldName = null;
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.nodes.IFieldNameAware} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.IFieldContainer} instance.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableInstructionNode from(IFieldNameAware instance) {
+  public MutableInstructionNode from(IFieldContainer instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
@@ -255,12 +243,12 @@ public final class MutableInstructionNode implements IInstructionNode {
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.nodes.IBaseNode} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.nodes.BaseNode} instance.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableInstructionNode from(IBaseNode instance) {
+  public MutableInstructionNode from(BaseNode instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
@@ -286,11 +274,17 @@ public final class MutableInstructionNode implements IInstructionNode {
       if (instance.fMInstructionIsSet()) {
         setFMInstruction(instance.getFMInstruction());
       }
-      if (instance.fieldTypeIsSet()) {
-        setFieldType(instance.getFieldType());
+      @Nullable String fieldNameValue = instance.getFieldName();
+      if (fieldNameValue != null) {
+        setFieldName(fieldNameValue);
       }
-      if (instance.fieldClassIsSet()) {
-        setFieldClass(instance.getFieldClass());
+      @Nullable String fieldTypeValue = instance.getFieldType();
+      if (fieldTypeValue != null) {
+        setFieldType(fieldTypeValue);
+      }
+      @Nullable String fieldClassValue = instance.getFieldClass();
+      if (fieldClassValue != null) {
+        setFieldClass(fieldClassValue);
       }
       if (instance.hostIsSet()) {
         setHost(instance.getHost());
@@ -308,14 +302,18 @@ public final class MutableInstructionNode implements IInstructionNode {
       addAllParameterFields(instance.getParameterFields());
       addAllParameterTypes(instance.getParameterTypes());
       setNodeType(instance.getNodeType());
-      if (instance.fieldNameIsSet()) {
-        setFieldName(instance.getFieldName());
-      }
       return;
     }
-    if (object instanceof IFieldNameAware) {
-      IFieldNameAware instance = (IFieldNameAware) object;
-      setFieldName(instance.getFieldName());
+    long bits = 0;
+    if (object instanceof IFieldContainer) {
+      IFieldContainer instance = (IFieldContainer) object;
+      if ((bits & 0x1L) == 0) {
+        @Nullable String fieldNameValue = instance.getFieldName();
+        if (fieldNameValue != null) {
+          setFieldName(fieldNameValue);
+        }
+        bits |= 0x1L;
+      }
     }
     if (object instanceof IInstructionNode) {
       IInstructionNode instance = (IInstructionNode) object;
@@ -323,15 +321,28 @@ public final class MutableInstructionNode implements IInstructionNode {
       setFMInstruction(instance.getFMInstruction());
       setContextIsFieldFlag(instance.getContextIsFieldFlag());
       setOutputIndex(instance.getOutputIndex());
+      if ((bits & 0x1L) == 0) {
+        @Nullable String fieldNameValue = instance.getFieldName();
+        if (fieldNameValue != null) {
+          setFieldName(fieldNameValue);
+        }
+        bits |= 0x1L;
+      }
       setMethod(instance.getMethod());
       addAllParameterTypes(instance.getParameterTypes());
       setHost(instance.getHost());
       setContext(instance.getContext());
-      setFieldType(instance.getFieldType());
-      setFieldClass(instance.getFieldClass());
+      @Nullable String fieldTypeValue = instance.getFieldType();
+      if (fieldTypeValue != null) {
+        setFieldType(fieldTypeValue);
+      }
+      @Nullable String fieldClassValue = instance.getFieldClass();
+      if (fieldClassValue != null) {
+        setFieldClass(fieldClassValue);
+      }
     }
-    if (object instanceof IBaseNode) {
-      IBaseNode instance = (IBaseNode) object;
+    if (object instanceof BaseNode) {
+      BaseNode instance = (BaseNode) object;
       setNodeType(instance.getNodeType());
     }
   }
@@ -349,26 +360,35 @@ public final class MutableInstructionNode implements IInstructionNode {
   }
 
   /**
-   * Assigns a value to the {@link IInstructionNode#getFieldType() fieldType} attribute.
-   * @param fieldType The value for fieldType
+   * Assigns a value to the {@link IInstructionNode#getFieldName() fieldName} attribute.
+   * @param fieldName The value for fieldName, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableInstructionNode setFieldType(String fieldType) {
-    this.fieldType = Objects.requireNonNull(fieldType, "fieldType");
-    initBits &= ~INIT_BIT_FIELD_TYPE;
+  public MutableInstructionNode setFieldName(@Nullable String fieldName) {
+    this.fieldName = fieldName;
+    return this;
+  }
+
+  /**
+   * Assigns a value to the {@link IInstructionNode#getFieldType() fieldType} attribute.
+   * @param fieldType The value for fieldType, can be {@code null}
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableInstructionNode setFieldType(@Nullable String fieldType) {
+    this.fieldType = fieldType;
     return this;
   }
 
   /**
    * Assigns a value to the {@link IInstructionNode#getFieldClass() fieldClass} attribute.
-   * @param fieldClass The value for fieldClass
+   * @param fieldClass The value for fieldClass, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableInstructionNode setFieldClass(String fieldClass) {
-    this.fieldClass = Objects.requireNonNull(fieldClass, "fieldClass");
-    initBits &= ~INIT_BIT_FIELD_CLASS;
+  public MutableInstructionNode setFieldClass(@Nullable String fieldClass) {
+    this.fieldClass = fieldClass;
     return this;
   }
 
@@ -547,39 +567,11 @@ public final class MutableInstructionNode implements IInstructionNode {
   }
 
   /**
-   * Assigns a value to the {@link IInstructionNode#getFieldName() fieldName} attribute.
-   * @param fieldName The value for fieldName
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableInstructionNode setFieldName(String fieldName) {
-    this.fieldName = Objects.requireNonNull(fieldName, "fieldName");
-    initBits &= ~INIT_BIT_FIELD_NAME;
-    return this;
-  }
-
-  /**
    * Returns {@code true} if the required attribute {@link IInstructionNode#getFMInstruction() fMInstruction} is set.
    * @return {@code true} if set
    */
   public final boolean fMInstructionIsSet() {
     return (initBits & INIT_BIT_F_M_INSTRUCTION) == 0;
-  }
-
-  /**
-   * Returns {@code true} if the required attribute {@link IInstructionNode#getFieldType() fieldType} is set.
-   * @return {@code true} if set
-   */
-  public final boolean fieldTypeIsSet() {
-    return (initBits & INIT_BIT_FIELD_TYPE) == 0;
-  }
-
-  /**
-   * Returns {@code true} if the required attribute {@link IInstructionNode#getFieldClass() fieldClass} is set.
-   * @return {@code true} if set
-   */
-  public final boolean fieldClassIsSet() {
-    return (initBits & INIT_BIT_FIELD_CLASS) == 0;
   }
 
   /**
@@ -615,14 +607,6 @@ public final class MutableInstructionNode implements IInstructionNode {
   }
 
   /**
-   * Returns {@code true} if the required attribute {@link IInstructionNode#getFieldName() fieldName} is set.
-   * @return {@code true} if set
-   */
-  public final boolean fieldNameIsSet() {
-    return (initBits & INIT_BIT_FIELD_NAME) == 0;
-  }
-
-  /**
    * Returns {@code true} if the default attribute {@link IInstructionNode#getOutputIndex() outputIndex} is set.
    * @return {@code true} if set
    */
@@ -647,28 +631,6 @@ public final class MutableInstructionNode implements IInstructionNode {
   public final MutableInstructionNode unsetFMInstruction() {
     initBits |= INIT_BIT_F_M_INSTRUCTION;
     fMInstruction = null;
-    return this;
-  }
-
-  /**
-   * Reset an attribute to its initial value.
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public final MutableInstructionNode unsetFieldType() {
-    initBits |= INIT_BIT_FIELD_TYPE;
-    fieldType = null;
-    return this;
-  }
-
-  /**
-   * Reset an attribute to its initial value.
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public final MutableInstructionNode unsetFieldClass() {
-    initBits |= INIT_BIT_FIELD_CLASS;
-    fieldClass = null;
     return this;
   }
 
@@ -715,17 +677,6 @@ public final class MutableInstructionNode implements IInstructionNode {
     method = null;
     return this;
   }
-
-  /**
-   * Reset an attribute to its initial value.
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public final MutableInstructionNode unsetFieldName() {
-    initBits |= INIT_BIT_FIELD_NAME;
-    fieldName = null;
-    return this;
-  }
   /**
    * Reset an attribute to its initial value.
    * @return {@code this} for use in a chained invocation
@@ -754,13 +705,10 @@ public final class MutableInstructionNode implements IInstructionNode {
   private String formatRequiredAttributesMessage() {
     List<String> attributes = new ArrayList<>();
     if (!fMInstructionIsSet()) attributes.add("fMInstruction");
-    if (!fieldTypeIsSet()) attributes.add("fieldType");
-    if (!fieldClassIsSet()) attributes.add("fieldClass");
     if (!hostIsSet()) attributes.add("host");
     if (!contextIsSet()) attributes.add("context");
     if (!contextIsFieldFlagIsSet()) attributes.add("contextIsFieldFlag");
     if (!methodIsSet()) attributes.add("method");
-    if (!fieldNameIsSet()) attributes.add("fieldName");
     return "InstructionNode is not initialized, some of the required attributes are not set " + attributes;
   }
 
@@ -793,8 +741,9 @@ public final class MutableInstructionNode implements IInstructionNode {
     int outputIndex = getOutputIndex();
     String nodeType = getNodeType();
     return fMInstruction.equals(another.fMInstruction)
-        && fieldType.equals(another.fieldType)
-        && fieldClass.equals(another.fieldClass)
+        && Objects.equals(fieldName, another.fieldName)
+        && Objects.equals(fieldType, another.fieldType)
+        && Objects.equals(fieldClass, another.fieldClass)
         && host.equals(another.host)
         && context.equals(another.context)
         && contextIsFieldFlag == another.contextIsFieldFlag
@@ -802,20 +751,20 @@ public final class MutableInstructionNode implements IInstructionNode {
         && outputIndex == another.getOutputIndex()
         && parameterFields.equals(another.parameterFields)
         && parameterTypes.equals(another.parameterTypes)
-        && nodeType.equals(another.getNodeType())
-        && fieldName.equals(another.fieldName);
+        && nodeType.equals(another.getNodeType());
   }
 
   /**
-   * Computes a hash code from attributes: {@code fMInstruction}, {@code fieldType}, {@code fieldClass}, {@code host}, {@code context}, {@code contextIsFieldFlag}, {@code method}, {@code outputIndex}, {@code parameterFields}, {@code parameterTypes}, {@code nodeType}, {@code fieldName}.
+   * Computes a hash code from attributes: {@code fMInstruction}, {@code fieldName}, {@code fieldType}, {@code fieldClass}, {@code host}, {@code context}, {@code contextIsFieldFlag}, {@code method}, {@code outputIndex}, {@code parameterFields}, {@code parameterTypes}, {@code nodeType}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
     h += (h << 5) + fMInstruction.hashCode();
-    h += (h << 5) + fieldType.hashCode();
-    h += (h << 5) + fieldClass.hashCode();
+    h += (h << 5) + Objects.hashCode(fieldName);
+    h += (h << 5) + Objects.hashCode(fieldType);
+    h += (h << 5) + Objects.hashCode(fieldClass);
     h += (h << 5) + host.hashCode();
     h += (h << 5) + context.hashCode();
     h += (h << 5) + Booleans.hashCode(contextIsFieldFlag);
@@ -826,7 +775,6 @@ public final class MutableInstructionNode implements IInstructionNode {
     h += (h << 5) + parameterTypes.hashCode();
     String nodeType = getNodeType();
     h += (h << 5) + nodeType.hashCode();
-    h += (h << 5) + fieldName.hashCode();
     return h;
   }
 
@@ -839,8 +787,9 @@ public final class MutableInstructionNode implements IInstructionNode {
   public String toString() {
     return MoreObjects.toStringHelper("MutableInstructionNode")
         .add("fMInstruction", fMInstructionIsSet() ? getFMInstruction() : "?")
-        .add("fieldType", fieldTypeIsSet() ? getFieldType() : "?")
-        .add("fieldClass", fieldClassIsSet() ? getFieldClass() : "?")
+        .add("fieldName", getFieldName())
+        .add("fieldType", getFieldType())
+        .add("fieldClass", getFieldClass())
         .add("host", hostIsSet() ? getHost() : "?")
         .add("context", contextIsSet() ? getContext() : "?")
         .add("contextIsFieldFlag", contextIsFieldFlagIsSet() ? getContextIsFieldFlag() : "?")
@@ -849,7 +798,6 @@ public final class MutableInstructionNode implements IInstructionNode {
         .add("parameterFields", getParameterFields())
         .add("parameterTypes", getParameterTypes())
         .add("nodeType", getNodeType())
-        .add("fieldName", fieldNameIsSet() ? getFieldName() : "?")
         .toString();
   }
 }

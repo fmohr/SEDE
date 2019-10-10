@@ -91,12 +91,12 @@ public final class MutableParseConstantNode implements IParseConstantNode {
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.nodes.IBaseNode} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.nodes.BaseNode} instance.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableParseConstantNode from(IBaseNode instance) {
+  public MutableParseConstantNode from(BaseNode instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
@@ -139,8 +139,8 @@ public final class MutableParseConstantNode implements IParseConstantNode {
       setNodeType(instance.getNodeType());
       return;
     }
-    if (object instanceof IBaseNode) {
-      IBaseNode instance = (IBaseNode) object;
+    if (object instanceof BaseNode) {
+      BaseNode instance = (BaseNode) object;
       setNodeType(instance.getNodeType());
     }
     if (object instanceof IParseConstantNode) {

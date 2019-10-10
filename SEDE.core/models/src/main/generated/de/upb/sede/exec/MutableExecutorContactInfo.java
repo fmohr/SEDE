@@ -28,6 +28,7 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
   private static final long INIT_BIT_QUALIFIER = 0x1L;
   private long initBits = 0x1L;
 
+  private @Nullable String hostAddress;
   private String qualifier;
   private String simpleName;
 
@@ -39,6 +40,15 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
    */
   public static MutableExecutorContactInfo create() {
     return new MutableExecutorContactInfo();
+  }
+
+  /**
+   * @return value of {@code hostAddress} attribute, may be {@code null}
+   */
+  @JsonProperty("hostAddress")
+  @Override
+  public final @Nullable String getHostAddress() {
+    return hostAddress;
   }
 
   /**
@@ -71,20 +81,9 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
   @CanIgnoreReturnValue
   public MutableExecutorContactInfo clear() {
     initBits = 0x1L;
+    hostAddress = null;
     qualifier = null;
     simpleName = null;
-    return this;
-  }
-
-  /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.IQualifiable} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableExecutorContactInfo from(IQualifiable instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
     return this;
   }
 
@@ -95,6 +94,18 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
    */
   @CanIgnoreReturnValue
   public MutableExecutorContactInfo from(IExecutorContactInfo instance) {
+    Objects.requireNonNull(instance, "instance");
+    from((Object) instance);
+    return this;
+  }
+
+  /**
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.IQualifiable} instance.
+   * @param instance The instance from which to copy values
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableExecutorContactInfo from(IQualifiable instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
@@ -116,17 +127,39 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
   private void from(Object object) {
     if (object instanceof MutableExecutorContactInfo) {
       MutableExecutorContactInfo instance = (MutableExecutorContactInfo) object;
+      @Nullable String hostAddressValue = instance.getHostAddress();
+      if (hostAddressValue != null) {
+        setHostAddress(hostAddressValue);
+      }
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
       setSimpleName(instance.getSimpleName());
       return;
     }
+    if (object instanceof IExecutorContactInfo) {
+      IExecutorContactInfo instance = (IExecutorContactInfo) object;
+      @Nullable String hostAddressValue = instance.getHostAddress();
+      if (hostAddressValue != null) {
+        setHostAddress(hostAddressValue);
+      }
+    }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
     }
+  }
+
+  /**
+   * Assigns a value to the {@link IExecutorContactInfo#getHostAddress() hostAddress} attribute.
+   * @param hostAddress The value for hostAddress, can be {@code null}
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableExecutorContactInfo setHostAddress(@Nullable String hostAddress) {
+    this.hostAddress = hostAddress;
+    return this;
   }
 
   /**
@@ -228,17 +261,19 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
 
   private boolean equalTo(MutableExecutorContactInfo another) {
     String simpleName = getSimpleName();
-    return qualifier.equals(another.qualifier)
+    return Objects.equals(hostAddress, another.hostAddress)
+        && qualifier.equals(another.qualifier)
         && simpleName.equals(another.getSimpleName());
   }
 
   /**
-   * Computes a hash code from attributes: {@code qualifier}, {@code simpleName}.
+   * Computes a hash code from attributes: {@code hostAddress}, {@code qualifier}, {@code simpleName}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
+    h += (h << 5) + Objects.hashCode(hostAddress);
     h += (h << 5) + qualifier.hashCode();
     String simpleName = getSimpleName();
     h += (h << 5) + simpleName.hashCode();
@@ -253,6 +288,7 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper("MutableExecutorContactInfo")
+        .add("hostAddress", getHostAddress())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
         .add("simpleName", getSimpleName())
         .toString();

@@ -9,7 +9,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = SendGraphNode.Builder.class)
-public interface ISendGraphNode {
+public interface ISendGraphNode extends BaseNode {
 
     String getGraph();
 

@@ -31,19 +31,34 @@ import org.immutables.value.Generated;
 @Immutable
 @CheckReturnValue
 public final class ExecutorContactInfo implements IExecutorContactInfo {
+  private final @Nullable String hostAddress;
   private final String qualifier;
   private final String simpleName;
 
   private ExecutorContactInfo(ExecutorContactInfo.Builder builder) {
+    this.hostAddress = builder.hostAddress;
     this.qualifier = builder.qualifier;
     this.simpleName = builder.simpleName != null
         ? builder.simpleName
         : Objects.requireNonNull(IExecutorContactInfo.super.getSimpleName(), "simpleName");
   }
 
-  private ExecutorContactInfo(String qualifier, String simpleName) {
+  private ExecutorContactInfo(
+      @Nullable String hostAddress,
+      String qualifier,
+      String simpleName) {
+    this.hostAddress = hostAddress;
     this.qualifier = qualifier;
     this.simpleName = simpleName;
+  }
+
+  /**
+   * @return The value of the {@code hostAddress} attribute
+   */
+  @JsonProperty("hostAddress")
+  @Override
+  public @Nullable String getHostAddress() {
+    return hostAddress;
   }
 
   /**
@@ -65,6 +80,17 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
   }
 
   /**
+   * Copy the current immutable object by setting a value for the {@link IExecutorContactInfo#getHostAddress() hostAddress} attribute.
+   * An equals check used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for hostAddress (can be {@code null})
+   * @return A modified copy of the {@code this} object
+   */
+  public final ExecutorContactInfo withHostAddress(@Nullable String value) {
+    if (Objects.equals(this.hostAddress, value)) return this;
+    return new ExecutorContactInfo(value, this.qualifier, this.simpleName);
+  }
+
+  /**
    * Copy the current immutable object by setting a value for the {@link IExecutorContactInfo#getQualifier() qualifier} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for qualifier
@@ -73,7 +99,7 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
   public final ExecutorContactInfo withQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "qualifier");
     if (this.qualifier.equals(newValue)) return this;
-    return new ExecutorContactInfo(newValue, this.simpleName);
+    return new ExecutorContactInfo(this.hostAddress, newValue, this.simpleName);
   }
 
   /**
@@ -85,7 +111,7 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
   public final ExecutorContactInfo withSimpleName(String value) {
     String newValue = Objects.requireNonNull(value, "simpleName");
     if (this.simpleName.equals(newValue)) return this;
-    return new ExecutorContactInfo(this.qualifier, newValue);
+    return new ExecutorContactInfo(this.hostAddress, this.qualifier, newValue);
   }
 
   /**
@@ -100,17 +126,19 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
   }
 
   private boolean equalTo(ExecutorContactInfo another) {
-    return qualifier.equals(another.qualifier)
+    return Objects.equals(hostAddress, another.hostAddress)
+        && qualifier.equals(another.qualifier)
         && simpleName.equals(another.simpleName);
   }
 
   /**
-   * Computes a hash code from attributes: {@code qualifier}, {@code simpleName}.
+   * Computes a hash code from attributes: {@code hostAddress}, {@code qualifier}, {@code simpleName}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     @Var int h = 5381;
+    h += (h << 5) + Objects.hashCode(hostAddress);
     h += (h << 5) + qualifier.hashCode();
     h += (h << 5) + simpleName.hashCode();
     return h;
@@ -124,6 +152,7 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
   public String toString() {
     return MoreObjects.toStringHelper("ExecutorContactInfo")
         .omitNullValues()
+        .add("hostAddress", hostAddress)
         .add("qualifier", qualifier)
         .add("simpleName", simpleName)
         .toString();
@@ -139,8 +168,13 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
   @JsonDeserialize
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IExecutorContactInfo {
+    @Nullable String hostAddress;
     @Nullable String qualifier;
     @Nullable String simpleName;
+    @JsonProperty("hostAddress")
+    public void setHostAddress(@Nullable String hostAddress) {
+      this.hostAddress = hostAddress;
+    }
     @JsonProperty("qualifier")
     public void setQualifier(String qualifier) {
       this.qualifier = qualifier;
@@ -149,6 +183,8 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
     public void setSimpleName(String simpleName) {
       this.simpleName = simpleName;
     }
+    @Override
+    public String getHostAddress() { throw new UnsupportedOperationException(); }
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
     @Override
@@ -164,6 +200,9 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
   @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
   static ExecutorContactInfo fromJson(Json json) {
     ExecutorContactInfo.Builder builder = ExecutorContactInfo.builder();
+    if (json.hostAddress != null) {
+      builder.hostAddress(json.hostAddress);
+    }
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
     }
@@ -193,6 +232,7 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
    * Creates a builder for {@link ExecutorContactInfo ExecutorContactInfo}.
    * <pre>
    * ExecutorContactInfo.builder()
+   *    .hostAddress(String | null) // nullable {@link IExecutorContactInfo#getHostAddress() hostAddress}
    *    .qualifier(String) // required {@link IExecutorContactInfo#getQualifier() qualifier}
    *    .simpleName(String) // optional {@link IExecutorContactInfo#getSimpleName() simpleName}
    *    .build();
@@ -216,6 +256,7 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
     private static final long INIT_BIT_QUALIFIER = 0x1L;
     private long initBits = 0x1L;
 
+    private @Nullable String hostAddress;
     private @Nullable String qualifier;
     private @Nullable String simpleName;
 
@@ -230,22 +271,14 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
     @CanIgnoreReturnValue 
     public final Builder from(MutableExecutorContactInfo instance) {
       Objects.requireNonNull(instance, "instance");
+      @Nullable String hostAddressValue = instance.getHostAddress();
+      if (hostAddressValue != null) {
+        hostAddress(hostAddressValue);
+      }
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
       simpleName(instance.getSimpleName());
-      return this;
-    }
-
-    /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.IQualifiable} instance.
-     * @param instance The instance from which to copy values
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder from(IQualifiable instance) {
-      Objects.requireNonNull(instance, "instance");
-      from((Object) instance);
       return this;
     }
 
@@ -261,16 +294,47 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
       return this;
     }
 
+    /**
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.IQualifiable} instance.
+     * @param instance The instance from which to copy values
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder from(IQualifiable instance) {
+      Objects.requireNonNull(instance, "instance");
+      from((Object) instance);
+      return this;
+    }
+
     private void from(Object object) {
       if (object instanceof MutableExecutorContactInfo) {
         from((MutableExecutorContactInfo) object);
         return;
+      }
+      if (object instanceof IExecutorContactInfo) {
+        IExecutorContactInfo instance = (IExecutorContactInfo) object;
+        @Nullable String hostAddressValue = instance.getHostAddress();
+        if (hostAddressValue != null) {
+          hostAddress(hostAddressValue);
+        }
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
         simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
       }
+    }
+
+    /**
+     * Initializes the value for the {@link IExecutorContactInfo#getHostAddress() hostAddress} attribute.
+     * @param hostAddress The value for hostAddress (can be {@code null})
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("hostAddress")
+    public final Builder hostAddress(@Nullable String hostAddress) {
+      this.hostAddress = hostAddress;
+      return this;
     }
 
     /**

@@ -8,6 +8,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
+import de.upb.sede.IFieldContainer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -110,7 +111,7 @@ public final class CastTypeNode implements ICastTypeNode {
   }
 
   /**
-   * Returns the field name that this node is referencing.
+   * Returns the field name that is being refered at.
    * @return Referenced field name
    */
   @JsonProperty("fieldName")
@@ -442,24 +443,12 @@ public final class CastTypeNode implements ICastTypeNode {
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.IFieldNameAware} instance.
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.IFieldContainer} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(IFieldNameAware instance) {
-      Objects.requireNonNull(instance, "instance");
-      from((Object) instance);
-      return this;
-    }
-
-    /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.IBaseNode} instance.
-     * @param instance The instance from which to copy values
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder from(IBaseNode instance) {
+    public final Builder from(IFieldContainer instance) {
       Objects.requireNonNull(instance, "instance");
       from((Object) instance);
       return this;
@@ -477,18 +466,26 @@ public final class CastTypeNode implements ICastTypeNode {
       return this;
     }
 
+    /**
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.BaseNode} instance.
+     * @param instance The instance from which to copy values
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder from(BaseNode instance) {
+      Objects.requireNonNull(instance, "instance");
+      from((Object) instance);
+      return this;
+    }
+
     private void from(Object object) {
       if (object instanceof MutableCastTypeNode) {
         from((MutableCastTypeNode) object);
         return;
       }
-      if (object instanceof IFieldNameAware) {
-        IFieldNameAware instance = (IFieldNameAware) object;
+      if (object instanceof IFieldContainer) {
+        IFieldContainer instance = (IFieldContainer) object;
         fieldName(instance.getFieldName());
-      }
-      if (object instanceof IBaseNode) {
-        IBaseNode instance = (IBaseNode) object;
-        nodeType(instance.getNodeType());
       }
       if (object instanceof ICastTypeNode) {
         ICastTypeNode instance = (ICastTypeNode) object;
@@ -496,6 +493,10 @@ public final class CastTypeNode implements ICastTypeNode {
         sourceType(instance.getSourceType());
         casterClasspath(instance.getCasterClasspath());
         castToSemantic(instance.castToSemantic());
+      }
+      if (object instanceof BaseNode) {
+        BaseNode instance = (BaseNode) object;
+        nodeType(instance.getNodeType());
       }
     }
 

@@ -3,7 +3,7 @@ package de.upb.sede.exec;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import de.upb.sede.ICommented;
+import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
 import java.util.ArrayList;
 import java.util.List;
@@ -100,18 +100,6 @@ public final class MutableMethodDesc implements IMethodDesc {
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.ICommented} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableMethodDesc from(ICommented instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
-    return this;
-  }
-
-  /**
    * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.exec.IMethodDesc} instance.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
@@ -130,6 +118,18 @@ public final class MutableMethodDesc implements IMethodDesc {
    */
   @CanIgnoreReturnValue
   public MutableMethodDesc from(IQualifiable instance) {
+    Objects.requireNonNull(instance, "instance");
+    from((Object) instance);
+    return this;
+  }
+
+  /**
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.CommentAware} instance.
+   * @param instance The instance from which to copy values
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableMethodDesc from(CommentAware instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
@@ -160,10 +160,6 @@ public final class MutableMethodDesc implements IMethodDesc {
       addAllComments(instance.getComments());
       return;
     }
-    if (object instanceof ICommented) {
-      ICommented instance = (ICommented) object;
-      addAllComments(instance.getComments());
-    }
     if (object instanceof IMethodDesc) {
       IMethodDesc instance = (IMethodDesc) object;
       addAllSignatures(instance.getSignatures());
@@ -172,6 +168,10 @@ public final class MutableMethodDesc implements IMethodDesc {
       IQualifiable instance = (IQualifiable) object;
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
+    }
+    if (object instanceof CommentAware) {
+      CommentAware instance = (CommentAware) object;
+      addAllComments(instance.getComments());
     }
   }
 
@@ -373,15 +373,13 @@ public final class MutableMethodDesc implements IMethodDesc {
   }
 
   private boolean equalTo(MutableMethodDesc another) {
-    String simpleName = getSimpleName();
     return signatures.equals(another.signatures)
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.getSimpleName())
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code signatures}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code signatures}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -389,8 +387,6 @@ public final class MutableMethodDesc implements IMethodDesc {
     int h = 5381;
     h += (h << 5) + signatures.hashCode();
     h += (h << 5) + qualifier.hashCode();
-    String simpleName = getSimpleName();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -405,7 +401,6 @@ public final class MutableMethodDesc implements IMethodDesc {
     return MoreObjects.toStringHelper("MutableMethodDesc")
         .add("signatures", getSignatures())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
-        .add("simpleName", getSimpleName())
         .add("comments", getComments())
         .toString();
   }

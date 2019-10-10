@@ -1,6 +1,6 @@
 package de.upb.sede.composition;
 
-import de.upb.sede.gateway.ExecutorHandle;
+import de.upb.sede.exec.ExecutorHandle;
 import de.upb.sede.util.Cache;
 import de.upb.sede.util.ExpiringCache;
 import org.slf4j.Logger;
@@ -60,12 +60,12 @@ public class RoundRobinScheduler {
 		ExecutorAccessMonitor highestPriority = null;
 		for(ExecutorHandle handle : candidates) {
 			ExecutorAccessMonitor monitor;
-            ExpiringCache<ExecutorAccessMonitor> monitorCache = executorAccess.get(handle.getExecutorId());
+            ExpiringCache<ExecutorAccessMonitor> monitorCache = executorAccess.get(handle.getContactInfo().getQualifier());
 
             if(monitorCache == null || monitorCache.isExpired()) {
-                monitor = new ExecutorAccessMonitor(handle.getExecutorId());
+                monitor = new ExecutorAccessMonitor(handle.getContactInfo().getQualifier());
                 monitorCache = new ExpiringCache<ExecutorAccessMonitor>(10, TimeUnit.MINUTES, monitor);
-                executorAccess.put(handle.getExecutorId(), monitorCache);
+                executorAccess.put(handle.getContactInfo().getQualifier(), monitorCache);
             } else {
                 monitorCache.prolong();
                 monitor = monitorCache.forceAccess();
@@ -85,7 +85,8 @@ public class RoundRobinScheduler {
 			throw new IllegalArgumentException(String.format("None of the executor candidates are found in the access map of the round robin scheduler." +
 					"\nCandidates: %s" +
 					"\n%s",
-					candidates.stream().map(ExecutorHandle::getExecutorId).collect(Collectors.joining(", ")),
+					candidates.stream()
+                        .map(handle -> handle.getContactInfo().getQualifier()).collect(Collectors.joining(", ")),
 					this.toString()));
 		}
 	}

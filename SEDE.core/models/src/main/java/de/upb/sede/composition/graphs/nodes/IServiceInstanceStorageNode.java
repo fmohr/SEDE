@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = ServiceInstanceStorageNode.Builder.class)
-public interface IServiceInstanceStorageNode {
+public interface IServiceInstanceStorageNode extends BaseNode {
 
     @Nullable
     String getInstanceId();
@@ -18,4 +18,10 @@ public interface IServiceInstanceStorageNode {
     String getServiceInstanceFieldName();
 
     String getServiceClasspath();
+
+    @Value.Derived
+    default boolean isLoadInstruction() {
+        String instanceId = getInstanceId();
+        return instanceId != null && !instanceId.isEmpty();
+    }
 }

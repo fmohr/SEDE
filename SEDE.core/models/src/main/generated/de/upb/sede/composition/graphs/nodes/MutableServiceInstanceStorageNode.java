@@ -2,6 +2,7 @@ package de.upb.sede.composition.graphs.nodes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,7 @@ public final class MutableServiceInstanceStorageNode
   private @Nullable String instanceId;
   private String serviceInstanceFieldName;
   private String serviceClasspath;
+  private String nodeType;
 
   private MutableServiceInstanceStorageNode() {}
 
@@ -77,6 +79,26 @@ public final class MutableServiceInstanceStorageNode
   }
 
   /**
+   * @return newly computed, not cached value of {@code isLoadInstruction} attribute
+   */
+  @JsonProperty("isLoadInstruction")
+  @Override
+  public final boolean isLoadInstruction() {
+    return IServiceInstanceStorageNode.super.isLoadInstruction();
+  }
+
+  /**
+   * @return assigned or, otherwise, newly computed, not cached value of {@code nodeType} attribute
+   */
+  @JsonProperty("nodeType")
+  @Override
+  public final String getNodeType() {
+    return nodeTypeIsSet()
+        ? nodeType
+        : IServiceInstanceStorageNode.super.getNodeType();
+  }
+
+  /**
    * Clears the object by setting all attributes to their initial values.
    * @return {@code this} for use in a chained invocation
    */
@@ -86,28 +108,31 @@ public final class MutableServiceInstanceStorageNode
     instanceId = null;
     serviceInstanceFieldName = null;
     serviceClasspath = null;
+    nodeType = null;
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link IServiceInstanceStorageNode} instance.
-   * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
-   * Any of the instance's absent optional values will not be copied (will not override current values).
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.nodes.BaseNode} instance.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
+  @CanIgnoreReturnValue
+  public MutableServiceInstanceStorageNode from(BaseNode instance) {
+    Objects.requireNonNull(instance, "instance");
+    from((Object) instance);
+    return this;
+  }
+
+  /**
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.nodes.IServiceInstanceStorageNode} instance.
+   * @param instance The instance from which to copy values
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
   public MutableServiceInstanceStorageNode from(IServiceInstanceStorageNode instance) {
     Objects.requireNonNull(instance, "instance");
-    if (instance instanceof MutableServiceInstanceStorageNode) {
-      from((MutableServiceInstanceStorageNode) instance);
-      return this;
-    }
-    @Nullable String instanceIdValue = instance.getInstanceId();
-    if (instanceIdValue != null) {
-      setInstanceId(instanceIdValue);
-    }
-    setServiceInstanceFieldName(instance.getServiceInstanceFieldName());
-    setServiceClasspath(instance.getServiceClasspath());
+    from((Object) instance);
     return this;
   }
 
@@ -120,17 +145,39 @@ public final class MutableServiceInstanceStorageNode
    */
   public MutableServiceInstanceStorageNode from(MutableServiceInstanceStorageNode instance) {
     Objects.requireNonNull(instance, "instance");
-    @Nullable String instanceIdValue = instance.getInstanceId();
-    if (instanceIdValue != null) {
-      setInstanceId(instanceIdValue);
-    }
-    if (instance.serviceInstanceFieldNameIsSet()) {
-      setServiceInstanceFieldName(instance.getServiceInstanceFieldName());
-    }
-    if (instance.serviceClasspathIsSet()) {
-      setServiceClasspath(instance.getServiceClasspath());
-    }
+    from((Object) instance);
     return this;
+  }
+
+  private void from(Object object) {
+    if (object instanceof MutableServiceInstanceStorageNode) {
+      MutableServiceInstanceStorageNode instance = (MutableServiceInstanceStorageNode) object;
+      @Nullable String instanceIdValue = instance.getInstanceId();
+      if (instanceIdValue != null) {
+        setInstanceId(instanceIdValue);
+      }
+      if (instance.serviceInstanceFieldNameIsSet()) {
+        setServiceInstanceFieldName(instance.getServiceInstanceFieldName());
+      }
+      if (instance.serviceClasspathIsSet()) {
+        setServiceClasspath(instance.getServiceClasspath());
+      }
+      setNodeType(instance.getNodeType());
+      return;
+    }
+    if (object instanceof BaseNode) {
+      BaseNode instance = (BaseNode) object;
+      setNodeType(instance.getNodeType());
+    }
+    if (object instanceof IServiceInstanceStorageNode) {
+      IServiceInstanceStorageNode instance = (IServiceInstanceStorageNode) object;
+      setServiceInstanceFieldName(instance.getServiceInstanceFieldName());
+      setServiceClasspath(instance.getServiceClasspath());
+      @Nullable String instanceIdValue = instance.getInstanceId();
+      if (instanceIdValue != null) {
+        setInstanceId(instanceIdValue);
+      }
+    }
   }
 
   /**
@@ -169,6 +216,18 @@ public final class MutableServiceInstanceStorageNode
   }
 
   /**
+   * Assigns a value to the {@link IServiceInstanceStorageNode#getNodeType() nodeType} attribute.
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IServiceInstanceStorageNode#getNodeType() nodeType}.</em>
+   * @param nodeType The value for nodeType
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceInstanceStorageNode setNodeType(String nodeType) {
+    this.nodeType = Objects.requireNonNull(nodeType, "nodeType");
+    return this;
+  }
+
+  /**
    * Returns {@code true} if the required attribute {@link IServiceInstanceStorageNode#getServiceInstanceFieldName() serviceInstanceFieldName} is set.
    * @return {@code true} if set
    */
@@ -182,6 +241,14 @@ public final class MutableServiceInstanceStorageNode
    */
   public final boolean serviceClasspathIsSet() {
     return (initBits & INIT_BIT_SERVICE_CLASSPATH) == 0;
+  }
+
+  /**
+   * Returns {@code true} if the default attribute {@link IServiceInstanceStorageNode#getNodeType() nodeType} is set.
+   * @return {@code true} if set
+   */
+  public final boolean nodeTypeIsSet() {
+    return nodeType != null;
   }
 
 
@@ -254,13 +321,17 @@ public final class MutableServiceInstanceStorageNode
   }
 
   private boolean equalTo(MutableServiceInstanceStorageNode another) {
+    boolean isLoadInstruction = isLoadInstruction();
+    String nodeType = getNodeType();
     return Objects.equals(instanceId, another.instanceId)
         && serviceInstanceFieldName.equals(another.serviceInstanceFieldName)
-        && serviceClasspath.equals(another.serviceClasspath);
+        && serviceClasspath.equals(another.serviceClasspath)
+        && isLoadInstruction == another.isLoadInstruction()
+        && nodeType.equals(another.getNodeType());
   }
 
   /**
-   * Computes a hash code from attributes: {@code instanceId}, {@code serviceInstanceFieldName}, {@code serviceClasspath}.
+   * Computes a hash code from attributes: {@code instanceId}, {@code serviceInstanceFieldName}, {@code serviceClasspath}, {@code isLoadInstruction}, {@code nodeType}.
    * @return hashCode value
    */
   @Override
@@ -269,6 +340,10 @@ public final class MutableServiceInstanceStorageNode
     h += (h << 5) + Objects.hashCode(instanceId);
     h += (h << 5) + serviceInstanceFieldName.hashCode();
     h += (h << 5) + serviceClasspath.hashCode();
+    boolean isLoadInstruction = isLoadInstruction();
+    h += (h << 5) + Booleans.hashCode(isLoadInstruction);
+    String nodeType = getNodeType();
+    h += (h << 5) + nodeType.hashCode();
     return h;
   }
 
@@ -283,6 +358,7 @@ public final class MutableServiceInstanceStorageNode
         .add("instanceId", getInstanceId())
         .add("serviceInstanceFieldName", serviceInstanceFieldNameIsSet() ? getServiceInstanceFieldName() : "?")
         .add("serviceClasspath", serviceClasspathIsSet() ? getServiceClasspath() : "?")
+        .add("nodeType", getNodeType())
         .toString();
   }
 }

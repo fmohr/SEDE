@@ -1,24 +1,31 @@
 package de.upb.sede.composition.graphs.nodes;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import de.upb.sede.IFieldContainer;
 import de.upb.sede.SEDEModelStyle;
 import org.immutables.value.Value;
 
+import javax.annotation.Nullable;
 import java.util.List;
 
 @SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = InstructionNode.Builder.class)
-public interface IInstructionNode extends IBaseNode, IFieldNameAware{
+public interface IInstructionNode extends BaseNode, IFieldContainer {
 
     String UNASSIGNED_VALUE = "UNDEFINED";
 
 
     String getFMInstruction();
 
+    @Nullable
+    String getFieldName();
+
+    @Nullable
     String getFieldType();
 
+    @Nullable
     String getFieldClass();
 
     @Deprecated
@@ -53,6 +60,5 @@ public interface IInstructionNode extends IBaseNode, IFieldNameAware{
     List<String> getParameterFields();
 
     List<String> getParameterTypes();
-
 
 }

@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
+import de.upb.sede.IFieldContainer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -70,7 +71,7 @@ public final class AcceptDataNode implements IAcceptDataNode {
   }
 
   /**
-   * Returns the field name that this node is referencing.
+   * Returns the field name that is being refered at.
    * @return Referenced field name
    */
   @JsonProperty("fieldName")
@@ -283,24 +284,12 @@ public final class AcceptDataNode implements IAcceptDataNode {
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.IFieldNameAware} instance.
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.IFieldContainer} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(IFieldNameAware instance) {
-      Objects.requireNonNull(instance, "instance");
-      from((Object) instance);
-      return this;
-    }
-
-    /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.IBaseNode} instance.
-     * @param instance The instance from which to copy values
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder from(IBaseNode instance) {
+    public final Builder from(IFieldContainer instance) {
       Objects.requireNonNull(instance, "instance");
       from((Object) instance);
       return this;
@@ -318,18 +307,26 @@ public final class AcceptDataNode implements IAcceptDataNode {
       return this;
     }
 
+    /**
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.BaseNode} instance.
+     * @param instance The instance from which to copy values
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder from(BaseNode instance) {
+      Objects.requireNonNull(instance, "instance");
+      from((Object) instance);
+      return this;
+    }
+
     private void from(Object object) {
       if (object instanceof MutableAcceptDataNode) {
         from((MutableAcceptDataNode) object);
         return;
       }
-      if (object instanceof IFieldNameAware) {
-        IFieldNameAware instance = (IFieldNameAware) object;
+      if (object instanceof IFieldContainer) {
+        IFieldContainer instance = (IFieldContainer) object;
         fieldName(instance.getFieldName());
-      }
-      if (object instanceof IBaseNode) {
-        IBaseNode instance = (IBaseNode) object;
-        nodeType(instance.getNodeType());
       }
       if (object instanceof IAcceptDataNode) {
         IAcceptDataNode instance = (IAcceptDataNode) object;
@@ -337,6 +334,10 @@ public final class AcceptDataNode implements IAcceptDataNode {
         if (castValue != null) {
           cast(castValue);
         }
+      }
+      if (object instanceof BaseNode) {
+        BaseNode instance = (BaseNode) object;
+        nodeType(instance.getNodeType());
       }
     }
 

@@ -1,6 +1,7 @@
 package de.upb.sede.composition.graphs.nodes;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import de.upb.sede.IFieldContainer;
 import de.upb.sede.SEDEModelStyle;
 import de.upb.sede.exec.IExecutorContactInfo;
 import org.immutables.value.Value;
@@ -9,7 +10,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = FinishNode.Builder.class)
-public interface IFinishNode extends IBaseNode, IFieldNameAware{
+public interface IFinishNode extends BaseNode, IFieldContainer {
 
     IExecutorContactInfo getClientContactInfo();
 

@@ -10,7 +10,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
-import de.upb.sede.ICommented;
+import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
 import de.upb.sede.exec.aux.IJavaDispatchAux;
 import de.upb.sede.exec.aux.IPythonClassAux;
@@ -499,12 +499,11 @@ public final class ServiceDesc implements IServiceDesc {
         && Objects.equals(javaAux, another.javaAux)
         && Objects.equals(pythonClassAuxiliaries, another.pythonClassAuxiliaries)
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.simpleName)
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code methods}, {@code interfaces}, {@code isAbstract}, {@code fieldTypes}, {@code javaAux}, {@code pythonClassAuxiliaries}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code methods}, {@code interfaces}, {@code isAbstract}, {@code fieldTypes}, {@code javaAux}, {@code pythonClassAuxiliaries}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -517,7 +516,6 @@ public final class ServiceDesc implements IServiceDesc {
     h += (h << 5) + Objects.hashCode(javaAux);
     h += (h << 5) + Objects.hashCode(pythonClassAuxiliaries);
     h += (h << 5) + qualifier.hashCode();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -537,7 +535,6 @@ public final class ServiceDesc implements IServiceDesc {
         .add("javaAux", javaAux)
         .add("pythonClassAuxiliaries", pythonClassAuxiliaries)
         .add("qualifier", qualifier)
-        .add("simpleName", simpleName)
         .add("comments", comments)
         .toString();
   }
@@ -752,18 +749,6 @@ public final class ServiceDesc implements IServiceDesc {
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.ICommented} instance.
-     * @param instance The instance from which to copy values
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder from(ICommented instance) {
-      Objects.requireNonNull(instance, "instance");
-      from((Object) instance);
-      return this;
-    }
-
-    /**
      * Fill a builder with attribute values from the provided {@code de.upb.sede.exec.IServiceDesc} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
@@ -787,14 +772,22 @@ public final class ServiceDesc implements IServiceDesc {
       return this;
     }
 
+    /**
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.CommentAware} instance.
+     * @param instance The instance from which to copy values
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder from(CommentAware instance) {
+      Objects.requireNonNull(instance, "instance");
+      from((Object) instance);
+      return this;
+    }
+
     private void from(Object object) {
       if (object instanceof MutableServiceDesc) {
         from((MutableServiceDesc) object);
         return;
-      }
-      if (object instanceof ICommented) {
-        ICommented instance = (ICommented) object;
-        addAllComments(instance.getComments());
       }
       if (object instanceof IServiceDesc) {
         IServiceDesc instance = (IServiceDesc) object;
@@ -815,6 +808,10 @@ public final class ServiceDesc implements IServiceDesc {
         IQualifiable instance = (IQualifiable) object;
         simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
+      }
+      if (object instanceof CommentAware) {
+        CommentAware instance = (CommentAware) object;
+        addAllComments(instance.getComments());
       }
     }
 

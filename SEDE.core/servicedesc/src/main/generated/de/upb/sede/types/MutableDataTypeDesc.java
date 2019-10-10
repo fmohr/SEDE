@@ -3,7 +3,7 @@ package de.upb.sede.types;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import de.upb.sede.ICommented;
+import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
 import de.upb.sede.exec.aux.IJavaDispatchAux;
 import java.util.ArrayList;
@@ -116,18 +116,6 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.ICommented} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableDataTypeDesc from(ICommented instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
-    return this;
-  }
-
-  /**
    * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.types.IDataTypeDesc} instance.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
@@ -146,6 +134,18 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
    */
   @CanIgnoreReturnValue
   public MutableDataTypeDesc from(IQualifiable instance) {
+    Objects.requireNonNull(instance, "instance");
+    from((Object) instance);
+    return this;
+  }
+
+  /**
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.CommentAware} instance.
+   * @param instance The instance from which to copy values
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableDataTypeDesc from(CommentAware instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
@@ -182,10 +182,6 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
       addAllComments(instance.getComments());
       return;
     }
-    if (object instanceof ICommented) {
-      ICommented instance = (ICommented) object;
-      addAllComments(instance.getComments());
-    }
     if (object instanceof IDataTypeDesc) {
       IDataTypeDesc instance = (IDataTypeDesc) object;
       @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
@@ -198,6 +194,10 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
       IQualifiable instance = (IQualifiable) object;
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
+    }
+    if (object instanceof CommentAware) {
+      CommentAware instance = (CommentAware) object;
+      addAllComments(instance.getComments());
     }
   }
 
@@ -392,16 +392,14 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   }
 
   private boolean equalTo(MutableDataTypeDesc another) {
-    String simpleName = getSimpleName();
     return semanticType.equals(another.semanticType)
         && Objects.equals(javaAux, another.javaAux)
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.getSimpleName())
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code semanticType}, {@code javaAux}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code semanticType}, {@code javaAux}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -410,8 +408,6 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
     h += (h << 5) + semanticType.hashCode();
     h += (h << 5) + Objects.hashCode(javaAux);
     h += (h << 5) + qualifier.hashCode();
-    String simpleName = getSimpleName();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -427,7 +423,6 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
         .add("semanticType", semanticTypeIsSet() ? getSemanticType() : "?")
         .add("javaAux", getJavaAux())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
-        .add("simpleName", getSimpleName())
         .add("comments", getComments())
         .toString();
   }

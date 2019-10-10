@@ -3,6 +3,7 @@ package de.upb.sede.exec;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import de.upb.sede.IQualifiable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -30,6 +31,7 @@ public final class MutableExecutorHandle implements IExecutorHandle {
 
   private IExecutorContactInfo contactInfo;
   private IExecutorCapabilities capabilities;
+  private String simpleName;
 
   private MutableExecutorHandle() {}
 
@@ -66,6 +68,26 @@ public final class MutableExecutorHandle implements IExecutorHandle {
   }
 
   /**
+   * @return newly computed, not cached value of {@code qualifier} attribute
+   */
+  @JsonProperty("qualifier")
+  @Override
+  public final String getQualifier() {
+    return IExecutorHandle.super.getQualifier();
+  }
+
+  /**
+   * @return assigned or, otherwise, newly computed, not cached value of {@code simpleName} attribute
+   */
+  @JsonProperty("simpleName")
+  @Override
+  public final String getSimpleName() {
+    return simpleNameIsSet()
+        ? simpleName
+        : IExecutorHandle.super.getSimpleName();
+  }
+
+  /**
    * Clears the object by setting all attributes to their initial values.
    * @return {@code this} for use in a chained invocation
    */
@@ -74,24 +96,31 @@ public final class MutableExecutorHandle implements IExecutorHandle {
     initBits = 0x3L;
     contactInfo = null;
     capabilities = null;
+    simpleName = null;
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link IExecutorHandle} instance.
-   * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
-   * Any of the instance's absent optional values will not be copied (will not override current values).
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.exec.IExecutorHandle} instance.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
+  @CanIgnoreReturnValue
   public MutableExecutorHandle from(IExecutorHandle instance) {
     Objects.requireNonNull(instance, "instance");
-    if (instance instanceof MutableExecutorHandle) {
-      from((MutableExecutorHandle) instance);
-      return this;
-    }
-    setContactInfo(instance.getContactInfo());
-    setCapabilities(instance.getCapabilities());
+    from((Object) instance);
+    return this;
+  }
+
+  /**
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.IQualifiable} instance.
+   * @param instance The instance from which to copy values
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableExecutorHandle from(IQualifiable instance) {
+    Objects.requireNonNull(instance, "instance");
+    from((Object) instance);
     return this;
   }
 
@@ -104,13 +133,31 @@ public final class MutableExecutorHandle implements IExecutorHandle {
    */
   public MutableExecutorHandle from(MutableExecutorHandle instance) {
     Objects.requireNonNull(instance, "instance");
-    if (instance.contactInfoIsSet()) {
-      setContactInfo(instance.getContactInfo());
+    from((Object) instance);
+    return this;
+  }
+
+  private void from(Object object) {
+    if (object instanceof MutableExecutorHandle) {
+      MutableExecutorHandle instance = (MutableExecutorHandle) object;
+      if (instance.contactInfoIsSet()) {
+        setContactInfo(instance.getContactInfo());
+      }
+      if (instance.capabilitiesIsSet()) {
+        setCapabilities(instance.getCapabilities());
+      }
+      setSimpleName(instance.getSimpleName());
+      return;
     }
-    if (instance.capabilitiesIsSet()) {
+    if (object instanceof IExecutorHandle) {
+      IExecutorHandle instance = (IExecutorHandle) object;
+      setContactInfo(instance.getContactInfo());
       setCapabilities(instance.getCapabilities());
     }
-    return this;
+    if (object instanceof IQualifiable) {
+      IQualifiable instance = (IQualifiable) object;
+      setSimpleName(instance.getSimpleName());
+    }
   }
 
   /**
@@ -138,6 +185,18 @@ public final class MutableExecutorHandle implements IExecutorHandle {
   }
 
   /**
+   * Assigns a value to the {@link IExecutorHandle#getSimpleName() simpleName} attribute.
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IExecutorHandle#getSimpleName() simpleName}.</em>
+   * @param simpleName The value for simpleName
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableExecutorHandle setSimpleName(String simpleName) {
+    this.simpleName = Objects.requireNonNull(simpleName, "simpleName");
+    return this;
+  }
+
+  /**
    * Returns {@code true} if the required attribute {@link IExecutorHandle#getContactInfo() contactInfo} is set.
    * @return {@code true} if set
    */
@@ -151,6 +210,14 @@ public final class MutableExecutorHandle implements IExecutorHandle {
    */
   public final boolean capabilitiesIsSet() {
     return (initBits & INIT_BIT_CAPABILITIES) == 0;
+  }
+
+  /**
+   * Returns {@code true} if the default attribute {@link IExecutorHandle#getSimpleName() simpleName} is set.
+   * @return {@code true} if set
+   */
+  public final boolean simpleNameIsSet() {
+    return simpleName != null;
   }
 
 
@@ -223,12 +290,16 @@ public final class MutableExecutorHandle implements IExecutorHandle {
   }
 
   private boolean equalTo(MutableExecutorHandle another) {
+    String qualifier = getQualifier();
+    String simpleName = getSimpleName();
     return contactInfo.equals(another.contactInfo)
-        && capabilities.equals(another.capabilities);
+        && capabilities.equals(another.capabilities)
+        && qualifier.equals(another.getQualifier())
+        && simpleName.equals(another.getSimpleName());
   }
 
   /**
-   * Computes a hash code from attributes: {@code contactInfo}, {@code capabilities}.
+   * Computes a hash code from attributes: {@code contactInfo}, {@code capabilities}, {@code qualifier}, {@code simpleName}.
    * @return hashCode value
    */
   @Override
@@ -236,6 +307,10 @@ public final class MutableExecutorHandle implements IExecutorHandle {
     int h = 5381;
     h += (h << 5) + contactInfo.hashCode();
     h += (h << 5) + capabilities.hashCode();
+    String qualifier = getQualifier();
+    h += (h << 5) + qualifier.hashCode();
+    String simpleName = getSimpleName();
+    h += (h << 5) + simpleName.hashCode();
     return h;
   }
 
@@ -249,6 +324,7 @@ public final class MutableExecutorHandle implements IExecutorHandle {
     return MoreObjects.toStringHelper("MutableExecutorHandle")
         .add("contactInfo", contactInfoIsSet() ? getContactInfo() : "?")
         .add("capabilities", capabilitiesIsSet() ? getCapabilities() : "?")
+        .add("simpleName", getSimpleName())
         .toString();
   }
 }

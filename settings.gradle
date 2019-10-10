@@ -25,7 +25,7 @@ includeAt coreProjects, "SEDE.sdl", "servicedesc-dsl"
 /*
  * Executor is a gradle subproject
  */
-include "SEDE.executor"
+//include "SEDE.executor"
 
 
 /*
@@ -42,15 +42,15 @@ includeAt gatewayProjects, "SEDE.gateway", "base"
  * Plugin Projects:
  */
 def plugins = "SEDE.plugins"
-includeAt plugins, "SEDE.http", "http_"
-includeAt plugins, "SEDE.terminal", "terminal"
-includeAt plugins, "SEDE.frontend", "frontend"
-includeAt plugins, "SEDE.assemblies", "assemblies"
-includeAt plugins, "SEDE.gateway-spring-server", "gateway-spring-server"
+//includeAt plugins, "SEDE.http", "http_"
+//includeAt plugins, "SEDE.terminal", "terminal"
+//includeAt plugins, "SEDE.frontend", "frontend"
+//includeAt plugins, "SEDE.assemblies", "assemblies"
+//includeAt plugins, "SEDE.gateway-spring-server", "gateway-spring-server"
 
 /*
  * Deployment Projects:
  */
 def deployment = "SEDE.deployment"
-includeAt deployment, "SEDE.deployment", "deployment"
-includeAt deployment, "SEDE.deployment-spring-server", "spring-server"
+//includeAt deployment, "SEDE.deployment", "deployment"
+//includeAt deployment, "SEDE.deployment-spring-server", "spring-server"

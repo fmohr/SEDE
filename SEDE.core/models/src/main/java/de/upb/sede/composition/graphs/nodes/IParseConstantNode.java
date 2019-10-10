@@ -8,7 +8,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = ParseConstantNode.Builder.class)
-public interface IParseConstantNode extends IBaseNode{
+public interface IParseConstantNode extends BaseNode {
 
     String getConstantValue();
 

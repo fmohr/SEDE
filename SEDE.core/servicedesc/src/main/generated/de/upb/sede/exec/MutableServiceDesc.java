@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import de.upb.sede.ICommented;
+import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
 import de.upb.sede.exec.aux.IJavaDispatchAux;
 import de.upb.sede.exec.aux.IPythonClassAux;
@@ -165,18 +165,6 @@ public final class MutableServiceDesc implements IServiceDesc {
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.ICommented} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableServiceDesc from(ICommented instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
-    return this;
-  }
-
-  /**
    * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.exec.IServiceDesc} instance.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
@@ -195,6 +183,18 @@ public final class MutableServiceDesc implements IServiceDesc {
    */
   @CanIgnoreReturnValue
   public MutableServiceDesc from(IQualifiable instance) {
+    Objects.requireNonNull(instance, "instance");
+    from((Object) instance);
+    return this;
+  }
+
+  /**
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.CommentAware} instance.
+   * @param instance The instance from which to copy values
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceDesc from(CommentAware instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
@@ -236,10 +236,6 @@ public final class MutableServiceDesc implements IServiceDesc {
       addAllComments(instance.getComments());
       return;
     }
-    if (object instanceof ICommented) {
-      ICommented instance = (ICommented) object;
-      addAllComments(instance.getComments());
-    }
     if (object instanceof IServiceDesc) {
       IServiceDesc instance = (IServiceDesc) object;
       addAllInterfaces(instance.getInterfaces());
@@ -259,6 +255,10 @@ public final class MutableServiceDesc implements IServiceDesc {
       IQualifiable instance = (IQualifiable) object;
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
+    }
+    if (object instanceof CommentAware) {
+      CommentAware instance = (CommentAware) object;
+      addAllComments(instance.getComments());
     }
   }
 
@@ -615,7 +615,6 @@ public final class MutableServiceDesc implements IServiceDesc {
 
   private boolean equalTo(MutableServiceDesc another) {
     boolean isAbstract = isAbstract();
-    String simpleName = getSimpleName();
     return methods.equals(another.methods)
         && interfaces.equals(another.interfaces)
         && isAbstract == another.isAbstract()
@@ -623,12 +622,11 @@ public final class MutableServiceDesc implements IServiceDesc {
         && Objects.equals(javaAux, another.javaAux)
         && Objects.equals(pythonClassAuxiliaries, another.pythonClassAuxiliaries)
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.getSimpleName())
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code methods}, {@code interfaces}, {@code isAbstract}, {@code fieldTypes}, {@code javaAux}, {@code pythonClassAuxiliaries}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code methods}, {@code interfaces}, {@code isAbstract}, {@code fieldTypes}, {@code javaAux}, {@code pythonClassAuxiliaries}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -642,8 +640,6 @@ public final class MutableServiceDesc implements IServiceDesc {
     h += (h << 5) + Objects.hashCode(javaAux);
     h += (h << 5) + Objects.hashCode(pythonClassAuxiliaries);
     h += (h << 5) + qualifier.hashCode();
-    String simpleName = getSimpleName();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -663,7 +659,6 @@ public final class MutableServiceDesc implements IServiceDesc {
         .add("javaAux", getJavaAux())
         .add("pythonClassAuxiliaries", getPythonClassAuxiliaries())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
-        .add("simpleName", getSimpleName())
         .add("comments", getComments())
         .toString();
   }

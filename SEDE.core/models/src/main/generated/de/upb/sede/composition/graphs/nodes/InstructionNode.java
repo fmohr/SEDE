@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
+import de.upb.sede.IFieldContainer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -33,8 +34,9 @@ import org.immutables.value.Generated;
 @CheckReturnValue
 public final class InstructionNode implements IInstructionNode {
   private final String fMInstruction;
-  private final String fieldType;
-  private final String fieldClass;
+  private final @Nullable String fieldName;
+  private final @Nullable String fieldType;
+  private final @Nullable String fieldClass;
   private final String host;
   private final String context;
   private final boolean contextIsFieldFlag;
@@ -43,10 +45,10 @@ public final class InstructionNode implements IInstructionNode {
   private final ImmutableList<String> parameterFields;
   private final ImmutableList<String> parameterTypes;
   private final String nodeType;
-  private final String fieldName;
 
   private InstructionNode(InstructionNode.Builder builder) {
     this.fMInstruction = builder.fMInstruction;
+    this.fieldName = builder.fieldName;
     this.fieldType = builder.fieldType;
     this.fieldClass = builder.fieldClass;
     this.host = builder.host;
@@ -55,7 +57,6 @@ public final class InstructionNode implements IInstructionNode {
     this.method = builder.method;
     this.parameterFields = builder.parameterFields.build();
     this.parameterTypes = builder.parameterTypes.build();
-    this.fieldName = builder.fieldName;
     if (builder.outputIndexIsSet()) {
       initShim.outputIndex(builder.outputIndex);
     }
@@ -69,8 +70,9 @@ public final class InstructionNode implements IInstructionNode {
 
   private InstructionNode(
       String fMInstruction,
-      String fieldType,
-      String fieldClass,
+      @Nullable String fieldName,
+      @Nullable String fieldType,
+      @Nullable String fieldClass,
       String host,
       String context,
       boolean contextIsFieldFlag,
@@ -78,9 +80,9 @@ public final class InstructionNode implements IInstructionNode {
       int outputIndex,
       ImmutableList<String> parameterFields,
       ImmutableList<String> parameterTypes,
-      String nodeType,
-      String fieldName) {
+      String nodeType) {
     this.fMInstruction = fMInstruction;
+    this.fieldName = fieldName;
     this.fieldType = fieldType;
     this.fieldClass = fieldClass;
     this.host = host;
@@ -91,7 +93,6 @@ public final class InstructionNode implements IInstructionNode {
     this.parameterFields = parameterFields;
     this.parameterTypes = parameterTypes;
     this.nodeType = nodeType;
-    this.fieldName = fieldName;
     this.initShim = null;
   }
 
@@ -165,11 +166,20 @@ public final class InstructionNode implements IInstructionNode {
   }
 
   /**
+   * @return The value of the {@code fieldName} attribute
+   */
+  @JsonProperty("fieldName")
+  @Override
+  public @Nullable String getFieldName() {
+    return fieldName;
+  }
+
+  /**
    * @return The value of the {@code fieldType} attribute
    */
   @JsonProperty("fieldType")
   @Override
-  public String getFieldType() {
+  public @Nullable String getFieldType() {
     return fieldType;
   }
 
@@ -178,7 +188,7 @@ public final class InstructionNode implements IInstructionNode {
    */
   @JsonProperty("fieldClass")
   @Override
-  public String getFieldClass() {
+  public @Nullable String getFieldClass() {
     return fieldClass;
   }
 
@@ -271,16 +281,6 @@ public final class InstructionNode implements IInstructionNode {
   }
 
   /**
-   * Returns the field name that this node is referencing.
-   * @return Referenced field name
-   */
-  @JsonProperty("fieldName")
-  @Override
-  public String getFieldName() {
-    return fieldName;
-  }
-
-  /**
    * Copy the current immutable object by setting a value for the {@link IInstructionNode#getFMInstruction() fMInstruction} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for fMInstruction
@@ -291,6 +291,7 @@ public final class InstructionNode implements IInstructionNode {
     if (this.fMInstruction.equals(newValue)) return this;
     return new InstructionNode(
         newValue,
+        this.fieldName,
         this.fieldType,
         this.fieldClass,
         this.host,
@@ -300,22 +301,44 @@ public final class InstructionNode implements IInstructionNode {
         this.outputIndex,
         this.parameterFields,
         this.parameterTypes,
-        this.nodeType,
-        this.fieldName);
+        this.nodeType);
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link IInstructionNode#getFieldName() fieldName} attribute.
+   * An equals check used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for fieldName (can be {@code null})
+   * @return A modified copy of the {@code this} object
+   */
+  public final InstructionNode withFieldName(@Nullable String value) {
+    if (Objects.equals(this.fieldName, value)) return this;
+    return new InstructionNode(
+        this.fMInstruction,
+        value,
+        this.fieldType,
+        this.fieldClass,
+        this.host,
+        this.context,
+        this.contextIsFieldFlag,
+        this.method,
+        this.outputIndex,
+        this.parameterFields,
+        this.parameterTypes,
+        this.nodeType);
   }
 
   /**
    * Copy the current immutable object by setting a value for the {@link IInstructionNode#getFieldType() fieldType} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for fieldType
+   * @param value A new value for fieldType (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final InstructionNode withFieldType(String value) {
-    String newValue = Objects.requireNonNull(value, "fieldType");
-    if (this.fieldType.equals(newValue)) return this;
+  public final InstructionNode withFieldType(@Nullable String value) {
+    if (Objects.equals(this.fieldType, value)) return this;
     return new InstructionNode(
         this.fMInstruction,
-        newValue,
+        this.fieldName,
+        value,
         this.fieldClass,
         this.host,
         this.context,
@@ -324,23 +347,22 @@ public final class InstructionNode implements IInstructionNode {
         this.outputIndex,
         this.parameterFields,
         this.parameterTypes,
-        this.nodeType,
-        this.fieldName);
+        this.nodeType);
   }
 
   /**
    * Copy the current immutable object by setting a value for the {@link IInstructionNode#getFieldClass() fieldClass} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for fieldClass
+   * @param value A new value for fieldClass (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final InstructionNode withFieldClass(String value) {
-    String newValue = Objects.requireNonNull(value, "fieldClass");
-    if (this.fieldClass.equals(newValue)) return this;
+  public final InstructionNode withFieldClass(@Nullable String value) {
+    if (Objects.equals(this.fieldClass, value)) return this;
     return new InstructionNode(
         this.fMInstruction,
+        this.fieldName,
         this.fieldType,
-        newValue,
+        value,
         this.host,
         this.context,
         this.contextIsFieldFlag,
@@ -348,8 +370,7 @@ public final class InstructionNode implements IInstructionNode {
         this.outputIndex,
         this.parameterFields,
         this.parameterTypes,
-        this.nodeType,
-        this.fieldName);
+        this.nodeType);
   }
 
   /**
@@ -364,6 +385,7 @@ public final class InstructionNode implements IInstructionNode {
     if (this.host.equals(newValue)) return this;
     return new InstructionNode(
         this.fMInstruction,
+        this.fieldName,
         this.fieldType,
         this.fieldClass,
         newValue,
@@ -373,8 +395,7 @@ public final class InstructionNode implements IInstructionNode {
         this.outputIndex,
         this.parameterFields,
         this.parameterTypes,
-        this.nodeType,
-        this.fieldName);
+        this.nodeType);
   }
 
   /**
@@ -388,6 +409,7 @@ public final class InstructionNode implements IInstructionNode {
     if (this.context.equals(newValue)) return this;
     return new InstructionNode(
         this.fMInstruction,
+        this.fieldName,
         this.fieldType,
         this.fieldClass,
         this.host,
@@ -397,8 +419,7 @@ public final class InstructionNode implements IInstructionNode {
         this.outputIndex,
         this.parameterFields,
         this.parameterTypes,
-        this.nodeType,
-        this.fieldName);
+        this.nodeType);
   }
 
   /**
@@ -411,6 +432,7 @@ public final class InstructionNode implements IInstructionNode {
     if (this.contextIsFieldFlag == value) return this;
     return new InstructionNode(
         this.fMInstruction,
+        this.fieldName,
         this.fieldType,
         this.fieldClass,
         this.host,
@@ -420,8 +442,7 @@ public final class InstructionNode implements IInstructionNode {
         this.outputIndex,
         this.parameterFields,
         this.parameterTypes,
-        this.nodeType,
-        this.fieldName);
+        this.nodeType);
   }
 
   /**
@@ -435,6 +456,7 @@ public final class InstructionNode implements IInstructionNode {
     if (this.method.equals(newValue)) return this;
     return new InstructionNode(
         this.fMInstruction,
+        this.fieldName,
         this.fieldType,
         this.fieldClass,
         this.host,
@@ -444,8 +466,7 @@ public final class InstructionNode implements IInstructionNode {
         this.outputIndex,
         this.parameterFields,
         this.parameterTypes,
-        this.nodeType,
-        this.fieldName);
+        this.nodeType);
   }
 
   /**
@@ -458,6 +479,7 @@ public final class InstructionNode implements IInstructionNode {
     if (this.outputIndex == value) return this;
     return new InstructionNode(
         this.fMInstruction,
+        this.fieldName,
         this.fieldType,
         this.fieldClass,
         this.host,
@@ -467,8 +489,7 @@ public final class InstructionNode implements IInstructionNode {
         value,
         this.parameterFields,
         this.parameterTypes,
-        this.nodeType,
-        this.fieldName);
+        this.nodeType);
   }
 
   /**
@@ -480,6 +501,7 @@ public final class InstructionNode implements IInstructionNode {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
     return new InstructionNode(
         this.fMInstruction,
+        this.fieldName,
         this.fieldType,
         this.fieldClass,
         this.host,
@@ -489,8 +511,7 @@ public final class InstructionNode implements IInstructionNode {
         this.outputIndex,
         newValue,
         this.parameterTypes,
-        this.nodeType,
-        this.fieldName);
+        this.nodeType);
   }
 
   /**
@@ -504,6 +525,7 @@ public final class InstructionNode implements IInstructionNode {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
     return new InstructionNode(
         this.fMInstruction,
+        this.fieldName,
         this.fieldType,
         this.fieldClass,
         this.host,
@@ -513,8 +535,7 @@ public final class InstructionNode implements IInstructionNode {
         this.outputIndex,
         newValue,
         this.parameterTypes,
-        this.nodeType,
-        this.fieldName);
+        this.nodeType);
   }
 
   /**
@@ -526,6 +547,7 @@ public final class InstructionNode implements IInstructionNode {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
     return new InstructionNode(
         this.fMInstruction,
+        this.fieldName,
         this.fieldType,
         this.fieldClass,
         this.host,
@@ -535,8 +557,7 @@ public final class InstructionNode implements IInstructionNode {
         this.outputIndex,
         this.parameterFields,
         newValue,
-        this.nodeType,
-        this.fieldName);
+        this.nodeType);
   }
 
   /**
@@ -550,6 +571,7 @@ public final class InstructionNode implements IInstructionNode {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
     return new InstructionNode(
         this.fMInstruction,
+        this.fieldName,
         this.fieldType,
         this.fieldClass,
         this.host,
@@ -559,8 +581,7 @@ public final class InstructionNode implements IInstructionNode {
         this.outputIndex,
         this.parameterFields,
         newValue,
-        this.nodeType,
-        this.fieldName);
+        this.nodeType);
   }
 
   /**
@@ -574,6 +595,7 @@ public final class InstructionNode implements IInstructionNode {
     if (this.nodeType.equals(newValue)) return this;
     return new InstructionNode(
         this.fMInstruction,
+        this.fieldName,
         this.fieldType,
         this.fieldClass,
         this.host,
@@ -583,31 +605,6 @@ public final class InstructionNode implements IInstructionNode {
         this.outputIndex,
         this.parameterFields,
         this.parameterTypes,
-        newValue,
-        this.fieldName);
-  }
-
-  /**
-   * Copy the current immutable object by setting a value for the {@link IInstructionNode#getFieldName() fieldName} attribute.
-   * An equals check used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for fieldName
-   * @return A modified copy of the {@code this} object
-   */
-  public final InstructionNode withFieldName(String value) {
-    String newValue = Objects.requireNonNull(value, "fieldName");
-    if (this.fieldName.equals(newValue)) return this;
-    return new InstructionNode(
-        this.fMInstruction,
-        this.fieldType,
-        this.fieldClass,
-        this.host,
-        this.context,
-        this.contextIsFieldFlag,
-        this.method,
-        this.outputIndex,
-        this.parameterFields,
-        this.parameterTypes,
-        this.nodeType,
         newValue);
   }
 
@@ -624,8 +621,9 @@ public final class InstructionNode implements IInstructionNode {
 
   private boolean equalTo(InstructionNode another) {
     return fMInstruction.equals(another.fMInstruction)
-        && fieldType.equals(another.fieldType)
-        && fieldClass.equals(another.fieldClass)
+        && Objects.equals(fieldName, another.fieldName)
+        && Objects.equals(fieldType, another.fieldType)
+        && Objects.equals(fieldClass, another.fieldClass)
         && host.equals(another.host)
         && context.equals(another.context)
         && contextIsFieldFlag == another.contextIsFieldFlag
@@ -633,20 +631,20 @@ public final class InstructionNode implements IInstructionNode {
         && outputIndex == another.outputIndex
         && parameterFields.equals(another.parameterFields)
         && parameterTypes.equals(another.parameterTypes)
-        && nodeType.equals(another.nodeType)
-        && fieldName.equals(another.fieldName);
+        && nodeType.equals(another.nodeType);
   }
 
   /**
-   * Computes a hash code from attributes: {@code fMInstruction}, {@code fieldType}, {@code fieldClass}, {@code host}, {@code context}, {@code contextIsFieldFlag}, {@code method}, {@code outputIndex}, {@code parameterFields}, {@code parameterTypes}, {@code nodeType}, {@code fieldName}.
+   * Computes a hash code from attributes: {@code fMInstruction}, {@code fieldName}, {@code fieldType}, {@code fieldClass}, {@code host}, {@code context}, {@code contextIsFieldFlag}, {@code method}, {@code outputIndex}, {@code parameterFields}, {@code parameterTypes}, {@code nodeType}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     @Var int h = 5381;
     h += (h << 5) + fMInstruction.hashCode();
-    h += (h << 5) + fieldType.hashCode();
-    h += (h << 5) + fieldClass.hashCode();
+    h += (h << 5) + Objects.hashCode(fieldName);
+    h += (h << 5) + Objects.hashCode(fieldType);
+    h += (h << 5) + Objects.hashCode(fieldClass);
     h += (h << 5) + host.hashCode();
     h += (h << 5) + context.hashCode();
     h += (h << 5) + Booleans.hashCode(contextIsFieldFlag);
@@ -655,7 +653,6 @@ public final class InstructionNode implements IInstructionNode {
     h += (h << 5) + parameterFields.hashCode();
     h += (h << 5) + parameterTypes.hashCode();
     h += (h << 5) + nodeType.hashCode();
-    h += (h << 5) + fieldName.hashCode();
     return h;
   }
 
@@ -668,6 +665,7 @@ public final class InstructionNode implements IInstructionNode {
     return MoreObjects.toStringHelper("InstructionNode")
         .omitNullValues()
         .add("fMInstruction", fMInstruction)
+        .add("fieldName", fieldName)
         .add("fieldType", fieldType)
         .add("fieldClass", fieldClass)
         .add("host", host)
@@ -678,7 +676,6 @@ public final class InstructionNode implements IInstructionNode {
         .add("parameterFields", parameterFields)
         .add("parameterTypes", parameterTypes)
         .add("nodeType", nodeType)
-        .add("fieldName", fieldName)
         .toString();
   }
 
@@ -693,6 +690,7 @@ public final class InstructionNode implements IInstructionNode {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IInstructionNode {
     @Nullable String fMInstruction;
+    @Nullable String fieldName;
     @Nullable String fieldType;
     @Nullable String fieldClass;
     @Nullable String host;
@@ -705,17 +703,20 @@ public final class InstructionNode implements IInstructionNode {
     @Nullable List<String> parameterFields = ImmutableList.of();
     @Nullable List<String> parameterTypes = ImmutableList.of();
     @Nullable String nodeType;
-    @Nullable String fieldName;
     @JsonProperty("fMInstruction")
     public void setFMInstruction(String fMInstruction) {
       this.fMInstruction = fMInstruction;
     }
+    @JsonProperty("fieldName")
+    public void setFieldName(@Nullable String fieldName) {
+      this.fieldName = fieldName;
+    }
     @JsonProperty("fieldType")
-    public void setFieldType(String fieldType) {
+    public void setFieldType(@Nullable String fieldType) {
       this.fieldType = fieldType;
     }
     @JsonProperty("fieldClass")
-    public void setFieldClass(String fieldClass) {
+    public void setFieldClass(@Nullable String fieldClass) {
       this.fieldClass = fieldClass;
     }
     @JsonProperty("host")
@@ -752,12 +753,10 @@ public final class InstructionNode implements IInstructionNode {
     public void setNodeType(String nodeType) {
       this.nodeType = nodeType;
     }
-    @JsonProperty("fieldName")
-    public void setFieldName(String fieldName) {
-      this.fieldName = fieldName;
-    }
     @Override
     public String getFMInstruction() { throw new UnsupportedOperationException(); }
+    @Override
+    public String getFieldName() { throw new UnsupportedOperationException(); }
     @Override
     public String getFieldType() { throw new UnsupportedOperationException(); }
     @Override
@@ -778,8 +777,6 @@ public final class InstructionNode implements IInstructionNode {
     public List<String> getParameterTypes() { throw new UnsupportedOperationException(); }
     @Override
     public String getNodeType() { throw new UnsupportedOperationException(); }
-    @Override
-    public String getFieldName() { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -793,6 +790,9 @@ public final class InstructionNode implements IInstructionNode {
     InstructionNode.Builder builder = InstructionNode.builder();
     if (json.fMInstruction != null) {
       builder.fMInstruction(json.fMInstruction);
+    }
+    if (json.fieldName != null) {
+      builder.fieldName(json.fieldName);
     }
     if (json.fieldType != null) {
       builder.fieldType(json.fieldType);
@@ -824,9 +824,6 @@ public final class InstructionNode implements IInstructionNode {
     if (json.nodeType != null) {
       builder.nodeType(json.nodeType);
     }
-    if (json.fieldName != null) {
-      builder.fieldName(json.fieldName);
-    }
     return builder.build();
   }
 
@@ -851,8 +848,9 @@ public final class InstructionNode implements IInstructionNode {
    * <pre>
    * InstructionNode.builder()
    *    .fMInstruction(String) // required {@link IInstructionNode#getFMInstruction() fMInstruction}
-   *    .fieldType(String) // required {@link IInstructionNode#getFieldType() fieldType}
-   *    .fieldClass(String) // required {@link IInstructionNode#getFieldClass() fieldClass}
+   *    .fieldName(String | null) // nullable {@link IInstructionNode#getFieldName() fieldName}
+   *    .fieldType(String | null) // nullable {@link IInstructionNode#getFieldType() fieldType}
+   *    .fieldClass(String | null) // nullable {@link IInstructionNode#getFieldClass() fieldClass}
    *    .host(String) // required {@link IInstructionNode#getHost() host}
    *    .context(String) // required {@link IInstructionNode#getContext() context}
    *    .contextIsFieldFlag(boolean) // required {@link IInstructionNode#getContextIsFieldFlag() contextIsFieldFlag}
@@ -861,7 +859,6 @@ public final class InstructionNode implements IInstructionNode {
    *    .addParameterFields|addAllParameterFields(String) // {@link IInstructionNode#getParameterFields() parameterFields} elements
    *    .addParameterTypes|addAllParameterTypes(String) // {@link IInstructionNode#getParameterTypes() parameterTypes} elements
    *    .nodeType(String) // optional {@link IInstructionNode#getNodeType() nodeType}
-   *    .fieldName(String) // required {@link IInstructionNode#getFieldName() fieldName}
    *    .build();
    * </pre>
    * @return A new InstructionNode builder
@@ -881,18 +878,16 @@ public final class InstructionNode implements IInstructionNode {
   @NotThreadSafe
   public static final class Builder {
     private static final long INIT_BIT_F_M_INSTRUCTION = 0x1L;
-    private static final long INIT_BIT_FIELD_TYPE = 0x2L;
-    private static final long INIT_BIT_FIELD_CLASS = 0x4L;
-    private static final long INIT_BIT_HOST = 0x8L;
-    private static final long INIT_BIT_CONTEXT = 0x10L;
-    private static final long INIT_BIT_CONTEXT_IS_FIELD_FLAG = 0x20L;
-    private static final long INIT_BIT_METHOD = 0x40L;
-    private static final long INIT_BIT_FIELD_NAME = 0x80L;
+    private static final long INIT_BIT_HOST = 0x2L;
+    private static final long INIT_BIT_CONTEXT = 0x4L;
+    private static final long INIT_BIT_CONTEXT_IS_FIELD_FLAG = 0x8L;
+    private static final long INIT_BIT_METHOD = 0x10L;
     private static final long OPT_BIT_OUTPUT_INDEX = 0x1L;
-    private long initBits = 0xffL;
+    private long initBits = 0x1fL;
     private long optBits;
 
     private @Nullable String fMInstruction;
+    private @Nullable String fieldName;
     private @Nullable String fieldType;
     private @Nullable String fieldClass;
     private @Nullable String host;
@@ -903,7 +898,6 @@ public final class InstructionNode implements IInstructionNode {
     private ImmutableList.Builder<String> parameterFields = ImmutableList.builder();
     private ImmutableList.Builder<String> parameterTypes = ImmutableList.builder();
     private @Nullable String nodeType;
-    private @Nullable String fieldName;
 
     private Builder() {
     }
@@ -919,11 +913,17 @@ public final class InstructionNode implements IInstructionNode {
       if (instance.fMInstructionIsSet()) {
         fMInstruction(instance.getFMInstruction());
       }
-      if (instance.fieldTypeIsSet()) {
-        fieldType(instance.getFieldType());
+      @Nullable String fieldNameValue = instance.getFieldName();
+      if (fieldNameValue != null) {
+        fieldName(fieldNameValue);
       }
-      if (instance.fieldClassIsSet()) {
-        fieldClass(instance.getFieldClass());
+      @Nullable String fieldTypeValue = instance.getFieldType();
+      if (fieldTypeValue != null) {
+        fieldType(fieldTypeValue);
+      }
+      @Nullable String fieldClassValue = instance.getFieldClass();
+      if (fieldClassValue != null) {
+        fieldClass(fieldClassValue);
       }
       if (instance.hostIsSet()) {
         host(instance.getHost());
@@ -941,19 +941,16 @@ public final class InstructionNode implements IInstructionNode {
       addAllParameterFields(instance.getParameterFields());
       addAllParameterTypes(instance.getParameterTypes());
       nodeType(instance.getNodeType());
-      if (instance.fieldNameIsSet()) {
-        fieldName(instance.getFieldName());
-      }
       return this;
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.IFieldNameAware} instance.
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.IFieldContainer} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(IFieldNameAware instance) {
+    public final Builder from(IFieldContainer instance) {
       Objects.requireNonNull(instance, "instance");
       from((Object) instance);
       return this;
@@ -972,12 +969,12 @@ public final class InstructionNode implements IInstructionNode {
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.IBaseNode} instance.
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.BaseNode} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(IBaseNode instance) {
+    public final Builder from(BaseNode instance) {
       Objects.requireNonNull(instance, "instance");
       from((Object) instance);
       return this;
@@ -988,9 +985,16 @@ public final class InstructionNode implements IInstructionNode {
         from((MutableInstructionNode) object);
         return;
       }
-      if (object instanceof IFieldNameAware) {
-        IFieldNameAware instance = (IFieldNameAware) object;
-        fieldName(instance.getFieldName());
+      @Var long bits = 0;
+      if (object instanceof IFieldContainer) {
+        IFieldContainer instance = (IFieldContainer) object;
+        if ((bits & 0x1L) == 0) {
+          @Nullable String fieldNameValue = instance.getFieldName();
+          if (fieldNameValue != null) {
+            fieldName(fieldNameValue);
+          }
+          bits |= 0x1L;
+        }
       }
       if (object instanceof IInstructionNode) {
         IInstructionNode instance = (IInstructionNode) object;
@@ -998,15 +1002,28 @@ public final class InstructionNode implements IInstructionNode {
         fMInstruction(instance.getFMInstruction());
         contextIsFieldFlag(instance.getContextIsFieldFlag());
         outputIndex(instance.getOutputIndex());
+        if ((bits & 0x1L) == 0) {
+          @Nullable String fieldNameValue = instance.getFieldName();
+          if (fieldNameValue != null) {
+            fieldName(fieldNameValue);
+          }
+          bits |= 0x1L;
+        }
         method(instance.getMethod());
         addAllParameterTypes(instance.getParameterTypes());
         host(instance.getHost());
         context(instance.getContext());
-        fieldType(instance.getFieldType());
-        fieldClass(instance.getFieldClass());
+        @Nullable String fieldTypeValue = instance.getFieldType();
+        if (fieldTypeValue != null) {
+          fieldType(fieldTypeValue);
+        }
+        @Nullable String fieldClassValue = instance.getFieldClass();
+        if (fieldClassValue != null) {
+          fieldClass(fieldClassValue);
+        }
       }
-      if (object instanceof IBaseNode) {
-        IBaseNode instance = (IBaseNode) object;
+      if (object instanceof BaseNode) {
+        BaseNode instance = (BaseNode) object;
         nodeType(instance.getNodeType());
       }
     }
@@ -1025,28 +1042,38 @@ public final class InstructionNode implements IInstructionNode {
     }
 
     /**
+     * Initializes the value for the {@link IInstructionNode#getFieldName() fieldName} attribute.
+     * @param fieldName The value for fieldName (can be {@code null})
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("fieldName")
+    public final Builder fieldName(@Nullable String fieldName) {
+      this.fieldName = fieldName;
+      return this;
+    }
+
+    /**
      * Initializes the value for the {@link IInstructionNode#getFieldType() fieldType} attribute.
-     * @param fieldType The value for fieldType 
+     * @param fieldType The value for fieldType (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
     @JsonProperty("fieldType")
-    public final Builder fieldType(String fieldType) {
-      this.fieldType = Objects.requireNonNull(fieldType, "fieldType");
-      initBits &= ~INIT_BIT_FIELD_TYPE;
+    public final Builder fieldType(@Nullable String fieldType) {
+      this.fieldType = fieldType;
       return this;
     }
 
     /**
      * Initializes the value for the {@link IInstructionNode#getFieldClass() fieldClass} attribute.
-     * @param fieldClass The value for fieldClass 
+     * @param fieldClass The value for fieldClass (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
     @JsonProperty("fieldClass")
-    public final Builder fieldClass(String fieldClass) {
-      this.fieldClass = Objects.requireNonNull(fieldClass, "fieldClass");
-      initBits &= ~INIT_BIT_FIELD_CLASS;
+    public final Builder fieldClass(@Nullable String fieldClass) {
+      this.fieldClass = fieldClass;
       return this;
     }
 
@@ -1223,19 +1250,6 @@ public final class InstructionNode implements IInstructionNode {
     }
 
     /**
-     * Initializes the value for the {@link IInstructionNode#getFieldName() fieldName} attribute.
-     * @param fieldName The value for fieldName 
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("fieldName")
-    public final Builder fieldName(String fieldName) {
-      this.fieldName = Objects.requireNonNull(fieldName, "fieldName");
-      initBits &= ~INIT_BIT_FIELD_NAME;
-      return this;
-    }
-
-    /**
      * Builds a new {@link InstructionNode InstructionNode}.
      * @return An immutable instance of InstructionNode
      * @throws java.lang.IllegalStateException if any required attributes are missing
@@ -1254,13 +1268,10 @@ public final class InstructionNode implements IInstructionNode {
     private String formatRequiredAttributesMessage() {
       List<String> attributes = new ArrayList<>();
       if ((initBits & INIT_BIT_F_M_INSTRUCTION) != 0) attributes.add("fMInstruction");
-      if ((initBits & INIT_BIT_FIELD_TYPE) != 0) attributes.add("fieldType");
-      if ((initBits & INIT_BIT_FIELD_CLASS) != 0) attributes.add("fieldClass");
       if ((initBits & INIT_BIT_HOST) != 0) attributes.add("host");
       if ((initBits & INIT_BIT_CONTEXT) != 0) attributes.add("context");
       if ((initBits & INIT_BIT_CONTEXT_IS_FIELD_FLAG) != 0) attributes.add("contextIsFieldFlag");
       if ((initBits & INIT_BIT_METHOD) != 0) attributes.add("method");
-      if ((initBits & INIT_BIT_FIELD_NAME) != 0) attributes.add("fieldName");
       return "Cannot build InstructionNode, some of required attributes are not set " + attributes;
     }
   }

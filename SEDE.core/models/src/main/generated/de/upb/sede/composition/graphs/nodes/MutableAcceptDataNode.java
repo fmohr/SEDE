@@ -3,6 +3,7 @@ package de.upb.sede.composition.graphs.nodes;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
+import de.upb.sede.IFieldContainer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -62,7 +63,7 @@ public final class MutableAcceptDataNode implements IAcceptDataNode {
   }
 
   /**
-   * Returns the field name that this node is referencing.
+   * Returns the field name that is being refered at.
    * @return Referenced field name
    */
   @JsonProperty("fieldName")
@@ -88,24 +89,12 @@ public final class MutableAcceptDataNode implements IAcceptDataNode {
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.nodes.IFieldNameAware} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.IFieldContainer} instance.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableAcceptDataNode from(IFieldNameAware instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
-    return this;
-  }
-
-  /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.nodes.IBaseNode} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableAcceptDataNode from(IBaseNode instance) {
+  public MutableAcceptDataNode from(IFieldContainer instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
@@ -118,6 +107,18 @@ public final class MutableAcceptDataNode implements IAcceptDataNode {
    */
   @CanIgnoreReturnValue
   public MutableAcceptDataNode from(IAcceptDataNode instance) {
+    Objects.requireNonNull(instance, "instance");
+    from((Object) instance);
+    return this;
+  }
+
+  /**
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.nodes.BaseNode} instance.
+   * @param instance The instance from which to copy values
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableAcceptDataNode from(BaseNode instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
@@ -149,13 +150,9 @@ public final class MutableAcceptDataNode implements IAcceptDataNode {
       }
       return;
     }
-    if (object instanceof IFieldNameAware) {
-      IFieldNameAware instance = (IFieldNameAware) object;
+    if (object instanceof IFieldContainer) {
+      IFieldContainer instance = (IFieldContainer) object;
       setFieldName(instance.getFieldName());
-    }
-    if (object instanceof IBaseNode) {
-      IBaseNode instance = (IBaseNode) object;
-      setNodeType(instance.getNodeType());
     }
     if (object instanceof IAcceptDataNode) {
       IAcceptDataNode instance = (IAcceptDataNode) object;
@@ -163,6 +160,10 @@ public final class MutableAcceptDataNode implements IAcceptDataNode {
       if (castValue != null) {
         setCast(castValue);
       }
+    }
+    if (object instanceof BaseNode) {
+      BaseNode instance = (BaseNode) object;
+      setNodeType(instance.getNodeType());
     }
   }
 

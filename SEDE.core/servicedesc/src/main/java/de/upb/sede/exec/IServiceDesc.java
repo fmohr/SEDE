@@ -1,7 +1,7 @@
 package de.upb.sede.exec;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.ICommented;
+import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
 import de.upb.sede.SEDEModelStyle;
 import de.upb.sede.exec.aux.IJavaDispatchAux;
@@ -16,7 +16,7 @@ import java.util.Map;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = ServiceDesc.Builder.class)
-public interface IServiceDesc extends IQualifiable, ICommented {
+public interface IServiceDesc extends IQualifiable, CommentAware {
 
     public static final String STATE_FIELD = "state";
 

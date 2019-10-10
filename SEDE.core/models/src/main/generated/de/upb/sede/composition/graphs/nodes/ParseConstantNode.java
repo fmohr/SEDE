@@ -284,12 +284,12 @@ public final class ParseConstantNode implements IParseConstantNode {
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.IBaseNode} instance.
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.BaseNode} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(IBaseNode instance) {
+    public final Builder from(BaseNode instance) {
       Objects.requireNonNull(instance, "instance");
       from((Object) instance);
       return this;
@@ -312,8 +312,8 @@ public final class ParseConstantNode implements IParseConstantNode {
         from((MutableParseConstantNode) object);
         return;
       }
-      if (object instanceof IBaseNode) {
-        IBaseNode instance = (IBaseNode) object;
+      if (object instanceof BaseNode) {
+        BaseNode instance = (BaseNode) object;
         nodeType(instance.getNodeType());
       }
       if (object instanceof IParseConstantNode) {

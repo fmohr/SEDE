@@ -1,6 +1,6 @@
 package de.upb.sede.gateway.edd;
 
-import de.upb.sede.gateway.ExecutorHandle;
+import de.upb.sede.exec.ExecutorHandle;
 import de.upb.sede.gateway.OnDemandExecutorSupplier;
 import de.upb.sede.requests.deploy.EDDRegistration;
 import de.upb.sede.util.ExpiringCache;
@@ -135,8 +135,8 @@ public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
         }
         List<ExecutorHandle> executorHandles = execHandleCache.access().stream()
             .filter(handle ->
-                handle.getExecutionerCapabilities()
-                    .supportedServices().contains(service))
+                handle.getCapabilities()
+                    .getServices().contains(service))
             .collect(Collectors.toList());
 
         return executorArbiter.apply(executorHandles)
@@ -165,7 +165,7 @@ public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
     public Optional<ExecutorHandle> getHandle(String executorId) {
         return execHandleCache.access()
             .stream()
-            .filter(handle -> handle.getExecutorId().equals(executorId))
+            .filter(handle -> handle.getQualifier().equals(executorId))
             .findAny();
     }
 

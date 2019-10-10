@@ -1,10 +1,13 @@
 package de.upb.sede.gateway;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import de.upb.sede.exec.ExecutorHandle;
+import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.config.DeploymentConfig;
 import de.upb.sede.gateway.edd.CachedExecutorHandleSupplier;
 import de.upb.sede.requests.deploy.EDDRegistration;
@@ -36,6 +39,13 @@ public class Gateway implements IGateway {
 	 * basic logger
 	 */
 	private final static Logger logger = LoggerFactory.getLogger(Gateway.class);
+
+    /**
+     * Object mapper
+     * TODO don't use the mapper in the base class
+     */
+	private static final ObjectMapper MAPPER = new ObjectMapper()
+        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 	/**
 	 * Has the task to offer coordination over registered executors.
@@ -106,21 +116,22 @@ public class Gateway implements IGateway {
 		return gatewayResolution;
 	}
 
-	private final ExecutorHandle createExecHandle(ExecutorRegistration registration){
-		ExecutorHandle execHandle = ExecutorHandle.fromRegistration(registration);
-
+	private ExecutorHandle createExecHandle(ExecutorRegistration registration){
         /*
          * Remove all the supported Services from the executor that are not supported by
          * this gateway:
          */
-        boolean unsupportedServicesFound = execHandle.getExecutionerCapabilities().removeServices(classesConfig::classunknown);
-		if(logger.isWarnEnabled() && unsupportedServicesFound) {
-			logger.warn("Executor registered with services that are unknown to the gateway. " +
+        List<String> supportedServices = registration.getSupportedServices();
+        boolean unsupportedServicesFound = supportedServices.removeIf(classesConfig::classunknown);
+        if(logger.isWarnEnabled() && unsupportedServicesFound) {
+            logger.warn("Executor registered with services that are unknown to the gateway. " +
                     "These services will be ignored:\n\t{}",
-                    registration.getSupportedServices()
-                        .stream().filter(classesConfig::classunknown)
-                        .collect(Collectors.joining("\n\t")));
-		}
+                registration.getSupportedServices()
+                    .stream().filter(classesConfig::classunknown)
+                    .collect(Collectors.joining("\n\t")));
+        }
+
+        ExecutorHandle execHandle = IExecutorHandle.fromRegistration(registration);
 		return execHandle;
 	}
 
@@ -139,18 +150,24 @@ public class Gateway implements IGateway {
 		}
 		ExecutorHandle execHandle = createExecHandle(execRegister);
 
-		if(execHandle.getExecutionerCapabilities().supportedServices().isEmpty()) {
+		if(execHandle.getCapabilities().getServices().isEmpty()) {
 			/*
 			 * as this implementation doesn't support loading services onto the executor, registration with empty services are denied.
 			 */
-			logger.warn("Executor tried to register with 0 amount of supported services. Denied registration. Executors host: {}", execHandle.getExecutorId());
+			logger.warn("Executor tried to register with 0 amount of supported services. Denied registration. Executors host: {}", execHandle.getQualifier());
 			return false;
 
 		}  else {
 		    StandaloneExecutor standaloneExecutor = new StandaloneExecutor(execHandle);
 			execCoordinator.addSupplier(standaloneExecutor);
-			logger.info("Executor registered successfully with {} services. Executor's id: {}", execHandle.getExecutionerCapabilities().supportedServices().size(), execRegister.getId());
-			logger.trace("Supported service of executor with id {} are {}.", execRegister.getId(), execHandle.getExecutionerCapabilities().supportedServices());
+			if(! logger.isTraceEnabled())
+			    logger.info("Executor registered successfully with {} services. Executor's id: {}",
+                    execHandle.getCapabilities().getServices().size(),
+                    execRegister.getId());
+			else
+                logger.trace("Supported service of executor with id {} are {}.",
+                    execRegister.getId(),
+                    execHandle.getCapabilities().getServices());
 			return true;
 		}
 	}
@@ -204,7 +221,7 @@ public class Gateway implements IGateway {
 		info.setClassesConfiguration(classesConfig);
 		info.setExecutorSupplyCoordinator(execCoordinator);
 		info.setTypeConfig(typeConfig);
-		info.setResolvePolicy(resolveRequest.getPolicy());
+		info.setResolvePolicy(null); // TODO set resolve policy after migration
 		info.setInputFields(resolveRequest.getInputFields());
 		ExecutorRegistration clientExecRegistration = resolveRequest.getClientExecutorRegistration();
 

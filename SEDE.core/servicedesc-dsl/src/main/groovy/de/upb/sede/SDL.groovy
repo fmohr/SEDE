@@ -29,5 +29,4 @@ abstract class SDL extends Script {
         return col
     }
 
-
 }

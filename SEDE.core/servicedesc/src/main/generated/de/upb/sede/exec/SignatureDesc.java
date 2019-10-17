@@ -10,7 +10,7 @@ import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.ICommented;
-import de.upb.sede.exec.aux.IJavaDispatchAux;
+import de.upb.sede.exec.auxiliary.IJavaDispatchAux;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -36,7 +36,7 @@ import org.immutables.value.Generated;
 public final class SignatureDesc implements ISignatureDesc {
   private final ImmutableList<IMethodParameterDesc> inputs;
   private final ImmutableList<IMethodParameterDesc> outputs;
-  private final @Nullable IJavaDispatchAux javaAux;
+  private final @Nullable IJavaDispatchAux javaDispatchAux;
   private final boolean isPure;
   private final boolean isContextFree;
   private final ImmutableList<String> comments;
@@ -44,7 +44,7 @@ public final class SignatureDesc implements ISignatureDesc {
   private SignatureDesc(SignatureDesc.Builder builder) {
     this.inputs = builder.inputs.build();
     this.outputs = builder.outputs.build();
-    this.javaAux = builder.javaAux;
+    this.javaDispatchAux = builder.javaDispatchAux;
     this.comments = builder.comments.build();
     if (builder.isPureIsSet()) {
       initShim.isPure(builder.isPure);
@@ -60,13 +60,13 @@ public final class SignatureDesc implements ISignatureDesc {
   private SignatureDesc(
       ImmutableList<IMethodParameterDesc> inputs,
       ImmutableList<IMethodParameterDesc> outputs,
-      @Nullable IJavaDispatchAux javaAux,
+      @Nullable IJavaDispatchAux javaDispatchAux,
       boolean isPure,
       boolean isContextFree,
       ImmutableList<String> comments) {
     this.inputs = inputs;
     this.outputs = outputs;
-    this.javaAux = javaAux;
+    this.javaDispatchAux = javaDispatchAux;
     this.isPure = isPure;
     this.isContextFree = isContextFree;
     this.comments = comments;
@@ -152,12 +152,12 @@ public final class SignatureDesc implements ISignatureDesc {
   }
 
   /**
-   * @return The value of the {@code javaAux} attribute
+   * @return The value of the {@code javaDispatchAux} attribute
    */
-  @JsonProperty("javaAux")
+  @JsonProperty("javaDispatchAux")
   @Override
-  public @Nullable IJavaDispatchAux getJavaAux() {
-    return javaAux;
+  public @Nullable IJavaDispatchAux getJavaDispatchAux() {
+    return javaDispatchAux;
   }
 
   /**
@@ -200,7 +200,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withInputs(IMethodParameterDesc... elements) {
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(newValue, this.outputs, this.javaAux, this.isPure, this.isContextFree, this.comments);
+    return new SignatureDesc(newValue, this.outputs, this.javaDispatchAux, this.isPure, this.isContextFree, this.comments);
   }
 
   /**
@@ -212,7 +212,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withInputs(Iterable<? extends IMethodParameterDesc> elements) {
     if (this.inputs == elements) return this;
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(newValue, this.outputs, this.javaAux, this.isPure, this.isContextFree, this.comments);
+    return new SignatureDesc(newValue, this.outputs, this.javaDispatchAux, this.isPure, this.isContextFree, this.comments);
   }
 
   /**
@@ -222,7 +222,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withOutputs(IMethodParameterDesc... elements) {
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, newValue, this.javaAux, this.isPure, this.isContextFree, this.comments);
+    return new SignatureDesc(this.inputs, newValue, this.javaDispatchAux, this.isPure, this.isContextFree, this.comments);
   }
 
   /**
@@ -234,17 +234,17 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withOutputs(Iterable<? extends IMethodParameterDesc> elements) {
     if (this.outputs == elements) return this;
     ImmutableList<IMethodParameterDesc> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, newValue, this.javaAux, this.isPure, this.isContextFree, this.comments);
+    return new SignatureDesc(this.inputs, newValue, this.javaDispatchAux, this.isPure, this.isContextFree, this.comments);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link ISignatureDesc#getJavaAux() javaAux} attribute.
+   * Copy the current immutable object by setting a value for the {@link ISignatureDesc#getJavaDispatchAux() javaDispatchAux} attribute.
    * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for javaAux (can be {@code null})
+   * @param value A new value for javaDispatchAux (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final SignatureDesc withJavaAux(@Nullable IJavaDispatchAux value) {
-    if (this.javaAux == value) return this;
+  public final SignatureDesc withJavaDispatchAux(@Nullable IJavaDispatchAux value) {
+    if (this.javaDispatchAux == value) return this;
     return new SignatureDesc(this.inputs, this.outputs, value, this.isPure, this.isContextFree, this.comments);
   }
 
@@ -256,7 +256,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withIsPure(boolean value) {
     if (this.isPure == value) return this;
-    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, value, this.isContextFree, this.comments);
+    return new SignatureDesc(this.inputs, this.outputs, this.javaDispatchAux, value, this.isContextFree, this.comments);
   }
 
   /**
@@ -267,7 +267,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withIsContextFree(boolean value) {
     if (this.isContextFree == value) return this;
-    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, this.isPure, value, this.comments);
+    return new SignatureDesc(this.inputs, this.outputs, this.javaDispatchAux, this.isPure, value, this.comments);
   }
 
   /**
@@ -277,7 +277,7 @@ public final class SignatureDesc implements ISignatureDesc {
    */
   public final SignatureDesc withComments(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, this.isPure, this.isContextFree, newValue);
+    return new SignatureDesc(this.inputs, this.outputs, this.javaDispatchAux, this.isPure, this.isContextFree, newValue);
   }
 
   /**
@@ -289,7 +289,7 @@ public final class SignatureDesc implements ISignatureDesc {
   public final SignatureDesc withComments(Iterable<String> elements) {
     if (this.comments == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new SignatureDesc(this.inputs, this.outputs, this.javaAux, this.isPure, this.isContextFree, newValue);
+    return new SignatureDesc(this.inputs, this.outputs, this.javaDispatchAux, this.isPure, this.isContextFree, newValue);
   }
 
   /**
@@ -306,14 +306,14 @@ public final class SignatureDesc implements ISignatureDesc {
   private boolean equalTo(SignatureDesc another) {
     return inputs.equals(another.inputs)
         && outputs.equals(another.outputs)
-        && Objects.equals(javaAux, another.javaAux)
+        && Objects.equals(javaDispatchAux, another.javaDispatchAux)
         && isPure == another.isPure
         && isContextFree == another.isContextFree
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaAux}, {@code isPure}, {@code isContextFree}, {@code comments}.
+   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaDispatchAux}, {@code isPure}, {@code isContextFree}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -321,7 +321,7 @@ public final class SignatureDesc implements ISignatureDesc {
     @Var int h = 5381;
     h += (h << 5) + inputs.hashCode();
     h += (h << 5) + outputs.hashCode();
-    h += (h << 5) + Objects.hashCode(javaAux);
+    h += (h << 5) + Objects.hashCode(javaDispatchAux);
     h += (h << 5) + Booleans.hashCode(isPure);
     h += (h << 5) + Booleans.hashCode(isContextFree);
     h += (h << 5) + comments.hashCode();
@@ -338,7 +338,7 @@ public final class SignatureDesc implements ISignatureDesc {
         .omitNullValues()
         .add("inputs", inputs)
         .add("outputs", outputs)
-        .add("javaAux", javaAux)
+        .add("javaDispatchAux", javaDispatchAux)
         .add("isPure", isPure)
         .add("isContextFree", isContextFree)
         .add("comments", comments)
@@ -357,7 +357,7 @@ public final class SignatureDesc implements ISignatureDesc {
   static final class Json implements ISignatureDesc {
     @Nullable List<IMethodParameterDesc> inputs = ImmutableList.of();
     @Nullable List<IMethodParameterDesc> outputs = ImmutableList.of();
-    @Nullable IJavaDispatchAux javaAux;
+    @Nullable IJavaDispatchAux javaDispatchAux;
     boolean isPure;
     boolean isPureIsSet;
     boolean isContextFree;
@@ -371,9 +371,9 @@ public final class SignatureDesc implements ISignatureDesc {
     public void setOutputs(List<IMethodParameterDesc> outputs) {
       this.outputs = outputs;
     }
-    @JsonProperty("javaAux")
-    public void setJavaAux(@Nullable IJavaDispatchAux javaAux) {
-      this.javaAux = javaAux;
+    @JsonProperty("javaDispatchAux")
+    public void setJavaDispatchAux(@Nullable IJavaDispatchAux javaDispatchAux) {
+      this.javaDispatchAux = javaDispatchAux;
     }
     @JsonProperty("isPure")
     public void setIsPure(boolean isPure) {
@@ -394,7 +394,7 @@ public final class SignatureDesc implements ISignatureDesc {
     @Override
     public List<IMethodParameterDesc> getOutputs() { throw new UnsupportedOperationException(); }
     @Override
-    public IJavaDispatchAux getJavaAux() { throw new UnsupportedOperationException(); }
+    public IJavaDispatchAux getJavaDispatchAux() { throw new UnsupportedOperationException(); }
     @Override
     public boolean isPure() { throw new UnsupportedOperationException(); }
     @Override
@@ -418,8 +418,8 @@ public final class SignatureDesc implements ISignatureDesc {
     if (json.outputs != null) {
       builder.addAllOutputs(json.outputs);
     }
-    if (json.javaAux != null) {
-      builder.javaAux(json.javaAux);
+    if (json.javaDispatchAux != null) {
+      builder.javaDispatchAux(json.javaDispatchAux);
     }
     if (json.isPureIsSet) {
       builder.isPure(json.isPure);
@@ -455,7 +455,7 @@ public final class SignatureDesc implements ISignatureDesc {
    * SignatureDesc.builder()
    *    .addInputs|addAllInputs(de.upb.sede.exec.IMethodParameterDesc) // {@link ISignatureDesc#getInputs() inputs} elements
    *    .addOutputs|addAllOutputs(de.upb.sede.exec.IMethodParameterDesc) // {@link ISignatureDesc#getOutputs() outputs} elements
-   *    .javaAux(de.upb.sede.exec.aux.IJavaDispatchAux | null) // nullable {@link ISignatureDesc#getJavaAux() javaAux}
+   *    .javaDispatchAux(de.upb.sede.exec.auxiliary.IJavaDispatchAux | null) // nullable {@link ISignatureDesc#getJavaDispatchAux() javaDispatchAux}
    *    .isPure(boolean) // optional {@link ISignatureDesc#isPure() isPure}
    *    .isContextFree(boolean) // optional {@link ISignatureDesc#isContextFree() isContextFree}
    *    .addComments|addAllComments(String) // {@link ISignatureDesc#getComments() comments} elements
@@ -483,7 +483,7 @@ public final class SignatureDesc implements ISignatureDesc {
 
     private ImmutableList.Builder<IMethodParameterDesc> inputs = ImmutableList.builder();
     private ImmutableList.Builder<IMethodParameterDesc> outputs = ImmutableList.builder();
-    private @Nullable IJavaDispatchAux javaAux;
+    private @Nullable IJavaDispatchAux javaDispatchAux;
     private boolean isPure;
     private boolean isContextFree;
     private ImmutableList.Builder<String> comments = ImmutableList.builder();
@@ -501,9 +501,9 @@ public final class SignatureDesc implements ISignatureDesc {
       Objects.requireNonNull(instance, "instance");
       addAllInputs(instance.getInputs());
       addAllOutputs(instance.getOutputs());
-      @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
-      if (javaAuxValue != null) {
-        javaAux(javaAuxValue);
+      @Nullable IJavaDispatchAux javaDispatchAuxValue = instance.getJavaDispatchAux();
+      if (javaDispatchAuxValue != null) {
+        javaDispatchAux(javaDispatchAuxValue);
       }
       isPure(instance.isPure());
       isContextFree(instance.isContextFree());
@@ -547,9 +547,9 @@ public final class SignatureDesc implements ISignatureDesc {
       if (object instanceof ISignatureDesc) {
         ISignatureDesc instance = (ISignatureDesc) object;
         addAllOutputs(instance.getOutputs());
-        @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
-        if (javaAuxValue != null) {
-          javaAux(javaAuxValue);
+        @Nullable IJavaDispatchAux javaDispatchAuxValue = instance.getJavaDispatchAux();
+        if (javaDispatchAuxValue != null) {
+          javaDispatchAux(javaDispatchAuxValue);
         }
         isPure(instance.isPure());
         isContextFree(instance.isContextFree());
@@ -650,14 +650,14 @@ public final class SignatureDesc implements ISignatureDesc {
     }
 
     /**
-     * Initializes the value for the {@link ISignatureDesc#getJavaAux() javaAux} attribute.
-     * @param javaAux The value for javaAux (can be {@code null})
+     * Initializes the value for the {@link ISignatureDesc#getJavaDispatchAux() javaDispatchAux} attribute.
+     * @param javaDispatchAux The value for javaDispatchAux (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    @JsonProperty("javaAux")
-    public final Builder javaAux(@Nullable IJavaDispatchAux javaAux) {
-      this.javaAux = javaAux;
+    @JsonProperty("javaDispatchAux")
+    public final Builder javaDispatchAux(@Nullable IJavaDispatchAux javaDispatchAux) {
+      this.javaDispatchAux = javaDispatchAux;
       return this;
     }
 

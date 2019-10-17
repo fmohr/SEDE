@@ -1266,6 +1266,6 @@ class FieldType {
 }
 
 enum TypeClass {
-	ServiceInstance, SemanticDataType, RealDataType, PrimitiveType, ServiceInstanceHandle;
+	ServiceInstance, SemanticDataType, RealDataType, PrimitiveType, ServiceInstanceHandle
 }
 

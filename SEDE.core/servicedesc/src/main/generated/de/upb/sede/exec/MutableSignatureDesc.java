@@ -5,7 +5,7 @@ import com.google.common.base.MoreObjects;
 import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import de.upb.sede.ICommented;
-import de.upb.sede.exec.aux.IJavaDispatchAux;
+import de.upb.sede.exec.auxiliary.IJavaDispatchAux;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -33,7 +33,7 @@ public final class MutableSignatureDesc implements ISignatureDesc {
 
   private final ArrayList<IMethodParameterDesc> inputs = new ArrayList<IMethodParameterDesc>();
   private final ArrayList<IMethodParameterDesc> outputs = new ArrayList<IMethodParameterDesc>();
-  private @Nullable IJavaDispatchAux javaAux;
+  private @Nullable IJavaDispatchAux javaDispatchAux;
   private boolean isPure;
   private boolean isContextFree;
   private final ArrayList<String> comments = new ArrayList<String>();
@@ -67,12 +67,12 @@ public final class MutableSignatureDesc implements ISignatureDesc {
   }
 
   /**
-   * @return value of {@code javaAux} attribute, may be {@code null}
+   * @return value of {@code javaDispatchAux} attribute, may be {@code null}
    */
-  @JsonProperty("javaAux")
+  @JsonProperty("javaDispatchAux")
   @Override
-  public final @Nullable IJavaDispatchAux getJavaAux() {
-    return javaAux;
+  public final @Nullable IJavaDispatchAux getJavaDispatchAux() {
+    return javaDispatchAux;
   }
 
   /**
@@ -115,7 +115,7 @@ public final class MutableSignatureDesc implements ISignatureDesc {
     optBits = 0;
     inputs.clear();
     outputs.clear();
-    javaAux = null;
+    javaDispatchAux = null;
     isPure = false;
     isContextFree = false;
     comments.clear();
@@ -165,9 +165,9 @@ public final class MutableSignatureDesc implements ISignatureDesc {
       MutableSignatureDesc instance = (MutableSignatureDesc) object;
       addAllInputs(instance.getInputs());
       addAllOutputs(instance.getOutputs());
-      @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
-      if (javaAuxValue != null) {
-        setJavaAux(javaAuxValue);
+      @Nullable IJavaDispatchAux javaDispatchAuxValue = instance.getJavaDispatchAux();
+      if (javaDispatchAuxValue != null) {
+        setJavaDispatchAux(javaDispatchAuxValue);
       }
       setIsPure(instance.isPure());
       setIsContextFree(instance.isContextFree());
@@ -181,9 +181,9 @@ public final class MutableSignatureDesc implements ISignatureDesc {
     if (object instanceof ISignatureDesc) {
       ISignatureDesc instance = (ISignatureDesc) object;
       addAllOutputs(instance.getOutputs());
-      @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
-      if (javaAuxValue != null) {
-        setJavaAux(javaAuxValue);
+      @Nullable IJavaDispatchAux javaDispatchAuxValue = instance.getJavaDispatchAux();
+      if (javaDispatchAuxValue != null) {
+        setJavaDispatchAux(javaDispatchAuxValue);
       }
       setIsPure(instance.isPure());
       setIsContextFree(instance.isContextFree());
@@ -292,13 +292,13 @@ public final class MutableSignatureDesc implements ISignatureDesc {
   }
 
   /**
-   * Assigns a value to the {@link ISignatureDesc#getJavaAux() javaAux} attribute.
-   * @param javaAux The value for javaAux, can be {@code null}
+   * Assigns a value to the {@link ISignatureDesc#getJavaDispatchAux() javaDispatchAux} attribute.
+   * @param javaDispatchAux The value for javaDispatchAux, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableSignatureDesc setJavaAux(@Nullable IJavaDispatchAux javaAux) {
-    this.javaAux = javaAux;
+  public MutableSignatureDesc setJavaDispatchAux(@Nullable IJavaDispatchAux javaDispatchAux) {
+    this.javaDispatchAux = javaDispatchAux;
     return this;
   }
 
@@ -448,14 +448,14 @@ public final class MutableSignatureDesc implements ISignatureDesc {
     boolean isContextFree = isContextFree();
     return inputs.equals(another.inputs)
         && outputs.equals(another.outputs)
-        && Objects.equals(javaAux, another.javaAux)
+        && Objects.equals(javaDispatchAux, another.javaDispatchAux)
         && isPure == another.isPure()
         && isContextFree == another.isContextFree()
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaAux}, {@code isPure}, {@code isContextFree}, {@code comments}.
+   * Computes a hash code from attributes: {@code inputs}, {@code outputs}, {@code javaDispatchAux}, {@code isPure}, {@code isContextFree}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -463,7 +463,7 @@ public final class MutableSignatureDesc implements ISignatureDesc {
     int h = 5381;
     h += (h << 5) + inputs.hashCode();
     h += (h << 5) + outputs.hashCode();
-    h += (h << 5) + Objects.hashCode(javaAux);
+    h += (h << 5) + Objects.hashCode(javaDispatchAux);
     boolean isPure = isPure();
     h += (h << 5) + Booleans.hashCode(isPure);
     boolean isContextFree = isContextFree();
@@ -482,7 +482,7 @@ public final class MutableSignatureDesc implements ISignatureDesc {
     return MoreObjects.toStringHelper("MutableSignatureDesc")
         .add("inputs", getInputs())
         .add("outputs", getOutputs())
-        .add("javaAux", getJavaAux())
+        .add("javaDispatchAux", getJavaDispatchAux())
         .add("isPure", isPure())
         .add("isContextFree", isContextFree())
         .add("comments", getComments())

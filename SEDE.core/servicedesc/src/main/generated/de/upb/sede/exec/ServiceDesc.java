@@ -12,8 +12,9 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
-import de.upb.sede.exec.aux.IJavaDispatchAux;
-import de.upb.sede.exec.aux.IPythonClassAux;
+import de.upb.sede.exec.auxiliary.IJavaDispatchAux;
+import de.upb.sede.exec.auxiliary.IPythonClassAux;
+import de.upb.sede.param.IServiceParameterizationDesc;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,9 +43,11 @@ public final class ServiceDesc implements IServiceDesc {
   private final ImmutableList<String> interfaces;
   private final boolean isAbstract;
   private final ImmutableMap<String, String> fieldTypes;
-  private final @Nullable IJavaDispatchAux javaAux;
+  private final @Nullable IJavaDispatchAux javaDispatchAux;
   private final @Nullable IPythonClassAux pythonClassAuxiliaries;
+  private final @Nullable IServiceParameterizationDesc serviceParameters;
   private final String qualifier;
+  private final ImmutableList<String> metaTags;
   private final String simpleName;
   private final ImmutableList<String> comments;
 
@@ -52,9 +55,11 @@ public final class ServiceDesc implements IServiceDesc {
     this.methods = builder.methods.build();
     this.interfaces = builder.interfaces.build();
     this.fieldTypes = builder.fieldTypes.build();
-    this.javaAux = builder.javaAux;
+    this.javaDispatchAux = builder.javaDispatchAux;
     this.pythonClassAuxiliaries = builder.pythonClassAuxiliaries;
+    this.serviceParameters = builder.serviceParameters;
     this.qualifier = builder.qualifier;
+    this.metaTags = builder.metaTags.build();
     this.comments = builder.comments.build();
     if (builder.isAbstractIsSet()) {
       initShim.isAbstract(builder.isAbstract);
@@ -72,18 +77,22 @@ public final class ServiceDesc implements IServiceDesc {
       ImmutableList<String> interfaces,
       boolean isAbstract,
       ImmutableMap<String, String> fieldTypes,
-      @Nullable IJavaDispatchAux javaAux,
+      @Nullable IJavaDispatchAux javaDispatchAux,
       @Nullable IPythonClassAux pythonClassAuxiliaries,
+      @Nullable IServiceParameterizationDesc serviceParameters,
       String qualifier,
+      ImmutableList<String> metaTags,
       String simpleName,
       ImmutableList<String> comments) {
     this.methods = methods;
     this.interfaces = interfaces;
     this.isAbstract = isAbstract;
     this.fieldTypes = fieldTypes;
-    this.javaAux = javaAux;
+    this.javaDispatchAux = javaDispatchAux;
     this.pythonClassAuxiliaries = pythonClassAuxiliaries;
+    this.serviceParameters = serviceParameters;
     this.qualifier = qualifier;
+    this.metaTags = metaTags;
     this.simpleName = simpleName;
     this.comments = comments;
     this.initShim = null;
@@ -189,12 +198,12 @@ public final class ServiceDesc implements IServiceDesc {
   }
 
   /**
-   * @return The value of the {@code javaAux} attribute
+   * @return The value of the {@code javaDispatchAux} attribute
    */
-  @JsonProperty("javaAux")
+  @JsonProperty("javaDispatchAux")
   @Override
-  public @Nullable IJavaDispatchAux getJavaAux() {
-    return javaAux;
+  public @Nullable IJavaDispatchAux getJavaDispatchAux() {
+    return javaDispatchAux;
   }
 
   /**
@@ -207,12 +216,30 @@ public final class ServiceDesc implements IServiceDesc {
   }
 
   /**
+   * @return The value of the {@code serviceParameters} attribute
+   */
+  @JsonProperty("serviceParameters")
+  @Override
+  public @Nullable IServiceParameterizationDesc getServiceParameters() {
+    return serviceParameters;
+  }
+
+  /**
    * @return The value of the {@code qualifier} attribute
    */
   @JsonProperty("qualifier")
   @Override
   public String getQualifier() {
     return qualifier;
+  }
+
+  /**
+   * @return The value of the {@code metaTags} attribute
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public ImmutableList<String> getMetaTags() {
+    return metaTags;
   }
 
   /**
@@ -248,9 +275,11 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaAux,
+        this.javaDispatchAux,
         this.pythonClassAuxiliaries,
+        this.serviceParameters,
         this.qualifier,
+        this.metaTags,
         this.simpleName,
         this.comments);
   }
@@ -269,9 +298,11 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaAux,
+        this.javaDispatchAux,
         this.pythonClassAuxiliaries,
+        this.serviceParameters,
         this.qualifier,
+        this.metaTags,
         this.simpleName,
         this.comments);
   }
@@ -288,9 +319,11 @@ public final class ServiceDesc implements IServiceDesc {
         newValue,
         this.isAbstract,
         this.fieldTypes,
-        this.javaAux,
+        this.javaDispatchAux,
         this.pythonClassAuxiliaries,
+        this.serviceParameters,
         this.qualifier,
+        this.metaTags,
         this.simpleName,
         this.comments);
   }
@@ -309,9 +342,11 @@ public final class ServiceDesc implements IServiceDesc {
         newValue,
         this.isAbstract,
         this.fieldTypes,
-        this.javaAux,
+        this.javaDispatchAux,
         this.pythonClassAuxiliaries,
+        this.serviceParameters,
         this.qualifier,
+        this.metaTags,
         this.simpleName,
         this.comments);
   }
@@ -329,9 +364,11 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         value,
         this.fieldTypes,
-        this.javaAux,
+        this.javaDispatchAux,
         this.pythonClassAuxiliaries,
+        this.serviceParameters,
         this.qualifier,
+        this.metaTags,
         this.simpleName,
         this.comments);
   }
@@ -351,21 +388,23 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         newValue,
-        this.javaAux,
+        this.javaDispatchAux,
         this.pythonClassAuxiliaries,
+        this.serviceParameters,
         this.qualifier,
+        this.metaTags,
         this.simpleName,
         this.comments);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IServiceDesc#getJavaAux() javaAux} attribute.
+   * Copy the current immutable object by setting a value for the {@link IServiceDesc#getJavaDispatchAux() javaDispatchAux} attribute.
    * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for javaAux (can be {@code null})
+   * @param value A new value for javaDispatchAux (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final ServiceDesc withJavaAux(@Nullable IJavaDispatchAux value) {
-    if (this.javaAux == value) return this;
+  public final ServiceDesc withJavaDispatchAux(@Nullable IJavaDispatchAux value) {
+    if (this.javaDispatchAux == value) return this;
     return new ServiceDesc(
         this.methods,
         this.interfaces,
@@ -373,7 +412,9 @@ public final class ServiceDesc implements IServiceDesc {
         this.fieldTypes,
         value,
         this.pythonClassAuxiliaries,
+        this.serviceParameters,
         this.qualifier,
+        this.metaTags,
         this.simpleName,
         this.comments);
   }
@@ -391,9 +432,33 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaAux,
+        this.javaDispatchAux,
+        value,
+        this.serviceParameters,
+        this.qualifier,
+        this.metaTags,
+        this.simpleName,
+        this.comments);
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link IServiceDesc#getServiceParameters() serviceParameters} attribute.
+   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for serviceParameters (can be {@code null})
+   * @return A modified copy of the {@code this} object
+   */
+  public final ServiceDesc withServiceParameters(@Nullable IServiceParameterizationDesc value) {
+    if (this.serviceParameters == value) return this;
+    return new ServiceDesc(
+        this.methods,
+        this.interfaces,
+        this.isAbstract,
+        this.fieldTypes,
+        this.javaDispatchAux,
+        this.pythonClassAuxiliaries,
         value,
         this.qualifier,
+        this.metaTags,
         this.simpleName,
         this.comments);
   }
@@ -412,8 +477,54 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaAux,
+        this.javaDispatchAux,
         this.pythonClassAuxiliaries,
+        this.serviceParameters,
+        newValue,
+        this.metaTags,
+        this.simpleName,
+        this.comments);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IServiceDesc#getMetaTags() metaTags}.
+   * @param elements The elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final ServiceDesc withMetaTags(String... elements) {
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new ServiceDesc(
+        this.methods,
+        this.interfaces,
+        this.isAbstract,
+        this.fieldTypes,
+        this.javaDispatchAux,
+        this.pythonClassAuxiliaries,
+        this.serviceParameters,
+        this.qualifier,
+        newValue,
+        this.simpleName,
+        this.comments);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IServiceDesc#getMetaTags() metaTags}.
+   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param elements An iterable of metaTags elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final ServiceDesc withMetaTags(Iterable<String> elements) {
+    if (this.metaTags == elements) return this;
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new ServiceDesc(
+        this.methods,
+        this.interfaces,
+        this.isAbstract,
+        this.fieldTypes,
+        this.javaDispatchAux,
+        this.pythonClassAuxiliaries,
+        this.serviceParameters,
+        this.qualifier,
         newValue,
         this.simpleName,
         this.comments);
@@ -433,9 +544,11 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaAux,
+        this.javaDispatchAux,
         this.pythonClassAuxiliaries,
+        this.serviceParameters,
         this.qualifier,
+        this.metaTags,
         newValue,
         this.comments);
   }
@@ -452,9 +565,11 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaAux,
+        this.javaDispatchAux,
         this.pythonClassAuxiliaries,
+        this.serviceParameters,
         this.qualifier,
+        this.metaTags,
         this.simpleName,
         newValue);
   }
@@ -473,9 +588,11 @@ public final class ServiceDesc implements IServiceDesc {
         this.interfaces,
         this.isAbstract,
         this.fieldTypes,
-        this.javaAux,
+        this.javaDispatchAux,
         this.pythonClassAuxiliaries,
+        this.serviceParameters,
         this.qualifier,
+        this.metaTags,
         this.simpleName,
         newValue);
   }
@@ -496,15 +613,15 @@ public final class ServiceDesc implements IServiceDesc {
         && interfaces.equals(another.interfaces)
         && isAbstract == another.isAbstract
         && fieldTypes.equals(another.fieldTypes)
-        && Objects.equals(javaAux, another.javaAux)
+        && Objects.equals(javaDispatchAux, another.javaDispatchAux)
         && Objects.equals(pythonClassAuxiliaries, another.pythonClassAuxiliaries)
+        && Objects.equals(serviceParameters, another.serviceParameters)
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.simpleName)
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code methods}, {@code interfaces}, {@code isAbstract}, {@code fieldTypes}, {@code javaAux}, {@code pythonClassAuxiliaries}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code methods}, {@code interfaces}, {@code isAbstract}, {@code fieldTypes}, {@code javaDispatchAux}, {@code pythonClassAuxiliaries}, {@code serviceParameters}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -514,10 +631,10 @@ public final class ServiceDesc implements IServiceDesc {
     h += (h << 5) + interfaces.hashCode();
     h += (h << 5) + Booleans.hashCode(isAbstract);
     h += (h << 5) + fieldTypes.hashCode();
-    h += (h << 5) + Objects.hashCode(javaAux);
+    h += (h << 5) + Objects.hashCode(javaDispatchAux);
     h += (h << 5) + Objects.hashCode(pythonClassAuxiliaries);
+    h += (h << 5) + Objects.hashCode(serviceParameters);
     h += (h << 5) + qualifier.hashCode();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -534,10 +651,10 @@ public final class ServiceDesc implements IServiceDesc {
         .add("interfaces", interfaces)
         .add("isAbstract", isAbstract)
         .add("fieldTypes", fieldTypes)
-        .add("javaAux", javaAux)
+        .add("javaDispatchAux", javaDispatchAux)
         .add("pythonClassAuxiliaries", pythonClassAuxiliaries)
+        .add("serviceParameters", serviceParameters)
         .add("qualifier", qualifier)
-        .add("simpleName", simpleName)
         .add("comments", comments)
         .toString();
   }
@@ -557,9 +674,11 @@ public final class ServiceDesc implements IServiceDesc {
     boolean isAbstract;
     boolean isAbstractIsSet;
     @Nullable Map<String, String> fieldTypes = ImmutableMap.of();
-    @Nullable IJavaDispatchAux javaAux;
+    @Nullable IJavaDispatchAux javaDispatchAux;
     @Nullable IPythonClassAux pythonClassAuxiliaries;
+    @Nullable IServiceParameterizationDesc serviceParameters;
     @Nullable String qualifier;
+    @Nullable List<String> metaTags = ImmutableList.of();
     @Nullable String simpleName;
     @Nullable List<String> comments = ImmutableList.of();
     @JsonProperty("methods")
@@ -579,17 +698,25 @@ public final class ServiceDesc implements IServiceDesc {
     public void setFieldTypes(Map<String, String> fieldTypes) {
       this.fieldTypes = fieldTypes;
     }
-    @JsonProperty("javaAux")
-    public void setJavaAux(@Nullable IJavaDispatchAux javaAux) {
-      this.javaAux = javaAux;
+    @JsonProperty("javaDispatchAux")
+    public void setJavaDispatchAux(@Nullable IJavaDispatchAux javaDispatchAux) {
+      this.javaDispatchAux = javaDispatchAux;
     }
     @JsonProperty("pythonClassAuxiliaries")
     public void setPythonClassAuxiliaries(@Nullable IPythonClassAux pythonClassAuxiliaries) {
       this.pythonClassAuxiliaries = pythonClassAuxiliaries;
     }
+    @JsonProperty("serviceParameters")
+    public void setServiceParameters(@Nullable IServiceParameterizationDesc serviceParameters) {
+      this.serviceParameters = serviceParameters;
+    }
     @JsonProperty("qualifier")
     public void setQualifier(String qualifier) {
       this.qualifier = qualifier;
+    }
+    @JsonProperty("metaTags")
+    public void setMetaTags(List<String> metaTags) {
+      this.metaTags = metaTags;
     }
     @JsonProperty("simpleName")
     public void setSimpleName(String simpleName) {
@@ -608,11 +735,15 @@ public final class ServiceDesc implements IServiceDesc {
     @Override
     public Map<String, String> getFieldTypes() { throw new UnsupportedOperationException(); }
     @Override
-    public IJavaDispatchAux getJavaAux() { throw new UnsupportedOperationException(); }
+    public IJavaDispatchAux getJavaDispatchAux() { throw new UnsupportedOperationException(); }
     @Override
     public IPythonClassAux getPythonClassAuxiliaries() { throw new UnsupportedOperationException(); }
     @Override
+    public IServiceParameterizationDesc getServiceParameters() { throw new UnsupportedOperationException(); }
+    @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
+    @Override
+    public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
     @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
     @Override
@@ -640,14 +771,20 @@ public final class ServiceDesc implements IServiceDesc {
     if (json.fieldTypes != null) {
       builder.putAllFieldTypes(json.fieldTypes);
     }
-    if (json.javaAux != null) {
-      builder.javaAux(json.javaAux);
+    if (json.javaDispatchAux != null) {
+      builder.javaDispatchAux(json.javaDispatchAux);
     }
     if (json.pythonClassAuxiliaries != null) {
       builder.pythonClassAuxiliaries(json.pythonClassAuxiliaries);
     }
+    if (json.serviceParameters != null) {
+      builder.serviceParameters(json.serviceParameters);
+    }
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
+    }
+    if (json.metaTags != null) {
+      builder.addAllMetaTags(json.metaTags);
     }
     if (json.simpleName != null) {
       builder.simpleName(json.simpleName);
@@ -682,9 +819,11 @@ public final class ServiceDesc implements IServiceDesc {
    *    .addInterfaces|addAllInterfaces(String) // {@link IServiceDesc#getInterfaces() interfaces} elements
    *    .isAbstract(boolean) // optional {@link IServiceDesc#isAbstract() isAbstract}
    *    .putFieldTypes|putAllFieldTypes(String => String) // {@link IServiceDesc#getFieldTypes() fieldTypes} mappings
-   *    .javaAux(de.upb.sede.exec.aux.IJavaDispatchAux | null) // nullable {@link IServiceDesc#getJavaAux() javaAux}
-   *    .pythonClassAuxiliaries(de.upb.sede.exec.aux.IPythonClassAux | null) // nullable {@link IServiceDesc#getPythonClassAuxiliaries() pythonClassAuxiliaries}
+   *    .javaDispatchAux(de.upb.sede.exec.auxiliary.IJavaDispatchAux | null) // nullable {@link IServiceDesc#getJavaDispatchAux() javaDispatchAux}
+   *    .pythonClassAuxiliaries(de.upb.sede.exec.auxiliary.IPythonClassAux | null) // nullable {@link IServiceDesc#getPythonClassAuxiliaries() pythonClassAuxiliaries}
+   *    .serviceParameters(de.upb.sede.param.IServiceParameterizationDesc | null) // nullable {@link IServiceDesc#getServiceParameters() serviceParameters}
    *    .qualifier(String) // required {@link IServiceDesc#getQualifier() qualifier}
+   *    .addMetaTags|addAllMetaTags(String) // {@link IServiceDesc#getMetaTags() metaTags} elements
    *    .simpleName(String) // optional {@link IServiceDesc#getSimpleName() simpleName}
    *    .addComments|addAllComments(String) // {@link IServiceDesc#getComments() comments} elements
    *    .build();
@@ -714,9 +853,11 @@ public final class ServiceDesc implements IServiceDesc {
     private ImmutableList.Builder<String> interfaces = ImmutableList.builder();
     private boolean isAbstract;
     private ImmutableMap.Builder<String, String> fieldTypes = ImmutableMap.builder();
-    private @Nullable IJavaDispatchAux javaAux;
+    private @Nullable IJavaDispatchAux javaDispatchAux;
     private @Nullable IPythonClassAux pythonClassAuxiliaries;
+    private @Nullable IServiceParameterizationDesc serviceParameters;
     private @Nullable String qualifier;
+    private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
     private @Nullable String simpleName;
     private ImmutableList.Builder<String> comments = ImmutableList.builder();
 
@@ -735,17 +876,22 @@ public final class ServiceDesc implements IServiceDesc {
       addAllInterfaces(instance.getInterfaces());
       isAbstract(instance.isAbstract());
       putAllFieldTypes(instance.getFieldTypes());
-      @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
-      if (javaAuxValue != null) {
-        javaAux(javaAuxValue);
+      @Nullable IJavaDispatchAux javaDispatchAuxValue = instance.getJavaDispatchAux();
+      if (javaDispatchAuxValue != null) {
+        javaDispatchAux(javaDispatchAuxValue);
       }
       @Nullable IPythonClassAux pythonClassAuxiliariesValue = instance.getPythonClassAuxiliaries();
       if (pythonClassAuxiliariesValue != null) {
         pythonClassAuxiliaries(pythonClassAuxiliariesValue);
       }
+      @Nullable IServiceParameterizationDesc serviceParametersValue = instance.getServiceParameters();
+      if (serviceParametersValue != null) {
+        serviceParameters(serviceParametersValue);
+      }
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       simpleName(instance.getSimpleName());
       addAllComments(instance.getComments());
       return this;
@@ -799,20 +945,25 @@ public final class ServiceDesc implements IServiceDesc {
       if (object instanceof IServiceDesc) {
         IServiceDesc instance = (IServiceDesc) object;
         addAllInterfaces(instance.getInterfaces());
-        @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
-        if (javaAuxValue != null) {
-          javaAux(javaAuxValue);
+        @Nullable IJavaDispatchAux javaDispatchAuxValue = instance.getJavaDispatchAux();
+        if (javaDispatchAuxValue != null) {
+          javaDispatchAux(javaDispatchAuxValue);
         }
+        addAllMethods(instance.getMethods());
+        putAllFieldTypes(instance.getFieldTypes());
         isAbstract(instance.isAbstract());
         @Nullable IPythonClassAux pythonClassAuxiliariesValue = instance.getPythonClassAuxiliaries();
         if (pythonClassAuxiliariesValue != null) {
           pythonClassAuxiliaries(pythonClassAuxiliariesValue);
         }
-        addAllMethods(instance.getMethods());
-        putAllFieldTypes(instance.getFieldTypes());
+        @Nullable IServiceParameterizationDesc serviceParametersValue = instance.getServiceParameters();
+        if (serviceParametersValue != null) {
+          serviceParameters(serviceParametersValue);
+        }
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
+        addAllMetaTags(instance.getMetaTags());
         simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
       }
@@ -971,14 +1122,14 @@ public final class ServiceDesc implements IServiceDesc {
     }
 
     /**
-     * Initializes the value for the {@link IServiceDesc#getJavaAux() javaAux} attribute.
-     * @param javaAux The value for javaAux (can be {@code null})
+     * Initializes the value for the {@link IServiceDesc#getJavaDispatchAux() javaDispatchAux} attribute.
+     * @param javaDispatchAux The value for javaDispatchAux (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    @JsonProperty("javaAux")
-    public final Builder javaAux(@Nullable IJavaDispatchAux javaAux) {
-      this.javaAux = javaAux;
+    @JsonProperty("javaDispatchAux")
+    public final Builder javaDispatchAux(@Nullable IJavaDispatchAux javaDispatchAux) {
+      this.javaDispatchAux = javaDispatchAux;
       return this;
     }
 
@@ -995,6 +1146,18 @@ public final class ServiceDesc implements IServiceDesc {
     }
 
     /**
+     * Initializes the value for the {@link IServiceDesc#getServiceParameters() serviceParameters} attribute.
+     * @param serviceParameters The value for serviceParameters (can be {@code null})
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("serviceParameters")
+    public final Builder serviceParameters(@Nullable IServiceParameterizationDesc serviceParameters) {
+      this.serviceParameters = serviceParameters;
+      return this;
+    }
+
+    /**
      * Initializes the value for the {@link IServiceDesc#getQualifier() qualifier} attribute.
      * @param qualifier The value for qualifier 
      * @return {@code this} builder for use in a chained invocation
@@ -1004,6 +1167,52 @@ public final class ServiceDesc implements IServiceDesc {
     public final Builder qualifier(String qualifier) {
       this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
       initBits &= ~INIT_BIT_QUALIFIER;
+      return this;
+    }
+
+    /**
+     * Adds one element to {@link IServiceDesc#getMetaTags() metaTags} list.
+     * @param element A metaTags element
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String element) {
+      this.metaTags.add(element);
+      return this;
+    }
+
+    /**
+     * Adds elements to {@link IServiceDesc#getMetaTags() metaTags} list.
+     * @param elements An array of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String... elements) {
+      this.metaTags.add(elements);
+      return this;
+    }
+
+
+    /**
+     * Sets or replaces all elements for {@link IServiceDesc#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("metaTags")
+    public final Builder metaTags(Iterable<String> elements) {
+      this.metaTags = ImmutableList.builder();
+      return addAllMetaTags(elements);
+    }
+
+    /**
+     * Adds elements to {@link IServiceDesc#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addAllMetaTags(Iterable<String> elements) {
+      this.metaTags.addAll(elements);
       return this;
     }
 

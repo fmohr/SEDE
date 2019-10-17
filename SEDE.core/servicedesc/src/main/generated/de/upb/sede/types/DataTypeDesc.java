@@ -10,7 +10,7 @@ import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
-import de.upb.sede.exec.aux.IJavaDispatchAux;
+import de.upb.sede.types.auxiliary.IJavaTypeAux;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -35,15 +35,17 @@ import org.immutables.value.Generated;
 @CheckReturnValue
 public final class DataTypeDesc implements IDataTypeDesc {
   private final String semanticType;
-  private final @Nullable IJavaDispatchAux javaAux;
+  private final @Nullable IJavaTypeAux javaTypeAux;
   private final String qualifier;
+  private final ImmutableList<String> metaTags;
   private final String simpleName;
   private final ImmutableList<String> comments;
 
   private DataTypeDesc(DataTypeDesc.Builder builder) {
     this.semanticType = builder.semanticType;
-    this.javaAux = builder.javaAux;
+    this.javaTypeAux = builder.javaTypeAux;
     this.qualifier = builder.qualifier;
+    this.metaTags = builder.metaTags.build();
     this.comments = builder.comments.build();
     this.simpleName = builder.simpleName != null
         ? builder.simpleName
@@ -52,13 +54,15 @@ public final class DataTypeDesc implements IDataTypeDesc {
 
   private DataTypeDesc(
       String semanticType,
-      @Nullable IJavaDispatchAux javaAux,
+      @Nullable IJavaTypeAux javaTypeAux,
       String qualifier,
+      ImmutableList<String> metaTags,
       String simpleName,
       ImmutableList<String> comments) {
     this.semanticType = semanticType;
-    this.javaAux = javaAux;
+    this.javaTypeAux = javaTypeAux;
     this.qualifier = qualifier;
+    this.metaTags = metaTags;
     this.simpleName = simpleName;
     this.comments = comments;
   }
@@ -73,12 +77,12 @@ public final class DataTypeDesc implements IDataTypeDesc {
   }
 
   /**
-   * @return The value of the {@code javaAux} attribute
+   * @return The value of the {@code javaTypeAux} attribute
    */
-  @JsonProperty("javaAux")
+  @JsonProperty("javaTypeAux")
   @Override
-  public @Nullable IJavaDispatchAux getJavaAux() {
-    return javaAux;
+  public @Nullable IJavaTypeAux getJavaTypeAux() {
+    return javaTypeAux;
   }
 
   /**
@@ -88,6 +92,15 @@ public final class DataTypeDesc implements IDataTypeDesc {
   @Override
   public String getQualifier() {
     return qualifier;
+  }
+
+  /**
+   * @return The value of the {@code metaTags} attribute
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public ImmutableList<String> getMetaTags() {
+    return metaTags;
   }
 
   /**
@@ -117,18 +130,18 @@ public final class DataTypeDesc implements IDataTypeDesc {
   public final DataTypeDesc withSemanticType(String value) {
     String newValue = Objects.requireNonNull(value, "semanticType");
     if (this.semanticType.equals(newValue)) return this;
-    return new DataTypeDesc(newValue, this.javaAux, this.qualifier, this.simpleName, this.comments);
+    return new DataTypeDesc(newValue, this.javaTypeAux, this.qualifier, this.metaTags, this.simpleName, this.comments);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IDataTypeDesc#getJavaAux() javaAux} attribute.
+   * Copy the current immutable object by setting a value for the {@link IDataTypeDesc#getJavaTypeAux() javaTypeAux} attribute.
    * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for javaAux (can be {@code null})
+   * @param value A new value for javaTypeAux (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final DataTypeDesc withJavaAux(@Nullable IJavaDispatchAux value) {
-    if (this.javaAux == value) return this;
-    return new DataTypeDesc(this.semanticType, value, this.qualifier, this.simpleName, this.comments);
+  public final DataTypeDesc withJavaTypeAux(@Nullable IJavaTypeAux value) {
+    if (this.javaTypeAux == value) return this;
+    return new DataTypeDesc(this.semanticType, value, this.qualifier, this.metaTags, this.simpleName, this.comments);
   }
 
   /**
@@ -140,7 +153,29 @@ public final class DataTypeDesc implements IDataTypeDesc {
   public final DataTypeDesc withQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "qualifier");
     if (this.qualifier.equals(newValue)) return this;
-    return new DataTypeDesc(this.semanticType, this.javaAux, newValue, this.simpleName, this.comments);
+    return new DataTypeDesc(this.semanticType, this.javaTypeAux, newValue, this.metaTags, this.simpleName, this.comments);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IDataTypeDesc#getMetaTags() metaTags}.
+   * @param elements The elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final DataTypeDesc withMetaTags(String... elements) {
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new DataTypeDesc(this.semanticType, this.javaTypeAux, this.qualifier, newValue, this.simpleName, this.comments);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IDataTypeDesc#getMetaTags() metaTags}.
+   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param elements An iterable of metaTags elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final DataTypeDesc withMetaTags(Iterable<String> elements) {
+    if (this.metaTags == elements) return this;
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new DataTypeDesc(this.semanticType, this.javaTypeAux, this.qualifier, newValue, this.simpleName, this.comments);
   }
 
   /**
@@ -152,7 +187,7 @@ public final class DataTypeDesc implements IDataTypeDesc {
   public final DataTypeDesc withSimpleName(String value) {
     String newValue = Objects.requireNonNull(value, "simpleName");
     if (this.simpleName.equals(newValue)) return this;
-    return new DataTypeDesc(this.semanticType, this.javaAux, this.qualifier, newValue, this.comments);
+    return new DataTypeDesc(this.semanticType, this.javaTypeAux, this.qualifier, this.metaTags, newValue, this.comments);
   }
 
   /**
@@ -162,7 +197,7 @@ public final class DataTypeDesc implements IDataTypeDesc {
    */
   public final DataTypeDesc withComments(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new DataTypeDesc(this.semanticType, this.javaAux, this.qualifier, this.simpleName, newValue);
+    return new DataTypeDesc(this.semanticType, this.javaTypeAux, this.qualifier, this.metaTags, this.simpleName, newValue);
   }
 
   /**
@@ -174,7 +209,7 @@ public final class DataTypeDesc implements IDataTypeDesc {
   public final DataTypeDesc withComments(Iterable<String> elements) {
     if (this.comments == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new DataTypeDesc(this.semanticType, this.javaAux, this.qualifier, this.simpleName, newValue);
+    return new DataTypeDesc(this.semanticType, this.javaTypeAux, this.qualifier, this.metaTags, this.simpleName, newValue);
   }
 
   /**
@@ -190,23 +225,21 @@ public final class DataTypeDesc implements IDataTypeDesc {
 
   private boolean equalTo(DataTypeDesc another) {
     return semanticType.equals(another.semanticType)
-        && Objects.equals(javaAux, another.javaAux)
+        && Objects.equals(javaTypeAux, another.javaTypeAux)
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.simpleName)
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code semanticType}, {@code javaAux}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code semanticType}, {@code javaTypeAux}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     @Var int h = 5381;
     h += (h << 5) + semanticType.hashCode();
-    h += (h << 5) + Objects.hashCode(javaAux);
+    h += (h << 5) + Objects.hashCode(javaTypeAux);
     h += (h << 5) + qualifier.hashCode();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -220,9 +253,8 @@ public final class DataTypeDesc implements IDataTypeDesc {
     return MoreObjects.toStringHelper("DataTypeDesc")
         .omitNullValues()
         .add("semanticType", semanticType)
-        .add("javaAux", javaAux)
+        .add("javaTypeAux", javaTypeAux)
         .add("qualifier", qualifier)
-        .add("simpleName", simpleName)
         .add("comments", comments)
         .toString();
   }
@@ -238,21 +270,26 @@ public final class DataTypeDesc implements IDataTypeDesc {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IDataTypeDesc {
     @Nullable String semanticType;
-    @Nullable IJavaDispatchAux javaAux;
+    @Nullable IJavaTypeAux javaTypeAux;
     @Nullable String qualifier;
+    @Nullable List<String> metaTags = ImmutableList.of();
     @Nullable String simpleName;
     @Nullable List<String> comments = ImmutableList.of();
     @JsonProperty("semanticType")
     public void setSemanticType(String semanticType) {
       this.semanticType = semanticType;
     }
-    @JsonProperty("javaAux")
-    public void setJavaAux(@Nullable IJavaDispatchAux javaAux) {
-      this.javaAux = javaAux;
+    @JsonProperty("javaTypeAux")
+    public void setJavaTypeAux(@Nullable IJavaTypeAux javaTypeAux) {
+      this.javaTypeAux = javaTypeAux;
     }
     @JsonProperty("qualifier")
     public void setQualifier(String qualifier) {
       this.qualifier = qualifier;
+    }
+    @JsonProperty("metaTags")
+    public void setMetaTags(List<String> metaTags) {
+      this.metaTags = metaTags;
     }
     @JsonProperty("simpleName")
     public void setSimpleName(String simpleName) {
@@ -265,9 +302,11 @@ public final class DataTypeDesc implements IDataTypeDesc {
     @Override
     public String getSemanticType() { throw new UnsupportedOperationException(); }
     @Override
-    public IJavaDispatchAux getJavaAux() { throw new UnsupportedOperationException(); }
+    public IJavaTypeAux getJavaTypeAux() { throw new UnsupportedOperationException(); }
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
+    @Override
+    public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
     @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
     @Override
@@ -286,11 +325,14 @@ public final class DataTypeDesc implements IDataTypeDesc {
     if (json.semanticType != null) {
       builder.semanticType(json.semanticType);
     }
-    if (json.javaAux != null) {
-      builder.javaAux(json.javaAux);
+    if (json.javaTypeAux != null) {
+      builder.javaTypeAux(json.javaTypeAux);
     }
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
+    }
+    if (json.metaTags != null) {
+      builder.addAllMetaTags(json.metaTags);
     }
     if (json.simpleName != null) {
       builder.simpleName(json.simpleName);
@@ -322,8 +364,9 @@ public final class DataTypeDesc implements IDataTypeDesc {
    * <pre>
    * DataTypeDesc.builder()
    *    .semanticType(String) // required {@link IDataTypeDesc#getSemanticType() semanticType}
-   *    .javaAux(de.upb.sede.exec.aux.IJavaDispatchAux | null) // nullable {@link IDataTypeDesc#getJavaAux() javaAux}
+   *    .javaTypeAux(de.upb.sede.types.auxiliary.IJavaTypeAux | null) // nullable {@link IDataTypeDesc#getJavaTypeAux() javaTypeAux}
    *    .qualifier(String) // required {@link IDataTypeDesc#getQualifier() qualifier}
+   *    .addMetaTags|addAllMetaTags(String) // {@link IDataTypeDesc#getMetaTags() metaTags} elements
    *    .simpleName(String) // optional {@link IDataTypeDesc#getSimpleName() simpleName}
    *    .addComments|addAllComments(String) // {@link IDataTypeDesc#getComments() comments} elements
    *    .build();
@@ -349,8 +392,9 @@ public final class DataTypeDesc implements IDataTypeDesc {
     private long initBits = 0x3L;
 
     private @Nullable String semanticType;
-    private @Nullable IJavaDispatchAux javaAux;
+    private @Nullable IJavaTypeAux javaTypeAux;
     private @Nullable String qualifier;
+    private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
     private @Nullable String simpleName;
     private ImmutableList.Builder<String> comments = ImmutableList.builder();
 
@@ -368,13 +412,14 @@ public final class DataTypeDesc implements IDataTypeDesc {
       if (instance.semanticTypeIsSet()) {
         semanticType(instance.getSemanticType());
       }
-      @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
-      if (javaAuxValue != null) {
-        javaAux(javaAuxValue);
+      @Nullable IJavaTypeAux javaTypeAuxValue = instance.getJavaTypeAux();
+      if (javaTypeAuxValue != null) {
+        javaTypeAux(javaTypeAuxValue);
       }
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       simpleName(instance.getSimpleName());
       addAllComments(instance.getComments());
       return this;
@@ -427,14 +472,15 @@ public final class DataTypeDesc implements IDataTypeDesc {
       }
       if (object instanceof IDataTypeDesc) {
         IDataTypeDesc instance = (IDataTypeDesc) object;
-        @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
-        if (javaAuxValue != null) {
-          javaAux(javaAuxValue);
+        @Nullable IJavaTypeAux javaTypeAuxValue = instance.getJavaTypeAux();
+        if (javaTypeAuxValue != null) {
+          javaTypeAux(javaTypeAuxValue);
         }
         semanticType(instance.getSemanticType());
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
+        addAllMetaTags(instance.getMetaTags());
         simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
       }
@@ -454,14 +500,14 @@ public final class DataTypeDesc implements IDataTypeDesc {
     }
 
     /**
-     * Initializes the value for the {@link IDataTypeDesc#getJavaAux() javaAux} attribute.
-     * @param javaAux The value for javaAux (can be {@code null})
+     * Initializes the value for the {@link IDataTypeDesc#getJavaTypeAux() javaTypeAux} attribute.
+     * @param javaTypeAux The value for javaTypeAux (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    @JsonProperty("javaAux")
-    public final Builder javaAux(@Nullable IJavaDispatchAux javaAux) {
-      this.javaAux = javaAux;
+    @JsonProperty("javaTypeAux")
+    public final Builder javaTypeAux(@Nullable IJavaTypeAux javaTypeAux) {
+      this.javaTypeAux = javaTypeAux;
       return this;
     }
 
@@ -475,6 +521,52 @@ public final class DataTypeDesc implements IDataTypeDesc {
     public final Builder qualifier(String qualifier) {
       this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
       initBits &= ~INIT_BIT_QUALIFIER;
+      return this;
+    }
+
+    /**
+     * Adds one element to {@link IDataTypeDesc#getMetaTags() metaTags} list.
+     * @param element A metaTags element
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String element) {
+      this.metaTags.add(element);
+      return this;
+    }
+
+    /**
+     * Adds elements to {@link IDataTypeDesc#getMetaTags() metaTags} list.
+     * @param elements An array of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String... elements) {
+      this.metaTags.add(elements);
+      return this;
+    }
+
+
+    /**
+     * Sets or replaces all elements for {@link IDataTypeDesc#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("metaTags")
+    public final Builder metaTags(Iterable<String> elements) {
+      this.metaTags = ImmutableList.builder();
+      return addAllMetaTags(elements);
+    }
+
+    /**
+     * Adds elements to {@link IDataTypeDesc#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addAllMetaTags(Iterable<String> elements) {
+      this.metaTags.addAll(elements);
       return this;
     }
 

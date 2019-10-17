@@ -4,11 +4,13 @@ import de.upb.sede.exec.IMethodDesc
 import de.upb.sede.exec.IServiceDesc
 import de.upb.sede.exec.MutableMethodDesc
 import de.upb.sede.exec.MutableServiceDesc
-import de.upb.sede.exec.aux.MutableJavaDispatchAux
+import de.upb.sede.exec.auxiliary.IJavaDispatchAux
+import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
+import de.upb.sede.param.MutableServiceParameterizationDesc
 
 class ServiceDomain
     extends DomainAware<MutableServiceDesc, ServiceCollectionDomain>
-    implements Shared.JavaDispatchAware, Shared.CommentAware {
+    implements Shared.AuxAware<MutableJavaDispatchAux>, Shared.CommentAware {
 
     def setStateful(Closure typeDescriber = Closure.IDENTITY) {
         setStateType(model.qualifier, typeDescriber)
@@ -70,23 +72,51 @@ class ServiceDomain
         return m
     }
 
-    def eachMethod(@DelegatesTo(MethodSignatureDomain) Closure describer) {
+    def params(@DelegatesTo(ParameterDomain) Closure describer) {
+        Objects.requireNonNull(describer)
+
+        if(model.serviceParameters == null) {
+            model.serviceParameters = MutableServiceParameterizationDesc.create()
+        }
+
+        def paramDom = new ParameterDomain()
+        delegateDown(paramDom, model.serviceParameters, describer)
+
+        return model.serviceParameters
+    }
+
+    def eachMethod(@DelegatesTo(MethodDomain) Closure describer) {
         model.methods.each {
             def methodDom =  new MethodDomain()
             delegateDown(methodDom, it, describer)
         }
     }
 
-    def implement(String... additionalInterfaces) {
-        model.interfaces += additionalInterfaces
+    def implOf(String... additionalInterfaces) {
+        model.interfaces += additionalInterfaces.collect()
     }
 
-    def implement(IServiceDesc... additionalInterfaces) {
+    def implOf(IServiceDesc... additionalInterfaces) {
         model.interfaces += additionalInterfaces.collect {it.qualifier}
     }
 
     @Override
     def String getBindingName() {
         "service"
+    }
+
+    @Override
+    MutableJavaDispatchAux setJavaAux(MutableJavaDispatchAux javaAux) {
+        model.javaDispatchAux = javaAux
+        return javaAux
+    }
+
+
+    @Override
+    MutableJavaDispatchAux getJavaAux() {
+        if(model.javaDispatchAux == null) {
+            model.javaDispatchAux = MutableJavaDispatchAux.create()
+        }
+        return model.javaDispatchAux as MutableJavaDispatchAux
     }
 }

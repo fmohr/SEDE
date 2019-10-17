@@ -25,7 +25,7 @@ task compileServiceDescs(type: JavaExec, dependsOn: [compileGroovy]) {
 
     main = 'de.upb.sede.SDLCli'
 
-    args "-i", "${projectDir}/src/main/servicedesc/"
+    args "-i", "${projectDir}/src/test/servicedesc/"
 }
 
 
@@ -45,4 +45,11 @@ shadowJar {
 //shadowJar.dependsOn(bundleCompiler)
 
 
+sourceSets {
+    test{
+        resources {
+            srcDirs +=  'src/test/servicedesc'
+        }
+    }
+}
 

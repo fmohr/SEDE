@@ -35,12 +35,14 @@ import org.immutables.value.Generated;
 public final class MethodDesc implements IMethodDesc {
   private final ImmutableList<ISignatureDesc> signatures;
   private final String qualifier;
+  private final ImmutableList<String> metaTags;
   private final String simpleName;
   private final ImmutableList<String> comments;
 
   private MethodDesc(MethodDesc.Builder builder) {
     this.signatures = builder.signatures.build();
     this.qualifier = builder.qualifier;
+    this.metaTags = builder.metaTags.build();
     this.comments = builder.comments.build();
     this.simpleName = builder.simpleName != null
         ? builder.simpleName
@@ -50,10 +52,12 @@ public final class MethodDesc implements IMethodDesc {
   private MethodDesc(
       ImmutableList<ISignatureDesc> signatures,
       String qualifier,
+      ImmutableList<String> metaTags,
       String simpleName,
       ImmutableList<String> comments) {
     this.signatures = signatures;
     this.qualifier = qualifier;
+    this.metaTags = metaTags;
     this.simpleName = simpleName;
     this.comments = comments;
   }
@@ -74,6 +78,15 @@ public final class MethodDesc implements IMethodDesc {
   @Override
   public String getQualifier() {
     return qualifier;
+  }
+
+  /**
+   * @return The value of the {@code metaTags} attribute
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public ImmutableList<String> getMetaTags() {
+    return metaTags;
   }
 
   /**
@@ -101,7 +114,7 @@ public final class MethodDesc implements IMethodDesc {
    */
   public final MethodDesc withSignatures(ISignatureDesc... elements) {
     ImmutableList<ISignatureDesc> newValue = ImmutableList.copyOf(elements);
-    return new MethodDesc(newValue, this.qualifier, this.simpleName, this.comments);
+    return new MethodDesc(newValue, this.qualifier, this.metaTags, this.simpleName, this.comments);
   }
 
   /**
@@ -113,7 +126,7 @@ public final class MethodDesc implements IMethodDesc {
   public final MethodDesc withSignatures(Iterable<? extends ISignatureDesc> elements) {
     if (this.signatures == elements) return this;
     ImmutableList<ISignatureDesc> newValue = ImmutableList.copyOf(elements);
-    return new MethodDesc(newValue, this.qualifier, this.simpleName, this.comments);
+    return new MethodDesc(newValue, this.qualifier, this.metaTags, this.simpleName, this.comments);
   }
 
   /**
@@ -125,7 +138,29 @@ public final class MethodDesc implements IMethodDesc {
   public final MethodDesc withQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "qualifier");
     if (this.qualifier.equals(newValue)) return this;
-    return new MethodDesc(this.signatures, newValue, this.simpleName, this.comments);
+    return new MethodDesc(this.signatures, newValue, this.metaTags, this.simpleName, this.comments);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IMethodDesc#getMetaTags() metaTags}.
+   * @param elements The elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final MethodDesc withMetaTags(String... elements) {
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new MethodDesc(this.signatures, this.qualifier, newValue, this.simpleName, this.comments);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IMethodDesc#getMetaTags() metaTags}.
+   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param elements An iterable of metaTags elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final MethodDesc withMetaTags(Iterable<String> elements) {
+    if (this.metaTags == elements) return this;
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new MethodDesc(this.signatures, this.qualifier, newValue, this.simpleName, this.comments);
   }
 
   /**
@@ -137,7 +172,7 @@ public final class MethodDesc implements IMethodDesc {
   public final MethodDesc withSimpleName(String value) {
     String newValue = Objects.requireNonNull(value, "simpleName");
     if (this.simpleName.equals(newValue)) return this;
-    return new MethodDesc(this.signatures, this.qualifier, newValue, this.comments);
+    return new MethodDesc(this.signatures, this.qualifier, this.metaTags, newValue, this.comments);
   }
 
   /**
@@ -147,7 +182,7 @@ public final class MethodDesc implements IMethodDesc {
    */
   public final MethodDesc withComments(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new MethodDesc(this.signatures, this.qualifier, this.simpleName, newValue);
+    return new MethodDesc(this.signatures, this.qualifier, this.metaTags, this.simpleName, newValue);
   }
 
   /**
@@ -159,7 +194,7 @@ public final class MethodDesc implements IMethodDesc {
   public final MethodDesc withComments(Iterable<String> elements) {
     if (this.comments == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new MethodDesc(this.signatures, this.qualifier, this.simpleName, newValue);
+    return new MethodDesc(this.signatures, this.qualifier, this.metaTags, this.simpleName, newValue);
   }
 
   /**
@@ -176,12 +211,11 @@ public final class MethodDesc implements IMethodDesc {
   private boolean equalTo(MethodDesc another) {
     return signatures.equals(another.signatures)
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.simpleName)
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code signatures}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code signatures}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -189,7 +223,6 @@ public final class MethodDesc implements IMethodDesc {
     @Var int h = 5381;
     h += (h << 5) + signatures.hashCode();
     h += (h << 5) + qualifier.hashCode();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -204,7 +237,6 @@ public final class MethodDesc implements IMethodDesc {
         .omitNullValues()
         .add("signatures", signatures)
         .add("qualifier", qualifier)
-        .add("simpleName", simpleName)
         .add("comments", comments)
         .toString();
   }
@@ -221,6 +253,7 @@ public final class MethodDesc implements IMethodDesc {
   static final class Json implements IMethodDesc {
     @Nullable List<ISignatureDesc> signatures = ImmutableList.of();
     @Nullable String qualifier;
+    @Nullable List<String> metaTags = ImmutableList.of();
     @Nullable String simpleName;
     @Nullable List<String> comments = ImmutableList.of();
     @JsonProperty("signatures")
@@ -230,6 +263,10 @@ public final class MethodDesc implements IMethodDesc {
     @JsonProperty("qualifier")
     public void setQualifier(String qualifier) {
       this.qualifier = qualifier;
+    }
+    @JsonProperty("metaTags")
+    public void setMetaTags(List<String> metaTags) {
+      this.metaTags = metaTags;
     }
     @JsonProperty("simpleName")
     public void setSimpleName(String simpleName) {
@@ -243,6 +280,8 @@ public final class MethodDesc implements IMethodDesc {
     public List<ISignatureDesc> getSignatures() { throw new UnsupportedOperationException(); }
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
+    @Override
+    public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
     @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
     @Override
@@ -263,6 +302,9 @@ public final class MethodDesc implements IMethodDesc {
     }
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
+    }
+    if (json.metaTags != null) {
+      builder.addAllMetaTags(json.metaTags);
     }
     if (json.simpleName != null) {
       builder.simpleName(json.simpleName);
@@ -295,6 +337,7 @@ public final class MethodDesc implements IMethodDesc {
    * MethodDesc.builder()
    *    .addSignatures|addAllSignatures(de.upb.sede.exec.ISignatureDesc) // {@link IMethodDesc#getSignatures() signatures} elements
    *    .qualifier(String) // required {@link IMethodDesc#getQualifier() qualifier}
+   *    .addMetaTags|addAllMetaTags(String) // {@link IMethodDesc#getMetaTags() metaTags} elements
    *    .simpleName(String) // optional {@link IMethodDesc#getSimpleName() simpleName}
    *    .addComments|addAllComments(String) // {@link IMethodDesc#getComments() comments} elements
    *    .build();
@@ -320,6 +363,7 @@ public final class MethodDesc implements IMethodDesc {
 
     private ImmutableList.Builder<ISignatureDesc> signatures = ImmutableList.builder();
     private @Nullable String qualifier;
+    private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
     private @Nullable String simpleName;
     private ImmutableList.Builder<String> comments = ImmutableList.builder();
 
@@ -338,6 +382,7 @@ public final class MethodDesc implements IMethodDesc {
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       simpleName(instance.getSimpleName());
       addAllComments(instance.getComments());
       return this;
@@ -394,6 +439,7 @@ public final class MethodDesc implements IMethodDesc {
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
+        addAllMetaTags(instance.getMetaTags());
         simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
       }
@@ -455,6 +501,52 @@ public final class MethodDesc implements IMethodDesc {
     public final Builder qualifier(String qualifier) {
       this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
       initBits &= ~INIT_BIT_QUALIFIER;
+      return this;
+    }
+
+    /**
+     * Adds one element to {@link IMethodDesc#getMetaTags() metaTags} list.
+     * @param element A metaTags element
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String element) {
+      this.metaTags.add(element);
+      return this;
+    }
+
+    /**
+     * Adds elements to {@link IMethodDesc#getMetaTags() metaTags} list.
+     * @param elements An array of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String... elements) {
+      this.metaTags.add(elements);
+      return this;
+    }
+
+
+    /**
+     * Sets or replaces all elements for {@link IMethodDesc#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("metaTags")
+    public final Builder metaTags(Iterable<String> elements) {
+      this.metaTags = ImmutableList.builder();
+      return addAllMetaTags(elements);
+    }
+
+    /**
+     * Adds elements to {@link IMethodDesc#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addAllMetaTags(Iterable<String> elements) {
+      this.metaTags.addAll(elements);
       return this;
     }
 

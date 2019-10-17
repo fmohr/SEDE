@@ -4,8 +4,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.ICommented;
 import de.upb.sede.IQualifiable;
 import de.upb.sede.SModelStyle;
-import de.upb.sede.exec.aux.IJavaDispatchAux;
-import de.upb.sede.exec.aux.IPythonClassAux;
+import de.upb.sede.exec.auxiliary.IJavaDispatchAux;
+import de.upb.sede.exec.auxiliary.IPythonClassAux;
+import de.upb.sede.param.IServiceParameterizationDesc;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
@@ -32,10 +33,13 @@ public interface IServiceDesc extends IQualifiable, ICommented {
     Map<String, String> getFieldTypes();
 
     @Nullable
-    IJavaDispatchAux getJavaAux();
+    IJavaDispatchAux getJavaDispatchAux();
 
     @Nullable
     IPythonClassAux getPythonClassAuxiliaries();
+
+    @Nullable
+    IServiceParameterizationDesc getServiceParameters();
 
     @Nullable
     @Value.Auxiliary

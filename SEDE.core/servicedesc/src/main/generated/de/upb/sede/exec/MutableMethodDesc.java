@@ -31,6 +31,7 @@ public final class MutableMethodDesc implements IMethodDesc {
 
   private final ArrayList<ISignatureDesc> signatures = new ArrayList<ISignatureDesc>();
   private String qualifier;
+  private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
   private final ArrayList<String> comments = new ArrayList<String>();
 
@@ -66,6 +67,15 @@ public final class MutableMethodDesc implements IMethodDesc {
   }
 
   /**
+   * @return modifiable list {@code metaTags}
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public final List<String> getMetaTags() {
+    return metaTags;
+  }
+
+  /**
    * @return assigned or, otherwise, newly computed, not cached value of {@code simpleName} attribute
    */
   @JsonProperty("simpleName")
@@ -94,6 +104,7 @@ public final class MutableMethodDesc implements IMethodDesc {
     initBits = 0x1L;
     signatures.clear();
     qualifier = null;
+    metaTags.clear();
     simpleName = null;
     comments.clear();
     return this;
@@ -156,6 +167,7 @@ public final class MutableMethodDesc implements IMethodDesc {
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       addAllComments(instance.getComments());
       return;
@@ -170,6 +182,7 @@ public final class MutableMethodDesc implements IMethodDesc {
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
     }
@@ -234,6 +247,56 @@ public final class MutableMethodDesc implements IMethodDesc {
   public MutableMethodDesc setQualifier(String qualifier) {
     this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
     initBits &= ~INIT_BIT_QUALIFIER;
+    return this;
+  }
+
+  /**
+   * Adds one element to {@link IMethodDesc#getMetaTags() metaTags} list.
+   * @param element The metaTags element
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableMethodDesc addMetaTags(String element) {
+    Objects.requireNonNull(element, "metaTags element");
+    this.metaTags.add(element);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IMethodDesc#getMetaTags() metaTags} list.
+   * @param elements An array of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableMethodDesc addMetaTags(String... elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
+    return this;
+  }
+
+  /**
+   * Sets or replaces all elements for {@link IMethodDesc#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableMethodDesc setMetaTags(Iterable<String> elements) {
+    this.metaTags.clear();
+    addAllMetaTags(elements);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IMethodDesc#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableMethodDesc addAllMetaTags(Iterable<String> elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
     return this;
   }
 
@@ -373,15 +436,13 @@ public final class MutableMethodDesc implements IMethodDesc {
   }
 
   private boolean equalTo(MutableMethodDesc another) {
-    String simpleName = getSimpleName();
     return signatures.equals(another.signatures)
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.getSimpleName())
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code signatures}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code signatures}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -389,8 +450,6 @@ public final class MutableMethodDesc implements IMethodDesc {
     int h = 5381;
     h += (h << 5) + signatures.hashCode();
     h += (h << 5) + qualifier.hashCode();
-    String simpleName = getSimpleName();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -405,7 +464,6 @@ public final class MutableMethodDesc implements IMethodDesc {
     return MoreObjects.toStringHelper("MutableMethodDesc")
         .add("signatures", getSignatures())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
-        .add("simpleName", getSimpleName())
         .add("comments", getComments())
         .toString();
   }

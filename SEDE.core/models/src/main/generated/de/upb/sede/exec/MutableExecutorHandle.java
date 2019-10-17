@@ -31,6 +31,7 @@ public final class MutableExecutorHandle implements IExecutorHandle {
 
   private IExecutorContactInfo contactInfo;
   private IExecutorCapabilities capabilities;
+  private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
 
   private MutableExecutorHandle() {}
@@ -77,6 +78,15 @@ public final class MutableExecutorHandle implements IExecutorHandle {
   }
 
   /**
+   * @return modifiable list {@code metaTags}
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public final List<String> getMetaTags() {
+    return metaTags;
+  }
+
+  /**
    * @return assigned or, otherwise, newly computed, not cached value of {@code simpleName} attribute
    */
   @JsonProperty("simpleName")
@@ -96,6 +106,7 @@ public final class MutableExecutorHandle implements IExecutorHandle {
     initBits = 0x3L;
     contactInfo = null;
     capabilities = null;
+    metaTags.clear();
     simpleName = null;
     return this;
   }
@@ -128,6 +139,7 @@ public final class MutableExecutorHandle implements IExecutorHandle {
    * Fill this modifiable instance with attribute values from the provided {@link IExecutorHandle} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
+   * Collection elements and entries will be added, not replaced.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
@@ -146,6 +158,7 @@ public final class MutableExecutorHandle implements IExecutorHandle {
       if (instance.capabilitiesIsSet()) {
         setCapabilities(instance.getCapabilities());
       }
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       return;
     }
@@ -156,6 +169,7 @@ public final class MutableExecutorHandle implements IExecutorHandle {
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
     }
   }
@@ -181,6 +195,56 @@ public final class MutableExecutorHandle implements IExecutorHandle {
   public MutableExecutorHandle setCapabilities(IExecutorCapabilities capabilities) {
     this.capabilities = Objects.requireNonNull(capabilities, "capabilities");
     initBits &= ~INIT_BIT_CAPABILITIES;
+    return this;
+  }
+
+  /**
+   * Adds one element to {@link IExecutorHandle#getMetaTags() metaTags} list.
+   * @param element The metaTags element
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableExecutorHandle addMetaTags(String element) {
+    Objects.requireNonNull(element, "metaTags element");
+    this.metaTags.add(element);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IExecutorHandle#getMetaTags() metaTags} list.
+   * @param elements An array of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableExecutorHandle addMetaTags(String... elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
+    return this;
+  }
+
+  /**
+   * Sets or replaces all elements for {@link IExecutorHandle#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableExecutorHandle setMetaTags(Iterable<String> elements) {
+    this.metaTags.clear();
+    addAllMetaTags(elements);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IExecutorHandle#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableExecutorHandle addAllMetaTags(Iterable<String> elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
     return this;
   }
 
@@ -291,15 +355,13 @@ public final class MutableExecutorHandle implements IExecutorHandle {
 
   private boolean equalTo(MutableExecutorHandle another) {
     String qualifier = getQualifier();
-    String simpleName = getSimpleName();
     return contactInfo.equals(another.contactInfo)
         && capabilities.equals(another.capabilities)
-        && qualifier.equals(another.getQualifier())
-        && simpleName.equals(another.getSimpleName());
+        && qualifier.equals(another.getQualifier());
   }
 
   /**
-   * Computes a hash code from attributes: {@code contactInfo}, {@code capabilities}, {@code qualifier}, {@code simpleName}.
+   * Computes a hash code from attributes: {@code contactInfo}, {@code capabilities}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -309,8 +371,6 @@ public final class MutableExecutorHandle implements IExecutorHandle {
     h += (h << 5) + capabilities.hashCode();
     String qualifier = getQualifier();
     h += (h << 5) + qualifier.hashCode();
-    String simpleName = getSimpleName();
-    h += (h << 5) + simpleName.hashCode();
     return h;
   }
 
@@ -324,7 +384,6 @@ public final class MutableExecutorHandle implements IExecutorHandle {
     return MoreObjects.toStringHelper("MutableExecutorHandle")
         .add("contactInfo", contactInfoIsSet() ? getContactInfo() : "?")
         .add("capabilities", capabilitiesIsSet() ? getCapabilities() : "?")
-        .add("simpleName", getSimpleName())
         .toString();
   }
 }

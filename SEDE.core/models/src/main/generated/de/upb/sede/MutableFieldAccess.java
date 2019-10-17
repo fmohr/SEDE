@@ -65,7 +65,8 @@ public final class MutableFieldAccess implements IFieldAccess {
   }
 
   /**
-   * @return value of {@code fieldName} attribute
+   * Returns the field name that is being refered at.
+   * @return Referenced field name
    */
   @JsonProperty("fieldName")
   @Override

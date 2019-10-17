@@ -30,6 +30,7 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
 
   private @Nullable String hostAddress;
   private String qualifier;
+  private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
 
   private MutableExecutorContactInfo() {}
@@ -64,6 +65,15 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
   }
 
   /**
+   * @return modifiable list {@code metaTags}
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public final List<String> getMetaTags() {
+    return metaTags;
+  }
+
+  /**
    * @return assigned or, otherwise, newly computed, not cached value of {@code simpleName} attribute
    */
   @JsonProperty("simpleName")
@@ -83,6 +93,7 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
     initBits = 0x1L;
     hostAddress = null;
     qualifier = null;
+    metaTags.clear();
     simpleName = null;
     return this;
   }
@@ -115,6 +126,7 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
    * Fill this modifiable instance with attribute values from the provided {@link IExecutorContactInfo} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
+   * Collection elements and entries will be added, not replaced.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
@@ -134,6 +146,7 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       return;
     }
@@ -146,6 +159,7 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
     }
@@ -171,6 +185,56 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
   public MutableExecutorContactInfo setQualifier(String qualifier) {
     this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
     initBits &= ~INIT_BIT_QUALIFIER;
+    return this;
+  }
+
+  /**
+   * Adds one element to {@link IExecutorContactInfo#getMetaTags() metaTags} list.
+   * @param element The metaTags element
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableExecutorContactInfo addMetaTags(String element) {
+    Objects.requireNonNull(element, "metaTags element");
+    this.metaTags.add(element);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IExecutorContactInfo#getMetaTags() metaTags} list.
+   * @param elements An array of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableExecutorContactInfo addMetaTags(String... elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
+    return this;
+  }
+
+  /**
+   * Sets or replaces all elements for {@link IExecutorContactInfo#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableExecutorContactInfo setMetaTags(Iterable<String> elements) {
+    this.metaTags.clear();
+    addAllMetaTags(elements);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IExecutorContactInfo#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableExecutorContactInfo addAllMetaTags(Iterable<String> elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
     return this;
   }
 
@@ -260,14 +324,12 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
   }
 
   private boolean equalTo(MutableExecutorContactInfo another) {
-    String simpleName = getSimpleName();
     return Objects.equals(hostAddress, another.hostAddress)
-        && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.getSimpleName());
+        && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code hostAddress}, {@code qualifier}, {@code simpleName}.
+   * Computes a hash code from attributes: {@code hostAddress}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -275,8 +337,6 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
     int h = 5381;
     h += (h << 5) + Objects.hashCode(hostAddress);
     h += (h << 5) + qualifier.hashCode();
-    String simpleName = getSimpleName();
-    h += (h << 5) + simpleName.hashCode();
     return h;
   }
 
@@ -290,7 +350,6 @@ public final class MutableExecutorContactInfo implements IExecutorContactInfo {
     return MoreObjects.toStringHelper("MutableExecutorContactInfo")
         .add("hostAddress", getHostAddress())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
-        .add("simpleName", getSimpleName())
         .toString();
   }
 }

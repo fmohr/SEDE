@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.IQualifiable;
@@ -33,19 +34,26 @@ import org.immutables.value.Generated;
 public final class ExecRequest implements IExecRequest {
   private final String compositionGraph;
   private final String qualifier;
+  private final ImmutableList<String> metaTags;
   private final String simpleName;
 
   private ExecRequest(ExecRequest.Builder builder) {
     this.compositionGraph = builder.compositionGraph;
     this.qualifier = builder.qualifier;
+    this.metaTags = builder.metaTags.build();
     this.simpleName = builder.simpleName != null
         ? builder.simpleName
         : Objects.requireNonNull(IExecRequest.super.getSimpleName(), "simpleName");
   }
 
-  private ExecRequest(String compositionGraph, String qualifier, String simpleName) {
+  private ExecRequest(
+      String compositionGraph,
+      String qualifier,
+      ImmutableList<String> metaTags,
+      String simpleName) {
     this.compositionGraph = compositionGraph;
     this.qualifier = qualifier;
+    this.metaTags = metaTags;
     this.simpleName = simpleName;
   }
 
@@ -68,6 +76,15 @@ public final class ExecRequest implements IExecRequest {
   }
 
   /**
+   * @return The value of the {@code metaTags} attribute
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public ImmutableList<String> getMetaTags() {
+    return metaTags;
+  }
+
+  /**
    * @return The value of the {@code simpleName} attribute
    */
   @JsonProperty("simpleName")
@@ -85,7 +102,7 @@ public final class ExecRequest implements IExecRequest {
   public final ExecRequest withCompositionGraph(String value) {
     String newValue = Objects.requireNonNull(value, "compositionGraph");
     if (this.compositionGraph.equals(newValue)) return this;
-    return new ExecRequest(newValue, this.qualifier, this.simpleName);
+    return new ExecRequest(newValue, this.qualifier, this.metaTags, this.simpleName);
   }
 
   /**
@@ -97,7 +114,29 @@ public final class ExecRequest implements IExecRequest {
   public final ExecRequest withQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "qualifier");
     if (this.qualifier.equals(newValue)) return this;
-    return new ExecRequest(this.compositionGraph, newValue, this.simpleName);
+    return new ExecRequest(this.compositionGraph, newValue, this.metaTags, this.simpleName);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IExecRequest#getMetaTags() metaTags}.
+   * @param elements The elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final ExecRequest withMetaTags(String... elements) {
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new ExecRequest(this.compositionGraph, this.qualifier, newValue, this.simpleName);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IExecRequest#getMetaTags() metaTags}.
+   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param elements An iterable of metaTags elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final ExecRequest withMetaTags(Iterable<String> elements) {
+    if (this.metaTags == elements) return this;
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new ExecRequest(this.compositionGraph, this.qualifier, newValue, this.simpleName);
   }
 
   /**
@@ -109,7 +148,7 @@ public final class ExecRequest implements IExecRequest {
   public final ExecRequest withSimpleName(String value) {
     String newValue = Objects.requireNonNull(value, "simpleName");
     if (this.simpleName.equals(newValue)) return this;
-    return new ExecRequest(this.compositionGraph, this.qualifier, newValue);
+    return new ExecRequest(this.compositionGraph, this.qualifier, this.metaTags, newValue);
   }
 
   /**
@@ -125,12 +164,11 @@ public final class ExecRequest implements IExecRequest {
 
   private boolean equalTo(ExecRequest another) {
     return compositionGraph.equals(another.compositionGraph)
-        && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.simpleName);
+        && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code compositionGraph}, {@code qualifier}, {@code simpleName}.
+   * Computes a hash code from attributes: {@code compositionGraph}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -138,7 +176,6 @@ public final class ExecRequest implements IExecRequest {
     @Var int h = 5381;
     h += (h << 5) + compositionGraph.hashCode();
     h += (h << 5) + qualifier.hashCode();
-    h += (h << 5) + simpleName.hashCode();
     return h;
   }
 
@@ -152,7 +189,6 @@ public final class ExecRequest implements IExecRequest {
         .omitNullValues()
         .add("compositionGraph", compositionGraph)
         .add("qualifier", qualifier)
-        .add("simpleName", simpleName)
         .toString();
   }
 
@@ -168,6 +204,7 @@ public final class ExecRequest implements IExecRequest {
   static final class Json implements IExecRequest {
     @Nullable String compositionGraph;
     @Nullable String qualifier;
+    @Nullable List<String> metaTags = ImmutableList.of();
     @Nullable String simpleName;
     @JsonProperty("compositionGraph")
     public void setCompositionGraph(String compositionGraph) {
@@ -177,6 +214,10 @@ public final class ExecRequest implements IExecRequest {
     public void setQualifier(String qualifier) {
       this.qualifier = qualifier;
     }
+    @JsonProperty("metaTags")
+    public void setMetaTags(List<String> metaTags) {
+      this.metaTags = metaTags;
+    }
     @JsonProperty("simpleName")
     public void setSimpleName(String simpleName) {
       this.simpleName = simpleName;
@@ -185,6 +226,8 @@ public final class ExecRequest implements IExecRequest {
     public String getCompositionGraph() { throw new UnsupportedOperationException(); }
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
+    @Override
+    public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
     @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
   }
@@ -203,6 +246,9 @@ public final class ExecRequest implements IExecRequest {
     }
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
+    }
+    if (json.metaTags != null) {
+      builder.addAllMetaTags(json.metaTags);
     }
     if (json.simpleName != null) {
       builder.simpleName(json.simpleName);
@@ -232,6 +278,7 @@ public final class ExecRequest implements IExecRequest {
    * ExecRequest.builder()
    *    .compositionGraph(String) // required {@link IExecRequest#getCompositionGraph() compositionGraph}
    *    .qualifier(String) // required {@link IExecRequest#getQualifier() qualifier}
+   *    .addMetaTags|addAllMetaTags(String) // {@link IExecRequest#getMetaTags() metaTags} elements
    *    .simpleName(String) // optional {@link IExecRequest#getSimpleName() simpleName}
    *    .build();
    * </pre>
@@ -257,6 +304,7 @@ public final class ExecRequest implements IExecRequest {
 
     private @Nullable String compositionGraph;
     private @Nullable String qualifier;
+    private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
     private @Nullable String simpleName;
 
     private Builder() {
@@ -276,6 +324,7 @@ public final class ExecRequest implements IExecRequest {
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       simpleName(instance.getSimpleName());
       return this;
     }
@@ -315,6 +364,7 @@ public final class ExecRequest implements IExecRequest {
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
+        addAllMetaTags(instance.getMetaTags());
         simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
       }
@@ -343,6 +393,52 @@ public final class ExecRequest implements IExecRequest {
     public final Builder qualifier(String qualifier) {
       this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
       initBits &= ~INIT_BIT_QUALIFIER;
+      return this;
+    }
+
+    /**
+     * Adds one element to {@link IExecRequest#getMetaTags() metaTags} list.
+     * @param element A metaTags element
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String element) {
+      this.metaTags.add(element);
+      return this;
+    }
+
+    /**
+     * Adds elements to {@link IExecRequest#getMetaTags() metaTags} list.
+     * @param elements An array of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String... elements) {
+      this.metaTags.add(elements);
+      return this;
+    }
+
+
+    /**
+     * Sets or replaces all elements for {@link IExecRequest#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("metaTags")
+    public final Builder metaTags(Iterable<String> elements) {
+      this.metaTags = ImmutableList.builder();
+      return addAllMetaTags(elements);
+    }
+
+    /**
+     * Adds elements to {@link IExecRequest#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addAllMetaTags(Iterable<String> elements) {
+      this.metaTags.addAll(elements);
       return this;
     }
 

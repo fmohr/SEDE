@@ -8,6 +8,7 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -43,6 +44,7 @@ public class SDLReader {
 
         ImportCustomizer importCustomizer = new ImportCustomizer();
         // TODO add implied imports
+        importCustomizer.addStaticStars(Helpers.class.getName());
         config.addCompilationCustomizers(importCustomizer);
 
         config.setScriptBaseClass(SDL.class.getName());
@@ -54,6 +56,11 @@ public class SDLReader {
         this.read(FileUtil.readFileAsString(serviceDescFilePath));
     }
 
+
+    public void read(String serviceDesc, String fileName) {
+        SDL collector = (SDL) shell.parse(serviceDesc, fileName);
+        runSDL(collector);
+    }
 
     public void read(String serviceDesc) {
         SDL collector = (SDL) shell.parse(serviceDesc);
@@ -70,6 +77,10 @@ public class SDLReader {
             sdl.setCols(database);
 
         sdl.run();
+    }
+
+    public void clearDatabase() {
+        database.clear();
     }
 
     public List<ServiceCollectionDesc> getCollections() {

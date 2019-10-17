@@ -1,0 +1,84 @@
+[ {
+  "services" : [ {
+    "stateType" : null,
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "T1",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "T2",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "T3",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "T4",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
+      } ],
+      "qualifier" : "m1",
+      "metaTags" : [ ],
+      "simpleName" : "m1",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : { },
+    "javaDispatchAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "serviceParameters" : {
+      "parameters" : [ {
+        "defaultValue" : true,
+        "paramType" : "BooleanParameter",
+        "qualifier" : "b1",
+        "metaTags" : [ ],
+        "simpleName" : "b1"
+      }, {
+        "defaultValue" : true,
+        "paramType" : "BooleanParameter",
+        "qualifier" : "b2",
+        "metaTags" : [ ],
+        "simpleName" : "b2"
+      }, {
+        "defaultValue" : true,
+        "paramType" : "BooleanParameter",
+        "qualifier" : "b3",
+        "metaTags" : [ ],
+        "simpleName" : "b3"
+      } ],
+      "parameterDependencies" : [ ],
+      "javaParameterizationAuxiliaries" : {
+        "dispatchAux" : null,
+        "autoScanEachParam" : true,
+        "bundleInMap" : true,
+        "bundleInArray" : true,
+        "bundleInList" : true,
+        "precedeParamsWithNames" : true,
+        "paramOrder" : [ "b3", "b2", "b1" ]
+      }
+    },
+    "qualifier" : "service1",
+    "metaTags" : [ ],
+    "simpleName" : "service1",
+    "comments" : [ ],
+    "isAbstract" : false
+  } ],
+  "dataTypes" : [ ],
+  "comments" : [ ],
+  "qualifier" : "service.Collection.1",
+  "metaTags" : [ ],
+  "simpleName" : "service.Collection.1"
+} ]

@@ -1,5 +1,8 @@
 package de.upb.sede;
 
+import java.util.Collections;
+import java.util.List;
+
 class ConstQualifier implements IQualifiable {
 
     private final String qualifier;
@@ -18,6 +21,12 @@ class ConstQualifier implements IQualifiable {
     @Override
     public String getQualifier() {
         return qualifier;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public List<String> getMetaTags() {
+        return Collections.EMPTY_LIST;
     }
 
     @Override

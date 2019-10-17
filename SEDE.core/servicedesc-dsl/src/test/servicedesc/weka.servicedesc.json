@@ -1,0 +1,559 @@
+[ {
+  "services" : [ {
+    "stateType" : null,
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : false
+        }, {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : 0,
+          "methodName" : null,
+          "className" : null,
+          "metaclass" : null
+        },
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "labelDataset",
+      "metaTags" : [ ],
+      "simpleName" : "labelDataset",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : false
+        }, {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : 0,
+          "methodName" : null,
+          "className" : null,
+          "metaclass" : null
+        },
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "setClassIndex",
+      "metaTags" : [ ],
+      "simpleName" : "setClassIndex",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null,
+          "metaclass" : null
+        },
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "classIndicesToNames",
+      "metaTags" : [ ],
+      "simpleName" : "classIndicesToNames",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null,
+          "metaclass" : null
+        },
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "classIndicesPrettify",
+      "metaTags" : [ ],
+      "simpleName" : "classIndicesPrettify",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null,
+          "metaclass" : null
+        },
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "categorize",
+      "metaTags" : [ ],
+      "simpleName" : "categorize",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : { },
+    "javaDispatchAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "serviceParameters" : null,
+    "qualifier" : "de.upb.sede.services.mls.Labeler",
+    "metaTags" : [ ],
+    "simpleName" : "de.upb.sede.services.mls.Labeler",
+    "comments" : [ ],
+    "isAbstract" : false
+  }, {
+    "stateType" : "de.upb.sede.services.mls.DataSetService",
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "String",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "de.upb.sede.services.mls.DataSetService",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "$construct",
+      "metaTags" : [ ],
+      "simpleName" : "$construct",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ ],
+        "javaDispatchAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null,
+          "metaclass" : null
+        },
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "createUnique",
+      "metaTags" : [ ],
+      "simpleName" : "createUnique",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "String",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "de.upb.sede.services.mls.DataSetService",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null,
+          "metaclass" : null
+        },
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "createNamed",
+      "metaTags" : [ ],
+      "simpleName" : "createNamed",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : true
+      } ],
+      "qualifier" : "all",
+      "metaTags" : [ ],
+      "simpleName" : "all",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : true
+      } ],
+      "qualifier" : "allLabeled",
+      "metaTags" : [ ],
+      "simpleName" : "allLabeled",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : true
+      } ],
+      "qualifier" : "fromIndices",
+      "metaTags" : [ ],
+      "simpleName" : "fromIndices",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : true
+      } ],
+      "qualifier" : "fromIndicesLabeled",
+      "metaTags" : [ ],
+      "simpleName" : "fromIndicesLabeled",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : {
+      "state" : "de.upb.sede.services.mls.DataSetService"
+    },
+    "javaDispatchAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "serviceParameters" : null,
+    "qualifier" : "de.upb.sede.services.mls.DataSetService",
+    "metaTags" : [ ],
+    "simpleName" : "de.upb.sede.services.mls.DataSetService",
+    "comments" : [ ],
+    "isAbstract" : false
+  }, {
+    "stateType" : null,
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "set_options",
+      "metaTags" : [ ],
+      "simpleName" : "set_options",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : { },
+    "javaDispatchAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "serviceParameters" : null,
+    "qualifier" : "$list_option_handler_config$",
+    "metaTags" : [ ],
+    "simpleName" : "$list_option_handler_config$",
+    "comments" : [ ],
+    "isAbstract" : true
+  }, {
+    "stateType" : null,
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.Dict",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "set_options_dict",
+      "metaTags" : [ ],
+      "simpleName" : "set_options_dict",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : { },
+    "javaDispatchAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "serviceParameters" : null,
+    "qualifier" : "$dict_option_handler_config$",
+    "metaTags" : [ ],
+    "simpleName" : "$dict_option_handler_config$",
+    "comments" : [ ],
+    "isAbstract" : true
+  }, {
+    "stateType" : null,
+    "methods" : [ {
+      "signatures" : [ ],
+      "qualifier" : "train",
+      "metaTags" : [ ],
+      "simpleName" : "train",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ ],
+      "qualifier" : "predict",
+      "metaTags" : [ ],
+      "simpleName" : "predict",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : { },
+    "javaDispatchAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "serviceParameters" : null,
+    "qualifier" : "$base_classifier_config$",
+    "metaTags" : [ ],
+    "simpleName" : "$base_classifier_config$",
+    "comments" : [ ],
+    "isAbstract" : true
+  }, {
+    "stateType" : null,
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "String",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "$construct",
+      "metaTags" : [ ],
+      "simpleName" : "$construct",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "train",
+      "metaTags" : [ ],
+      "simpleName" : "train",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "Bool",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : true
+      } ],
+      "qualifier" : "predict",
+      "metaTags" : [ ],
+      "simpleName" : "predict",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ "$list_option_handler_config$", "$dict_option_handler_config$", "$base_classifier_config$" ],
+    "fieldTypes" : { },
+    "javaDispatchAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "serviceParameters" : null,
+    "qualifier" : "de.upb.sede.services.mls.WekaBClassifierWrapper",
+    "metaTags" : [ ],
+    "simpleName" : "de.upb.sede.services.mls.WekaBClassifierWrapper",
+    "comments" : [ ],
+    "isAbstract" : false
+  }, {
+    "stateType" : null,
+    "methods" : [ ],
+    "interfaces" : [ ],
+    "fieldTypes" : { },
+    "javaDispatchAux" : {
+      "staticInvocation" : false,
+      "redirectArg" : -1,
+      "methodName" : null,
+      "className" : null,
+      "metaclass" : "Wrapper"
+    },
+    "pythonClassAuxiliaries" : null,
+    "serviceParameters" : null,
+    "qualifier" : "$Basic_Weka_Distribution_Classifier$",
+    "metaTags" : [ ],
+    "simpleName" : "$Basic_Weka_Distribution_Classifier$",
+    "comments" : [ ],
+    "isAbstract" : false
+  } ],
+  "dataTypes" : [ {
+    "semanticType" : "de.upb.sede.services.mls.DataSetService",
+    "javaTypeAux" : null,
+    "qualifier" : "de.upb.sede.services.mls.DataSetService",
+    "metaTags" : [ ],
+    "simpleName" : "de.upb.sede.services.mls.DataSetService",
+    "comments" : [ ]
+  } ],
+  "comments" : [ "Weka is a collection of machine learning algorithms for data mining tasks. It contains tools for data preparation, classification, regression, clustering, association rules mining, and visualization.", "Weka is open source software issued under the GNU General Public License.", "Website: https://www.cs.waikato.ac.nz/~ml/weka/index.html" ],
+  "qualifier" : "weka.ml",
+  "metaTags" : [ ],
+  "simpleName" : "Weka Library"
+} ]

@@ -31,6 +31,7 @@ public final class MutableExecRequest implements IExecRequest {
 
   private String compositionGraph;
   private String qualifier;
+  private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
 
   private MutableExecRequest() {}
@@ -68,6 +69,15 @@ public final class MutableExecRequest implements IExecRequest {
   }
 
   /**
+   * @return modifiable list {@code metaTags}
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public final List<String> getMetaTags() {
+    return metaTags;
+  }
+
+  /**
    * @return assigned or, otherwise, newly computed, not cached value of {@code simpleName} attribute
    */
   @JsonProperty("simpleName")
@@ -87,6 +97,7 @@ public final class MutableExecRequest implements IExecRequest {
     initBits = 0x3L;
     compositionGraph = null;
     qualifier = null;
+    metaTags.clear();
     simpleName = null;
     return this;
   }
@@ -119,6 +130,7 @@ public final class MutableExecRequest implements IExecRequest {
    * Fill this modifiable instance with attribute values from the provided {@link IExecRequest} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
+   * Collection elements and entries will be added, not replaced.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
@@ -137,6 +149,7 @@ public final class MutableExecRequest implements IExecRequest {
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       return;
     }
@@ -146,6 +159,7 @@ public final class MutableExecRequest implements IExecRequest {
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
     }
@@ -172,6 +186,56 @@ public final class MutableExecRequest implements IExecRequest {
   public MutableExecRequest setQualifier(String qualifier) {
     this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
     initBits &= ~INIT_BIT_QUALIFIER;
+    return this;
+  }
+
+  /**
+   * Adds one element to {@link IExecRequest#getMetaTags() metaTags} list.
+   * @param element The metaTags element
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableExecRequest addMetaTags(String element) {
+    Objects.requireNonNull(element, "metaTags element");
+    this.metaTags.add(element);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IExecRequest#getMetaTags() metaTags} list.
+   * @param elements An array of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableExecRequest addMetaTags(String... elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
+    return this;
+  }
+
+  /**
+   * Sets or replaces all elements for {@link IExecRequest#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableExecRequest setMetaTags(Iterable<String> elements) {
+    this.metaTags.clear();
+    addAllMetaTags(elements);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IExecRequest#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableExecRequest addAllMetaTags(Iterable<String> elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
     return this;
   }
 
@@ -281,14 +345,12 @@ public final class MutableExecRequest implements IExecRequest {
   }
 
   private boolean equalTo(MutableExecRequest another) {
-    String simpleName = getSimpleName();
     return compositionGraph.equals(another.compositionGraph)
-        && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.getSimpleName());
+        && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code compositionGraph}, {@code qualifier}, {@code simpleName}.
+   * Computes a hash code from attributes: {@code compositionGraph}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -296,8 +358,6 @@ public final class MutableExecRequest implements IExecRequest {
     int h = 5381;
     h += (h << 5) + compositionGraph.hashCode();
     h += (h << 5) + qualifier.hashCode();
-    String simpleName = getSimpleName();
-    h += (h << 5) + simpleName.hashCode();
     return h;
   }
 
@@ -311,7 +371,6 @@ public final class MutableExecRequest implements IExecRequest {
     return MoreObjects.toStringHelper("MutableExecRequest")
         .add("compositionGraph", compositionGraphIsSet() ? getCompositionGraph() : "?")
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
-        .add("simpleName", getSimpleName())
         .toString();
   }
 }

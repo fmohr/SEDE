@@ -33,6 +33,7 @@ public final class MutableServiceCollectionDesc implements IServiceCollectionDes
   private final ArrayList<IDataTypeDesc> dataTypes = new ArrayList<IDataTypeDesc>();
   private final ArrayList<String> comments = new ArrayList<String>();
   private String qualifier;
+  private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
 
   private MutableServiceCollectionDesc() {}
@@ -85,6 +86,15 @@ public final class MutableServiceCollectionDesc implements IServiceCollectionDes
   }
 
   /**
+   * @return modifiable list {@code metaTags}
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public final List<String> getMetaTags() {
+    return metaTags;
+  }
+
+  /**
    * @return assigned or, otherwise, newly computed, not cached value of {@code simpleName} attribute
    */
   @JsonProperty("simpleName")
@@ -106,6 +116,7 @@ public final class MutableServiceCollectionDesc implements IServiceCollectionDes
     dataTypes.clear();
     comments.clear();
     qualifier = null;
+    metaTags.clear();
     simpleName = null;
     return this;
   }
@@ -169,6 +180,7 @@ public final class MutableServiceCollectionDesc implements IServiceCollectionDes
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       return;
     }
@@ -179,6 +191,7 @@ public final class MutableServiceCollectionDesc implements IServiceCollectionDes
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
     }
@@ -347,6 +360,56 @@ public final class MutableServiceCollectionDesc implements IServiceCollectionDes
   public MutableServiceCollectionDesc setQualifier(String qualifier) {
     this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
     initBits &= ~INIT_BIT_QUALIFIER;
+    return this;
+  }
+
+  /**
+   * Adds one element to {@link IServiceCollectionDesc#getMetaTags() metaTags} list.
+   * @param element The metaTags element
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceCollectionDesc addMetaTags(String element) {
+    Objects.requireNonNull(element, "metaTags element");
+    this.metaTags.add(element);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IServiceCollectionDesc#getMetaTags() metaTags} list.
+   * @param elements An array of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableServiceCollectionDesc addMetaTags(String... elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
+    return this;
+  }
+
+  /**
+   * Sets or replaces all elements for {@link IServiceCollectionDesc#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceCollectionDesc setMetaTags(Iterable<String> elements) {
+    this.metaTags.clear();
+    addAllMetaTags(elements);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IServiceCollectionDesc#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceCollectionDesc addAllMetaTags(Iterable<String> elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
     return this;
   }
 

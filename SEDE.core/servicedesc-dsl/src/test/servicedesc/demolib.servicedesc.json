@@ -1,0 +1,373 @@
+[ {
+  "services" : [ {
+    "stateType" : "demo.math.Addierer",
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "demo.math.Addierer",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      }, {
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "demo.math.Addierer",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "$construct",
+      "metaTags" : [ ],
+      "simpleName" : "$construct",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : true
+      } ],
+      "qualifier" : "addier",
+      "metaTags" : [ ],
+      "simpleName" : "addier",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : true
+      } ],
+      "qualifier" : "addierListe",
+      "metaTags" : [ ],
+      "simpleName" : "addierListe",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : true,
+        "isPure" : true
+      } ],
+      "qualifier" : "summierListe",
+      "metaTags" : [ ],
+      "simpleName" : "summierListe",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : true
+      } ],
+      "qualifier" : "summier",
+      "metaTags" : [ ],
+      "simpleName" : "summier",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : true,
+        "isPure" : false
+      } ],
+      "qualifier" : "fail",
+      "metaTags" : [ ],
+      "simpleName" : "fail",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ ],
+        "outputs" : [ ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : true,
+        "isPure" : false
+      } ],
+      "qualifier" : "sleep",
+      "metaTags" : [ ],
+      "simpleName" : "sleep",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : true,
+        "isPure" : false
+      } ],
+      "qualifier" : "addierBuiltIn",
+      "metaTags" : [ ],
+      "simpleName" : "addierBuiltIn",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : {
+      "state" : "demo.math.Addierer"
+    },
+    "javaDispatchAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "serviceParameters" : null,
+    "qualifier" : "demo.math.Addierer",
+    "metaTags" : [ ],
+    "simpleName" : "demo.math.Addierer",
+    "comments" : [ ],
+    "isAbstract" : false
+  }, {
+    "stateType" : "demo.math.Gerade",
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "demo.math.Gerade",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "$construct",
+      "metaTags" : [ ],
+      "simpleName" : "$construct",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "demo.types.Punkt",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : false
+      } ],
+      "qualifier" : "calc",
+      "metaTags" : [ ],
+      "simpleName" : "calc",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "demo.types.Punkt",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "Bool",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : true
+      } ],
+      "qualifier" : "liagtAufGerade",
+      "metaTags" : [ ],
+      "simpleName" : "liagtAufGerade",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "demo.types.Punkt",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : true
+      } ],
+      "qualifier" : "achsenabschnitt",
+      "metaTags" : [ ],
+      "simpleName" : "achsenabschnitt",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "demo.types.Punkt",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isContextFree" : false,
+        "isPure" : true
+      } ],
+      "qualifier" : "nullstelle",
+      "metaTags" : [ ],
+      "simpleName" : "nullstelle",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : {
+      "state" : "demo.math.Gerade"
+    },
+    "javaDispatchAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "serviceParameters" : null,
+    "qualifier" : "demo.math.Gerade",
+    "metaTags" : [ ],
+    "simpleName" : "demo.math.Gerade",
+    "comments" : [ ],
+    "isAbstract" : false
+  } ],
+  "dataTypes" : [ {
+    "semanticType" : "Arr",
+    "javaTypeAux" : {
+      "dataCastHandler" : null,
+      "className" : "demo.types.DemoCaster"
+    },
+    "qualifier" : "demo.types.NummerList",
+    "metaTags" : [ ],
+    "simpleName" : "demo.types.NummerList",
+    "comments" : [ ]
+  }, {
+    "semanticType" : "Arr",
+    "javaTypeAux" : {
+      "dataCastHandler" : null,
+      "className" : "demo.types.DemoCaster"
+    },
+    "qualifier" : "demo.types.Punkt",
+    "metaTags" : [ ],
+    "simpleName" : "demo.types.Punkt",
+    "comments" : [ ]
+  }, {
+    "semanticType" : "demo.math.Addierer",
+    "javaTypeAux" : null,
+    "qualifier" : "demo.math.Addierer",
+    "metaTags" : [ ],
+    "simpleName" : "demo.math.Addierer",
+    "comments" : [ ]
+  }, {
+    "semanticType" : "demo.math.Gerade",
+    "javaTypeAux" : null,
+    "qualifier" : "demo.math.Gerade",
+    "metaTags" : [ ],
+    "simpleName" : "demo.math.Gerade",
+    "comments" : [ ]
+  } ],
+  "comments" : [ "This library serves as a demonstration and testing library for integration tests in SEDE.", "Implementation: https://github.com/fmohr/SEDE.services/tree/master/demolib/src/main" ],
+  "qualifier" : "demolib",
+  "metaTags" : [ ],
+  "simpleName" : "SEDE Demo Library"
+} ]

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.IQualifiable;
@@ -33,11 +34,13 @@ import org.immutables.value.Generated;
 public final class ExecutorContactInfo implements IExecutorContactInfo {
   private final @Nullable String hostAddress;
   private final String qualifier;
+  private final ImmutableList<String> metaTags;
   private final String simpleName;
 
   private ExecutorContactInfo(ExecutorContactInfo.Builder builder) {
     this.hostAddress = builder.hostAddress;
     this.qualifier = builder.qualifier;
+    this.metaTags = builder.metaTags.build();
     this.simpleName = builder.simpleName != null
         ? builder.simpleName
         : Objects.requireNonNull(IExecutorContactInfo.super.getSimpleName(), "simpleName");
@@ -46,9 +49,11 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
   private ExecutorContactInfo(
       @Nullable String hostAddress,
       String qualifier,
+      ImmutableList<String> metaTags,
       String simpleName) {
     this.hostAddress = hostAddress;
     this.qualifier = qualifier;
+    this.metaTags = metaTags;
     this.simpleName = simpleName;
   }
 
@@ -71,6 +76,15 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
   }
 
   /**
+   * @return The value of the {@code metaTags} attribute
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public ImmutableList<String> getMetaTags() {
+    return metaTags;
+  }
+
+  /**
    * @return The value of the {@code simpleName} attribute
    */
   @JsonProperty("simpleName")
@@ -87,7 +101,7 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
    */
   public final ExecutorContactInfo withHostAddress(@Nullable String value) {
     if (Objects.equals(this.hostAddress, value)) return this;
-    return new ExecutorContactInfo(value, this.qualifier, this.simpleName);
+    return new ExecutorContactInfo(value, this.qualifier, this.metaTags, this.simpleName);
   }
 
   /**
@@ -99,7 +113,29 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
   public final ExecutorContactInfo withQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "qualifier");
     if (this.qualifier.equals(newValue)) return this;
-    return new ExecutorContactInfo(this.hostAddress, newValue, this.simpleName);
+    return new ExecutorContactInfo(this.hostAddress, newValue, this.metaTags, this.simpleName);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IExecutorContactInfo#getMetaTags() metaTags}.
+   * @param elements The elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final ExecutorContactInfo withMetaTags(String... elements) {
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new ExecutorContactInfo(this.hostAddress, this.qualifier, newValue, this.simpleName);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IExecutorContactInfo#getMetaTags() metaTags}.
+   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param elements An iterable of metaTags elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final ExecutorContactInfo withMetaTags(Iterable<String> elements) {
+    if (this.metaTags == elements) return this;
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new ExecutorContactInfo(this.hostAddress, this.qualifier, newValue, this.simpleName);
   }
 
   /**
@@ -111,7 +147,7 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
   public final ExecutorContactInfo withSimpleName(String value) {
     String newValue = Objects.requireNonNull(value, "simpleName");
     if (this.simpleName.equals(newValue)) return this;
-    return new ExecutorContactInfo(this.hostAddress, this.qualifier, newValue);
+    return new ExecutorContactInfo(this.hostAddress, this.qualifier, this.metaTags, newValue);
   }
 
   /**
@@ -127,12 +163,11 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
 
   private boolean equalTo(ExecutorContactInfo another) {
     return Objects.equals(hostAddress, another.hostAddress)
-        && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.simpleName);
+        && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code hostAddress}, {@code qualifier}, {@code simpleName}.
+   * Computes a hash code from attributes: {@code hostAddress}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -140,7 +175,6 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
     @Var int h = 5381;
     h += (h << 5) + Objects.hashCode(hostAddress);
     h += (h << 5) + qualifier.hashCode();
-    h += (h << 5) + simpleName.hashCode();
     return h;
   }
 
@@ -154,7 +188,6 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
         .omitNullValues()
         .add("hostAddress", hostAddress)
         .add("qualifier", qualifier)
-        .add("simpleName", simpleName)
         .toString();
   }
 
@@ -170,6 +203,7 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
   static final class Json implements IExecutorContactInfo {
     @Nullable String hostAddress;
     @Nullable String qualifier;
+    @Nullable List<String> metaTags = ImmutableList.of();
     @Nullable String simpleName;
     @JsonProperty("hostAddress")
     public void setHostAddress(@Nullable String hostAddress) {
@@ -179,6 +213,10 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
     public void setQualifier(String qualifier) {
       this.qualifier = qualifier;
     }
+    @JsonProperty("metaTags")
+    public void setMetaTags(List<String> metaTags) {
+      this.metaTags = metaTags;
+    }
     @JsonProperty("simpleName")
     public void setSimpleName(String simpleName) {
       this.simpleName = simpleName;
@@ -187,6 +225,8 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
     public String getHostAddress() { throw new UnsupportedOperationException(); }
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
+    @Override
+    public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
     @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
   }
@@ -205,6 +245,9 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
     }
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
+    }
+    if (json.metaTags != null) {
+      builder.addAllMetaTags(json.metaTags);
     }
     if (json.simpleName != null) {
       builder.simpleName(json.simpleName);
@@ -234,6 +277,7 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
    * ExecutorContactInfo.builder()
    *    .hostAddress(String | null) // nullable {@link IExecutorContactInfo#getHostAddress() hostAddress}
    *    .qualifier(String) // required {@link IExecutorContactInfo#getQualifier() qualifier}
+   *    .addMetaTags|addAllMetaTags(String) // {@link IExecutorContactInfo#getMetaTags() metaTags} elements
    *    .simpleName(String) // optional {@link IExecutorContactInfo#getSimpleName() simpleName}
    *    .build();
    * </pre>
@@ -258,6 +302,7 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
 
     private @Nullable String hostAddress;
     private @Nullable String qualifier;
+    private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
     private @Nullable String simpleName;
 
     private Builder() {
@@ -278,6 +323,7 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       simpleName(instance.getSimpleName());
       return this;
     }
@@ -320,6 +366,7 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
+        addAllMetaTags(instance.getMetaTags());
         simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
       }
@@ -347,6 +394,52 @@ public final class ExecutorContactInfo implements IExecutorContactInfo {
     public final Builder qualifier(String qualifier) {
       this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
       initBits &= ~INIT_BIT_QUALIFIER;
+      return this;
+    }
+
+    /**
+     * Adds one element to {@link IExecutorContactInfo#getMetaTags() metaTags} list.
+     * @param element A metaTags element
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String element) {
+      this.metaTags.add(element);
+      return this;
+    }
+
+    /**
+     * Adds elements to {@link IExecutorContactInfo#getMetaTags() metaTags} list.
+     * @param elements An array of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String... elements) {
+      this.metaTags.add(elements);
+      return this;
+    }
+
+
+    /**
+     * Sets or replaces all elements for {@link IExecutorContactInfo#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("metaTags")
+    public final Builder metaTags(Iterable<String> elements) {
+      this.metaTags = ImmutableList.builder();
+      return addAllMetaTags(elements);
+    }
+
+    /**
+     * Adds elements to {@link IExecutorContactInfo#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addAllMetaTags(Iterable<String> elements) {
+      this.metaTags.addAll(elements);
       return this;
     }
 

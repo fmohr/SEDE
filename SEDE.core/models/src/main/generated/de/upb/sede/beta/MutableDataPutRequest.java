@@ -34,6 +34,7 @@ public final class MutableDataPutRequest implements IDataPutRequest {
 
   private boolean isUnavailable;
   private String qualifier;
+  private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
   private String fieldName;
 
@@ -72,6 +73,15 @@ public final class MutableDataPutRequest implements IDataPutRequest {
   }
 
   /**
+   * @return modifiable list {@code metaTags}
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public final List<String> getMetaTags() {
+    return metaTags;
+  }
+
+  /**
    * @return assigned or, otherwise, newly computed, not cached value of {@code simpleName} attribute
    */
   @JsonProperty("simpleName")
@@ -83,8 +93,7 @@ public final class MutableDataPutRequest implements IDataPutRequest {
   }
 
   /**
-   * Returns the field name that is being refered at.
-   * @return Referenced field name
+   * @return value of {@code fieldName} attribute
    */
   @JsonProperty("fieldName")
   @Override
@@ -104,6 +113,7 @@ public final class MutableDataPutRequest implements IDataPutRequest {
     initBits = 0x7L;
     isUnavailable = false;
     qualifier = null;
+    metaTags.clear();
     simpleName = null;
     fieldName = null;
     return this;
@@ -149,6 +159,7 @@ public final class MutableDataPutRequest implements IDataPutRequest {
    * Fill this modifiable instance with attribute values from the provided {@link IDataPutRequest} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
+   * Collection elements and entries will be added, not replaced.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
@@ -167,6 +178,7 @@ public final class MutableDataPutRequest implements IDataPutRequest {
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       if (instance.fieldNameIsSet()) {
         setFieldName(instance.getFieldName());
@@ -183,6 +195,7 @@ public final class MutableDataPutRequest implements IDataPutRequest {
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
     }
@@ -209,6 +222,56 @@ public final class MutableDataPutRequest implements IDataPutRequest {
   public MutableDataPutRequest setQualifier(String qualifier) {
     this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
     initBits &= ~INIT_BIT_QUALIFIER;
+    return this;
+  }
+
+  /**
+   * Adds one element to {@link IDataPutRequest#getMetaTags() metaTags} list.
+   * @param element The metaTags element
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableDataPutRequest addMetaTags(String element) {
+    Objects.requireNonNull(element, "metaTags element");
+    this.metaTags.add(element);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IDataPutRequest#getMetaTags() metaTags} list.
+   * @param elements An array of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableDataPutRequest addMetaTags(String... elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
+    return this;
+  }
+
+  /**
+   * Sets or replaces all elements for {@link IDataPutRequest#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableDataPutRequest setMetaTags(Iterable<String> elements) {
+    this.metaTags.clear();
+    addAllMetaTags(elements);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IDataPutRequest#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableDataPutRequest addAllMetaTags(Iterable<String> elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
     return this;
   }
 
@@ -350,15 +413,13 @@ public final class MutableDataPutRequest implements IDataPutRequest {
   }
 
   private boolean equalTo(MutableDataPutRequest another) {
-    String simpleName = getSimpleName();
     return isUnavailable == another.isUnavailable
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.getSimpleName())
         && fieldName.equals(another.fieldName);
   }
 
   /**
-   * Computes a hash code from attributes: {@code isUnavailable}, {@code qualifier}, {@code simpleName}, {@code fieldName}.
+   * Computes a hash code from attributes: {@code isUnavailable}, {@code qualifier}, {@code fieldName}.
    * @return hashCode value
    */
   @Override
@@ -366,8 +427,6 @@ public final class MutableDataPutRequest implements IDataPutRequest {
     int h = 5381;
     h += (h << 5) + Booleans.hashCode(isUnavailable);
     h += (h << 5) + qualifier.hashCode();
-    String simpleName = getSimpleName();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + fieldName.hashCode();
     return h;
   }
@@ -382,7 +441,6 @@ public final class MutableDataPutRequest implements IDataPutRequest {
     return MoreObjects.toStringHelper("MutableDataPutRequest")
         .add("isUnavailable", isUnavailableIsSet() ? isUnavailable() : "?")
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
-        .add("simpleName", getSimpleName())
         .add("fieldName", fieldNameIsSet() ? getFieldName() : "?")
         .toString();
   }

@@ -5,12 +5,12 @@ import de.upb.sede.exec.IMethodParameterDesc
 
 import de.upb.sede.exec.MutableMethodParameterDesc
 import de.upb.sede.exec.MutableSignatureDesc
-import de.upb.sede.exec.aux.MutableJavaDispatchAux
+import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
 import groovy.transform.NamedVariant
 
 class MethodSignatureDomain
     extends DomainAware<MutableSignatureDesc, MethodDomain>
-    implements Shared.JavaDispatchAware, Shared.CommentAware {
+    implements Shared.AuxAware<MutableJavaDispatchAux>, Shared.CommentAware {
 
     void setInputTypes(String... inputTypes) {
         model.inputs.clear()
@@ -109,5 +109,19 @@ class MethodSignatureDomain
     @Override
     def String getBindingName() {
         "signature"
+    }
+
+    @Override
+    MutableJavaDispatchAux setJavaAux(MutableJavaDispatchAux javaAux) {
+        model.javaDispatchAux = javaAux
+        return javaAux
+    }
+
+    @Override
+    MutableJavaDispatchAux getJavaAux() {
+        if(model.javaDispatchAux == null) {
+            model.javaDispatchAux = MutableJavaDispatchAux.create()
+        }
+        return model.javaDispatchAux as MutableJavaDispatchAux
     }
 }

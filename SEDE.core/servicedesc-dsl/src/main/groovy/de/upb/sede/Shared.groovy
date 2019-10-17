@@ -1,13 +1,13 @@
 package de.upb.sede
 
 import de.upb.sede.exec.IServiceDesc
-import de.upb.sede.exec.aux.MutableJavaDispatchAux
+import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
 import groovy.transform.PackageScope
 
 @PackageScope
 class Shared {
 
-    final static MutableJavaDispatchAux createJava(
+    final static MutableJavaDispatchAux createJavaDispatchAux(
         MutableJavaDispatchAux javaAux,
         Closure javaAuxDescriber) {
         if(javaAux == null) {
@@ -23,14 +23,11 @@ class Shared {
     }
 
     @PackageScope
-    trait JavaDispatchAware {
+    interface AuxAware<JAVAAUX> {
 
-        def java(@DelegatesTo(MutableJavaDispatchAux) javaAuxDescriber) {
-            model.javaAux = Shared.createJava(model.javaAux as MutableJavaDispatchAux,
-                javaAuxDescriber)
-            return model.javaAux as MutableJavaDispatchAux
-        }
+        JAVAAUX setJavaAux(JAVAAUX javaAux);
 
+        JAVAAUX getJavaAux();
     }
 
     @PackageScope

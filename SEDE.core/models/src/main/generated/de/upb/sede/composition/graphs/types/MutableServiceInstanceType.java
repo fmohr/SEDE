@@ -31,6 +31,7 @@ public final class MutableServiceInstanceType
 
   private String typeClass;
   private String qualifier;
+  private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
 
   private MutableServiceInstanceType() {}
@@ -67,6 +68,15 @@ public final class MutableServiceInstanceType
   }
 
   /**
+   * @return modifiable list {@code metaTags}
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public final List<String> getMetaTags() {
+    return metaTags;
+  }
+
+  /**
    * @return assigned or, otherwise, newly computed, not cached value of {@code simpleName} attribute
    */
   @JsonProperty("simpleName")
@@ -86,6 +96,7 @@ public final class MutableServiceInstanceType
     initBits = 0x1L;
     typeClass = null;
     qualifier = null;
+    metaTags.clear();
     simpleName = null;
     return this;
   }
@@ -130,6 +141,7 @@ public final class MutableServiceInstanceType
    * Fill this modifiable instance with attribute values from the provided {@link IServiceInstanceType} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
+   * Collection elements and entries will be added, not replaced.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
@@ -146,6 +158,7 @@ public final class MutableServiceInstanceType
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       return;
     }
@@ -155,6 +168,7 @@ public final class MutableServiceInstanceType
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
     }
@@ -181,6 +195,56 @@ public final class MutableServiceInstanceType
   public MutableServiceInstanceType setQualifier(String qualifier) {
     this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
     initBits &= ~INIT_BIT_QUALIFIER;
+    return this;
+  }
+
+  /**
+   * Adds one element to {@link IServiceInstanceType#getMetaTags() metaTags} list.
+   * @param element The metaTags element
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceInstanceType addMetaTags(String element) {
+    Objects.requireNonNull(element, "metaTags element");
+    this.metaTags.add(element);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IServiceInstanceType#getMetaTags() metaTags} list.
+   * @param elements An array of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableServiceInstanceType addMetaTags(String... elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
+    return this;
+  }
+
+  /**
+   * Sets or replaces all elements for {@link IServiceInstanceType#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceInstanceType setMetaTags(Iterable<String> elements) {
+    this.metaTags.clear();
+    addAllMetaTags(elements);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IServiceInstanceType#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceInstanceType addAllMetaTags(Iterable<String> elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
     return this;
   }
 

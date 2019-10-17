@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
 import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.exec.aux.IJavaDispatchAux;
+import de.upb.sede.exec.auxiliary.IJavaDispatchAux;
+import de.upb.sede.types.auxiliary.IJavaTypeAux;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;

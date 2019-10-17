@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
+import com.google.common.collect.ImmutableList;
 import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
@@ -35,12 +36,14 @@ import org.immutables.value.Generated;
 public final class DataPutRequest implements IDataPutRequest {
   private final boolean isUnavailable;
   private final String qualifier;
+  private final ImmutableList<String> metaTags;
   private final String simpleName;
   private final String fieldName;
 
   private DataPutRequest(DataPutRequest.Builder builder) {
     this.isUnavailable = builder.isUnavailable;
     this.qualifier = builder.qualifier;
+    this.metaTags = builder.metaTags.build();
     this.fieldName = builder.fieldName;
     this.simpleName = builder.simpleName != null
         ? builder.simpleName
@@ -50,10 +53,12 @@ public final class DataPutRequest implements IDataPutRequest {
   private DataPutRequest(
       boolean isUnavailable,
       String qualifier,
+      ImmutableList<String> metaTags,
       String simpleName,
       String fieldName) {
     this.isUnavailable = isUnavailable;
     this.qualifier = qualifier;
+    this.metaTags = metaTags;
     this.simpleName = simpleName;
     this.fieldName = fieldName;
   }
@@ -77,6 +82,15 @@ public final class DataPutRequest implements IDataPutRequest {
   }
 
   /**
+   * @return The value of the {@code metaTags} attribute
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public ImmutableList<String> getMetaTags() {
+    return metaTags;
+  }
+
+  /**
    * @return The value of the {@code simpleName} attribute
    */
   @JsonProperty("simpleName")
@@ -86,8 +100,7 @@ public final class DataPutRequest implements IDataPutRequest {
   }
 
   /**
-   * Returns the field name that is being refered at.
-   * @return Referenced field name
+   * @return The value of the {@code fieldName} attribute
    */
   @JsonProperty("fieldName")
   @Override
@@ -103,7 +116,7 @@ public final class DataPutRequest implements IDataPutRequest {
    */
   public final DataPutRequest withIsUnavailable(boolean value) {
     if (this.isUnavailable == value) return this;
-    return new DataPutRequest(value, this.qualifier, this.simpleName, this.fieldName);
+    return new DataPutRequest(value, this.qualifier, this.metaTags, this.simpleName, this.fieldName);
   }
 
   /**
@@ -115,7 +128,29 @@ public final class DataPutRequest implements IDataPutRequest {
   public final DataPutRequest withQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "qualifier");
     if (this.qualifier.equals(newValue)) return this;
-    return new DataPutRequest(this.isUnavailable, newValue, this.simpleName, this.fieldName);
+    return new DataPutRequest(this.isUnavailable, newValue, this.metaTags, this.simpleName, this.fieldName);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IDataPutRequest#getMetaTags() metaTags}.
+   * @param elements The elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final DataPutRequest withMetaTags(String... elements) {
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new DataPutRequest(this.isUnavailable, this.qualifier, newValue, this.simpleName, this.fieldName);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IDataPutRequest#getMetaTags() metaTags}.
+   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param elements An iterable of metaTags elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final DataPutRequest withMetaTags(Iterable<String> elements) {
+    if (this.metaTags == elements) return this;
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new DataPutRequest(this.isUnavailable, this.qualifier, newValue, this.simpleName, this.fieldName);
   }
 
   /**
@@ -127,7 +162,7 @@ public final class DataPutRequest implements IDataPutRequest {
   public final DataPutRequest withSimpleName(String value) {
     String newValue = Objects.requireNonNull(value, "simpleName");
     if (this.simpleName.equals(newValue)) return this;
-    return new DataPutRequest(this.isUnavailable, this.qualifier, newValue, this.fieldName);
+    return new DataPutRequest(this.isUnavailable, this.qualifier, this.metaTags, newValue, this.fieldName);
   }
 
   /**
@@ -139,7 +174,7 @@ public final class DataPutRequest implements IDataPutRequest {
   public final DataPutRequest withFieldName(String value) {
     String newValue = Objects.requireNonNull(value, "fieldName");
     if (this.fieldName.equals(newValue)) return this;
-    return new DataPutRequest(this.isUnavailable, this.qualifier, this.simpleName, newValue);
+    return new DataPutRequest(this.isUnavailable, this.qualifier, this.metaTags, this.simpleName, newValue);
   }
 
   /**
@@ -156,12 +191,11 @@ public final class DataPutRequest implements IDataPutRequest {
   private boolean equalTo(DataPutRequest another) {
     return isUnavailable == another.isUnavailable
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.simpleName)
         && fieldName.equals(another.fieldName);
   }
 
   /**
-   * Computes a hash code from attributes: {@code isUnavailable}, {@code qualifier}, {@code simpleName}, {@code fieldName}.
+   * Computes a hash code from attributes: {@code isUnavailable}, {@code qualifier}, {@code fieldName}.
    * @return hashCode value
    */
   @Override
@@ -169,7 +203,6 @@ public final class DataPutRequest implements IDataPutRequest {
     @Var int h = 5381;
     h += (h << 5) + Booleans.hashCode(isUnavailable);
     h += (h << 5) + qualifier.hashCode();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + fieldName.hashCode();
     return h;
   }
@@ -184,7 +217,6 @@ public final class DataPutRequest implements IDataPutRequest {
         .omitNullValues()
         .add("isUnavailable", isUnavailable)
         .add("qualifier", qualifier)
-        .add("simpleName", simpleName)
         .add("fieldName", fieldName)
         .toString();
   }
@@ -202,6 +234,7 @@ public final class DataPutRequest implements IDataPutRequest {
     boolean isUnavailable;
     boolean isUnavailableIsSet;
     @Nullable String qualifier;
+    @Nullable List<String> metaTags = ImmutableList.of();
     @Nullable String simpleName;
     @Nullable String fieldName;
     @JsonProperty("isUnavailable")
@@ -212,6 +245,10 @@ public final class DataPutRequest implements IDataPutRequest {
     @JsonProperty("qualifier")
     public void setQualifier(String qualifier) {
       this.qualifier = qualifier;
+    }
+    @JsonProperty("metaTags")
+    public void setMetaTags(List<String> metaTags) {
+      this.metaTags = metaTags;
     }
     @JsonProperty("simpleName")
     public void setSimpleName(String simpleName) {
@@ -225,6 +262,8 @@ public final class DataPutRequest implements IDataPutRequest {
     public boolean isUnavailable() { throw new UnsupportedOperationException(); }
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
+    @Override
+    public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
     @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
     @Override
@@ -245,6 +284,9 @@ public final class DataPutRequest implements IDataPutRequest {
     }
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
+    }
+    if (json.metaTags != null) {
+      builder.addAllMetaTags(json.metaTags);
     }
     if (json.simpleName != null) {
       builder.simpleName(json.simpleName);
@@ -277,6 +319,7 @@ public final class DataPutRequest implements IDataPutRequest {
    * DataPutRequest.builder()
    *    .isUnavailable(boolean) // required {@link IDataPutRequest#isUnavailable() isUnavailable}
    *    .qualifier(String) // required {@link IDataPutRequest#getQualifier() qualifier}
+   *    .addMetaTags|addAllMetaTags(String) // {@link IDataPutRequest#getMetaTags() metaTags} elements
    *    .simpleName(String) // optional {@link IDataPutRequest#getSimpleName() simpleName}
    *    .fieldName(String) // required {@link IDataPutRequest#getFieldName() fieldName}
    *    .build();
@@ -304,6 +347,7 @@ public final class DataPutRequest implements IDataPutRequest {
 
     private boolean isUnavailable;
     private @Nullable String qualifier;
+    private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
     private @Nullable String simpleName;
     private @Nullable String fieldName;
 
@@ -324,6 +368,7 @@ public final class DataPutRequest implements IDataPutRequest {
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       simpleName(instance.getSimpleName());
       if (instance.fieldNameIsSet()) {
         fieldName(instance.getFieldName());
@@ -382,6 +427,7 @@ public final class DataPutRequest implements IDataPutRequest {
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
+        addAllMetaTags(instance.getMetaTags());
         simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
       }
@@ -410,6 +456,52 @@ public final class DataPutRequest implements IDataPutRequest {
     public final Builder qualifier(String qualifier) {
       this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
       initBits &= ~INIT_BIT_QUALIFIER;
+      return this;
+    }
+
+    /**
+     * Adds one element to {@link IDataPutRequest#getMetaTags() metaTags} list.
+     * @param element A metaTags element
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String element) {
+      this.metaTags.add(element);
+      return this;
+    }
+
+    /**
+     * Adds elements to {@link IDataPutRequest#getMetaTags() metaTags} list.
+     * @param elements An array of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String... elements) {
+      this.metaTags.add(elements);
+      return this;
+    }
+
+
+    /**
+     * Sets or replaces all elements for {@link IDataPutRequest#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("metaTags")
+    public final Builder metaTags(Iterable<String> elements) {
+      this.metaTags = ImmutableList.builder();
+      return addAllMetaTags(elements);
+    }
+
+    /**
+     * Adds elements to {@link IDataPutRequest#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addAllMetaTags(Iterable<String> elements) {
+      this.metaTags.addAll(elements);
       return this;
     }
 

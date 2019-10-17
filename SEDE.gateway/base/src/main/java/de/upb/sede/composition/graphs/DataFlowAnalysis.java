@@ -61,7 +61,7 @@ public class DataFlowAnalysis {
 		mergeAcceptAndCasts();
 		addErrorCollectors();
 		fillinContactInforamtions();
-		if(resolveInfo.getResolvePolicy().isBlockTillFinished()) {
+		if(resolveInfo.getResolvePolicy().isBlockExecRequested()) {
 			addFinishingNodes();
 		}
 	}
@@ -1266,6 +1266,6 @@ class FieldType {
 }
 
 enum TypeClass {
-	ServiceInstance, SemanticDataType, RealDataType, PrimitiveType, ServiceInstanceHandle;
+	ServiceInstance, SemanticDataType, RealDataType, PrimitiveType, ServiceInstanceHandle
 }
 

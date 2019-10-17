@@ -71,7 +71,8 @@ public final class FieldAccess implements IFieldAccess {
   }
 
   /**
-   * @return The value of the {@code fieldName} attribute
+   * Returns the field name that is being refered at.
+   * @return Referenced field name
    */
   @JsonProperty("fieldName")
   @Override

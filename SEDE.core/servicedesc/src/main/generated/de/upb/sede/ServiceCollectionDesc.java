@@ -37,6 +37,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
   private final ImmutableList<IDataTypeDesc> dataTypes;
   private final ImmutableList<String> comments;
   private final String qualifier;
+  private final ImmutableList<String> metaTags;
   private final String simpleName;
 
   private ServiceCollectionDesc(ServiceCollectionDesc.Builder builder) {
@@ -44,6 +45,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
     this.dataTypes = builder.dataTypes.build();
     this.comments = builder.comments.build();
     this.qualifier = builder.qualifier;
+    this.metaTags = builder.metaTags.build();
     this.simpleName = builder.simpleName != null
         ? builder.simpleName
         : Objects.requireNonNull(IServiceCollectionDesc.super.getSimpleName(), "simpleName");
@@ -54,11 +56,13 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
       ImmutableList<IDataTypeDesc> dataTypes,
       ImmutableList<String> comments,
       String qualifier,
+      ImmutableList<String> metaTags,
       String simpleName) {
     this.services = services;
     this.dataTypes = dataTypes;
     this.comments = comments;
     this.qualifier = qualifier;
+    this.metaTags = metaTags;
     this.simpleName = simpleName;
   }
 
@@ -99,6 +103,15 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
   }
 
   /**
+   * @return The value of the {@code metaTags} attribute
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public ImmutableList<String> getMetaTags() {
+    return metaTags;
+  }
+
+  /**
    * @return The value of the {@code simpleName} attribute
    */
   @JsonProperty("simpleName")
@@ -114,7 +127,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
    */
   public final ServiceCollectionDesc withServices(IServiceDesc... elements) {
     ImmutableList<IServiceDesc> newValue = ImmutableList.copyOf(elements);
-    return new ServiceCollectionDesc(newValue, this.dataTypes, this.comments, this.qualifier, this.simpleName);
+    return new ServiceCollectionDesc(newValue, this.dataTypes, this.comments, this.qualifier, this.metaTags, this.simpleName);
   }
 
   /**
@@ -126,7 +139,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
   public final ServiceCollectionDesc withServices(Iterable<? extends IServiceDesc> elements) {
     if (this.services == elements) return this;
     ImmutableList<IServiceDesc> newValue = ImmutableList.copyOf(elements);
-    return new ServiceCollectionDesc(newValue, this.dataTypes, this.comments, this.qualifier, this.simpleName);
+    return new ServiceCollectionDesc(newValue, this.dataTypes, this.comments, this.qualifier, this.metaTags, this.simpleName);
   }
 
   /**
@@ -136,7 +149,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
    */
   public final ServiceCollectionDesc withDataTypes(IDataTypeDesc... elements) {
     ImmutableList<IDataTypeDesc> newValue = ImmutableList.copyOf(elements);
-    return new ServiceCollectionDesc(this.services, newValue, this.comments, this.qualifier, this.simpleName);
+    return new ServiceCollectionDesc(this.services, newValue, this.comments, this.qualifier, this.metaTags, this.simpleName);
   }
 
   /**
@@ -148,7 +161,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
   public final ServiceCollectionDesc withDataTypes(Iterable<? extends IDataTypeDesc> elements) {
     if (this.dataTypes == elements) return this;
     ImmutableList<IDataTypeDesc> newValue = ImmutableList.copyOf(elements);
-    return new ServiceCollectionDesc(this.services, newValue, this.comments, this.qualifier, this.simpleName);
+    return new ServiceCollectionDesc(this.services, newValue, this.comments, this.qualifier, this.metaTags, this.simpleName);
   }
 
   /**
@@ -158,7 +171,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
    */
   public final ServiceCollectionDesc withComments(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new ServiceCollectionDesc(this.services, this.dataTypes, newValue, this.qualifier, this.simpleName);
+    return new ServiceCollectionDesc(this.services, this.dataTypes, newValue, this.qualifier, this.metaTags, this.simpleName);
   }
 
   /**
@@ -170,7 +183,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
   public final ServiceCollectionDesc withComments(Iterable<String> elements) {
     if (this.comments == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new ServiceCollectionDesc(this.services, this.dataTypes, newValue, this.qualifier, this.simpleName);
+    return new ServiceCollectionDesc(this.services, this.dataTypes, newValue, this.qualifier, this.metaTags, this.simpleName);
   }
 
   /**
@@ -182,7 +195,29 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
   public final ServiceCollectionDesc withQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "qualifier");
     if (this.qualifier.equals(newValue)) return this;
-    return new ServiceCollectionDesc(this.services, this.dataTypes, this.comments, newValue, this.simpleName);
+    return new ServiceCollectionDesc(this.services, this.dataTypes, this.comments, newValue, this.metaTags, this.simpleName);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IServiceCollectionDesc#getMetaTags() metaTags}.
+   * @param elements The elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final ServiceCollectionDesc withMetaTags(String... elements) {
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new ServiceCollectionDesc(this.services, this.dataTypes, this.comments, this.qualifier, newValue, this.simpleName);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IServiceCollectionDesc#getMetaTags() metaTags}.
+   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param elements An iterable of metaTags elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final ServiceCollectionDesc withMetaTags(Iterable<String> elements) {
+    if (this.metaTags == elements) return this;
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new ServiceCollectionDesc(this.services, this.dataTypes, this.comments, this.qualifier, newValue, this.simpleName);
   }
 
   /**
@@ -194,7 +229,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
   public final ServiceCollectionDesc withSimpleName(String value) {
     String newValue = Objects.requireNonNull(value, "simpleName");
     if (this.simpleName.equals(newValue)) return this;
-    return new ServiceCollectionDesc(this.services, this.dataTypes, this.comments, this.qualifier, newValue);
+    return new ServiceCollectionDesc(this.services, this.dataTypes, this.comments, this.qualifier, this.metaTags, newValue);
   }
 
   /**
@@ -258,6 +293,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
     @Nullable List<IDataTypeDesc> dataTypes = ImmutableList.of();
     @Nullable List<String> comments = ImmutableList.of();
     @Nullable String qualifier;
+    @Nullable List<String> metaTags = ImmutableList.of();
     @Nullable String simpleName;
     @JsonProperty("services")
     public void setServices(List<IServiceDesc> services) {
@@ -275,6 +311,10 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
     public void setQualifier(String qualifier) {
       this.qualifier = qualifier;
     }
+    @JsonProperty("metaTags")
+    public void setMetaTags(List<String> metaTags) {
+      this.metaTags = metaTags;
+    }
     @JsonProperty("simpleName")
     public void setSimpleName(String simpleName) {
       this.simpleName = simpleName;
@@ -287,6 +327,8 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
     public List<String> getComments() { throw new UnsupportedOperationException(); }
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
+    @Override
+    public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
     @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
   }
@@ -311,6 +353,9 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
     }
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
+    }
+    if (json.metaTags != null) {
+      builder.addAllMetaTags(json.metaTags);
     }
     if (json.simpleName != null) {
       builder.simpleName(json.simpleName);
@@ -342,6 +387,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
    *    .addDataTypes|addAllDataTypes(de.upb.sede.types.IDataTypeDesc) // {@link IServiceCollectionDesc#getDataTypes() dataTypes} elements
    *    .addComments|addAllComments(String) // {@link IServiceCollectionDesc#getComments() comments} elements
    *    .qualifier(String) // required {@link IServiceCollectionDesc#getQualifier() qualifier}
+   *    .addMetaTags|addAllMetaTags(String) // {@link IServiceCollectionDesc#getMetaTags() metaTags} elements
    *    .simpleName(String) // optional {@link IServiceCollectionDesc#getSimpleName() simpleName}
    *    .build();
    * </pre>
@@ -368,6 +414,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
     private ImmutableList.Builder<IDataTypeDesc> dataTypes = ImmutableList.builder();
     private ImmutableList.Builder<String> comments = ImmutableList.builder();
     private @Nullable String qualifier;
+    private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
     private @Nullable String simpleName;
 
     private Builder() {
@@ -387,6 +434,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       simpleName(instance.getSimpleName());
       return this;
     }
@@ -439,6 +487,7 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
+        addAllMetaTags(instance.getMetaTags());
         simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
       }
@@ -596,6 +645,52 @@ public final class ServiceCollectionDesc implements IServiceCollectionDesc {
     public final Builder qualifier(String qualifier) {
       this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
       initBits &= ~INIT_BIT_QUALIFIER;
+      return this;
+    }
+
+    /**
+     * Adds one element to {@link IServiceCollectionDesc#getMetaTags() metaTags} list.
+     * @param element A metaTags element
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String element) {
+      this.metaTags.add(element);
+      return this;
+    }
+
+    /**
+     * Adds elements to {@link IServiceCollectionDesc#getMetaTags() metaTags} list.
+     * @param elements An array of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String... elements) {
+      this.metaTags.add(elements);
+      return this;
+    }
+
+
+    /**
+     * Sets or replaces all elements for {@link IServiceCollectionDesc#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("metaTags")
+    public final Builder metaTags(Iterable<String> elements) {
+      this.metaTags = ImmutableList.builder();
+      return addAllMetaTags(elements);
+    }
+
+    /**
+     * Adds elements to {@link IServiceCollectionDesc#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addAllMetaTags(Iterable<String> elements) {
+      this.metaTags.addAll(elements);
       return this;
     }
 

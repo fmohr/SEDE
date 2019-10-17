@@ -17,6 +17,6 @@ public interface IJavaTypeAux {
     IJavaDispatchAux getDataCastHandler();
 
     @Nullable
-    String getClassName();
+    String getMappedClassName();
 
 }

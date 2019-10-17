@@ -12,8 +12,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : false
       } ],
       "qualifier" : "$construct",
       "metaTags" : [ ],
@@ -56,8 +56,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : false
       }, {
         "inputs" : [ {
           "type" : "t1",
@@ -84,8 +84,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : false
       }, {
         "inputs" : [ {
           "type" : "t1",
@@ -107,8 +107,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : false
       }, {
         "inputs" : [ {
           "type" : "t1",
@@ -135,8 +135,8 @@
           "metaclass" : null
         },
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : false
       } ],
       "qualifier" : "m1",
       "metaTags" : [ ],
@@ -163,8 +163,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : false
       } ],
       "qualifier" : "m2",
       "metaTags" : [ ],

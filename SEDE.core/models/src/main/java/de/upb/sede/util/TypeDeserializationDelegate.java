@@ -5,10 +5,8 @@ import com.fasterxml.jackson.core.TreeNode;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.node.ValueNode;
-import de.upb.sede.param.IParameter;
 
 import java.io.IOException;
 
@@ -31,7 +29,7 @@ public abstract class TypeDeserializationDelegate<T> extends StdDeserializer<T> 
          */
         TreeNode tree = p.getCodec().readTree(p);
         if(! (tree instanceof ObjectNode)) {
-            throw new InvalidFormatException(p, "Expected Object Node", tree, IParameter.class);
+            throw new JsonMappingException(p, "Expected Object Node.");
         }
         ObjectNode object = (ObjectNode) tree;
         TreeNode nodeType = object.get(getTypeField());

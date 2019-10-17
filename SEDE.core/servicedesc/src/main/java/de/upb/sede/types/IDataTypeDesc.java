@@ -18,8 +18,7 @@ public interface IDataTypeDesc extends IQualifiable, CommentAware {
 
     String getSemanticType();
 
-
     @Nullable
-    IJavaDispatchAux getJavaAux();
+    IJavaTypeAux getJavaTypeAux();
 
 }

@@ -17,8 +17,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : false
       }, {
         "inputs" : [ ],
         "outputs" : [ {
@@ -29,8 +29,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : false
       } ],
       "qualifier" : "$construct",
       "metaTags" : [ ],
@@ -52,8 +52,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : true
+        "isPure" : true,
+        "isContextFree" : false
       } ],
       "qualifier" : "addier",
       "metaTags" : [ ],
@@ -75,8 +75,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : true
+        "isPure" : true,
+        "isContextFree" : false
       } ],
       "qualifier" : "addierListe",
       "metaTags" : [ ],
@@ -103,8 +103,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : true,
-        "isPure" : true
+        "isPure" : true,
+        "isContextFree" : true
       } ],
       "qualifier" : "summierListe",
       "metaTags" : [ ],
@@ -126,8 +126,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : true
+        "isPure" : true,
+        "isContextFree" : false
       } ],
       "qualifier" : "summier",
       "metaTags" : [ ],
@@ -144,8 +144,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : true,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : true
       } ],
       "qualifier" : "fail",
       "metaTags" : [ ],
@@ -157,8 +157,8 @@
         "outputs" : [ ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : true,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : true
       } ],
       "qualifier" : "sleep",
       "metaTags" : [ ],
@@ -185,8 +185,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : true,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : true
       } ],
       "qualifier" : "addierBuiltIn",
       "metaTags" : [ ],
@@ -228,8 +228,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : false
       } ],
       "qualifier" : "$construct",
       "metaTags" : [ ],
@@ -251,8 +251,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : false
       } ],
       "qualifier" : "calc",
       "metaTags" : [ ],
@@ -274,8 +274,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : true
+        "isPure" : true,
+        "isContextFree" : false
       } ],
       "qualifier" : "liagtAufGerade",
       "metaTags" : [ ],
@@ -292,8 +292,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : true
+        "isPure" : true,
+        "isContextFree" : false
       } ],
       "qualifier" : "achsenabschnitt",
       "metaTags" : [ ],
@@ -310,8 +310,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isContextFree" : false,
-        "isPure" : true
+        "isPure" : true,
+        "isContextFree" : false
       } ],
       "qualifier" : "nullstelle",
       "metaTags" : [ ],

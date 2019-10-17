@@ -24,7 +24,7 @@ import org.immutables.value.Generated;
 @NotThreadSafe
 public final class MutableJavaTypeAux implements IJavaTypeAux {
   private @Nullable IJavaDispatchAux dataCastHandler;
-  private @Nullable String className;
+  private @Nullable String mappedClassName;
 
   private MutableJavaTypeAux() {}
 
@@ -46,12 +46,12 @@ public final class MutableJavaTypeAux implements IJavaTypeAux {
   }
 
   /**
-   * @return value of {@code className} attribute, may be {@code null}
+   * @return value of {@code mappedClassName} attribute, may be {@code null}
    */
-  @JsonProperty("className")
+  @JsonProperty("mappedClassName")
   @Override
-  public final @Nullable String getClassName() {
-    return className;
+  public final @Nullable String getMappedClassName() {
+    return mappedClassName;
   }
 
   /**
@@ -61,7 +61,7 @@ public final class MutableJavaTypeAux implements IJavaTypeAux {
   @CanIgnoreReturnValue
   public MutableJavaTypeAux clear() {
     dataCastHandler = null;
-    className = null;
+    mappedClassName = null;
     return this;
   }
 
@@ -82,9 +82,9 @@ public final class MutableJavaTypeAux implements IJavaTypeAux {
     if (dataCastHandlerValue != null) {
       setDataCastHandler(dataCastHandlerValue);
     }
-    @Nullable String classNameValue = instance.getClassName();
-    if (classNameValue != null) {
-      setClassName(classNameValue);
+    @Nullable String mappedClassNameValue = instance.getMappedClassName();
+    if (mappedClassNameValue != null) {
+      setMappedClassName(mappedClassNameValue);
     }
     return this;
   }
@@ -102,9 +102,9 @@ public final class MutableJavaTypeAux implements IJavaTypeAux {
     if (dataCastHandlerValue != null) {
       setDataCastHandler(dataCastHandlerValue);
     }
-    @Nullable String classNameValue = instance.getClassName();
-    if (classNameValue != null) {
-      setClassName(classNameValue);
+    @Nullable String mappedClassNameValue = instance.getMappedClassName();
+    if (mappedClassNameValue != null) {
+      setMappedClassName(mappedClassNameValue);
     }
     return this;
   }
@@ -121,13 +121,13 @@ public final class MutableJavaTypeAux implements IJavaTypeAux {
   }
 
   /**
-   * Assigns a value to the {@link IJavaTypeAux#getClassName() className} attribute.
-   * @param className The value for className, can be {@code null}
+   * Assigns a value to the {@link IJavaTypeAux#getMappedClassName() mappedClassName} attribute.
+   * @param mappedClassName The value for mappedClassName, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableJavaTypeAux setClassName(@Nullable String className) {
-    this.className = className;
+  public MutableJavaTypeAux setMappedClassName(@Nullable String mappedClassName) {
+    this.mappedClassName = mappedClassName;
     return this;
   }
 
@@ -162,18 +162,18 @@ public final class MutableJavaTypeAux implements IJavaTypeAux {
 
   private boolean equalTo(MutableJavaTypeAux another) {
     return Objects.equals(dataCastHandler, another.dataCastHandler)
-        && Objects.equals(className, another.className);
+        && Objects.equals(mappedClassName, another.mappedClassName);
   }
 
   /**
-   * Computes a hash code from attributes: {@code dataCastHandler}, {@code className}.
+   * Computes a hash code from attributes: {@code dataCastHandler}, {@code mappedClassName}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
     h += (h << 5) + Objects.hashCode(dataCastHandler);
-    h += (h << 5) + Objects.hashCode(className);
+    h += (h << 5) + Objects.hashCode(mappedClassName);
     return h;
   }
 
@@ -186,7 +186,7 @@ public final class MutableJavaTypeAux implements IJavaTypeAux {
   public String toString() {
     return MoreObjects.toStringHelper("MutableJavaTypeAux")
         .add("dataCastHandler", getDataCastHandler())
-        .add("className", getClassName())
+        .add("mappedClassName", getMappedClassName())
         .toString();
   }
 }

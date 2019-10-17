@@ -5,7 +5,7 @@ import com.google.common.base.MoreObjects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
-import de.upb.sede.exec.auxiliary.IJavaDispatchAux;
+import de.upb.sede.types.auxiliary.IJavaTypeAux;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +32,7 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   private long initBits = 0x3L;
 
   private String semanticType;
-  private @Nullable IJavaDispatchAux javaAux;
+  private @Nullable IJavaTypeAux javaTypeAux;
   private String qualifier;
   private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
@@ -61,12 +61,12 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   }
 
   /**
-   * @return value of {@code javaAux} attribute, may be {@code null}
+   * @return value of {@code javaTypeAux} attribute, may be {@code null}
    */
-  @JsonProperty("javaAux")
+  @JsonProperty("javaTypeAux")
   @Override
-  public final @Nullable IJavaDispatchAux getJavaAux() {
-    return javaAux;
+  public final @Nullable IJavaTypeAux getJavaTypeAux() {
+    return javaTypeAux;
   }
 
   /**
@@ -118,7 +118,7 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   public MutableDataTypeDesc clear() {
     initBits = 0x3L;
     semanticType = null;
-    javaAux = null;
+    javaTypeAux = null;
     qualifier = null;
     metaTags.clear();
     simpleName = null;
@@ -182,9 +182,9 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
       if (instance.semanticTypeIsSet()) {
         setSemanticType(instance.getSemanticType());
       }
-      @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
-      if (javaAuxValue != null) {
-        setJavaAux(javaAuxValue);
+      @Nullable IJavaTypeAux javaTypeAuxValue = instance.getJavaTypeAux();
+      if (javaTypeAuxValue != null) {
+        setJavaTypeAux(javaTypeAuxValue);
       }
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
@@ -196,9 +196,9 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
     }
     if (object instanceof IDataTypeDesc) {
       IDataTypeDesc instance = (IDataTypeDesc) object;
-      @Nullable IJavaDispatchAux javaAuxValue = instance.getJavaAux();
-      if (javaAuxValue != null) {
-        setJavaAux(javaAuxValue);
+      @Nullable IJavaTypeAux javaTypeAuxValue = instance.getJavaTypeAux();
+      if (javaTypeAuxValue != null) {
+        setJavaTypeAux(javaTypeAuxValue);
       }
       setSemanticType(instance.getSemanticType());
     }
@@ -227,13 +227,13 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   }
 
   /**
-   * Assigns a value to the {@link IDataTypeDesc#getJavaAux() javaAux} attribute.
-   * @param javaAux The value for javaAux, can be {@code null}
+   * Assigns a value to the {@link IDataTypeDesc#getJavaTypeAux() javaTypeAux} attribute.
+   * @param javaTypeAux The value for javaTypeAux, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableDataTypeDesc setJavaAux(@Nullable IJavaDispatchAux javaAux) {
-    this.javaAux = javaAux;
+  public MutableDataTypeDesc setJavaTypeAux(@Nullable IJavaTypeAux javaTypeAux) {
+    this.javaTypeAux = javaTypeAux;
     return this;
   }
 
@@ -456,20 +456,20 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
 
   private boolean equalTo(MutableDataTypeDesc another) {
     return semanticType.equals(another.semanticType)
-        && Objects.equals(javaAux, another.javaAux)
+        && Objects.equals(javaTypeAux, another.javaTypeAux)
         && qualifier.equals(another.qualifier)
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code semanticType}, {@code javaAux}, {@code qualifier}, {@code comments}.
+   * Computes a hash code from attributes: {@code semanticType}, {@code javaTypeAux}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
     h += (h << 5) + semanticType.hashCode();
-    h += (h << 5) + Objects.hashCode(javaAux);
+    h += (h << 5) + Objects.hashCode(javaTypeAux);
     h += (h << 5) + qualifier.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
@@ -484,7 +484,7 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   public String toString() {
     return MoreObjects.toStringHelper("MutableDataTypeDesc")
         .add("semanticType", semanticTypeIsSet() ? getSemanticType() : "?")
-        .add("javaAux", getJavaAux())
+        .add("javaTypeAux", getJavaTypeAux())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
         .add("comments", getComments())
         .toString();

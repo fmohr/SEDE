@@ -2,6 +2,7 @@ package de.upb.sede.param;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import de.upb.sede.IQualifiable;
 import java.util.ArrayList;
@@ -26,11 +27,14 @@ import org.immutables.value.Generated;
 @NotThreadSafe
 public final class MutableCategoryParameter implements ICategoryParameter {
   private static final long INIT_BIT_QUALIFIER = 0x1L;
+  private static final long OPT_BIT_IS_OPTIONAL = 0x1L;
   private long initBits = 0x1L;
+  private long optBits;
 
   private @Nullable String defaultValue;
   private final ArrayList<String> categories = new ArrayList<String>();
   private String paramType;
+  private boolean isOptional;
   private String qualifier;
   private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
@@ -75,6 +79,17 @@ public final class MutableCategoryParameter implements ICategoryParameter {
   }
 
   /**
+   * @return assigned or, otherwise, newly computed, not cached value of {@code isOptional} attribute
+   */
+  @JsonProperty("isOptional")
+  @Override
+  public final boolean isOptional() {
+    return isOptionalIsSet()
+        ? isOptional
+        : ICategoryParameter.super.isOptional();
+  }
+
+  /**
    * @return value of {@code qualifier} attribute
    */
   @JsonProperty("qualifier")
@@ -113,9 +128,11 @@ public final class MutableCategoryParameter implements ICategoryParameter {
   @CanIgnoreReturnValue
   public MutableCategoryParameter clear() {
     initBits = 0x1L;
+    optBits = 0;
     defaultValue = null;
     categories.clear();
     paramType = null;
+    isOptional = false;
     qualifier = null;
     metaTags.clear();
     simpleName = null;
@@ -181,6 +198,7 @@ public final class MutableCategoryParameter implements ICategoryParameter {
       }
       addAllCategories(instance.getCategories());
       setParamType(instance.getParamType());
+      setIsOptional(instance.isOptional());
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
@@ -191,6 +209,7 @@ public final class MutableCategoryParameter implements ICategoryParameter {
     if (object instanceof IParameter) {
       IParameter instance = (IParameter) object;
       setParamType(instance.getParamType());
+      setIsOptional(instance.isOptional());
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
@@ -282,6 +301,19 @@ public final class MutableCategoryParameter implements ICategoryParameter {
   }
 
   /**
+   * Assigns a value to the {@link ICategoryParameter#isOptional() isOptional} attribute.
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link ICategoryParameter#isOptional() isOptional}.</em>
+   * @param isOptional The value for isOptional
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableCategoryParameter setIsOptional(boolean isOptional) {
+    this.isOptional = isOptional;
+    optBits |= OPT_BIT_IS_OPTIONAL;
+    return this;
+  }
+
+  /**
    * Assigns a value to the {@link ICategoryParameter#getQualifier() qualifier} attribute.
    * @param qualifier The value for qualifier
    * @return {@code this} for use in a chained invocation
@@ -364,6 +396,14 @@ public final class MutableCategoryParameter implements ICategoryParameter {
   }
 
   /**
+   * Returns {@code true} if the default attribute {@link ICategoryParameter#isOptional() isOptional} is set.
+   * @return {@code true} if set
+   */
+  public final boolean isOptionalIsSet() {
+    return (optBits & OPT_BIT_IS_OPTIONAL) != 0;
+  }
+
+  /**
    * Returns {@code true} if the default attribute {@link ICategoryParameter#getParamType() paramType} is set.
    * @return {@code true} if set
    */
@@ -388,6 +428,16 @@ public final class MutableCategoryParameter implements ICategoryParameter {
   public final MutableCategoryParameter unsetQualifier() {
     initBits |= INIT_BIT_QUALIFIER;
     qualifier = null;
+    return this;
+  }
+  /**
+   * Reset an attribute to its initial value.
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableCategoryParameter unsetIsOptional() {
+    optBits |= 0;
+    isOptional = false;
     return this;
   }
 
@@ -438,14 +488,16 @@ public final class MutableCategoryParameter implements ICategoryParameter {
 
   private boolean equalTo(MutableCategoryParameter another) {
     String paramType = getParamType();
+    boolean isOptional = isOptional();
     return Objects.equals(defaultValue, another.defaultValue)
         && categories.equals(another.categories)
         && paramType.equals(another.getParamType())
+        && isOptional == another.isOptional()
         && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code defaultValue}, {@code categories}, {@code paramType}, {@code qualifier}.
+   * Computes a hash code from attributes: {@code defaultValue}, {@code categories}, {@code paramType}, {@code isOptional}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -455,6 +507,8 @@ public final class MutableCategoryParameter implements ICategoryParameter {
     h += (h << 5) + categories.hashCode();
     String paramType = getParamType();
     h += (h << 5) + paramType.hashCode();
+    boolean isOptional = isOptional();
+    h += (h << 5) + Booleans.hashCode(isOptional);
     h += (h << 5) + qualifier.hashCode();
     return h;
   }
@@ -470,6 +524,7 @@ public final class MutableCategoryParameter implements ICategoryParameter {
         .add("defaultValue", getDefaultValue())
         .add("categories", getCategories())
         .add("paramType", getParamType())
+        .add("isOptional", isOptional())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
         .toString();
   }

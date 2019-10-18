@@ -12,7 +12,6 @@ import javax.annotation.Nullable;
 @JsonDeserialize(builder = NumericParameter.Builder.class)
 public interface INumericParameter extends IParameter{
 
-
     @Value.Default
     default boolean isInteger() {
         return false;
@@ -25,7 +24,7 @@ public interface INumericParameter extends IParameter{
     Double getMax();
 
     @Nullable
-    Integer getRefineSplits();
+    Integer getSplitsRefined();
 
     @Nullable
     Integer getMinInterval();

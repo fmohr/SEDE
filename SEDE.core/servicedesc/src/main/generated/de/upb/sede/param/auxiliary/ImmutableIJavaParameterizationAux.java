@@ -217,7 +217,7 @@ public final class ImmutableIJavaParameterizationAux
    */
   @JsonProperty("dispatchAux")
   @Override
-  public @Nullable IJavaDispatchAux getDispatchAux() {
+  public @Nullable IJavaDispatchAux getParameterHandler() {
     return dispatchAux;
   }
 
@@ -291,7 +291,7 @@ public final class ImmutableIJavaParameterizationAux
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IJavaParameterizationAux#getDispatchAux() dispatchAux} attribute.
+   * Copy the current immutable object by setting a value for the {@link IJavaParameterizationAux#getParameterHandler() dispatchAux} attribute.
    * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for dispatchAux (can be {@code null})
    * @return A modified copy of the {@code this} object
@@ -520,7 +520,7 @@ public final class ImmutableIJavaParameterizationAux
    * Creates a builder for {@link ImmutableIJavaParameterizationAux ImmutableIJavaParameterizationAux}.
    * <pre>
    * ImmutableIJavaParameterizationAux.builder()
-   *    .dispatchAux(de.upb.sede.exec.auxiliary.IJavaDispatchAux | null) // nullable {@link IJavaParameterizationAux#getDispatchAux() dispatchAux}
+   *    .dispatchAux(de.upb.sede.exec.auxiliary.IJavaDispatchAux | null) // nullable {@link IJavaParameterizationAux#getParameterHandler() dispatchAux}
    *    .autoScanEachParam(boolean) // optional {@link IJavaParameterizationAux#getAutoScanEachParam() autoScanEachParam}
    *    .bundleInMap(boolean) // optional {@link IJavaParameterizationAux#getBundleInMap() bundleInMap}
    *    .bundleInArray(boolean) // optional {@link IJavaParameterizationAux#getBundleInArray() bundleInArray}
@@ -568,10 +568,10 @@ public final class ImmutableIJavaParameterizationAux
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     public final Builder from(ModifiableIJavaParameterizationAux instance) {
       Objects.requireNonNull(instance, "instance");
-      @Nullable IJavaDispatchAux dispatchAuxValue = instance.getDispatchAux();
+      @Nullable IJavaDispatchAux dispatchAuxValue = instance.getParameterHandler();
       if (dispatchAuxValue != null) {
         dispatchAux(dispatchAuxValue);
       }
@@ -595,13 +595,13 @@ public final class ImmutableIJavaParameterizationAux
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     public final Builder from(IJavaParameterizationAux instance) {
       Objects.requireNonNull(instance, "instance");
       if (instance instanceof ModifiableIJavaParameterizationAux) {
         return from((ModifiableIJavaParameterizationAux) instance);
       }
-      @Nullable IJavaDispatchAux dispatchAuxValue = instance.getDispatchAux();
+      @Nullable IJavaDispatchAux dispatchAuxValue = instance.getParameterHandler();
       if (dispatchAuxValue != null) {
         dispatchAux(dispatchAuxValue);
       }
@@ -618,11 +618,11 @@ public final class ImmutableIJavaParameterizationAux
     }
 
     /**
-     * Initializes the value for the {@link IJavaParameterizationAux#getDispatchAux() dispatchAux} attribute.
+     * Initializes the value for the {@link IJavaParameterizationAux#getParameterHandler() dispatchAux} attribute.
      * @param dispatchAux The value for dispatchAux (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("dispatchAux")
     public final Builder dispatchAux(@Nullable IJavaDispatchAux dispatchAux) {
       this.dispatchAux = dispatchAux;
@@ -632,10 +632,10 @@ public final class ImmutableIJavaParameterizationAux
     /**
      * Initializes the value for the {@link IJavaParameterizationAux#getAutoScanEachParam() autoScanEachParam} attribute.
      * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IJavaParameterizationAux#getAutoScanEachParam() autoScanEachParam}.</em>
-     * @param autoScanEachParam The value for autoScanEachParam 
+     * @param autoScanEachParam The value for autoScanEachParam
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("autoScanEachParam")
     public final Builder autoScanEachParam(boolean autoScanEachParam) {
       this.autoScanEachParam = autoScanEachParam;
@@ -646,10 +646,10 @@ public final class ImmutableIJavaParameterizationAux
     /**
      * Initializes the value for the {@link IJavaParameterizationAux#getBundleInMap() bundleInMap} attribute.
      * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IJavaParameterizationAux#getBundleInMap() bundleInMap}.</em>
-     * @param bundleInMap The value for bundleInMap 
+     * @param bundleInMap The value for bundleInMap
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("bundleInMap")
     public final Builder bundleInMap(boolean bundleInMap) {
       this.bundleInMap = bundleInMap;
@@ -660,10 +660,10 @@ public final class ImmutableIJavaParameterizationAux
     /**
      * Initializes the value for the {@link IJavaParameterizationAux#getBundleInArray() bundleInArray} attribute.
      * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IJavaParameterizationAux#getBundleInArray() bundleInArray}.</em>
-     * @param bundleInArray The value for bundleInArray 
+     * @param bundleInArray The value for bundleInArray
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("bundleInArray")
     public final Builder bundleInArray(boolean bundleInArray) {
       this.bundleInArray = bundleInArray;
@@ -674,10 +674,10 @@ public final class ImmutableIJavaParameterizationAux
     /**
      * Initializes the value for the {@link IJavaParameterizationAux#getBundleInList() bundleInList} attribute.
      * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IJavaParameterizationAux#getBundleInList() bundleInList}.</em>
-     * @param bundleInList The value for bundleInList 
+     * @param bundleInList The value for bundleInList
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("bundleInList")
     public final Builder bundleInList(boolean bundleInList) {
       this.bundleInList = bundleInList;
@@ -688,10 +688,10 @@ public final class ImmutableIJavaParameterizationAux
     /**
      * Initializes the value for the {@link IJavaParameterizationAux#getPrecedeParamsWithNames() precedeParamsWithNames} attribute.
      * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IJavaParameterizationAux#getPrecedeParamsWithNames() precedeParamsWithNames}.</em>
-     * @param precedeParamsWithNames The value for precedeParamsWithNames 
+     * @param precedeParamsWithNames The value for precedeParamsWithNames
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("precedeParamsWithNames")
     public final Builder precedeParamsWithNames(boolean precedeParamsWithNames) {
       this.precedeParamsWithNames = precedeParamsWithNames;
@@ -704,7 +704,7 @@ public final class ImmutableIJavaParameterizationAux
      * @param element A paramOrder element
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     public final Builder addParamOrder(String element) {
       if (this.paramOrder == null) {
         this.paramOrder = ImmutableList.builder();
@@ -718,7 +718,7 @@ public final class ImmutableIJavaParameterizationAux
      * @param elements An array of paramOrder elements
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     public final Builder addParamOrder(String... elements) {
       if (this.paramOrder == null) {
         this.paramOrder = ImmutableList.builder();
@@ -733,7 +733,7 @@ public final class ImmutableIJavaParameterizationAux
      * @param elements An iterable of paramOrder elements
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("paramOrder")
     public final Builder paramOrder(@Nullable Iterable<String> elements) {
       if (elements == null) {
@@ -749,7 +749,7 @@ public final class ImmutableIJavaParameterizationAux
      * @param elements An iterable of paramOrder elements
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     public final Builder addAllParamOrder(Iterable<String> elements) {
       Objects.requireNonNull(elements, "paramOrder element");
       if (this.paramOrder == null) {

@@ -36,10 +36,11 @@ public final class NumericParameter implements INumericParameter {
   private final boolean isInteger;
   private final @Nullable Double min;
   private final @Nullable Double max;
-  private final @Nullable Integer refineSplits;
+  private final @Nullable Integer splitsRefined;
   private final @Nullable Integer minInterval;
   private final @Nullable Double defaultValue;
   private final String paramType;
+  private final boolean isOptional;
   private final String qualifier;
   private final ImmutableList<String> metaTags;
   private final String simpleName;
@@ -47,7 +48,7 @@ public final class NumericParameter implements INumericParameter {
   private NumericParameter(NumericParameter.Builder builder) {
     this.min = builder.min;
     this.max = builder.max;
-    this.refineSplits = builder.refineSplits;
+    this.splitsRefined = builder.splitsRefined;
     this.minInterval = builder.minInterval;
     this.defaultValue = builder.defaultValue;
     this.qualifier = builder.qualifier;
@@ -58,11 +59,15 @@ public final class NumericParameter implements INumericParameter {
     if (builder.paramType != null) {
       initShim.paramType(builder.paramType);
     }
+    if (builder.isOptionalIsSet()) {
+      initShim.isOptional(builder.isOptional);
+    }
     if (builder.simpleName != null) {
       initShim.simpleName(builder.simpleName);
     }
     this.isInteger = initShim.isInteger();
     this.paramType = initShim.getParamType();
+    this.isOptional = initShim.isOptional();
     this.simpleName = initShim.getSimpleName();
     this.initShim = null;
   }
@@ -71,20 +76,22 @@ public final class NumericParameter implements INumericParameter {
       boolean isInteger,
       @Nullable Double min,
       @Nullable Double max,
-      @Nullable Integer refineSplits,
+      @Nullable Integer splitsRefined,
       @Nullable Integer minInterval,
       @Nullable Double defaultValue,
       String paramType,
+      boolean isOptional,
       String qualifier,
       ImmutableList<String> metaTags,
       String simpleName) {
     this.isInteger = isInteger;
     this.min = min;
     this.max = max;
-    this.refineSplits = refineSplits;
+    this.splitsRefined = splitsRefined;
     this.minInterval = minInterval;
     this.defaultValue = defaultValue;
     this.paramType = paramType;
+    this.isOptional = isOptional;
     this.qualifier = qualifier;
     this.metaTags = metaTags;
     this.simpleName = simpleName;
@@ -135,6 +142,24 @@ public final class NumericParameter implements INumericParameter {
       paramTypeBuildStage = STAGE_INITIALIZED;
     }
 
+    private byte isOptionalBuildStage = STAGE_UNINITIALIZED;
+    private boolean isOptional;
+
+    boolean isOptional() {
+      if (isOptionalBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
+      if (isOptionalBuildStage == STAGE_UNINITIALIZED) {
+        isOptionalBuildStage = STAGE_INITIALIZING;
+        this.isOptional = isOptionalInitialize();
+        isOptionalBuildStage = STAGE_INITIALIZED;
+      }
+      return this.isOptional;
+    }
+
+    void isOptional(boolean isOptional) {
+      this.isOptional = isOptional;
+      isOptionalBuildStage = STAGE_INITIALIZED;
+    }
+
     private byte simpleNameBuildStage = STAGE_UNINITIALIZED;
     private String simpleName;
 
@@ -157,6 +182,7 @@ public final class NumericParameter implements INumericParameter {
       List<String> attributes = new ArrayList<>();
       if (isIntegerBuildStage == STAGE_INITIALIZING) attributes.add("isInteger");
       if (paramTypeBuildStage == STAGE_INITIALIZING) attributes.add("paramType");
+      if (isOptionalBuildStage == STAGE_INITIALIZING) attributes.add("isOptional");
       if (simpleNameBuildStage == STAGE_INITIALIZING) attributes.add("simpleName");
       return "Cannot build NumericParameter, attribute initializers form cycle " + attributes;
     }
@@ -168,6 +194,10 @@ public final class NumericParameter implements INumericParameter {
 
   private String getParamTypeInitialize() {
     return INumericParameter.super.getParamType();
+  }
+
+  private boolean isOptionalInitialize() {
+    return INumericParameter.super.isOptional();
   }
 
   private String getSimpleNameInitialize() {
@@ -205,12 +235,12 @@ public final class NumericParameter implements INumericParameter {
   }
 
   /**
-   * @return The value of the {@code refineSplits} attribute
+   * @return The value of the {@code splitsRefined} attribute
    */
-  @JsonProperty("refineSplits")
+  @JsonProperty("splitsRefined")
   @Override
-  public @Nullable Integer getRefineSplits() {
-    return refineSplits;
+  public @Nullable Integer getSplitsRefined() {
+    return splitsRefined;
   }
 
   /**
@@ -241,6 +271,18 @@ public final class NumericParameter implements INumericParameter {
     return shim != null
         ? shim.getParamType()
         : this.paramType;
+  }
+
+  /**
+   * @return The value of the {@code isOptional} attribute
+   */
+  @JsonProperty("isOptional")
+  @Override
+  public boolean isOptional() {
+    InitShim shim = this.initShim;
+    return shim != null
+        ? shim.isOptional()
+        : this.isOptional;
   }
 
   /**
@@ -285,10 +327,11 @@ public final class NumericParameter implements INumericParameter {
         value,
         this.min,
         this.max,
-        this.refineSplits,
+        this.splitsRefined,
         this.minInterval,
         this.defaultValue,
         this.paramType,
+        this.isOptional,
         this.qualifier,
         this.metaTags,
         this.simpleName);
@@ -306,10 +349,11 @@ public final class NumericParameter implements INumericParameter {
         this.isInteger,
         value,
         this.max,
-        this.refineSplits,
+        this.splitsRefined,
         this.minInterval,
         this.defaultValue,
         this.paramType,
+        this.isOptional,
         this.qualifier,
         this.metaTags,
         this.simpleName);
@@ -327,23 +371,24 @@ public final class NumericParameter implements INumericParameter {
         this.isInteger,
         this.min,
         value,
-        this.refineSplits,
+        this.splitsRefined,
         this.minInterval,
         this.defaultValue,
         this.paramType,
+        this.isOptional,
         this.qualifier,
         this.metaTags,
         this.simpleName);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link INumericParameter#getRefineSplits() refineSplits} attribute.
+   * Copy the current immutable object by setting a value for the {@link INumericParameter#getSplitsRefined() splitsRefined} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for refineSplits (can be {@code null})
+   * @param value A new value for splitsRefined (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final NumericParameter withRefineSplits(@Nullable Integer value) {
-    if (Objects.equals(this.refineSplits, value)) return this;
+  public final NumericParameter withSplitsRefined(@Nullable Integer value) {
+    if (Objects.equals(this.splitsRefined, value)) return this;
     return new NumericParameter(
         this.isInteger,
         this.min,
@@ -352,6 +397,7 @@ public final class NumericParameter implements INumericParameter {
         this.minInterval,
         this.defaultValue,
         this.paramType,
+        this.isOptional,
         this.qualifier,
         this.metaTags,
         this.simpleName);
@@ -369,10 +415,11 @@ public final class NumericParameter implements INumericParameter {
         this.isInteger,
         this.min,
         this.max,
-        this.refineSplits,
+        this.splitsRefined,
         value,
         this.defaultValue,
         this.paramType,
+        this.isOptional,
         this.qualifier,
         this.metaTags,
         this.simpleName);
@@ -390,10 +437,11 @@ public final class NumericParameter implements INumericParameter {
         this.isInteger,
         this.min,
         this.max,
-        this.refineSplits,
+        this.splitsRefined,
         this.minInterval,
         value,
         this.paramType,
+        this.isOptional,
         this.qualifier,
         this.metaTags,
         this.simpleName);
@@ -412,10 +460,33 @@ public final class NumericParameter implements INumericParameter {
         this.isInteger,
         this.min,
         this.max,
-        this.refineSplits,
+        this.splitsRefined,
         this.minInterval,
         this.defaultValue,
         newValue,
+        this.isOptional,
+        this.qualifier,
+        this.metaTags,
+        this.simpleName);
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link INumericParameter#isOptional() isOptional} attribute.
+   * A value equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for isOptional
+   * @return A modified copy of the {@code this} object
+   */
+  public final NumericParameter withIsOptional(boolean value) {
+    if (this.isOptional == value) return this;
+    return new NumericParameter(
+        this.isInteger,
+        this.min,
+        this.max,
+        this.splitsRefined,
+        this.minInterval,
+        this.defaultValue,
+        this.paramType,
+        value,
         this.qualifier,
         this.metaTags,
         this.simpleName);
@@ -434,10 +505,11 @@ public final class NumericParameter implements INumericParameter {
         this.isInteger,
         this.min,
         this.max,
-        this.refineSplits,
+        this.splitsRefined,
         this.minInterval,
         this.defaultValue,
         this.paramType,
+        this.isOptional,
         newValue,
         this.metaTags,
         this.simpleName);
@@ -454,10 +526,11 @@ public final class NumericParameter implements INumericParameter {
         this.isInteger,
         this.min,
         this.max,
-        this.refineSplits,
+        this.splitsRefined,
         this.minInterval,
         this.defaultValue,
         this.paramType,
+        this.isOptional,
         this.qualifier,
         newValue,
         this.simpleName);
@@ -476,10 +549,11 @@ public final class NumericParameter implements INumericParameter {
         this.isInteger,
         this.min,
         this.max,
-        this.refineSplits,
+        this.splitsRefined,
         this.minInterval,
         this.defaultValue,
         this.paramType,
+        this.isOptional,
         this.qualifier,
         newValue,
         this.simpleName);
@@ -498,10 +572,11 @@ public final class NumericParameter implements INumericParameter {
         this.isInteger,
         this.min,
         this.max,
-        this.refineSplits,
+        this.splitsRefined,
         this.minInterval,
         this.defaultValue,
         this.paramType,
+        this.isOptional,
         this.qualifier,
         this.metaTags,
         newValue);
@@ -522,15 +597,16 @@ public final class NumericParameter implements INumericParameter {
     return isInteger == another.isInteger
         && Objects.equals(min, another.min)
         && Objects.equals(max, another.max)
-        && Objects.equals(refineSplits, another.refineSplits)
+        && Objects.equals(splitsRefined, another.splitsRefined)
         && Objects.equals(minInterval, another.minInterval)
         && Objects.equals(defaultValue, another.defaultValue)
         && paramType.equals(another.paramType)
+        && isOptional == another.isOptional
         && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code isInteger}, {@code min}, {@code max}, {@code refineSplits}, {@code minInterval}, {@code defaultValue}, {@code paramType}, {@code qualifier}.
+   * Computes a hash code from attributes: {@code isInteger}, {@code min}, {@code max}, {@code splitsRefined}, {@code minInterval}, {@code defaultValue}, {@code paramType}, {@code isOptional}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -539,10 +615,11 @@ public final class NumericParameter implements INumericParameter {
     h += (h << 5) + Booleans.hashCode(isInteger);
     h += (h << 5) + Objects.hashCode(min);
     h += (h << 5) + Objects.hashCode(max);
-    h += (h << 5) + Objects.hashCode(refineSplits);
+    h += (h << 5) + Objects.hashCode(splitsRefined);
     h += (h << 5) + Objects.hashCode(minInterval);
     h += (h << 5) + Objects.hashCode(defaultValue);
     h += (h << 5) + paramType.hashCode();
+    h += (h << 5) + Booleans.hashCode(isOptional);
     h += (h << 5) + qualifier.hashCode();
     return h;
   }
@@ -558,10 +635,11 @@ public final class NumericParameter implements INumericParameter {
         .add("isInteger", isInteger)
         .add("min", min)
         .add("max", max)
-        .add("refineSplits", refineSplits)
+        .add("splitsRefined", splitsRefined)
         .add("minInterval", minInterval)
         .add("defaultValue", defaultValue)
         .add("paramType", paramType)
+        .add("isOptional", isOptional)
         .add("qualifier", qualifier)
         .toString();
   }
@@ -580,10 +658,12 @@ public final class NumericParameter implements INumericParameter {
     boolean isIntegerIsSet;
     @Nullable Double min;
     @Nullable Double max;
-    @Nullable Integer refineSplits;
+    @Nullable Integer splitsRefined;
     @Nullable Integer minInterval;
     @Nullable Double defaultValue;
     @Nullable String paramType;
+    boolean isOptional;
+    boolean isOptionalIsSet;
     @Nullable String qualifier;
     @Nullable List<String> metaTags = ImmutableList.of();
     @Nullable String simpleName;
@@ -600,9 +680,9 @@ public final class NumericParameter implements INumericParameter {
     public void setMax(@Nullable Double max) {
       this.max = max;
     }
-    @JsonProperty("refineSplits")
-    public void setRefineSplits(@Nullable Integer refineSplits) {
-      this.refineSplits = refineSplits;
+    @JsonProperty("splitsRefined")
+    public void setSplitsRefined(@Nullable Integer splitsRefined) {
+      this.splitsRefined = splitsRefined;
     }
     @JsonProperty("minInterval")
     public void setMinInterval(@Nullable Integer minInterval) {
@@ -615,6 +695,11 @@ public final class NumericParameter implements INumericParameter {
     @JsonProperty("paramType")
     public void setParamType(String paramType) {
       this.paramType = paramType;
+    }
+    @JsonProperty("isOptional")
+    public void setIsOptional(boolean isOptional) {
+      this.isOptional = isOptional;
+      this.isOptionalIsSet = true;
     }
     @JsonProperty("qualifier")
     public void setQualifier(String qualifier) {
@@ -635,13 +720,15 @@ public final class NumericParameter implements INumericParameter {
     @Override
     public Double getMax() { throw new UnsupportedOperationException(); }
     @Override
-    public Integer getRefineSplits() { throw new UnsupportedOperationException(); }
+    public Integer getSplitsRefined() { throw new UnsupportedOperationException(); }
     @Override
     public Integer getMinInterval() { throw new UnsupportedOperationException(); }
     @Override
     public Double getDefaultValue() { throw new UnsupportedOperationException(); }
     @Override
     public String getParamType() { throw new UnsupportedOperationException(); }
+    @Override
+    public boolean isOptional() { throw new UnsupportedOperationException(); }
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
     @Override
@@ -668,8 +755,8 @@ public final class NumericParameter implements INumericParameter {
     if (json.max != null) {
       builder.max(json.max);
     }
-    if (json.refineSplits != null) {
-      builder.refineSplits(json.refineSplits);
+    if (json.splitsRefined != null) {
+      builder.splitsRefined(json.splitsRefined);
     }
     if (json.minInterval != null) {
       builder.minInterval(json.minInterval);
@@ -679,6 +766,9 @@ public final class NumericParameter implements INumericParameter {
     }
     if (json.paramType != null) {
       builder.paramType(json.paramType);
+    }
+    if (json.isOptionalIsSet) {
+      builder.isOptional(json.isOptional);
     }
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
@@ -715,10 +805,11 @@ public final class NumericParameter implements INumericParameter {
    *    .isInteger(boolean) // optional {@link INumericParameter#isInteger() isInteger}
    *    .min(Double | null) // nullable {@link INumericParameter#getMin() min}
    *    .max(Double | null) // nullable {@link INumericParameter#getMax() max}
-   *    .refineSplits(Integer | null) // nullable {@link INumericParameter#getRefineSplits() refineSplits}
+   *    .splitsRefined(Integer | null) // nullable {@link INumericParameter#getSplitsRefined() splitsRefined}
    *    .minInterval(Integer | null) // nullable {@link INumericParameter#getMinInterval() minInterval}
    *    .defaultValue(Double | null) // nullable {@link INumericParameter#getDefaultValue() defaultValue}
    *    .paramType(String) // optional {@link INumericParameter#getParamType() paramType}
+   *    .isOptional(boolean) // optional {@link INumericParameter#isOptional() isOptional}
    *    .qualifier(String) // required {@link INumericParameter#getQualifier() qualifier}
    *    .addMetaTags|addAllMetaTags(String) // {@link INumericParameter#getMetaTags() metaTags} elements
    *    .simpleName(String) // optional {@link INumericParameter#getSimpleName() simpleName}
@@ -742,16 +833,18 @@ public final class NumericParameter implements INumericParameter {
   public static final class Builder {
     private static final long INIT_BIT_QUALIFIER = 0x1L;
     private static final long OPT_BIT_IS_INTEGER = 0x1L;
+    private static final long OPT_BIT_IS_OPTIONAL = 0x2L;
     private long initBits = 0x1L;
     private long optBits;
 
     private boolean isInteger;
     private @Nullable Double min;
     private @Nullable Double max;
-    private @Nullable Integer refineSplits;
+    private @Nullable Integer splitsRefined;
     private @Nullable Integer minInterval;
     private @Nullable Double defaultValue;
     private @Nullable String paramType;
+    private boolean isOptional;
     private @Nullable String qualifier;
     private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
     private @Nullable String simpleName;
@@ -776,9 +869,9 @@ public final class NumericParameter implements INumericParameter {
       if (maxValue != null) {
         max(maxValue);
       }
-      @Nullable Integer refineSplitsValue = instance.getRefineSplits();
-      if (refineSplitsValue != null) {
-        refineSplits(refineSplitsValue);
+      @Nullable Integer splitsRefinedValue = instance.getSplitsRefined();
+      if (splitsRefinedValue != null) {
+        splitsRefined(splitsRefinedValue);
       }
       @Nullable Integer minIntervalValue = instance.getMinInterval();
       if (minIntervalValue != null) {
@@ -789,6 +882,7 @@ public final class NumericParameter implements INumericParameter {
         defaultValue(defaultValueValue);
       }
       paramType(instance.getParamType());
+      isOptional(instance.isOptional());
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
@@ -840,6 +934,10 @@ public final class NumericParameter implements INumericParameter {
       }
       if (object instanceof INumericParameter) {
         INumericParameter instance = (INumericParameter) object;
+        @Nullable Integer splitsRefinedValue = instance.getSplitsRefined();
+        if (splitsRefinedValue != null) {
+          splitsRefined(splitsRefinedValue);
+        }
         isInteger(instance.isInteger());
         @Nullable Double minValue = instance.getMin();
         if (minValue != null) {
@@ -848,10 +946,6 @@ public final class NumericParameter implements INumericParameter {
         @Nullable Double maxValue = instance.getMax();
         if (maxValue != null) {
           max(maxValue);
-        }
-        @Nullable Integer refineSplitsValue = instance.getRefineSplits();
-        if (refineSplitsValue != null) {
-          refineSplits(refineSplitsValue);
         }
         @Nullable Integer minIntervalValue = instance.getMinInterval();
         if (minIntervalValue != null) {
@@ -865,6 +959,7 @@ public final class NumericParameter implements INumericParameter {
       if (object instanceof IParameter) {
         IParameter instance = (IParameter) object;
         paramType(instance.getParamType());
+        isOptional(instance.isOptional());
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
@@ -913,14 +1008,14 @@ public final class NumericParameter implements INumericParameter {
     }
 
     /**
-     * Initializes the value for the {@link INumericParameter#getRefineSplits() refineSplits} attribute.
-     * @param refineSplits The value for refineSplits (can be {@code null})
+     * Initializes the value for the {@link INumericParameter#getSplitsRefined() splitsRefined} attribute.
+     * @param splitsRefined The value for splitsRefined (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    @JsonProperty("refineSplits")
-    public final Builder refineSplits(@Nullable Integer refineSplits) {
-      this.refineSplits = refineSplits;
+    @JsonProperty("splitsRefined")
+    public final Builder splitsRefined(@Nullable Integer splitsRefined) {
+      this.splitsRefined = splitsRefined;
       return this;
     }
 
@@ -958,6 +1053,20 @@ public final class NumericParameter implements INumericParameter {
     @JsonProperty("paramType")
     public final Builder paramType(String paramType) {
       this.paramType = Objects.requireNonNull(paramType, "paramType");
+      return this;
+    }
+
+    /**
+     * Initializes the value for the {@link INumericParameter#isOptional() isOptional} attribute.
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link INumericParameter#isOptional() isOptional}.</em>
+     * @param isOptional The value for isOptional 
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("isOptional")
+    public final Builder isOptional(boolean isOptional) {
+      this.isOptional = isOptional;
+      optBits |= OPT_BIT_IS_OPTIONAL;
       return this;
     }
 
@@ -1047,6 +1156,10 @@ public final class NumericParameter implements INumericParameter {
 
     private boolean isIntegerIsSet() {
       return (optBits & OPT_BIT_IS_INTEGER) != 0;
+    }
+
+    private boolean isOptionalIsSet() {
+      return (optBits & OPT_BIT_IS_OPTIONAL) != 0;
     }
 
     private String formatRequiredAttributesMessage() {

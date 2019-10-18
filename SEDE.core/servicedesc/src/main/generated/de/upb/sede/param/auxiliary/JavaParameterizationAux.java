@@ -33,7 +33,7 @@ import org.immutables.value.Generated;
 @Immutable
 @CheckReturnValue
 public final class JavaParameterizationAux implements IJavaParameterizationAux {
-  private final @Nullable IJavaDispatchAux dispatchAux;
+  private final @Nullable IJavaDispatchAux parameterHandler;
   private final boolean autoScanEachParam;
   private final boolean bundleInMap;
   private final boolean bundleInArray;
@@ -42,7 +42,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   private final @Nullable ImmutableList<String> paramOrder;
 
   private JavaParameterizationAux(JavaParameterizationAux.Builder builder) {
-    this.dispatchAux = builder.dispatchAux;
+    this.parameterHandler = builder.parameterHandler;
     this.paramOrder = builder.paramOrder == null ? null : builder.paramOrder.build();
     if (builder.autoScanEachParamIsSet()) {
       initShim.autoScanEachParam(builder.autoScanEachParam);
@@ -68,14 +68,14 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   }
 
   private JavaParameterizationAux(
-      @Nullable IJavaDispatchAux dispatchAux,
+      @Nullable IJavaDispatchAux parameterHandler,
       boolean autoScanEachParam,
       boolean bundleInMap,
       boolean bundleInArray,
       boolean bundleInList,
       boolean precedeParamsWithNames,
       @Nullable ImmutableList<String> paramOrder) {
-    this.dispatchAux = dispatchAux;
+    this.parameterHandler = parameterHandler;
     this.autoScanEachParam = autoScanEachParam;
     this.bundleInMap = bundleInMap;
     this.bundleInArray = bundleInArray;
@@ -215,12 +215,12 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   }
 
   /**
-   * @return The value of the {@code dispatchAux} attribute
+   * @return The value of the {@code parameterHandler} attribute
    */
-  @JsonProperty("dispatchAux")
+  @JsonProperty("parameterHandler")
   @Override
-  public @Nullable IJavaDispatchAux getDispatchAux() {
-    return dispatchAux;
+  public @Nullable IJavaDispatchAux getParameterHandler() {
+    return parameterHandler;
   }
 
   /**
@@ -293,13 +293,13 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IJavaParameterizationAux#getDispatchAux() dispatchAux} attribute.
+   * Copy the current immutable object by setting a value for the {@link IJavaParameterizationAux#getParameterHandler() parameterHandler} attribute.
    * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for dispatchAux (can be {@code null})
+   * @param value A new value for parameterHandler (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final JavaParameterizationAux withDispatchAux(@Nullable IJavaDispatchAux value) {
-    if (this.dispatchAux == value) return this;
+  public final JavaParameterizationAux withParameterHandler(@Nullable IJavaDispatchAux value) {
+    if (this.parameterHandler == value) return this;
     return new JavaParameterizationAux(
         value,
         this.autoScanEachParam,
@@ -319,7 +319,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   public final JavaParameterizationAux withAutoScanEachParam(boolean value) {
     if (this.autoScanEachParam == value) return this;
     return new JavaParameterizationAux(
-        this.dispatchAux,
+        this.parameterHandler,
         value,
         this.bundleInMap,
         this.bundleInArray,
@@ -337,7 +337,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   public final JavaParameterizationAux withBundleInMap(boolean value) {
     if (this.bundleInMap == value) return this;
     return new JavaParameterizationAux(
-        this.dispatchAux,
+        this.parameterHandler,
         this.autoScanEachParam,
         value,
         this.bundleInArray,
@@ -355,7 +355,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   public final JavaParameterizationAux withBundleInArray(boolean value) {
     if (this.bundleInArray == value) return this;
     return new JavaParameterizationAux(
-        this.dispatchAux,
+        this.parameterHandler,
         this.autoScanEachParam,
         this.bundleInMap,
         value,
@@ -373,7 +373,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   public final JavaParameterizationAux withBundleInList(boolean value) {
     if (this.bundleInList == value) return this;
     return new JavaParameterizationAux(
-        this.dispatchAux,
+        this.parameterHandler,
         this.autoScanEachParam,
         this.bundleInMap,
         this.bundleInArray,
@@ -391,7 +391,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   public final JavaParameterizationAux withPrecedeParamsWithNames(boolean value) {
     if (this.precedeParamsWithNames == value) return this;
     return new JavaParameterizationAux(
-        this.dispatchAux,
+        this.parameterHandler,
         this.autoScanEachParam,
         this.bundleInMap,
         this.bundleInArray,
@@ -408,7 +408,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   public final JavaParameterizationAux withParamOrder(@Nullable String... elements) {
     if (elements == null) {
       return new JavaParameterizationAux(
-          this.dispatchAux,
+          this.parameterHandler,
           this.autoScanEachParam,
           this.bundleInMap,
           this.bundleInArray,
@@ -418,7 +418,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
     }
     @Nullable ImmutableList<String> newValue = elements == null ? null : ImmutableList.copyOf(elements);
     return new JavaParameterizationAux(
-        this.dispatchAux,
+        this.parameterHandler,
         this.autoScanEachParam,
         this.bundleInMap,
         this.bundleInArray,
@@ -437,7 +437,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
     if (this.paramOrder == elements) return this;
     @Nullable ImmutableList<String> newValue = elements == null ? null : ImmutableList.copyOf(elements);
     return new JavaParameterizationAux(
-        this.dispatchAux,
+        this.parameterHandler,
         this.autoScanEachParam,
         this.bundleInMap,
         this.bundleInArray,
@@ -458,7 +458,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   }
 
   private boolean equalTo(JavaParameterizationAux another) {
-    return Objects.equals(dispatchAux, another.dispatchAux)
+    return Objects.equals(parameterHandler, another.parameterHandler)
         && autoScanEachParam == another.autoScanEachParam
         && bundleInMap == another.bundleInMap
         && bundleInArray == another.bundleInArray
@@ -468,13 +468,13 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   }
 
   /**
-   * Computes a hash code from attributes: {@code dispatchAux}, {@code autoScanEachParam}, {@code bundleInMap}, {@code bundleInArray}, {@code bundleInList}, {@code precedeParamsWithNames}, {@code paramOrder}.
+   * Computes a hash code from attributes: {@code parameterHandler}, {@code autoScanEachParam}, {@code bundleInMap}, {@code bundleInArray}, {@code bundleInList}, {@code precedeParamsWithNames}, {@code paramOrder}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     @Var int h = 5381;
-    h += (h << 5) + Objects.hashCode(dispatchAux);
+    h += (h << 5) + Objects.hashCode(parameterHandler);
     h += (h << 5) + Booleans.hashCode(autoScanEachParam);
     h += (h << 5) + Booleans.hashCode(bundleInMap);
     h += (h << 5) + Booleans.hashCode(bundleInArray);
@@ -492,7 +492,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   public String toString() {
     return MoreObjects.toStringHelper("JavaParameterizationAux")
         .omitNullValues()
-        .add("dispatchAux", dispatchAux)
+        .add("parameterHandler", parameterHandler)
         .add("autoScanEachParam", autoScanEachParam)
         .add("bundleInMap", bundleInMap)
         .add("bundleInArray", bundleInArray)
@@ -512,7 +512,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   @JsonDeserialize
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IJavaParameterizationAux {
-    @Nullable IJavaDispatchAux dispatchAux;
+    @Nullable IJavaDispatchAux parameterHandler;
     boolean autoScanEachParam;
     boolean autoScanEachParamIsSet;
     boolean bundleInMap;
@@ -524,9 +524,9 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
     boolean precedeParamsWithNames;
     boolean precedeParamsWithNamesIsSet;
     @Nullable List<String> paramOrder = null;
-    @JsonProperty("dispatchAux")
-    public void setDispatchAux(@Nullable IJavaDispatchAux dispatchAux) {
-      this.dispatchAux = dispatchAux;
+    @JsonProperty("parameterHandler")
+    public void setParameterHandler(@Nullable IJavaDispatchAux parameterHandler) {
+      this.parameterHandler = parameterHandler;
     }
     @JsonProperty("autoScanEachParam")
     public void setAutoScanEachParam(boolean autoScanEachParam) {
@@ -558,7 +558,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
       this.paramOrder = paramOrder;
     }
     @Override
-    public IJavaDispatchAux getDispatchAux() { throw new UnsupportedOperationException(); }
+    public IJavaDispatchAux getParameterHandler() { throw new UnsupportedOperationException(); }
     @Override
     public boolean getAutoScanEachParam() { throw new UnsupportedOperationException(); }
     @Override
@@ -582,8 +582,8 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
   @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
   static JavaParameterizationAux fromJson(Json json) {
     JavaParameterizationAux.Builder builder = JavaParameterizationAux.builder();
-    if (json.dispatchAux != null) {
-      builder.dispatchAux(json.dispatchAux);
+    if (json.parameterHandler != null) {
+      builder.parameterHandler(json.parameterHandler);
     }
     if (json.autoScanEachParamIsSet) {
       builder.autoScanEachParam(json.autoScanEachParam);
@@ -626,7 +626,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
    * Creates a builder for {@link JavaParameterizationAux JavaParameterizationAux}.
    * <pre>
    * JavaParameterizationAux.builder()
-   *    .dispatchAux(de.upb.sede.exec.auxiliary.IJavaDispatchAux | null) // nullable {@link IJavaParameterizationAux#getDispatchAux() dispatchAux}
+   *    .parameterHandler(de.upb.sede.exec.auxiliary.IJavaDispatchAux | null) // nullable {@link IJavaParameterizationAux#getParameterHandler() parameterHandler}
    *    .autoScanEachParam(boolean) // optional {@link IJavaParameterizationAux#getAutoScanEachParam() autoScanEachParam}
    *    .bundleInMap(boolean) // optional {@link IJavaParameterizationAux#getBundleInMap() bundleInMap}
    *    .bundleInArray(boolean) // optional {@link IJavaParameterizationAux#getBundleInArray() bundleInArray}
@@ -658,7 +658,7 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
     private static final long OPT_BIT_PRECEDE_PARAMS_WITH_NAMES = 0x10L;
     private long optBits;
 
-    private @Nullable IJavaDispatchAux dispatchAux;
+    private @Nullable IJavaDispatchAux parameterHandler;
     private boolean autoScanEachParam;
     private boolean bundleInMap;
     private boolean bundleInArray;
@@ -677,9 +677,9 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
     @CanIgnoreReturnValue 
     public final Builder from(MutableJavaParameterizationAux instance) {
       Objects.requireNonNull(instance, "instance");
-      @Nullable IJavaDispatchAux dispatchAuxValue = instance.getDispatchAux();
-      if (dispatchAuxValue != null) {
-        dispatchAux(dispatchAuxValue);
+      @Nullable IJavaDispatchAux parameterHandlerValue = instance.getParameterHandler();
+      if (parameterHandlerValue != null) {
+        parameterHandler(parameterHandlerValue);
       }
       autoScanEachParam(instance.getAutoScanEachParam());
       bundleInMap(instance.getBundleInMap());
@@ -707,9 +707,9 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
       if (instance instanceof MutableJavaParameterizationAux) {
         return from((MutableJavaParameterizationAux) instance);
       }
-      @Nullable IJavaDispatchAux dispatchAuxValue = instance.getDispatchAux();
-      if (dispatchAuxValue != null) {
-        dispatchAux(dispatchAuxValue);
+      @Nullable IJavaDispatchAux parameterHandlerValue = instance.getParameterHandler();
+      if (parameterHandlerValue != null) {
+        parameterHandler(parameterHandlerValue);
       }
       autoScanEachParam(instance.getAutoScanEachParam());
       bundleInMap(instance.getBundleInMap());
@@ -724,14 +724,14 @@ public final class JavaParameterizationAux implements IJavaParameterizationAux {
     }
 
     /**
-     * Initializes the value for the {@link IJavaParameterizationAux#getDispatchAux() dispatchAux} attribute.
-     * @param dispatchAux The value for dispatchAux (can be {@code null})
+     * Initializes the value for the {@link IJavaParameterizationAux#getParameterHandler() parameterHandler} attribute.
+     * @param parameterHandler The value for parameterHandler (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    @JsonProperty("dispatchAux")
-    public final Builder dispatchAux(@Nullable IJavaDispatchAux dispatchAux) {
-      this.dispatchAux = dispatchAux;
+    @JsonProperty("parameterHandler")
+    public final Builder parameterHandler(@Nullable IJavaDispatchAux parameterHandler) {
+      this.parameterHandler = parameterHandler;
       return this;
     }
 

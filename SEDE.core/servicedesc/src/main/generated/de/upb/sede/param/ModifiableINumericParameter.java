@@ -86,7 +86,7 @@ public final class ModifiableINumericParameter implements INumericParameter {
    */
   @JsonProperty("refineSplits")
   @Override
-  public final @Nullable Integer getRefineSplits() {
+  public final @Nullable Integer getSplitsRefined() {
     return refineSplits;
   }
 
@@ -234,7 +234,7 @@ public final class ModifiableINumericParameter implements INumericParameter {
       if (maxValue != null) {
         setMax(maxValue);
       }
-      @Nullable Integer refineSplitsValue = instance.getRefineSplits();
+      @Nullable Integer refineSplitsValue = instance.getSplitsRefined();
       if (refineSplitsValue != null) {
         setRefineSplits(refineSplitsValue);
       }
@@ -265,7 +265,7 @@ public final class ModifiableINumericParameter implements INumericParameter {
       if (maxValue != null) {
         setMax(maxValue);
       }
-      @Nullable Integer refineSplitsValue = instance.getRefineSplits();
+      @Nullable Integer refineSplitsValue = instance.getSplitsRefined();
       if (refineSplitsValue != null) {
         setRefineSplits(refineSplitsValue);
       }
@@ -326,7 +326,7 @@ public final class ModifiableINumericParameter implements INumericParameter {
   }
 
   /**
-   * Assigns a value to the {@link INumericParameter#getRefineSplits() refineSplits} attribute.
+   * Assigns a value to the {@link INumericParameter#getSplitsRefined() refineSplits} attribute.
    * @param refineSplits The value for refineSplits, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
@@ -587,7 +587,7 @@ public final class ModifiableINumericParameter implements INumericParameter {
         .add("isInteger", isInteger())
         .add("min", getMin())
         .add("max", getMax())
-        .add("refineSplits", getRefineSplits())
+        .add("refineSplits", getSplitsRefined())
         .add("minInterval", getMinInterval())
         .add("defaultValue", getDefaultValue())
         .add("paramType", getParamType())

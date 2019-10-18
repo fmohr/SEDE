@@ -206,7 +206,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
    */
   @JsonProperty("refineSplits")
   @Override
-  public @Nullable Integer getRefineSplits() {
+  public @Nullable Integer getSplitsRefined() {
     return refineSplits;
   }
 
@@ -334,7 +334,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link INumericParameter#getRefineSplits() refineSplits} attribute.
+   * Copy the current immutable object by setting a value for the {@link INumericParameter#getSplitsRefined() refineSplits} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for refineSplits (can be {@code null})
    * @return A modified copy of the {@code this} object
@@ -586,7 +586,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
    *    .isInteger(boolean) // optional {@link INumericParameter#isInteger() isInteger}
    *    .min(Double | null) // nullable {@link INumericParameter#getMin() min}
    *    .max(Double | null) // nullable {@link INumericParameter#getMax() max}
-   *    .refineSplits(Integer | null) // nullable {@link INumericParameter#getRefineSplits() refineSplits}
+   *    .refineSplits(Integer | null) // nullable {@link INumericParameter#getSplitsRefined() refineSplits}
    *    .minInterval(Integer | null) // nullable {@link INumericParameter#getMinInterval() minInterval}
    *    .defaultValue(Double | null) // nullable {@link INumericParameter#getDefaultValue() defaultValue}
    *    .paramType(String) // optional {@link INumericParameter#getParamType() paramType}
@@ -635,7 +635,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     public final Builder from(ModifiableINumericParameter instance) {
       Objects.requireNonNull(instance, "instance");
       isInteger(instance.isInteger());
@@ -647,7 +647,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
       if (maxValue != null) {
         max(maxValue);
       }
-      @Nullable Integer refineSplitsValue = instance.getRefineSplits();
+      @Nullable Integer refineSplitsValue = instance.getSplitsRefined();
       if (refineSplitsValue != null) {
         refineSplits(refineSplitsValue);
       }
@@ -673,7 +673,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     public final Builder from(INumericParameter instance) {
       Objects.requireNonNull(instance, "instance");
       from((Object) instance);
@@ -685,7 +685,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     public final Builder from(IParameter instance) {
       Objects.requireNonNull(instance, "instance");
       from((Object) instance);
@@ -697,7 +697,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     public final Builder from(IQualifiable instance) {
       Objects.requireNonNull(instance, "instance");
       from((Object) instance);
@@ -720,7 +720,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
         if (maxValue != null) {
           max(maxValue);
         }
-        @Nullable Integer refineSplitsValue = instance.getRefineSplits();
+        @Nullable Integer refineSplitsValue = instance.getSplitsRefined();
         if (refineSplitsValue != null) {
           refineSplits(refineSplitsValue);
         }
@@ -748,10 +748,10 @@ public final class ImmutableINumericParameter implements INumericParameter {
     /**
      * Initializes the value for the {@link INumericParameter#isInteger() isInteger} attribute.
      * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link INumericParameter#isInteger() isInteger}.</em>
-     * @param isInteger The value for isInteger 
+     * @param isInteger The value for isInteger
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("isInteger")
     public final Builder isInteger(boolean isInteger) {
       this.isInteger = isInteger;
@@ -764,7 +764,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
      * @param min The value for min (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("min")
     public final Builder min(@Nullable Double min) {
       this.min = min;
@@ -776,7 +776,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
      * @param max The value for max (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("max")
     public final Builder max(@Nullable Double max) {
       this.max = max;
@@ -784,11 +784,11 @@ public final class ImmutableINumericParameter implements INumericParameter {
     }
 
     /**
-     * Initializes the value for the {@link INumericParameter#getRefineSplits() refineSplits} attribute.
+     * Initializes the value for the {@link INumericParameter#getSplitsRefined() refineSplits} attribute.
      * @param refineSplits The value for refineSplits (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("refineSplits")
     public final Builder refineSplits(@Nullable Integer refineSplits) {
       this.refineSplits = refineSplits;
@@ -800,7 +800,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
      * @param minInterval The value for minInterval (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("minInterval")
     public final Builder minInterval(@Nullable Integer minInterval) {
       this.minInterval = minInterval;
@@ -812,7 +812,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
      * @param defaultValue The value for defaultValue (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("defaultValue")
     public final Builder defaultValue(@Nullable Double defaultValue) {
       this.defaultValue = defaultValue;
@@ -822,10 +822,10 @@ public final class ImmutableINumericParameter implements INumericParameter {
     /**
      * Initializes the value for the {@link INumericParameter#getParamType() paramType} attribute.
      * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link INumericParameter#getParamType() paramType}.</em>
-     * @param paramType The value for paramType 
+     * @param paramType The value for paramType
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("paramType")
     public final Builder paramType(String paramType) {
       this.paramType = Objects.requireNonNull(paramType, "paramType");
@@ -834,10 +834,10 @@ public final class ImmutableINumericParameter implements INumericParameter {
 
     /**
      * Initializes the value for the {@link INumericParameter#getQualifier() qualifier} attribute.
-     * @param qualifier The value for qualifier 
+     * @param qualifier The value for qualifier
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("qualifier")
     public final Builder qualifier(String qualifier) {
       this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
@@ -850,7 +850,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
      * @param element A metaTags element
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     public final Builder addMetaTags(String element) {
       this.metaTags.add(element);
       return this;
@@ -861,7 +861,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
      * @param elements An array of metaTags elements
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     public final Builder addMetaTags(String... elements) {
       this.metaTags.add(elements);
       return this;
@@ -873,7 +873,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
      * @param elements An iterable of metaTags elements
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("metaTags")
     public final Builder metaTags(Iterable<String> elements) {
       this.metaTags = ImmutableList.builder();
@@ -885,7 +885,7 @@ public final class ImmutableINumericParameter implements INumericParameter {
      * @param elements An iterable of metaTags elements
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     public final Builder addAllMetaTags(Iterable<String> elements) {
       this.metaTags.addAll(elements);
       return this;
@@ -894,10 +894,10 @@ public final class ImmutableINumericParameter implements INumericParameter {
     /**
      * Initializes the value for the {@link INumericParameter#getSimpleName() simpleName} attribute.
      * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link INumericParameter#getSimpleName() simpleName}.</em>
-     * @param simpleName The value for simpleName 
+     * @param simpleName The value for simpleName
      * @return {@code this} builder for use in a chained invocation
      */
-    @CanIgnoreReturnValue 
+    @CanIgnoreReturnValue
     @JsonProperty("simpleName")
     public final Builder simpleName(String simpleName) {
       this.simpleName = Objects.requireNonNull(simpleName, "simpleName");

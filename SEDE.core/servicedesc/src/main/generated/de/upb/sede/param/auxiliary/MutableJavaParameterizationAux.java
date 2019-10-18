@@ -34,7 +34,7 @@ public final class MutableJavaParameterizationAux
   private static final long OPT_BIT_PRECEDE_PARAMS_WITH_NAMES = 0x10L;
   private long optBits;
 
-  private @Nullable IJavaDispatchAux dispatchAux;
+  private @Nullable IJavaDispatchAux parameterHandler;
   private boolean autoScanEachParam;
   private boolean bundleInMap;
   private boolean bundleInArray;
@@ -53,12 +53,12 @@ public final class MutableJavaParameterizationAux
   }
 
   /**
-   * @return value of {@code dispatchAux} attribute, may be {@code null}
+   * @return value of {@code parameterHandler} attribute, may be {@code null}
    */
-  @JsonProperty("dispatchAux")
+  @JsonProperty("parameterHandler")
   @Override
-  public final @Nullable IJavaDispatchAux getDispatchAux() {
-    return dispatchAux;
+  public final @Nullable IJavaDispatchAux getParameterHandler() {
+    return parameterHandler;
   }
 
   /**
@@ -132,7 +132,7 @@ public final class MutableJavaParameterizationAux
   @CanIgnoreReturnValue
   public MutableJavaParameterizationAux clear() {
     optBits = 0;
-    dispatchAux = null;
+    parameterHandler = null;
     autoScanEachParam = false;
     bundleInMap = false;
     bundleInArray = false;
@@ -156,9 +156,9 @@ public final class MutableJavaParameterizationAux
       from((MutableJavaParameterizationAux) instance);
       return this;
     }
-    @Nullable IJavaDispatchAux dispatchAuxValue = instance.getDispatchAux();
-    if (dispatchAuxValue != null) {
-      setDispatchAux(dispatchAuxValue);
+    @Nullable IJavaDispatchAux parameterHandlerValue = instance.getParameterHandler();
+    if (parameterHandlerValue != null) {
+      setParameterHandler(parameterHandlerValue);
     }
     setAutoScanEachParam(instance.getAutoScanEachParam());
     setBundleInMap(instance.getBundleInMap());
@@ -179,9 +179,9 @@ public final class MutableJavaParameterizationAux
    */
   public MutableJavaParameterizationAux from(MutableJavaParameterizationAux instance) {
     Objects.requireNonNull(instance, "instance");
-    @Nullable IJavaDispatchAux dispatchAuxValue = instance.getDispatchAux();
-    if (dispatchAuxValue != null) {
-      setDispatchAux(dispatchAuxValue);
+    @Nullable IJavaDispatchAux parameterHandlerValue = instance.getParameterHandler();
+    if (parameterHandlerValue != null) {
+      setParameterHandler(parameterHandlerValue);
     }
     setAutoScanEachParam(instance.getAutoScanEachParam());
     setBundleInMap(instance.getBundleInMap());
@@ -193,13 +193,13 @@ public final class MutableJavaParameterizationAux
   }
 
   /**
-   * Assigns a value to the {@link IJavaParameterizationAux#getDispatchAux() dispatchAux} attribute.
-   * @param dispatchAux The value for dispatchAux, can be {@code null}
+   * Assigns a value to the {@link IJavaParameterizationAux#getParameterHandler() parameterHandler} attribute.
+   * @param parameterHandler The value for parameterHandler, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableJavaParameterizationAux setDispatchAux(@Nullable IJavaDispatchAux dispatchAux) {
-    this.dispatchAux = dispatchAux;
+  public MutableJavaParameterizationAux setParameterHandler(@Nullable IJavaDispatchAux parameterHandler) {
+    this.parameterHandler = parameterHandler;
     return this;
   }
 
@@ -461,7 +461,7 @@ public final class MutableJavaParameterizationAux
     boolean bundleInArray = getBundleInArray();
     boolean bundleInList = getBundleInList();
     boolean precedeParamsWithNames = getPrecedeParamsWithNames();
-    return Objects.equals(dispatchAux, another.dispatchAux)
+    return Objects.equals(parameterHandler, another.parameterHandler)
         && autoScanEachParam == another.getAutoScanEachParam()
         && bundleInMap == another.getBundleInMap()
         && bundleInArray == another.getBundleInArray()
@@ -471,13 +471,13 @@ public final class MutableJavaParameterizationAux
   }
 
   /**
-   * Computes a hash code from attributes: {@code dispatchAux}, {@code autoScanEachParam}, {@code bundleInMap}, {@code bundleInArray}, {@code bundleInList}, {@code precedeParamsWithNames}, {@code paramOrder}.
+   * Computes a hash code from attributes: {@code parameterHandler}, {@code autoScanEachParam}, {@code bundleInMap}, {@code bundleInArray}, {@code bundleInList}, {@code precedeParamsWithNames}, {@code paramOrder}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
-    h += (h << 5) + Objects.hashCode(dispatchAux);
+    h += (h << 5) + Objects.hashCode(parameterHandler);
     boolean autoScanEachParam = getAutoScanEachParam();
     h += (h << 5) + Booleans.hashCode(autoScanEachParam);
     boolean bundleInMap = getBundleInMap();
@@ -500,7 +500,7 @@ public final class MutableJavaParameterizationAux
   @Override
   public String toString() {
     return MoreObjects.toStringHelper("MutableJavaParameterizationAux")
-        .add("dispatchAux", getDispatchAux())
+        .add("parameterHandler", getParameterHandler())
         .add("autoScanEachParam", getAutoScanEachParam())
         .add("bundleInMap", getBundleInMap())
         .add("bundleInArray", getBundleInArray())

@@ -37,4 +37,9 @@ public interface IParameter extends IQualifiable {
 
     }
 
+    @Value.Default
+    default boolean isOptional(){
+        return false;
+    }
+
 }

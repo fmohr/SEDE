@@ -57,7 +57,7 @@ public final class ModifiableIJavaParameterizationAux
    */
   @JsonProperty("dispatchAux")
   @Override
-  public final @Nullable IJavaDispatchAux getDispatchAux() {
+  public final @Nullable IJavaDispatchAux getParameterHandler() {
     return dispatchAux;
   }
 
@@ -156,7 +156,7 @@ public final class ModifiableIJavaParameterizationAux
       from((ModifiableIJavaParameterizationAux) instance);
       return this;
     }
-    @Nullable IJavaDispatchAux dispatchAuxValue = instance.getDispatchAux();
+    @Nullable IJavaDispatchAux dispatchAuxValue = instance.getParameterHandler();
     if (dispatchAuxValue != null) {
       setDispatchAux(dispatchAuxValue);
     }
@@ -179,7 +179,7 @@ public final class ModifiableIJavaParameterizationAux
    */
   public ModifiableIJavaParameterizationAux from(ModifiableIJavaParameterizationAux instance) {
     Objects.requireNonNull(instance, "instance");
-    @Nullable IJavaDispatchAux dispatchAuxValue = instance.getDispatchAux();
+    @Nullable IJavaDispatchAux dispatchAuxValue = instance.getParameterHandler();
     if (dispatchAuxValue != null) {
       setDispatchAux(dispatchAuxValue);
     }
@@ -193,7 +193,7 @@ public final class ModifiableIJavaParameterizationAux
   }
 
   /**
-   * Assigns a value to the {@link IJavaParameterizationAux#getDispatchAux() dispatchAux} attribute.
+   * Assigns a value to the {@link IJavaParameterizationAux#getParameterHandler() dispatchAux} attribute.
    * @param dispatchAux The value for dispatchAux, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
@@ -500,7 +500,7 @@ public final class ModifiableIJavaParameterizationAux
   @Override
   public String toString() {
     return MoreObjects.toStringHelper("ModifiableIJavaParameterizationAux")
-        .add("dispatchAux", getDispatchAux())
+        .add("dispatchAux", getParameterHandler())
         .add("autoScanEachParam", getAutoScanEachParam())
         .add("bundleInMap", getBundleInMap())
         .add("bundleInArray", getBundleInArray())

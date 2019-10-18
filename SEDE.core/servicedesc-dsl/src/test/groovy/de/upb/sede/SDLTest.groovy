@@ -4,6 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import de.upb.sede.exec.IServiceDesc
 import de.upb.sede.exec.ServiceDesc
+import de.upb.sede.param.IBooleanParameter
+import de.upb.sede.param.ICategoryParameter
+import de.upb.sede.param.INumericParameter
+import de.upb.sede.param.IParameter
+import de.upb.sede.param.IParameterDependencyDesc
 import de.upb.sede.param.IServiceParameterizationDesc
 import de.upb.sede.param.auxiliary.IJavaParameterizationAux
 import de.upb.sede.types.IDataTypeDesc
@@ -134,20 +139,42 @@ class SDLTest extends Specification {
         when:
         IServiceDesc service1 = serviceCollection1.services.find {it.qualifier == 'service1'}
         def params = service1.serviceParameters
+        List<IBooleanParameter> boolParams = params.parameters.grep(IBooleanParameter)
         then:
-        params.parameters.size() == 3
-        params.parameters[0].qualifier == 'b1'
-        params.parameters[0].defaultValue == true
-        params.parameters[1].qualifier == 'b2'
-        params.parameters[1].defaultValue == true
-        params.parameters[2].qualifier == 'b3'
-        params.parameters[2].defaultValue == true
-        !params.parameters.any {it.paramType != 'BooleanParameter'}
+        boolParams.every { it.qualifier == 'bParam' }
+        boolParams.every { it.defaultValue == true }
+        boolParams.every { it.isOptional() == true }
+
+        when:
+        List<INumericParameter> numParams = params.parameters.grep(INumericParameter)
+        then:
+        numParams.every {it.qualifier == 'nParam'}
+        numParams.every {it.defaultValue == 10.0 }
+        numParams.every {it.isInteger()}
+        numParams.every {it.min == 0.5}
+        numParams.every {it.max == 20.5}
+        numParams.every {it.splitsRefined == 4}
+        numParams.every {it.minInterval == 10}
+        numParams.every {it.isOptional()}
+        when:
+        List<ICategoryParameter> catParams = params.parameters.grep(ICategoryParameter)
+        then:
+        catParams.every {it.qualifier == 'cParam'}
+        catParams.every {it.defaultValue == 'A'}
+        catParams.every {it.categories == ['A', 'B', 'C'] }
+        catParams.every {it.isOptional() }
+
+        when:
+        List<IParameterDependencyDesc> dependencies = params.parameterDependencies
+        then:
+        dependencies.every({it.premise == 'b2 in {true}'})
+        dependencies.every {it.conclusion == 'b3 in {false}'}
 
         when:
         def javaAux = params.getJavaParameterizationAuxiliaries()
 
         then:
+        javaAux.parameterHandler.className() == 'Service1ParameterHandler'
         javaAux.autoScanEachParam == true
         javaAux.bundleInArray == true
         javaAux.bundleInMap == true

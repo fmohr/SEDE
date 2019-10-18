@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
+import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.IQualifiable;
@@ -34,6 +35,7 @@ import org.immutables.value.Generated;
 public final class BooleanParameter implements IBooleanParameter {
   private final @Nullable Boolean defaultValue;
   private final String paramType;
+  private final boolean isOptional;
   private final String qualifier;
   private final ImmutableList<String> metaTags;
   private final String simpleName;
@@ -45,10 +47,14 @@ public final class BooleanParameter implements IBooleanParameter {
     if (builder.paramType != null) {
       initShim.paramType(builder.paramType);
     }
+    if (builder.isOptionalIsSet()) {
+      initShim.isOptional(builder.isOptional);
+    }
     if (builder.simpleName != null) {
       initShim.simpleName(builder.simpleName);
     }
     this.paramType = initShim.getParamType();
+    this.isOptional = initShim.isOptional();
     this.simpleName = initShim.getSimpleName();
     this.initShim = null;
   }
@@ -56,11 +62,13 @@ public final class BooleanParameter implements IBooleanParameter {
   private BooleanParameter(
       @Nullable Boolean defaultValue,
       String paramType,
+      boolean isOptional,
       String qualifier,
       ImmutableList<String> metaTags,
       String simpleName) {
     this.defaultValue = defaultValue;
     this.paramType = paramType;
+    this.isOptional = isOptional;
     this.qualifier = qualifier;
     this.metaTags = metaTags;
     this.simpleName = simpleName;
@@ -93,6 +101,24 @@ public final class BooleanParameter implements IBooleanParameter {
       paramTypeBuildStage = STAGE_INITIALIZED;
     }
 
+    private byte isOptionalBuildStage = STAGE_UNINITIALIZED;
+    private boolean isOptional;
+
+    boolean isOptional() {
+      if (isOptionalBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
+      if (isOptionalBuildStage == STAGE_UNINITIALIZED) {
+        isOptionalBuildStage = STAGE_INITIALIZING;
+        this.isOptional = isOptionalInitialize();
+        isOptionalBuildStage = STAGE_INITIALIZED;
+      }
+      return this.isOptional;
+    }
+
+    void isOptional(boolean isOptional) {
+      this.isOptional = isOptional;
+      isOptionalBuildStage = STAGE_INITIALIZED;
+    }
+
     private byte simpleNameBuildStage = STAGE_UNINITIALIZED;
     private String simpleName;
 
@@ -114,6 +140,7 @@ public final class BooleanParameter implements IBooleanParameter {
     private String formatInitCycleMessage() {
       List<String> attributes = new ArrayList<>();
       if (paramTypeBuildStage == STAGE_INITIALIZING) attributes.add("paramType");
+      if (isOptionalBuildStage == STAGE_INITIALIZING) attributes.add("isOptional");
       if (simpleNameBuildStage == STAGE_INITIALIZING) attributes.add("simpleName");
       return "Cannot build BooleanParameter, attribute initializers form cycle " + attributes;
     }
@@ -121,6 +148,10 @@ public final class BooleanParameter implements IBooleanParameter {
 
   private String getParamTypeInitialize() {
     return IBooleanParameter.super.getParamType();
+  }
+
+  private boolean isOptionalInitialize() {
+    return IBooleanParameter.super.isOptional();
   }
 
   private String getSimpleNameInitialize() {
@@ -146,6 +177,18 @@ public final class BooleanParameter implements IBooleanParameter {
     return shim != null
         ? shim.getParamType()
         : this.paramType;
+  }
+
+  /**
+   * @return The value of the {@code isOptional} attribute
+   */
+  @JsonProperty("isOptional")
+  @Override
+  public boolean isOptional() {
+    InitShim shim = this.initShim;
+    return shim != null
+        ? shim.isOptional()
+        : this.isOptional;
   }
 
   /**
@@ -186,7 +229,7 @@ public final class BooleanParameter implements IBooleanParameter {
    */
   public final BooleanParameter withDefaultValue(@Nullable Boolean value) {
     if (Objects.equals(this.defaultValue, value)) return this;
-    return new BooleanParameter(value, this.paramType, this.qualifier, this.metaTags, this.simpleName);
+    return new BooleanParameter(value, this.paramType, this.isOptional, this.qualifier, this.metaTags, this.simpleName);
   }
 
   /**
@@ -198,7 +241,18 @@ public final class BooleanParameter implements IBooleanParameter {
   public final BooleanParameter withParamType(String value) {
     String newValue = Objects.requireNonNull(value, "paramType");
     if (this.paramType.equals(newValue)) return this;
-    return new BooleanParameter(this.defaultValue, newValue, this.qualifier, this.metaTags, this.simpleName);
+    return new BooleanParameter(this.defaultValue, newValue, this.isOptional, this.qualifier, this.metaTags, this.simpleName);
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link IBooleanParameter#isOptional() isOptional} attribute.
+   * A value equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for isOptional
+   * @return A modified copy of the {@code this} object
+   */
+  public final BooleanParameter withIsOptional(boolean value) {
+    if (this.isOptional == value) return this;
+    return new BooleanParameter(this.defaultValue, this.paramType, value, this.qualifier, this.metaTags, this.simpleName);
   }
 
   /**
@@ -210,7 +264,7 @@ public final class BooleanParameter implements IBooleanParameter {
   public final BooleanParameter withQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "qualifier");
     if (this.qualifier.equals(newValue)) return this;
-    return new BooleanParameter(this.defaultValue, this.paramType, newValue, this.metaTags, this.simpleName);
+    return new BooleanParameter(this.defaultValue, this.paramType, this.isOptional, newValue, this.metaTags, this.simpleName);
   }
 
   /**
@@ -220,7 +274,7 @@ public final class BooleanParameter implements IBooleanParameter {
    */
   public final BooleanParameter withMetaTags(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new BooleanParameter(this.defaultValue, this.paramType, this.qualifier, newValue, this.simpleName);
+    return new BooleanParameter(this.defaultValue, this.paramType, this.isOptional, this.qualifier, newValue, this.simpleName);
   }
 
   /**
@@ -232,7 +286,7 @@ public final class BooleanParameter implements IBooleanParameter {
   public final BooleanParameter withMetaTags(Iterable<String> elements) {
     if (this.metaTags == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new BooleanParameter(this.defaultValue, this.paramType, this.qualifier, newValue, this.simpleName);
+    return new BooleanParameter(this.defaultValue, this.paramType, this.isOptional, this.qualifier, newValue, this.simpleName);
   }
 
   /**
@@ -244,7 +298,7 @@ public final class BooleanParameter implements IBooleanParameter {
   public final BooleanParameter withSimpleName(String value) {
     String newValue = Objects.requireNonNull(value, "simpleName");
     if (this.simpleName.equals(newValue)) return this;
-    return new BooleanParameter(this.defaultValue, this.paramType, this.qualifier, this.metaTags, newValue);
+    return new BooleanParameter(this.defaultValue, this.paramType, this.isOptional, this.qualifier, this.metaTags, newValue);
   }
 
   /**
@@ -261,11 +315,12 @@ public final class BooleanParameter implements IBooleanParameter {
   private boolean equalTo(BooleanParameter another) {
     return Objects.equals(defaultValue, another.defaultValue)
         && paramType.equals(another.paramType)
+        && isOptional == another.isOptional
         && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code defaultValue}, {@code paramType}, {@code qualifier}.
+   * Computes a hash code from attributes: {@code defaultValue}, {@code paramType}, {@code isOptional}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -273,6 +328,7 @@ public final class BooleanParameter implements IBooleanParameter {
     @Var int h = 5381;
     h += (h << 5) + Objects.hashCode(defaultValue);
     h += (h << 5) + paramType.hashCode();
+    h += (h << 5) + Booleans.hashCode(isOptional);
     h += (h << 5) + qualifier.hashCode();
     return h;
   }
@@ -287,6 +343,7 @@ public final class BooleanParameter implements IBooleanParameter {
         .omitNullValues()
         .add("defaultValue", defaultValue)
         .add("paramType", paramType)
+        .add("isOptional", isOptional)
         .add("qualifier", qualifier)
         .toString();
   }
@@ -303,6 +360,8 @@ public final class BooleanParameter implements IBooleanParameter {
   static final class Json implements IBooleanParameter {
     @Nullable Boolean defaultValue;
     @Nullable String paramType;
+    boolean isOptional;
+    boolean isOptionalIsSet;
     @Nullable String qualifier;
     @Nullable List<String> metaTags = ImmutableList.of();
     @Nullable String simpleName;
@@ -313,6 +372,11 @@ public final class BooleanParameter implements IBooleanParameter {
     @JsonProperty("paramType")
     public void setParamType(String paramType) {
       this.paramType = paramType;
+    }
+    @JsonProperty("isOptional")
+    public void setIsOptional(boolean isOptional) {
+      this.isOptional = isOptional;
+      this.isOptionalIsSet = true;
     }
     @JsonProperty("qualifier")
     public void setQualifier(String qualifier) {
@@ -330,6 +394,8 @@ public final class BooleanParameter implements IBooleanParameter {
     public Boolean getDefaultValue() { throw new UnsupportedOperationException(); }
     @Override
     public String getParamType() { throw new UnsupportedOperationException(); }
+    @Override
+    public boolean isOptional() { throw new UnsupportedOperationException(); }
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
     @Override
@@ -352,6 +418,9 @@ public final class BooleanParameter implements IBooleanParameter {
     }
     if (json.paramType != null) {
       builder.paramType(json.paramType);
+    }
+    if (json.isOptionalIsSet) {
+      builder.isOptional(json.isOptional);
     }
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
@@ -387,6 +456,7 @@ public final class BooleanParameter implements IBooleanParameter {
    * BooleanParameter.builder()
    *    .defaultValue(Boolean | null) // nullable {@link IBooleanParameter#getDefaultValue() defaultValue}
    *    .paramType(String) // optional {@link IBooleanParameter#getParamType() paramType}
+   *    .isOptional(boolean) // optional {@link IBooleanParameter#isOptional() isOptional}
    *    .qualifier(String) // required {@link IBooleanParameter#getQualifier() qualifier}
    *    .addMetaTags|addAllMetaTags(String) // {@link IBooleanParameter#getMetaTags() metaTags} elements
    *    .simpleName(String) // optional {@link IBooleanParameter#getSimpleName() simpleName}
@@ -409,10 +479,13 @@ public final class BooleanParameter implements IBooleanParameter {
   @NotThreadSafe
   public static final class Builder {
     private static final long INIT_BIT_QUALIFIER = 0x1L;
+    private static final long OPT_BIT_IS_OPTIONAL = 0x1L;
     private long initBits = 0x1L;
+    private long optBits;
 
     private @Nullable Boolean defaultValue;
     private @Nullable String paramType;
+    private boolean isOptional;
     private @Nullable String qualifier;
     private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
     private @Nullable String simpleName;
@@ -433,6 +506,7 @@ public final class BooleanParameter implements IBooleanParameter {
         defaultValue(defaultValueValue);
       }
       paramType(instance.getParamType());
+      isOptional(instance.isOptional());
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
@@ -492,6 +566,7 @@ public final class BooleanParameter implements IBooleanParameter {
       if (object instanceof IParameter) {
         IParameter instance = (IParameter) object;
         paramType(instance.getParamType());
+        isOptional(instance.isOptional());
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
@@ -523,6 +598,20 @@ public final class BooleanParameter implements IBooleanParameter {
     @JsonProperty("paramType")
     public final Builder paramType(String paramType) {
       this.paramType = Objects.requireNonNull(paramType, "paramType");
+      return this;
+    }
+
+    /**
+     * Initializes the value for the {@link IBooleanParameter#isOptional() isOptional} attribute.
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IBooleanParameter#isOptional() isOptional}.</em>
+     * @param isOptional The value for isOptional 
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("isOptional")
+    public final Builder isOptional(boolean isOptional) {
+      this.isOptional = isOptional;
+      optBits |= OPT_BIT_IS_OPTIONAL;
       return this;
     }
 
@@ -608,6 +697,10 @@ public final class BooleanParameter implements IBooleanParameter {
         throw new IllegalStateException(formatRequiredAttributesMessage());
       }
       return new BooleanParameter(this);
+    }
+
+    private boolean isOptionalIsSet() {
+      return (optBits & OPT_BIT_IS_OPTIONAL) != 0;
     }
 
     private String formatRequiredAttributesMessage() {

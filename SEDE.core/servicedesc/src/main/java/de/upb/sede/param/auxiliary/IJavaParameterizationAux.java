@@ -15,7 +15,7 @@ import java.util.List;
 public interface IJavaParameterizationAux {
 
     @Nullable
-    IJavaDispatchAux getDispatchAux();
+    IJavaDispatchAux getParameterHandler();
 
     @Value.Default
     default boolean  getAutoScanEachParam() {

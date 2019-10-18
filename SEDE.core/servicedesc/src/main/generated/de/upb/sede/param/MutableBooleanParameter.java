@@ -2,6 +2,7 @@ package de.upb.sede.param;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
+import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import de.upb.sede.IQualifiable;
 import java.util.ArrayList;
@@ -26,10 +27,13 @@ import org.immutables.value.Generated;
 @NotThreadSafe
 public final class MutableBooleanParameter implements IBooleanParameter {
   private static final long INIT_BIT_QUALIFIER = 0x1L;
+  private static final long OPT_BIT_IS_OPTIONAL = 0x1L;
   private long initBits = 0x1L;
+  private long optBits;
 
   private @Nullable Boolean defaultValue;
   private String paramType;
+  private boolean isOptional;
   private String qualifier;
   private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
@@ -62,6 +66,17 @@ public final class MutableBooleanParameter implements IBooleanParameter {
     return paramTypeIsSet()
         ? paramType
         : IBooleanParameter.super.getParamType();
+  }
+
+  /**
+   * @return assigned or, otherwise, newly computed, not cached value of {@code isOptional} attribute
+   */
+  @JsonProperty("isOptional")
+  @Override
+  public final boolean isOptional() {
+    return isOptionalIsSet()
+        ? isOptional
+        : IBooleanParameter.super.isOptional();
   }
 
   /**
@@ -103,8 +118,10 @@ public final class MutableBooleanParameter implements IBooleanParameter {
   @CanIgnoreReturnValue
   public MutableBooleanParameter clear() {
     initBits = 0x1L;
+    optBits = 0;
     defaultValue = null;
     paramType = null;
+    isOptional = false;
     qualifier = null;
     metaTags.clear();
     simpleName = null;
@@ -169,6 +186,7 @@ public final class MutableBooleanParameter implements IBooleanParameter {
         setDefaultValue(defaultValueValue);
       }
       setParamType(instance.getParamType());
+      setIsOptional(instance.isOptional());
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
@@ -186,6 +204,7 @@ public final class MutableBooleanParameter implements IBooleanParameter {
     if (object instanceof IParameter) {
       IParameter instance = (IParameter) object;
       setParamType(instance.getParamType());
+      setIsOptional(instance.isOptional());
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
@@ -215,6 +234,19 @@ public final class MutableBooleanParameter implements IBooleanParameter {
   @CanIgnoreReturnValue
   public MutableBooleanParameter setParamType(String paramType) {
     this.paramType = Objects.requireNonNull(paramType, "paramType");
+    return this;
+  }
+
+  /**
+   * Assigns a value to the {@link IBooleanParameter#isOptional() isOptional} attribute.
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IBooleanParameter#isOptional() isOptional}.</em>
+   * @param isOptional The value for isOptional
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableBooleanParameter setIsOptional(boolean isOptional) {
+    this.isOptional = isOptional;
+    optBits |= OPT_BIT_IS_OPTIONAL;
     return this;
   }
 
@@ -301,6 +333,14 @@ public final class MutableBooleanParameter implements IBooleanParameter {
   }
 
   /**
+   * Returns {@code true} if the default attribute {@link IBooleanParameter#isOptional() isOptional} is set.
+   * @return {@code true} if set
+   */
+  public final boolean isOptionalIsSet() {
+    return (optBits & OPT_BIT_IS_OPTIONAL) != 0;
+  }
+
+  /**
    * Returns {@code true} if the default attribute {@link IBooleanParameter#getParamType() paramType} is set.
    * @return {@code true} if set
    */
@@ -325,6 +365,16 @@ public final class MutableBooleanParameter implements IBooleanParameter {
   public final MutableBooleanParameter unsetQualifier() {
     initBits |= INIT_BIT_QUALIFIER;
     qualifier = null;
+    return this;
+  }
+  /**
+   * Reset an attribute to its initial value.
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableBooleanParameter unsetIsOptional() {
+    optBits |= 0;
+    isOptional = false;
     return this;
   }
 
@@ -375,13 +425,15 @@ public final class MutableBooleanParameter implements IBooleanParameter {
 
   private boolean equalTo(MutableBooleanParameter another) {
     String paramType = getParamType();
+    boolean isOptional = isOptional();
     return Objects.equals(defaultValue, another.defaultValue)
         && paramType.equals(another.getParamType())
+        && isOptional == another.isOptional()
         && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code defaultValue}, {@code paramType}, {@code qualifier}.
+   * Computes a hash code from attributes: {@code defaultValue}, {@code paramType}, {@code isOptional}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -390,6 +442,8 @@ public final class MutableBooleanParameter implements IBooleanParameter {
     h += (h << 5) + Objects.hashCode(defaultValue);
     String paramType = getParamType();
     h += (h << 5) + paramType.hashCode();
+    boolean isOptional = isOptional();
+    h += (h << 5) + Booleans.hashCode(isOptional);
     h += (h << 5) + qualifier.hashCode();
     return h;
   }
@@ -404,6 +458,7 @@ public final class MutableBooleanParameter implements IBooleanParameter {
     return MoreObjects.toStringHelper("MutableBooleanParameter")
         .add("defaultValue", getDefaultValue())
         .add("paramType", getParamType())
+        .add("isOptional", isOptional())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
         .toString();
   }

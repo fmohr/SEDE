@@ -16,7 +16,7 @@ collection ("C1") {
         }
         params {
             javaAux = newJavaParamAux {
-                dispatchAux = newJavaDispatchAux {
+                 parameterHandler = newJavaDispatchAux {
                     className = "org.example.S1ParamSetter"
                 }
                 paramOrder = ['1', '2', '3']

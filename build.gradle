@@ -79,6 +79,8 @@ subprojects {
             okhttp3: [group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.2.0'],
             owner: [group: 'org.aeonbits.owner', name: 'owner', version: '1.0.8'],
             systemrule: 'com.github.stefanbirkner:system-rules:1.19.0',
+            javax_bind_api: [group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'],
+            java_annotation_api: 'javax.annotation:javax.annotation-api:1.3.2'
         ]
         isyslibs = [
             demolib: [group: 'de.upb.isys', name: 'demolib', version: '1.0'],

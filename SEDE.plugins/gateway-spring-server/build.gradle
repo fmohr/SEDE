@@ -40,7 +40,7 @@ dependencies {
     testRuntimeOnly group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.11.1'
 
     // https://mvnrepository.com/artifact/javax.xml.bind/jaxb-api
-    compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1'
+    compile project.ext.libs.javax_bind_api
 
     /*
      * SEDE dependencies

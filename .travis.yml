@@ -24,8 +24,8 @@ jdk:
 
 os:
   - linux
-  - osx
-  - windows
+#  - osx
+#  - windows
 
 script:
   - ./gradlew assemble

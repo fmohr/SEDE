@@ -59,7 +59,7 @@ subprojects {
              * Jackson
              */
             jackson_databind: [group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9'],
-            jackson_dataformat: 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9.3',
+            jackson_dataformat: 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.9.9',
             jackson_schema: 'com.fasterxml.jackson.module:jackson-module-jsonSchema:2.10.0.pr2',
 
             /*

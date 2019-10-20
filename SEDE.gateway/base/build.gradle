@@ -4,9 +4,9 @@ dependencies {
     compile 'com.github.aminfa:TinyJavaDot:v1.3'
 
     // dependend on the builtin service configurations
-    compile group: 'de.upb.isys', name: 'builtins', version: '1.1'
+    compile project.ext.isyslibs.builtins
 
-    compile group: 'com.squareup.okhttp3', name: 'okhttp', version: '3.14.2'
+    compile project.ext.libs.okhttp3
 
     // https://mvnrepository.com/artifact/org.skyscreamer/jsonassert
     testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'

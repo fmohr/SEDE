@@ -4,7 +4,7 @@ dependencies {
     compile 'com.github.aminfa:TinyJavaDot:v1.3'
 
     // dependend on the builtin service configurations
-    compile project.ext.isyslibs.builtins
+//    compile project.ext.isyslibs.builtins
 
     compile project.ext.libs.okhttp3
 

@@ -45,7 +45,7 @@ This section informs on how to install and make use of the SDL compiler. The pri
 
 === The Big Picture
 
-The service description language is built upon the concept of inceremental, declarative changes to one or more {pr-servicedesc}{java-src}ServiceCollectionsDescription.java[service collection] objects.
+The service description language is built upon the concept of inceremental, declarative changes to one or more {pr-servicedesc}{j-src}ServiceCollectionsDescription.java[service collection] objects.
 The SDL compiler expects two kind of user *inputs*.
 
 * An *ordered* list of `.servicedesc.json` data, with base specification of services. May be empty.

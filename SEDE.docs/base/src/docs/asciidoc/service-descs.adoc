@@ -5,13 +5,14 @@ SDL
 //:pr-root: https://github.com/fmohr/SEDE/tree/dev/service-desc/
 :pr-servicedesc: {pr-root}SEDE.core/servicedesc/
 :pr-servicedesc-dsl: {pr-root}SEDE.core/servicedesc-dsl/
+:pr-hasco: https://github.com/fmohr/AILibs/tree/master/softwareconfiguration/hasco
 :todo: pass:q[[small blue]#TODO#]
 :old-classconf-example: https://github.com/fmohr/SEDE.services/blob/master/weka.ml/src/main/resources/config/weka-ml-classifiers-classconf.json
 :j-src: src/main/java/de/upb/sede/
 
 //{pr-servicedesc}{j-src}/ServiceDescSchemaGenerator.java[SchemaGen]
 
-This document contains a user guide for service descriptions. For the development guide, see: {todo}.
+This document contains a user guide for creating and managing service descriptions. For the development guide, see: {todo}.
 
 == What is a service description?
 
@@ -22,20 +23,41 @@ Given this meta-data, the library seamlessly *integrates* into the SEDE-Framewor
 == Why a domain specific language?
 
 Previously, services
-footnote:[In context of service descriptions, the role of software libraries do not differ from services and the terms are used synonymously.]
+footnote:[In context of service descriptions, the role of software libraries do not differ from services and the terms are used *synonymously*.]
 were specified by painstakingly creating  {old-classconf-example}[large class-config files].
 The advantage of having a simple json-format was neutralized by numerous down sides:
 
-* For one, they were barely human readable. After a few iteration of feature-sets being added to the specification of services, the json-format could not contain the load of information in a *concise manner*.
+* For one, these files were barely human readable. After a few iteration of feature-sets being added to the specification of services, the json-format could not contain the load of information in a *concise manner*.
 
-* Additionally, seemingly small changes to a subset of the services, like a method name change, had to be done with *small scripts*, search and replaces or even manual labor; bringing careless mistakes with it.
+* Additionally, seemingly small *changes* to a subset of the services, like a method name change, had to be done with small python scripts, search and replaces or even manual labor; bringing careless mistakes and human errors with it.
 
 * Finally, all aspects of the specification of each service had to be defined in a single place footnote:[Single place means a distinct json-object in single document]. Any *additional* information about an already specified service did not *accumulate with the rest* but instead overwrote the previous specification.
 
-To overcome these problemes, we decided to introduce a thin layer of logic on top of the {pr-servicedesc}[*object models* of service descriptions].
-This was done by implementing a {pr-servicedesc-dsl}[custom Groovy DSL] that handles incremental, small and consice scripts that creats and manipules an objects graph.
+To overcome these problems, we decided to introduce a thin layer of logic on top of the {pr-servicedesc}[*object models* of service descriptions].
+This was done by implementing a
+{pr-servicedesc-dsl}[custom Groovy DSL]
+footnote:[For more details on what a *Groovy DSL* is have a look at the link:http://docs.groovy-lang.org/docs/latest/html/documentation/core-domain-specific-languages.html[documentation] on this subject.]
+that handles incremental and declarative user scripts that creats and manipules an objects graph.
 
 == Usage
 
+This section informs on how to install and make use of the SDL compiler. The primary client, however, are other SEDE components.
+
+=== The Big Picture
+
+The service description language is built upon the concept of inceremental, declarative changes to one or more {pr-servicedesc}{java-src}ServiceCollectionsDescription.java[service collection] objects.
+The SDL compiler expects two kind of user *inputs*.
+
+* An *ordered* list of `.servicedesc.json` data, with base specification of services. May be empty.
+* An *ordered* list of `.servicedesc.groovy` scripts, with additional specification and alterations. May be empty.
+
+Based on the user needs, the generated *output* of the compiler may be:
+
+* A `.servicedesc.json` file as a resulting from the *merge* of specification and alteration of service collections.
+* {todo} Component models with dependencies and parameter options of services, used by {pr-hasco}[HASCO].
+* {todo} Service Specification in used by SFB-OTF _testbed_ team.
+* {todo} More to come.
+
+=== Basic Examples
 
 

@@ -1,22 +1,41 @@
 = Service Description Language
 SDL
 :toc: left
-:project-root: link:../../../../../
-//:project-root: https://github.com/fmohr/SEDE/tree/dev/service-desc/
-:project-servicedesc: {project-root}SEDE.core/servicedesc/src/main/java/de/upb/sede
-:project-servicedesc-dsl: {project-root}SEDE.core/servicedesc-dsl/
+:pr-root: link:../../../../../
+//:pr-root: https://github.com/fmohr/SEDE/tree/dev/service-desc/
+:pr-servicedesc: {pr-root}SEDE.core/servicedesc/
+:pr-servicedesc-dsl: {pr-root}SEDE.core/servicedesc-dsl/
 :todo: pass:q[[small blue]#TODO#]
+:old-classconf-example: https://github.com/fmohr/SEDE.services/blob/master/weka.ml/src/main/resources/config/weka-ml-classifiers-classconf.json
+:j-src: src/main/java/de/upb/sede/
 
-//{project-servicedesc}/ServiceDescSchemaGenerator.java[SchemaGen]
+//{pr-servicedesc}{j-src}/ServiceDescSchemaGenerator.java[SchemaGen]
 
 This document contains a user guide for service descriptions. For the development guide, see: {todo}.
 
 == What is a service description?
 
-A service description contains meta-information about a software library which *describes* how to deploy, configure, run and compose its functionality.
-Given this, the library integrates into the SEDE-Framework and its units of functionality can be offered as a *set of service*.
+A service description is an object graph that contains meta-information about a *software library*.
+It *describes* how to deploy, configure, run and compose its functionality.
+Given this meta-data, the library seamlessly *integrates* into the SEDE-Framework and its units of functionality can be offered as a *set of services*.
 
 == Why a domain specific language?
+
+Previously, services
+footnote:[In context of service descriptions, the role of software libraries do not differ from services and the terms are used synonymously.]
+were specified by painstakingly creating  {old-classconf-example}[large class-config files].
+The advantage of having a simple json-format was neutralized by numerous down sides:
+
+* For one, they were barely human readable. After a few iteration of feature-sets being added to the specification of services, the json-format could not contain the load of information in a *concise manner*.
+
+* Additionally, seemingly small changes to a subset of the services, like a method name change, had to be done with *small scripts*, search and replaces or even manual labor; bringing careless mistakes with it.
+
+* Finally, all aspects of the specification of each service had to be defined in a single place footnote:[Single place means a distinct json-object in single document]. Any *additional* information about an already specified service did not *accumulate with the rest* but instead overwrote the previous specification.
+
+To overcome these problemes, we decided to introduce a thin layer of logic on top of the {pr-servicedesc}[*object models* of service descriptions].
+This was done by implementing a {pr-servicedesc-dsl}[custom Groovy DSL] that handles incremental, small and consice scripts that creats and manipules an objects graph.
+
+== Usage
 
 
 

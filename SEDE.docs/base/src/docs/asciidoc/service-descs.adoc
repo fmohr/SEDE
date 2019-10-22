@@ -1,0 +1,22 @@
+= Service Description Language
+SDL
+:toc: left
+:project-root: link:../../../../../
+//:project-root: https://github.com/fmohr/SEDE/tree/dev/service-desc/
+:project-servicedesc: {project-root}SEDE.core/servicedesc/src/main/java/de/upb/sede
+:project-servicedesc-dsl: {project-root}SEDE.core/servicedesc-dsl/
+:todo: pass:q[[small blue]#TODO#]
+
+//{project-servicedesc}/ServiceDescSchemaGenerator.java[SchemaGen]
+
+This document contains a user guide for service descriptions. For the development guide, see: {todo}.
+
+== What is a service description?
+
+A service description contains meta-information about a software library which *describes* how to deploy, configure, run and compose its functionality.
+Given this, the library integrates into the SEDE-Framework and its units of functionality can be offered as a *set of service*.
+
+== Why a domain specific language?
+
+
+

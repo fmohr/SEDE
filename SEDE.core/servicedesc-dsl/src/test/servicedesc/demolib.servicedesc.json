@@ -335,7 +335,7 @@
     "semanticType" : "Arr",
     "javaTypeAux" : {
       "dataCastHandler" : null,
-      "className" : "demo.types.DemoCaster"
+      "mappedClassName" : "demo.types.DemoCaster"
     },
     "qualifier" : "demo.types.NummerList",
     "metaTags" : [ ],
@@ -345,7 +345,7 @@
     "semanticType" : "Arr",
     "javaTypeAux" : {
       "dataCastHandler" : null,
-      "className" : "demo.types.DemoCaster"
+      "mappedClassName" : "demo.types.DemoCaster"
     },
     "qualifier" : "demo.types.Punkt",
     "metaTags" : [ ],

@@ -1,0 +1,142 @@
+[ {
+  "services" : [ {
+    "stateType" : null,
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
+      }, {
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
+      } ],
+      "qualifier" : "generateRandom",
+      "metaTags" : [ ],
+      "simpleName" : "generateRandom",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : "floor",
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isPure" : true,
+        "isContextFree" : false
+      } ],
+      "qualifier" : "generateNext",
+      "metaTags" : [ ],
+      "simpleName" : "generateNext",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : { },
+    "javaDispatchAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "serviceParameters" : null,
+    "qualifier" : "ai.libs.Primes",
+    "metaTags" : [ ],
+    "simpleName" : "Prime Numbers Service",
+    "comments" : [ ],
+    "isAbstract" : false
+  }, {
+    "stateType" : "ai.libs.Function",
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "ai.libs.Dot",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
+      } ],
+      "qualifier" : "plug",
+      "metaTags" : [ ],
+      "simpleName" : "plug",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ ],
+    "fieldTypes" : {
+      "state" : "ai.libs.Function"
+    },
+    "javaDispatchAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "serviceParameters" : null,
+    "qualifier" : "DotService",
+    "metaTags" : [ ],
+    "simpleName" : "DotService",
+    "comments" : [ ],
+    "isAbstract" : false
+  } ],
+  "dataTypes" : [ {
+    "semanticType" : "ai.libs.Function",
+    "javaTypeAux" : {
+      "dataCastHandler" : null,
+      "mappedClassName" : "ai.libs.FunctionDataTypeHandler"
+    },
+    "qualifier" : "ai.libs.Function",
+    "metaTags" : [ ],
+    "simpleName" : "ai.libs.Function",
+    "comments" : [ ]
+  }, {
+    "semanticType" : "Arr",
+    "javaTypeAux" : {
+      "dataCastHandler" : null,
+      "mappedClassName" : "ai.libs.DotDataTypeHandler"
+    },
+    "qualifier" : "ai.libs.Dot",
+    "metaTags" : [ ],
+    "simpleName" : "ai.libs.Dot",
+    "comments" : [ ]
+  } ],
+  "comments" : [ "This is an exemplary service description for a fictional math library.", "For more information: https://libs.ai/" ],
+  "qualifier" : "MathLib",
+  "metaTags" : [ ],
+  "simpleName" : "Classic Math Library"
+} ]

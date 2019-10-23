@@ -1,0 +1,8 @@
+[ {
+  "services" : [ ],
+  "dataTypes" : [ ],
+  "comments" : [ "This is an exemplary service description for a fictional math library.", "For more information: https://libs.ai/" ],
+  "qualifier" : "MathLib",
+  "metaTags" : [ ],
+  "simpleName" : "Math Library"
+} ]

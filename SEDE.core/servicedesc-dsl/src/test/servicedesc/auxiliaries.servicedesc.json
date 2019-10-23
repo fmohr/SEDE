@@ -8,7 +8,7 @@
       "staticInvocation" : true,
       "redirectArg" : -1,
       "methodName" : null,
-      "className" : null,
+      "className" : "org.example.S1",
       "metaclass" : null
     },
     "pythonClassAuxiliaries" : null,
@@ -16,7 +16,13 @@
       "parameters" : [ ],
       "parameterDependencies" : [ ],
       "javaParameterizationAuxiliaries" : {
-        "dispatchAux" : null,
+        "parameterHandler" : {
+          "staticInvocation" : false,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : "org.example.S1ParamSetter",
+          "metaclass" : null
+        },
         "autoScanEachParam" : false,
         "bundleInMap" : false,
         "bundleInArray" : false,
@@ -38,10 +44,10 @@
         "staticInvocation" : false,
         "redirectArg" : -1,
         "methodName" : null,
-        "className" : null,
+        "className" : "org.example.T2Handler",
         "metaclass" : null
       },
-      "className" : "org.example.T2Handler"
+      "mappedClassName" : "org.example.T2"
     },
     "qualifier" : "t2",
     "metaTags" : [ ],

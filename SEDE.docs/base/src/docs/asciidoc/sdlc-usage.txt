@@ -1,0 +1,5 @@
+usage: java -jar sdlc.jar [option]
+ -h,--help            display usage
+ -i,--inputs <arg>    input service description file paths
+ -m,--merge           merges the inputs into the a single output
+ -o,--outputs <arg>   output service description file paths

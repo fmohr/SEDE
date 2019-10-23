@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -27,6 +28,8 @@ public class GraphJsonSerializer {
 	private static final String JSON_FIELDNAME_NODES = "nodes";
 	private static final String JSON_FIELDNAME_EDGES = "edges";
 
+	private static final ObjectMapper MAPPER = new ObjectMapper();
+
 	/**
 	 * Serializes the given graph to JSON.
 	 *
@@ -45,9 +48,9 @@ public class GraphJsonSerializer {
 		 */
 		List<BaseNode> orderOfNodes = Iterators.TO_LIST(GraphTraversal.iterateNodes(graph).iterator());
 		JSONArray nodearray = new JSONArray();
-		NodeJsonSerializer njs = new NodeJsonSerializer();
 		for (BaseNode bn : orderOfNodes) {
-			nodearray.add(njs.toJSON(bn));
+            JSONObject convertedVal = MAPPER.convertValue(bn, JSONObject.class);
+            nodearray.add(convertedVal);
 		}
 		/*
 		 * serialize the edges by creating an "m":n tuple for each edge:
@@ -109,11 +112,10 @@ public class GraphJsonSerializer {
 		/*
 		 * Deserialize nodes:
 		 */
-		NodeJsonSerializer njs = new NodeJsonSerializer();
 		List<BaseNode> orderOfNodes = new ArrayList<>(serializedNodes.size()); // fill a map to hold indices of nodes.
 		for (Object jsonNode : serializedNodes) {
 			Map<Object, Object> serializedNode = (Map<Object, Object>) jsonNode;
-			BaseNode bn = njs.fromJSON(serializedNode);
+			BaseNode bn = MAPPER.convertValue(serializedNode, BaseNode.class);
 			orderOfNodes.add(bn);
 			deserializedGraph.addNode(bn);
 		}

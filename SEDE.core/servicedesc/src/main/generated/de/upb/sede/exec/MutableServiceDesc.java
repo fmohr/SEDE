@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import de.upb.sede.ICommented;
+import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
+import de.upb.sede.exec.auxiliary.IJavaDispatchAux;
+import de.upb.sede.exec.auxiliary.IPythonClassAux;
+import de.upb.sede.param.IServiceParameterizationDesc;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -38,9 +41,11 @@ public final class MutableServiceDesc implements IServiceDesc {
   private final ArrayList<String> interfaces = new ArrayList<String>();
   private boolean isAbstract;
   private final Map<String, String> fieldTypes = new LinkedHashMap<String, String>();
-  private @Nullable IJavaClassAux javaClassAuxiliaries;
+  private @Nullable IJavaDispatchAux javaDispatchAux;
   private @Nullable IPythonClassAux pythonClassAuxiliaries;
+  private @Nullable IServiceParameterizationDesc serviceParameters;
   private String qualifier;
+  private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
   private final ArrayList<String> comments = new ArrayList<String>();
 
@@ -93,12 +98,12 @@ public final class MutableServiceDesc implements IServiceDesc {
   }
 
   /**
-   * @return value of {@code javaClassAuxiliaries} attribute, may be {@code null}
+   * @return value of {@code javaDispatchAux} attribute, may be {@code null}
    */
-  @JsonProperty("javaClassAuxiliaries")
+  @JsonProperty("javaDispatchAux")
   @Override
-  public final @Nullable IJavaClassAux getJavaClassAuxiliaries() {
-    return javaClassAuxiliaries;
+  public final @Nullable IJavaDispatchAux getJavaDispatchAux() {
+    return javaDispatchAux;
   }
 
   /**
@@ -111,6 +116,15 @@ public final class MutableServiceDesc implements IServiceDesc {
   }
 
   /**
+   * @return value of {@code serviceParameters} attribute, may be {@code null}
+   */
+  @JsonProperty("serviceParameters")
+  @Override
+  public final @Nullable IServiceParameterizationDesc getServiceParameters() {
+    return serviceParameters;
+  }
+
+  /**
    * @return value of {@code qualifier} attribute
    */
   @JsonProperty("qualifier")
@@ -120,6 +134,15 @@ public final class MutableServiceDesc implements IServiceDesc {
       checkRequiredAttributes();
     }
     return qualifier;
+  }
+
+  /**
+   * @return modifiable list {@code metaTags}
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public final List<String> getMetaTags() {
+    return metaTags;
   }
 
   /**
@@ -154,23 +177,13 @@ public final class MutableServiceDesc implements IServiceDesc {
     interfaces.clear();
     isAbstract = false;
     fieldTypes.clear();
-    javaClassAuxiliaries = null;
+    javaDispatchAux = null;
     pythonClassAuxiliaries = null;
+    serviceParameters = null;
     qualifier = null;
+    metaTags.clear();
     simpleName = null;
     comments.clear();
-    return this;
-  }
-
-  /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.ICommented} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableServiceDesc from(ICommented instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
     return this;
   }
 
@@ -199,6 +212,18 @@ public final class MutableServiceDesc implements IServiceDesc {
   }
 
   /**
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.CommentAware} instance.
+   * @param instance The instance from which to copy values
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceDesc from(CommentAware instance) {
+    Objects.requireNonNull(instance, "instance");
+    from((Object) instance);
+    return this;
+  }
+
+  /**
    * Fill this modifiable instance with attribute values from the provided {@link IServiceDesc} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
@@ -219,44 +244,54 @@ public final class MutableServiceDesc implements IServiceDesc {
       addAllInterfaces(instance.getInterfaces());
       setIsAbstract(instance.isAbstract());
       putAllFieldTypes(instance.getFieldTypes());
-      @Nullable IJavaClassAux javaClassAuxiliariesValue = instance.getJavaClassAuxiliaries();
-      if (javaClassAuxiliariesValue != null) {
-        setJavaClassAuxiliaries(javaClassAuxiliariesValue);
+      @Nullable IJavaDispatchAux javaDispatchAuxValue = instance.getJavaDispatchAux();
+      if (javaDispatchAuxValue != null) {
+        setJavaDispatchAux(javaDispatchAuxValue);
       }
       @Nullable IPythonClassAux pythonClassAuxiliariesValue = instance.getPythonClassAuxiliaries();
       if (pythonClassAuxiliariesValue != null) {
         setPythonClassAuxiliaries(pythonClassAuxiliariesValue);
       }
+      @Nullable IServiceParameterizationDesc serviceParametersValue = instance.getServiceParameters();
+      if (serviceParametersValue != null) {
+        setServiceParameters(serviceParametersValue);
+      }
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       addAllComments(instance.getComments());
       return;
     }
-    if (object instanceof ICommented) {
-      ICommented instance = (ICommented) object;
-      addAllComments(instance.getComments());
-    }
     if (object instanceof IServiceDesc) {
       IServiceDesc instance = (IServiceDesc) object;
       addAllInterfaces(instance.getInterfaces());
+      @Nullable IJavaDispatchAux javaDispatchAuxValue = instance.getJavaDispatchAux();
+      if (javaDispatchAuxValue != null) {
+        setJavaDispatchAux(javaDispatchAuxValue);
+      }
+      addAllMethods(instance.getMethods());
+      putAllFieldTypes(instance.getFieldTypes());
       setIsAbstract(instance.isAbstract());
       @Nullable IPythonClassAux pythonClassAuxiliariesValue = instance.getPythonClassAuxiliaries();
       if (pythonClassAuxiliariesValue != null) {
         setPythonClassAuxiliaries(pythonClassAuxiliariesValue);
       }
-      addAllMethods(instance.getMethods());
-      putAllFieldTypes(instance.getFieldTypes());
-      @Nullable IJavaClassAux javaClassAuxiliariesValue = instance.getJavaClassAuxiliaries();
-      if (javaClassAuxiliariesValue != null) {
-        setJavaClassAuxiliaries(javaClassAuxiliariesValue);
+      @Nullable IServiceParameterizationDesc serviceParametersValue = instance.getServiceParameters();
+      if (serviceParametersValue != null) {
+        setServiceParameters(serviceParametersValue);
       }
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
+    }
+    if (object instanceof CommentAware) {
+      CommentAware instance = (CommentAware) object;
+      addAllComments(instance.getComments());
     }
   }
 
@@ -425,13 +460,13 @@ public final class MutableServiceDesc implements IServiceDesc {
   }
 
   /**
-   * Assigns a value to the {@link IServiceDesc#getJavaClassAuxiliaries() javaClassAuxiliaries} attribute.
-   * @param javaClassAuxiliaries The value for javaClassAuxiliaries, can be {@code null}
+   * Assigns a value to the {@link IServiceDesc#getJavaDispatchAux() javaDispatchAux} attribute.
+   * @param javaDispatchAux The value for javaDispatchAux, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableServiceDesc setJavaClassAuxiliaries(@Nullable IJavaClassAux javaClassAuxiliaries) {
-    this.javaClassAuxiliaries = javaClassAuxiliaries;
+  public MutableServiceDesc setJavaDispatchAux(@Nullable IJavaDispatchAux javaDispatchAux) {
+    this.javaDispatchAux = javaDispatchAux;
     return this;
   }
 
@@ -447,6 +482,17 @@ public final class MutableServiceDesc implements IServiceDesc {
   }
 
   /**
+   * Assigns a value to the {@link IServiceDesc#getServiceParameters() serviceParameters} attribute.
+   * @param serviceParameters The value for serviceParameters, can be {@code null}
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceDesc setServiceParameters(@Nullable IServiceParameterizationDesc serviceParameters) {
+    this.serviceParameters = serviceParameters;
+    return this;
+  }
+
+  /**
    * Assigns a value to the {@link IServiceDesc#getQualifier() qualifier} attribute.
    * @param qualifier The value for qualifier
    * @return {@code this} for use in a chained invocation
@@ -455,6 +501,56 @@ public final class MutableServiceDesc implements IServiceDesc {
   public MutableServiceDesc setQualifier(String qualifier) {
     this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
     initBits &= ~INIT_BIT_QUALIFIER;
+    return this;
+  }
+
+  /**
+   * Adds one element to {@link IServiceDesc#getMetaTags() metaTags} list.
+   * @param element The metaTags element
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceDesc addMetaTags(String element) {
+    Objects.requireNonNull(element, "metaTags element");
+    this.metaTags.add(element);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IServiceDesc#getMetaTags() metaTags} list.
+   * @param elements An array of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableServiceDesc addMetaTags(String... elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
+    return this;
+  }
+
+  /**
+   * Sets or replaces all elements for {@link IServiceDesc#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceDesc setMetaTags(Iterable<String> elements) {
+    this.metaTags.clear();
+    addAllMetaTags(elements);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IServiceDesc#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableServiceDesc addAllMetaTags(Iterable<String> elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
     return this;
   }
 
@@ -613,20 +709,19 @@ public final class MutableServiceDesc implements IServiceDesc {
 
   private boolean equalTo(MutableServiceDesc another) {
     boolean isAbstract = isAbstract();
-    String simpleName = getSimpleName();
     return methods.equals(another.methods)
         && interfaces.equals(another.interfaces)
         && isAbstract == another.isAbstract()
         && fieldTypes.equals(another.fieldTypes)
-        && Objects.equals(javaClassAuxiliaries, another.javaClassAuxiliaries)
+        && Objects.equals(javaDispatchAux, another.javaDispatchAux)
         && Objects.equals(pythonClassAuxiliaries, another.pythonClassAuxiliaries)
+        && Objects.equals(serviceParameters, another.serviceParameters)
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.getSimpleName())
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code methods}, {@code interfaces}, {@code isAbstract}, {@code fieldTypes}, {@code javaClassAuxiliaries}, {@code pythonClassAuxiliaries}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code methods}, {@code interfaces}, {@code isAbstract}, {@code fieldTypes}, {@code javaDispatchAux}, {@code pythonClassAuxiliaries}, {@code serviceParameters}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
@@ -637,11 +732,10 @@ public final class MutableServiceDesc implements IServiceDesc {
     boolean isAbstract = isAbstract();
     h += (h << 5) + Booleans.hashCode(isAbstract);
     h += (h << 5) + fieldTypes.hashCode();
-    h += (h << 5) + Objects.hashCode(javaClassAuxiliaries);
+    h += (h << 5) + Objects.hashCode(javaDispatchAux);
     h += (h << 5) + Objects.hashCode(pythonClassAuxiliaries);
+    h += (h << 5) + Objects.hashCode(serviceParameters);
     h += (h << 5) + qualifier.hashCode();
-    String simpleName = getSimpleName();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -658,10 +752,10 @@ public final class MutableServiceDesc implements IServiceDesc {
         .add("interfaces", getInterfaces())
         .add("isAbstract", isAbstract())
         .add("fieldTypes", getFieldTypes())
-        .add("javaClassAuxiliaries", getJavaClassAuxiliaries())
+        .add("javaDispatchAux", getJavaDispatchAux())
         .add("pythonClassAuxiliaries", getPythonClassAuxiliaries())
+        .add("serviceParameters", getServiceParameters())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
-        .add("simpleName", getSimpleName())
         .add("comments", getComments())
         .toString();
   }

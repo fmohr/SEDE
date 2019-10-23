@@ -3,8 +3,9 @@ package de.upb.sede.types;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import de.upb.sede.ICommented;
+import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
+import de.upb.sede.types.auxiliary.IJavaTypeAux;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,9 +32,9 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   private long initBits = 0x3L;
 
   private String semanticType;
-  private @Nullable IJavaTypeAux javaTypeAuxiliaries;
-  private @Nullable IPythonTypeAux pythonTypeAuxiliaries;
+  private @Nullable IJavaTypeAux javaTypeAux;
   private String qualifier;
+  private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
   private final ArrayList<String> comments = new ArrayList<String>();
 
@@ -60,21 +61,12 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   }
 
   /**
-   * @return value of {@code javaTypeAuxiliaries} attribute, may be {@code null}
+   * @return value of {@code javaTypeAux} attribute, may be {@code null}
    */
-  @JsonProperty("javaTypeAuxiliaries")
+  @JsonProperty("javaTypeAux")
   @Override
-  public final @Nullable IJavaTypeAux getJavaTypeAuxiliaries() {
-    return javaTypeAuxiliaries;
-  }
-
-  /**
-   * @return value of {@code pythonTypeAuxiliaries} attribute, may be {@code null}
-   */
-  @JsonProperty("pythonTypeAuxiliaries")
-  @Override
-  public final @Nullable IPythonTypeAux getPythonTypeAuxiliaries() {
-    return pythonTypeAuxiliaries;
+  public final @Nullable IJavaTypeAux getJavaTypeAux() {
+    return javaTypeAux;
   }
 
   /**
@@ -87,6 +79,15 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
       checkRequiredAttributes();
     }
     return qualifier;
+  }
+
+  /**
+   * @return modifiable list {@code metaTags}
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public final List<String> getMetaTags() {
+    return metaTags;
   }
 
   /**
@@ -117,23 +118,11 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   public MutableDataTypeDesc clear() {
     initBits = 0x3L;
     semanticType = null;
-    javaTypeAuxiliaries = null;
-    pythonTypeAuxiliaries = null;
+    javaTypeAux = null;
     qualifier = null;
+    metaTags.clear();
     simpleName = null;
     comments.clear();
-    return this;
-  }
-
-  /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.ICommented} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableDataTypeDesc from(ICommented instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
     return this;
   }
 
@@ -162,6 +151,18 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   }
 
   /**
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.CommentAware} instance.
+   * @param instance The instance from which to copy values
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableDataTypeDesc from(CommentAware instance) {
+    Objects.requireNonNull(instance, "instance");
+    from((Object) instance);
+    return this;
+  }
+
+  /**
    * Fill this modifiable instance with attribute values from the provided {@link IDataTypeDesc} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
@@ -181,41 +182,35 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
       if (instance.semanticTypeIsSet()) {
         setSemanticType(instance.getSemanticType());
       }
-      @Nullable IJavaTypeAux javaTypeAuxiliariesValue = instance.getJavaTypeAuxiliaries();
-      if (javaTypeAuxiliariesValue != null) {
-        setJavaTypeAuxiliaries(javaTypeAuxiliariesValue);
-      }
-      @Nullable IPythonTypeAux pythonTypeAuxiliariesValue = instance.getPythonTypeAuxiliaries();
-      if (pythonTypeAuxiliariesValue != null) {
-        setPythonTypeAuxiliaries(pythonTypeAuxiliariesValue);
+      @Nullable IJavaTypeAux javaTypeAuxValue = instance.getJavaTypeAux();
+      if (javaTypeAuxValue != null) {
+        setJavaTypeAux(javaTypeAuxValue);
       }
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       addAllComments(instance.getComments());
       return;
     }
-    if (object instanceof ICommented) {
-      ICommented instance = (ICommented) object;
-      addAllComments(instance.getComments());
-    }
     if (object instanceof IDataTypeDesc) {
       IDataTypeDesc instance = (IDataTypeDesc) object;
-      @Nullable IPythonTypeAux pythonTypeAuxiliariesValue = instance.getPythonTypeAuxiliaries();
-      if (pythonTypeAuxiliariesValue != null) {
-        setPythonTypeAuxiliaries(pythonTypeAuxiliariesValue);
-      }
-      @Nullable IJavaTypeAux javaTypeAuxiliariesValue = instance.getJavaTypeAuxiliaries();
-      if (javaTypeAuxiliariesValue != null) {
-        setJavaTypeAuxiliaries(javaTypeAuxiliariesValue);
+      @Nullable IJavaTypeAux javaTypeAuxValue = instance.getJavaTypeAux();
+      if (javaTypeAuxValue != null) {
+        setJavaTypeAux(javaTypeAuxValue);
       }
       setSemanticType(instance.getSemanticType());
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
+    }
+    if (object instanceof CommentAware) {
+      CommentAware instance = (CommentAware) object;
+      addAllComments(instance.getComments());
     }
   }
 
@@ -232,24 +227,13 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   }
 
   /**
-   * Assigns a value to the {@link IDataTypeDesc#getJavaTypeAuxiliaries() javaTypeAuxiliaries} attribute.
-   * @param javaTypeAuxiliaries The value for javaTypeAuxiliaries, can be {@code null}
+   * Assigns a value to the {@link IDataTypeDesc#getJavaTypeAux() javaTypeAux} attribute.
+   * @param javaTypeAux The value for javaTypeAux, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableDataTypeDesc setJavaTypeAuxiliaries(@Nullable IJavaTypeAux javaTypeAuxiliaries) {
-    this.javaTypeAuxiliaries = javaTypeAuxiliaries;
-    return this;
-  }
-
-  /**
-   * Assigns a value to the {@link IDataTypeDesc#getPythonTypeAuxiliaries() pythonTypeAuxiliaries} attribute.
-   * @param pythonTypeAuxiliaries The value for pythonTypeAuxiliaries, can be {@code null}
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableDataTypeDesc setPythonTypeAuxiliaries(@Nullable IPythonTypeAux pythonTypeAuxiliaries) {
-    this.pythonTypeAuxiliaries = pythonTypeAuxiliaries;
+  public MutableDataTypeDesc setJavaTypeAux(@Nullable IJavaTypeAux javaTypeAux) {
+    this.javaTypeAux = javaTypeAux;
     return this;
   }
 
@@ -262,6 +246,56 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   public MutableDataTypeDesc setQualifier(String qualifier) {
     this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
     initBits &= ~INIT_BIT_QUALIFIER;
+    return this;
+  }
+
+  /**
+   * Adds one element to {@link IDataTypeDesc#getMetaTags() metaTags} list.
+   * @param element The metaTags element
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableDataTypeDesc addMetaTags(String element) {
+    Objects.requireNonNull(element, "metaTags element");
+    this.metaTags.add(element);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IDataTypeDesc#getMetaTags() metaTags} list.
+   * @param elements An array of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableDataTypeDesc addMetaTags(String... elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
+    return this;
+  }
+
+  /**
+   * Sets or replaces all elements for {@link IDataTypeDesc#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableDataTypeDesc setMetaTags(Iterable<String> elements) {
+    this.metaTags.clear();
+    addAllMetaTags(elements);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IDataTypeDesc#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableDataTypeDesc addAllMetaTags(Iterable<String> elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
     return this;
   }
 
@@ -421,28 +455,22 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   }
 
   private boolean equalTo(MutableDataTypeDesc another) {
-    String simpleName = getSimpleName();
     return semanticType.equals(another.semanticType)
-        && Objects.equals(javaTypeAuxiliaries, another.javaTypeAuxiliaries)
-        && Objects.equals(pythonTypeAuxiliaries, another.pythonTypeAuxiliaries)
+        && Objects.equals(javaTypeAux, another.javaTypeAux)
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.getSimpleName())
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code semanticType}, {@code javaTypeAuxiliaries}, {@code pythonTypeAuxiliaries}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code semanticType}, {@code javaTypeAux}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
     h += (h << 5) + semanticType.hashCode();
-    h += (h << 5) + Objects.hashCode(javaTypeAuxiliaries);
-    h += (h << 5) + Objects.hashCode(pythonTypeAuxiliaries);
+    h += (h << 5) + Objects.hashCode(javaTypeAux);
     h += (h << 5) + qualifier.hashCode();
-    String simpleName = getSimpleName();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -456,10 +484,8 @@ public final class MutableDataTypeDesc implements IDataTypeDesc {
   public String toString() {
     return MoreObjects.toStringHelper("MutableDataTypeDesc")
         .add("semanticType", semanticTypeIsSet() ? getSemanticType() : "?")
-        .add("javaTypeAuxiliaries", getJavaTypeAuxiliaries())
-        .add("pythonTypeAuxiliaries", getPythonTypeAuxiliaries())
+        .add("javaTypeAux", getJavaTypeAux())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
-        .add("simpleName", getSimpleName())
         .add("comments", getComments())
         .toString();
   }

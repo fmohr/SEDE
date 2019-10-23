@@ -1,5 +1,8 @@
-apply plugin: "groovy"
-//apply plugin: "GroovyCompile"
+plugins {
+    id 'com.github.johnrengelman.shadow' version '5.1.0'
+    id 'java'
+    id 'groovy'
+}
 
 dependencies {
 
@@ -11,6 +14,45 @@ dependencies {
     compile libs.jackson_dataformat
     compile libs.groovy
 
+
+    compile "org.codehaus.groovy:groovy-all:2.5.7"
+    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.22'
+
     testCompile libs.junit
     testCompile libs.spock
 }
+
+task compileServiceDescs(type: JavaExec, dependsOn: [compileGroovy]) {
+    classpath += sourceSets.main.runtimeClasspath
+    classpath += sourceSets.test.runtimeClasspath
+
+    main = 'de.upb.sede.SDLCli'
+
+    args "-i", "${projectDir}/src/test/servicedesc/"
+}
+
+
+assemble.dependsOn(compileServiceDescs)
+
+shadowJar {
+    archiveFileName = "sdlc.jar"
+    manifest {
+        attributes 'Main-Class': 'de.upb.sede.SDLCli'
+    }
+}
+
+// custom shadow jar task
+//import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+//task bundleCompiler(type: ShadowJar) {
+//}
+//shadowJar.dependsOn(bundleCompiler)
+
+
+sourceSets {
+    test{
+        resources {
+            srcDirs +=  'src/test/servicedesc'
+        }
+    }
+}
+

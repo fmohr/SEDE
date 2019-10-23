@@ -8,6 +8,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
+import de.upb.sede.composition.graphs.nodes.MutableInstructionNode;
 import de.upb.sede.exceptions.FMCompositionSyntaxException;
 
 /**
@@ -255,15 +256,19 @@ public final class FMCompositionParser {
 			/*
 			 * Distinguish between service creation and service invocation;
 			 */
-			InstructionNode instNode = new InstructionNode(instruction, context, method);
+            MutableInstructionNode instNode = MutableInstructionNode.create();
+            instNode.setFMInstruction(instruction);
+            instNode.setContext(context);
+            instNode.setMethod(method);
+
 			if (PATTERN_classpath.matcher(context).matches()) {
-				instNode.setContextIsField(false);
+				instNode.setContextIsFieldFlag(false);
 			} else {
-				instNode.setContextIsField(true);
+                instNode.setContextIsFieldFlag(true);
 			}
 			/* populate fields */
 			if (leftside != null) {
-				instNode.setLeftSideFieldname(leftside);
+				instNode.setFieldName(leftside);
 			}
 			if (host != null) {
 				instNode.setHost(host);
@@ -274,7 +279,7 @@ public final class FMCompositionParser {
 			List<String> inputList = separateInputs(inputs);
 			instNode.setParameterFields(inputList);
 
-			return instNode;
+			return instNode.toImmutable();
 		} else {
 			throw new FMCompositionSyntaxException(instruction, REGEX_instruction);
 		}

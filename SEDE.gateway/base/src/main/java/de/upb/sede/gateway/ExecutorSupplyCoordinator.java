@@ -1,6 +1,7 @@
 package de.upb.sede.gateway;
 
 import de.upb.sede.composition.RoundRobinScheduler;
+import de.upb.sede.exec.ExecutorHandle;
 import de.upb.sede.gateway.edd.CachedExecutorHandleSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,7 +86,7 @@ public class ExecutorSupplyCoordinator { // TODO let this class implement OnDema
 	public ExecutorHandle scheduleNextAmong(List<ExecutorHandle> candidates) {
 		String id = scheduler.scheduleNextAmong(candidates);
 		for (ExecutorHandle executor : candidates) {
-			if (executor.getExecutorId().equals(id)) {
+			if (executor.getContactInfo().getQualifier().equals(id)) {
 				return executor;
 			}
 		}

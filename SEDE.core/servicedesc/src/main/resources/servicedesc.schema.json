@@ -26,7 +26,7 @@
                     "type" : "object",
                     "id" : "urn:jsonschema:de:upb:sede:exec:ISignatureDesc",
                     "properties" : {
-                      "static" : {
+                      "pure" : {
                         "type" : "boolean"
                       },
                       "inputs" : {
@@ -36,25 +36,19 @@
                           "id" : "urn:jsonschema:de:upb:sede:exec:IMethodParameterDesc",
                           "properties" : {
                             "name" : {
-                              "type" : "object",
-                              "id" : "urn:jsonschema:java:util:Optional<java:lang:String>",
-                              "properties" : {
-                                "present" : {
-                                  "type" : "boolean"
-                                }
-                              }
+                              "type" : "string"
                             },
                             "type" : {
                               "type" : "string"
                             },
                             "fixedValue" : {
                               "type" : "string"
-                            },
-                            "mutable" : {
-                              "type" : "boolean"
                             }
                           }
                         }
+                      },
+                      "contextFree" : {
+                        "type" : "boolean"
                       },
                       "outputs" : {
                         "type" : "array",
@@ -63,9 +57,14 @@
                           "$ref" : "urn:jsonschema:de:upb:sede:exec:IMethodParameterDesc"
                         }
                       },
-                      "javaMethodAux" : {
+                      "javaAux" : {
                         "type" : "object",
-                        "id" : "urn:jsonschema:de:upb:sede:exec:IJavaMethodAux"
+                        "id" : "urn:jsonschema:de:upb:sede:exec:aux:IJavaDispatchAux",
+                        "properties" : {
+                          "metaclass" : {
+                            "type" : "string"
+                          }
+                        }
                       },
                       "comments" : {
                         "type" : "array",
@@ -94,19 +93,22 @@
           "abstract" : {
             "type" : "boolean"
           },
-          "javaClassAuxiliaries" : {
-            "type" : "object",
-            "id" : "urn:jsonschema:de:upb:sede:exec:IJavaClassAux"
-          },
           "fieldTypes" : {
             "type" : "object",
             "additionalProperties" : {
               "type" : "string"
             }
           },
+          "javaAux" : {
+            "type" : "object",
+            "$ref" : "urn:jsonschema:de:upb:sede:exec:aux:IJavaDispatchAux"
+          },
           "pythonClassAuxiliaries" : {
             "type" : "object",
-            "id" : "urn:jsonschema:de:upb:sede:exec:IPythonClassAux"
+            "id" : "urn:jsonschema:de:upb:sede:exec:aux:IPythonClassAux"
+          },
+          "stateType" : {
+            "type" : "string"
           },
           "simpleName" : {
             "type" : "string"
@@ -132,13 +134,9 @@
           "semanticType" : {
             "type" : "string"
           },
-          "javaTypeAuxiliaries" : {
+          "javaAux" : {
             "type" : "object",
-            "id" : "urn:jsonschema:de:upb:sede:types:IJavaTypeAux"
-          },
-          "pythonTypeAuxiliaries" : {
-            "type" : "object",
-            "id" : "urn:jsonschema:de:upb:sede:types:IPythonTypeAux"
+            "$ref" : "urn:jsonschema:de:upb:sede:exec:aux:IJavaDispatchAux"
           },
           "simpleName" : {
             "type" : "string"

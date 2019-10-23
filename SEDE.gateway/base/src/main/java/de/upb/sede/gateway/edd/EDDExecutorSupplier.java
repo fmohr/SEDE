@@ -2,12 +2,12 @@ package de.upb.sede.gateway.edd;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.upb.sede.gateway.ExecutorHandle;
+import de.upb.sede.exec.ExecutorHandle;
+import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.gateway.OnDemandExecutorSupplier;
 import de.upb.sede.requests.deploy.EDDRegistration;
 import de.upb.sede.requests.deploy.ExecutorDemandFulfillment;
 import de.upb.sede.requests.deploy.ExecutorDemandRequest;
-import de.upb.sede.util.ModifiableURI;
 import de.upb.sede.util.URIMod;
 import de.upb.sede.util.UnmodifiableURI;
 import okhttp3.*;
@@ -38,7 +38,7 @@ public class EDDExecutorSupplier implements OnDemandExecutorSupplier {
     public ExecutorHandle supply(String service) {
         List<ExecutorHandle> handles = supplyList(Collections.singletonList(service));
         for(ExecutorHandle handle : handles) {
-            if(handle.getExecutionerCapabilities().supportedServices().contains(service)) {
+            if(handle.getCapabilities().getServices().contains(service)) {
                 return handle;
             }
         }
@@ -95,7 +95,7 @@ public class EDDExecutorSupplier implements OnDemandExecutorSupplier {
             try {
                 ExecutorDemandFulfillment fulfillment = mapper.readValue(responseBody, ExecutorDemandFulfillment.class);
                 return fulfillment.getExecutors().stream()
-                    .map(ExecutorHandle::fromRegistration)
+                    .map(IExecutorHandle::fromRegistration)
                     .collect(Collectors.toList());
             } catch (IOException e) {
                 throw new UnsuppliedExecutorException(getEDDDisplayName()
@@ -136,7 +136,7 @@ public class EDDExecutorSupplier implements OnDemandExecutorSupplier {
     public Optional<ExecutorHandle> getHandle(String executorId) {
         try {
             return supplyList(Collections.emptyList()).stream()
-                .filter(handle -> handle.getExecutorId().equals(executorId))
+                .filter(handle -> handle.getQualifier().equals(executorId))
                 .findAny();
         } catch (UnsuppliedExecutorException ex) {
             //TODO log the exception

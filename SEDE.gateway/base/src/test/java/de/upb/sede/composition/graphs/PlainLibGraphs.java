@@ -22,7 +22,6 @@ import de.upb.sede.requests.ExecRequest;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.InputFields;
-import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.util.FileUtil;
 

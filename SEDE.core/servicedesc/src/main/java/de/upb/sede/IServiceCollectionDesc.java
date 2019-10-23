@@ -7,11 +7,11 @@ import org.immutables.value.Value;
 
 import java.util.List;
 
-@SModelStyle
+@SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = ServiceCollectionDesc.Builder.class)
-public interface IServiceCollectionDesc extends ICommented, IQualifiable {
+public interface IServiceCollectionDesc extends CommentAware, IQualifiable {
 
     List<IServiceDesc> getServices();
 

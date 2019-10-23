@@ -8,8 +8,9 @@ import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
-import de.upb.sede.ICommented;
+import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
+import de.upb.sede.types.auxiliary.IJavaTypeAux;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,17 +35,17 @@ import org.immutables.value.Generated;
 @CheckReturnValue
 public final class DataTypeDesc implements IDataTypeDesc {
   private final String semanticType;
-  private final @Nullable IJavaTypeAux javaTypeAuxiliaries;
-  private final @Nullable IPythonTypeAux pythonTypeAuxiliaries;
+  private final @Nullable IJavaTypeAux javaTypeAux;
   private final String qualifier;
+  private final ImmutableList<String> metaTags;
   private final String simpleName;
   private final ImmutableList<String> comments;
 
   private DataTypeDesc(DataTypeDesc.Builder builder) {
     this.semanticType = builder.semanticType;
-    this.javaTypeAuxiliaries = builder.javaTypeAuxiliaries;
-    this.pythonTypeAuxiliaries = builder.pythonTypeAuxiliaries;
+    this.javaTypeAux = builder.javaTypeAux;
     this.qualifier = builder.qualifier;
+    this.metaTags = builder.metaTags.build();
     this.comments = builder.comments.build();
     this.simpleName = builder.simpleName != null
         ? builder.simpleName
@@ -53,15 +54,15 @@ public final class DataTypeDesc implements IDataTypeDesc {
 
   private DataTypeDesc(
       String semanticType,
-      @Nullable IJavaTypeAux javaTypeAuxiliaries,
-      @Nullable IPythonTypeAux pythonTypeAuxiliaries,
+      @Nullable IJavaTypeAux javaTypeAux,
       String qualifier,
+      ImmutableList<String> metaTags,
       String simpleName,
       ImmutableList<String> comments) {
     this.semanticType = semanticType;
-    this.javaTypeAuxiliaries = javaTypeAuxiliaries;
-    this.pythonTypeAuxiliaries = pythonTypeAuxiliaries;
+    this.javaTypeAux = javaTypeAux;
     this.qualifier = qualifier;
+    this.metaTags = metaTags;
     this.simpleName = simpleName;
     this.comments = comments;
   }
@@ -76,21 +77,12 @@ public final class DataTypeDesc implements IDataTypeDesc {
   }
 
   /**
-   * @return The value of the {@code javaTypeAuxiliaries} attribute
+   * @return The value of the {@code javaTypeAux} attribute
    */
-  @JsonProperty("javaTypeAuxiliaries")
+  @JsonProperty("javaTypeAux")
   @Override
-  public @Nullable IJavaTypeAux getJavaTypeAuxiliaries() {
-    return javaTypeAuxiliaries;
-  }
-
-  /**
-   * @return The value of the {@code pythonTypeAuxiliaries} attribute
-   */
-  @JsonProperty("pythonTypeAuxiliaries")
-  @Override
-  public @Nullable IPythonTypeAux getPythonTypeAuxiliaries() {
-    return pythonTypeAuxiliaries;
+  public @Nullable IJavaTypeAux getJavaTypeAux() {
+    return javaTypeAux;
   }
 
   /**
@@ -100,6 +92,15 @@ public final class DataTypeDesc implements IDataTypeDesc {
   @Override
   public String getQualifier() {
     return qualifier;
+  }
+
+  /**
+   * @return The value of the {@code metaTags} attribute
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public ImmutableList<String> getMetaTags() {
+    return metaTags;
   }
 
   /**
@@ -129,47 +130,18 @@ public final class DataTypeDesc implements IDataTypeDesc {
   public final DataTypeDesc withSemanticType(String value) {
     String newValue = Objects.requireNonNull(value, "semanticType");
     if (this.semanticType.equals(newValue)) return this;
-    return new DataTypeDesc(
-        newValue,
-        this.javaTypeAuxiliaries,
-        this.pythonTypeAuxiliaries,
-        this.qualifier,
-        this.simpleName,
-        this.comments);
+    return new DataTypeDesc(newValue, this.javaTypeAux, this.qualifier, this.metaTags, this.simpleName, this.comments);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IDataTypeDesc#getJavaTypeAuxiliaries() javaTypeAuxiliaries} attribute.
+   * Copy the current immutable object by setting a value for the {@link IDataTypeDesc#getJavaTypeAux() javaTypeAux} attribute.
    * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for javaTypeAuxiliaries (can be {@code null})
+   * @param value A new value for javaTypeAux (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
-  public final DataTypeDesc withJavaTypeAuxiliaries(@Nullable IJavaTypeAux value) {
-    if (this.javaTypeAuxiliaries == value) return this;
-    return new DataTypeDesc(
-        this.semanticType,
-        value,
-        this.pythonTypeAuxiliaries,
-        this.qualifier,
-        this.simpleName,
-        this.comments);
-  }
-
-  /**
-   * Copy the current immutable object by setting a value for the {@link IDataTypeDesc#getPythonTypeAuxiliaries() pythonTypeAuxiliaries} attribute.
-   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for pythonTypeAuxiliaries (can be {@code null})
-   * @return A modified copy of the {@code this} object
-   */
-  public final DataTypeDesc withPythonTypeAuxiliaries(@Nullable IPythonTypeAux value) {
-    if (this.pythonTypeAuxiliaries == value) return this;
-    return new DataTypeDesc(
-        this.semanticType,
-        this.javaTypeAuxiliaries,
-        value,
-        this.qualifier,
-        this.simpleName,
-        this.comments);
+  public final DataTypeDesc withJavaTypeAux(@Nullable IJavaTypeAux value) {
+    if (this.javaTypeAux == value) return this;
+    return new DataTypeDesc(this.semanticType, value, this.qualifier, this.metaTags, this.simpleName, this.comments);
   }
 
   /**
@@ -181,13 +153,29 @@ public final class DataTypeDesc implements IDataTypeDesc {
   public final DataTypeDesc withQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "qualifier");
     if (this.qualifier.equals(newValue)) return this;
-    return new DataTypeDesc(
-        this.semanticType,
-        this.javaTypeAuxiliaries,
-        this.pythonTypeAuxiliaries,
-        newValue,
-        this.simpleName,
-        this.comments);
+    return new DataTypeDesc(this.semanticType, this.javaTypeAux, newValue, this.metaTags, this.simpleName, this.comments);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IDataTypeDesc#getMetaTags() metaTags}.
+   * @param elements The elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final DataTypeDesc withMetaTags(String... elements) {
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new DataTypeDesc(this.semanticType, this.javaTypeAux, this.qualifier, newValue, this.simpleName, this.comments);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IDataTypeDesc#getMetaTags() metaTags}.
+   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param elements An iterable of metaTags elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final DataTypeDesc withMetaTags(Iterable<String> elements) {
+    if (this.metaTags == elements) return this;
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new DataTypeDesc(this.semanticType, this.javaTypeAux, this.qualifier, newValue, this.simpleName, this.comments);
   }
 
   /**
@@ -199,13 +187,7 @@ public final class DataTypeDesc implements IDataTypeDesc {
   public final DataTypeDesc withSimpleName(String value) {
     String newValue = Objects.requireNonNull(value, "simpleName");
     if (this.simpleName.equals(newValue)) return this;
-    return new DataTypeDesc(
-        this.semanticType,
-        this.javaTypeAuxiliaries,
-        this.pythonTypeAuxiliaries,
-        this.qualifier,
-        newValue,
-        this.comments);
+    return new DataTypeDesc(this.semanticType, this.javaTypeAux, this.qualifier, this.metaTags, newValue, this.comments);
   }
 
   /**
@@ -215,13 +197,7 @@ public final class DataTypeDesc implements IDataTypeDesc {
    */
   public final DataTypeDesc withComments(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new DataTypeDesc(
-        this.semanticType,
-        this.javaTypeAuxiliaries,
-        this.pythonTypeAuxiliaries,
-        this.qualifier,
-        this.simpleName,
-        newValue);
+    return new DataTypeDesc(this.semanticType, this.javaTypeAux, this.qualifier, this.metaTags, this.simpleName, newValue);
   }
 
   /**
@@ -233,13 +209,7 @@ public final class DataTypeDesc implements IDataTypeDesc {
   public final DataTypeDesc withComments(Iterable<String> elements) {
     if (this.comments == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new DataTypeDesc(
-        this.semanticType,
-        this.javaTypeAuxiliaries,
-        this.pythonTypeAuxiliaries,
-        this.qualifier,
-        this.simpleName,
-        newValue);
+    return new DataTypeDesc(this.semanticType, this.javaTypeAux, this.qualifier, this.metaTags, this.simpleName, newValue);
   }
 
   /**
@@ -255,25 +225,21 @@ public final class DataTypeDesc implements IDataTypeDesc {
 
   private boolean equalTo(DataTypeDesc another) {
     return semanticType.equals(another.semanticType)
-        && Objects.equals(javaTypeAuxiliaries, another.javaTypeAuxiliaries)
-        && Objects.equals(pythonTypeAuxiliaries, another.pythonTypeAuxiliaries)
+        && Objects.equals(javaTypeAux, another.javaTypeAux)
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.simpleName)
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code semanticType}, {@code javaTypeAuxiliaries}, {@code pythonTypeAuxiliaries}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code semanticType}, {@code javaTypeAux}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     @Var int h = 5381;
     h += (h << 5) + semanticType.hashCode();
-    h += (h << 5) + Objects.hashCode(javaTypeAuxiliaries);
-    h += (h << 5) + Objects.hashCode(pythonTypeAuxiliaries);
+    h += (h << 5) + Objects.hashCode(javaTypeAux);
     h += (h << 5) + qualifier.hashCode();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -287,10 +253,8 @@ public final class DataTypeDesc implements IDataTypeDesc {
     return MoreObjects.toStringHelper("DataTypeDesc")
         .omitNullValues()
         .add("semanticType", semanticType)
-        .add("javaTypeAuxiliaries", javaTypeAuxiliaries)
-        .add("pythonTypeAuxiliaries", pythonTypeAuxiliaries)
+        .add("javaTypeAux", javaTypeAux)
         .add("qualifier", qualifier)
-        .add("simpleName", simpleName)
         .add("comments", comments)
         .toString();
   }
@@ -306,26 +270,26 @@ public final class DataTypeDesc implements IDataTypeDesc {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IDataTypeDesc {
     @Nullable String semanticType;
-    @Nullable IJavaTypeAux javaTypeAuxiliaries;
-    @Nullable IPythonTypeAux pythonTypeAuxiliaries;
+    @Nullable IJavaTypeAux javaTypeAux;
     @Nullable String qualifier;
+    @Nullable List<String> metaTags = ImmutableList.of();
     @Nullable String simpleName;
     @Nullable List<String> comments = ImmutableList.of();
     @JsonProperty("semanticType")
     public void setSemanticType(String semanticType) {
       this.semanticType = semanticType;
     }
-    @JsonProperty("javaTypeAuxiliaries")
-    public void setJavaTypeAuxiliaries(@Nullable IJavaTypeAux javaTypeAuxiliaries) {
-      this.javaTypeAuxiliaries = javaTypeAuxiliaries;
-    }
-    @JsonProperty("pythonTypeAuxiliaries")
-    public void setPythonTypeAuxiliaries(@Nullable IPythonTypeAux pythonTypeAuxiliaries) {
-      this.pythonTypeAuxiliaries = pythonTypeAuxiliaries;
+    @JsonProperty("javaTypeAux")
+    public void setJavaTypeAux(@Nullable IJavaTypeAux javaTypeAux) {
+      this.javaTypeAux = javaTypeAux;
     }
     @JsonProperty("qualifier")
     public void setQualifier(String qualifier) {
       this.qualifier = qualifier;
+    }
+    @JsonProperty("metaTags")
+    public void setMetaTags(List<String> metaTags) {
+      this.metaTags = metaTags;
     }
     @JsonProperty("simpleName")
     public void setSimpleName(String simpleName) {
@@ -338,11 +302,11 @@ public final class DataTypeDesc implements IDataTypeDesc {
     @Override
     public String getSemanticType() { throw new UnsupportedOperationException(); }
     @Override
-    public IJavaTypeAux getJavaTypeAuxiliaries() { throw new UnsupportedOperationException(); }
-    @Override
-    public IPythonTypeAux getPythonTypeAuxiliaries() { throw new UnsupportedOperationException(); }
+    public IJavaTypeAux getJavaTypeAux() { throw new UnsupportedOperationException(); }
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
+    @Override
+    public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
     @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
     @Override
@@ -361,14 +325,14 @@ public final class DataTypeDesc implements IDataTypeDesc {
     if (json.semanticType != null) {
       builder.semanticType(json.semanticType);
     }
-    if (json.javaTypeAuxiliaries != null) {
-      builder.javaTypeAuxiliaries(json.javaTypeAuxiliaries);
-    }
-    if (json.pythonTypeAuxiliaries != null) {
-      builder.pythonTypeAuxiliaries(json.pythonTypeAuxiliaries);
+    if (json.javaTypeAux != null) {
+      builder.javaTypeAux(json.javaTypeAux);
     }
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
+    }
+    if (json.metaTags != null) {
+      builder.addAllMetaTags(json.metaTags);
     }
     if (json.simpleName != null) {
       builder.simpleName(json.simpleName);
@@ -400,9 +364,9 @@ public final class DataTypeDesc implements IDataTypeDesc {
    * <pre>
    * DataTypeDesc.builder()
    *    .semanticType(String) // required {@link IDataTypeDesc#getSemanticType() semanticType}
-   *    .javaTypeAuxiliaries(de.upb.sede.types.IJavaTypeAux | null) // nullable {@link IDataTypeDesc#getJavaTypeAuxiliaries() javaTypeAuxiliaries}
-   *    .pythonTypeAuxiliaries(de.upb.sede.types.IPythonTypeAux | null) // nullable {@link IDataTypeDesc#getPythonTypeAuxiliaries() pythonTypeAuxiliaries}
+   *    .javaTypeAux(de.upb.sede.types.auxiliary.IJavaTypeAux | null) // nullable {@link IDataTypeDesc#getJavaTypeAux() javaTypeAux}
    *    .qualifier(String) // required {@link IDataTypeDesc#getQualifier() qualifier}
+   *    .addMetaTags|addAllMetaTags(String) // {@link IDataTypeDesc#getMetaTags() metaTags} elements
    *    .simpleName(String) // optional {@link IDataTypeDesc#getSimpleName() simpleName}
    *    .addComments|addAllComments(String) // {@link IDataTypeDesc#getComments() comments} elements
    *    .build();
@@ -428,9 +392,9 @@ public final class DataTypeDesc implements IDataTypeDesc {
     private long initBits = 0x3L;
 
     private @Nullable String semanticType;
-    private @Nullable IJavaTypeAux javaTypeAuxiliaries;
-    private @Nullable IPythonTypeAux pythonTypeAuxiliaries;
+    private @Nullable IJavaTypeAux javaTypeAux;
     private @Nullable String qualifier;
+    private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
     private @Nullable String simpleName;
     private ImmutableList.Builder<String> comments = ImmutableList.builder();
 
@@ -448,31 +412,16 @@ public final class DataTypeDesc implements IDataTypeDesc {
       if (instance.semanticTypeIsSet()) {
         semanticType(instance.getSemanticType());
       }
-      @Nullable IJavaTypeAux javaTypeAuxiliariesValue = instance.getJavaTypeAuxiliaries();
-      if (javaTypeAuxiliariesValue != null) {
-        javaTypeAuxiliaries(javaTypeAuxiliariesValue);
-      }
-      @Nullable IPythonTypeAux pythonTypeAuxiliariesValue = instance.getPythonTypeAuxiliaries();
-      if (pythonTypeAuxiliariesValue != null) {
-        pythonTypeAuxiliaries(pythonTypeAuxiliariesValue);
+      @Nullable IJavaTypeAux javaTypeAuxValue = instance.getJavaTypeAux();
+      if (javaTypeAuxValue != null) {
+        javaTypeAux(javaTypeAuxValue);
       }
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       simpleName(instance.getSimpleName());
       addAllComments(instance.getComments());
-      return this;
-    }
-
-    /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.ICommented} instance.
-     * @param instance The instance from which to copy values
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder from(ICommented instance) {
-      Objects.requireNonNull(instance, "instance");
-      from((Object) instance);
       return this;
     }
 
@@ -500,31 +449,40 @@ public final class DataTypeDesc implements IDataTypeDesc {
       return this;
     }
 
+    /**
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.CommentAware} instance.
+     * @param instance The instance from which to copy values
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder from(CommentAware instance) {
+      Objects.requireNonNull(instance, "instance");
+      from((Object) instance);
+      return this;
+    }
+
     private void from(Object object) {
       if (object instanceof MutableDataTypeDesc) {
         from((MutableDataTypeDesc) object);
         return;
       }
-      if (object instanceof ICommented) {
-        ICommented instance = (ICommented) object;
-        addAllComments(instance.getComments());
-      }
       if (object instanceof IDataTypeDesc) {
         IDataTypeDesc instance = (IDataTypeDesc) object;
-        @Nullable IPythonTypeAux pythonTypeAuxiliariesValue = instance.getPythonTypeAuxiliaries();
-        if (pythonTypeAuxiliariesValue != null) {
-          pythonTypeAuxiliaries(pythonTypeAuxiliariesValue);
-        }
-        @Nullable IJavaTypeAux javaTypeAuxiliariesValue = instance.getJavaTypeAuxiliaries();
-        if (javaTypeAuxiliariesValue != null) {
-          javaTypeAuxiliaries(javaTypeAuxiliariesValue);
+        @Nullable IJavaTypeAux javaTypeAuxValue = instance.getJavaTypeAux();
+        if (javaTypeAuxValue != null) {
+          javaTypeAux(javaTypeAuxValue);
         }
         semanticType(instance.getSemanticType());
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
+        addAllMetaTags(instance.getMetaTags());
         simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
+      }
+      if (object instanceof CommentAware) {
+        CommentAware instance = (CommentAware) object;
+        addAllComments(instance.getComments());
       }
     }
 
@@ -542,26 +500,14 @@ public final class DataTypeDesc implements IDataTypeDesc {
     }
 
     /**
-     * Initializes the value for the {@link IDataTypeDesc#getJavaTypeAuxiliaries() javaTypeAuxiliaries} attribute.
-     * @param javaTypeAuxiliaries The value for javaTypeAuxiliaries (can be {@code null})
+     * Initializes the value for the {@link IDataTypeDesc#getJavaTypeAux() javaTypeAux} attribute.
+     * @param javaTypeAux The value for javaTypeAux (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    @JsonProperty("javaTypeAuxiliaries")
-    public final Builder javaTypeAuxiliaries(@Nullable IJavaTypeAux javaTypeAuxiliaries) {
-      this.javaTypeAuxiliaries = javaTypeAuxiliaries;
-      return this;
-    }
-
-    /**
-     * Initializes the value for the {@link IDataTypeDesc#getPythonTypeAuxiliaries() pythonTypeAuxiliaries} attribute.
-     * @param pythonTypeAuxiliaries The value for pythonTypeAuxiliaries (can be {@code null})
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("pythonTypeAuxiliaries")
-    public final Builder pythonTypeAuxiliaries(@Nullable IPythonTypeAux pythonTypeAuxiliaries) {
-      this.pythonTypeAuxiliaries = pythonTypeAuxiliaries;
+    @JsonProperty("javaTypeAux")
+    public final Builder javaTypeAux(@Nullable IJavaTypeAux javaTypeAux) {
+      this.javaTypeAux = javaTypeAux;
       return this;
     }
 
@@ -575,6 +521,52 @@ public final class DataTypeDesc implements IDataTypeDesc {
     public final Builder qualifier(String qualifier) {
       this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
       initBits &= ~INIT_BIT_QUALIFIER;
+      return this;
+    }
+
+    /**
+     * Adds one element to {@link IDataTypeDesc#getMetaTags() metaTags} list.
+     * @param element A metaTags element
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String element) {
+      this.metaTags.add(element);
+      return this;
+    }
+
+    /**
+     * Adds elements to {@link IDataTypeDesc#getMetaTags() metaTags} list.
+     * @param elements An array of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String... elements) {
+      this.metaTags.add(elements);
+      return this;
+    }
+
+
+    /**
+     * Sets or replaces all elements for {@link IDataTypeDesc#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("metaTags")
+    public final Builder metaTags(Iterable<String> elements) {
+      this.metaTags = ImmutableList.builder();
+      return addAllMetaTags(elements);
+    }
+
+    /**
+     * Adds elements to {@link IDataTypeDesc#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addAllMetaTags(Iterable<String> elements) {
+      this.metaTags.addAll(elements);
       return this;
     }
 

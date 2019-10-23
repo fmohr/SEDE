@@ -26,14 +26,14 @@ import org.immutables.value.Generated;
 @NotThreadSafe
 public final class MutableMethodParameterDesc implements IMethodParameterDesc {
   private static final long INIT_BIT_TYPE = 0x1L;
-  private static final long OPT_BIT_IS_MUTABLE = 0x1L;
+  private static final long OPT_BIT_CALL_BY_VALUE = 0x1L;
   private long initBits = 0x1L;
   private long optBits;
 
   private String type;
   private @Nullable String name;
   private @Nullable String fixedValue;
-  private boolean isMutable;
+  private boolean callByValue;
 
   private MutableMethodParameterDesc() {}
 
@@ -76,14 +76,14 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
   }
 
   /**
-   * @return assigned or, otherwise, newly computed, not cached value of {@code isMutable} attribute
+   * @return assigned or, otherwise, newly computed, not cached value of {@code callByValue} attribute
    */
-  @JsonProperty("isMutable")
+  @JsonProperty("callByValue")
   @Override
-  public final boolean isMutable() {
-    return isMutableIsSet()
-        ? isMutable
-        : IMethodParameterDesc.super.isMutable();
+  public final boolean callByValue() {
+    return callByValueIsSet()
+        ? callByValue
+        : IMethodParameterDesc.super.callByValue();
   }
 
   /**
@@ -97,7 +97,7 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
     type = null;
     name = null;
     fixedValue = null;
-    isMutable = false;
+    callByValue = false;
     return this;
   }
 
@@ -123,7 +123,7 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
     if (fixedValueValue != null) {
       setFixedValue(fixedValueValue);
     }
-    setIsMutable(instance.isMutable());
+    setCallByValue(instance.callByValue());
     return this;
   }
 
@@ -147,7 +147,7 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
     if (fixedValueValue != null) {
       setFixedValue(fixedValueValue);
     }
-    setIsMutable(instance.isMutable());
+    setCallByValue(instance.callByValue());
     return this;
   }
 
@@ -186,15 +186,15 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
   }
 
   /**
-   * Assigns a value to the {@link IMethodParameterDesc#isMutable() isMutable} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IMethodParameterDesc#isMutable() isMutable}.</em>
-   * @param isMutable The value for isMutable
+   * Assigns a value to the {@link IMethodParameterDesc#callByValue() callByValue} attribute.
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IMethodParameterDesc#callByValue() callByValue}.</em>
+   * @param callByValue The value for callByValue
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableMethodParameterDesc setIsMutable(boolean isMutable) {
-    this.isMutable = isMutable;
-    optBits |= OPT_BIT_IS_MUTABLE;
+  public MutableMethodParameterDesc setCallByValue(boolean callByValue) {
+    this.callByValue = callByValue;
+    optBits |= OPT_BIT_CALL_BY_VALUE;
     return this;
   }
 
@@ -207,11 +207,11 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
   }
 
   /**
-   * Returns {@code true} if the default attribute {@link IMethodParameterDesc#isMutable() isMutable} is set.
+   * Returns {@code true} if the default attribute {@link IMethodParameterDesc#callByValue() callByValue} is set.
    * @return {@code true} if set
    */
-  public final boolean isMutableIsSet() {
-    return (optBits & OPT_BIT_IS_MUTABLE) != 0;
+  public final boolean callByValueIsSet() {
+    return (optBits & OPT_BIT_CALL_BY_VALUE) != 0;
   }
 
 
@@ -230,9 +230,9 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public final MutableMethodParameterDesc unsetIsMutable() {
+  public final MutableMethodParameterDesc unsetCallByValue() {
     optBits |= 0;
-    isMutable = false;
+    callByValue = false;
     return this;
   }
 
@@ -282,15 +282,15 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
   }
 
   private boolean equalTo(MutableMethodParameterDesc another) {
-    boolean isMutable = isMutable();
+    boolean callByValue = callByValue();
     return type.equals(another.type)
         && Objects.equals(name, another.name)
         && Objects.equals(fixedValue, another.fixedValue)
-        && isMutable == another.isMutable();
+        && callByValue == another.callByValue();
   }
 
   /**
-   * Computes a hash code from attributes: {@code type}, {@code name}, {@code fixedValue}, {@code isMutable}.
+   * Computes a hash code from attributes: {@code type}, {@code name}, {@code fixedValue}, {@code callByValue}.
    * @return hashCode value
    */
   @Override
@@ -299,8 +299,8 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
     h += (h << 5) + type.hashCode();
     h += (h << 5) + Objects.hashCode(name);
     h += (h << 5) + Objects.hashCode(fixedValue);
-    boolean isMutable = isMutable();
-    h += (h << 5) + Booleans.hashCode(isMutable);
+    boolean callByValue = callByValue();
+    h += (h << 5) + Booleans.hashCode(callByValue);
     return h;
   }
 
@@ -315,7 +315,7 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
         .add("type", typeIsSet() ? getType() : "?")
         .add("name", getName())
         .add("fixedValue", getFixedValue())
-        .add("isMutable", isMutable())
+        .add("callByValue", callByValue())
         .toString();
   }
 }

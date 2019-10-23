@@ -6,10 +6,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableList;
-import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
-import de.upb.sede.ICommented;
+import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,98 +34,32 @@ import org.immutables.value.Generated;
 @CheckReturnValue
 public final class MethodDesc implements IMethodDesc {
   private final ImmutableList<ISignatureDesc> signatures;
-  private final boolean isPure;
   private final String qualifier;
+  private final ImmutableList<String> metaTags;
   private final String simpleName;
   private final ImmutableList<String> comments;
 
   private MethodDesc(MethodDesc.Builder builder) {
     this.signatures = builder.signatures.build();
     this.qualifier = builder.qualifier;
+    this.metaTags = builder.metaTags.build();
     this.comments = builder.comments.build();
-    if (builder.isPureIsSet()) {
-      initShim.isPure(builder.isPure);
-    }
-    if (builder.simpleName != null) {
-      initShim.simpleName(builder.simpleName);
-    }
-    this.isPure = initShim.isPure();
-    this.simpleName = initShim.getSimpleName();
-    this.initShim = null;
+    this.simpleName = builder.simpleName != null
+        ? builder.simpleName
+        : Objects.requireNonNull(IMethodDesc.super.getSimpleName(), "simpleName");
   }
 
   private MethodDesc(
       ImmutableList<ISignatureDesc> signatures,
-      boolean isPure,
       String qualifier,
+      ImmutableList<String> metaTags,
       String simpleName,
       ImmutableList<String> comments) {
     this.signatures = signatures;
-    this.isPure = isPure;
     this.qualifier = qualifier;
+    this.metaTags = metaTags;
     this.simpleName = simpleName;
     this.comments = comments;
-    this.initShim = null;
-  }
-
-  private static final byte STAGE_INITIALIZING = -1;
-  private static final byte STAGE_UNINITIALIZED = 0;
-  private static final byte STAGE_INITIALIZED = 1;
-  @SuppressWarnings("Immutable")
-  private transient volatile InitShim initShim = new InitShim();
-
-  @Generated(from = "IMethodDesc", generator = "Immutables")
-  private final class InitShim {
-    private byte isPureBuildStage = STAGE_UNINITIALIZED;
-    private boolean isPure;
-
-    boolean isPure() {
-      if (isPureBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
-      if (isPureBuildStage == STAGE_UNINITIALIZED) {
-        isPureBuildStage = STAGE_INITIALIZING;
-        this.isPure = isPureInitialize();
-        isPureBuildStage = STAGE_INITIALIZED;
-      }
-      return this.isPure;
-    }
-
-    void isPure(boolean isPure) {
-      this.isPure = isPure;
-      isPureBuildStage = STAGE_INITIALIZED;
-    }
-
-    private byte simpleNameBuildStage = STAGE_UNINITIALIZED;
-    private String simpleName;
-
-    String getSimpleName() {
-      if (simpleNameBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
-      if (simpleNameBuildStage == STAGE_UNINITIALIZED) {
-        simpleNameBuildStage = STAGE_INITIALIZING;
-        this.simpleName = Objects.requireNonNull(getSimpleNameInitialize(), "simpleName");
-        simpleNameBuildStage = STAGE_INITIALIZED;
-      }
-      return this.simpleName;
-    }
-
-    void simpleName(String simpleName) {
-      this.simpleName = simpleName;
-      simpleNameBuildStage = STAGE_INITIALIZED;
-    }
-
-    private String formatInitCycleMessage() {
-      List<String> attributes = new ArrayList<>();
-      if (isPureBuildStage == STAGE_INITIALIZING) attributes.add("isPure");
-      if (simpleNameBuildStage == STAGE_INITIALIZING) attributes.add("simpleName");
-      return "Cannot build MethodDesc, attribute initializers form cycle " + attributes;
-    }
-  }
-
-  private boolean isPureInitialize() {
-    return IMethodDesc.super.isPure();
-  }
-
-  private String getSimpleNameInitialize() {
-    return IMethodDesc.super.getSimpleName();
   }
 
   /**
@@ -139,18 +72,6 @@ public final class MethodDesc implements IMethodDesc {
   }
 
   /**
-   * @return The value of the {@code isPure} attribute
-   */
-  @JsonProperty("isPure")
-  @Override
-  public boolean isPure() {
-    InitShim shim = this.initShim;
-    return shim != null
-        ? shim.isPure()
-        : this.isPure;
-  }
-
-  /**
    * @return The value of the {@code qualifier} attribute
    */
   @JsonProperty("qualifier")
@@ -160,15 +81,21 @@ public final class MethodDesc implements IMethodDesc {
   }
 
   /**
+   * @return The value of the {@code metaTags} attribute
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public ImmutableList<String> getMetaTags() {
+    return metaTags;
+  }
+
+  /**
    * @return The value of the {@code simpleName} attribute
    */
   @JsonProperty("simpleName")
   @Override
   public String getSimpleName() {
-    InitShim shim = this.initShim;
-    return shim != null
-        ? shim.getSimpleName()
-        : this.simpleName;
+    return simpleName;
   }
 
   /**
@@ -187,7 +114,7 @@ public final class MethodDesc implements IMethodDesc {
    */
   public final MethodDesc withSignatures(ISignatureDesc... elements) {
     ImmutableList<ISignatureDesc> newValue = ImmutableList.copyOf(elements);
-    return new MethodDesc(newValue, this.isPure, this.qualifier, this.simpleName, this.comments);
+    return new MethodDesc(newValue, this.qualifier, this.metaTags, this.simpleName, this.comments);
   }
 
   /**
@@ -199,18 +126,7 @@ public final class MethodDesc implements IMethodDesc {
   public final MethodDesc withSignatures(Iterable<? extends ISignatureDesc> elements) {
     if (this.signatures == elements) return this;
     ImmutableList<ISignatureDesc> newValue = ImmutableList.copyOf(elements);
-    return new MethodDesc(newValue, this.isPure, this.qualifier, this.simpleName, this.comments);
-  }
-
-  /**
-   * Copy the current immutable object by setting a value for the {@link IMethodDesc#isPure() isPure} attribute.
-   * A value equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for isPure
-   * @return A modified copy of the {@code this} object
-   */
-  public final MethodDesc withIsPure(boolean value) {
-    if (this.isPure == value) return this;
-    return new MethodDesc(this.signatures, value, this.qualifier, this.simpleName, this.comments);
+    return new MethodDesc(newValue, this.qualifier, this.metaTags, this.simpleName, this.comments);
   }
 
   /**
@@ -222,7 +138,29 @@ public final class MethodDesc implements IMethodDesc {
   public final MethodDesc withQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "qualifier");
     if (this.qualifier.equals(newValue)) return this;
-    return new MethodDesc(this.signatures, this.isPure, newValue, this.simpleName, this.comments);
+    return new MethodDesc(this.signatures, newValue, this.metaTags, this.simpleName, this.comments);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IMethodDesc#getMetaTags() metaTags}.
+   * @param elements The elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final MethodDesc withMetaTags(String... elements) {
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new MethodDesc(this.signatures, this.qualifier, newValue, this.simpleName, this.comments);
+  }
+
+  /**
+   * Copy the current immutable object with elements that replace the content of {@link IMethodDesc#getMetaTags() metaTags}.
+   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param elements An iterable of metaTags elements to set
+   * @return A modified copy of {@code this} object
+   */
+  public final MethodDesc withMetaTags(Iterable<String> elements) {
+    if (this.metaTags == elements) return this;
+    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
+    return new MethodDesc(this.signatures, this.qualifier, newValue, this.simpleName, this.comments);
   }
 
   /**
@@ -234,7 +172,7 @@ public final class MethodDesc implements IMethodDesc {
   public final MethodDesc withSimpleName(String value) {
     String newValue = Objects.requireNonNull(value, "simpleName");
     if (this.simpleName.equals(newValue)) return this;
-    return new MethodDesc(this.signatures, this.isPure, this.qualifier, newValue, this.comments);
+    return new MethodDesc(this.signatures, this.qualifier, this.metaTags, newValue, this.comments);
   }
 
   /**
@@ -244,7 +182,7 @@ public final class MethodDesc implements IMethodDesc {
    */
   public final MethodDesc withComments(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new MethodDesc(this.signatures, this.isPure, this.qualifier, this.simpleName, newValue);
+    return new MethodDesc(this.signatures, this.qualifier, this.metaTags, this.simpleName, newValue);
   }
 
   /**
@@ -256,7 +194,7 @@ public final class MethodDesc implements IMethodDesc {
   public final MethodDesc withComments(Iterable<String> elements) {
     if (this.comments == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new MethodDesc(this.signatures, this.isPure, this.qualifier, this.simpleName, newValue);
+    return new MethodDesc(this.signatures, this.qualifier, this.metaTags, this.simpleName, newValue);
   }
 
   /**
@@ -272,23 +210,19 @@ public final class MethodDesc implements IMethodDesc {
 
   private boolean equalTo(MethodDesc another) {
     return signatures.equals(another.signatures)
-        && isPure == another.isPure
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.simpleName)
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code signatures}, {@code isPure}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code signatures}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     @Var int h = 5381;
     h += (h << 5) + signatures.hashCode();
-    h += (h << 5) + Booleans.hashCode(isPure);
     h += (h << 5) + qualifier.hashCode();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -302,9 +236,7 @@ public final class MethodDesc implements IMethodDesc {
     return MoreObjects.toStringHelper("MethodDesc")
         .omitNullValues()
         .add("signatures", signatures)
-        .add("isPure", isPure)
         .add("qualifier", qualifier)
-        .add("simpleName", simpleName)
         .add("comments", comments)
         .toString();
   }
@@ -320,23 +252,21 @@ public final class MethodDesc implements IMethodDesc {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IMethodDesc {
     @Nullable List<ISignatureDesc> signatures = ImmutableList.of();
-    boolean isPure;
-    boolean isPureIsSet;
     @Nullable String qualifier;
+    @Nullable List<String> metaTags = ImmutableList.of();
     @Nullable String simpleName;
     @Nullable List<String> comments = ImmutableList.of();
     @JsonProperty("signatures")
     public void setSignatures(List<ISignatureDesc> signatures) {
       this.signatures = signatures;
     }
-    @JsonProperty("isPure")
-    public void setIsPure(boolean isPure) {
-      this.isPure = isPure;
-      this.isPureIsSet = true;
-    }
     @JsonProperty("qualifier")
     public void setQualifier(String qualifier) {
       this.qualifier = qualifier;
+    }
+    @JsonProperty("metaTags")
+    public void setMetaTags(List<String> metaTags) {
+      this.metaTags = metaTags;
     }
     @JsonProperty("simpleName")
     public void setSimpleName(String simpleName) {
@@ -349,9 +279,9 @@ public final class MethodDesc implements IMethodDesc {
     @Override
     public List<ISignatureDesc> getSignatures() { throw new UnsupportedOperationException(); }
     @Override
-    public boolean isPure() { throw new UnsupportedOperationException(); }
-    @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
+    @Override
+    public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
     @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
     @Override
@@ -370,11 +300,11 @@ public final class MethodDesc implements IMethodDesc {
     if (json.signatures != null) {
       builder.addAllSignatures(json.signatures);
     }
-    if (json.isPureIsSet) {
-      builder.isPure(json.isPure);
-    }
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
+    }
+    if (json.metaTags != null) {
+      builder.addAllMetaTags(json.metaTags);
     }
     if (json.simpleName != null) {
       builder.simpleName(json.simpleName);
@@ -406,8 +336,8 @@ public final class MethodDesc implements IMethodDesc {
    * <pre>
    * MethodDesc.builder()
    *    .addSignatures|addAllSignatures(de.upb.sede.exec.ISignatureDesc) // {@link IMethodDesc#getSignatures() signatures} elements
-   *    .isPure(boolean) // optional {@link IMethodDesc#isPure() isPure}
    *    .qualifier(String) // required {@link IMethodDesc#getQualifier() qualifier}
+   *    .addMetaTags|addAllMetaTags(String) // {@link IMethodDesc#getMetaTags() metaTags} elements
    *    .simpleName(String) // optional {@link IMethodDesc#getSimpleName() simpleName}
    *    .addComments|addAllComments(String) // {@link IMethodDesc#getComments() comments} elements
    *    .build();
@@ -429,13 +359,11 @@ public final class MethodDesc implements IMethodDesc {
   @NotThreadSafe
   public static final class Builder {
     private static final long INIT_BIT_QUALIFIER = 0x1L;
-    private static final long OPT_BIT_IS_PURE = 0x1L;
     private long initBits = 0x1L;
-    private long optBits;
 
     private ImmutableList.Builder<ISignatureDesc> signatures = ImmutableList.builder();
-    private boolean isPure;
     private @Nullable String qualifier;
+    private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
     private @Nullable String simpleName;
     private ImmutableList.Builder<String> comments = ImmutableList.builder();
 
@@ -451,24 +379,12 @@ public final class MethodDesc implements IMethodDesc {
     public final Builder from(MutableMethodDesc instance) {
       Objects.requireNonNull(instance, "instance");
       addAllSignatures(instance.getSignatures());
-      isPure(instance.isPure());
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       simpleName(instance.getSimpleName());
       addAllComments(instance.getComments());
-      return this;
-    }
-
-    /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.ICommented} instance.
-     * @param instance The instance from which to copy values
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder from(ICommented instance) {
-      Objects.requireNonNull(instance, "instance");
-      from((Object) instance);
       return this;
     }
 
@@ -496,24 +412,36 @@ public final class MethodDesc implements IMethodDesc {
       return this;
     }
 
+    /**
+     * Fill a builder with attribute values from the provided {@code de.upb.sede.CommentAware} instance.
+     * @param instance The instance from which to copy values
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder from(CommentAware instance) {
+      Objects.requireNonNull(instance, "instance");
+      from((Object) instance);
+      return this;
+    }
+
     private void from(Object object) {
       if (object instanceof MutableMethodDesc) {
         from((MutableMethodDesc) object);
         return;
       }
-      if (object instanceof ICommented) {
-        ICommented instance = (ICommented) object;
-        addAllComments(instance.getComments());
-      }
       if (object instanceof IMethodDesc) {
         IMethodDesc instance = (IMethodDesc) object;
-        isPure(instance.isPure());
         addAllSignatures(instance.getSignatures());
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
+        addAllMetaTags(instance.getMetaTags());
         simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
+      }
+      if (object instanceof CommentAware) {
+        CommentAware instance = (CommentAware) object;
+        addAllComments(instance.getComments());
       }
     }
 
@@ -564,20 +492,6 @@ public final class MethodDesc implements IMethodDesc {
     }
 
     /**
-     * Initializes the value for the {@link IMethodDesc#isPure() isPure} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IMethodDesc#isPure() isPure}.</em>
-     * @param isPure The value for isPure 
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("isPure")
-    public final Builder isPure(boolean isPure) {
-      this.isPure = isPure;
-      optBits |= OPT_BIT_IS_PURE;
-      return this;
-    }
-
-    /**
      * Initializes the value for the {@link IMethodDesc#getQualifier() qualifier} attribute.
      * @param qualifier The value for qualifier 
      * @return {@code this} builder for use in a chained invocation
@@ -587,6 +501,52 @@ public final class MethodDesc implements IMethodDesc {
     public final Builder qualifier(String qualifier) {
       this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
       initBits &= ~INIT_BIT_QUALIFIER;
+      return this;
+    }
+
+    /**
+     * Adds one element to {@link IMethodDesc#getMetaTags() metaTags} list.
+     * @param element A metaTags element
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String element) {
+      this.metaTags.add(element);
+      return this;
+    }
+
+    /**
+     * Adds elements to {@link IMethodDesc#getMetaTags() metaTags} list.
+     * @param elements An array of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addMetaTags(String... elements) {
+      this.metaTags.add(elements);
+      return this;
+    }
+
+
+    /**
+     * Sets or replaces all elements for {@link IMethodDesc#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("metaTags")
+    public final Builder metaTags(Iterable<String> elements) {
+      this.metaTags = ImmutableList.builder();
+      return addAllMetaTags(elements);
+    }
+
+    /**
+     * Adds elements to {@link IMethodDesc#getMetaTags() metaTags} list.
+     * @param elements An iterable of metaTags elements
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    public final Builder addAllMetaTags(Iterable<String> elements) {
+      this.metaTags.addAll(elements);
       return this;
     }
 
@@ -659,10 +619,6 @@ public final class MethodDesc implements IMethodDesc {
         throw new IllegalStateException(formatRequiredAttributesMessage());
       }
       return new MethodDesc(this);
-    }
-
-    private boolean isPureIsSet() {
-      return (optBits & OPT_BIT_IS_PURE) != 0;
     }
 
     private String formatRequiredAttributesMessage() {

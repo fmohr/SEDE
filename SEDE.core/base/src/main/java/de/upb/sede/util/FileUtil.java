@@ -200,7 +200,39 @@ public class FileUtil {
 		}
 	}
 
-	public void save(byte[] data, String filePath) {
+    /**
+     * Makes sure the output file is writable by creating its parent directories if necessary and checking access rights.
+     *
+     * Throws an IllegalArgumentException if:
+     *  - Output file or its parent directories doesn't exist and cannot be created.
+     *  - Output file exists but isn't writable. (access rights)
+     *
+     * @param outputFile file which will be prepared to write to
+     *
+     * @exception IllegalArgumentException if the output file isn't writable..
+     */
+    public static void prepareOutputFile(File outputFile) throws IllegalArgumentException {
+        if(!outputFile.exists()) {
+            /*
+             * Output file doesnt exist. make sure its parent directory exists.
+             */
+            File outputDir = outputFile.getAbsoluteFile().getParentFile();
+            if(outputDir == null) {
+                throw new IllegalArgumentException("Output file doesn't exist and has no parent directory: " + outputFile );
+            }
+            if(!outputDir.exists()) {
+                boolean success = outputDir.mkdirs();
+                if(!success) {
+                    throw new IllegalArgumentException("Cannot create the output directory: " + outputDir.getPath());
+                }
+
+            }
+        } else if(!outputFile.canWrite()) {
+            throw new IllegalArgumentException("Cannot write onto " + outputFile);
+        }
+    }
+
+    public void save(byte[] data, String filePath) {
 		try {
 			File destination = new File(filePath);
 			if (destination.exists())

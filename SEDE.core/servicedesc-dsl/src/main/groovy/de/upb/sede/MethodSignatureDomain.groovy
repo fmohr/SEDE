@@ -1,26 +1,25 @@
 package de.upb.sede
 
-import de.upb.sede.exec.MethodParameterDesc
+
+import de.upb.sede.exec.IMethodParameterDesc
+
 import de.upb.sede.exec.MutableMethodParameterDesc
 import de.upb.sede.exec.MutableSignatureDesc
+import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
 import groovy.transform.NamedVariant
-import groovy.transform.PackageScope
 
-class MethodSignatureDomain implements ModelAware{
-
-    @PackageScope
-    MutableSignatureDesc signature() {
-        return model
-    }
+class MethodSignatureDomain
+    extends DomainAware<MutableSignatureDesc, MethodDomain>
+    implements Shared.AuxAware<MutableJavaDispatchAux>, Shared.CommentAware {
 
     void setInputTypes(String... inputTypes) {
-        signature().inputs.clear()
+        model.inputs.clear()
         addInputTypes(inputTypes)
     }
 
     void addInputTypes(String... inputTypes) {
         for(String inputType: inputTypes) {
-            signature().inputs += param {
+            model.inputs += param {
                 type = inputType
             }
         }
@@ -33,7 +32,7 @@ class MethodSignatureDomain implements ModelAware{
 
     void addOutputTypes(String... outputTypes) {
         for(String outputType: outputTypes) {
-            signature().outputs += param {
+            model.outputs += param {
                 type = outputType
             }
         }
@@ -43,30 +42,86 @@ class MethodSignatureDomain implements ModelAware{
     void addInput(String type, String name) {
         String t = type
         String n = name
-        signature().inputs += param type: type, name: name
+        model.inputs += param type: type, name: name
     }
 
     @NamedVariant
     void addOutput(String type, String name) {
-        signature().outputs += param type: type, name: name
+        model.outputs += param type: type, name: name
     }
 
-    static MethodParameterDesc param(String t, String n) {
+    static MutableMethodParameterDesc param(String t, String n) {
         return param {
             type = t
             name = n
         }
     }
 
-    static MethodParameterDesc param(Map<String, String> paramDesc) {
+    static MutableMethodParameterDesc param(Map<String, String> paramDesc) {
         return param(paramDesc["type"], paramDesc["name"])
     }
 
-    static MethodParameterDesc param(@DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
+    static MutableMethodParameterDesc param(@DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
         def parameter = MutableMethodParameterDesc.create()
         paramDescriber.delegate = parameter
         paramDescriber.resolveStrategy = Closure.DELEGATE_ONLY
         paramDescriber.run()
-        return parameter.toImmutable()
+        return parameter
+    }
+
+    MutableMethodParameterDesc input(int paramIndex,
+                                     @DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
+        return redefineParameter(model.inputs, paramIndex, paramDescriber)
+    }
+
+
+    MutableMethodParameterDesc output(int paramIndex,
+                                @DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
+        return redefineParameter(model.outputs, paramIndex, paramDescriber)
+    }
+
+    MutableMethodParameterDesc output(@DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
+        return output(0, paramDescriber)
+    }
+
+    private MutableMethodParameterDesc redefineParameter(List<IMethodParameterDesc> paramList,
+                             int paramIndex,
+                             @DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
+        if(paramIndex >= paramList.size()) {
+            /*
+             * Parameter doesnt exists
+             */
+            throw new IllegalArgumentException("Parameter index exceeds bounds: " + paramIndex + "." +
+                " First define the parameter before configuring it.")
+        }
+
+        def parameter = MutableMethodParameterDesc.create().from(paramList[paramIndex])
+
+        paramDescriber.delegate = parameter
+        paramDescriber.resolveStrategy = Closure.DELEGATE_FIRST
+        paramDescriber.run()
+
+        def newParameter = parameter
+        paramList.set(paramIndex, newParameter)
+        return newParameter
+    }
+
+    @Override
+    def String getBindingName() {
+        "signature"
+    }
+
+    @Override
+    MutableJavaDispatchAux setJavaAux(MutableJavaDispatchAux javaAux) {
+        model.javaDispatchAux = javaAux
+        return javaAux
+    }
+
+    @Override
+    MutableJavaDispatchAux getJavaAux() {
+        if(model.javaDispatchAux == null) {
+            model.javaDispatchAux = MutableJavaDispatchAux.create()
+        }
+        return model.javaDispatchAux as MutableJavaDispatchAux
     }
 }

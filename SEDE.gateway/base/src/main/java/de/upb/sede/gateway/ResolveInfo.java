@@ -2,8 +2,9 @@ package de.upb.sede.gateway;
 
 import de.upb.sede.config.ClassesConfig;
 import de.upb.sede.config.OnthologicalTypeConfig;
+import de.upb.sede.exec.ExecutorHandle;
 import de.upb.sede.requests.resolve.InputFields;
-import de.upb.sede.requests.resolve.ResolvePolicy;
+import de.upb.sede.requests.resolve.beta.ResolvePolicy;
 
 /**
  * This class bundles all classes whose pointers are needed for resolving a

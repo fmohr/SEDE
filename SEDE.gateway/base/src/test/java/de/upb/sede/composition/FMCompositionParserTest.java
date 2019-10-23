@@ -392,7 +392,7 @@ public class FMCompositionParserTest {
 		}
 		Assert.assertEquals(expectedNoException, true);
 		if (expectedLeftside == null) {
-			Assert.assertEquals(false, node.isAssignedLeftSideFieldname());
+			Assert.assertEquals(false, node.getFieldName() != null);
 		} else {
 			Assert.assertEquals(expectedLeftside, node.getLeftSideFieldname());
 		}

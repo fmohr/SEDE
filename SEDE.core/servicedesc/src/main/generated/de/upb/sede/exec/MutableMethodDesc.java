@@ -2,9 +2,8 @@ package de.upb.sede.exec;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.MoreObjects;
-import com.google.common.primitives.Booleans;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
-import de.upb.sede.ICommented;
+import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
 import java.util.ArrayList;
 import java.util.List;
@@ -28,13 +27,11 @@ import org.immutables.value.Generated;
 @NotThreadSafe
 public final class MutableMethodDesc implements IMethodDesc {
   private static final long INIT_BIT_QUALIFIER = 0x1L;
-  private static final long OPT_BIT_IS_PURE = 0x1L;
   private long initBits = 0x1L;
-  private long optBits;
 
   private final ArrayList<ISignatureDesc> signatures = new ArrayList<ISignatureDesc>();
-  private boolean isPure;
   private String qualifier;
+  private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
   private final ArrayList<String> comments = new ArrayList<String>();
 
@@ -58,17 +55,6 @@ public final class MutableMethodDesc implements IMethodDesc {
   }
 
   /**
-   * @return assigned or, otherwise, newly computed, not cached value of {@code isPure} attribute
-   */
-  @JsonProperty("isPure")
-  @Override
-  public final boolean isPure() {
-    return isPureIsSet()
-        ? isPure
-        : IMethodDesc.super.isPure();
-  }
-
-  /**
    * @return value of {@code qualifier} attribute
    */
   @JsonProperty("qualifier")
@@ -78,6 +64,15 @@ public final class MutableMethodDesc implements IMethodDesc {
       checkRequiredAttributes();
     }
     return qualifier;
+  }
+
+  /**
+   * @return modifiable list {@code metaTags}
+   */
+  @JsonProperty("metaTags")
+  @Override
+  public final List<String> getMetaTags() {
+    return metaTags;
   }
 
   /**
@@ -107,24 +102,11 @@ public final class MutableMethodDesc implements IMethodDesc {
   @CanIgnoreReturnValue
   public MutableMethodDesc clear() {
     initBits = 0x1L;
-    optBits = 0;
     signatures.clear();
-    isPure = false;
     qualifier = null;
+    metaTags.clear();
     simpleName = null;
     comments.clear();
-    return this;
-  }
-
-  /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.ICommented} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableMethodDesc from(ICommented instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
     return this;
   }
 
@@ -153,6 +135,18 @@ public final class MutableMethodDesc implements IMethodDesc {
   }
 
   /**
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.CommentAware} instance.
+   * @param instance The instance from which to copy values
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableMethodDesc from(CommentAware instance) {
+    Objects.requireNonNull(instance, "instance");
+    from((Object) instance);
+    return this;
+  }
+
+  /**
    * Fill this modifiable instance with attribute values from the provided {@link IMethodDesc} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
@@ -170,27 +164,27 @@ public final class MutableMethodDesc implements IMethodDesc {
     if (object instanceof MutableMethodDesc) {
       MutableMethodDesc instance = (MutableMethodDesc) object;
       addAllSignatures(instance.getSignatures());
-      setIsPure(instance.isPure());
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       addAllComments(instance.getComments());
       return;
     }
-    if (object instanceof ICommented) {
-      ICommented instance = (ICommented) object;
-      addAllComments(instance.getComments());
-    }
     if (object instanceof IMethodDesc) {
       IMethodDesc instance = (IMethodDesc) object;
-      setIsPure(instance.isPure());
       addAllSignatures(instance.getSignatures());
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
+      addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
+    }
+    if (object instanceof CommentAware) {
+      CommentAware instance = (CommentAware) object;
+      addAllComments(instance.getComments());
     }
   }
 
@@ -245,19 +239,6 @@ public final class MutableMethodDesc implements IMethodDesc {
   }
 
   /**
-   * Assigns a value to the {@link IMethodDesc#isPure() isPure} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IMethodDesc#isPure() isPure}.</em>
-   * @param isPure The value for isPure
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableMethodDesc setIsPure(boolean isPure) {
-    this.isPure = isPure;
-    optBits |= OPT_BIT_IS_PURE;
-    return this;
-  }
-
-  /**
    * Assigns a value to the {@link IMethodDesc#getQualifier() qualifier} attribute.
    * @param qualifier The value for qualifier
    * @return {@code this} for use in a chained invocation
@@ -266,6 +247,56 @@ public final class MutableMethodDesc implements IMethodDesc {
   public MutableMethodDesc setQualifier(String qualifier) {
     this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
     initBits &= ~INIT_BIT_QUALIFIER;
+    return this;
+  }
+
+  /**
+   * Adds one element to {@link IMethodDesc#getMetaTags() metaTags} list.
+   * @param element The metaTags element
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableMethodDesc addMetaTags(String element) {
+    Objects.requireNonNull(element, "metaTags element");
+    this.metaTags.add(element);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IMethodDesc#getMetaTags() metaTags} list.
+   * @param elements An array of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableMethodDesc addMetaTags(String... elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
+    return this;
+  }
+
+  /**
+   * Sets or replaces all elements for {@link IMethodDesc#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableMethodDesc setMetaTags(Iterable<String> elements) {
+    this.metaTags.clear();
+    addAllMetaTags(elements);
+    return this;
+  }
+
+  /**
+   * Adds elements to {@link IMethodDesc#getMetaTags() metaTags} list.
+   * @param elements An iterable of metaTags elements
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableMethodDesc addAllMetaTags(Iterable<String> elements) {
+    for (String e : elements) {
+      addMetaTags(e);
+    }
     return this;
   }
 
@@ -340,14 +371,6 @@ public final class MutableMethodDesc implements IMethodDesc {
   }
 
   /**
-   * Returns {@code true} if the default attribute {@link IMethodDesc#isPure() isPure} is set.
-   * @return {@code true} if set
-   */
-  public final boolean isPureIsSet() {
-    return (optBits & OPT_BIT_IS_PURE) != 0;
-  }
-
-  /**
    * Returns {@code true} if the default attribute {@link IMethodDesc#getSimpleName() simpleName} is set.
    * @return {@code true} if set
    */
@@ -364,16 +387,6 @@ public final class MutableMethodDesc implements IMethodDesc {
   public final MutableMethodDesc unsetQualifier() {
     initBits |= INIT_BIT_QUALIFIER;
     qualifier = null;
-    return this;
-  }
-  /**
-   * Reset an attribute to its initial value.
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public final MutableMethodDesc unsetIsPure() {
-    optBits |= 0;
-    isPure = false;
     return this;
   }
 
@@ -423,28 +436,20 @@ public final class MutableMethodDesc implements IMethodDesc {
   }
 
   private boolean equalTo(MutableMethodDesc another) {
-    boolean isPure = isPure();
-    String simpleName = getSimpleName();
     return signatures.equals(another.signatures)
-        && isPure == another.isPure()
         && qualifier.equals(another.qualifier)
-        && simpleName.equals(another.getSimpleName())
         && comments.equals(another.comments);
   }
 
   /**
-   * Computes a hash code from attributes: {@code signatures}, {@code isPure}, {@code qualifier}, {@code simpleName}, {@code comments}.
+   * Computes a hash code from attributes: {@code signatures}, {@code qualifier}, {@code comments}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
     h += (h << 5) + signatures.hashCode();
-    boolean isPure = isPure();
-    h += (h << 5) + Booleans.hashCode(isPure);
     h += (h << 5) + qualifier.hashCode();
-    String simpleName = getSimpleName();
-    h += (h << 5) + simpleName.hashCode();
     h += (h << 5) + comments.hashCode();
     return h;
   }
@@ -458,9 +463,7 @@ public final class MutableMethodDesc implements IMethodDesc {
   public String toString() {
     return MoreObjects.toStringHelper("MutableMethodDesc")
         .add("signatures", getSignatures())
-        .add("isPure", isPure())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
-        .add("simpleName", getSimpleName())
         .add("comments", getComments())
         .toString();
   }

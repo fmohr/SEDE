@@ -11,6 +11,7 @@ import org.json.simple.JSONObject;
 import de.upb.sede.requests.Request;
 
 public class ResolveRequest extends Request {
+
 	private Optional<String> composition;
 	private Optional<ResolvePolicy> policy;
 	private Optional<InputFields> inputFields;

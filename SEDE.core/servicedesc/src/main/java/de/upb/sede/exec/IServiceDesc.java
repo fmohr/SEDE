@@ -1,20 +1,23 @@
 package de.upb.sede.exec;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.ICommented;
+import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
-import de.upb.sede.SModelStyle;
+import de.upb.sede.SEDEModelStyle;
+import de.upb.sede.exec.auxiliary.IJavaDispatchAux;
+import de.upb.sede.exec.auxiliary.IPythonClassAux;
+import de.upb.sede.param.IServiceParameterizationDesc;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 
-@SModelStyle
+@SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = ServiceDesc.Builder.class)
-public interface IServiceDesc extends IQualifiable, ICommented {
+public interface IServiceDesc extends IQualifiable, CommentAware {
 
     public static final String STATE_FIELD = "state";
 
@@ -29,12 +32,20 @@ public interface IServiceDesc extends IQualifiable, ICommented {
 
     Map<String, String> getFieldTypes();
 
-
     @Nullable
-    IJavaClassAux getJavaClassAuxiliaries();
+    IJavaDispatchAux getJavaDispatchAux();
 
     @Nullable
     IPythonClassAux getPythonClassAuxiliaries();
+
+    @Nullable
+    IServiceParameterizationDesc getServiceParameters();
+
+    @Nullable
+    @Value.Auxiliary
+    default String getStateType() {
+        return getFieldTypes().getOrDefault(STATE_FIELD, null);
+    }
 
 }
 

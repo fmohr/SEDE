@@ -34,26 +34,26 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
   private final String type;
   private final @Nullable String name;
   private final @Nullable String fixedValue;
-  private final boolean isMutable;
+  private final boolean callByValue;
 
   private MethodParameterDesc(MethodParameterDesc.Builder builder) {
     this.type = builder.type;
     this.name = builder.name;
     this.fixedValue = builder.fixedValue;
-    this.isMutable = builder.isMutableIsSet()
-        ? builder.isMutable
-        : IMethodParameterDesc.super.isMutable();
+    this.callByValue = builder.callByValueIsSet()
+        ? builder.callByValue
+        : IMethodParameterDesc.super.callByValue();
   }
 
   private MethodParameterDesc(
       String type,
       @Nullable String name,
       @Nullable String fixedValue,
-      boolean isMutable) {
+      boolean callByValue) {
     this.type = type;
     this.name = name;
     this.fixedValue = fixedValue;
-    this.isMutable = isMutable;
+    this.callByValue = callByValue;
   }
 
   /**
@@ -84,12 +84,12 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
   }
 
   /**
-   * @return The value of the {@code isMutable} attribute
+   * @return The value of the {@code callByValue} attribute
    */
-  @JsonProperty("isMutable")
+  @JsonProperty("callByValue")
   @Override
-  public boolean isMutable() {
-    return isMutable;
+  public boolean callByValue() {
+    return callByValue;
   }
 
   /**
@@ -101,7 +101,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
   public final MethodParameterDesc withType(String value) {
     String newValue = Objects.requireNonNull(value, "type");
     if (this.type.equals(newValue)) return this;
-    return new MethodParameterDesc(newValue, this.name, this.fixedValue, this.isMutable);
+    return new MethodParameterDesc(newValue, this.name, this.fixedValue, this.callByValue);
   }
 
   /**
@@ -112,7 +112,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
    */
   public final MethodParameterDesc withName(@Nullable String value) {
     if (Objects.equals(this.name, value)) return this;
-    return new MethodParameterDesc(this.type, value, this.fixedValue, this.isMutable);
+    return new MethodParameterDesc(this.type, value, this.fixedValue, this.callByValue);
   }
 
   /**
@@ -123,17 +123,17 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
    */
   public final MethodParameterDesc withFixedValue(@Nullable String value) {
     if (Objects.equals(this.fixedValue, value)) return this;
-    return new MethodParameterDesc(this.type, this.name, value, this.isMutable);
+    return new MethodParameterDesc(this.type, this.name, value, this.callByValue);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IMethodParameterDesc#isMutable() isMutable} attribute.
+   * Copy the current immutable object by setting a value for the {@link IMethodParameterDesc#callByValue() callByValue} attribute.
    * A value equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for isMutable
+   * @param value A new value for callByValue
    * @return A modified copy of the {@code this} object
    */
-  public final MethodParameterDesc withIsMutable(boolean value) {
-    if (this.isMutable == value) return this;
+  public final MethodParameterDesc withCallByValue(boolean value) {
+    if (this.callByValue == value) return this;
     return new MethodParameterDesc(this.type, this.name, this.fixedValue, value);
   }
 
@@ -152,11 +152,11 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     return type.equals(another.type)
         && Objects.equals(name, another.name)
         && Objects.equals(fixedValue, another.fixedValue)
-        && isMutable == another.isMutable;
+        && callByValue == another.callByValue;
   }
 
   /**
-   * Computes a hash code from attributes: {@code type}, {@code name}, {@code fixedValue}, {@code isMutable}.
+   * Computes a hash code from attributes: {@code type}, {@code name}, {@code fixedValue}, {@code callByValue}.
    * @return hashCode value
    */
   @Override
@@ -165,7 +165,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     h += (h << 5) + type.hashCode();
     h += (h << 5) + Objects.hashCode(name);
     h += (h << 5) + Objects.hashCode(fixedValue);
-    h += (h << 5) + Booleans.hashCode(isMutable);
+    h += (h << 5) + Booleans.hashCode(callByValue);
     return h;
   }
 
@@ -180,7 +180,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
         .add("type", type)
         .add("name", name)
         .add("fixedValue", fixedValue)
-        .add("isMutable", isMutable)
+        .add("callByValue", callByValue)
         .toString();
   }
 
@@ -197,8 +197,8 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     @Nullable String type;
     @Nullable String name;
     @Nullable String fixedValue;
-    boolean isMutable;
-    boolean isMutableIsSet;
+    boolean callByValue;
+    boolean callByValueIsSet;
     @JsonProperty("type")
     public void setType(String type) {
       this.type = type;
@@ -211,10 +211,10 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     public void setFixedValue(@Nullable String fixedValue) {
       this.fixedValue = fixedValue;
     }
-    @JsonProperty("isMutable")
-    public void setIsMutable(boolean isMutable) {
-      this.isMutable = isMutable;
-      this.isMutableIsSet = true;
+    @JsonProperty("callByValue")
+    public void setCallByValue(boolean callByValue) {
+      this.callByValue = callByValue;
+      this.callByValueIsSet = true;
     }
     @Override
     public String getType() { throw new UnsupportedOperationException(); }
@@ -223,7 +223,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     @Override
     public String getFixedValue() { throw new UnsupportedOperationException(); }
     @Override
-    public boolean isMutable() { throw new UnsupportedOperationException(); }
+    public boolean callByValue() { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -244,8 +244,8 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     if (json.fixedValue != null) {
       builder.fixedValue(json.fixedValue);
     }
-    if (json.isMutableIsSet) {
-      builder.isMutable(json.isMutable);
+    if (json.callByValueIsSet) {
+      builder.callByValue(json.callByValue);
     }
     return builder.build();
   }
@@ -273,7 +273,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
    *    .type(String) // required {@link IMethodParameterDesc#getType() type}
    *    .name(String | null) // nullable {@link IMethodParameterDesc#getName() name}
    *    .fixedValue(String | null) // nullable {@link IMethodParameterDesc#getFixedValue() fixedValue}
-   *    .isMutable(boolean) // optional {@link IMethodParameterDesc#isMutable() isMutable}
+   *    .callByValue(boolean) // optional {@link IMethodParameterDesc#callByValue() callByValue}
    *    .build();
    * </pre>
    * @return A new MethodParameterDesc builder
@@ -293,14 +293,14 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
   @NotThreadSafe
   public static final class Builder {
     private static final long INIT_BIT_TYPE = 0x1L;
-    private static final long OPT_BIT_IS_MUTABLE = 0x1L;
+    private static final long OPT_BIT_CALL_BY_VALUE = 0x1L;
     private long initBits = 0x1L;
     private long optBits;
 
     private @Nullable String type;
     private @Nullable String name;
     private @Nullable String fixedValue;
-    private boolean isMutable;
+    private boolean callByValue;
 
     private Builder() {
     }
@@ -324,7 +324,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
       if (fixedValueValue != null) {
         fixedValue(fixedValueValue);
       }
-      isMutable(instance.isMutable());
+      callByValue(instance.callByValue());
       return this;
     }
 
@@ -350,7 +350,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
       if (fixedValueValue != null) {
         fixedValue(fixedValueValue);
       }
-      isMutable(instance.isMutable());
+      callByValue(instance.callByValue());
       return this;
     }
 
@@ -392,16 +392,16 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     }
 
     /**
-     * Initializes the value for the {@link IMethodParameterDesc#isMutable() isMutable} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IMethodParameterDesc#isMutable() isMutable}.</em>
-     * @param isMutable The value for isMutable 
+     * Initializes the value for the {@link IMethodParameterDesc#callByValue() callByValue} attribute.
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IMethodParameterDesc#callByValue() callByValue}.</em>
+     * @param callByValue The value for callByValue 
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    @JsonProperty("isMutable")
-    public final Builder isMutable(boolean isMutable) {
-      this.isMutable = isMutable;
-      optBits |= OPT_BIT_IS_MUTABLE;
+    @JsonProperty("callByValue")
+    public final Builder callByValue(boolean callByValue) {
+      this.callByValue = callByValue;
+      optBits |= OPT_BIT_CALL_BY_VALUE;
       return this;
     }
 
@@ -417,8 +417,8 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
       return new MethodParameterDesc(this);
     }
 
-    private boolean isMutableIsSet() {
-      return (optBits & OPT_BIT_IS_MUTABLE) != 0;
+    private boolean callByValueIsSet() {
+      return (optBits & OPT_BIT_CALL_BY_VALUE) != 0;
     }
 
     private String formatRequiredAttributesMessage() {

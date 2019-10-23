@@ -1,0 +1,199 @@
+[ {
+  "services" : [ {
+    "stateType" : "a.A",
+    "methods" : [ {
+      "signatures" : [ {
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "a.A",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
+      } ],
+      "qualifier" : "$construct",
+      "metaTags" : [ ],
+      "simpleName" : "$construct",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "t1",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "t2",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "t3",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "t4",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "t5",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null,
+          "metaclass" : null
+        },
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
+      }, {
+        "inputs" : [ {
+          "type" : "t1",
+          "name" : "in1",
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "t2",
+          "name" : "in2",
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "t3",
+          "name" : "out1",
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null,
+          "metaclass" : null
+        },
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
+      }, {
+        "inputs" : [ {
+          "type" : "t1",
+          "name" : "in1",
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "t2",
+          "name" : null,
+          "fixedValue" : "SOME_FIXED_VALUE",
+          "callByValue" : false
+        } ],
+        "outputs" : [ ],
+        "javaDispatchAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null,
+          "metaclass" : null
+        },
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
+      }, {
+        "inputs" : [ {
+          "type" : "t1",
+          "name" : "First Input Parameter",
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "t2",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : false
+        } ],
+        "outputs" : [ {
+          "type" : "t3",
+          "name" : "Return Value",
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : {
+          "staticInvocation" : true,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : null,
+          "metaclass" : null
+        },
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
+      } ],
+      "qualifier" : "m1",
+      "metaTags" : [ ],
+      "simpleName" : "method 1",
+      "comments" : [ ]
+    }, {
+      "signatures" : [ {
+        "inputs" : [ {
+          "type" : "t1",
+          "name" : "First Input Parameter of m2",
+          "fixedValue" : null,
+          "callByValue" : true
+        }, {
+          "type" : "t2",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "outputs" : [ {
+          "type" : "t3",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true
+        } ],
+        "javaDispatchAux" : null,
+        "comments" : [ ],
+        "isPure" : false,
+        "isContextFree" : false
+      } ],
+      "qualifier" : "m2",
+      "metaTags" : [ ],
+      "simpleName" : "m2",
+      "comments" : [ ]
+    } ],
+    "interfaces" : [ "abstracts.A" ],
+    "fieldTypes" : {
+      "state" : "a.A"
+    },
+    "javaDispatchAux" : null,
+    "pythonClassAuxiliaries" : null,
+    "serviceParameters" : null,
+    "qualifier" : "a.A",
+    "metaTags" : [ ],
+    "simpleName" : "Service A",
+    "comments" : [ ],
+    "isAbstract" : true
+  } ],
+  "dataTypes" : [ {
+    "semanticType" : "semantics.A",
+    "javaTypeAux" : null,
+    "qualifier" : "a.A",
+    "metaTags" : [ ],
+    "simpleName" : "a.A",
+    "comments" : [ ]
+  } ],
+  "comments" : [ "This is a comment." ],
+  "qualifier" : "services1",
+  "metaTags" : [ ],
+  "simpleName" : "SERVICES1_COLLECTION"
+} ]

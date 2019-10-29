@@ -23,13 +23,29 @@ class SDLCli {
         } else {
             inputFiles += Arrays.asList(opt.inputs())
         }
-        def outputFiles = []
-        if(opt.outputs() != null) {
-            outputFiles += Arrays.asList(opt.outputs())
+
+        if(opt.targetComponents()) {
+            def outputFiles
+            if(opt.output() != null) {
+                outputFiles = [opt.output()]
+            } else {
+                outputFiles = ["out.json"]
+            }
+            // TODO write HASCO component model creator.
+        } else {
+            def outputFiles
+            if(opt.output() != null) {
+                outputFiles = [opt.output()]
+            } else {
+                outputFiles = ["out.servicedesc.json"]
+            }
+
+            def compiler =  new SDLCompiler(inputFiles, outputFiles, true)
+            compiler.compile()
         }
-        def compiler =  new SDLCompiler(inputFiles, outputFiles, opt.merge())
-        compiler.compile()
     }
+
+
 
 
     static void main(String[] args) {
@@ -66,15 +82,16 @@ class SDLCli {
             description='input service description file paths')
         File[] inputs()
 
-        @Option(shortName='m',
-            description= "merges the inputs into the a single output")
-        Boolean merge()
-
-        @Option(numberOfArgumentsString = "+",
+        @Option(numberOfArgumentsString = "1",
             valueSeparator = ',',
             shortName='o',
-            description = "output service description file paths")
-        File[] outputs()
+            description = "output service description file path")
+        File output()
+
+        @Option(shortName = 'c',
+                longName =  "components",
+                description = "outputs a HASCO component model")
+        Boolean targetComponents();
 
         @Unparsed(description = "positional parameters") List remaining()
     }

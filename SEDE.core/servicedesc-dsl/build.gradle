@@ -22,13 +22,48 @@ dependencies {
     testCompile libs.spock
 }
 
-task compileServiceDescs(type: JavaExec, dependsOn: [compileGroovy]) {
-    classpath += sourceSets.main.runtimeClasspath
-    classpath += sourceSets.test.runtimeClasspath
 
-    main = 'de.upb.sede.SDLCli'
+/**
+ * Compiles all service description files in in the test resources folder:
+ *      SEDE.core/servicedesc-dsl/src/test/servicedesc/*.servicedesc.groovy
+ *
+ * Outputs in the same directory:
+ *      .servicedesc.json transcription
+ *      .components.json hasco components
+ */
+task compileServiceDescs {
+    dependsOn compileGroovy
+    def sourceFiles = fileTree("${projectDir}/src/test/servicedesc/").matching{ include "*.servicedesc.groovy"}
+    sourceFiles.each { File aFile ->
+        String filename = aFile.name
+        String targetFilename = filename.substring(0, filename.length() - ".groovy".length()) + ".json"
+        File targetFile = new File(aFile.parentFile, targetFilename)
 
-    args "-i", "${projectDir}/src/test/servicedesc/"
+        String sourceAbsPath = aFile.absolutePath
+        String targetAbsPath = targetFile.absolutePath
+
+        // Doing multiple java execs in one task:
+        // https://discuss.gradle.org/t/how-do-i-execute-a-command-on-a-list-of-files/4902
+        // https://stackoverflow.com/questions/13474842/how-to-execute-javaexec-multiple-times-in-a-single-task-using-gradle
+        doLast {
+            javaexec {
+                classpath += sourceSets.main.runtimeClasspath
+                classpath += sourceSets.test.runtimeClasspath
+
+                main = 'de.upb.sede.SDLCli'
+
+                args '-i', sourceAbsPath, '-o', targetAbsPath
+            }
+            javaexec {
+                classpath += sourceSets.main.runtimeClasspath
+                classpath += sourceSets.test.runtimeClasspath
+
+                main = 'de.upb.sede.SDLCli'
+
+                args '-c', '-i', sourceAbsPath, '-o', targetAbsPath
+            }
+        }
+    }
 }
 
 

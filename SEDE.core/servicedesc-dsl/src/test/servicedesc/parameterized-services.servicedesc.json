@@ -43,25 +43,94 @@
       "parameters" : [ {
         "defaultValue" : true,
         "paramType" : "BooleanParameter",
-        "qualifier" : "b1",
+        "qualifier" : "bParam",
         "metaTags" : [ ],
-        "simpleName" : "b1"
+        "simpleName" : "bParam",
+        "isOptional" : true
       }, {
         "defaultValue" : true,
         "paramType" : "BooleanParameter",
-        "qualifier" : "b2",
+        "qualifier" : "bParam",
         "metaTags" : [ ],
-        "simpleName" : "b2"
+        "simpleName" : "bParam",
+        "isOptional" : true
       }, {
         "defaultValue" : true,
         "paramType" : "BooleanParameter",
-        "qualifier" : "b3",
+        "qualifier" : "bParam",
         "metaTags" : [ ],
-        "simpleName" : "b3"
+        "simpleName" : "bParam",
+        "isOptional" : true
+      }, {
+        "min" : 0.5,
+        "max" : 20.5,
+        "splitsRefined" : 4,
+        "minInterval" : 10,
+        "defaultValue" : 10.0,
+        "paramType" : "NumericParameter",
+        "qualifier" : "nParam",
+        "metaTags" : [ ],
+        "simpleName" : "nParam",
+        "isInteger" : true,
+        "isOptional" : true
+      }, {
+        "min" : 0.5,
+        "max" : 20.5,
+        "splitsRefined" : 4,
+        "minInterval" : 10,
+        "defaultValue" : 10.0,
+        "paramType" : "NumericParameter",
+        "qualifier" : "nParam",
+        "metaTags" : [ ],
+        "simpleName" : "nParam",
+        "isInteger" : true,
+        "isOptional" : true
+      }, {
+        "min" : 0.5,
+        "max" : 20.5,
+        "splitsRefined" : 4,
+        "minInterval" : 10,
+        "defaultValue" : 10.0,
+        "paramType" : "NumericParameter",
+        "qualifier" : "nParam",
+        "metaTags" : [ ],
+        "simpleName" : "nParam",
+        "isInteger" : true,
+        "isOptional" : true
+      }, {
+        "defaultValue" : "A",
+        "categories" : [ "A", "B", "C" ],
+        "paramType" : "CategoryParameter",
+        "qualifier" : "cParam",
+        "metaTags" : [ ],
+        "simpleName" : "cParam",
+        "isOptional" : true
+      }, {
+        "defaultValue" : "A",
+        "categories" : [ "A", "B", "C" ],
+        "paramType" : "CategoryParameter",
+        "qualifier" : "cParam",
+        "metaTags" : [ ],
+        "simpleName" : "cParam",
+        "isOptional" : true
+      }, {
+        "defaultValue" : "A",
+        "categories" : [ "A", "B", "C" ],
+        "paramType" : "CategoryParameter",
+        "qualifier" : "cParam",
+        "metaTags" : [ ],
+        "simpleName" : "cParam",
+        "isOptional" : true
       } ],
       "parameterDependencies" : [ ],
       "javaParameterizationAuxiliaries" : {
-        "dispatchAux" : null,
+        "parameterHandler" : {
+          "staticInvocation" : false,
+          "redirectArg" : -1,
+          "methodName" : null,
+          "className" : "Service1ParameterHandler",
+          "metaclass" : null
+        },
         "autoScanEachParam" : true,
         "bundleInMap" : true,
         "bundleInArray" : true,

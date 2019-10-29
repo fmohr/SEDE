@@ -17,8 +17,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       }, {
         "inputs" : [ ],
         "outputs" : [ {
@@ -29,8 +29,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "$construct",
       "metaTags" : [ ],
@@ -52,8 +52,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "addier",
       "metaTags" : [ ],
@@ -75,8 +75,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "addierListe",
       "metaTags" : [ ],
@@ -103,8 +103,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : true
+        "isContextFree" : true,
+        "isPure" : true
       } ],
       "qualifier" : "summierListe",
       "metaTags" : [ ],
@@ -126,8 +126,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "summier",
       "metaTags" : [ ],
@@ -144,8 +144,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : true
+        "isContextFree" : true,
+        "isPure" : false
       } ],
       "qualifier" : "fail",
       "metaTags" : [ ],
@@ -157,8 +157,8 @@
         "outputs" : [ ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : true
+        "isContextFree" : true,
+        "isPure" : false
       } ],
       "qualifier" : "sleep",
       "metaTags" : [ ],
@@ -185,8 +185,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : true
+        "isContextFree" : true,
+        "isPure" : false
       } ],
       "qualifier" : "addierBuiltIn",
       "metaTags" : [ ],
@@ -228,8 +228,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "$construct",
       "metaTags" : [ ],
@@ -251,8 +251,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "qualifier" : "calc",
       "metaTags" : [ ],
@@ -274,8 +274,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "liagtAufGerade",
       "metaTags" : [ ],
@@ -292,8 +292,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "achsenabschnitt",
       "metaTags" : [ ],
@@ -310,8 +310,8 @@
         } ],
         "javaDispatchAux" : null,
         "comments" : [ ],
-        "isPure" : true,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "qualifier" : "nullstelle",
       "metaTags" : [ ],
@@ -335,7 +335,7 @@
     "semanticType" : "Arr",
     "javaTypeAux" : {
       "dataCastHandler" : null,
-      "className" : "demo.types.DemoCaster"
+      "mappedClassName" : "demo.types.DemoCaster"
     },
     "qualifier" : "demo.types.NummerList",
     "metaTags" : [ ],
@@ -345,7 +345,7 @@
     "semanticType" : "Arr",
     "javaTypeAux" : {
       "dataCastHandler" : null,
-      "className" : "demo.types.DemoCaster"
+      "mappedClassName" : "demo.types.DemoCaster"
     },
     "qualifier" : "demo.types.Punkt",
     "metaTags" : [ ],

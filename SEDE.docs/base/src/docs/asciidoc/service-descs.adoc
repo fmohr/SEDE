@@ -65,6 +65,7 @@ The SDL compiler is an executable jar program that can be used to manually trans
 Download it from this link: {download-link-sdlc}[sdl.jar]
 
 General usage:
+{todo} update the help output
 
 [source]
 ----
@@ -77,6 +78,14 @@ If `merge` is not enabled, each input file is considered individually. When the 
 
 It will also be possible to include sdl files in a gradle project and benefit from autocomplete features of IDEs.
 {todo} SDL gradle plugin.
+
+
+== Object Model Class Diagram
+
+[plantuml,"classdiag",svg]
+....
+include::../plantuml/service-descs.plantuml[]
+....
 
 == Examples
 
@@ -143,13 +152,14 @@ java -jar sdlc.jar \
 <2> Multiple input files
 <3> Single output, which contains the merged result
 
-NOTE: The sdl file of the previous example is reused. This way the second service description merely updates the `MathLib` collection and retains the info block. Note that the order of the input files matters.
+NOTE: The sdl file of the previous example is reused. This way the second service description merely updates the `MathLib` collection and retains the info block. Note that the order of the input files determine which change comes through.
+
 The resulting json file now becomes:
 
 [source, json]
-.MathLib.servicedesc.json
+.MathLib.servicedesc.json (First 20 lines)
 ----
-include::MathLib-2.servicedesc.json[]
+include::MathLib-2.servicedesc.json[lines=1..20]
 ----
 
 === Data Type
@@ -182,4 +192,6 @@ include::MathLib-4.servicedesc.groovy[]
 <4> Add a dependency between two parameters
 
 == Advanced Examples
+
 {todo}
+

@@ -1,0 +1,12 @@
+== Testing plant uml
+
+[plantuml,"test",png]
+....
+class Animal
+class Bird
+class Mammal
+Mammal <|-- Cats
+Mammal <|-- Dog
+Animal <|-- Bird
+Animal <|-- Mammal
+....

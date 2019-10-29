@@ -1,6 +1,11 @@
 buildscript {
     dependencies {
-        classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.15'
+
+        // PDF target
+//        classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.15'
+
+        // plant uml diagrams
+        classpath 'org.asciidoctor:asciidoctorj-diagram:1.3.1'
     }
 }
 
@@ -17,14 +22,18 @@ asciidoctorj {
 }
 
 asciidoctor {
-    resources {
-        from(sourceDir) {
-            include 'images/**'
-        }
-    }
-    // gemPath '/usr/local/opt/ruby/bin/gem'
-    // requires 'asciidoctor-pdf'
 
-    backends 'pdf'
-    backends 'html'
+    requires = [
+        // 'asciidoctor-pdf',
+        'asciidoctor-diagram'
+    ]
+
+
+    backends = [
+        // 'pdf'
+        'html5'
+    ]
+
+    logDocuments = false
 }
+

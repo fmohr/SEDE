@@ -71,8 +71,9 @@ General usage:
 ----
 include::sdlc-usage.txt[]
 ----
-
-If `merge` is not enabled, each input file is considered individually. When the scripts build upon, enable `merge` to merge the input files into a single output.
+<1> If the components flag is enabled, the output file is a HASCO component model.
+<2> Provide one or more input files. Note that the order determines which change comes through. For more information, see examples below.
+<3> Provide a single output file. This file will be overwritten with the output of the compilation.
 
 === SDL Gradle Project
 
@@ -82,9 +83,11 @@ It will also be possible to include sdl files in a gradle project and benefit fr
 
 == Object Model Class Diagram
 
+This uml class diagram shows an excerpt of the object model graph responsible for capturing service runtime descriptions.
+
 [plantuml,"classdiag",svg]
 ....
-include::../plantuml/service-descs.plantuml[]
+include::../plantuml/service-descs-overview.plantuml[]
 ....
 
 == Examples
@@ -144,13 +147,11 @@ Compile the added specification:
 [source, bash]
 ----
 java -jar sdlc.jar \
-    -m <1>
-    -i MathLib-1.servicedesc.groovy MathLib-2.servicedesc.groovy <2>
-    -o MathLib.servicedesc.json <3>
+    -i MathLib-1.servicedesc.groovy MathLib-2.servicedesc.groovy <1>
+    -o MathLib.servicedesc.json <2>
 ----
-<1> Merge one or more inputs
-<2> Multiple input files
-<3> Single output, which contains the merged result
+<1> Multiple input files
+<2> Single output, which contains the merged result
 
 NOTE: The sdl file of the previous example is reused. This way the second service description merely updates the `MathLib` collection and retains the info block. Note that the order of the input files determine which change comes through.
 

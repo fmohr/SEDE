@@ -1,5 +1,5 @@
 usage: java -jar sdlc.jar [option]
- -h,--help            display usage
- -i,--inputs <arg>    input service description file paths
- -m,--merge           merges the inputs into the a single output
- -o,--outputs <arg>   output service description file paths
+ -c,--components     outputs a HASCO component model # <1>
+ -h,--help           display usage
+ -i,--inputs <arg>   input service description file paths # <2>
+ -o,--output <arg>   output service description file path # <3>

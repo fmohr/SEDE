@@ -1,9 +1,3 @@
 @startuml
-class Animal
-class Bird
-class Mammal
-Mammal <|-- Cats
-Mammal <|-- Dog
-Animal <|-- Bird
-Animal <|-- Mammal
+class A
 @enduml

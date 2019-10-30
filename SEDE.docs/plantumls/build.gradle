@@ -1,19 +1,32 @@
-buildscript {
-    dependencies {
-        classpath 'org.asciidoctor:asciidoctorj-diagram:1.3.1'
-    }
-}
-
 plugins {
-    id 'org.asciidoctor.convert' version '1.5.3'
+    id 'java'
+    id 'groovy'
 }
 
-repositories {
-    jcenter()
+dependencies {
+    Map libs = project.ext.libs
+    compile project(":SEDE.core-models")
+    compile project(":SEDE.servicedesc")
+
+    compile libs.plantuml_builder
+    compile libs.commons_io
 }
 
-asciidoctor {
-    backends 'html5'
-    requires 'asciidoctor-diagram'
-    attributes 'buildDir': buildDir
+
+task genClassDiag(type: JavaExec) {
+    dependsOn assemble
+
+    getInputs().files(
+        tasks.getByPath(':SEDE.core-models:compileJava').outputs,
+        tasks.getByPath(':SEDE.servicedesc:compileJava').outputs
+    )
+
+    File outputDir = file("$buildDir/plantuml")
+    getOutputs().dir(outputDir)
+
+    main = 'de.upb.sede.PlantUMLGen'
+    args = [outputDir.absolutePath]
+    classpath += sourceSets.main.runtimeClasspath
+    classpath += sourceSets.test.runtimeClasspath
 }
+

@@ -1,0 +1,93 @@
+@startuml
+
+interface "IDataTypeDesc"
+
+interface "IMethodDesc"
+
+interface "IMethodParameterDesc"
+
+interface "IQualifiable"
+
+interface "IServiceCollectionDesc"
+
+interface "IServiceDesc"
+
+interface "ISignatureDesc"
+
+interface "CommentAware"
+
+
+class "MethodDesc" {
+  signatures : List<ISignatureDesc>
+  qualifier : String
+  metaTags : List<String>
+  simpleName : String
+  comments : List<String>
+}
+
+class "MethodParameterDesc" {
+  type : String
+  name : String
+  fixedValue : String
+  callByValue : boolean
+}
+
+class "ServiceCollectionDesc" {
+  services : List<IServiceDesc>
+  dataTypes : List<IDataTypeDesc>
+  comments : List<String>
+  qualifier : String
+  metaTags : List<String>
+  simpleName : String
+}
+
+class "ServiceDesc" {
+  methods : List<IMethodDesc>
+  interfaces : List<String>
+  isAbstract : boolean
+  fieldTypes : Map<String, String>
+  qualifier : String
+  metaTags : List<String>
+  simpleName : String
+  comments : List<String>
+}
+
+class "SignatureDesc" {
+  inputs : List<IMethodParameterDesc>
+  outputs : List<IMethodParameterDesc>
+  isPure : boolean
+  isContextFree : boolean
+  comments : List<String>
+}
+
+class "DataTypeDesc" {
+  semanticType : String
+  javaTypeAux : IJavaTypeAux
+  qualifier : String
+  metaTags : ImmutableList<String>
+  simpleName : String
+  comments : ImmutableList<String>
+}
+
+"CommentAware" <|-- "MethodDesc"
+"CommentAware" <|-- "ServiceCollectionDesc"
+"CommentAware" <|-- "ServiceDesc"
+"CommentAware" <|-- "SignatureDesc"
+"IMethodDesc" <|-- "MethodDesc"
+"IMethodParameterDesc" <|-- "MethodParameterDesc"
+"IQualifiable" <|-- "MethodDesc"
+"IQualifiable" <|-- "ServiceCollectionDesc"
+"IQualifiable" <|-- "ServiceDesc"
+"IServiceCollectionDesc" <|-- "ServiceCollectionDesc"
+"IServiceDesc" <|-- "ServiceDesc"
+"ISignatureDesc" <|-- "SignatureDesc"
+"MethodDesc" --> "*" "ISignatureDesc" : signatures
+"ServiceCollectionDesc" --> "*" "IDataTypeDesc" : dataTypes
+"ServiceCollectionDesc" --> "*" "IServiceDesc" : services
+"ServiceDesc" --> "*" "IMethodDesc" : methods
+"SignatureDesc" "*" --> "*" "IMethodParameterDesc" : inputs/outputs
+
+"IDataTypeDesc" <|-- "DataTypeDesc"
+"IQualifiable" <|-- "DataTypeDesc"
+
+@enduml

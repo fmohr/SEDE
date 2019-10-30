@@ -73,6 +73,15 @@ subprojects {
                 exclude group: 'org.hamcrest'
             },
 
+            /*
+             * Doc builder dependencies:
+             */
+            plantuml_builder: 'ch.ifocusit:plantuml-builder:1.4',
+
+
+            /*
+             * Misc:
+             */
             immutables: 'org.immutables:value:2.7.4',
             findbugs:[group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'],
             jgit: [group: 'org.eclipse.jgit', name: 'org.eclipse.jgit', version: '5.3.1.201904271842-r'],

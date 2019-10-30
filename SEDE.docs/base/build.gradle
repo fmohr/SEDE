@@ -1,6 +1,5 @@
 buildscript {
     dependencies {
-
         // PDF target
 //        classpath 'org.asciidoctor:asciidoctorj-pdf:1.5.0-alpha.15'
 
@@ -10,7 +9,8 @@ buildscript {
 }
 
 plugins {
-    id("org.asciidoctor.convert") version "1.5.9.2"
+    id ("org.asciidoctor.convert") version "1.5.9.2"
+    // TODO migrate to "org.asciidoctor.jvm.convert" version 3
 }
 
 dependencies {
@@ -31,7 +31,8 @@ asciidoctor {
 
     backends = [
         // 'pdf'
-        'html5'
+        'html5',
+        'html',
     ]
 
     logDocuments = false

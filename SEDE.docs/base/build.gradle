@@ -10,7 +10,7 @@ buildscript {
 
 plugins {
     id ("org.asciidoctor.convert") version "1.5.9.2"
-    id 'org.ajoberstar.github-pages' version '1.5.1'
+    id 'org.ajoberstar.git-publish' version '2.1.1'
     id 'org.asciidoctor.gradle.asciidoctor' version '1.5.1'
     // TODO migrate to "org.asciidoctor.jvm.convert" version 3
 }
@@ -39,15 +39,20 @@ asciidoctor {
     logDocuments = false
 }
 
-githubPages {
+gitPublishPush.dependsOn(asciidoctor)
 
-    repoUri = 'https://github.com/aminfa/SEDE.git' // (1)
-    credentials { // (2)
-        username = project.hasProperty('githubToken') ? project.githubToken : ''
-        password = ''
-    }
+gitPublish {
+    // SEE: https://github.com/ajoberstar/gradle-git-publish
+    repoUri = 'git@github.com:aminfa/SEDE.git'
 
-    pages {
+    branch = 'gh-pages'
+
+    contents {
         from file(asciidoctor.outputDir.path +  '/html5')
+//        TODO publish api
+//        from(javadoc) {
+//            into 'api'
+//        }
     }
+    commitMessage = 'Publishing a new page'
 }

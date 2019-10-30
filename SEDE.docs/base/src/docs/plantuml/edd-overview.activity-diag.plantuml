@@ -12,6 +12,6 @@
 --> Cache output
 --> === B2 ===
 === B1 === --> "Publish build events"
-"Publish build events" --> === B2 ===
+"Publish build events" --> === B2 ==
 --> (*)
 @enduml

@@ -1,8 +1,6 @@
 = Deployment in SEDE - `SKETCH`
+:toc: left
 :pr-rel-root: ../../../../../
-:pr-root: https://github.com/fmohr/SEDE/tree/dev/docs/
-:pr-servicedesc: {pr-root}SEDE.core/servicedesc/
-:pr-servicedesc-dsl: {pr-root}SEDE.core/servicedesc-dsl/
 :pr-docs: {pr-rel-root}SEDE.docs/base/src/docs/asciidoc/
 :easy-block-link: https://easybuild.readthedocs.io/en/latest/Concepts_and_Terminology.html#easyblocks
 
@@ -34,6 +32,8 @@ Extend *generic* blocks that implement a procedure using *standard tools* (e.g. 
 Dependencies on other blocks are resolved by *dependency injection*
 . Event Bus:
 Blocks can *subscribe to events* from other blocks to add *custom actions*, or *publish own events* for future extensions.
+
+=== Build activity flow
 
 The following uml activity diagram illustrates the process of software build in EDD:
 

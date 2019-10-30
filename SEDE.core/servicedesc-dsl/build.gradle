@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '5.1.0'
+//    id 'com.github.johnrengelman.shadow' version '5.1.0'
     id 'java'
     id 'groovy'
 }
@@ -69,12 +69,12 @@ task compileServiceDescs {
 
 assemble.dependsOn(compileServiceDescs)
 
-shadowJar {
-    archiveFileName = "sdlc.jar"
-    manifest {
-        attributes 'Main-Class': 'de.upb.sede.SDLCli'
-    }
-}
+//shadowJar {
+//    archiveFileName = "sdlc.jar"
+//    manifest {
+//        attributes 'Main-Class': 'de.upb.sede.SDLCli'
+//    }
+//}
 
 // custom shadow jar task
 //import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar

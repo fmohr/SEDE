@@ -1,11 +1,11 @@
 = Service Description Language
 SDL
 :toc: left
-//:pr-root: link:../../../../../
+:pr-rel-root: ../../../../../
 :pr-root: https://github.com/fmohr/SEDE/tree/dev/docs/
 :pr-servicedesc: {pr-root}SEDE.core/servicedesc/
 :pr-servicedesc-dsl: {pr-root}SEDE.core/servicedesc-dsl/
-:pr-docs: {pr-root}SEDE.docs/base/src/docs/asciidoc/
+:pr-docs: {pr-rel-root}SEDE.docs/base/src/docs/asciidoc/
 :pr-hasco: https://github.com/fmohr/AILibs/tree/master/softwareconfiguration/hasco
 :todo: pass:q[[small blue]#TODO#]
 :old-classconf-example: https://github.com/fmohr/SEDE.services/blob/master/weka.ml/src/main/resources/config/weka-ml-classifiers-classconf.json
@@ -69,7 +69,7 @@ General usage:
 
 [source]
 ----
-include::sdlc-usage.txt[]
+include::{pr-docs}sdlc-usage.txt[]
 ----
 <1> If the components flag is enabled, the output file is a HASCO component model.
 <2> Provide one or more input files. Note that the order determines which change comes through. For more information, see examples below.
@@ -87,7 +87,7 @@ This uml class diagram shows an excerpt of the object model graph responsible fo
 
 [plantuml,"classdiag",svg]
 ....
-include::../plantuml/service-descs-overview.plantuml[]
+include::{pr-docs}../plantuml/service-descs-overview.plantuml[]
 ....
 
 == Examples
@@ -102,7 +102,7 @@ One can, alternatively, split the services up into multiple service collections,
 [source, groovy]
 .MathLib-1.servicedesc.groovy
 ----
-include::MathLib-1.servicedesc.groovy[]
+include::{pr-docs}MathLib-1.servicedesc.groovy[]
 ----
 <1> Create a collection with the qualifier `MathLib`
 <2> Add a multi-line info block for the collection.
@@ -120,7 +120,7 @@ This is the generated output:
 [source, json]
 .MathLib.servicedesc.json
 ----
-include::MathLib-1.servicedesc.json[]
+include::{pr-docs}MathLib-1.servicedesc.json[]
 ----
 
 === Service
@@ -131,7 +131,7 @@ The next file adds a `Primes` service to out `MathLib` Service Collection that i
 [source, groovy]
 .MathLib-2.servicedesc.json
 ----
-include::MathLib-2.servicedesc.groovy[]
+include::{pr-docs}MathLib-2.servicedesc.groovy[]
 ----
 <1> Similiar to `typedef`, predefine the `Number` type into a  variable and reuse the number variable inside this document.
 <2> We can overwrite the previous specification; in this case the simple name of the collection has been renamed.
@@ -160,7 +160,7 @@ The resulting json file now becomes:
 [source, json]
 .MathLib.servicedesc.json (First 20 lines)
 ----
-include::MathLib-2.servicedesc.json[lines=1..20]
+include::{pr-docs}MathLib-2.servicedesc.json[lines=1..20]
 ----
 
 === Data Type
@@ -170,7 +170,7 @@ By defining custom {pr-servicedesc}{j-src}types/IDataTypeRef.java[Data Types], t
 [source, groovy]
 .MathLib-3.servicedesc.json
 ----
-include::MathLib-3.servicedesc.groovy[]
+include::{pr-docs}MathLib-3.servicedesc.groovy[]
 ----
 <1> Create a new type `ai.libs.Function`. Add details about the java implementation, by specifying which class this data type is mapped to.
 <2> Define  a semantic type of the data type. In simple terms, this guarantees that the serialized form of this data type is compatible with all data types whose semantic type matched this.
@@ -185,7 +185,7 @@ The design of Service Parametrization was done with integration into HASCO in mi
 [source, groovy]
 .MathLib-4.servicedesc.json
 ----
-include::MathLib-4.servicedesc.groovy[]
+include::{pr-docs}MathLib-4.servicedesc.groovy[]
 ----
 <1> Add boolean parameters
 <2> Add a numeric parameter

@@ -1,0 +1,17 @@
+@startuml
+(*) --> "Instantiate requested Blocks"
+--> Read block dependency requests
+--> "Resolve Block Dependencies"
+--> Inject requested blocks
+--> Sort blocks topologically
+--> Initiate event bus
+--> Offer subscription to blocks
+--> === B1 ===
+--> Retrieve sources
+--> Build/Extract software
+--> Cache output
+--> === B2 ===
+=== B1 === --> "Publish build events"
+"Publish build events" --> === B2 ===
+--> (*)
+@enduml

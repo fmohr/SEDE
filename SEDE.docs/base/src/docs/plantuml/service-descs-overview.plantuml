@@ -1,28 +1,23 @@
 @startuml
 
-interface "IDataTypeDesc"
+skinparam defaultFontName "Avenir"
+skinparam defaultFontSize 13
+skinparam classBorderColor black
+skinparam ArrowColor black
 
-interface "IMethodDesc"
+interface "IQualifiable" {
+  qualifier : String
+  metaTags : List<String>
+  simpleName : String
+}
 
-interface "IMethodParameterDesc"
-
-interface "IQualifiable"
-
-interface "IServiceCollectionDesc"
-
-interface "IServiceDesc"
-
-interface "ISignatureDesc"
-
-interface "CommentAware"
+interface "CommentAware" {
+  comments : List<String>
+}
 
 
 class "MethodDesc" {
   signatures : List<ISignatureDesc>
-  qualifier : String
-  metaTags : List<String>
-  simpleName : String
-  comments : List<String>
 }
 
 class "MethodParameterDesc" {
@@ -35,10 +30,6 @@ class "MethodParameterDesc" {
 class "ServiceCollectionDesc" {
   services : List<IServiceDesc>
   dataTypes : List<IDataTypeDesc>
-  comments : List<String>
-  qualifier : String
-  metaTags : List<String>
-  simpleName : String
 }
 
 class "ServiceDesc" {
@@ -46,10 +37,7 @@ class "ServiceDesc" {
   interfaces : List<String>
   isAbstract : boolean
   fieldTypes : Map<String, String>
-  qualifier : String
-  metaTags : List<String>
-  simpleName : String
-  comments : List<String>
+
 }
 
 class "SignatureDesc" {
@@ -57,37 +45,28 @@ class "SignatureDesc" {
   outputs : List<IMethodParameterDesc>
   isPure : boolean
   isContextFree : boolean
-  comments : List<String>
+
 }
 
 class "DataTypeDesc" {
   semanticType : String
-  javaTypeAux : IJavaTypeAux
-  qualifier : String
-  metaTags : ImmutableList<String>
-  simpleName : String
-  comments : ImmutableList<String>
 }
 
-"CommentAware" <|-- "MethodDesc"
-"CommentAware" <|-- "ServiceCollectionDesc"
-"CommentAware" <|-- "ServiceDesc"
-"CommentAware" <|-- "SignatureDesc"
-"IMethodDesc" <|-- "MethodDesc"
-"IMethodParameterDesc" <|-- "MethodParameterDesc"
+'"CommentAware" <|-- "MethodDesc"
+'"CommentAware" <|-- "ServiceCollectionDesc"
+'"CommentAware" <|-- "ServiceDesc"
+'"CommentAware" <|-- "SignatureDesc"
+'"CommentAware" <|-- "DataTypeDesc"
 "IQualifiable" <|-- "MethodDesc"
 "IQualifiable" <|-- "ServiceCollectionDesc"
 "IQualifiable" <|-- "ServiceDesc"
-"IServiceCollectionDesc" <|-- "ServiceCollectionDesc"
-"IServiceDesc" <|-- "ServiceDesc"
-"ISignatureDesc" <|-- "SignatureDesc"
-"MethodDesc" --> "*" "ISignatureDesc" : signatures
-"ServiceCollectionDesc" --> "*" "IDataTypeDesc" : dataTypes
-"ServiceCollectionDesc" --> "*" "IServiceDesc" : services
-"ServiceDesc" --> "*" "IMethodDesc" : methods
-"SignatureDesc" "*" --> "*" "IMethodParameterDesc" : inputs/outputs
-
-"IDataTypeDesc" <|-- "DataTypeDesc"
 "IQualifiable" <|-- "DataTypeDesc"
+
+"MethodDesc" --> "*" "SignatureDesc" : signatures
+"ServiceCollectionDesc" --> "*" "DataTypeDesc" : dataTypes
+"ServiceCollectionDesc" --> "*" "ServiceDesc" : services
+"ServiceDesc" --> "*" "MethodDesc" : methods
+"SignatureDesc" "*" --> "*" "MethodParameterDesc" : inputs/outputs
+
 
 @enduml

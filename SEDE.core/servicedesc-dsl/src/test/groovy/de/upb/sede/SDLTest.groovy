@@ -6,6 +6,7 @@ import de.upb.sede.exec.IServiceDesc
 import de.upb.sede.exec.ServiceDesc
 import de.upb.sede.param.IBooleanParameter
 import de.upb.sede.param.ICategoryParameter
+import de.upb.sede.param.IInterfaceParameter
 import de.upb.sede.param.INumericParameter
 import de.upb.sede.param.IParameter
 import de.upb.sede.param.IParameterDependencyDesc
@@ -163,6 +164,14 @@ class SDLTest extends Specification {
         catParams.every {it.defaultValue == 'A'}
         catParams.every {it.categories == ['A', 'B', 'C'] }
         catParams.every {it.isOptional() }
+
+        when:
+        List<IInterfaceParameter> intParams = params.parameters.grep(IInterfaceParameter)
+        then:
+        intParams.every {it.qualifier == 'iParam'}
+        intParams.every {it.defaultValue == null}
+        intParams.every {it.interfaceQualifier == 'interface.I1'}
+        intParams.every {it.isOptional() }
 
         when:
         List<IParameterDependencyDesc> dependencies = params.parameterDependencies

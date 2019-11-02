@@ -14,6 +14,8 @@ import java.util.Optional;
  */
 public interface ISDLLookupService {
 
+    Optional<IServiceCollectionDesc> lookupCollection(IServiceRef serviceRef);
+
     Optional<IServiceCollectionDesc> lookup(IServiceCollectionRef collectionRef);
 
     Optional<IServiceDesc> lookup(IServiceRef serviceRef);

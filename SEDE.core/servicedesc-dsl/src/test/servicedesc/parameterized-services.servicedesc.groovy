@@ -63,6 +63,18 @@ collection("service.Collection.1") {
 
             category 'cParam', 'A', ['A', 'B', 'C'], true
 
+            intface {
+                qualifier = 'iParam'
+                // cannot set default value:
+                // defaultValue = null
+                isOptional = true
+                interfaceQualifier = "interface.I1"
+            }
+
+            intface name: 'iParam', default: 'A', optional: true, interfaceQualifier: 'interface.I1'
+
+            intface 'iParam', 'interface.I1', true
+
             dependency {
                 premise = 'b2 in {true}'
                 conclusion = 'b3 in {false}'

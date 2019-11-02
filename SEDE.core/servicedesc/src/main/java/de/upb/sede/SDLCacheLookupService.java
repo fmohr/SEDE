@@ -30,6 +30,11 @@ public class SDLCacheLookupService implements ISDLLookupService,
 
 
     @Override
+    public Optional<IServiceCollectionDesc> lookupCollection(IServiceRef serviceRef) {
+        return lookupServiceDelegate.lookupCollection(serviceRef); // TODO cache this result somehow..
+    }
+
+    @Override
     public Optional<IServiceCollectionDesc> lookup(IServiceCollectionRef collectionRef) {
         return lookupInCache(collectionRef);
     }

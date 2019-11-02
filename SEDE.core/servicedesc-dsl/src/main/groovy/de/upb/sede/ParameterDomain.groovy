@@ -3,6 +3,7 @@ package de.upb.sede
 import de.upb.sede.param.IParameter
 import de.upb.sede.param.MutableBooleanParameter
 import de.upb.sede.param.MutableCategoryParameter
+import de.upb.sede.param.MutableInterfaceParameter
 import de.upb.sede.param.MutableNumericParameter
 import de.upb.sede.param.MutableParameterDependencyDesc
 import de.upb.sede.param.MutableServiceParameterizationDesc
@@ -67,6 +68,36 @@ class ParameterDomain
         PARAM_QUALIFIER_SETTER(paramDef, boolParam)
         PARAM_OPTIONAL_SETTER(paramDef, boolParam)
         return boolParam
+    }
+
+    MutableInterfaceParameter intface(@DelegatesTo(MutableInterfaceParameter) Closure paramDescriber) {
+        def intfaceParam = MutableInterfaceParameter.create()
+        readDescription(intfaceParam, paramDescriber)
+        model.parameters.add(intfaceParam)
+        return intfaceParam
+    }
+
+    MutableInterfaceParameter intface(String name, String intfaceQualifier, boolean opt = false) {
+        return intface() {
+            qualifier = name
+            isOptional = opt
+            interfaceQualifier = intfaceQualifier
+        }
+    }
+
+    MutableInterfaceParameter intface(Map paramDef) {
+        def intfaceParam = intface {
+            if ('default' in paramDef) {
+                interfaceQualifier = paramDef['interfaceQualifier']
+            }
+        }
+        PARAM_QUALIFIER_SETTER(paramDef, intfaceParam)
+        PARAM_OPTIONAL_SETTER(paramDef, intfaceParam)
+
+        if(intfaceParam.getInterfaceQualifier() == null) {
+            throw new IllegalArgumentException("Interface definition '${intfaceParam.qualifier}' does not define the requested interface qualifier.");
+        }
+        return intfaceParam
     }
 
     MutableNumericParameter numeric(@DelegatesTo(MutableNumericParameter) Closure description) {

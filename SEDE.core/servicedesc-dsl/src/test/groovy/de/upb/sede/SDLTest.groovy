@@ -176,6 +176,7 @@ class SDLTest extends Specification {
         when:
         List<IParameterDependencyDesc> dependencies = params.parameterDependencies
         then:
+        dependencies.size() == 3
         dependencies.every({it.premise == 'b2 in {true}'})
         dependencies.every {it.conclusion == 'b3 in {false}'}
 

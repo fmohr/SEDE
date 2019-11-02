@@ -189,6 +189,7 @@ class ParameterDomain
     MutableParameterDependencyDesc dependency(@DelegatesTo(MutableParameterDependencyDesc) Closure describer) {
         def dependencyDesc = MutableParameterDependencyDesc.create().setPremise("").setConclusion("")
         readDescription(dependencyDesc, describer)
+        model.parameterDependencies += dependencyDesc
         return dependencyDesc
     }
 
@@ -224,10 +225,8 @@ class ParameterDomain
             if(!(con instanceof String)) {
                 throw new IllegalArgumentException("Dependency definition ill typed. Conclusion: " + con)
             }
-            return dependency {
-                premise = pre
-                conclusion = con
-            }
+            premise = pre
+            conclusion = con
         }
     }
 

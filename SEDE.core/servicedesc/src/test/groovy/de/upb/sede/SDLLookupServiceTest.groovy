@@ -93,11 +93,11 @@ class SDLLookupServiceTest extends Specification {
         optC.isPresent()
         optC.get() == optCol2C.get()
 
-        when:
-        IServiceRef ref = null
-        ls.lookup(ref)
-        then:
-        thrown(NullPointerException)
+//        when:
+//        IServiceRef ref = null
+//        ls.lookup(ref)
+//        then:
+//        thrown(NullPointerException)
 
         where:
         ls | _
@@ -154,13 +154,6 @@ class SDLLookupServiceTest extends Specification {
 
         then:
         optMethod.isPresent()
-
-        when:
-        IMethodRef nullRef = null
-        ls.lookup(nullRef)
-
-        then:
-        thrown(NullPointerException)
 
         where:
         ls | _

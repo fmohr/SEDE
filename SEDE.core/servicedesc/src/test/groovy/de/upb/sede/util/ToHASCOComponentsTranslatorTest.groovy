@@ -21,8 +21,7 @@ class ToHASCOComponentsTranslatorTest extends Specification {
 
     def "test basics translation"() {
         when:
-        SDLReader reader = new SDLReader()
-        reader.readClosure {
+        def sdlBase = SDLGUtil.read {
             collection 'collection.1', {
                 service 'service.0', {
                     // no params
@@ -76,13 +75,11 @@ class ToHASCOComponentsTranslatorTest extends Specification {
             }
         }
 
-        def collects = reader.collections;
-//        println(MAPPER.writeValueAsString(collects))
-        def sdlBase = SDLBase.builder().collections(collects).build()
         def lookupService = new SDLBaseLookupService(sdlBase)
         def componentRepos = componentsOfServiceQualifiers(lookupService,
             ['service.0', 'service.1'])
-//        println(MAPPER.writeValueAsString(componentRepos))
+        println(MAPPER.writeValueAsString(sdlBase))
+        println(MAPPER.writeValueAsString(componentRepos))
         then:
         componentRepos.size() == 1
         componentRepos[0][KEY_REPO] == 'collection.1'
@@ -142,6 +139,15 @@ class ToHASCOComponentsTranslatorTest extends Specification {
             (KEY_VALUES): [],
             (KEY_TYPE): PARAM_TYPE_CATEGORY
         ]
+
+        when:
+        def deps = service1Component[KEY_DEPENDENCIES] as List
+        then:
+        deps.size() == 2
+        deps[0][KEY_DEPENDENCY_PRE] == "bParam1 in {true}"
+        deps[0][KEY_DEPENDENCY_POST] == "nParam2 in [0.0,1.0]"
+        deps[1][KEY_DEPENDENCY_PRE] == "bParam1 in {false}"
+        deps[1][KEY_DEPENDENCY_POST] == "nParam2 in [10.0,20.0]"
     }
 
 }

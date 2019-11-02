@@ -96,6 +96,14 @@ public class SDLReader {
             .collect(Collectors.toList());
     }
 
+    public ISDLBase getSDLBase() {
+        return SDLBase.builder().collections(getCollections()).build();
+    }
+
+    public ISDLBase getMutableSDLBase() {
+        return MutableSDLBase.create().setCollections(getMutableCollections());
+    }
+
     public  List<MutableServiceCollectionDesc> getMutableCollections() {
         return new ArrayList<>(database.values());
     }

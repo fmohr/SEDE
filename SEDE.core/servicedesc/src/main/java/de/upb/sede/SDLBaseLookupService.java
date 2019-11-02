@@ -149,7 +149,7 @@ public class SDLBaseLookupService implements ISDLLookupService{
         String qualifier;
 
         QualifierMatcher(String qualifier) {
-            qualifier = qualifier;
+            this.qualifier = qualifier;
         }
 
         QualifierMatcher(IQualifiable qualifiable) {

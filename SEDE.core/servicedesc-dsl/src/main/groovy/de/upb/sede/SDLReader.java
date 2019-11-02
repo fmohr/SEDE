@@ -2,13 +2,14 @@ package de.upb.sede;
 
 
 import de.upb.sede.util.*;
+import groovy.lang.Closure;
+import groovy.lang.DelegatesTo;
 import groovy.lang.GroovyShell;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -70,6 +71,11 @@ public class SDLReader {
     public void read(File serviceDesc) throws IOException {
         SDL collector = (SDL) shell.parse(serviceDesc);
         runSDL(collector);
+    }
+
+    public void readClosure(@DelegatesTo(SDL.class) Closure closure)  {
+        SDL sdl = new ClosureSDL(closure);
+        runSDL(sdl);
     }
 
     private synchronized void runSDL(SDL sdl) {

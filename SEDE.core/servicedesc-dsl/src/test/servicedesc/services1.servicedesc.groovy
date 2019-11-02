@@ -7,7 +7,6 @@ collection ("services1") {
 
     // Define a simple name for the collection:
     simpleName = (qualifier + "_collection").toUpperCase()
-
     /*
      * Services:
      */

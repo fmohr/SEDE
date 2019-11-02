@@ -87,7 +87,7 @@ public class SDLCompiler {
 
     private void read(File inputFile) {
         if(!inputFile.getName().endsWith(".servicedesc.groovy")) {
-            throw new IllegalArgumentException("Unknown file ending: " + inputFile);
+            throw new IllegalArgumentException("Cant handle input-file: " + inputFile);
         }
         SDLReader reader = new SDLReader(collections.get());
         Uncheck.call(() -> {reader.read(inputFile); return null;});

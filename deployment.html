@@ -418,9 +418,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 .show-for-print{display:inherit!important}}
 </style>
 </head>
-<body class="article">
+<body class="article toc2 toc-left">
 <div id="header">
 <h1>Deployment in SEDE - <code>SKETCH</code></h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_edd">EDD</a>
+<ul class="sectlevel2">
+<li><a href="#_blocks">Blocks</a></li>
+<li><a href="#_build_activity_flow">Build activity flow</a></li>
+</ul>
+</li>
+</ul>
+</div>
 </div>
 <div id="content">
 <div id="preamble">
@@ -484,12 +495,15 @@ Blocks can <strong>subscribe to events</strong> from other blocks to add <strong
 </li>
 </ol>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_build_activity_flow">Build activity flow</h3>
 <div class="paragraph">
 <p>The following uml activity diagram illustrates the process of software build in EDD:</p>
 </div>
 <div class="imageblock">
 <div class="content">
-<img src="edd-overview.svg" alt="edd overview" width="317" height="931">
+<img src="edd-overview.svg" alt="edd overview" width="309" height="925">
 </div>
 </div>
 </div>
@@ -498,7 +512,7 @@ Blocks can <strong>subscribe to events</strong> from other blocks to add <strong
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-10-30 07:24:01 CET
+Last updated 2019-11-02 00:29:39 CET
 </div>
 </div>
 </body>

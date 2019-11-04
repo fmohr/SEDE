@@ -1,7 +1,6 @@
 package de.upb.sede;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import de.upb.sede.exec.IServiceRef;
 import de.upb.sede.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,44 +13,20 @@ public class SDLCompiler {
 
     private final static Logger logger = LoggerFactory.getLogger(SDLCompiler.class);
 
-    private  static ObjectMapper MAPPER = new ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT);
-
-    private boolean mergeInputs;
-
     private List<File> inputFiles;
-
-    private List<File> outputFiles;
 
     private LayeredCache<Map<String, MutableServiceCollectionDesc>> collections = Cache.nullableDefaultCache(LinkedHashMap::new);
 
-    public SDLCompiler(List<File> inputFiles, List<File> outputFiles, boolean mergeInputs) {
+    public SDLCompiler(List<File> inputFiles) {
         this.inputFiles = new ArrayList<>(Objects.requireNonNull(inputFiles));
         if(inputFiles.isEmpty()) {
             throw new IllegalArgumentException("empty input list");
-        }
-        this.outputFiles = new ArrayList<>(Objects.requireNonNull(outputFiles));
-        this.mergeInputs = mergeInputs;
-
-
-        if(mergeInputs){
-            if(outputFiles.isEmpty())
-                throw new IllegalArgumentException("Merging inputs was requested but no output file was provided.");
-            if(outputFiles.size() > 1) {
-                throw new IllegalArgumentException("Merging inputs was requested but multiple output files were provided.");
-            }
-        } else {
-            if(outputFiles.size() > 0 && outputFiles.size() != inputFiles.size()){
-                throw new IllegalArgumentException("Unequal amount of input and output files were defined");
-            }
         }
     }
 
     public synchronized void compile() {
         while(!inputFiles.isEmpty()) {
             compileNext();
-        }
-        if(mergeInputs) {
-            dump(nextOutput());
         }
     }
 
@@ -69,8 +44,6 @@ public class SDLCompiler {
             compileDir(inputFile);
         } else {
             read(inputFile);
-            if(!mergeInputs)
-                dump(nextOutput(inputFile));
         }
     }
 
@@ -79,9 +52,6 @@ public class SDLCompiler {
             "(.*?)\\.servicedesc.groovy$")) {
             File sDFile = new File(inputDir, sDFileName);
             read(sDFile);
-            if(!mergeInputs) {
-                dump(nextOutputInDir(inputDir, sDFile));
-            }
         }
     }
 
@@ -98,47 +68,43 @@ public class SDLCompiler {
         return inputFiles.remove(0);
     }
 
-    private File nextOutput() {
-        if(outputFiles.isEmpty()) {
-            throw new IllegalStateException("No output files defined.");
-        }
-        return outputFiles.remove(0);
-    }
 
-    private File nextOutput(File inputFile) {
-        if(outputFiles.isEmpty()) {
-            String outputFileName = jsonExtension(inputFile.getName());
-            return new File(inputFile.getParent(), outputFileName);
-        } else {
-            return nextOutput();
-        }
-    }
-
-    private File nextOutputInDir(File inputDir, File inputFile) {
-        File outputDir;
-        if(outputFiles.isEmpty()) {
-            outputDir = inputDir;
-        } else {
-            outputDir = nextOutput();
-            if(!outputDir.exists()) {
-                outputDir.mkdirs();
-            } else if(!outputDir.isDirectory()) {
-                throw new IllegalArgumentException("Expected output directory, got: " + outputDir.getPath());
-            }
-        }
-        return new File(outputDir, jsonExtension(inputFile.getName()));
-    }
-
-
-    private void dump(File outputFile)  {
-        Map<String, MutableServiceCollectionDesc> colMap = collections.get();
+    public ISDLBase popSDLBase()  {
+        ISDLBase isdlBase = peekSDLBase();
         collections.set(null);
-        FileUtil.prepareOutputFile(outputFile);
+        return isdlBase;
+    }
+
+    public ISDLBase peekSDLBase() {
+        Map<String, MutableServiceCollectionDesc> colMap = collections.get();
         List<MutableServiceCollectionDesc> colList = new ArrayList<>(colMap.values());
-        List<ServiceCollectionDesc> output = colList.stream()
+        SDLBase.Builder output = SDLBase.builder();
+
+        colList.stream()
             .map(col -> SDLUtil.toImmutable(col, ServiceCollectionDesc.class))
-            .collect(Collectors.toList());
-        Uncheck.call(() -> { MAPPER.writeValue(outputFile, output); return null; });
+            .forEachOrdered(output::addCollections);
+
+        return output.build();
+    }
+
+    // TODO maybe there is a better place for these:
+
+    private SDLBaseLookupService currentLookupService() {
+        ISDLBase isdlBase = peekSDLBase();
+        SDLBaseLookupService lookupService = new SDLBaseLookupService(isdlBase);
+        return lookupService;
+    }
+
+    public List<Map> peekHASCOComponentsOfQualifiers(List<String> serviceQualifiers) {
+        SDLBaseLookupService lookupService = currentLookupService();
+        List<Map> components = ToHASCOComponentsTranslator.componentsOfServiceQualifiers(lookupService, serviceQualifiers);
+        return components;
+    }
+
+    public List<Map> peekAllHASCOComponents() {
+        SDLBaseLookupService lookupService = currentLookupService();
+        List<IServiceRef> serviceRefs = lookupService.allServiceRefs().collect(Collectors.toList());
+        return ToHASCOComponentsTranslator.componentsOfServiceRefs(lookupService, serviceRefs);
     }
 
     private static String jsonExtension(String fileName) {

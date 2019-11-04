@@ -124,8 +124,8 @@ public class ToHASCOComponentsTranslator {
                 continue;
             }
             Map param = translateParam(serviceParam);
-            if(param!=null)
-                params.add(param);
+//            if(param!=null) // TODO decide whether services are included even if they dont specify param options
+            params.add(param);
         }
         return params;
     }
@@ -232,7 +232,7 @@ public class ToHASCOComponentsTranslator {
 
     public static List<Map> componentsOfServiceRefs(ISDLLookupService sdlService,
                                                     List<IServiceRef> serviceRefs) {
-        return componentsOfServiceRefs(sdlService, serviceRefs, true);
+        return componentsOfServiceRefs(sdlService, serviceRefs, false);
     }
 
     public static List<Map> componentsOfServiceRefs(ISDLLookupService sdlService,

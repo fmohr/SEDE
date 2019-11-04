@@ -5,6 +5,7 @@ import de.upb.sede.types.IDataTypeDesc;
 import de.upb.sede.types.IDataTypeRef;
 
 import java.util.Optional;
+import java.util.stream.Stream;
 
 /**
  * This class exposes aspects of an SDLBase in a standard manner.
@@ -23,4 +24,11 @@ public interface ISDLLookupService {
     Optional<IMethodDesc> lookup(IMethodRef methodRef);
 
     Optional<IDataTypeDesc> lookup(IDataTypeRef dataTypeRef);
+
+    Stream<IServiceCollectionRef> allCollectionRefs();
+
+    Stream<IServiceRef> allServiceRefs();
+
+    Stream<IServiceRef> serviceRefsIn(IServiceCollectionRef collectionRef);
+
 }

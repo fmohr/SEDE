@@ -3,6 +3,7 @@ package de.upb.sede;
 import de.upb.sede.exec.*;
 import de.upb.sede.types.IDataTypeDesc;
 import de.upb.sede.types.IDataTypeRef;
+import de.upb.sede.util.Streams;
 
 import java.util.Collections;
 import java.util.List;
@@ -143,6 +144,42 @@ public class SDLBaseLookupService implements ISDLLookupService{
 
         return pickOneOrNone(typeStream);
     }
+
+    @Override
+    public Stream<IServiceCollectionRef> allCollectionRefs() {
+        return this.sdlBase.getCollections().stream()
+            .map(IServiceCollectionDesc::getQualifier)
+            .map(IServiceCollectionRef::of);
+    }
+
+    @Override
+    public Stream<IServiceRef> allServiceRefs() {
+        Stream<Stream<IServiceRef>> serviceRefStreams = allCollectionRefs()
+            .map(this::lookup)
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .map(SDLBaseLookupService::extractServiceRefs);
+        return Streams.flatten(serviceRefStreams);
+    }
+
+    @Override
+    public Stream<IServiceRef> serviceRefsIn(IServiceCollectionRef collectionRef) {
+        Optional<IServiceCollectionDesc> optCollection = lookup(collectionRef);
+        if (!optCollection.isPresent()) {
+            return Stream.empty();
+        } else {
+            IServiceCollectionDesc collection = optCollection.get();
+            return extractServiceRefs(collection);
+        }
+    }
+
+    private static Stream<IServiceRef> extractServiceRefs(IServiceCollectionDesc collection) {
+        return collection.getServices()
+            .stream()
+            .map(service ->
+                IServiceRef.of(collection.getQualifier(), service.getQualifier()));
+    }
+
 
     private static class QualifierMatcher implements Predicate<IQualifiable> {
 

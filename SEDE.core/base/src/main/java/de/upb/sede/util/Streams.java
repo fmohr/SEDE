@@ -4,9 +4,14 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Spliterator;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 public class Streams {
 
@@ -351,5 +356,63 @@ public class Streams {
                 os2.close();
             }
         };
+    }
+
+    public static <T> Stream<T> flatten(Stream<Stream<T>> streams) {
+        Objects.requireNonNull(streams, "flatten(null) was called");
+        boolean isParallel = false;
+        final int characteristics = Spliterator.ORDERED  | Spliterator.NONNULL;
+        return StreamSupport.stream(() -> new Spliterator<T>() {
+
+
+            final Spliterator<Stream<T>> allStreams = streams.spliterator();
+            final MutableOptionalField<Spliterator<T>> currentStream = MutableOptionalField.empty();
+
+
+            @Override
+            public boolean tryAdvance(Consumer<? super T> action) {
+                boolean actionPerformed = false;
+                boolean endReached = false;
+                do {
+                    if(currentStream.isPresent()) {
+                        actionPerformed = currentStream.get().tryAdvance(action);
+                        if(!actionPerformed) {
+                            currentStream.unset();
+                        }
+                    }
+                    if(currentStream.isAbsent()) {
+                        boolean newStream = allStreams.tryAdvance(stream -> currentStream.set(stream.spliterator()));
+                        if(!newStream) {
+                            endReached = true;
+                        }
+                    }
+                } while(!actionPerformed || endReached);
+                return actionPerformed;
+            }
+
+            @Override
+            public Spliterator<T> trySplit() {
+                return null;
+            }
+
+            @Override
+            public long estimateSize() {
+                return Long.MAX_VALUE;
+            }
+
+            @Override
+            public int characteristics() {
+                return characteristics;
+            }
+
+            @Override
+            public void forEachRemaining(Consumer<? super T> action) {
+                if(currentStream.isPresent()) {
+                    currentStream.get().forEachRemaining(action);
+                }
+                allStreams.forEachRemaining(s -> s.forEachOrdered(action));
+            }
+
+        }, characteristics, isParallel);
     }
 }

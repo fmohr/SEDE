@@ -1,61 +1,63 @@
-[ {
-  "services" : [ {
-    "stateType" : null,
-    "methods" : [ ],
-    "interfaces" : [ ],
-    "fieldTypes" : { },
-    "javaDispatchAux" : {
-      "staticInvocation" : true,
-      "redirectArg" : -1,
-      "methodName" : null,
-      "className" : "org.example.S1",
-      "metaclass" : null
-    },
-    "pythonClassAuxiliaries" : null,
-    "serviceParameters" : {
-      "parameters" : [ ],
-      "parameterDependencies" : [ ],
-      "javaParameterizationAuxiliaries" : {
-        "parameterHandler" : {
+{
+  "collections" : [ {
+    "services" : [ {
+      "stateType" : null,
+      "methods" : [ ],
+      "interfaces" : [ ],
+      "fieldTypes" : { },
+      "javaDispatchAux" : {
+        "staticInvocation" : true,
+        "redirectArg" : -1,
+        "methodName" : null,
+        "className" : "org.example.S1",
+        "metaclass" : null
+      },
+      "pythonClassAuxiliaries" : null,
+      "serviceParameters" : {
+        "parameters" : [ ],
+        "parameterDependencies" : [ ],
+        "javaParameterizationAuxiliaries" : {
+          "parameterHandler" : {
+            "staticInvocation" : false,
+            "redirectArg" : -1,
+            "methodName" : null,
+            "className" : "org.example.S1ParamSetter",
+            "metaclass" : null
+          },
+          "autoScanEachParam" : false,
+          "bundleInMap" : false,
+          "bundleInArray" : false,
+          "bundleInList" : false,
+          "precedeParamsWithNames" : false,
+          "paramOrder" : [ "1", "2", "3" ]
+        }
+      },
+      "qualifier" : "S1",
+      "metaTags" : [ ],
+      "simpleName" : "S1",
+      "comments" : [ ],
+      "isAbstract" : false
+    } ],
+    "dataTypes" : [ {
+      "semanticType" : "t2",
+      "javaTypeAux" : {
+        "dataCastHandler" : {
           "staticInvocation" : false,
           "redirectArg" : -1,
           "methodName" : null,
-          "className" : "org.example.S1ParamSetter",
+          "className" : "org.example.T2Handler",
           "metaclass" : null
         },
-        "autoScanEachParam" : false,
-        "bundleInMap" : false,
-        "bundleInArray" : false,
-        "bundleInList" : false,
-        "precedeParamsWithNames" : false,
-        "paramOrder" : [ "1", "2", "3" ]
-      }
-    },
-    "qualifier" : "S1",
-    "metaTags" : [ ],
-    "simpleName" : "S1",
-    "comments" : [ ],
-    "isAbstract" : false
-  } ],
-  "dataTypes" : [ {
-    "semanticType" : "t2",
-    "javaTypeAux" : {
-      "dataCastHandler" : {
-        "staticInvocation" : false,
-        "redirectArg" : -1,
-        "methodName" : null,
-        "className" : "org.example.T2Handler",
-        "metaclass" : null
+        "mappedClassName" : "org.example.T2"
       },
-      "mappedClassName" : "org.example.T2"
-    },
-    "qualifier" : "t2",
+      "qualifier" : "t2",
+      "metaTags" : [ ],
+      "simpleName" : "t2",
+      "comments" : [ ]
+    } ],
+    "comments" : [ ],
+    "qualifier" : "C1",
     "metaTags" : [ ],
-    "simpleName" : "t2",
-    "comments" : [ ]
-  } ],
-  "comments" : [ ],
-  "qualifier" : "C1",
-  "metaTags" : [ ],
-  "simpleName" : "C1"
-} ]
+    "simpleName" : "C1"
+  } ]
+}

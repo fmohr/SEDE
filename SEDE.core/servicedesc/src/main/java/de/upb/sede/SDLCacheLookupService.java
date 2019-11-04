@@ -1,8 +1,6 @@
 package de.upb.sede;
 
 import de.upb.sede.exec.*;
-import de.upb.sede.types.DataTypeDesc;
-import de.upb.sede.types.DataTypeRef;
 import de.upb.sede.types.IDataTypeDesc;
 import de.upb.sede.types.IDataTypeRef;
 
@@ -11,15 +9,14 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class SDLCacheLookupService implements ISDLLookupService,
+public class SDLCacheLookupService extends SDLLookupServiceAdapter implements ISDLLookupService,
     Function<ConstructReference, Object> {
 
     private final Map<ConstructReference, Object> refCache = new HashMap<>();
 
-    private final ISDLLookupService lookupServiceDelegate;
 
     public SDLCacheLookupService(ISDLLookupService lookupServiceDelegate) {
-        this.lookupServiceDelegate = lookupServiceDelegate;
+        super(lookupServiceDelegate);
     }
 
     @SuppressWarnings("unchecked")
@@ -28,11 +25,6 @@ public class SDLCacheLookupService implements ISDLLookupService,
             (T) refCache.computeIfAbsent(ref, this));
     }
 
-
-    @Override
-    public Optional<IServiceCollectionDesc> lookupCollection(IServiceRef serviceRef) {
-        return lookupServiceDelegate.lookupCollection(serviceRef); // TODO cache this result somehow..
-    }
 
     @Override
     public Optional<IServiceCollectionDesc> lookup(IServiceCollectionRef collectionRef) {

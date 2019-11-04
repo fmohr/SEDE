@@ -1,0 +1,70 @@
+[ {
+  "components" : [ {
+    "parameter" : [ {
+      "default" : true,
+      "name" : "bParam",
+      "type" : "boolean"
+    }, {
+      "default" : true,
+      "name" : "bParam",
+      "type" : "boolean"
+    }, {
+      "default" : true,
+      "name" : "bParam",
+      "type" : "boolean"
+    }, {
+      "default" : 10,
+      "min" : 0,
+      "max" : 20,
+      "refineSplits" : 4,
+      "minInterval" : 10,
+      "name" : "nParam",
+      "type" : "double"
+    }, {
+      "default" : 10,
+      "min" : 0,
+      "max" : 20,
+      "refineSplits" : 4,
+      "minInterval" : 10,
+      "name" : "nParam",
+      "type" : "double"
+    }, {
+      "default" : 10,
+      "min" : 0,
+      "max" : 20,
+      "refineSplits" : 4,
+      "minInterval" : 10,
+      "name" : "nParam",
+      "type" : "double"
+    }, {
+      "default" : "A",
+      "values" : [ "A", "B", "C" ],
+      "name" : "cParam",
+      "type" : "cat"
+    }, {
+      "default" : "A",
+      "values" : [ "A", "B", "C" ],
+      "name" : "cParam",
+      "type" : "cat"
+    }, {
+      "default" : "A",
+      "values" : [ "A", "B", "C" ],
+      "name" : "cParam",
+      "type" : "cat"
+    }, null, null, null ],
+    "name" : "service1",
+    "requiredInterface" : [ "interface.I1", "interface.I1", "interface.I1" ],
+    "providedInterface" : [ ],
+    "dependencies" : [ {
+      "pre" : "b2 in {true}",
+      "post" : "b3 in {false}"
+    }, {
+      "pre" : "b2 in {true}",
+      "post" : "b3 in {false}"
+    }, {
+      "pre" : "b2 in {true}",
+      "post" : "b3 in {false}"
+    } ]
+  } ],
+  "repository" : "service.Collection.1"
+} ]

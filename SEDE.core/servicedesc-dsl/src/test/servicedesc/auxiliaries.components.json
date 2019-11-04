@@ -1,0 +1,10 @@
+[ {
+  "components" : [ {
+    "parameter" : [ ],
+    "name" : "S1",
+    "requiredInterface" : [ ],
+    "providedInterface" : [ ],
+    "dependencies" : [ ]
+  } ],
+  "repository" : "C1"
+} ]

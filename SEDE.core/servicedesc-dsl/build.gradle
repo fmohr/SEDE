@@ -35,17 +35,22 @@ task compileServiceDescs {
         String filename = aFile.name
         String targetFilename = filename.substring(0, filename.length() - ".groovy".length()) + ".json"
         File targetFile = new File(aFile.parentFile, targetFilename)
+        String targetComponentsFilename = filename.substring(0, filename.length() - "servicedesc.groovy".length()) + "components.json"
+        File targetComponentFile = new File(aFile.parentFile, targetComponentsFilename)
 
         String sourceAbsPath = aFile.absolutePath
         String targetAbsPath = targetFile.absolutePath
+        String targetComponentsAbsPath = targetComponentFile.absolutePath
 
         // Doing multiple java execs in one task:
         // https://discuss.gradle.org/t/how-do-i-execute-a-command-on-a-list-of-files/4902
         // https://stackoverflow.com/questions/13474842/how-to-execute-javaexec-multiple-times-in-a-single-task-using-gradle
+        // TODO add logger files
         doLast {
             javaexec {
                 classpath += sourceSets.main.runtimeClasspath
                 classpath += sourceSets.test.runtimeClasspath
+
 
                 main = 'de.upb.sede.SDLCli'
 
@@ -57,7 +62,7 @@ task compileServiceDescs {
 
                 main = 'de.upb.sede.SDLCli'
 
-                args '-c', '-i', sourceAbsPath, '-o', targetAbsPath
+                args '-c', '-i', sourceAbsPath, '-o', targetComponentsAbsPath
             }
         }
     }

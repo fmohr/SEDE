@@ -1,0 +1,7 @@
+
+task (frontpage, type: Copy) {
+    from "src/main/web"
+    into "$buildDir/"
+}
+assemble.dependsOn(frontpage)
+

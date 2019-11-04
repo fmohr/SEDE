@@ -1,4 +1,8 @@
 @startuml
+skinparam backgroundColor transparent
+skinparam monochrome true
+skinparam shadowing false
+
 (*) --> "Instantiate requested Blocks"
 --> Read block dependency requests
 --> "Resolve Block Dependencies"

@@ -38,7 +38,7 @@ To overcome these problems, we decided to introduce a thin layer of logic on top
 This was done by implementing a
 {pr-servicedesc-dsl}[custom Groovy DSL]
 footnote:[For more details on what a *Groovy DSL* is have a look at the link:http://docs.groovy-lang.org/docs/latest/html/documentation/core-domain-specific-languages.html[documentation] on this subject.]
-that handles incremental and declarative user scripts that creats and manipules an objects graph.
+that handles incremental and declarative user scripts that creates and manipulates an objects graph.
 
 == Usage
 
@@ -125,7 +125,7 @@ include::{pr-docs}MathLib-1.servicedesc.json[]
 
 === Service
 
-A {pr-servicedesc}{j-src}exec/IServiceDesc.java[Service] description offers *parametrization*, defines *state* and groups a set of common *functionality.
+A {pr-servicedesc}{j-src}exec/IServiceDesc.java[Service] description offers *parametrization options*, defines *service state* and groups a set of common *functionality*.
 The next file adds a `Primes` service to out `MathLib` Service Collection that is able to generate prime numbers.
 
 [source, groovy]
@@ -133,12 +133,12 @@ The next file adds a `Primes` service to out `MathLib` Service Collection that i
 ----
 include::{pr-docs}MathLib-2.servicedesc.groovy[]
 ----
-<1> Similiar to `typedef`, predefine the `Number` type into a  variable and reuse the number variable inside this document.
-<2> We can overwrite the previous specification; in this case the simple name of the collection has been renamed.
+<1> Similar to `typedef` operator in C, predefine the `Number` type into a  variable and reuse the number variable inside this document.
+<2> We can access and alter the previous specification; in this case the simple name of the collection has been renamed.
 <3> Create a service with the qualifier: `ai.libs.Primers`.
 <4> Create a method inside of the service called `generateRandom`.
-<5> Overload the previous method definition with a different signature. Both method definitions are preserved and are seen separately.
-<6> This method definiton contains an aditional https://groovy-lang.org/closures.html[Closure] that includes additional tweaks of method properties.
+<5> Overload the previous method definition with a different signature. Both method definitions are preserved and are handled separately.
+<6> This method definition contains an additional https://groovy-lang.org/closures.html[Closure] that includes additional tweaks of method properties.
 <7> Set the name of the first input parameter. This does not have any functional side-effect for now.
 <8> Enable the isPure flag, which indicates that the method is considered https://en.wikipedia.org/wiki/Pure_function[pure]. This additional information helps optimize its runtime , for example  by internally resusing cached results.
 

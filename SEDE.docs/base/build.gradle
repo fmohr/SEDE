@@ -40,6 +40,7 @@ asciidoctor {
 }
 
 gitPublishPush.dependsOn(asciidoctor)
+gitPublishPush.dependsOn(project(':SEDE.frontpage').getTasks().getByName('assemble'))
 
 gitPublish {
     // SEE: https://github.com/ajoberstar/gradle-git-publish
@@ -48,7 +49,11 @@ gitPublish {
     branch = 'gh-pages'
 
     contents {
-        from file(asciidoctor.outputDir.path +  '/html5')
+        from (file(asciidoctor.outputDir.path +  '/html5')) {
+            exclude "index.html"
+        }
+        from project(':SEDE.frontpage').buildDir
+//        from (project(':SEDE.frontpage').getTasks().getByName('frontpage').getOutputs())
 //        TODO publish api
 //        from(javadoc) {
 //            into 'api'

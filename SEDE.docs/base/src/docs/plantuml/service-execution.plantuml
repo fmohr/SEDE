@@ -1,0 +1,13 @@
+@startuml
+
+skinparam defaultFontName "Avenir"
+skinparam defaultFontSize 13
+skinparam backgroundColor transparent
+skinparam monochrome true
+'skinparam shadowing false
+
+A <- B
+A -> A
+A -> B
+B -> A
+@enduml

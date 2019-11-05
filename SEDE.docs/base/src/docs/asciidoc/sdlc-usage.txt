@@ -1,5 +1,6 @@
 usage: java -jar sdlc.jar [option]
- -c,--components     outputs a HASCO component model # <1>
- -h,--help           display usage
- -i,--inputs <arg>   input service description file paths # <2>
- -o,--output <arg>   output service description file path # <3>
+ -c,--components       outputs a HASCO component model <1>
+ -h,--help             display usage
+ -i,--inputs <arg>     input service description file paths. Separate by: , <2>
+ -o,--output <arg>     output service description file path <3>
+ -s,--services <arg>   white-list of services that are considered when targeting components. If empty all services are compiled. Separate by: , <4>

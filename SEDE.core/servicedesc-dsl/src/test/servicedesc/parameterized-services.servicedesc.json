@@ -36,7 +36,7 @@
         "simpleName" : "m1",
         "comments" : [ ]
       } ],
-      "interfaces" : [ ],
+      "interfaces" : [ "Provided_Interface_1", "Provided_Interface_2" ],
       "fieldTypes" : { },
       "javaDispatchAux" : null,
       "pythonClassAuxiliaries" : null,
@@ -72,8 +72,8 @@
           "qualifier" : "nParam",
           "metaTags" : [ ],
           "simpleName" : "nParam",
-          "isInteger" : true,
-          "isOptional" : true
+          "isOptional" : true,
+          "isInteger" : true
         }, {
           "min" : 0.5,
           "max" : 20.5,
@@ -84,8 +84,8 @@
           "qualifier" : "nParam",
           "metaTags" : [ ],
           "simpleName" : "nParam",
-          "isInteger" : true,
-          "isOptional" : true
+          "isOptional" : true,
+          "isInteger" : true
         }, {
           "min" : 0.5,
           "max" : 20.5,
@@ -96,8 +96,8 @@
           "qualifier" : "nParam",
           "metaTags" : [ ],
           "simpleName" : "nParam",
-          "isInteger" : true,
-          "isOptional" : true
+          "isOptional" : true,
+          "isInteger" : true
         }, {
           "defaultValue" : "A",
           "categories" : [ "A", "B", "C" ],

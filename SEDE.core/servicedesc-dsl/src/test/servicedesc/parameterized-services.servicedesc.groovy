@@ -6,6 +6,8 @@ import static de.upb.sede.Helpers.*;
 collection("service.Collection.1") {
     service("service1") {
 
+        implOf 'Provided_Interface_1', 'Provided_Interface_2'
+
         method name: "m1", inputs: ["T1", "T2", "T3"], output: "T4"
 
         params {

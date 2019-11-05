@@ -1,0 +1,30 @@
+[ {
+  "components" : [ {
+    "parameter" : [ {
+      "default" : true,
+      "name" : "bParam",
+      "type" : "boolean"
+    }, {
+      "default" : 10,
+      "min" : 0,
+      "max" : 20,
+      "refineSplits" : 4,
+      "minInterval" : 10,
+      "name" : "nParam",
+      "type" : "double"
+    }, {
+      "default" : "A",
+      "values" : [ "A", "B", "C" ],
+      "name" : "cParam",
+      "type" : "cat"
+    }, null ],
+    "name" : "service1",
+    "requiredInterface" : [ "interface.I1" ],
+    "providedInterface" : [ "Provided_Interface_1", "Provided_Interface_2" ],
+    "dependencies" : [ {
+      "pre" : "b2 in {true}",
+      "post" : "b3 in {false}"
+    } ]
+  } ],
+  "repository" : "service.Collection.1"
+} ]

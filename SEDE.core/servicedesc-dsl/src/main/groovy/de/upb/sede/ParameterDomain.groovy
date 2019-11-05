@@ -87,14 +87,14 @@ class ParameterDomain
 
     MutableInterfaceParameter requiredInterface(Map paramDef) {
         def intfaceParam = requiredInterface {
-            if ('default' in paramDef) {
+            if ('interfaceQualifier' in paramDef) {
                 interfaceQualifier = paramDef['interfaceQualifier']
             }
         }
         PARAM_QUALIFIER_SETTER(paramDef, intfaceParam)
         PARAM_OPTIONAL_SETTER(paramDef, intfaceParam)
 
-        if(intfaceParam.getInterfaceQualifier() == null) {
+        if(!intfaceParam.isInitialized()) {
             throw new IllegalArgumentException("Interface definition '${intfaceParam.qualifier}' does not define the requested interface qualifier.");
         }
         return intfaceParam

@@ -54,7 +54,7 @@
     }, null, null, null ],
     "name" : "service1",
     "requiredInterface" : [ "interface.I1", "interface.I1", "interface.I1" ],
-    "providedInterface" : [ ],
+    "providedInterface" : [ "Provided_Interface_1", "Provided_Interface_2" ],
     "dependencies" : [ {
       "pre" : "b2 in {true}",
       "post" : "b3 in {false}"

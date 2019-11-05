@@ -49,7 +49,7 @@ public class ToHASCOComponentsTranslator {
         PARAM_TYPE_BOOLEAN = "boolean",
         PARAM_TYPE_CATEGORY= "cat",
         PARAM_TYPE_DOUBLE = "double",
-        PARAM_TYPE_INT = "double"
+        PARAM_TYPE_INT = "int"
     ;
 
     private ToHASCOComponentsTranslator(ISDLLookupService sdlService,

@@ -1,0 +1,65 @@
+{
+  "collections" : [ {
+    "services" : [ {
+      "stateType" : null,
+      "methods" : [ ],
+      "interfaces" : [ "Provided_Interface_1", "Provided_Interface_2" ],
+      "fieldTypes" : { },
+      "javaDispatchAux" : null,
+      "pythonClassAuxiliaries" : null,
+      "serviceParameters" : {
+        "parameters" : [ {
+          "defaultValue" : true,
+          "paramType" : "BooleanParameter",
+          "qualifier" : "bParam",
+          "metaTags" : [ ],
+          "simpleName" : "bParam",
+          "isOptional" : true
+        }, {
+          "min" : 0.5,
+          "max" : 20.5,
+          "splitsRefined" : 4,
+          "minInterval" : 10,
+          "defaultValue" : 10.0,
+          "paramType" : "NumericParameter",
+          "qualifier" : "nParam",
+          "metaTags" : [ ],
+          "simpleName" : "nParam",
+          "isInteger" : true,
+          "isOptional" : true
+        }, {
+          "defaultValue" : "A",
+          "categories" : [ "A", "B", "C" ],
+          "paramType" : "CategoryParameter",
+          "qualifier" : "cParam",
+          "metaTags" : [ ],
+          "simpleName" : "cParam",
+          "isOptional" : true
+        }, {
+          "defaultValue" : null,
+          "interfaceQualifier" : "interface.I1",
+          "paramType" : "InterfaceParameter",
+          "qualifier" : "iParam",
+          "metaTags" : [ ],
+          "simpleName" : "iParam",
+          "isOptional" : true
+        } ],
+        "parameterDependencies" : [ {
+          "premise" : "b2 in {true}",
+          "conclusion" : "b3 in {false}"
+        } ],
+        "javaParameterizationAuxiliaries" : null
+      },
+      "qualifier" : "service1",
+      "metaTags" : [ ],
+      "simpleName" : "service1",
+      "comments" : [ ],
+      "isAbstract" : false
+    } ],
+    "dataTypes" : [ ],
+    "comments" : [ ],
+    "qualifier" : "service.Collection.1",
+    "metaTags" : [ ],
+    "simpleName" : "service.Collection.1"
+  } ]
+}

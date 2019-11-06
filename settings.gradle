@@ -23,6 +23,12 @@ includeAt coreProjects, "SEDE.sdl", "servicedesc-dsl"
 
 
 /*
+ *
+ */
+def documentationProjects = 'SEDE.docs'
+includeAt documentationProjects, "SEDE.docs", "base"
+
+/*
  * Executor is a gradle subproject
  */
 //include "SEDE.executor"

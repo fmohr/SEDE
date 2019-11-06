@@ -9,16 +9,14 @@ dependencies {
     compile project(":SEDE.core")
     compile project(":SEDE.servicedesc")
 
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9.3'
+    Map libs = project.ext.libs
+    compile libs.jackson_databind
+    compile libs.jackson_dataformat
+    compile libs.groovy
 
-
-    compile "org.codehaus.groovy:groovy-all:2.5.7"
-    compile group: 'org.slf4j', name: 'jul-to-slf4j', version: '1.7.22'
-
-    testCompile "org.spockframework:spock-core:1.3-groovy-2.5"
+    testCompile libs.junit
+    testCompile libs.spock
 }
-
 
 /**
  * Compiles all service description files in in the test resources folder:
@@ -92,4 +90,3 @@ sourceSets {
         }
     }
 }
-

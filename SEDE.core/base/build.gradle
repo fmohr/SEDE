@@ -1,0 +1,30 @@
+buildPython.enabled = false
+
+dependencies {
+    Map libs = project.ext.libs
+
+    compile libs.slf4j
+    compile libs.json_simple, libs.json_simple_exclusions
+    compile libs.commons_io
+    compile libs.guava
+    compile libs.jackson_databind
+    compile libs.jackson_dataformat
+
+    testRuntimeOnly libs.log4j
+    testCompile (
+        libs.junit,
+        libs.groovy,
+        libs.spock
+    )
+}
+
+task jarTransformer(type: Jar, dependsOn: assemble) {
+    manifest {
+        attributes 'Main-Class': 'de.upb.sede.config.ServiceSpecTransformer'
+    }
+    destinationDir = file("$rootDir")
+    baseName = 'ServiceSpecTransfomer'
+    from { (configurations.compile)
+        .collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
+}

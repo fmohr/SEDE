@@ -1,5 +1,7 @@
 package de.upb.sede.composition.graphs.typing;
 
+import de.upb.sede.composition.graphs.types.IValueType;
+
 import javax.annotation.Nullable;
 
 public class TypeJournalPage implements TypingContext {
@@ -15,6 +17,13 @@ public class TypeJournalPage implements TypingContext {
     }
 
 
+    @Override
+    public FieldType getFieldType(String fieldname) {
+        return null;
+    }
 
+    @Override
+    public void setFieldType(String fieldname, FieldType valueType) {
 
+    }
 }

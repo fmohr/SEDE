@@ -1,7 +1,5 @@
 package de.upb.sede.composition.graphs.typing;
 
-import de.upb.sede.gateway.engine.TypeContext;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,36 +8,67 @@ public class TypeJournal {
     private List<TypeJournalPage> pages = new ArrayList<>();
 
     /**
-     * returns the i'th typing context in this journal.
-     * The i'th typing context describes the type state *before* the i'th instruction is executed.
-     * @param index
-     * @return
+     * The journal size.
+     * @return journal size
      */
-    public TypingContext getPageAt(long index) {
+    public long size() {
+        return pages.size();
+    }
+
+    /**
+     * Returns the i'th typing context in this journal.
+     * Creates a new page and all the preceding pages if the index is larger than the current journal size.
+     *
+     * The i'th typing context describes the type state *before* the i'th instruction is executed.
+     * @param index index of the requested page. index of the next instruction to be executed.
+     * @return The new type journal page
+     */
+    public TypeJournalPage getPageAt(long index) {
+        if(index < 0) {
+            throw new IllegalArgumentException("Index is negative: " + index);
+        }
         if(index == 0 && pages.isEmpty()) {
             return createFirstPage();
         }
 
         if(pages.size() < index) {
-            TypeJournalPage prevPage = getPrevPage(index - 1);
-
+            return newPageAt(index);
+        } else {
+            return pages.get((int) index);
         }
+    }
+
+    public TypeJournalPage getPageAfterInst(long instructionIndex) {
+        return getPageAt(instructionIndex + 1);
     }
 
     /**
      * Creates the first page in the journal.
      * @return The first type journal page.
      */
-    private TypingContext createFirstPage() {
+    private TypeJournalPage createFirstPage() {
         TypeJournalPage firstPage = new TypeJournalPage();
         pages.add(firstPage);
         return firstPage;
     }
 
-    private TypeJournalPage getPrevPage(long index) {
-        long prevIndex = index - 1;
-        if(pages.size() == prevIndex) {
-
+    /**
+     * Creates a new page at the given index.
+     * If there are pages missing before the index, they are recursevly created.
+     * @param index index of the new page.
+     * @return new journal page.
+     */
+    private TypeJournalPage newPageAt(long index) {
+        if(index < pages.size()) {
+            throw new IllegalArgumentException(String.format("Page %d already exists.", index));
         }
+        TypeJournalPage prevPage = getPageAt(index - 1);
+        TypeJournalPage newPage = new TypeJournalPage(prevPage);
+        if(index != pages.size()) {
+            throw new RuntimeException(String.format("Implementation error: the number of pages in list doesnt match the current page index: pages = %d != %d = index", pages.size(), index));
+        }
+        pages.add(newPage);
+        return newPage;
     }
+
 }

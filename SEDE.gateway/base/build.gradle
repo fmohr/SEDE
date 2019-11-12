@@ -13,3 +13,18 @@ dependencies {
     // https://mvnrepository.com/artifact/org.skyscreamer/jsonassert
     testCompile group: 'org.skyscreamer', name: 'jsonassert', version: '1.5.0'
 }
+
+dependencies {
+    asciidoclet project.ext.libs.asciidoclet
+}
+
+javadoc {
+    options.docletpath = configurations.asciidoclet.files.asType(List)
+    options.doclet = 'org.asciidoctor.Asciidoclet'
+    options.overview = "src/main/java/overview.adoc"
+    options.addStringOption "-base-dir", "${projectDir}"
+    options.addStringOption "-attribute",
+        "name=${project.name}," +
+            "version=${project.version}," +
+            "title-link=https://aminfa.github.io/SEDE[${project.name} ${project.version}]"
+}

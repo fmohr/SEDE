@@ -2,6 +2,7 @@ package de.upb.sede.composition.graphs.types;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.SEDEModelStyle;
+import de.upb.sede.core.PrimitiveDataField;
 import org.immutables.value.Value;
 
 @SEDEModelStyle
@@ -13,5 +14,7 @@ public interface IPrimitiveValueType extends TypeClass {
     enum PrimitiveTypes {
         Number, String, Bool, Null
     }
+
+    PrimitiveTypes getPrimitiveType();
 
 }

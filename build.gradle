@@ -22,6 +22,7 @@ subprojects {
         provided
         compile.extendsFrom provided
         serviceConf
+        asciidoclet
     }
 
     project.ext {
@@ -72,6 +73,11 @@ subprojects {
                 exclude module: 'junit'
                 exclude group: 'org.hamcrest'
             },
+
+            /*
+             * Documentation
+             */
+            asciidoclet: 'org.asciidoctor:asciidoclet:1.+',
 
             immutables: 'org.immutables:value:2.7.4',
             findbugs:[group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.2'],

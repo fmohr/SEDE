@@ -6,10 +6,12 @@ import de.upb.sede.composition.InstructionIndexer;
 import de.upb.sede.composition.graphs.nodes.IIndexedInstruction;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 
+/**
+ * Fills in the type journal.
+ */
 public class TypeChecker implements CompStep {
 
-
-    private TypingContext typingContext;
+    private TypeJournal typeJournal;
 
     private InstructionIndexer instructions;
 
@@ -19,12 +21,21 @@ public class TypeChecker implements CompStep {
     public void compose() {
     }
 
-    private void typeCheck(IIndexedInstruction indexedInstruction) {
+    private void typeCheckContext(IIndexedInstruction indexedInstruction) {
 
         IInstructionNode inst = indexedInstruction.getInstruction();
         long index = indexedInstruction.getIndex();
+        TypeJournalPage currentPage = typeJournal.getPageAt(index);
+        TypeJournalPage nextPage = typeJournal.getPageAfterInst(index);
 
-        inst.getFieldName()
+        if(inst.getContextIsFieldFlag()) {
+            /*
+             * type check field
+             */
+            String contextFieldName = inst.getContext();
+            FieldType fieldType = currentPage.getFieldType(contextFieldName);
+
+        }
     }
 
 }

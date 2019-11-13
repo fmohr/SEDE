@@ -12,6 +12,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.util.AsyncObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -302,4 +303,13 @@ public class CoreClient implements ICoreClient{
 			FileUtil.writeStringToFile(pathToDotGraph, svgString);
 		});
 	}
+
+	/*
+	 * TODO
+	 *  handles of this executor are removed.
+	 *  handles of other executors: send http request to remove them.
+	 */
+	public void deallocateAll(List<ServiceInstanceHandle> handles) {
+        
+    }
 }

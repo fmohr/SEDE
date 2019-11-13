@@ -1,5 +1,6 @@
 package de.upb.sede.exec;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 
+import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.procedure.*;
 import de.upb.sede.util.AsyncObserver;
 import org.slf4j.Logger;
@@ -265,5 +267,15 @@ public class Executor implements IExecutor {
 		getWorkerPool().shutdown();
 		shutdownHook.update(this);
 	}
+
+	public boolean deallocate(ServiceInstanceHandle serviceInstanceHandle) {
+        String serviceFilePath = ServiceInstanceStorageProcedure.pathFor(getExecutorConfiguration().getServiceStoreLocation(), serviceInstanceHandle.getClasspath(), serviceInstanceHandle.getId());
+        File serviceFile = new File(serviceFilePath);
+        if(!serviceFile.exists() || serviceFile.isDirectory() || !serviceFile.canWrite()) {
+            return false;
+        } else {
+            return serviceFile.delete();
+        }
+    }
 
 }

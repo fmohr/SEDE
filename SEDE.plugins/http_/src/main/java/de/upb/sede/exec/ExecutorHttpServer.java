@@ -13,17 +13,18 @@ import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
-import de.upb.sede.core.SemanticDataField;
+import de.upb.sede.core.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.sun.net.httpserver.HttpServer;
 
 import de.upb.sede.config.ExecutorConfiguration;
-import de.upb.sede.core.PrimitiveDataField;
-import de.upb.sede.core.SEDEObject;
-import de.upb.sede.core.SemanticStreamer;
 import de.upb.sede.procedure.FinishProcedure;
 import de.upb.sede.procedure.SendGraphProcedure;
 import de.upb.sede.procedure.TransmitDataProcedure;
@@ -82,6 +83,7 @@ public class ExecutorHttpServer implements HttpExecutor {
 		addHandle("/put", PutDataHandler::new);
 		addHandle("/execute", ExecuteGraphHandler::new);
 		addHandle("/interrupt", InterruptHandler::new);
+		addHandle("/deallocate", DeallocateHandler::new);
 
 		server.setExecutor(Executors.newFixedThreadPool(4));
 		server.start();
@@ -342,4 +344,48 @@ public class ExecutorHttpServer implements HttpExecutor {
 			}
 		}
 	}
+
+
+    class DeallocateHandler implements HTTPServerResponse {
+
+	    private boolean remove(Map siHandleMap) {
+            ServiceInstanceHandle siHandle = new ServiceInstanceHandle();
+            siHandle.fromJson(siHandleMap);
+            return basis.deallocate(siHandle);
+        }
+
+
+        @Override
+        public void receive(Optional<String> url, InputStream payload, OutputStream answer) {
+            try {
+                String siHandleJsonStr = Streams.InReadString(payload);
+                Object o = new JSONParser().parse(siHandleJsonStr);
+                if(o instanceof List) {
+                    List<Map> notRemoved = (List<Map>) ((List) o).stream()
+                        .map((Object obj) -> {
+                            Map map = (Map) obj;
+                            boolean removed = remove(map);
+                            map.put("removed", removed);
+                            return map;
+                        }).filter(map -> (boolean) ((Map) map).get("removed") == false)
+                        .collect(Collectors.toList());
+                    if(!notRemoved.isEmpty()) {
+                        throw new RuntimeException("Couldn't remove service instance: " + notRemoved);
+                    }
+                } else if(o instanceof Map) {
+                    boolean removed = remove((Map) o);
+                    if(!removed) {
+                        throw new RuntimeException("Couldn't remove service instance: " + o);
+                    }
+                } else {
+                    throw new IllegalArgumentException("Request payload not recognized: `" + siHandleJsonStr.substring(0, Math.min(siHandleJsonStr.length(), 25)) + "`");
+                }
+                answer.close();
+            } catch (Exception ex) {
+                Streams.OutWriteString(answer, ex.getMessage(), true);
+            }
+        }
+
+    }
+
 }

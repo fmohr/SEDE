@@ -98,7 +98,7 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 		 * first few characters are cut in order to get under the max amount.
 		 */
 		if (serviceClasspath.length() > max) {
-			serviceClasspath = serviceClasspath.substring(serviceClasspath.length() - max, serviceClasspath.length());
+			serviceClasspath = serviceClasspath.substring(serviceClasspath.length() - max);
 		}
 		return servicesPath + "/" + serviceClasspath + "/" + instanceid;
 	}

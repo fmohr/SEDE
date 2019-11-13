@@ -1,19 +1,19 @@
 package de.upb.sede.client;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.util.AsyncObserver;
+import de.upb.sede.util.JsonSerializable;
+import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
+import org.json.simple.JSONArray;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -295,6 +295,10 @@ public class CoreClient implements ICoreClient{
 		}
 	}
 
+    /**
+     *
+     * @param directoryPath
+     */
 	public void writeDotGraphToDir(final String directoryPath) {
 		boolean needsSlash = !directoryPath.endsWith("/");
 		this.setDotGraphConsumer((executionId, svgString) -> {
@@ -304,12 +308,76 @@ public class CoreClient implements ICoreClient{
 		});
 	}
 
-	/*
-	 * TODO
-	 *  handles of this executor are removed.
-	 *  handles of other executors: send http request to remove them.
+
+	/**
+	 * Deallocates all given service instance handles.
+	 * If the service handle is on this executor (clients executor) it will simply be removed.
+	 * Else if the service handle is on an external executor the given consumer will be called in batches of service instance handles.
+	 *
+     * @param externalDeallocator Call-back function that is called in batches with service handles of a common external executor.
+	 *
 	 */
-	public void deallocateAll(List<ServiceInstanceHandle> handles) {
-        
+	private void deallocateAll(List<ServiceInstanceHandle> handles, Consumer<List<ServiceInstanceHandle>> externalDeallocator) {
+	    if(Objects.requireNonNull(handles).isEmpty()) {
+	        throw new IllegalArgumentException("Service handle list to be removed is empty.");
+        }
+	    logger.info("Client makes deallocation requests for {} many services.", handles.size());
+	    Map<String, List<ServiceInstanceHandle>> externalServices = new HashMap<>();
+        for(ServiceInstanceHandle handle : handles) {
+            if(handle.getExecutorId().equals(getClientExecutor()
+                .getExecutorConfiguration().getExecutorId())) {
+                /*
+                 * Service handle is pointing to a service serialized on the client executor.
+                 *
+                 * Make direct deallocate call.
+                 */
+                logger.debug("Deallocating local service instance {}/{}.",
+                    handle.getClasspath(), handle.getId());
+                boolean deallocate = getClientExecutor().deallocate(handle);
+                if(!deallocate) {
+                    logger.warn("Couldn't deallocate local service instance {}/{}",
+                        handle.getClasspath(), handle.getId());
+                }
+            } else  {
+                /*
+                 * Service handle is pointing at a service on another executor.
+                 *
+                 * Collect all of the service handles of that executor and make the dealloc call in a batch:
+                 */
+                externalServices.computeIfAbsent(handle.getExecutorId(), executorId -> new ArrayList<>())
+                        .add(handle);
+            }
+        }
+        /*
+         * Forward to external deallocator.
+         */
+        externalServices.values().forEach(externalDeallocator);
     }
+
+    /**
+     * Builds on top of the above deallocateAll method.
+     * It relies on a function that can provide the http address of external executors.
+     */
+    private void deallocateAll(List<ServiceInstanceHandle> handles, Function<String, String> executorAddressResolver) {
+        deallocateAll(handles, externalSIList -> {
+            if (externalSIList.isEmpty()) {
+                logger.error("BUG: empty service instance list.");
+                return;
+            }
+            String executorId = externalSIList.get(0).getExecutorId();
+            String executorHostAddress = executorAddressResolver.apply(executorId);
+            HttpURLConnectionClientRequest deallocRequest;
+            deallocRequest = new HttpURLConnectionClientRequest(executorHostAddress + "/deallocate");
+            String payload = JSONArray.toJSONString(externalSIList.stream().map(JsonSerializable::toJson).collect(Collectors.toList()));
+            String deallocationResult = deallocRequest.send(payload);
+            if (deallocationResult != null && !deallocationResult.isEmpty()) {
+                logger.warn("Error while making http dealloc call to external executor: \n{}", deallocationResult);
+            }
+        });
+    }
+
+    public void deallocateAll(List<ServiceInstanceHandle> handles, String gatewayHttpAddress) {
+        // TODO make gateway call to resolve executor id
+    }
+
 }

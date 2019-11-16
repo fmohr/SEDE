@@ -1,4 +1,4 @@
-package demo
+package de.upb.sede.exec
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import de.upb.sede.client.CoreClient
@@ -13,6 +13,7 @@ import de.upb.sede.requests.resolve.InputFields
 import de.upb.sede.requests.resolve.ResolvePolicy
 import de.upb.sede.requests.resolve.ResolveRequest
 import de.upb.sede.util.ExecutorConfigurationCreator
+import demo.IntegrationTest_ExecuteExtern
 import demo.types.DemoCaster
 import demo.types.NummerList
 import demo.types.Punkt

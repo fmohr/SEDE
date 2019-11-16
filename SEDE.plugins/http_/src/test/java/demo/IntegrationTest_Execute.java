@@ -314,13 +314,13 @@ public class IntegrationTest_Execute {
 	}
 
 
-	private static ClassesConfig getTestClassConfig() {
+	public static ClassesConfig getTestClassConfig() {
 		ClassesConfig classesConfig = new ClassesConfig();
 		classesConfig.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/demo-classconf.json"));
 		return classesConfig;
 	}
 
-	private static OnthologicalTypeConfig getTestTypeConfig() {
+    public static OnthologicalTypeConfig getTestTypeConfig() {
 		OnthologicalTypeConfig typeConfig = new OnthologicalTypeConfig();
 		typeConfig.appendConfigFromJsonStrings(FileUtil.readResourceAsString("config/demo-typeconf.json"),
 				FileUtil.readResourceAsString("config/builtin-typeconf.json"));

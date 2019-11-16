@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.upb.sede.requests.deploy.EDDRegistration;
+import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,6 +58,7 @@ public final class GatewayHttpServer implements ImServer {
         addHandle("/add-conf/types", TypeConfigAdditionHandler::new);
         addHandle("/add-conf/deployments", DeplConfigAdditionHandler::new);
         addHandle("/get-conf/deployments", GetDeplConfigHandler::new);
+        addHandle("/executors/contact-info", GetExecutorContactInfo::new);
 		server.setExecutor(Executors.newCachedThreadPool());
 		server.start();
 	}
@@ -225,6 +227,24 @@ public final class GatewayHttpServer implements ImServer {
             logger.info("Received GET request for deployment configuration.");
             try{
                 return basis.getDeploymentConfig().serialize();
+            } catch (Exception ex){
+                return Streams.ErrToString(ex);
+            }
+        }
+
+    }
+
+    class GetExecutorContactInfo extends StringServerResponse {
+
+        @Override
+        public String receive(String executorId) {
+            logger.trace("Received executor contact info query.");
+            try{
+                if(basis.getExecutorCoord().hasExecutor(executorId)) {
+                    ExecutorHandle executor = basis.getExecutorCoord().getExecutorFor(executorId);
+                    return JSONObject.toJSONString(executor.getContactInfo());
+                }
+                return "No executor with id: " + executorId + " found.";
             } catch (Exception ex){
                 return Streams.ErrToString(ex);
             }

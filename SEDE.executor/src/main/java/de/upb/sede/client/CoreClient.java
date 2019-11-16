@@ -14,6 +14,9 @@ import de.upb.sede.util.AsyncObserver;
 import de.upb.sede.util.JsonSerializable;
 import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -358,26 +361,58 @@ public class CoreClient implements ICoreClient{
      * Builds on top of the above deallocateAll method.
      * It relies on a function that can provide the http address of external executors.
      */
-    private void deallocateAll(List<ServiceInstanceHandle> handles, Function<String, String> executorAddressResolver) {
+    private void deallocateAll(List<ServiceInstanceHandle> handles, Function<String, Optional<String>> executorAddressResolver) {
         deallocateAll(handles, externalSIList -> {
             if (externalSIList.isEmpty()) {
                 logger.error("BUG: empty service instance list.");
                 return;
             }
             String executorId = externalSIList.get(0).getExecutorId();
-            String executorHostAddress = executorAddressResolver.apply(executorId);
+            String executorHostAddress;
+            Optional<String> optExecutorHostAddress = executorAddressResolver.apply(executorId);
+            if(!optExecutorHostAddress.isPresent()) {
+                logger.error("While deallocating the following services, couldn't resolve the address of the executor with id `{}`: \n[{}]",
+                    executorId, handles.stream()
+                        .map(ServiceInstanceHandle::toString)
+                        .collect(Collectors.joining(", ")));
+                return;
+            }
+            executorHostAddress = optExecutorHostAddress.get();
             HttpURLConnectionClientRequest deallocRequest;
             deallocRequest = new HttpURLConnectionClientRequest(executorHostAddress + "/deallocate");
             String payload = JSONArray.toJSONString(externalSIList.stream().map(JsonSerializable::toJson).collect(Collectors.toList()));
-            String deallocationResult = deallocRequest.send(payload);
-            if (deallocationResult != null && !deallocationResult.isEmpty()) {
-                logger.warn("Error while making http dealloc call to external executor: \n{}", deallocationResult);
+            String deallocResult = deallocRequest.send(payload);
+            if (deallocResult != null && !deallocResult.isEmpty()) {
+                logger.warn("Error while making http dealloc call to external executor: \n{}", deallocResult);
             }
         });
     }
 
-    public void deallocateAll(List<ServiceInstanceHandle> handles, String gatewayHttpAddress) {
-        // TODO make gateway call to resolve executor id
+    public void deallocateAll(List<ServiceInstanceHandle> handles, String gatewayHostAddress) {
+        deallocateAll(handles, (String executorId) -> {
+            String getContactInfoRequestPath = "/executors/contact-info";
+            HttpURLConnectionClientRequest deallocRequest;
+            deallocRequest = new HttpURLConnectionClientRequest(gatewayHostAddress + getContactInfoRequestPath);
+            String payload = executorId;
+            String contactInfoString = deallocRequest.send(payload);
+            Map contactInfo;
+            try {
+                JSONParser parser = new JSONParser();
+                contactInfo = (Map) parser.parse(contactInfoString);
+            } catch (ParseException e) {
+                String errorMessage = contactInfoString;
+                logger.error("Error while resolving the address of executor `{}` from gateway at `{}`. Return message: \n{}",
+                    executorId, gatewayHostAddress, errorMessage);
+                return Optional.empty();
+            }
+            String exectorHostAddress = (String) contactInfo.get("host-address");
+            if(exectorHostAddress == null) {
+                logger.error("The gateway at `{}` returned a contact-info of the executor `{}` that doesn't have a host address field.", gatewayHostAddress, executorId);
+            }
+            return Optional.ofNullable(exectorHostAddress);
+        });
+
+
     }
 
 }

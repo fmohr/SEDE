@@ -1,0 +1,120 @@
+{
+    "$Image_Processor$": {
+        "abstract": true,
+        "methods": {
+            "process": {}
+        }
+    },
+    "$dict_option_handler_config$": {
+        "abstract": true,
+        "methods": {
+            "set_options_dict": {
+                "params": [
+                    "builtin.Dict"
+                ],
+                "statemutating": true
+            }
+        }
+    },
+    "$Abstract_C2_ImageFilter_Service$": {
+        "extends": [
+            "$Image_Processor$",
+            "$dict_option_handler_config$"
+        ],
+        "abstract": true,
+        "methods": {
+            "processImage": {
+                "params": [
+                    "C2Data.C2Image"
+                ],
+                "returntype": "C2Data.C2Image",
+                "statemutating": false
+            },
+            "processImages": {
+                "params": [
+                    "C2Data.C2ImageList"
+                ],
+                "returntype": "C2Data.C2ImageList",
+                "statemutating": false
+            },
+            "process": {
+                "realisedby": {
+                    "methodname": "processImages",
+                    "overload": true
+                }
+            },
+            "setOptions": {
+                "params": [
+                    "C2Data.C2Params"
+                ],
+                "statemutating": true
+            },
+            "set_options_dict": {
+                "realisedby": {
+                    "methodname": "setOptions",
+                    "overload": true
+                }
+            }
+        }
+    },
+    "C2Services.C2Service_grey_CPU": {
+        "extends": [
+            "$Abstract_C2_ImageFilter_Service$"
+        ]
+    },
+    "C2Services.C2Service_grey_FPGA": {
+        "extends": [
+            "$Abstract_C2_ImageFilter_Service$"
+        ]
+    },
+    "C2Services.C2Service_grey_GPU": {
+        "extends": [
+            "$Abstract_C2_ImageFilter_Service$"
+        ]
+    },
+    "C2Services.C2Service_grey_JAVA": {
+        "extends": [
+            "$Abstract_C2_ImageFilter_Service$"
+        ]
+    },
+    "C2Services.C2Service_grey_SCPU": {
+        "extends": [
+            "$Abstract_C2_ImageFilter_Service$"
+        ]
+    },
+    "C2Services.C2Service_grey_OVERLAY": {
+        "extends": [
+            "$Abstract_C2_ImageFilter_Service$"
+        ]
+    },
+    "C2Services.C2Service_sobel_CPU": {
+        "extends": [
+            "$Abstract_C2_ImageFilter_Service$"
+        ]
+    },
+    "C2Services.C2Service_sobel_FPGA": {
+        "extends": [
+            "$Abstract_C2_ImageFilter_Service$"
+        ]
+    },
+    "C2Services.C2Service_sobel_GPU": {
+        "extends": [
+            "$Abstract_C2_ImageFilter_Service$"
+        ]
+    },
+    "C2Services.C2Service_sobel_JAVA": {
+        "extends": [
+            "$Abstract_C2_ImageFilter_Service$"
+        ]
+    },
+    "C2Services.C2Service_sobel_SCPU": {
+        "extends": [
+            "$Abstract_C2_ImageFilter_Service$"
+        ]
+    },
+    "C2Services.C2Service_sobel_OVERLAY": {
+        "extends": [
+            "$Abstract_C2_ImageFilter_Service$"
+        ]
+    }
+}

@@ -9,10 +9,20 @@ RUN apk update && apk add \
 	graphviz \
     	ttf-freefont
 
-COPY ./run-gateway-template/log4j2.xml /log4j2.xml
-COPY ./SEDE /SEDE
+# COPY Sede libraries:
+COPY ./SEDE/SEDE.core-0.0.11.jar /SEDE/
+COPY ./SEDE/SEDE.gateway-0.0.11.jar /SEDE/
+COPY ./SEDE/SEDE.http-0.0.11.jar /SEDE/
+COPY ./SEDE/SEDE.terminal-0.0.11.jar /SEDE/
+COPY ./SEDE/SEDE.frontend-0.0.11.jar /SEDE/
+COPY ./SEDE/SEDE.assemblies-0.0.11.jar /SEDE/
+
 COPY ./run-gateway-template/resources /resources
+
 COPY ./SEDE_logging_lib /SEDE_logging_lib
+COPY ./run-gateway-template/log4j2.xml /log4j2.xml
+
+COPY ./SEDE_service_configs /config
 
 
 ENV DOT_PATH=/usr/bin/dot

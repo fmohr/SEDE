@@ -32,13 +32,15 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 		if (isLoadInstruction) {
 			/* load the service instance and put it into the execution environment */
 			instanceId = (String) task.getAttributes().get("instance-id");
+			String executorId = task.getExecution().getConfiguration().getExecutorId();
+			if(task.getExecution().getConfiguration().getGroupId() != null) {
+			    executorId = task.getExecution().getConfiguration().getGroupId();
+            }
 			BasicClientRequest loadRequest = getLoadRequest(task, instanceId, serviceClasspath);
 			SEDEObject loadedSedeObject;
 			try (ObjectInputStream objectIn = new ObjectInputStream(loadRequest.receive())) {
 				Object instanceObject = objectIn.readObject();
-				ServiceInstance serviceInstance = new ServiceInstance(
-				        task.getExecution().getConfiguration().getExecutorId(),
-						serviceClasspath, instanceId, instanceObject);
+				ServiceInstance serviceInstance = new ServiceInstance(executorId, serviceClasspath, instanceId, instanceObject);
 				loadedSedeObject = new ServiceInstanceField(serviceInstance);
 			} catch (IOException e) {
 				throw new UncheckedIOException(e);
@@ -69,6 +71,7 @@ public class ServiceInstanceStorageProcedure implements Procedure {
 			task.setSucceeded();
 		}
 	}
+
 
 	public void processFail(Task task) {
 		boolean isLoadInstruction = (boolean) task.getAttributes().get("is-load-instruction");

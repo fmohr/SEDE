@@ -18,6 +18,6 @@ public interface OnDemandExecutorSupplier {
 
     List<ExecutorHandle> allHandles();
 
-    Optional<ExecutorHandle> getHandle(String executorId);
+    Optional<ExecutorHandle> getHandle(String executorOrGroupId);
 
 }

@@ -16,8 +16,8 @@ public class ExecutorConfiguration implements JsonSerializable {
 	private static final String UNDEFINED_SERVICE_STORE_LOC = "instances";
 
 	private String serviceStoreLocation = UNDEFINED_SERVICE_STORE_LOC;
-	private String executorId;
-	private int threadNumber = 4;
+	private String executorId, groupId;
+	private int threadNumber = 1;
 	private List<String> capabilities = new ArrayList<>();
 	private List<String> services = new ArrayList<>();
 	private List<String> gateways = new ArrayList<>();
@@ -54,7 +54,20 @@ public class ExecutorConfiguration implements JsonSerializable {
 		return executorId;
 	}
 
-	public int getThreadNumber() {
+    public String getGroupId() {
+        return groupId;
+    }
+
+    public boolean matches(String identification) {
+	    if(identification == null || identification.isEmpty())
+	        return false;
+	    if(identification.equals(groupId))
+	        return true;
+	    else
+	        return identification.equals(executorId);
+    }
+
+    public int getThreadNumber() {
 		return threadNumber;
 	}
 
@@ -76,7 +89,8 @@ public class ExecutorConfiguration implements JsonSerializable {
 		JSONObject objectAsJsonObj = new JSONObject();
 		objectAsJsonObj.put("capabilities", capabilities);
 		objectAsJsonObj.put("services", services);
-		objectAsJsonObj.put("executorId", executorId);
+        objectAsJsonObj.put("executorId", executorId);
+        objectAsJsonObj.put("groupId", groupId);
 		objectAsJsonObj.put("threadNumber", threadNumber);
 		objectAsJsonObj.put("serviceStoreLocation", serviceStoreLocation);
 		objectAsJsonObj.put("gateways", gateways);
@@ -92,10 +106,13 @@ public class ExecutorConfiguration implements JsonSerializable {
 		if (jsonObj.containsKey("services")) {
 			services = (List<String>) jsonObj.get("services");
 		}
-		if (jsonObj.containsKey("executorId")) {
-			executorId = (String) jsonObj.get("executorId");
-		} else {
+        if (jsonObj.containsKey("executorId")) {
+            executorId = (String) jsonObj.get("executorId");
+        } else {
             selectRandomID();
+        }
+        if (jsonObj.containsKey("groupId")) {
+            groupId = (String) jsonObj.get("groupId");
         }
 		if (jsonObj.containsKey("threadNumber")) {
 			threadNumber =  ((Number) jsonObj.get("threadNumber")).intValue();

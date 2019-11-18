@@ -327,8 +327,7 @@ public class CoreClient implements ICoreClient{
 	    logger.info("Client makes deallocation requests for {} many services.", handles.size());
 	    Map<String, List<ServiceInstanceHandle>> externalServices = new HashMap<>();
         for(ServiceInstanceHandle handle : handles) {
-            if(handle.getExecutorId().equals(getClientExecutor()
-                .getExecutorConfiguration().getExecutorId())) {
+            if(getClientExecutor().getExecutorConfiguration().matches(handle.getExecutorId())) {
                 /*
                  * Service handle is pointing to a service serialized on the client executor.
                  *

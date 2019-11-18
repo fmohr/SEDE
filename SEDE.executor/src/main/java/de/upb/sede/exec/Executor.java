@@ -74,7 +74,8 @@ public class Executor implements IExecutor {
 		this.executionGarbageCollector = new AsyncObserver<>(Observer.lambda(Execution::hasExecutionFinished,  // when an execution is done, .
 				this::removeExecution,
 				t -> false));
-		contactInfo.put("id", getExecutorConfiguration().getExecutorId());
+        contactInfo.put("id", getExecutorConfiguration().getExecutorId());
+        contactInfo.put("groupId", getExecutorConfiguration().getGroupId());
 		bindProcedureNames();
 		logger.info(
 				"Executor with id '{}' created.\n" +

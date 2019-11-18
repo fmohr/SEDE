@@ -3,6 +3,7 @@ package de.upb.sede.gateway;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
+import java.util.Optional;
 import java.util.concurrent.Executors;
 import java.util.function.Supplier;
 
@@ -237,14 +238,29 @@ public final class GatewayHttpServer implements ImServer {
     class GetExecutorContactInfo extends StringServerResponse {
 
         @Override
-        public String receive(String executorId) {
-            logger.trace("Received executor contact info query.");
+        public String receive(String executorOrGroupId) {
+            logger.debug("Received executor contact info query for executor with id or group: {}", executorOrGroupId);
+            if(executorOrGroupId == null || executorOrGroupId.isEmpty()) {
+                return "Cannot return contact info. Id or group of requested executor is empty";
+            }
             try{
-                if(basis.getExecutorCoord().hasExecutor(executorId)) {
-                    ExecutorHandle executor = basis.getExecutorCoord().getExecutorFor(executorId);
-                    return JSONObject.toJSONString(executor.getContactInfo());
+                ExecutorHandle executor = null;
+                if(basis.getExecutorCoord().hasExecutor(executorOrGroupId)) {
+                    executor = basis.getExecutorCoord().getExecutorFor(executorOrGroupId);
+                } else {
+                    Optional<ExecutorHandle> anyMatchingExecutor = basis.getExecutorCoord()
+                        .getExecutors()
+                        .stream()
+                        .filter(executorHandle -> executorOrGroupId.equals(executorHandle.getGroupId().orElse(null)))
+                        .findAny();
+                    if (anyMatchingExecutor.isPresent()) {
+                        executor = anyMatchingExecutor.get();
+                    }
                 }
-                return "No executor with id: " + executorId + " found.";
+                if(executor != null)
+                    return JSONObject.toJSONString(executor.getContactInfo());
+                else
+                    return "No executor with id: " + executorOrGroupId + " found.";
             } catch (Exception ex){
                 return Streams.ErrToString(ex);
             }

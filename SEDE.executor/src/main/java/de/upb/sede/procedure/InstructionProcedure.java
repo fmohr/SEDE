@@ -298,8 +298,14 @@ public class InstructionProcedure implements Procedure {
 	 */
 	private ServiceInstance createServiceInstanceHandle(Task task, InstructionNodeAttributes attr, Object newServiceInstance) {
 		String serviceInstanceId = UUID.randomUUID().toString();
-		String executorId = task.getExecution().getConfiguration().getExecutorId();
-		String classpath = attr.getLeftsidefieldType();
+		String executorId;
+		String groupId = task.getExecution().getConfiguration().getGroupId();
+		if(groupId != null) {
+		    executorId = groupId;
+        } else {
+            executorId = task.getExecution().getConfiguration().getExecutorId();
+        }
+        String classpath = attr.getLeftsidefieldType();
 		ServiceInstance si = new ServiceInstance(executorId, classpath, serviceInstanceId, newServiceInstance);
 		return si;
 	}

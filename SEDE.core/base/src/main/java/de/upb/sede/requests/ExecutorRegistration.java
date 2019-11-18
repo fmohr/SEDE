@@ -24,7 +24,6 @@ public class ExecutorRegistration implements JsonSerializable {
 
 	private Optional<Map<String, Object>> contactInformation = Optional.empty();
 
-
 	private Optional<List<String>> capabilities = Optional.empty();
 
 	private Optional<List<String>> supportedServices = Optional.empty();
@@ -51,6 +50,13 @@ public class ExecutorRegistration implements JsonSerializable {
 	public String getId() {
 		return (String) contactInformation.get().get("id");
 	}
+
+
+    public Optional<String> getGroupId() {
+
+	    return Optional.ofNullable((String) contactInformation.get().get("groupId"));
+    }
+
 
 	/**
 	 * @return the executor contact information.
@@ -103,6 +109,7 @@ public class ExecutorRegistration implements JsonSerializable {
 		setCapabilities((List<String>) data.get("capabilities"));
 		setSupportedServices((List<String>) data.get("supported-services"));
 	}
+
 
     static class Serializer extends StdSerializer<ExecutorRegistration> {
 

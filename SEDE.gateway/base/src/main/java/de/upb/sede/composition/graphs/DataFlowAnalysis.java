@@ -166,9 +166,26 @@ public class DataFlowAnalysis {
 				/*
 				 * service handles are in the input fields:
 				 */
-				ServiceInstanceHandle serviceInstanceHandle = resolveInfo.getInputFields()
-						.getServiceInstanceHandle(serviceInstanceFieldname);
-				resolvedExecPlan = getOrCreateExecutionForId(serviceInstanceHandle.getExecutorId());
+				ServiceInstanceHandle serviceInstanceHandle = resolveInfo
+                    .getInputFields()
+                    .getServiceInstanceHandle(serviceInstanceFieldname);
+				/*
+				 * For now executor id of the service instance handle can take both group id and executor id.
+				 * TODO create a separate nullable field for group id.
+				 */
+                String executorOrGroupId = serviceInstanceHandle.getExecutorId();
+                /*
+                 * First assume the executor Id is a group id:
+                 */
+                Optional<ExecPlan> groupedExecPlan = getOrCreateExecutionForGroup(executorOrGroupId, serviceInstanceHandle.getClasspath());
+                if(groupedExecPlan.isPresent()){
+                    resolvedExecPlan = groupedExecPlan.get();
+                } else {
+                    /*
+                     * If no exec plan for the group has been found, assume executorId is an actual executor Id:
+                     */
+                    resolvedExecPlan = getOrCreateExecutionForId(executorOrGroupId);
+                }
 			} else {
 				/*
 				 * The field is bound to a new service instance. producer is another instruction
@@ -212,8 +229,8 @@ public class DataFlowAnalysis {
 			}
 			if (!found) {
 				/*
-				 * no execution in the list supports the required service. find a new executor
-				 * that supports the service and add it to the exections.
+				 * no executor in the list supports the required service. find a new executor
+				 * that supports the service and add it to the plan.
 				 */
 				List<ExecutorHandle> executors = resolveInfo.getExecutorSupplyCoordinator()
 						.supplyExecutor(serviceClasspath);
@@ -930,28 +947,66 @@ public class DataFlowAnalysis {
 		}
 	}
 
-	private ExecPlan getOrCreateExecutionForId(final String executorId) {
+    /**
+     * Returns a ExecPlan matching the given groupId and serviceQualifier.
+     * Matching means that the executors in the plan all have the groupId and support the service.
+     * @return
+     */
+	private Optional<ExecPlan> getOrCreateExecutionForGroup(final String groupId, final String serviceQualifier) {
+	    /*
+	     * Tester for executor handle. Returns true iff:
+	     *     - Group Id is present.
+	     *     - Group Id Matches.
+	     *     - Required Service is present.
+	     */
+	    Predicate<ExecutorHandle> executorMatcher = handle -> {
+            Optional<String> execGroupOId = handle.getGroupId();
+            if(!execGroupOId.isPresent()) {
+                return false;
+            }
+	        if(!execGroupOId.get().equals(groupId)) {
+	            return false;
+            }
+	        return handle.getExecutionerCapabilities().supportsServiceClass(serviceQualifier);
+        };
+        /*
+         * Look of any involved matching executor.
+         */
+        Optional<ExecPlan> involvedExecution = searchForInvolvedExecution(executorMatcher);
+        if(involvedExecution.isPresent()) {
+            return involvedExecution;
+        }
+
+        /*
+         * Create a new exec plan for the group.
+         * Search for all executors with service:
+         */
+        List<ExecutorHandle> executors = resolveInfo.getExecutorSupplyCoordinator().supplyExecutor(serviceQualifier);
+        /*
+         * Remove all non matching executors.
+         */
+        executors.removeIf(executorMatcher.negate());
+        if(executors.isEmpty()) {
+            /*
+             * No executor in group matched:
+             */
+            return Optional.empty();
+        }
+        ExecPlan plan = new ExecPlan(executors);
+        execPlans.add(plan);
+        return Optional.of(plan);
+    }
+
+    private ExecPlan getOrCreateExecutionForId(final String executorId) {
 		/*
 		 * First search the list of already involved executors to look for it:
 		 */
 		Predicate<ExecutorHandle> executorWithId = handle ->  handle.getExecutorId().equals(executorId);
-		for (ExecPlan exec : execPlans) {
-			if(exec.targetDetermined()) {
-				if (executorWithId.test(exec.getTarget())) {
-					return exec;
-				}
-			} else {
-				boolean executorWithIdFound = exec.candidates().stream().anyMatch(executorWithId);
-				if(executorWithIdFound) {
-					/*
-						Remove all other executor:
-					 */
-					exec.removeCandidates(executorWithId.negate());
-					return exec;
-				}
-			}
-		}
-		/*
+        Optional<ExecPlan> involvedExecution = searchForInvolvedExecution(executorWithId);
+        if(involvedExecution.isPresent()) {
+            return involvedExecution.get();
+        }
+        /*
 		 * No involved executor has the given id.
 		 * Search in the registered executors list:
 		 */
@@ -969,6 +1024,30 @@ public class DataFlowAnalysis {
                 " No such executor is registered.");
 		}
 	}
+
+    /**
+     * Searches involved execution plans for the matcher.
+     * WARNING: calling this may change the state of a matching execplan. So never test for availability using this method.
+     */
+    private Optional<ExecPlan> searchForInvolvedExecution(Predicate<ExecutorHandle> executorMatcher) {
+        for (ExecPlan exec : execPlans) {
+            if(exec.targetDetermined()) {
+                if (executorMatcher.test(exec.getTarget())) {
+                    return Optional.of(exec);
+                }
+            } else {
+                boolean executorWithIdFound = exec.candidates().stream().anyMatch(executorMatcher);
+                if(executorWithIdFound) {
+					/*
+						Remove all other executor:
+					 */
+                    exec.removeCandidates(executorMatcher.negate());
+                    return Optional.of(exec);
+                }
+            }
+        }
+        return Optional.empty();
+    }
 
 	private void addFieldType(FieldType fieldType) {
 		if (fieldType.isChangedState() || !fieldnameTypeResult.containsKey(fieldType.getFieldname())) {

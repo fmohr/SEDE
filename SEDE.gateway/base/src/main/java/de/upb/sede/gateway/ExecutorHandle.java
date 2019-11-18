@@ -2,26 +2,26 @@ package de.upb.sede.gateway;
 
 import de.upb.sede.requests.ExecutorRegistration;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ExecutorHandle {
 
 	private final Map<String, Object>  contactInfo;
 	private final String executorId;
-	private final ExecutorCapabilities capabilities;
+    private final String groupId;
+    private final ExecutorCapabilities capabilities;
 
-	public ExecutorHandle(String executorId, Map<String, Object>  contactInfo, String... executorCapabilities) {
+	public ExecutorHandle(String executorId, String groupId, Map<String, Object>  contactInfo, String... executorCapabilities) {
 		this.executorId = Objects.requireNonNull(executorId);
 		this.contactInfo = Objects.requireNonNull(contactInfo);
 		this.capabilities = new ExecutorCapabilities(executorCapabilities);
+		this.groupId = groupId;
 	}
 
 	public static ExecutorHandle fromRegistration(ExecutorRegistration registration) {
         ExecutorHandle execHandle = new ExecutorHandle(registration.getId(),
+            registration.getGroupId().orElse(null),
             registration.getContactInfo(),
             registration.getCapabilities().toArray(new String[0]));
         execHandle.getExecutionerCapabilities().addAllServiceClasses(registration.getSupportedServices().toArray(new String[0]));
@@ -37,6 +37,10 @@ public class ExecutorHandle {
 		return getExecutorId().equals(id);
 	}
 
+    public Optional<String> getGroupId() {
+        return Optional.ofNullable(groupId);
+    }
+
 	public String getExecutorId(){
 		return  executorId;
 	}
@@ -45,7 +49,7 @@ public class ExecutorHandle {
 		return contactInfo;
 	}
 
-	@Override
+    @Override
 	public boolean equals(Object o) {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;

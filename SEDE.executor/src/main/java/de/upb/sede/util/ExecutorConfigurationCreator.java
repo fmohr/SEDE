@@ -6,12 +6,14 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 public class ExecutorConfigurationCreator {
-	public static ExecutorConfigurationCreator newConfigFile() {
+
+    public static ExecutorConfigurationCreator newConfigFile() {
 		return new ExecutorConfigurationCreator();
 	}
 
 	private String serviceStoreLocation;
 	private String executorId;
+    private String groupId;
 	private List<String> gateways = new ArrayList<>();
 	private Integer threadNumber;
 	private List<String> capabilities;
@@ -26,6 +28,11 @@ public class ExecutorConfigurationCreator {
 		this.executorId = executorId;
 		return this;
 	}
+
+	public ExecutorConfigurationCreator withGroupId(String groupId) {
+	    this.groupId = groupId;
+	    return this;
+    }
 
 	public ExecutorConfigurationCreator withGateway(String gatewayId) {
 		gateways.add(Objects.requireNonNull(gatewayId));
@@ -71,6 +78,9 @@ public class ExecutorConfigurationCreator {
 		if (executorId != null) {
 			obj.put("executorId", executorId);
 		}
+		if(groupId != null) {
+		    obj.put("groupId", groupId);
+        }
 
 		obj.put("gateways", gateways);
 

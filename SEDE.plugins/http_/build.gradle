@@ -1,4 +1,5 @@
 apply plugin: "groovy"
+toBePublished = true
 
 dependencies {
 

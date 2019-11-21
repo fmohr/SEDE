@@ -1,13 +1,15 @@
 package de.upb.sede.gateway;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import de.upb.sede.config.DeploymentConfig;
 import de.upb.sede.gateway.edd.CachedExecutorHandleSupplier;
 import de.upb.sede.requests.deploy.EDDRegistration;
+import de.upb.sede.util.Streams;
+import de.upb.sede.webinterfaces.client.AsyncClientRequest;
+import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -191,7 +193,49 @@ public class Gateway implements IGateway {
                 "\n Supported services are: {}.", registration, registration.getOfferedServices());
         }
 	    return true;
+    }
 
+
+    public synchronized String heartbeat()  {
+        logger.info("Gateway is performing HEARTBEAT. Removing every registered executor who doesn't respond.");
+        StringBuilder removedExecutors = new StringBuilder("Removed executors: ");
+        Map<String, AsyncClientRequest> pingRequests = new HashMap<>();
+
+        try {
+            for(ExecutorHandle executorHandle : this.getExecutorCoord().getExecutors()) {
+                Map contactInfo = executorHandle.getContactInfo();
+                if (contactInfo.containsKey("host-address")) {
+                    String address = (String) contactInfo.get("host-address");
+                    String id = (String) contactInfo.get("id");
+                    String heartbeatUrl = address + "/cmd/" + id + "/heartbeat";
+                    HttpURLConnectionClientRequest requestHeartbeat = new HttpURLConnectionClientRequest(heartbeatUrl);
+                    AsyncClientRequest asyncRequestHeartbeat = new AsyncClientRequest(requestHeartbeat, "");
+                    pingRequests.put(executorHandle.getExecutorId(), asyncRequestHeartbeat);
+                } else {
+                    logger.warn("Gateway is performing HEARTBEAT. Cannot contact executor with id: {}. His contact information is: {}.",
+                        executorHandle.getExecutorId(), contactInfo);
+                }
+            }
+
+            AsyncClientRequest.joinAll(pingRequests.values(), 8, TimeUnit.SECONDS);
+        } catch (Exception e) {
+            logger.warn("Error while perfoming HEARTBEAT: " , e);
+            return Streams.ErrToString(e);
+        }
+
+
+        for(String executorId : pingRequests.keySet()) {
+            AsyncClientRequest pingRequest = pingRequests.get(executorId);
+            if(pingRequest.hasFailed() || !pingRequest.isDone()) {
+                logger.info("Gateway is performing HEARTBEAT. Heartbeat failed for executor with id: {}",
+                    executorId);
+                removedExecutors.append("\n").append(executorId);
+                getExecutorCoord().removeExecutor(executorId);
+            } else {
+                logger.info("Gateway is performing HEARTBEAT. Executor responded successfully: {}", executorId);
+            }
+        }
+        return removedExecutors.toString();
     }
 
 

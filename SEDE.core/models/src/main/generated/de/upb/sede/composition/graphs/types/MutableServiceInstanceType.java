@@ -29,7 +29,6 @@ public final class MutableServiceInstanceType
   private static final long INIT_BIT_QUALIFIER = 0x1L;
   private long initBits = 0x1L;
 
-  private String typeClass;
   private String qualifier;
   private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
@@ -42,17 +41,6 @@ public final class MutableServiceInstanceType
    */
   public static MutableServiceInstanceType create() {
     return new MutableServiceInstanceType();
-  }
-
-  /**
-   * @return assigned or, otherwise, newly computed, not cached value of {@code typeClass} attribute
-   */
-  @JsonProperty("typeClass")
-  @Override
-  public final String getTypeClass() {
-    return typeClassIsSet()
-        ? typeClass
-        : IServiceInstanceType.super.getTypeClass();
   }
 
   /**
@@ -94,22 +82,9 @@ public final class MutableServiceInstanceType
   @CanIgnoreReturnValue
   public MutableServiceInstanceType clear() {
     initBits = 0x1L;
-    typeClass = null;
     qualifier = null;
     metaTags.clear();
     simpleName = null;
-    return this;
-  }
-
-  /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.types.TypeClass} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableServiceInstanceType from(TypeClass instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
     return this;
   }
 
@@ -154,7 +129,6 @@ public final class MutableServiceInstanceType
   private void from(Object object) {
     if (object instanceof MutableServiceInstanceType) {
       MutableServiceInstanceType instance = (MutableServiceInstanceType) object;
-      setTypeClass(instance.getTypeClass());
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
@@ -162,28 +136,12 @@ public final class MutableServiceInstanceType
       setSimpleName(instance.getSimpleName());
       return;
     }
-    if (object instanceof TypeClass) {
-      TypeClass instance = (TypeClass) object;
-      setTypeClass(instance.getTypeClass());
-    }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
       addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
     }
-  }
-
-  /**
-   * Assigns a value to the {@link IServiceInstanceType#getTypeClass() typeClass} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IServiceInstanceType#getTypeClass() typeClass}.</em>
-   * @param typeClass The value for typeClass
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableServiceInstanceType setTypeClass(String typeClass) {
-    this.typeClass = Objects.requireNonNull(typeClass, "typeClass");
-    return this;
   }
 
   /**
@@ -269,14 +227,6 @@ public final class MutableServiceInstanceType
   }
 
   /**
-   * Returns {@code true} if the default attribute {@link IServiceInstanceType#getTypeClass() typeClass} is set.
-   * @return {@code true} if set
-   */
-  public final boolean typeClassIsSet() {
-    return typeClass != null;
-  }
-
-  /**
    * Returns {@code true} if the default attribute {@link IServiceInstanceType#getSimpleName() simpleName} is set.
    * @return {@code true} if set
    */
@@ -342,20 +292,16 @@ public final class MutableServiceInstanceType
   }
 
   private boolean equalTo(MutableServiceInstanceType another) {
-    String typeClass = getTypeClass();
-    return typeClass.equals(another.getTypeClass())
-        && qualifier.equals(another.qualifier);
+    return qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code typeClass}, {@code qualifier}.
+   * Computes a hash code from attributes: {@code qualifier}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
-    String typeClass = getTypeClass();
-    h += (h << 5) + typeClass.hashCode();
     h += (h << 5) + qualifier.hashCode();
     return h;
   }
@@ -368,7 +314,6 @@ public final class MutableServiceInstanceType
   @Override
   public String toString() {
     return MoreObjects.toStringHelper("MutableServiceInstanceType")
-        .add("typeClass", getTypeClass())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
         .toString();
   }

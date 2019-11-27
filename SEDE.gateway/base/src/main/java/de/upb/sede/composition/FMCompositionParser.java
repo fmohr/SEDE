@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
 
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.graphs.nodes.MutableInstructionNode;
+import de.upb.sede.core.PrimitiveDataField;
+import de.upb.sede.core.PrimitiveType;
 import de.upb.sede.exceptions.FMCompositionSyntaxException;
 
 /**
@@ -323,5 +325,22 @@ public final class FMCompositionParser {
 		}
 		return PATTERN_constNull.matcher(text).matches();
 	}
+
+
+    public static PrimitiveType primitiveTypeFor(String constant) {
+        if (FMCompositionParser.isConstant(constant)) {
+            if (FMCompositionParser.isConstantString(constant))
+                return PrimitiveType.String;
+            if (FMCompositionParser.isConstantBool(constant))
+                return PrimitiveType.Bool;
+            if (FMCompositionParser.isConstantNumber(constant))
+                return PrimitiveType.Number;
+            if (FMCompositionParser.isConstantNull(constant))
+                return PrimitiveType.NULL;
+        }
+
+        /* given constant isn't a constant */
+        throw new RuntimeException("given constant `" + constant + "` isn't a constant");
+    }
 
 }

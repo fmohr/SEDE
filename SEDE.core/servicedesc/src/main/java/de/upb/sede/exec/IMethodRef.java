@@ -16,4 +16,8 @@ public interface IMethodRef extends ConstructReference {
 
     IServiceRef getServiceRef();
 
+    static IMethodRef of(IServiceRef serviceRef, String methodQualifier) {
+        return MethodRef.builder().serviceRef(serviceRef).ref(IQualifiable.of(methodQualifier)).build();
+    }
+
 }

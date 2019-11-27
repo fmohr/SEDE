@@ -2,14 +2,12 @@ package de.upb.sede.util;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Spliterator;
+import java.util.*;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
@@ -414,5 +412,25 @@ public class Streams {
             }
 
         }, characteristics, isParallel);
+    }
+
+    /**
+     * This utility function will reduce the given stream to an optional iff the stream contains exactly one element.
+     *
+     * This function has a linear runtime.
+     *
+     * @param objStream Object stream which is reduced.
+     * @param <T> The type of the stream objects.
+     * @return The content of the stream if it contains exactly 1 element or else an empty Optional.
+     */
+    public static <T> Optional<T> pickOneOrNone(Stream<T> objStream) {
+        return objStream
+            // Limit the stream to only 2 objects
+            .limit(2)
+            // choose null if more than one obj exists.
+            .collect(Collectors.reducing((a, b) -> null));
+
+        // Note: dont use 'Stream::reduce( (a,b) -> null)'
+        // The Stream::reduce operation will wrap the returned value using Optional::of and a NPException will be thrown.
     }
 }

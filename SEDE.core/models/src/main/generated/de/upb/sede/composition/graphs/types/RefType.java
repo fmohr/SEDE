@@ -30,61 +30,31 @@ import org.immutables.value.Generated;
 @Immutable
 @CheckReturnValue
 public final class RefType implements IRefType {
-  private final TypeClass referencedType;
-  private final String typeClass;
+  private final IValueTypeClass typeOfRef;
 
-  private RefType(RefType.Builder builder) {
-    this.referencedType = builder.referencedType;
-    this.typeClass = builder.typeClass != null
-        ? builder.typeClass
-        : Objects.requireNonNull(IRefType.super.getTypeClass(), "typeClass");
-  }
-
-  private RefType(TypeClass referencedType, String typeClass) {
-    this.referencedType = referencedType;
-    this.typeClass = typeClass;
+  private RefType(IValueTypeClass typeOfRef) {
+    this.typeOfRef = typeOfRef;
   }
 
   /**
-   * @return The value of the {@code referencedType} attribute
+   * @return The value of the {@code typeOfRef} attribute
    */
-  @JsonProperty("referencedType")
+  @JsonProperty("typeOfRef")
   @Override
-  public TypeClass getReferencedType() {
-    return referencedType;
+  public IValueTypeClass getTypeOfRef() {
+    return typeOfRef;
   }
 
   /**
-   * @return The value of the {@code typeClass} attribute
-   */
-  @JsonProperty("typeClass")
-  @Override
-  public String getTypeClass() {
-    return typeClass;
-  }
-
-  /**
-   * Copy the current immutable object by setting a value for the {@link IRefType#getReferencedType() referencedType} attribute.
+   * Copy the current immutable object by setting a value for the {@link IRefType#getTypeOfRef() typeOfRef} attribute.
    * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for referencedType
+   * @param value A new value for typeOfRef
    * @return A modified copy of the {@code this} object
    */
-  public final RefType withReferencedType(TypeClass value) {
-    if (this.referencedType == value) return this;
-    TypeClass newValue = Objects.requireNonNull(value, "referencedType");
-    return new RefType(newValue, this.typeClass);
-  }
-
-  /**
-   * Copy the current immutable object by setting a value for the {@link IRefType#getTypeClass() typeClass} attribute.
-   * An equals check used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for typeClass
-   * @return A modified copy of the {@code this} object
-   */
-  public final RefType withTypeClass(String value) {
-    String newValue = Objects.requireNonNull(value, "typeClass");
-    if (this.typeClass.equals(newValue)) return this;
-    return new RefType(this.referencedType, newValue);
+  public final RefType withTypeOfRef(IValueTypeClass value) {
+    if (this.typeOfRef == value) return this;
+    IValueTypeClass newValue = Objects.requireNonNull(value, "typeOfRef");
+    return new RefType(newValue);
   }
 
   /**
@@ -99,19 +69,17 @@ public final class RefType implements IRefType {
   }
 
   private boolean equalTo(RefType another) {
-    return referencedType.equals(another.referencedType)
-        && typeClass.equals(another.typeClass);
+    return typeOfRef.equals(another.typeOfRef);
   }
 
   /**
-   * Computes a hash code from attributes: {@code referencedType}, {@code typeClass}.
+   * Computes a hash code from attributes: {@code typeOfRef}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     @Var int h = 5381;
-    h += (h << 5) + referencedType.hashCode();
-    h += (h << 5) + typeClass.hashCode();
+    h += (h << 5) + typeOfRef.hashCode();
     return h;
   }
 
@@ -123,8 +91,7 @@ public final class RefType implements IRefType {
   public String toString() {
     return MoreObjects.toStringHelper("RefType")
         .omitNullValues()
-        .add("referencedType", referencedType)
-        .add("typeClass", typeClass)
+        .add("typeOfRef", typeOfRef)
         .toString();
   }
 
@@ -138,18 +105,13 @@ public final class RefType implements IRefType {
   @JsonDeserialize
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IRefType {
-    @Nullable TypeClass referencedType;
-    @Nullable String typeClass;
-    @JsonProperty("referencedType")
-    public void setReferencedType(TypeClass referencedType) {
-      this.referencedType = referencedType;
-    }
-    @JsonProperty("typeClass")
-    public void setTypeClass(String typeClass) {
-      this.typeClass = typeClass;
+    @Nullable IValueTypeClass typeOfRef;
+    @JsonProperty("typeOfRef")
+    public void setTypeOfRef(IValueTypeClass typeOfRef) {
+      this.typeOfRef = typeOfRef;
     }
     @Override
-    public TypeClass getReferencedType() { throw new UnsupportedOperationException(); }
+    public IValueTypeClass getTypeOfRef() { throw new UnsupportedOperationException(); }
     @Override
     public String getTypeClass() { throw new UnsupportedOperationException(); }
   }
@@ -163,13 +125,41 @@ public final class RefType implements IRefType {
   @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
   static RefType fromJson(Json json) {
     RefType.Builder builder = RefType.builder();
-    if (json.referencedType != null) {
-      builder.referencedType(json.referencedType);
-    }
-    if (json.typeClass != null) {
-      builder.typeClass(json.typeClass);
+    if (json.typeOfRef != null) {
+      builder.typeOfRef(json.typeOfRef);
     }
     return builder.build();
+  }
+
+  @SuppressWarnings("Immutable")
+  private transient volatile long lazyInitBitmap;
+
+  private static final long TYPE_CLASS_LAZY_INIT_BIT = 0x1L;
+
+  @SuppressWarnings("Immutable")
+  private transient String typeClass;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IRefType#getTypeClass() typeClass} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code typeClass} attribute
+   */
+  @Override
+  public String getTypeClass() {
+    if ((lazyInitBitmap & TYPE_CLASS_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & TYPE_CLASS_LAZY_INIT_BIT) == 0) {
+          this.typeClass = Objects.requireNonNull(IRefType.super.getTypeClass(), "typeClass");
+          lazyInitBitmap |= TYPE_CLASS_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return typeClass;
   }
 
   /**
@@ -192,8 +182,7 @@ public final class RefType implements IRefType {
    * Creates a builder for {@link RefType RefType}.
    * <pre>
    * RefType.builder()
-   *    .referencedType(de.upb.sede.composition.graphs.types.TypeClass) // required {@link IRefType#getReferencedType() referencedType}
-   *    .typeClass(String) // optional {@link IRefType#getTypeClass() typeClass}
+   *    .typeOfRef(de.upb.sede.composition.graphs.types.IValueTypeClass) // required {@link IRefType#getTypeOfRef() typeOfRef}
    *    .build();
    * </pre>
    * @return A new RefType builder
@@ -212,11 +201,10 @@ public final class RefType implements IRefType {
   @Generated(from = "IRefType", generator = "Immutables")
   @NotThreadSafe
   public static final class Builder {
-    private static final long INIT_BIT_REFERENCED_TYPE = 0x1L;
+    private static final long INIT_BIT_TYPE_OF_REF = 0x1L;
     private long initBits = 0x1L;
 
-    private @Nullable TypeClass referencedType;
-    private @Nullable String typeClass;
+    private @Nullable IValueTypeClass typeOfRef;
 
     private Builder() {
     }
@@ -229,75 +217,39 @@ public final class RefType implements IRefType {
     @CanIgnoreReturnValue 
     public final Builder from(MutableRefType instance) {
       Objects.requireNonNull(instance, "instance");
-      if (instance.referencedTypeIsSet()) {
-        referencedType(instance.getReferencedType());
+      if (instance.typeOfRefIsSet()) {
+        typeOfRef(instance.getTypeOfRef());
       }
-      typeClass(instance.getTypeClass());
       return this;
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.types.TypeClass} instance.
-     * @param instance The instance from which to copy values
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder from(TypeClass instance) {
-      Objects.requireNonNull(instance, "instance");
-      from((Object) instance);
-      return this;
-    }
-
-    /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.types.IRefType} instance.
+     * Fill a builder with attribute values from the provided {@code IRefType} instance.
+     * Regular attribute values will be replaced with those from the given instance.
+     * Absent optional values will not replace present values.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
     public final Builder from(IRefType instance) {
       Objects.requireNonNull(instance, "instance");
-      from((Object) instance);
-      return this;
-    }
-
-    private void from(Object object) {
-      if (object instanceof MutableRefType) {
-        from((MutableRefType) object);
-        return;
+      if (instance instanceof MutableRefType) {
+        return from((MutableRefType) instance);
       }
-      if (object instanceof TypeClass) {
-        TypeClass instance = (TypeClass) object;
-        typeClass(instance.getTypeClass());
-      }
-      if (object instanceof IRefType) {
-        IRefType instance = (IRefType) object;
-        referencedType(instance.getReferencedType());
-      }
-    }
-
-    /**
-     * Initializes the value for the {@link IRefType#getReferencedType() referencedType} attribute.
-     * @param referencedType The value for referencedType 
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("referencedType")
-    public final Builder referencedType(TypeClass referencedType) {
-      this.referencedType = Objects.requireNonNull(referencedType, "referencedType");
-      initBits &= ~INIT_BIT_REFERENCED_TYPE;
+      typeOfRef(instance.getTypeOfRef());
       return this;
     }
 
     /**
-     * Initializes the value for the {@link IRefType#getTypeClass() typeClass} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IRefType#getTypeClass() typeClass}.</em>
-     * @param typeClass The value for typeClass 
+     * Initializes the value for the {@link IRefType#getTypeOfRef() typeOfRef} attribute.
+     * @param typeOfRef The value for typeOfRef 
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    @JsonProperty("typeClass")
-    public final Builder typeClass(String typeClass) {
-      this.typeClass = Objects.requireNonNull(typeClass, "typeClass");
+    @JsonProperty("typeOfRef")
+    public final Builder typeOfRef(IValueTypeClass typeOfRef) {
+      this.typeOfRef = Objects.requireNonNull(typeOfRef, "typeOfRef");
+      initBits &= ~INIT_BIT_TYPE_OF_REF;
       return this;
     }
 
@@ -310,12 +262,12 @@ public final class RefType implements IRefType {
       if (initBits != 0) {
         throw new IllegalStateException(formatRequiredAttributesMessage());
       }
-      return new RefType(this);
+      return new RefType(typeOfRef);
     }
 
     private String formatRequiredAttributesMessage() {
       List<String> attributes = new ArrayList<>();
-      if ((initBits & INIT_BIT_REFERENCED_TYPE) != 0) attributes.add("referencedType");
+      if ((initBits & INIT_BIT_TYPE_OF_REF) != 0) attributes.add("typeOfRef");
       return "Cannot build RefType, some of required attributes are not set " + attributes;
     }
   }

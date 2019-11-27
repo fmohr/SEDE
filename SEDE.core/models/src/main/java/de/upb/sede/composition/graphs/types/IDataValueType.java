@@ -8,9 +8,9 @@ import org.immutables.value.Value;
 @SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
-@JsonDeserialize(builder = RefType.Builder.class)
-public interface IRefType extends TypeClass {
+@JsonDeserialize(builder = DataValueType.Builder.class)
+public interface IDataValueType extends TypeClass, IValueTypeClass {
 
-    IValueTypeClass getTypeOfRef();
 
 }
+

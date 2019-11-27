@@ -24,11 +24,10 @@ import org.immutables.value.Generated;
 @javax.annotation.Generated({"Modifiables.generator", "IRefType"})
 @NotThreadSafe
 public final class MutableRefType implements IRefType {
-  private static final long INIT_BIT_REFERENCED_TYPE = 0x1L;
+  private static final long INIT_BIT_TYPE_OF_REF = 0x1L;
   private long initBits = 0x1L;
 
-  private TypeClass referencedType;
-  private String typeClass;
+  private IValueTypeClass typeOfRef;
 
   private MutableRefType() {}
 
@@ -41,26 +40,15 @@ public final class MutableRefType implements IRefType {
   }
 
   /**
-   * @return value of {@code referencedType} attribute
+   * @return value of {@code typeOfRef} attribute
    */
-  @JsonProperty("referencedType")
+  @JsonProperty("typeOfRef")
   @Override
-  public final TypeClass getReferencedType() {
-    if (!referencedTypeIsSet()) {
+  public final IValueTypeClass getTypeOfRef() {
+    if (!typeOfRefIsSet()) {
       checkRequiredAttributes();
     }
-    return referencedType;
-  }
-
-  /**
-   * @return assigned or, otherwise, newly computed, not cached value of {@code typeClass} attribute
-   */
-  @JsonProperty("typeClass")
-  @Override
-  public final String getTypeClass() {
-    return typeClassIsSet()
-        ? typeClass
-        : IRefType.super.getTypeClass();
+    return typeOfRef;
   }
 
   /**
@@ -70,32 +58,24 @@ public final class MutableRefType implements IRefType {
   @CanIgnoreReturnValue
   public MutableRefType clear() {
     initBits = 0x1L;
-    referencedType = null;
-    typeClass = null;
+    typeOfRef = null;
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.types.TypeClass} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link IRefType} instance.
+   * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
+   * Any of the instance's absent optional values will not be copied (will not override current values).
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  @CanIgnoreReturnValue
-  public MutableRefType from(TypeClass instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
-    return this;
-  }
-
-  /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.types.IRefType} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
   public MutableRefType from(IRefType instance) {
     Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
+    if (instance instanceof MutableRefType) {
+      from((MutableRefType) instance);
+      return this;
+    }
+    setTypeOfRef(instance.getTypeOfRef());
     return this;
   }
 
@@ -108,67 +88,30 @@ public final class MutableRefType implements IRefType {
    */
   public MutableRefType from(MutableRefType instance) {
     Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
+    if (instance.typeOfRefIsSet()) {
+      setTypeOfRef(instance.getTypeOfRef());
+    }
     return this;
   }
 
-  private void from(Object object) {
-    if (object instanceof MutableRefType) {
-      MutableRefType instance = (MutableRefType) object;
-      if (instance.referencedTypeIsSet()) {
-        setReferencedType(instance.getReferencedType());
-      }
-      setTypeClass(instance.getTypeClass());
-      return;
-    }
-    if (object instanceof TypeClass) {
-      TypeClass instance = (TypeClass) object;
-      setTypeClass(instance.getTypeClass());
-    }
-    if (object instanceof IRefType) {
-      IRefType instance = (IRefType) object;
-      setReferencedType(instance.getReferencedType());
-    }
-  }
-
   /**
-   * Assigns a value to the {@link IRefType#getReferencedType() referencedType} attribute.
-   * @param referencedType The value for referencedType
+   * Assigns a value to the {@link IRefType#getTypeOfRef() typeOfRef} attribute.
+   * @param typeOfRef The value for typeOfRef
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableRefType setReferencedType(TypeClass referencedType) {
-    this.referencedType = Objects.requireNonNull(referencedType, "referencedType");
-    initBits &= ~INIT_BIT_REFERENCED_TYPE;
+  public MutableRefType setTypeOfRef(IValueTypeClass typeOfRef) {
+    this.typeOfRef = Objects.requireNonNull(typeOfRef, "typeOfRef");
+    initBits &= ~INIT_BIT_TYPE_OF_REF;
     return this;
   }
 
   /**
-   * Assigns a value to the {@link IRefType#getTypeClass() typeClass} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IRefType#getTypeClass() typeClass}.</em>
-   * @param typeClass The value for typeClass
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableRefType setTypeClass(String typeClass) {
-    this.typeClass = Objects.requireNonNull(typeClass, "typeClass");
-    return this;
-  }
-
-  /**
-   * Returns {@code true} if the required attribute {@link IRefType#getReferencedType() referencedType} is set.
+   * Returns {@code true} if the required attribute {@link IRefType#getTypeOfRef() typeOfRef} is set.
    * @return {@code true} if set
    */
-  public final boolean referencedTypeIsSet() {
-    return (initBits & INIT_BIT_REFERENCED_TYPE) == 0;
-  }
-
-  /**
-   * Returns {@code true} if the default attribute {@link IRefType#getTypeClass() typeClass} is set.
-   * @return {@code true} if set
-   */
-  public final boolean typeClassIsSet() {
-    return typeClass != null;
+  public final boolean typeOfRefIsSet() {
+    return (initBits & INIT_BIT_TYPE_OF_REF) == 0;
   }
 
 
@@ -177,9 +120,9 @@ public final class MutableRefType implements IRefType {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public final MutableRefType unsetReferencedType() {
-    initBits |= INIT_BIT_REFERENCED_TYPE;
-    referencedType = null;
+  public final MutableRefType unsetTypeOfRef() {
+    initBits |= INIT_BIT_TYPE_OF_REF;
+    typeOfRef = null;
     return this;
   }
 
@@ -199,7 +142,7 @@ public final class MutableRefType implements IRefType {
 
   private String formatRequiredAttributesMessage() {
     List<String> attributes = new ArrayList<>();
-    if (!referencedTypeIsSet()) attributes.add("referencedType");
+    if (!typeOfRefIsSet()) attributes.add("typeOfRef");
     return "RefType is not initialized, some of the required attributes are not set " + attributes;
   }
 
@@ -229,21 +172,17 @@ public final class MutableRefType implements IRefType {
   }
 
   private boolean equalTo(MutableRefType another) {
-    String typeClass = getTypeClass();
-    return referencedType.equals(another.referencedType)
-        && typeClass.equals(another.getTypeClass());
+    return typeOfRef.equals(another.typeOfRef);
   }
 
   /**
-   * Computes a hash code from attributes: {@code referencedType}, {@code typeClass}.
+   * Computes a hash code from attributes: {@code typeOfRef}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
-    h += (h << 5) + referencedType.hashCode();
-    String typeClass = getTypeClass();
-    h += (h << 5) + typeClass.hashCode();
+    h += (h << 5) + typeOfRef.hashCode();
     return h;
   }
 
@@ -255,8 +194,7 @@ public final class MutableRefType implements IRefType {
   @Override
   public String toString() {
     return MoreObjects.toStringHelper("MutableRefType")
-        .add("referencedType", referencedTypeIsSet() ? getReferencedType() : "?")
-        .add("typeClass", getTypeClass())
+        .add("typeOfRef", typeOfRefIsSet() ? getTypeOfRef() : "?")
         .toString();
   }
 }

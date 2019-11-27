@@ -15,7 +15,7 @@ public interface IParameter extends IQualifiable {
     @Nullable
     Object getDefaultValue();
 
-    @Value.Default
+    @Value.Lazy
     default String getParamType() {
         return TypeDeserializationDelegate.stripPrefix(this.getClass().getSimpleName());
     }

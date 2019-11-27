@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import static de.upb.sede.util.Streams.pickOneOrNone;
 
 import static java.util.Objects.requireNonNull;
 
@@ -28,25 +29,6 @@ public class SDLBaseLookupService implements ISDLLookupService{
         this.sdlBase = sdlBase;
     }
 
-    /**
-     * This utility function will reduce the given stream to an optional iff the stream contains exactly one element.
-     *
-     * This function has a linear runtime.
-     *
-     * @param objStream Object stream which is reduced.
-     * @param <T> The type of the stream objects.
-     * @return The content of the stream if it contains exactly 1 element or else an empty Optional.
-     */
-    private <T> Optional<T> pickOneOrNone(Stream<T> objStream) {
-        return objStream
-            // Limit the stream to only 2 objects
-            .limit(2)
-            // choose null if more than one obj exists.
-            .collect(Collectors.reducing((a, b) -> null));
-
-        // Note: dont use '.reduce( (a,b) -> null)'
-        // The Stream::reduce operation will wrap the returned value using Optional::of and a NPException will be thrown.
-    }
 
     @Override
     public Optional<IServiceCollectionDesc> lookupCollection(IServiceRef serviceRef) {
@@ -123,7 +105,7 @@ public class SDLBaseLookupService implements ISDLLookupService{
             .stream()
             .filter(matcher);
 
-        return pickOneOrNone(methodStream);
+        return pickOneOrNone(methodStream); // TODO method overloading
     }
 
     @Override

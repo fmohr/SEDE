@@ -13,45 +13,33 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
- * A modifiable implementation of the {@link IValueType IValueType} type.
+ * A modifiable implementation of the {@link IDataValueType IDataValueType} type.
  * <p>Use the {@link #create()} static factory methods to create new instances.
  * Use the {@link #toImmutable()} method to convert to canonical immutable instances.
- * <p><em>MutableValueType is not thread-safe</em>
- * @see ValueType
+ * <p><em>MutableDataValueType is not thread-safe</em>
+ * @see DataValueType
  */
-@Generated(from = "IValueType", generator = "Modifiables")
+@Generated(from = "IDataValueType", generator = "Modifiables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
-@javax.annotation.Generated({"Modifiables.generator", "IValueType"})
+@javax.annotation.Generated({"Modifiables.generator", "IDataValueType"})
 @NotThreadSafe
-public final class MutableValueType implements IValueType {
+public final class MutableDataValueType implements IDataValueType {
   private static final long INIT_BIT_QUALIFIER = 0x1L;
   private long initBits = 0x1L;
 
-  private String typeClass;
   private String qualifier;
   private final ArrayList<String> metaTags = new ArrayList<String>();
   private String simpleName;
 
-  private MutableValueType() {}
+  private MutableDataValueType() {}
 
   /**
-   * Construct a modifiable instance of {@code IValueType}.
+   * Construct a modifiable instance of {@code IDataValueType}.
    * @return A new modifiable instance
    */
-  public static MutableValueType create() {
-    return new MutableValueType();
-  }
-
-  /**
-   * @return assigned or, otherwise, newly computed, not cached value of {@code typeClass} attribute
-   */
-  @JsonProperty("typeClass")
-  @Override
-  public final String getTypeClass() {
-    return typeClassIsSet()
-        ? typeClass
-        : IValueType.super.getTypeClass();
+  public static MutableDataValueType create() {
+    return new MutableDataValueType();
   }
 
   /**
@@ -83,7 +71,7 @@ public final class MutableValueType implements IValueType {
   public final String getSimpleName() {
     return simpleNameIsSet()
         ? simpleName
-        : IValueType.super.getSimpleName();
+        : IDataValueType.super.getSimpleName();
   }
 
   /**
@@ -91,24 +79,11 @@ public final class MutableValueType implements IValueType {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableValueType clear() {
+  public MutableDataValueType clear() {
     initBits = 0x1L;
-    typeClass = null;
     qualifier = null;
     metaTags.clear();
     simpleName = null;
-    return this;
-  }
-
-  /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.types.TypeClass} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableValueType from(TypeClass instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
     return this;
   }
 
@@ -118,52 +93,47 @@ public final class MutableValueType implements IValueType {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableValueType from(IQualifiable instance) {
+  public MutableDataValueType from(IQualifiable instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.types.IValueType} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.types.IDataValueType} instance.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableValueType from(IValueType instance) {
+  public MutableDataValueType from(IDataValueType instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link IValueType} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link IDataValueType} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
    * Collection elements and entries will be added, not replaced.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  public MutableValueType from(MutableValueType instance) {
+  public MutableDataValueType from(MutableDataValueType instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
   }
 
   private void from(Object object) {
-    if (object instanceof MutableValueType) {
-      MutableValueType instance = (MutableValueType) object;
-      setTypeClass(instance.getTypeClass());
+    if (object instanceof MutableDataValueType) {
+      MutableDataValueType instance = (MutableDataValueType) object;
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
       addAllMetaTags(instance.getMetaTags());
       setSimpleName(instance.getSimpleName());
       return;
-    }
-    if (object instanceof TypeClass) {
-      TypeClass instance = (TypeClass) object;
-      setTypeClass(instance.getTypeClass());
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
@@ -174,48 +144,36 @@ public final class MutableValueType implements IValueType {
   }
 
   /**
-   * Assigns a value to the {@link IValueType#getTypeClass() typeClass} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IValueType#getTypeClass() typeClass}.</em>
-   * @param typeClass The value for typeClass
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableValueType setTypeClass(String typeClass) {
-    this.typeClass = Objects.requireNonNull(typeClass, "typeClass");
-    return this;
-  }
-
-  /**
-   * Assigns a value to the {@link IValueType#getQualifier() qualifier} attribute.
+   * Assigns a value to the {@link IDataValueType#getQualifier() qualifier} attribute.
    * @param qualifier The value for qualifier
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableValueType setQualifier(String qualifier) {
+  public MutableDataValueType setQualifier(String qualifier) {
     this.qualifier = Objects.requireNonNull(qualifier, "qualifier");
     initBits &= ~INIT_BIT_QUALIFIER;
     return this;
   }
 
   /**
-   * Adds one element to {@link IValueType#getMetaTags() metaTags} list.
+   * Adds one element to {@link IDataValueType#getMetaTags() metaTags} list.
    * @param element The metaTags element
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableValueType addMetaTags(String element) {
+  public MutableDataValueType addMetaTags(String element) {
     Objects.requireNonNull(element, "metaTags element");
     this.metaTags.add(element);
     return this;
   }
 
   /**
-   * Adds elements to {@link IValueType#getMetaTags() metaTags} list.
+   * Adds elements to {@link IDataValueType#getMetaTags() metaTags} list.
    * @param elements An array of metaTags elements
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public final MutableValueType addMetaTags(String... elements) {
+  public final MutableDataValueType addMetaTags(String... elements) {
     for (String e : elements) {
       addMetaTags(e);
     }
@@ -223,24 +181,24 @@ public final class MutableValueType implements IValueType {
   }
 
   /**
-   * Sets or replaces all elements for {@link IValueType#getMetaTags() metaTags} list.
+   * Sets or replaces all elements for {@link IDataValueType#getMetaTags() metaTags} list.
    * @param elements An iterable of metaTags elements
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableValueType setMetaTags(Iterable<String> elements) {
+  public MutableDataValueType setMetaTags(Iterable<String> elements) {
     this.metaTags.clear();
     addAllMetaTags(elements);
     return this;
   }
 
   /**
-   * Adds elements to {@link IValueType#getMetaTags() metaTags} list.
+   * Adds elements to {@link IDataValueType#getMetaTags() metaTags} list.
    * @param elements An iterable of metaTags elements
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableValueType addAllMetaTags(Iterable<String> elements) {
+  public MutableDataValueType addAllMetaTags(Iterable<String> elements) {
     for (String e : elements) {
       addMetaTags(e);
     }
@@ -248,19 +206,19 @@ public final class MutableValueType implements IValueType {
   }
 
   /**
-   * Assigns a value to the {@link IValueType#getSimpleName() simpleName} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IValueType#getSimpleName() simpleName}.</em>
+   * Assigns a value to the {@link IDataValueType#getSimpleName() simpleName} attribute.
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IDataValueType#getSimpleName() simpleName}.</em>
    * @param simpleName The value for simpleName
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableValueType setSimpleName(String simpleName) {
+  public MutableDataValueType setSimpleName(String simpleName) {
     this.simpleName = Objects.requireNonNull(simpleName, "simpleName");
     return this;
   }
 
   /**
-   * Returns {@code true} if the required attribute {@link IValueType#getQualifier() qualifier} is set.
+   * Returns {@code true} if the required attribute {@link IDataValueType#getQualifier() qualifier} is set.
    * @return {@code true} if set
    */
   public final boolean qualifierIsSet() {
@@ -268,15 +226,7 @@ public final class MutableValueType implements IValueType {
   }
 
   /**
-   * Returns {@code true} if the default attribute {@link IValueType#getTypeClass() typeClass} is set.
-   * @return {@code true} if set
-   */
-  public final boolean typeClassIsSet() {
-    return typeClass != null;
-  }
-
-  /**
-   * Returns {@code true} if the default attribute {@link IValueType#getSimpleName() simpleName} is set.
+   * Returns {@code true} if the default attribute {@link IDataValueType#getSimpleName() simpleName} is set.
    * @return {@code true} if set
    */
   public final boolean simpleNameIsSet() {
@@ -289,7 +239,7 @@ public final class MutableValueType implements IValueType {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public final MutableValueType unsetQualifier() {
+  public final MutableDataValueType unsetQualifier() {
     initBits |= INIT_BIT_QUALIFIER;
     qualifier = null;
     return this;
@@ -312,62 +262,57 @@ public final class MutableValueType implements IValueType {
   private String formatRequiredAttributesMessage() {
     List<String> attributes = new ArrayList<>();
     if (!qualifierIsSet()) attributes.add("qualifier");
-    return "ValueType is not initialized, some of the required attributes are not set " + attributes;
+    return "DataValueType is not initialized, some of the required attributes are not set " + attributes;
   }
 
   /**
-   * Converts to {@link ValueType ValueType}.
-   * @return An immutable instance of ValueType
+   * Converts to {@link DataValueType DataValueType}.
+   * @return An immutable instance of DataValueType
    */
-  public final ValueType toImmutable() {
+  public final DataValueType toImmutable() {
     checkRequiredAttributes();
-    return ValueType.copyOf(this);
+    return DataValueType.copyOf(this);
   }
 
   /**
-   * This instance is equal to all instances of {@code MutableValueType} that have equal attribute values.
+   * This instance is equal to all instances of {@code MutableDataValueType} that have equal attribute values.
    * An uninitialized instance is equal only to itself.
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
   public boolean equals(@Nullable Object another) {
     if (this == another) return true;
-    if (!(another instanceof MutableValueType)) return false;
-    MutableValueType other = (MutableValueType) another;
+    if (!(another instanceof MutableDataValueType)) return false;
+    MutableDataValueType other = (MutableDataValueType) another;
     if (!isInitialized() || !other.isInitialized()) {
       return false;
     }
     return equalTo(other);
   }
 
-  private boolean equalTo(MutableValueType another) {
-    String typeClass = getTypeClass();
-    return typeClass.equals(another.getTypeClass())
-        && qualifier.equals(another.qualifier);
+  private boolean equalTo(MutableDataValueType another) {
+    return qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code typeClass}, {@code qualifier}.
+   * Computes a hash code from attributes: {@code qualifier}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
-    String typeClass = getTypeClass();
-    h += (h << 5) + typeClass.hashCode();
     h += (h << 5) + qualifier.hashCode();
     return h;
   }
 
   /**
-   * Generates a string representation of this {@code IValueType}.
+   * Generates a string representation of this {@code IDataValueType}.
    * If uninitialized, some attribute values may appear as question marks.
    * @return A string representation
    */
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper("MutableValueType")
-        .add("typeClass", getTypeClass())
+    return MoreObjects.toStringHelper("MutableDataValueType")
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
         .toString();
   }

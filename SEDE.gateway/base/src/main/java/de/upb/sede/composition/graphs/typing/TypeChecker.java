@@ -1,41 +1,31 @@
 package de.upb.sede.composition.graphs.typing;
 
-import de.upb.sede.ISDLLookupService;
 import de.upb.sede.composition.CompStep;
-import de.upb.sede.composition.InstructionIndexer;
-import de.upb.sede.composition.graphs.nodes.IIndexedInstruction;
-import de.upb.sede.composition.graphs.nodes.IInstructionNode;
+
 
 /**
  * Fills in the type journal.
  */
-public class TypeChecker implements CompStep {
+public class TypeChecker implements CompStep<TypeCheckInput, TypeCheckOutput> {
 
-    private TypeJournal typeJournal;
-
-    private InstructionIndexer instructions;
-
-    private ISDLLookupService lookupService;
 
     @Override
-    public void compose() {
-    }
+    public TypeCheckOutput compose(TypeCheckInput input) {
+        TypeCheckStep step;
+        TypeJournal journal = new TypeJournal();
 
-    private void typeCheckContext(IIndexedInstruction indexedInstruction) {
+        InstructionMethodResolver methodResolver = new InstructionMethodResolver();
 
-        IInstructionNode inst = indexedInstruction.getInstruction();
-        long index = indexedInstruction.getIndex();
-        TypeJournalPage currentPage = typeJournal.getPageAt(index);
-        TypeJournalPage nextPage = typeJournal.getPageAfterInst(index);
+        step = new TypeCheckStep(journal,
+            methodResolver,
+            input.getInstructions(),
+            input.getLookupService());
 
-        if(inst.getContextIsFieldFlag()) {
-            /*
-             * type check field
-             */
-            String contextFieldName = inst.getContext();
-            FieldType fieldType = currentPage.getFieldType(contextFieldName);
+        step.checkAll();
 
-        }
+        TypeCheckOutput output = new TypeCheckOutput(journal, methodResolver);
+
+        return output;
     }
 
 }

@@ -59,6 +59,9 @@ public interface IInstructionNode extends BaseNode, IFieldContainer {
      */
     List<String> getParameterFields();
 
-    List<String> getParameterTypes();
+    @Value.Lazy
+    default boolean isAssignment() {
+        return getFieldName() != null;
+    }
 
 }

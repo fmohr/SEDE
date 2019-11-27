@@ -32,7 +32,6 @@ import org.immutables.value.Generated;
 @Immutable
 @CheckReturnValue
 public final class ServiceInstanceType implements IServiceInstanceType {
-  private final String typeClass;
   private final String qualifier;
   private final ImmutableList<String> metaTags;
   private final String simpleName;
@@ -40,99 +39,18 @@ public final class ServiceInstanceType implements IServiceInstanceType {
   private ServiceInstanceType(ServiceInstanceType.Builder builder) {
     this.qualifier = builder.qualifier;
     this.metaTags = builder.metaTags.build();
-    if (builder.typeClass != null) {
-      initShim.typeClass(builder.typeClass);
-    }
-    if (builder.simpleName != null) {
-      initShim.simpleName(builder.simpleName);
-    }
-    this.typeClass = initShim.getTypeClass();
-    this.simpleName = initShim.getSimpleName();
-    this.initShim = null;
+    this.simpleName = builder.simpleName != null
+        ? builder.simpleName
+        : Objects.requireNonNull(IServiceInstanceType.super.getSimpleName(), "simpleName");
   }
 
   private ServiceInstanceType(
-      String typeClass,
       String qualifier,
       ImmutableList<String> metaTags,
       String simpleName) {
-    this.typeClass = typeClass;
     this.qualifier = qualifier;
     this.metaTags = metaTags;
     this.simpleName = simpleName;
-    this.initShim = null;
-  }
-
-  private static final byte STAGE_INITIALIZING = -1;
-  private static final byte STAGE_UNINITIALIZED = 0;
-  private static final byte STAGE_INITIALIZED = 1;
-  @SuppressWarnings("Immutable")
-  private transient volatile InitShim initShim = new InitShim();
-
-  @Generated(from = "IServiceInstanceType", generator = "Immutables")
-  private final class InitShim {
-    private byte typeClassBuildStage = STAGE_UNINITIALIZED;
-    private String typeClass;
-
-    String getTypeClass() {
-      if (typeClassBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
-      if (typeClassBuildStage == STAGE_UNINITIALIZED) {
-        typeClassBuildStage = STAGE_INITIALIZING;
-        this.typeClass = Objects.requireNonNull(getTypeClassInitialize(), "typeClass");
-        typeClassBuildStage = STAGE_INITIALIZED;
-      }
-      return this.typeClass;
-    }
-
-    void typeClass(String typeClass) {
-      this.typeClass = typeClass;
-      typeClassBuildStage = STAGE_INITIALIZED;
-    }
-
-    private byte simpleNameBuildStage = STAGE_UNINITIALIZED;
-    private String simpleName;
-
-    String getSimpleName() {
-      if (simpleNameBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
-      if (simpleNameBuildStage == STAGE_UNINITIALIZED) {
-        simpleNameBuildStage = STAGE_INITIALIZING;
-        this.simpleName = Objects.requireNonNull(getSimpleNameInitialize(), "simpleName");
-        simpleNameBuildStage = STAGE_INITIALIZED;
-      }
-      return this.simpleName;
-    }
-
-    void simpleName(String simpleName) {
-      this.simpleName = simpleName;
-      simpleNameBuildStage = STAGE_INITIALIZED;
-    }
-
-    private String formatInitCycleMessage() {
-      List<String> attributes = new ArrayList<>();
-      if (typeClassBuildStage == STAGE_INITIALIZING) attributes.add("typeClass");
-      if (simpleNameBuildStage == STAGE_INITIALIZING) attributes.add("simpleName");
-      return "Cannot build ServiceInstanceType, attribute initializers form cycle " + attributes;
-    }
-  }
-
-  private String getTypeClassInitialize() {
-    return IServiceInstanceType.super.getTypeClass();
-  }
-
-  private String getSimpleNameInitialize() {
-    return IServiceInstanceType.super.getSimpleName();
-  }
-
-  /**
-   * @return The value of the {@code typeClass} attribute
-   */
-  @JsonProperty("typeClass")
-  @Override
-  public String getTypeClass() {
-    InitShim shim = this.initShim;
-    return shim != null
-        ? shim.getTypeClass()
-        : this.typeClass;
   }
 
   /**
@@ -159,22 +77,7 @@ public final class ServiceInstanceType implements IServiceInstanceType {
   @JsonProperty("simpleName")
   @Override
   public String getSimpleName() {
-    InitShim shim = this.initShim;
-    return shim != null
-        ? shim.getSimpleName()
-        : this.simpleName;
-  }
-
-  /**
-   * Copy the current immutable object by setting a value for the {@link IServiceInstanceType#getTypeClass() typeClass} attribute.
-   * An equals check used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for typeClass
-   * @return A modified copy of the {@code this} object
-   */
-  public final ServiceInstanceType withTypeClass(String value) {
-    String newValue = Objects.requireNonNull(value, "typeClass");
-    if (this.typeClass.equals(newValue)) return this;
-    return new ServiceInstanceType(newValue, this.qualifier, this.metaTags, this.simpleName);
+    return simpleName;
   }
 
   /**
@@ -186,7 +89,7 @@ public final class ServiceInstanceType implements IServiceInstanceType {
   public final ServiceInstanceType withQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "qualifier");
     if (this.qualifier.equals(newValue)) return this;
-    return new ServiceInstanceType(this.typeClass, newValue, this.metaTags, this.simpleName);
+    return new ServiceInstanceType(newValue, this.metaTags, this.simpleName);
   }
 
   /**
@@ -196,7 +99,7 @@ public final class ServiceInstanceType implements IServiceInstanceType {
    */
   public final ServiceInstanceType withMetaTags(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new ServiceInstanceType(this.typeClass, this.qualifier, newValue, this.simpleName);
+    return new ServiceInstanceType(this.qualifier, newValue, this.simpleName);
   }
 
   /**
@@ -208,7 +111,7 @@ public final class ServiceInstanceType implements IServiceInstanceType {
   public final ServiceInstanceType withMetaTags(Iterable<String> elements) {
     if (this.metaTags == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new ServiceInstanceType(this.typeClass, this.qualifier, newValue, this.simpleName);
+    return new ServiceInstanceType(this.qualifier, newValue, this.simpleName);
   }
 
   /**
@@ -220,7 +123,7 @@ public final class ServiceInstanceType implements IServiceInstanceType {
   public final ServiceInstanceType withSimpleName(String value) {
     String newValue = Objects.requireNonNull(value, "simpleName");
     if (this.simpleName.equals(newValue)) return this;
-    return new ServiceInstanceType(this.typeClass, this.qualifier, this.metaTags, newValue);
+    return new ServiceInstanceType(this.qualifier, this.metaTags, newValue);
   }
 
   /**
@@ -235,18 +138,16 @@ public final class ServiceInstanceType implements IServiceInstanceType {
   }
 
   private boolean equalTo(ServiceInstanceType another) {
-    return typeClass.equals(another.typeClass)
-        && qualifier.equals(another.qualifier);
+    return qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code typeClass}, {@code qualifier}.
+   * Computes a hash code from attributes: {@code qualifier}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     @Var int h = 5381;
-    h += (h << 5) + typeClass.hashCode();
     h += (h << 5) + qualifier.hashCode();
     return h;
   }
@@ -259,7 +160,6 @@ public final class ServiceInstanceType implements IServiceInstanceType {
   public String toString() {
     return MoreObjects.toStringHelper("ServiceInstanceType")
         .omitNullValues()
-        .add("typeClass", typeClass)
         .add("qualifier", qualifier)
         .toString();
   }
@@ -274,14 +174,9 @@ public final class ServiceInstanceType implements IServiceInstanceType {
   @JsonDeserialize
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IServiceInstanceType {
-    @Nullable String typeClass;
     @Nullable String qualifier;
     @Nullable List<String> metaTags = ImmutableList.of();
     @Nullable String simpleName;
-    @JsonProperty("typeClass")
-    public void setTypeClass(String typeClass) {
-      this.typeClass = typeClass;
-    }
     @JsonProperty("qualifier")
     public void setQualifier(String qualifier) {
       this.qualifier = qualifier;
@@ -295,13 +190,13 @@ public final class ServiceInstanceType implements IServiceInstanceType {
       this.simpleName = simpleName;
     }
     @Override
-    public String getTypeClass() { throw new UnsupportedOperationException(); }
-    @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
     @Override
     public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
     @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
+    @Override
+    public String getTypeClass() { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -313,9 +208,6 @@ public final class ServiceInstanceType implements IServiceInstanceType {
   @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
   static ServiceInstanceType fromJson(Json json) {
     ServiceInstanceType.Builder builder = ServiceInstanceType.builder();
-    if (json.typeClass != null) {
-      builder.typeClass(json.typeClass);
-    }
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
     }
@@ -326,6 +218,37 @@ public final class ServiceInstanceType implements IServiceInstanceType {
       builder.simpleName(json.simpleName);
     }
     return builder.build();
+  }
+
+  @SuppressWarnings("Immutable")
+  private transient volatile long lazyInitBitmap;
+
+  private static final long TYPE_CLASS_LAZY_INIT_BIT = 0x1L;
+
+  @SuppressWarnings("Immutable")
+  private transient String typeClass;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IServiceInstanceType#getTypeClass() typeClass} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code typeClass} attribute
+   */
+  @Override
+  public String getTypeClass() {
+    if ((lazyInitBitmap & TYPE_CLASS_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & TYPE_CLASS_LAZY_INIT_BIT) == 0) {
+          this.typeClass = Objects.requireNonNull(IServiceInstanceType.super.getTypeClass(), "typeClass");
+          lazyInitBitmap |= TYPE_CLASS_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return typeClass;
   }
 
   /**
@@ -348,7 +271,6 @@ public final class ServiceInstanceType implements IServiceInstanceType {
    * Creates a builder for {@link ServiceInstanceType ServiceInstanceType}.
    * <pre>
    * ServiceInstanceType.builder()
-   *    .typeClass(String) // optional {@link IServiceInstanceType#getTypeClass() typeClass}
    *    .qualifier(String) // required {@link IServiceInstanceType#getQualifier() qualifier}
    *    .addMetaTags|addAllMetaTags(String) // {@link IServiceInstanceType#getMetaTags() metaTags} elements
    *    .simpleName(String) // optional {@link IServiceInstanceType#getSimpleName() simpleName}
@@ -373,7 +295,6 @@ public final class ServiceInstanceType implements IServiceInstanceType {
     private static final long INIT_BIT_QUALIFIER = 0x1L;
     private long initBits = 0x1L;
 
-    private @Nullable String typeClass;
     private @Nullable String qualifier;
     private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
     private @Nullable String simpleName;
@@ -389,24 +310,11 @@ public final class ServiceInstanceType implements IServiceInstanceType {
     @CanIgnoreReturnValue 
     public final Builder from(MutableServiceInstanceType instance) {
       Objects.requireNonNull(instance, "instance");
-      typeClass(instance.getTypeClass());
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
       addAllMetaTags(instance.getMetaTags());
       simpleName(instance.getSimpleName());
-      return this;
-    }
-
-    /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.types.TypeClass} instance.
-     * @param instance The instance from which to copy values
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder from(TypeClass instance) {
-      Objects.requireNonNull(instance, "instance");
-      from((Object) instance);
       return this;
     }
 
@@ -439,29 +347,12 @@ public final class ServiceInstanceType implements IServiceInstanceType {
         from((MutableServiceInstanceType) object);
         return;
       }
-      if (object instanceof TypeClass) {
-        TypeClass instance = (TypeClass) object;
-        typeClass(instance.getTypeClass());
-      }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
         addAllMetaTags(instance.getMetaTags());
         simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
       }
-    }
-
-    /**
-     * Initializes the value for the {@link IServiceInstanceType#getTypeClass() typeClass} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IServiceInstanceType#getTypeClass() typeClass}.</em>
-     * @param typeClass The value for typeClass 
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("typeClass")
-    public final Builder typeClass(String typeClass) {
-      this.typeClass = Objects.requireNonNull(typeClass, "typeClass");
-      return this;
     }
 
     /**

@@ -45,8 +45,6 @@ public final class MutableInstructionNode implements IInstructionNode {
   private String method;
   private int outputIndex;
   private final ArrayList<String> parameterFields = new ArrayList<String>();
-  private final ArrayList<String> parameterTypes = new ArrayList<String>();
-  private String nodeType;
 
   private MutableInstructionNode() {}
 
@@ -176,26 +174,6 @@ public final class MutableInstructionNode implements IInstructionNode {
   }
 
   /**
-   * @return modifiable list {@code parameterTypes}
-   */
-  @JsonProperty("parameterTypes")
-  @Override
-  public final List<String> getParameterTypes() {
-    return parameterTypes;
-  }
-
-  /**
-   * @return assigned or, otherwise, newly computed, not cached value of {@code nodeType} attribute
-   */
-  @JsonProperty("nodeType")
-  @Override
-  public final String getNodeType() {
-    return nodeTypeIsSet()
-        ? nodeType
-        : IInstructionNode.super.getNodeType();
-  }
-
-  /**
    * Clears the object by setting all attributes to their initial values.
    * @return {@code this} for use in a chained invocation
    */
@@ -213,8 +191,6 @@ public final class MutableInstructionNode implements IInstructionNode {
     method = null;
     outputIndex = 0;
     parameterFields.clear();
-    parameterTypes.clear();
-    nodeType = null;
     return this;
   }
 
@@ -237,18 +213,6 @@ public final class MutableInstructionNode implements IInstructionNode {
    */
   @CanIgnoreReturnValue
   public MutableInstructionNode from(IInstructionNode instance) {
-    Objects.requireNonNull(instance, "instance");
-    from((Object) instance);
-    return this;
-  }
-
-  /**
-   * Fill this modifiable instance with attribute values from the provided {@link de.upb.sede.composition.graphs.nodes.BaseNode} instance.
-   * @param instance The instance from which to copy values
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableInstructionNode from(BaseNode instance) {
     Objects.requireNonNull(instance, "instance");
     from((Object) instance);
     return this;
@@ -300,8 +264,6 @@ public final class MutableInstructionNode implements IInstructionNode {
       }
       setOutputIndex(instance.getOutputIndex());
       addAllParameterFields(instance.getParameterFields());
-      addAllParameterTypes(instance.getParameterTypes());
-      setNodeType(instance.getNodeType());
       return;
     }
     long bits = 0;
@@ -329,7 +291,6 @@ public final class MutableInstructionNode implements IInstructionNode {
         bits |= 0x1L;
       }
       setMethod(instance.getMethod());
-      addAllParameterTypes(instance.getParameterTypes());
       setHost(instance.getHost());
       setContext(instance.getContext());
       @Nullable String fieldTypeValue = instance.getFieldType();
@@ -340,10 +301,6 @@ public final class MutableInstructionNode implements IInstructionNode {
       if (fieldClassValue != null) {
         setFieldClass(fieldClassValue);
       }
-    }
-    if (object instanceof BaseNode) {
-      BaseNode instance = (BaseNode) object;
-      setNodeType(instance.getNodeType());
     }
   }
 
@@ -505,68 +462,6 @@ public final class MutableInstructionNode implements IInstructionNode {
   }
 
   /**
-   * Adds one element to {@link IInstructionNode#getParameterTypes() parameterTypes} list.
-   * @param element The parameterTypes element
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableInstructionNode addParameterTypes(String element) {
-    Objects.requireNonNull(element, "parameterTypes element");
-    this.parameterTypes.add(element);
-    return this;
-  }
-
-  /**
-   * Adds elements to {@link IInstructionNode#getParameterTypes() parameterTypes} list.
-   * @param elements An array of parameterTypes elements
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public final MutableInstructionNode addParameterTypes(String... elements) {
-    for (String e : elements) {
-      addParameterTypes(e);
-    }
-    return this;
-  }
-
-  /**
-   * Sets or replaces all elements for {@link IInstructionNode#getParameterTypes() parameterTypes} list.
-   * @param elements An iterable of parameterTypes elements
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableInstructionNode setParameterTypes(Iterable<String> elements) {
-    this.parameterTypes.clear();
-    addAllParameterTypes(elements);
-    return this;
-  }
-
-  /**
-   * Adds elements to {@link IInstructionNode#getParameterTypes() parameterTypes} list.
-   * @param elements An iterable of parameterTypes elements
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableInstructionNode addAllParameterTypes(Iterable<String> elements) {
-    for (String e : elements) {
-      addParameterTypes(e);
-    }
-    return this;
-  }
-
-  /**
-   * Assigns a value to the {@link IInstructionNode#getNodeType() nodeType} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IInstructionNode#getNodeType() nodeType}.</em>
-   * @param nodeType The value for nodeType
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableInstructionNode setNodeType(String nodeType) {
-    this.nodeType = Objects.requireNonNull(nodeType, "nodeType");
-    return this;
-  }
-
-  /**
    * Returns {@code true} if the required attribute {@link IInstructionNode#getFMInstruction() fMInstruction} is set.
    * @return {@code true} if set
    */
@@ -612,14 +507,6 @@ public final class MutableInstructionNode implements IInstructionNode {
    */
   public final boolean outputIndexIsSet() {
     return (optBits & OPT_BIT_OUTPUT_INDEX) != 0;
-  }
-
-  /**
-   * Returns {@code true} if the default attribute {@link IInstructionNode#getNodeType() nodeType} is set.
-   * @return {@code true} if set
-   */
-  public final boolean nodeTypeIsSet() {
-    return nodeType != null;
   }
 
 
@@ -739,7 +626,6 @@ public final class MutableInstructionNode implements IInstructionNode {
 
   private boolean equalTo(MutableInstructionNode another) {
     int outputIndex = getOutputIndex();
-    String nodeType = getNodeType();
     return fMInstruction.equals(another.fMInstruction)
         && Objects.equals(fieldName, another.fieldName)
         && Objects.equals(fieldType, another.fieldType)
@@ -749,13 +635,11 @@ public final class MutableInstructionNode implements IInstructionNode {
         && contextIsFieldFlag == another.contextIsFieldFlag
         && method.equals(another.method)
         && outputIndex == another.getOutputIndex()
-        && parameterFields.equals(another.parameterFields)
-        && parameterTypes.equals(another.parameterTypes)
-        && nodeType.equals(another.getNodeType());
+        && parameterFields.equals(another.parameterFields);
   }
 
   /**
-   * Computes a hash code from attributes: {@code fMInstruction}, {@code fieldName}, {@code fieldType}, {@code fieldClass}, {@code host}, {@code context}, {@code contextIsFieldFlag}, {@code method}, {@code outputIndex}, {@code parameterFields}, {@code parameterTypes}, {@code nodeType}.
+   * Computes a hash code from attributes: {@code fMInstruction}, {@code fieldName}, {@code fieldType}, {@code fieldClass}, {@code host}, {@code context}, {@code contextIsFieldFlag}, {@code method}, {@code outputIndex}, {@code parameterFields}.
    * @return hashCode value
    */
   @Override
@@ -772,9 +656,6 @@ public final class MutableInstructionNode implements IInstructionNode {
     int outputIndex = getOutputIndex();
     h += (h << 5) + outputIndex;
     h += (h << 5) + parameterFields.hashCode();
-    h += (h << 5) + parameterTypes.hashCode();
-    String nodeType = getNodeType();
-    h += (h << 5) + nodeType.hashCode();
     return h;
   }
 
@@ -796,8 +677,6 @@ public final class MutableInstructionNode implements IInstructionNode {
         .add("method", methodIsSet() ? getMethod() : "?")
         .add("outputIndex", getOutputIndex())
         .add("parameterFields", getParameterFields())
-        .add("parameterTypes", getParameterTypes())
-        .add("nodeType", getNodeType())
         .toString();
   }
 }

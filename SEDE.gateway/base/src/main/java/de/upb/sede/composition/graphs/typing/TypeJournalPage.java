@@ -1,29 +1,41 @@
 package de.upb.sede.composition.graphs.typing;
 
-import de.upb.sede.composition.graphs.types.IValueType;
+import de.upb.sede.composition.graphs.types.IFieldType;
+import de.upb.sede.exec.IMethodDesc;
 
 import javax.annotation.Nullable;
+import java.util.Map;
 
-public class TypeJournalPage implements TypingContext {
+public class TypeJournalPage implements FieldTypeResolution {
 
-    @Nullable
-    private TypeJournalPage prevPage;
+    private final FieldTypeResolution readOnlyPrevPage;
 
-    public TypeJournalPage(@Nullable TypeJournalPage prevPage) {
-        this.prevPage = prevPage;
+    private IMethodDesc methodDesc;
+
+    private Map<String, IFieldType> typeMap;
+
+
+    public TypeJournalPage(TypeJournalPage readOnlyPrevPage) {
+        this.readOnlyPrevPage = readOnlyPrevPage;
     }
 
     public TypeJournalPage() {
-    }
-
-
-    @Override
-    public FieldType getFieldType(String fieldname) {
-        return null;
+        readOnlyPrevPage = new EmptyJournalPage();
     }
 
     @Override
-    public void setFieldType(String fieldname, FieldType valueType) {
-
+    @Nullable
+    public IFieldType getFieldType(String fieldname) {
+        if(typeMap.containsKey(fieldname)) {
+            return typeMap.get(fieldname);
+        } else {
+            return readOnlyPrevPage.getFieldType(fieldname);
+        }
     }
+
+    @Override
+    public void setFieldType(String fieldname, IFieldType valueType) {
+        typeMap.put(fieldname, valueType);
+    }
+
 }

@@ -11,5 +11,5 @@ import java.lang.reflect.Type;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = ServiceInstanceType.Builder.class)
-public interface IServiceInstanceType extends TypeClass, IQualifiable {
+public interface IServiceInstanceType extends TypeClass, IValueTypeClass {
 }

@@ -22,7 +22,7 @@ import java.io.IOException;
 @JsonDeserialize(using = BaseNode.DeserializeDelegate.class)
 public interface BaseNode {
 
-    @Value.Default
+    @Value.Lazy
     default String getNodeType() {
         return TypeDeserializationDelegate.stripPrefix(this.getClass().getSimpleName());
     }

@@ -1,7 +1,7 @@
 package de.upb.sede.composition;
 
-public interface CompStep {
+public interface CompStep<I, O> {
 
-    void compose();
+    O compose(I input);
 
 }

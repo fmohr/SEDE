@@ -12,6 +12,10 @@ import javax.annotation.Nullable;
 @JsonDeserialize(builder = DataTypeRef.Builder.class)
 public interface IDataTypeRef extends ConstructReference {
 
+    public static IDataTypeRef of(String typeQualifier) {
+        return DataTypeRef.builder().ref(IQualifiable.of(typeQualifier)).build();
+    }
+
     @Nullable
     IServiceCollectionRef getServiceCollectionRef();
 

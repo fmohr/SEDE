@@ -17,7 +17,7 @@ import java.io.IOException;
 @JsonDeserialize(using = TypeClass.DeserializeDelegate.class)
 public interface TypeClass {
 
-    @Value.Default
+    @Value.Lazy
     default String getTypeClass() {
         return TypeDeserializationDelegate.stripPrefix(this.getClass().getSimpleName());
     }

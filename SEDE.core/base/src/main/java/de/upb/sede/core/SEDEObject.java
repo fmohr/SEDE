@@ -1,12 +1,10 @@
 package de.upb.sede.core;
 
 import de.upb.sede.util.JsonSerializable;
-import de.upb.sede.util.Streams;
 import org.json.simple.JSONObject;
 
 import java.io.Serializable;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public abstract class SEDEObject implements JsonSerializable, Serializable {
 
@@ -37,7 +35,7 @@ public abstract class SEDEObject implements JsonSerializable, Serializable {
 	}
 
 	public static boolean isPrimitive(String type) {
-		for (PrimitiveDataField.PrimitiveType primitivType : PrimitiveDataField.PrimitiveType.values()) {
+		for (PrimitiveType primitivType : PrimitiveType.values()) {
 			if (type.equalsIgnoreCase(primitivType.toString())) {
 				return true;
 			}

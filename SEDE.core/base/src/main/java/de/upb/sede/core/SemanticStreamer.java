@@ -56,7 +56,7 @@ public final class SemanticStreamer {
 	}
 
 	private static SEDEObject castStringToPrimitive(String data, String type){
-		PrimitiveDataField.PrimitiveType enumType = PrimitiveDataField.PrimitiveType.insensitiveValueOf(type);
+		PrimitiveType enumType = PrimitiveType.insensitiveValueOf(type);
 		return parsePrimitive(data, enumType);
 	}
 
@@ -216,7 +216,7 @@ public final class SemanticStreamer {
 		}
 	}
 
-	public static SEDEObject parsePrimitive(final String constantStr, final PrimitiveDataField.PrimitiveType primitiveType) {
+	public static SEDEObject parsePrimitive(final String constantStr, final PrimitiveType primitiveType) {
 		final Object data;
 		switch (Objects.requireNonNull(primitiveType)) {
 		case NULL:

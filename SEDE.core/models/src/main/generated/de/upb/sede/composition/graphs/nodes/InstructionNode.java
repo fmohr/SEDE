@@ -43,8 +43,6 @@ public final class InstructionNode implements IInstructionNode {
   private final String method;
   private final int outputIndex;
   private final ImmutableList<String> parameterFields;
-  private final ImmutableList<String> parameterTypes;
-  private final String nodeType;
 
   private InstructionNode(InstructionNode.Builder builder) {
     this.fMInstruction = builder.fMInstruction;
@@ -56,16 +54,9 @@ public final class InstructionNode implements IInstructionNode {
     this.contextIsFieldFlag = builder.contextIsFieldFlag;
     this.method = builder.method;
     this.parameterFields = builder.parameterFields.build();
-    this.parameterTypes = builder.parameterTypes.build();
-    if (builder.outputIndexIsSet()) {
-      initShim.outputIndex(builder.outputIndex);
-    }
-    if (builder.nodeType != null) {
-      initShim.nodeType(builder.nodeType);
-    }
-    this.outputIndex = initShim.getOutputIndex();
-    this.nodeType = initShim.getNodeType();
-    this.initShim = null;
+    this.outputIndex = builder.outputIndexIsSet()
+        ? builder.outputIndex
+        : IInstructionNode.super.getOutputIndex();
   }
 
   private InstructionNode(
@@ -78,9 +69,7 @@ public final class InstructionNode implements IInstructionNode {
       boolean contextIsFieldFlag,
       String method,
       int outputIndex,
-      ImmutableList<String> parameterFields,
-      ImmutableList<String> parameterTypes,
-      String nodeType) {
+      ImmutableList<String> parameterFields) {
     this.fMInstruction = fMInstruction;
     this.fieldName = fieldName;
     this.fieldType = fieldType;
@@ -91,69 +80,6 @@ public final class InstructionNode implements IInstructionNode {
     this.method = method;
     this.outputIndex = outputIndex;
     this.parameterFields = parameterFields;
-    this.parameterTypes = parameterTypes;
-    this.nodeType = nodeType;
-    this.initShim = null;
-  }
-
-  private static final byte STAGE_INITIALIZING = -1;
-  private static final byte STAGE_UNINITIALIZED = 0;
-  private static final byte STAGE_INITIALIZED = 1;
-  @SuppressWarnings("Immutable")
-  private transient volatile InitShim initShim = new InitShim();
-
-  @Generated(from = "IInstructionNode", generator = "Immutables")
-  private final class InitShim {
-    private byte outputIndexBuildStage = STAGE_UNINITIALIZED;
-    private int outputIndex;
-
-    int getOutputIndex() {
-      if (outputIndexBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
-      if (outputIndexBuildStage == STAGE_UNINITIALIZED) {
-        outputIndexBuildStage = STAGE_INITIALIZING;
-        this.outputIndex = getOutputIndexInitialize();
-        outputIndexBuildStage = STAGE_INITIALIZED;
-      }
-      return this.outputIndex;
-    }
-
-    void outputIndex(int outputIndex) {
-      this.outputIndex = outputIndex;
-      outputIndexBuildStage = STAGE_INITIALIZED;
-    }
-
-    private byte nodeTypeBuildStage = STAGE_UNINITIALIZED;
-    private String nodeType;
-
-    String getNodeType() {
-      if (nodeTypeBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
-      if (nodeTypeBuildStage == STAGE_UNINITIALIZED) {
-        nodeTypeBuildStage = STAGE_INITIALIZING;
-        this.nodeType = Objects.requireNonNull(getNodeTypeInitialize(), "nodeType");
-        nodeTypeBuildStage = STAGE_INITIALIZED;
-      }
-      return this.nodeType;
-    }
-
-    void nodeType(String nodeType) {
-      this.nodeType = nodeType;
-      nodeTypeBuildStage = STAGE_INITIALIZED;
-    }
-
-    private String formatInitCycleMessage() {
-      List<String> attributes = new ArrayList<>();
-      if (outputIndexBuildStage == STAGE_INITIALIZING) attributes.add("outputIndex");
-      if (nodeTypeBuildStage == STAGE_INITIALIZING) attributes.add("nodeType");
-      return "Cannot build InstructionNode, attribute initializers form cycle " + attributes;
-    }
-  }
-
-  private int getOutputIndexInitialize() {
-    return IInstructionNode.super.getOutputIndex();
-  }
-
-  private String getNodeTypeInitialize() {
-    return IInstructionNode.super.getNodeType();
   }
 
   /**
@@ -237,10 +163,7 @@ public final class InstructionNode implements IInstructionNode {
   @JsonProperty("outputIndex")
   @Override
   public int getOutputIndex() {
-    InitShim shim = this.initShim;
-    return shim != null
-        ? shim.getOutputIndex()
-        : this.outputIndex;
+    return outputIndex;
   }
 
   /**
@@ -257,27 +180,6 @@ public final class InstructionNode implements IInstructionNode {
   @Override
   public ImmutableList<String> getParameterFields() {
     return parameterFields;
-  }
-
-  /**
-   * @return The value of the {@code parameterTypes} attribute
-   */
-  @JsonProperty("parameterTypes")
-  @Override
-  public ImmutableList<String> getParameterTypes() {
-    return parameterTypes;
-  }
-
-  /**
-   * @return The value of the {@code nodeType} attribute
-   */
-  @JsonProperty("nodeType")
-  @Override
-  public String getNodeType() {
-    InitShim shim = this.initShim;
-    return shim != null
-        ? shim.getNodeType()
-        : this.nodeType;
   }
 
   /**
@@ -299,9 +201,7 @@ public final class InstructionNode implements IInstructionNode {
         this.contextIsFieldFlag,
         this.method,
         this.outputIndex,
-        this.parameterFields,
-        this.parameterTypes,
-        this.nodeType);
+        this.parameterFields);
   }
 
   /**
@@ -322,9 +222,7 @@ public final class InstructionNode implements IInstructionNode {
         this.contextIsFieldFlag,
         this.method,
         this.outputIndex,
-        this.parameterFields,
-        this.parameterTypes,
-        this.nodeType);
+        this.parameterFields);
   }
 
   /**
@@ -345,9 +243,7 @@ public final class InstructionNode implements IInstructionNode {
         this.contextIsFieldFlag,
         this.method,
         this.outputIndex,
-        this.parameterFields,
-        this.parameterTypes,
-        this.nodeType);
+        this.parameterFields);
   }
 
   /**
@@ -368,9 +264,7 @@ public final class InstructionNode implements IInstructionNode {
         this.contextIsFieldFlag,
         this.method,
         this.outputIndex,
-        this.parameterFields,
-        this.parameterTypes,
-        this.nodeType);
+        this.parameterFields);
   }
 
   /**
@@ -393,9 +287,7 @@ public final class InstructionNode implements IInstructionNode {
         this.contextIsFieldFlag,
         this.method,
         this.outputIndex,
-        this.parameterFields,
-        this.parameterTypes,
-        this.nodeType);
+        this.parameterFields);
   }
 
   /**
@@ -417,9 +309,7 @@ public final class InstructionNode implements IInstructionNode {
         this.contextIsFieldFlag,
         this.method,
         this.outputIndex,
-        this.parameterFields,
-        this.parameterTypes,
-        this.nodeType);
+        this.parameterFields);
   }
 
   /**
@@ -440,9 +330,7 @@ public final class InstructionNode implements IInstructionNode {
         value,
         this.method,
         this.outputIndex,
-        this.parameterFields,
-        this.parameterTypes,
-        this.nodeType);
+        this.parameterFields);
   }
 
   /**
@@ -464,9 +352,7 @@ public final class InstructionNode implements IInstructionNode {
         this.contextIsFieldFlag,
         newValue,
         this.outputIndex,
-        this.parameterFields,
-        this.parameterTypes,
-        this.nodeType);
+        this.parameterFields);
   }
 
   /**
@@ -487,9 +373,7 @@ public final class InstructionNode implements IInstructionNode {
         this.contextIsFieldFlag,
         this.method,
         value,
-        this.parameterFields,
-        this.parameterTypes,
-        this.nodeType);
+        this.parameterFields);
   }
 
   /**
@@ -509,9 +393,7 @@ public final class InstructionNode implements IInstructionNode {
         this.contextIsFieldFlag,
         this.method,
         this.outputIndex,
-        newValue,
-        this.parameterTypes,
-        this.nodeType);
+        newValue);
   }
 
   /**
@@ -533,78 +415,6 @@ public final class InstructionNode implements IInstructionNode {
         this.contextIsFieldFlag,
         this.method,
         this.outputIndex,
-        newValue,
-        this.parameterTypes,
-        this.nodeType);
-  }
-
-  /**
-   * Copy the current immutable object with elements that replace the content of {@link IInstructionNode#getParameterTypes() parameterTypes}.
-   * @param elements The elements to set
-   * @return A modified copy of {@code this} object
-   */
-  public final InstructionNode withParameterTypes(String... elements) {
-    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new InstructionNode(
-        this.fMInstruction,
-        this.fieldName,
-        this.fieldType,
-        this.fieldClass,
-        this.host,
-        this.context,
-        this.contextIsFieldFlag,
-        this.method,
-        this.outputIndex,
-        this.parameterFields,
-        newValue,
-        this.nodeType);
-  }
-
-  /**
-   * Copy the current immutable object with elements that replace the content of {@link IInstructionNode#getParameterTypes() parameterTypes}.
-   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param elements An iterable of parameterTypes elements to set
-   * @return A modified copy of {@code this} object
-   */
-  public final InstructionNode withParameterTypes(Iterable<String> elements) {
-    if (this.parameterTypes == elements) return this;
-    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new InstructionNode(
-        this.fMInstruction,
-        this.fieldName,
-        this.fieldType,
-        this.fieldClass,
-        this.host,
-        this.context,
-        this.contextIsFieldFlag,
-        this.method,
-        this.outputIndex,
-        this.parameterFields,
-        newValue,
-        this.nodeType);
-  }
-
-  /**
-   * Copy the current immutable object by setting a value for the {@link IInstructionNode#getNodeType() nodeType} attribute.
-   * An equals check used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for nodeType
-   * @return A modified copy of the {@code this} object
-   */
-  public final InstructionNode withNodeType(String value) {
-    String newValue = Objects.requireNonNull(value, "nodeType");
-    if (this.nodeType.equals(newValue)) return this;
-    return new InstructionNode(
-        this.fMInstruction,
-        this.fieldName,
-        this.fieldType,
-        this.fieldClass,
-        this.host,
-        this.context,
-        this.contextIsFieldFlag,
-        this.method,
-        this.outputIndex,
-        this.parameterFields,
-        this.parameterTypes,
         newValue);
   }
 
@@ -629,13 +439,11 @@ public final class InstructionNode implements IInstructionNode {
         && contextIsFieldFlag == another.contextIsFieldFlag
         && method.equals(another.method)
         && outputIndex == another.outputIndex
-        && parameterFields.equals(another.parameterFields)
-        && parameterTypes.equals(another.parameterTypes)
-        && nodeType.equals(another.nodeType);
+        && parameterFields.equals(another.parameterFields);
   }
 
   /**
-   * Computes a hash code from attributes: {@code fMInstruction}, {@code fieldName}, {@code fieldType}, {@code fieldClass}, {@code host}, {@code context}, {@code contextIsFieldFlag}, {@code method}, {@code outputIndex}, {@code parameterFields}, {@code parameterTypes}, {@code nodeType}.
+   * Computes a hash code from attributes: {@code fMInstruction}, {@code fieldName}, {@code fieldType}, {@code fieldClass}, {@code host}, {@code context}, {@code contextIsFieldFlag}, {@code method}, {@code outputIndex}, {@code parameterFields}.
    * @return hashCode value
    */
   @Override
@@ -651,8 +459,6 @@ public final class InstructionNode implements IInstructionNode {
     h += (h << 5) + method.hashCode();
     h += (h << 5) + outputIndex;
     h += (h << 5) + parameterFields.hashCode();
-    h += (h << 5) + parameterTypes.hashCode();
-    h += (h << 5) + nodeType.hashCode();
     return h;
   }
 
@@ -674,8 +480,6 @@ public final class InstructionNode implements IInstructionNode {
         .add("method", method)
         .add("outputIndex", outputIndex)
         .add("parameterFields", parameterFields)
-        .add("parameterTypes", parameterTypes)
-        .add("nodeType", nodeType)
         .toString();
   }
 
@@ -701,8 +505,6 @@ public final class InstructionNode implements IInstructionNode {
     int outputIndex;
     boolean outputIndexIsSet;
     @Nullable List<String> parameterFields = ImmutableList.of();
-    @Nullable List<String> parameterTypes = ImmutableList.of();
-    @Nullable String nodeType;
     @JsonProperty("fMInstruction")
     public void setFMInstruction(String fMInstruction) {
       this.fMInstruction = fMInstruction;
@@ -745,14 +547,6 @@ public final class InstructionNode implements IInstructionNode {
     public void setParameterFields(List<String> parameterFields) {
       this.parameterFields = parameterFields;
     }
-    @JsonProperty("parameterTypes")
-    public void setParameterTypes(List<String> parameterTypes) {
-      this.parameterTypes = parameterTypes;
-    }
-    @JsonProperty("nodeType")
-    public void setNodeType(String nodeType) {
-      this.nodeType = nodeType;
-    }
     @Override
     public String getFMInstruction() { throw new UnsupportedOperationException(); }
     @Override
@@ -774,7 +568,7 @@ public final class InstructionNode implements IInstructionNode {
     @Override
     public List<String> getParameterFields() { throw new UnsupportedOperationException(); }
     @Override
-    public List<String> getParameterTypes() { throw new UnsupportedOperationException(); }
+    public boolean isAssignment() { throw new UnsupportedOperationException(); }
     @Override
     public String getNodeType() { throw new UnsupportedOperationException(); }
   }
@@ -818,13 +612,66 @@ public final class InstructionNode implements IInstructionNode {
     if (json.parameterFields != null) {
       builder.addAllParameterFields(json.parameterFields);
     }
-    if (json.parameterTypes != null) {
-      builder.addAllParameterTypes(json.parameterTypes);
-    }
-    if (json.nodeType != null) {
-      builder.nodeType(json.nodeType);
-    }
     return builder.build();
+  }
+
+  @SuppressWarnings("Immutable")
+  private transient volatile long lazyInitBitmap;
+
+  private static final long IS_ASSIGNMENT_LAZY_INIT_BIT = 0x1L;
+
+  @SuppressWarnings("Immutable")
+  private transient boolean isAssignment;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IInstructionNode#isAssignment() isAssignment} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code isAssignment} attribute
+   */
+  @Override
+  public boolean isAssignment() {
+    if ((lazyInitBitmap & IS_ASSIGNMENT_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & IS_ASSIGNMENT_LAZY_INIT_BIT) == 0) {
+          this.isAssignment = IInstructionNode.super.isAssignment();
+          lazyInitBitmap |= IS_ASSIGNMENT_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return isAssignment;
+  }
+
+  private static final long NODE_TYPE_LAZY_INIT_BIT = 0x2L;
+
+  @SuppressWarnings("Immutable")
+  private transient String nodeType;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IInstructionNode#getNodeType() nodeType} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code nodeType} attribute
+   */
+  @Override
+  public String getNodeType() {
+    if ((lazyInitBitmap & NODE_TYPE_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & NODE_TYPE_LAZY_INIT_BIT) == 0) {
+          this.nodeType = Objects.requireNonNull(IInstructionNode.super.getNodeType(), "nodeType");
+          lazyInitBitmap |= NODE_TYPE_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return nodeType;
   }
 
   /**
@@ -857,8 +704,6 @@ public final class InstructionNode implements IInstructionNode {
    *    .method(String) // required {@link IInstructionNode#getMethod() method}
    *    .outputIndex(int) // optional {@link IInstructionNode#getOutputIndex() outputIndex}
    *    .addParameterFields|addAllParameterFields(String) // {@link IInstructionNode#getParameterFields() parameterFields} elements
-   *    .addParameterTypes|addAllParameterTypes(String) // {@link IInstructionNode#getParameterTypes() parameterTypes} elements
-   *    .nodeType(String) // optional {@link IInstructionNode#getNodeType() nodeType}
    *    .build();
    * </pre>
    * @return A new InstructionNode builder
@@ -896,8 +741,6 @@ public final class InstructionNode implements IInstructionNode {
     private @Nullable String method;
     private int outputIndex;
     private ImmutableList.Builder<String> parameterFields = ImmutableList.builder();
-    private ImmutableList.Builder<String> parameterTypes = ImmutableList.builder();
-    private @Nullable String nodeType;
 
     private Builder() {
     }
@@ -939,8 +782,6 @@ public final class InstructionNode implements IInstructionNode {
       }
       outputIndex(instance.getOutputIndex());
       addAllParameterFields(instance.getParameterFields());
-      addAllParameterTypes(instance.getParameterTypes());
-      nodeType(instance.getNodeType());
       return this;
     }
 
@@ -963,18 +804,6 @@ public final class InstructionNode implements IInstructionNode {
      */
     @CanIgnoreReturnValue 
     public final Builder from(IInstructionNode instance) {
-      Objects.requireNonNull(instance, "instance");
-      from((Object) instance);
-      return this;
-    }
-
-    /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.nodes.BaseNode} instance.
-     * @param instance The instance from which to copy values
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder from(BaseNode instance) {
       Objects.requireNonNull(instance, "instance");
       from((Object) instance);
       return this;
@@ -1010,7 +839,6 @@ public final class InstructionNode implements IInstructionNode {
           bits |= 0x1L;
         }
         method(instance.getMethod());
-        addAllParameterTypes(instance.getParameterTypes());
         host(instance.getHost());
         context(instance.getContext());
         @Nullable String fieldTypeValue = instance.getFieldType();
@@ -1021,10 +849,6 @@ public final class InstructionNode implements IInstructionNode {
         if (fieldClassValue != null) {
           fieldClass(fieldClassValue);
         }
-      }
-      if (object instanceof BaseNode) {
-        BaseNode instance = (BaseNode) object;
-        nodeType(instance.getNodeType());
       }
     }
 
@@ -1187,65 +1011,6 @@ public final class InstructionNode implements IInstructionNode {
     @CanIgnoreReturnValue 
     public final Builder addAllParameterFields(Iterable<String> elements) {
       this.parameterFields.addAll(elements);
-      return this;
-    }
-
-    /**
-     * Adds one element to {@link IInstructionNode#getParameterTypes() parameterTypes} list.
-     * @param element A parameterTypes element
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder addParameterTypes(String element) {
-      this.parameterTypes.add(element);
-      return this;
-    }
-
-    /**
-     * Adds elements to {@link IInstructionNode#getParameterTypes() parameterTypes} list.
-     * @param elements An array of parameterTypes elements
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder addParameterTypes(String... elements) {
-      this.parameterTypes.add(elements);
-      return this;
-    }
-
-
-    /**
-     * Sets or replaces all elements for {@link IInstructionNode#getParameterTypes() parameterTypes} list.
-     * @param elements An iterable of parameterTypes elements
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("parameterTypes")
-    public final Builder parameterTypes(Iterable<String> elements) {
-      this.parameterTypes = ImmutableList.builder();
-      return addAllParameterTypes(elements);
-    }
-
-    /**
-     * Adds elements to {@link IInstructionNode#getParameterTypes() parameterTypes} list.
-     * @param elements An iterable of parameterTypes elements
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder addAllParameterTypes(Iterable<String> elements) {
-      this.parameterTypes.addAll(elements);
-      return this;
-    }
-
-    /**
-     * Initializes the value for the {@link IInstructionNode#getNodeType() nodeType} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IInstructionNode#getNodeType() nodeType}.</em>
-     * @param nodeType The value for nodeType 
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("nodeType")
-    public final Builder nodeType(String nodeType) {
-      this.nodeType = Objects.requireNonNull(nodeType, "nodeType");
       return this;
     }
 

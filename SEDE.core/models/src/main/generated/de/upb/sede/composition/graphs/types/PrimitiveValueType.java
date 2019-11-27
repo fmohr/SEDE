@@ -7,6 +7,9 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
+import de.upb.sede.core.PrimitiveType;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import javax.annotation.CheckReturnValue;
 import javax.annotation.Nullable;
@@ -28,36 +31,31 @@ import org.immutables.value.Generated;
 @Immutable
 @CheckReturnValue
 public final class PrimitiveValueType implements IPrimitiveValueType {
-  private final String typeClass;
+  private final PrimitiveType primitiveType;
 
-  private PrimitiveValueType(PrimitiveValueType.Builder builder) {
-    this.typeClass = builder.typeClass != null
-        ? builder.typeClass
-        : Objects.requireNonNull(IPrimitiveValueType.super.getTypeClass(), "typeClass");
-  }
-
-  private PrimitiveValueType(String typeClass) {
-    this.typeClass = typeClass;
+  private PrimitiveValueType(PrimitiveType primitiveType) {
+    this.primitiveType = primitiveType;
   }
 
   /**
-   * @return The value of the {@code typeClass} attribute
+   * @return The value of the {@code primitiveType} attribute
    */
-  @JsonProperty("typeClass")
+  @JsonProperty("primitiveType")
   @Override
-  public String getTypeClass() {
-    return typeClass;
+  public PrimitiveType getPrimitiveType() {
+    return primitiveType;
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IPrimitiveValueType#getTypeClass() typeClass} attribute.
-   * An equals check used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for typeClass
+   * Copy the current immutable object by setting a value for the {@link IPrimitiveValueType#getPrimitiveType() primitiveType} attribute.
+   * A value equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for primitiveType
    * @return A modified copy of the {@code this} object
    */
-  public final PrimitiveValueType withTypeClass(String value) {
-    String newValue = Objects.requireNonNull(value, "typeClass");
-    if (this.typeClass.equals(newValue)) return this;
+  public final PrimitiveValueType withPrimitiveType(PrimitiveType value) {
+    if (this.primitiveType == value) return this;
+    PrimitiveType newValue = Objects.requireNonNull(value, "primitiveType");
+    if (this.primitiveType.equals(newValue)) return this;
     return new PrimitiveValueType(newValue);
   }
 
@@ -73,17 +71,17 @@ public final class PrimitiveValueType implements IPrimitiveValueType {
   }
 
   private boolean equalTo(PrimitiveValueType another) {
-    return typeClass.equals(another.typeClass);
+    return primitiveType.equals(another.primitiveType);
   }
 
   /**
-   * Computes a hash code from attributes: {@code typeClass}.
+   * Computes a hash code from attributes: {@code primitiveType}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     @Var int h = 5381;
-    h += (h << 5) + typeClass.hashCode();
+    h += (h << 5) + primitiveType.hashCode();
     return h;
   }
 
@@ -95,7 +93,7 @@ public final class PrimitiveValueType implements IPrimitiveValueType {
   public String toString() {
     return MoreObjects.toStringHelper("PrimitiveValueType")
         .omitNullValues()
-        .add("typeClass", typeClass)
+        .add("primitiveType", primitiveType)
         .toString();
   }
 
@@ -109,11 +107,19 @@ public final class PrimitiveValueType implements IPrimitiveValueType {
   @JsonDeserialize
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IPrimitiveValueType {
-    @Nullable String typeClass;
-    @JsonProperty("typeClass")
-    public void setTypeClass(String typeClass) {
-      this.typeClass = typeClass;
+    @Nullable PrimitiveType primitiveType;
+    @JsonProperty("primitiveType")
+    public void setPrimitiveType(PrimitiveType primitiveType) {
+      this.primitiveType = primitiveType;
     }
+    @Override
+    public PrimitiveType getPrimitiveType() { throw new UnsupportedOperationException(); }
+    @Override
+    public String getQualifier() { throw new UnsupportedOperationException(); }
+    @Override
+    public String getSimpleName() { throw new UnsupportedOperationException(); }
+    @Override
+    public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
     @Override
     public String getTypeClass() { throw new UnsupportedOperationException(); }
   }
@@ -127,10 +133,125 @@ public final class PrimitiveValueType implements IPrimitiveValueType {
   @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
   static PrimitiveValueType fromJson(Json json) {
     PrimitiveValueType.Builder builder = PrimitiveValueType.builder();
-    if (json.typeClass != null) {
-      builder.typeClass(json.typeClass);
+    if (json.primitiveType != null) {
+      builder.primitiveType(json.primitiveType);
     }
     return builder.build();
+  }
+
+  @SuppressWarnings("Immutable")
+  private transient volatile long lazyInitBitmap;
+
+  private static final long QUALIFIER_LAZY_INIT_BIT = 0x1L;
+
+  @SuppressWarnings("Immutable")
+  private transient String qualifier;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IPrimitiveValueType#getQualifier() qualifier} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code qualifier} attribute
+   */
+  @Override
+  public String getQualifier() {
+    if ((lazyInitBitmap & QUALIFIER_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & QUALIFIER_LAZY_INIT_BIT) == 0) {
+          this.qualifier = Objects.requireNonNull(IPrimitiveValueType.super.getQualifier(), "qualifier");
+          lazyInitBitmap |= QUALIFIER_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return qualifier;
+  }
+
+  private static final long SIMPLE_NAME_LAZY_INIT_BIT = 0x2L;
+
+  @SuppressWarnings("Immutable")
+  private transient String simpleName;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IPrimitiveValueType#getSimpleName() simpleName} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code simpleName} attribute
+   */
+  @Override
+  public String getSimpleName() {
+    if ((lazyInitBitmap & SIMPLE_NAME_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & SIMPLE_NAME_LAZY_INIT_BIT) == 0) {
+          this.simpleName = Objects.requireNonNull(IPrimitiveValueType.super.getSimpleName(), "simpleName");
+          lazyInitBitmap |= SIMPLE_NAME_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return simpleName;
+  }
+
+  private static final long META_TAGS_LAZY_INIT_BIT = 0x4L;
+
+  @SuppressWarnings("Immutable")
+  private transient List<String> metaTags;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IPrimitiveValueType#getMetaTags() metaTags} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code metaTags} attribute
+   */
+  @Override
+  public List<String> getMetaTags() {
+    if ((lazyInitBitmap & META_TAGS_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & META_TAGS_LAZY_INIT_BIT) == 0) {
+          this.metaTags = Objects.requireNonNull(IPrimitiveValueType.super.getMetaTags(), "metaTags");
+          lazyInitBitmap |= META_TAGS_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return metaTags;
+  }
+
+  private static final long TYPE_CLASS_LAZY_INIT_BIT = 0x8L;
+
+  @SuppressWarnings("Immutable")
+  private transient String typeClass;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IPrimitiveValueType#getTypeClass() typeClass} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code typeClass} attribute
+   */
+  @Override
+  public String getTypeClass() {
+    if ((lazyInitBitmap & TYPE_CLASS_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & TYPE_CLASS_LAZY_INIT_BIT) == 0) {
+          this.typeClass = Objects.requireNonNull(IPrimitiveValueType.super.getTypeClass(), "typeClass");
+          lazyInitBitmap |= TYPE_CLASS_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return typeClass;
   }
 
   /**
@@ -153,7 +274,7 @@ public final class PrimitiveValueType implements IPrimitiveValueType {
    * Creates a builder for {@link PrimitiveValueType PrimitiveValueType}.
    * <pre>
    * PrimitiveValueType.builder()
-   *    .typeClass(String) // optional {@link IPrimitiveValueType#getTypeClass() typeClass}
+   *    .primitiveType(de.upb.sede.core.PrimitiveType) // required {@link IPrimitiveValueType#getPrimitiveType() primitiveType}
    *    .build();
    * </pre>
    * @return A new PrimitiveValueType builder
@@ -172,7 +293,10 @@ public final class PrimitiveValueType implements IPrimitiveValueType {
   @Generated(from = "IPrimitiveValueType", generator = "Immutables")
   @NotThreadSafe
   public static final class Builder {
-    private @Nullable String typeClass;
+    private static final long INIT_BIT_PRIMITIVE_TYPE = 0x1L;
+    private long initBits = 0x1L;
+
+    private @Nullable PrimitiveType primitiveType;
 
     private Builder() {
     }
@@ -185,55 +309,39 @@ public final class PrimitiveValueType implements IPrimitiveValueType {
     @CanIgnoreReturnValue 
     public final Builder from(MutablePrimitiveValueType instance) {
       Objects.requireNonNull(instance, "instance");
-      typeClass(instance.getTypeClass());
+      if (instance.primitiveTypeIsSet()) {
+        primitiveType(instance.getPrimitiveType());
+      }
       return this;
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.types.TypeClass} instance.
-     * @param instance The instance from which to copy values
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder from(TypeClass instance) {
-      Objects.requireNonNull(instance, "instance");
-      from((Object) instance);
-      return this;
-    }
-
-    /**
-     * Fill a builder with attribute values from the provided {@code de.upb.sede.composition.graphs.types.IPrimitiveValueType} instance.
+     * Fill a builder with attribute values from the provided {@code IPrimitiveValueType} instance.
+     * Regular attribute values will be replaced with those from the given instance.
+     * Absent optional values will not replace present values.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
     public final Builder from(IPrimitiveValueType instance) {
       Objects.requireNonNull(instance, "instance");
-      from((Object) instance);
+      if (instance instanceof MutablePrimitiveValueType) {
+        return from((MutablePrimitiveValueType) instance);
+      }
+      primitiveType(instance.getPrimitiveType());
       return this;
     }
 
-    private void from(Object object) {
-      if (object instanceof MutablePrimitiveValueType) {
-        from((MutablePrimitiveValueType) object);
-        return;
-      }
-      if (object instanceof TypeClass) {
-        TypeClass instance = (TypeClass) object;
-        typeClass(instance.getTypeClass());
-      }
-    }
-
     /**
-     * Initializes the value for the {@link IPrimitiveValueType#getTypeClass() typeClass} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IPrimitiveValueType#getTypeClass() typeClass}.</em>
-     * @param typeClass The value for typeClass 
+     * Initializes the value for the {@link IPrimitiveValueType#getPrimitiveType() primitiveType} attribute.
+     * @param primitiveType The value for primitiveType 
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    @JsonProperty("typeClass")
-    public final Builder typeClass(String typeClass) {
-      this.typeClass = Objects.requireNonNull(typeClass, "typeClass");
+    @JsonProperty("primitiveType")
+    public final Builder primitiveType(PrimitiveType primitiveType) {
+      this.primitiveType = Objects.requireNonNull(primitiveType, "primitiveType");
+      initBits &= ~INIT_BIT_PRIMITIVE_TYPE;
       return this;
     }
 
@@ -243,7 +351,16 @@ public final class PrimitiveValueType implements IPrimitiveValueType {
      * @throws java.lang.IllegalStateException if any required attributes are missing
      */
     public PrimitiveValueType build() {
-      return new PrimitiveValueType(this);
+      if (initBits != 0) {
+        throw new IllegalStateException(formatRequiredAttributesMessage());
+      }
+      return new PrimitiveValueType(primitiveType);
+    }
+
+    private String formatRequiredAttributesMessage() {
+      List<String> attributes = new ArrayList<>();
+      if ((initBits & INIT_BIT_PRIMITIVE_TYPE) != 0) attributes.add("primitiveType");
+      return "Cannot build PrimitiveValueType, some of required attributes are not set " + attributes;
     }
   }
 }

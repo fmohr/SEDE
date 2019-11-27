@@ -6,20 +6,7 @@ import java.util.Map;
 
 public class PrimitiveDataField extends SEDEObject {
 
-	public enum PrimitiveType {
-		NULL, String, Number, Bool;
-
-		public static PrimitiveType insensitiveValueOf(String searchName) {
-			for (PrimitiveType type : PrimitiveType.values()) {
-				if (type.name().equalsIgnoreCase(searchName)) {
-					return type;
-				}
-			}
-			throw new RuntimeException("BUG: primitive type '" + searchName + "' not defined.");
-		}
-	}
-
-	private Object primitiveObject;
+    private Object primitiveObject;
 
 
 	private PrimitiveDataField(PrimitiveType type, Object primitiveObject) {

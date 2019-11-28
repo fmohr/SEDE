@@ -1,7 +1,6 @@
 package de.upb.sede.composition.graphs.types;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.IQualifiable;
 import de.upb.sede.SEDEModelStyle;
 import org.immutables.value.Value;
 
@@ -11,6 +10,12 @@ import org.immutables.value.Value;
 @JsonDeserialize(builder = RefType.Builder.class)
 public interface IRefType extends TypeClass {
 
-    IValueTypeClass getTypeOfRef();
+    ValueTypeClass getTypeOfRef();
+
+    @Override
+    @Value.Lazy
+    default String getTypeQualifier() {
+        return getTypeOfRef().getTypeQualifier();
+    }
 
 }

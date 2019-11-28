@@ -12,26 +12,13 @@ import java.util.List;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = PrimitiveValueType.Builder.class)
-public interface IPrimitiveValueType extends TypeClass, IValueTypeClass {
+public interface IPrimitiveValueType extends TypeClass, ValueTypeClass {
 
     @Override
     @Value.Lazy
     default String getQualifier() {
         return getPrimitiveType().toString();
     }
-
-    @Override
-    @Value.Lazy
-    default String getSimpleName() {
-        return getQualifier();
-    }
-
-    @Override
-    @Value.Lazy
-    default List<String> getMetaTags() {
-        return Collections.EMPTY_LIST;
-    }
-
 
     PrimitiveType getPrimitiveType();
 

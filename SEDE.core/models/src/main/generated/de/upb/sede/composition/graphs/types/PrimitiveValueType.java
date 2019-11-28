@@ -117,11 +117,13 @@ public final class PrimitiveValueType implements IPrimitiveValueType {
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
     @Override
+    public String getTypeClass() { throw new UnsupportedOperationException(); }
+    @Override
+    public String getTypeQualifier() { throw new UnsupportedOperationException(); }
+    @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
     @Override
     public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
-    @Override
-    public String getTypeClass() { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -170,7 +172,63 @@ public final class PrimitiveValueType implements IPrimitiveValueType {
     return qualifier;
   }
 
-  private static final long SIMPLE_NAME_LAZY_INIT_BIT = 0x2L;
+  private static final long TYPE_CLASS_LAZY_INIT_BIT = 0x2L;
+
+  @SuppressWarnings("Immutable")
+  private transient String typeClass;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IPrimitiveValueType#getTypeClass() typeClass} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code typeClass} attribute
+   */
+  @Override
+  public String getTypeClass() {
+    if ((lazyInitBitmap & TYPE_CLASS_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & TYPE_CLASS_LAZY_INIT_BIT) == 0) {
+          this.typeClass = Objects.requireNonNull(IPrimitiveValueType.super.getTypeClass(), "typeClass");
+          lazyInitBitmap |= TYPE_CLASS_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return typeClass;
+  }
+
+  private static final long TYPE_QUALIFIER_LAZY_INIT_BIT = 0x4L;
+
+  @SuppressWarnings("Immutable")
+  private transient String typeQualifier;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IPrimitiveValueType#getTypeQualifier() typeQualifier} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code typeQualifier} attribute
+   */
+  @Override
+  public String getTypeQualifier() {
+    if ((lazyInitBitmap & TYPE_QUALIFIER_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & TYPE_QUALIFIER_LAZY_INIT_BIT) == 0) {
+          this.typeQualifier = Objects.requireNonNull(IPrimitiveValueType.super.getTypeQualifier(), "typeQualifier");
+          lazyInitBitmap |= TYPE_QUALIFIER_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return typeQualifier;
+  }
+
+  private static final long SIMPLE_NAME_LAZY_INIT_BIT = 0x8L;
 
   @SuppressWarnings("Immutable")
   private transient String simpleName;
@@ -198,7 +256,7 @@ public final class PrimitiveValueType implements IPrimitiveValueType {
     return simpleName;
   }
 
-  private static final long META_TAGS_LAZY_INIT_BIT = 0x4L;
+  private static final long META_TAGS_LAZY_INIT_BIT = 0x10L;
 
   @SuppressWarnings("Immutable")
   private transient List<String> metaTags;
@@ -224,34 +282,6 @@ public final class PrimitiveValueType implements IPrimitiveValueType {
       }
     }
     return metaTags;
-  }
-
-  private static final long TYPE_CLASS_LAZY_INIT_BIT = 0x8L;
-
-  @SuppressWarnings("Immutable")
-  private transient String typeClass;
-
-  /**
-   * {@inheritDoc}
-   * <p>
-   * Returns a lazily initialized value of the {@link IPrimitiveValueType#getTypeClass() typeClass} attribute.
-   * Initialized once and only once and stored for subsequent access with proper synchronization.
-   * In case of any exception or error thrown by the lazy value initializer,
-   * the result will not be memoised (i.e. remembered) and on next call computation
-   * will be attempted again.
-   * @return A lazily initialized value of the {@code typeClass} attribute
-   */
-  @Override
-  public String getTypeClass() {
-    if ((lazyInitBitmap & TYPE_CLASS_LAZY_INIT_BIT) == 0) {
-      synchronized (this) {
-        if ((lazyInitBitmap & TYPE_CLASS_LAZY_INIT_BIT) == 0) {
-          this.typeClass = Objects.requireNonNull(IPrimitiveValueType.super.getTypeClass(), "typeClass");
-          lazyInitBitmap |= TYPE_CLASS_LAZY_INIT_BIT;
-        }
-      }
-    }
-    return typeClass;
   }
 
   /**

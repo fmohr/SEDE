@@ -29,8 +29,6 @@ public final class MutableDataValueType implements IDataValueType {
   private long initBits = 0x1L;
 
   private String qualifier;
-  private final ArrayList<String> metaTags = new ArrayList<String>();
-  private String simpleName;
 
   private MutableDataValueType() {}
 
@@ -55,26 +53,6 @@ public final class MutableDataValueType implements IDataValueType {
   }
 
   /**
-   * @return modifiable list {@code metaTags}
-   */
-  @JsonProperty("metaTags")
-  @Override
-  public final List<String> getMetaTags() {
-    return metaTags;
-  }
-
-  /**
-   * @return assigned or, otherwise, newly computed, not cached value of {@code simpleName} attribute
-   */
-  @JsonProperty("simpleName")
-  @Override
-  public final String getSimpleName() {
-    return simpleNameIsSet()
-        ? simpleName
-        : IDataValueType.super.getSimpleName();
-  }
-
-  /**
    * Clears the object by setting all attributes to their initial values.
    * @return {@code this} for use in a chained invocation
    */
@@ -82,8 +60,6 @@ public final class MutableDataValueType implements IDataValueType {
   public MutableDataValueType clear() {
     initBits = 0x1L;
     qualifier = null;
-    metaTags.clear();
-    simpleName = null;
     return this;
   }
 
@@ -115,7 +91,6 @@ public final class MutableDataValueType implements IDataValueType {
    * Fill this modifiable instance with attribute values from the provided {@link IDataValueType} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
-   * Collection elements and entries will be added, not replaced.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
@@ -131,14 +106,10 @@ public final class MutableDataValueType implements IDataValueType {
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
-      addAllMetaTags(instance.getMetaTags());
-      setSimpleName(instance.getSimpleName());
       return;
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
-      addAllMetaTags(instance.getMetaTags());
-      setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
     }
   }
@@ -156,81 +127,11 @@ public final class MutableDataValueType implements IDataValueType {
   }
 
   /**
-   * Adds one element to {@link IDataValueType#getMetaTags() metaTags} list.
-   * @param element The metaTags element
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableDataValueType addMetaTags(String element) {
-    Objects.requireNonNull(element, "metaTags element");
-    this.metaTags.add(element);
-    return this;
-  }
-
-  /**
-   * Adds elements to {@link IDataValueType#getMetaTags() metaTags} list.
-   * @param elements An array of metaTags elements
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public final MutableDataValueType addMetaTags(String... elements) {
-    for (String e : elements) {
-      addMetaTags(e);
-    }
-    return this;
-  }
-
-  /**
-   * Sets or replaces all elements for {@link IDataValueType#getMetaTags() metaTags} list.
-   * @param elements An iterable of metaTags elements
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableDataValueType setMetaTags(Iterable<String> elements) {
-    this.metaTags.clear();
-    addAllMetaTags(elements);
-    return this;
-  }
-
-  /**
-   * Adds elements to {@link IDataValueType#getMetaTags() metaTags} list.
-   * @param elements An iterable of metaTags elements
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableDataValueType addAllMetaTags(Iterable<String> elements) {
-    for (String e : elements) {
-      addMetaTags(e);
-    }
-    return this;
-  }
-
-  /**
-   * Assigns a value to the {@link IDataValueType#getSimpleName() simpleName} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IDataValueType#getSimpleName() simpleName}.</em>
-   * @param simpleName The value for simpleName
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableDataValueType setSimpleName(String simpleName) {
-    this.simpleName = Objects.requireNonNull(simpleName, "simpleName");
-    return this;
-  }
-
-  /**
    * Returns {@code true} if the required attribute {@link IDataValueType#getQualifier() qualifier} is set.
    * @return {@code true} if set
    */
   public final boolean qualifierIsSet() {
     return (initBits & INIT_BIT_QUALIFIER) == 0;
-  }
-
-  /**
-   * Returns {@code true} if the default attribute {@link IDataValueType#getSimpleName() simpleName} is set.
-   * @return {@code true} if set
-   */
-  public final boolean simpleNameIsSet() {
-    return simpleName != null;
   }
 
 

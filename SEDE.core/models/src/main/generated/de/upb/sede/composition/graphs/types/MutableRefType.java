@@ -27,7 +27,7 @@ public final class MutableRefType implements IRefType {
   private static final long INIT_BIT_TYPE_OF_REF = 0x1L;
   private long initBits = 0x1L;
 
-  private IValueTypeClass typeOfRef;
+  private ValueTypeClass typeOfRef;
 
   private MutableRefType() {}
 
@@ -44,7 +44,7 @@ public final class MutableRefType implements IRefType {
    */
   @JsonProperty("typeOfRef")
   @Override
-  public final IValueTypeClass getTypeOfRef() {
+  public final ValueTypeClass getTypeOfRef() {
     if (!typeOfRefIsSet()) {
       checkRequiredAttributes();
     }
@@ -100,7 +100,7 @@ public final class MutableRefType implements IRefType {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableRefType setTypeOfRef(IValueTypeClass typeOfRef) {
+  public MutableRefType setTypeOfRef(ValueTypeClass typeOfRef) {
     this.typeOfRef = Objects.requireNonNull(typeOfRef, "typeOfRef");
     initBits &= ~INIT_BIT_TYPE_OF_REF;
     return this;

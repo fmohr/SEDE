@@ -124,11 +124,23 @@ class TypeCheckStep {
             Objects.requireNonNull(expectedInputType);
             Objects.requireNonNull(instParam);
 
-            TypeCoercion typeCoercion = performTypeCoercion(instParam, expectedInputType);
-
-
-            typeCoercion = performTypeCoercion(instParam, expectedInputType);
-
+            TypeCoercion typeCoercion;
+            if(FMCompositionParser.isConstant(instParam)) {
+                /*
+                 * The given param is a constant, e.g. a number like `5`
+                 */
+                typeCoercion = constantParam(instParam, expectedInputType);
+            } else {
+                /*
+                 * The given param is a field, e.g. `a`
+                 * We look into the typing context to get the type of the field:
+                 */
+                IFieldType paramType = typeContext.getFieldType(instParam);
+                if(paramType == null) {
+                    throw TypeCheckException.undefinedField(instParam);
+                }
+                typeCoercion = castValue(paramType, expectedInputType);
+            }
         }
 
         iMR.setMethodCognition(new MethodCognition(service, method, signature, methodRef));
@@ -151,44 +163,43 @@ class TypeCheckStep {
             TypeCheckException.unknownMethodSignature(serviceContextQualifier, method.getQualifier(), inst));
     }
 
-
-    private TypeCoercion performTypeCoercion(String sourceType, String targetType) {
-        // TODO sourceType is the field
-        if(FMCompositionParser.isConstant(sourceType)) {
-            /*
-             * The parameter is a constant.
-             * Replace the input type by the primitive type:
-             */
-            TypeCoercion typeCoercion = TypeCoercion.primType(sourceType);
-            if(!typeCoercion.getResultType().equals(targetType)) {
-                throw TypeCheckException.unexpectedConstantType(sourceType, typeCoercion.getSourceType(), targetType,
-                    "The expected type");
-            }
-            return typeCoercion;
-        } else  {
-            IDataTypeRef sourceTypeRef = IDataTypeRef.of(sourceType);
-            Optional<IDataTypeDesc> sourceTypeDescOpt = lookupService.lookup(sourceTypeRef);
-            if(!sourceTypeDescOpt.isPresent()) {
-                throw TypeCheckException.unknownType(sourceType, "data type");
-            }
-            if(sourceType.equals(targetType)) {
-                /*
-                 * No type coercion is needed:
-                 */
-                return TypeCoercion.sameType(sourceType);
-            }
-            IDataTypeRef targetTypeRef = IDataTypeRef.of(targetType);
-            Optional<IDataTypeDesc> targetTypeDescOpt = lookupService.lookup(targetTypeRef);
-            if(!targetTypeDescOpt.isPresent()) {
-                throw TypeCheckException.unknownType(targetType, "data type");
-            }
-            String sourceSemType = sourceTypeDescOpt.get().getSemanticType();
-            String targetSemType = sourceTypeDescOpt.get().getSemanticType();
-            if(!sourceSemType.equals(targetSemType)) {
-                throw TypeCheckException.nonMatchingSemanticType(sourceType, sourceSemType, targetType, targetSemType);
-            }
-            return TypeCoercion.typeCast(sourceType, targetType, sourceSemType);
+    private TypeCoercion constantParam(String constant, String targetPrimType) {
+        /*
+         * The parameter is a constant.
+         * Replace the input type by the primitive type:
+         */
+        TypeCoercion typeCoercion = TypeCoercion.primType(constant);
+        if(!typeCoercion.getResultType().equals(targetPrimType)) {
+            throw TypeCheckException.unexpectedConstantType(constant, typeCoercion.getSourceType(), targetPrimType,
+                "The expected type");
         }
+        return typeCoercion;
+    }
+
+    private TypeCoercion castValue(IFieldType field, String targetType) {
+        String sourceType = field.getFieldType().getTypeQualifier();
+        IDataTypeRef sourceTypeRef = IDataTypeRef.of(sourceType);
+        Optional<IDataTypeDesc> sourceTypeDescOpt = lookupService.lookup(sourceTypeRef);
+        if(!sourceTypeDescOpt.isPresent()) {
+            throw TypeCheckException.unknownType(field);
+        }
+        if(sourceType.equals(targetType)) {
+            /*
+             * No type coercion is needed:
+             */
+            return TypeCoercion.sameType(sourceType);
+        }
+        IDataTypeRef targetTypeRef = IDataTypeRef.of(targetType);
+        Optional<IDataTypeDesc> targetTypeDescOpt = lookupService.lookup(targetTypeRef);
+        if(!targetTypeDescOpt.isPresent()) {
+            throw TypeCheckException.unknownType(targetType, "data type");
+        }
+        String sourceSemType = sourceTypeDescOpt.get().getSemanticType();
+        String targetSemType = sourceTypeDescOpt.get().getSemanticType();
+        if(!sourceSemType.equals(targetSemType)) {
+            throw TypeCheckException.nonMatchingSemanticType(sourceType, sourceSemType, targetType, targetSemType);
+        }
+        return TypeCoercion.typeCast(sourceType, targetType, sourceSemType);
     }
 
 }

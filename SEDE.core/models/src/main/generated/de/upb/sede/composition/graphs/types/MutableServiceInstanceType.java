@@ -30,8 +30,6 @@ public final class MutableServiceInstanceType
   private long initBits = 0x1L;
 
   private String qualifier;
-  private final ArrayList<String> metaTags = new ArrayList<String>();
-  private String simpleName;
 
   private MutableServiceInstanceType() {}
 
@@ -56,26 +54,6 @@ public final class MutableServiceInstanceType
   }
 
   /**
-   * @return modifiable list {@code metaTags}
-   */
-  @JsonProperty("metaTags")
-  @Override
-  public final List<String> getMetaTags() {
-    return metaTags;
-  }
-
-  /**
-   * @return assigned or, otherwise, newly computed, not cached value of {@code simpleName} attribute
-   */
-  @JsonProperty("simpleName")
-  @Override
-  public final String getSimpleName() {
-    return simpleNameIsSet()
-        ? simpleName
-        : IServiceInstanceType.super.getSimpleName();
-  }
-
-  /**
    * Clears the object by setting all attributes to their initial values.
    * @return {@code this} for use in a chained invocation
    */
@@ -83,8 +61,6 @@ public final class MutableServiceInstanceType
   public MutableServiceInstanceType clear() {
     initBits = 0x1L;
     qualifier = null;
-    metaTags.clear();
-    simpleName = null;
     return this;
   }
 
@@ -116,7 +92,6 @@ public final class MutableServiceInstanceType
    * Fill this modifiable instance with attribute values from the provided {@link IServiceInstanceType} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
-   * Collection elements and entries will be added, not replaced.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
@@ -132,14 +107,10 @@ public final class MutableServiceInstanceType
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
       }
-      addAllMetaTags(instance.getMetaTags());
-      setSimpleName(instance.getSimpleName());
       return;
     }
     if (object instanceof IQualifiable) {
       IQualifiable instance = (IQualifiable) object;
-      addAllMetaTags(instance.getMetaTags());
-      setSimpleName(instance.getSimpleName());
       setQualifier(instance.getQualifier());
     }
   }
@@ -157,81 +128,11 @@ public final class MutableServiceInstanceType
   }
 
   /**
-   * Adds one element to {@link IServiceInstanceType#getMetaTags() metaTags} list.
-   * @param element The metaTags element
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableServiceInstanceType addMetaTags(String element) {
-    Objects.requireNonNull(element, "metaTags element");
-    this.metaTags.add(element);
-    return this;
-  }
-
-  /**
-   * Adds elements to {@link IServiceInstanceType#getMetaTags() metaTags} list.
-   * @param elements An array of metaTags elements
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public final MutableServiceInstanceType addMetaTags(String... elements) {
-    for (String e : elements) {
-      addMetaTags(e);
-    }
-    return this;
-  }
-
-  /**
-   * Sets or replaces all elements for {@link IServiceInstanceType#getMetaTags() metaTags} list.
-   * @param elements An iterable of metaTags elements
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableServiceInstanceType setMetaTags(Iterable<String> elements) {
-    this.metaTags.clear();
-    addAllMetaTags(elements);
-    return this;
-  }
-
-  /**
-   * Adds elements to {@link IServiceInstanceType#getMetaTags() metaTags} list.
-   * @param elements An iterable of metaTags elements
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableServiceInstanceType addAllMetaTags(Iterable<String> elements) {
-    for (String e : elements) {
-      addMetaTags(e);
-    }
-    return this;
-  }
-
-  /**
-   * Assigns a value to the {@link IServiceInstanceType#getSimpleName() simpleName} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IServiceInstanceType#getSimpleName() simpleName}.</em>
-   * @param simpleName The value for simpleName
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableServiceInstanceType setSimpleName(String simpleName) {
-    this.simpleName = Objects.requireNonNull(simpleName, "simpleName");
-    return this;
-  }
-
-  /**
    * Returns {@code true} if the required attribute {@link IServiceInstanceType#getQualifier() qualifier} is set.
    * @return {@code true} if set
    */
   public final boolean qualifierIsSet() {
     return (initBits & INIT_BIT_QUALIFIER) == 0;
-  }
-
-  /**
-   * Returns {@code true} if the default attribute {@link IServiceInstanceType#getSimpleName() simpleName} is set.
-   * @return {@code true} if set
-   */
-  public final boolean simpleNameIsSet() {
-    return simpleName != null;
   }
 
 

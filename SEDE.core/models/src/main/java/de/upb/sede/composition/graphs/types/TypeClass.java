@@ -22,6 +22,9 @@ public interface TypeClass {
         return TypeDeserializationDelegate.stripPrefix(this.getClass().getSimpleName());
     }
 
+    @Value.Lazy
+    String getTypeQualifier();
+
     class DeserializeDelegate extends TypeDeserializationDelegate<TypeClass> {
 
         protected DeserializeDelegate() {

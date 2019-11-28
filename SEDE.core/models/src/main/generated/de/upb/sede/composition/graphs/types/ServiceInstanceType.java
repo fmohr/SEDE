@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
-import com.google.common.collect.ImmutableList;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import com.google.errorprone.annotations.Var;
 import de.upb.sede.IQualifiable;
@@ -33,24 +32,9 @@ import org.immutables.value.Generated;
 @CheckReturnValue
 public final class ServiceInstanceType implements IServiceInstanceType {
   private final String qualifier;
-  private final ImmutableList<String> metaTags;
-  private final String simpleName;
 
-  private ServiceInstanceType(ServiceInstanceType.Builder builder) {
-    this.qualifier = builder.qualifier;
-    this.metaTags = builder.metaTags.build();
-    this.simpleName = builder.simpleName != null
-        ? builder.simpleName
-        : Objects.requireNonNull(IServiceInstanceType.super.getSimpleName(), "simpleName");
-  }
-
-  private ServiceInstanceType(
-      String qualifier,
-      ImmutableList<String> metaTags,
-      String simpleName) {
+  private ServiceInstanceType(String qualifier) {
     this.qualifier = qualifier;
-    this.metaTags = metaTags;
-    this.simpleName = simpleName;
   }
 
   /**
@@ -63,24 +47,6 @@ public final class ServiceInstanceType implements IServiceInstanceType {
   }
 
   /**
-   * @return The value of the {@code metaTags} attribute
-   */
-  @JsonProperty("metaTags")
-  @Override
-  public ImmutableList<String> getMetaTags() {
-    return metaTags;
-  }
-
-  /**
-   * @return The value of the {@code simpleName} attribute
-   */
-  @JsonProperty("simpleName")
-  @Override
-  public String getSimpleName() {
-    return simpleName;
-  }
-
-  /**
    * Copy the current immutable object by setting a value for the {@link IServiceInstanceType#getQualifier() qualifier} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for qualifier
@@ -89,41 +55,7 @@ public final class ServiceInstanceType implements IServiceInstanceType {
   public final ServiceInstanceType withQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "qualifier");
     if (this.qualifier.equals(newValue)) return this;
-    return new ServiceInstanceType(newValue, this.metaTags, this.simpleName);
-  }
-
-  /**
-   * Copy the current immutable object with elements that replace the content of {@link IServiceInstanceType#getMetaTags() metaTags}.
-   * @param elements The elements to set
-   * @return A modified copy of {@code this} object
-   */
-  public final ServiceInstanceType withMetaTags(String... elements) {
-    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new ServiceInstanceType(this.qualifier, newValue, this.simpleName);
-  }
-
-  /**
-   * Copy the current immutable object with elements that replace the content of {@link IServiceInstanceType#getMetaTags() metaTags}.
-   * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param elements An iterable of metaTags elements to set
-   * @return A modified copy of {@code this} object
-   */
-  public final ServiceInstanceType withMetaTags(Iterable<String> elements) {
-    if (this.metaTags == elements) return this;
-    ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new ServiceInstanceType(this.qualifier, newValue, this.simpleName);
-  }
-
-  /**
-   * Copy the current immutable object by setting a value for the {@link IServiceInstanceType#getSimpleName() simpleName} attribute.
-   * An equals check used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for simpleName
-   * @return A modified copy of the {@code this} object
-   */
-  public final ServiceInstanceType withSimpleName(String value) {
-    String newValue = Objects.requireNonNull(value, "simpleName");
-    if (this.simpleName.equals(newValue)) return this;
-    return new ServiceInstanceType(this.qualifier, this.metaTags, newValue);
+    return new ServiceInstanceType(newValue);
   }
 
   /**
@@ -175,28 +107,20 @@ public final class ServiceInstanceType implements IServiceInstanceType {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IServiceInstanceType {
     @Nullable String qualifier;
-    @Nullable List<String> metaTags = ImmutableList.of();
-    @Nullable String simpleName;
     @JsonProperty("qualifier")
     public void setQualifier(String qualifier) {
       this.qualifier = qualifier;
     }
-    @JsonProperty("metaTags")
-    public void setMetaTags(List<String> metaTags) {
-      this.metaTags = metaTags;
-    }
-    @JsonProperty("simpleName")
-    public void setSimpleName(String simpleName) {
-      this.simpleName = simpleName;
-    }
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
     @Override
-    public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
+    public String getTypeClass() { throw new UnsupportedOperationException(); }
+    @Override
+    public String getTypeQualifier() { throw new UnsupportedOperationException(); }
     @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
     @Override
-    public String getTypeClass() { throw new UnsupportedOperationException(); }
+    public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -210,12 +134,6 @@ public final class ServiceInstanceType implements IServiceInstanceType {
     ServiceInstanceType.Builder builder = ServiceInstanceType.builder();
     if (json.qualifier != null) {
       builder.qualifier(json.qualifier);
-    }
-    if (json.metaTags != null) {
-      builder.addAllMetaTags(json.metaTags);
-    }
-    if (json.simpleName != null) {
-      builder.simpleName(json.simpleName);
     }
     return builder.build();
   }
@@ -251,6 +169,90 @@ public final class ServiceInstanceType implements IServiceInstanceType {
     return typeClass;
   }
 
+  private static final long TYPE_QUALIFIER_LAZY_INIT_BIT = 0x2L;
+
+  @SuppressWarnings("Immutable")
+  private transient String typeQualifier;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IServiceInstanceType#getTypeQualifier() typeQualifier} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code typeQualifier} attribute
+   */
+  @Override
+  public String getTypeQualifier() {
+    if ((lazyInitBitmap & TYPE_QUALIFIER_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & TYPE_QUALIFIER_LAZY_INIT_BIT) == 0) {
+          this.typeQualifier = Objects.requireNonNull(IServiceInstanceType.super.getTypeQualifier(), "typeQualifier");
+          lazyInitBitmap |= TYPE_QUALIFIER_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return typeQualifier;
+  }
+
+  private static final long SIMPLE_NAME_LAZY_INIT_BIT = 0x4L;
+
+  @SuppressWarnings("Immutable")
+  private transient String simpleName;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IServiceInstanceType#getSimpleName() simpleName} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code simpleName} attribute
+   */
+  @Override
+  public String getSimpleName() {
+    if ((lazyInitBitmap & SIMPLE_NAME_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & SIMPLE_NAME_LAZY_INIT_BIT) == 0) {
+          this.simpleName = Objects.requireNonNull(IServiceInstanceType.super.getSimpleName(), "simpleName");
+          lazyInitBitmap |= SIMPLE_NAME_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return simpleName;
+  }
+
+  private static final long META_TAGS_LAZY_INIT_BIT = 0x8L;
+
+  @SuppressWarnings("Immutable")
+  private transient List<String> metaTags;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IServiceInstanceType#getMetaTags() metaTags} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code metaTags} attribute
+   */
+  @Override
+  public List<String> getMetaTags() {
+    if ((lazyInitBitmap & META_TAGS_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & META_TAGS_LAZY_INIT_BIT) == 0) {
+          this.metaTags = Objects.requireNonNull(IServiceInstanceType.super.getMetaTags(), "metaTags");
+          lazyInitBitmap |= META_TAGS_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return metaTags;
+  }
+
   /**
    * Creates an immutable copy of a {@link IServiceInstanceType} value.
    * Uses accessors to get values to initialize the new immutable instance.
@@ -272,8 +274,6 @@ public final class ServiceInstanceType implements IServiceInstanceType {
    * <pre>
    * ServiceInstanceType.builder()
    *    .qualifier(String) // required {@link IServiceInstanceType#getQualifier() qualifier}
-   *    .addMetaTags|addAllMetaTags(String) // {@link IServiceInstanceType#getMetaTags() metaTags} elements
-   *    .simpleName(String) // optional {@link IServiceInstanceType#getSimpleName() simpleName}
    *    .build();
    * </pre>
    * @return A new ServiceInstanceType builder
@@ -296,8 +296,6 @@ public final class ServiceInstanceType implements IServiceInstanceType {
     private long initBits = 0x1L;
 
     private @Nullable String qualifier;
-    private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
-    private @Nullable String simpleName;
 
     private Builder() {
     }
@@ -313,8 +311,6 @@ public final class ServiceInstanceType implements IServiceInstanceType {
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
       }
-      addAllMetaTags(instance.getMetaTags());
-      simpleName(instance.getSimpleName());
       return this;
     }
 
@@ -349,8 +345,6 @@ public final class ServiceInstanceType implements IServiceInstanceType {
       }
       if (object instanceof IQualifiable) {
         IQualifiable instance = (IQualifiable) object;
-        addAllMetaTags(instance.getMetaTags());
-        simpleName(instance.getSimpleName());
         qualifier(instance.getQualifier());
       }
     }
@@ -369,65 +363,6 @@ public final class ServiceInstanceType implements IServiceInstanceType {
     }
 
     /**
-     * Adds one element to {@link IServiceInstanceType#getMetaTags() metaTags} list.
-     * @param element A metaTags element
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder addMetaTags(String element) {
-      this.metaTags.add(element);
-      return this;
-    }
-
-    /**
-     * Adds elements to {@link IServiceInstanceType#getMetaTags() metaTags} list.
-     * @param elements An array of metaTags elements
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder addMetaTags(String... elements) {
-      this.metaTags.add(elements);
-      return this;
-    }
-
-
-    /**
-     * Sets or replaces all elements for {@link IServiceInstanceType#getMetaTags() metaTags} list.
-     * @param elements An iterable of metaTags elements
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("metaTags")
-    public final Builder metaTags(Iterable<String> elements) {
-      this.metaTags = ImmutableList.builder();
-      return addAllMetaTags(elements);
-    }
-
-    /**
-     * Adds elements to {@link IServiceInstanceType#getMetaTags() metaTags} list.
-     * @param elements An iterable of metaTags elements
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    public final Builder addAllMetaTags(Iterable<String> elements) {
-      this.metaTags.addAll(elements);
-      return this;
-    }
-
-    /**
-     * Initializes the value for the {@link IServiceInstanceType#getSimpleName() simpleName} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IServiceInstanceType#getSimpleName() simpleName}.</em>
-     * @param simpleName The value for simpleName 
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("simpleName")
-    public final Builder simpleName(String simpleName) {
-      this.simpleName = Objects.requireNonNull(simpleName, "simpleName");
-      return this;
-    }
-
-    /**
      * Builds a new {@link ServiceInstanceType ServiceInstanceType}.
      * @return An immutable instance of ServiceInstanceType
      * @throws java.lang.IllegalStateException if any required attributes are missing
@@ -436,7 +371,7 @@ public final class ServiceInstanceType implements IServiceInstanceType {
       if (initBits != 0) {
         throw new IllegalStateException(formatRequiredAttributesMessage());
       }
-      return new ServiceInstanceType(this);
+      return new ServiceInstanceType(qualifier);
     }
 
     private String formatRequiredAttributesMessage() {

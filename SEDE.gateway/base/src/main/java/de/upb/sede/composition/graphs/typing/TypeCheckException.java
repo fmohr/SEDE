@@ -65,6 +65,11 @@ public class TypeCheckException extends RuntimeException {
         throw new TypeCheckException(errText);
     }
 
+    public static TypeCheckException unknownType(IFieldType fieldType) {
+        String errText = String.format("Field %s Unknown type `%s`", fieldType.getFieldName(), fieldType.getFieldType().getTypeQualifier());
+        throw new TypeCheckException(errText);
+    }
+
     public static TypeCheckException unknownMethodSignature(String serviceQualifier, String methodQualifier, IInstructionNode inst) {
         int expectedOutput = inst.isAssignment()? 1 : 0;
         int expectedInput = inst.getParameterFields().size();

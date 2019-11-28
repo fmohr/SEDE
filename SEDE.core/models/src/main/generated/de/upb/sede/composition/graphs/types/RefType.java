@@ -30,9 +30,9 @@ import org.immutables.value.Generated;
 @Immutable
 @CheckReturnValue
 public final class RefType implements IRefType {
-  private final IValueTypeClass typeOfRef;
+  private final ValueTypeClass typeOfRef;
 
-  private RefType(IValueTypeClass typeOfRef) {
+  private RefType(ValueTypeClass typeOfRef) {
     this.typeOfRef = typeOfRef;
   }
 
@@ -41,7 +41,7 @@ public final class RefType implements IRefType {
    */
   @JsonProperty("typeOfRef")
   @Override
-  public IValueTypeClass getTypeOfRef() {
+  public ValueTypeClass getTypeOfRef() {
     return typeOfRef;
   }
 
@@ -51,9 +51,9 @@ public final class RefType implements IRefType {
    * @param value A new value for typeOfRef
    * @return A modified copy of the {@code this} object
    */
-  public final RefType withTypeOfRef(IValueTypeClass value) {
+  public final RefType withTypeOfRef(ValueTypeClass value) {
     if (this.typeOfRef == value) return this;
-    IValueTypeClass newValue = Objects.requireNonNull(value, "typeOfRef");
+    ValueTypeClass newValue = Objects.requireNonNull(value, "typeOfRef");
     return new RefType(newValue);
   }
 
@@ -105,13 +105,15 @@ public final class RefType implements IRefType {
   @JsonDeserialize
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IRefType {
-    @Nullable IValueTypeClass typeOfRef;
+    @Nullable ValueTypeClass typeOfRef;
     @JsonProperty("typeOfRef")
-    public void setTypeOfRef(IValueTypeClass typeOfRef) {
+    public void setTypeOfRef(ValueTypeClass typeOfRef) {
       this.typeOfRef = typeOfRef;
     }
     @Override
-    public IValueTypeClass getTypeOfRef() { throw new UnsupportedOperationException(); }
+    public ValueTypeClass getTypeOfRef() { throw new UnsupportedOperationException(); }
+    @Override
+    public String getTypeQualifier() { throw new UnsupportedOperationException(); }
     @Override
     public String getTypeClass() { throw new UnsupportedOperationException(); }
   }
@@ -134,7 +136,35 @@ public final class RefType implements IRefType {
   @SuppressWarnings("Immutable")
   private transient volatile long lazyInitBitmap;
 
-  private static final long TYPE_CLASS_LAZY_INIT_BIT = 0x1L;
+  private static final long TYPE_QUALIFIER_LAZY_INIT_BIT = 0x1L;
+
+  @SuppressWarnings("Immutable")
+  private transient String typeQualifier;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IRefType#getTypeQualifier() typeQualifier} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code typeQualifier} attribute
+   */
+  @Override
+  public String getTypeQualifier() {
+    if ((lazyInitBitmap & TYPE_QUALIFIER_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & TYPE_QUALIFIER_LAZY_INIT_BIT) == 0) {
+          this.typeQualifier = Objects.requireNonNull(IRefType.super.getTypeQualifier(), "typeQualifier");
+          lazyInitBitmap |= TYPE_QUALIFIER_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return typeQualifier;
+  }
+
+  private static final long TYPE_CLASS_LAZY_INIT_BIT = 0x2L;
 
   @SuppressWarnings("Immutable")
   private transient String typeClass;
@@ -182,7 +212,7 @@ public final class RefType implements IRefType {
    * Creates a builder for {@link RefType RefType}.
    * <pre>
    * RefType.builder()
-   *    .typeOfRef(de.upb.sede.composition.graphs.types.IValueTypeClass) // required {@link IRefType#getTypeOfRef() typeOfRef}
+   *    .typeOfRef(de.upb.sede.composition.graphs.types.ValueTypeClass) // required {@link IRefType#getTypeOfRef() typeOfRef}
    *    .build();
    * </pre>
    * @return A new RefType builder
@@ -204,7 +234,7 @@ public final class RefType implements IRefType {
     private static final long INIT_BIT_TYPE_OF_REF = 0x1L;
     private long initBits = 0x1L;
 
-    private @Nullable IValueTypeClass typeOfRef;
+    private @Nullable ValueTypeClass typeOfRef;
 
     private Builder() {
     }
@@ -247,7 +277,7 @@ public final class RefType implements IRefType {
      */
     @CanIgnoreReturnValue 
     @JsonProperty("typeOfRef")
-    public final Builder typeOfRef(IValueTypeClass typeOfRef) {
+    public final Builder typeOfRef(ValueTypeClass typeOfRef) {
       this.typeOfRef = Objects.requireNonNull(typeOfRef, "typeOfRef");
       initBits &= ~INIT_BIT_TYPE_OF_REF;
       return this;

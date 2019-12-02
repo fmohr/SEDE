@@ -12,18 +12,15 @@ public class TypeChecker implements CompStep<TypeCheckInput, TypeCheckOutput> {
     @Override
     public TypeCheckOutput compose(TypeCheckInput input) {
         TypeCheckStep step;
-        TypeJournal journal = new TypeJournal();
 
-        InstructionMethodResolver methodResolver = new InstructionMethodResolver();
 
-        step = new TypeCheckStep(journal,
-            methodResolver,
+        TypeCheckOutput output = new TypeCheckOutput();
+
+        step = new TypeCheckStep(output,
             input.getInstructions(),
             input.getLookupService());
 
         step.checkAll();
-
-        TypeCheckOutput output = new TypeCheckOutput(journal, methodResolver);
 
         return output;
     }

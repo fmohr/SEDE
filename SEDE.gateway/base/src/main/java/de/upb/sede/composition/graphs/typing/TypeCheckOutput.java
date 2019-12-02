@@ -5,19 +5,23 @@ public class TypeCheckOutput {
 
     private final TypeJournal journal;
 
-    private final InstructionMethodResolver methodResolver;
+    private final InstIndexMap<MethodCognition> indexedMethodCog;
 
     public TypeCheckOutput(TypeJournal journal,
-                           InstructionMethodResolver methodResolver) {
+                           InstIndexMap<MethodCognition> indexedMethodCog) {
         this.journal = journal;
-        this.methodResolver = methodResolver;
+        this.indexedMethodCog = indexedMethodCog;
+    }
+
+    TypeCheckOutput() {
+        this(new TypeJournal(), new InstIndexMap<>());
     }
 
     public TypeJournal getJournal() {
         return journal;
     }
 
-    public InstructionMethodResolver getMethodResolver() {
-        return methodResolver;
+    public InstIndexMap<MethodCognition> getMethodCognitionMap() {
+        return indexedMethodCog;
     }
 }

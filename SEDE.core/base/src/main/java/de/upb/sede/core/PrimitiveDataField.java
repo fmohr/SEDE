@@ -3,6 +3,7 @@ package de.upb.sede.core;
 import org.json.simple.JSONObject;
 
 import java.util.Map;
+import java.util.Objects;
 
 public class PrimitiveDataField extends SEDEObject {
 
@@ -15,7 +16,7 @@ public class PrimitiveDataField extends SEDEObject {
 	}
 
 	public PrimitiveDataField(String type, Object primitiveObject) {
-		this(PrimitiveType.insensitiveValueOf(type), primitiveObject);
+		this(PrimitiveType.insensitiveValueOf(type).orElseThrow(() -> new RuntimeException("Primitive " + type + " not found.")), primitiveObject);
 	}
 
 	public PrimitiveDataField(Number number) {

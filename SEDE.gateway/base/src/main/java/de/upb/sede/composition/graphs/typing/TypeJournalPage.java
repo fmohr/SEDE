@@ -1,6 +1,6 @@
 package de.upb.sede.composition.graphs.typing;
 
-import de.upb.sede.composition.graphs.types.IFieldType;
+import de.upb.sede.composition.graphs.types.TypeClass;
 import de.upb.sede.exec.IMethodDesc;
 
 import javax.annotation.Nullable;
@@ -12,7 +12,7 @@ public class TypeJournalPage implements FieldTypeResolution {
 
     private IMethodDesc methodDesc;
 
-    private Map<String, IFieldType> typeMap;
+    private Map<String, TypeClass> typeMap;
 
 
     public TypeJournalPage(TypeJournalPage readOnlyPrevPage) {
@@ -25,7 +25,7 @@ public class TypeJournalPage implements FieldTypeResolution {
 
     @Override
     @Nullable
-    public IFieldType getFieldType(String fieldname) {
+    public TypeClass getFieldType(String fieldname) {
         if(typeMap.containsKey(fieldname)) {
             return typeMap.get(fieldname);
         } else {
@@ -34,7 +34,7 @@ public class TypeJournalPage implements FieldTypeResolution {
     }
 
     @Override
-    public void setFieldType(String fieldname, IFieldType valueType) {
+    public void setFieldType(String fieldname, TypeClass valueType) {
         typeMap.put(fieldname, valueType);
     }
 

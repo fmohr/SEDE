@@ -1,12 +1,10 @@
 package de.upb.sede.composition.graphs.typing;
 
-import de.upb.sede.ISDLLookupService;
 import de.upb.sede.exec.IMethodDesc;
 import de.upb.sede.exec.IMethodRef;
 import de.upb.sede.exec.IServiceDesc;
 import de.upb.sede.exec.ISignatureDesc;
 
-import java.util.ArrayList;
 import java.util.List;
 
 class MethodCognition {
@@ -19,13 +17,14 @@ class MethodCognition {
 
     private final IMethodRef methodRef;
 
-    private List<TypeCoercion> inputParamTypeCoercions = new ArrayList<>();
+    private final List<TypeCoercion> parameterTypeCoersion;
 
-    public MethodCognition(IServiceDesc service, IMethodDesc method, ISignatureDesc signature, IMethodRef methodRef) {
+    public MethodCognition(IServiceDesc service, IMethodDesc method, ISignatureDesc signature, IMethodRef methodRef, List<TypeCoercion> parameterTypeCoersion) {
         this.serviceDesc = service;
         this.methodDesc = method;
         this.signatureDesc = signature;
         this.methodRef = methodRef;
+        this.parameterTypeCoersion = parameterTypeCoersion;
     }
 
     public IMethodDesc getMethodDesc() {
@@ -40,4 +39,11 @@ class MethodCognition {
         return signatureDesc;
     }
 
+    public IServiceDesc getServiceDesc() {
+        return serviceDesc;
+    }
+
+    public List<TypeCoercion> getParameterTypeCoersion() {
+        return parameterTypeCoersion;
+    }
 }

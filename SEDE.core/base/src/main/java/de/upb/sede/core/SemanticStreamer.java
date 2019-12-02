@@ -56,7 +56,7 @@ public final class SemanticStreamer {
 	}
 
 	private static SEDEObject castStringToPrimitive(String data, String type){
-		PrimitiveType enumType = PrimitiveType.insensitiveValueOf(type);
+		PrimitiveType enumType = PrimitiveType.insensitiveValueOf(type).orElseThrow( () -> new RuntimeException("Primitive " + type + " not found."));
 		return parsePrimitive(data, enumType);
 	}
 

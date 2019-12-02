@@ -5,16 +5,19 @@ import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.InstructionIndexer;
 import de.upb.sede.composition.graphs.nodes.IIndexedInstruction;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.composition.graphs.types.IFieldType;
+import de.upb.sede.composition.graphs.types.*;
+import de.upb.sede.core.PrimitiveType;
 import de.upb.sede.exec.*;
 import de.upb.sede.types.IDataTypeDesc;
 import de.upb.sede.types.IDataTypeRef;
 import de.upb.sede.util.Streams;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static de.upb.sede.composition.graphs.typing.Locals.getServiceType;
@@ -24,16 +27,15 @@ class TypeCheckStep {
 
     private TypeJournal typeJournal;
 
-    private InstructionMethodResolver instructionMethodResolver;
+    private InstIndexMap<MethodCognition> methodCognitionMap;
 
     private InstructionIndexer instructions;
 
     private ISDLLookupService lookupService;
 
-
-    TypeCheckStep(TypeJournal typeJournal, InstructionMethodResolver instructionMethodResolver, InstructionIndexer instructions, ISDLLookupService lookupService) {
-        this.typeJournal = typeJournal;
-        this.instructionMethodResolver = instructionMethodResolver;
+    TypeCheckStep(TypeCheckOutput output, InstructionIndexer instructions, ISDLLookupService lookupService) {
+        this.methodCognitionMap = output.getMethodCognitionMap();
+        this.typeJournal = output.getJournal();
         this.instructions = instructions;
         this.lookupService = lookupService;
     }
@@ -45,40 +47,39 @@ class TypeCheckStep {
     }
 
     private void typeCheckContext(IIndexedInstruction indexedInstruction) {
-
         IInstructionNode inst = indexedInstruction.getInstruction();
         long index = indexedInstruction.getIndex();
 //        TypeJournalPage currentPage = typeJournal.getPageAt(index);
         TypeJournalPage nextPage = typeJournal.getPageAfterInst(index);
-        InstructionMethodResolver.Indexed indexedInstResolution;
-        indexedInstResolution = instructionMethodResolver.ofIndex(index);
+        Consumer<MethodCognition> indexedInstResolution;
+        indexedInstResolution = methodCognitionMap.setter(index);
         try {
-            recordCheckedTypes(inst, nextPage, indexedInstResolution);
+            typeCheckInstruction(inst, nextPage, indexedInstResolution);
         } catch(NullPointerException | TypeCheckException typeError) {
             throw new TypeCheckException(indexedInstruction, typeError);
         }
     }
 
-    private void recordCheckedTypes(IInstructionNode inst, TypeJournalPage typeContext, InstructionMethodResolver.Indexed iMR) {
+    private void typeCheckInstruction(IInstructionNode inst, TypeJournalPage typeContext, Consumer<MethodCognition> instMethodCognition) {
 
         String serviceContextQualifier;
 
         @Nullable // null indicates a static invocation
-        IFieldType fieldContext;
+        TypeClass fieldContext;
 
         if(inst.getContextIsFieldFlag()) {
             /*
              * type check field
              */
             String contextFieldName = inst.getContext();
-            IFieldType fieldType = typeContext.getFieldType(contextFieldName);
+            TypeClass fieldType = typeContext.getFieldType(contextFieldName);
             if(fieldType == null) {
                 throw TypeCheckException.undefinedField(contextFieldName);
-            } else if(!isService(fieldType.getFieldType())) {
-                throw TypeCheckException.unexpectedFieldType(fieldType, "Service Instance", "Service methods can only be invoked with service instances as a context.");
+            } else if(!isService(fieldType)) {
+                throw TypeCheckException.unexpectedFieldType(contextFieldName, fieldType, "Service Instance", "Service methods can only be invoked with service instances as a context.");
             }
             fieldContext = fieldType;
-            serviceContextQualifier = getServiceType(fieldType.getFieldType()).getQualifier();
+            serviceContextQualifier = getServiceType(fieldType).getQualifier();
         } else {
             serviceContextQualifier = inst.getContext();
             fieldContext = null;
@@ -114,8 +115,85 @@ class TypeCheckStep {
         ISignatureDesc signature = getMatchingSignature(serviceContextQualifier, method, inst);
         assert signature.getInputs().size() == inst.getParameterFields().size();
         /*
-         * Type-check signature
+         * Type-check signature by creating type coercions.
+         *
+         * If there exists a list of TypeCoercion then the parameter signature type checks.
          */
+        List<TypeCoercion> parameterTypeCoercions = coerceParameters(signature, inst, typeContext);
+        instMethodCognition.accept(new MethodCognition(service, method, signature, methodRef, parameterTypeCoercions));
+
+        if(inst.isAssignment()) {
+            /*
+             * Instruction assigns to a field.
+             * Record the resulting type
+             */
+            String assignedField = inst.getFieldName();
+            if(signature.getOutputs().isEmpty()) {
+                throw TypeCheckException.methodNoReturnValue(method.getQualifier(), assignedField);
+            }
+            IMethodParameterDesc methodOutput = signature.getOutputs().get(0);
+            String returnType = methodOutput.getType();
+            TypeClass fieldType;
+            try {
+                fieldType = getTypeClassOf(returnType);
+            } catch (TypeCheckException e) {
+                throw new TypeCheckException(
+                    String.format("Error classifying return type of method %s::%s",
+                        service.getQualifier(), method.getQualifier() ),
+                    e);
+            }
+            typeContext.setFieldType(assignedField, fieldType);
+        }
+
+    }
+
+    private TypeClass getTypeClassOf(String typeQualifier) {
+        /*
+         * Assume type is a primitive qualifier, i.e. "Number", "String", "Bool"
+         */
+        Optional<PrimitiveType> primTypeOpt = PrimitiveType.insensitiveValueOf(typeQualifier);
+        if(primTypeOpt.isPresent()) {
+            /*
+             * Method cannot declare the NULL class as its return value.
+             */
+            if(primTypeOpt.get() == PrimitiveType.NULL) {
+                throw TypeCheckException.methodReturnsNullClass();
+            }
+            IPrimitiveValueType primValType = PrimitiveValueType.builder()
+                .primitiveType(primTypeOpt.get()).build();
+            return primValType;
+        }
+        /*
+         * Assume type is a service type qualifier.
+         */
+        IServiceRef serviceRef = IServiceRef.of(null, typeQualifier);
+        Optional<IServiceDesc> serviceDescOpt = lookupService.lookup(serviceRef);
+        if(serviceDescOpt.isPresent()) {
+            IServiceInstanceType serviceInstanceType = ServiceInstanceType.builder()
+                .qualifier(typeQualifier)
+                .build();
+            return serviceInstanceType;
+        }
+        /*
+         * The last case remaining is a data value type.
+         */
+        IDataTypeRef dataTypeRef = IDataTypeRef.of(typeQualifier);
+        Optional<IDataTypeDesc> dataTypeOpt = lookupService.lookup(dataTypeRef);
+        if(dataTypeOpt.isPresent()) {
+            IDataValueType dataValueType = DataValueType.builder()
+                .qualifier(typeQualifier)
+                .build();
+            return dataValueType;
+        }
+
+        /*
+         * The type qualifier was not recognized..
+         */
+        throw TypeCheckException.unknownType(typeQualifier, "type");
+    }
+
+    private List<TypeCoercion> coerceParameters(ISignatureDesc signature, IInstructionNode inst, TypeJournalPage typeContext) {
+        List<TypeCoercion> parameterTypeCoercion = new ArrayList<>();
         int inputParamSize = signature.getInputs().size();
         for (int i = 0; i < inputParamSize; i++) {
             String expectedInputType = signature.getInputs().get(i).getType();
@@ -135,16 +213,15 @@ class TypeCheckStep {
                  * The given param is a field, e.g. `a`
                  * We look into the typing context to get the type of the field:
                  */
-                IFieldType paramType = typeContext.getFieldType(instParam);
+                TypeClass paramType = typeContext.getFieldType(instParam);
                 if(paramType == null) {
                     throw TypeCheckException.undefinedField(instParam);
                 }
-                typeCoercion = castValue(paramType, expectedInputType);
+                typeCoercion = castValue(instParam, paramType.getTypeQualifier(), expectedInputType);
             }
+            parameterTypeCoercion.add(typeCoercion);
         }
-
-        iMR.setMethodCognition(new MethodCognition(service, method, signature, methodRef));
-
+        return parameterTypeCoercion;
     }
 
 
@@ -176,12 +253,11 @@ class TypeCheckStep {
         return typeCoercion;
     }
 
-    private TypeCoercion castValue(IFieldType field, String targetType) {
-        String sourceType = field.getFieldType().getTypeQualifier();
+    private TypeCoercion castValue(String fieldName, String sourceType, String targetType) {
         IDataTypeRef sourceTypeRef = IDataTypeRef.of(sourceType);
         Optional<IDataTypeDesc> sourceTypeDescOpt = lookupService.lookup(sourceTypeRef);
         if(!sourceTypeDescOpt.isPresent()) {
-            throw TypeCheckException.unknownType(field);
+            throw TypeCheckException.unknownType(sourceType, "Data Type");
         }
         if(sourceType.equals(targetType)) {
             /*
@@ -201,5 +277,4 @@ class TypeCheckStep {
         }
         return TypeCoercion.typeCast(sourceType, targetType, sourceSemType);
     }
-
 }

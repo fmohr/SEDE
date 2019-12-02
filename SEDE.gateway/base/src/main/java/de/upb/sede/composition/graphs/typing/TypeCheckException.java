@@ -2,7 +2,7 @@ package de.upb.sede.composition.graphs.typing;
 
 import de.upb.sede.composition.graphs.nodes.IIndexedInstruction;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.composition.graphs.types.IFieldType;
+import de.upb.sede.composition.graphs.types.TypeClass;
 import de.upb.sede.exec.IMethodDesc;
 
 public class TypeCheckException extends RuntimeException {
@@ -44,18 +44,19 @@ public class TypeCheckException extends RuntimeException {
         return new TypeCheckException(errText);
     }
 
-    public static TypeCheckException unexpectedConstantType(String constant, String assumedConstantType, String expectedType, String message) {
+    public static TypeCheckException unexpectedConstantType(String constant, String assumedConstantType,
+                                                            String expectedType, String message) {
         String typeText = String.format("Constant `%s` of  type `%s`", constant, assumedConstantType);
         return unexpectedType(typeText, expectedType, message);
     }
 
-    public static TypeCheckException unexpectedFieldType(IFieldType field, String expectedType, String message) {
-        String typeText = String.format("Field `%s` of  type `%s`", field.getFieldName(), Locals.typeToText(field.getFieldType()));
+    public static TypeCheckException unexpectedFieldType(String fieldName, TypeClass fieldType, String expectedType, String message) {
+        String typeText = String.format("Field `%s` of  type `%s`", fieldName, Locals.typeToText(fieldType));
         return unexpectedType(typeText, expectedType, message);
     }
 
-    public static TypeCheckException unexpectedType(IFieldType field, String expectedType) {
-        return unexpectedFieldType(field, expectedType, null);
+    public static TypeCheckException unexpectedType(String fieldName, TypeClass fieldType, String expectedType) {
+        return unexpectedFieldType(fieldName, fieldType, expectedType, null);
     }
 
 
@@ -65,8 +66,8 @@ public class TypeCheckException extends RuntimeException {
         throw new TypeCheckException(errText);
     }
 
-    public static TypeCheckException unknownType(IFieldType fieldType) {
-        String errText = String.format("Field %s Unknown type `%s`", fieldType.getFieldName(), fieldType.getFieldType().getTypeQualifier());
+    public static TypeCheckException unknownType(String fieldName, TypeClass fieldType) {
+        String errText = String.format("Field %s Unknown type `%s`", fieldName, fieldType.getTypeQualifier());
         throw new TypeCheckException(errText);
     }
 
@@ -94,4 +95,16 @@ public class TypeCheckException extends RuntimeException {
             sourceType, targetType, sourceSemType, targetSemType);
         throw new TypeCheckException(errText);
     }
+
+    public static TypeCheckException methodNoReturnValue(String method, String assignedField) {
+        String errText = String.format("Cannot assign `%s`, " +
+            "method `%s` doesn't return any value", method, assignedField);
+        throw new TypeCheckException(errText);
+    }
+
+    public static TypeCheckException methodReturnsNullClass() {
+        String errText = "Returns null class";
+        throw new TypeCheckException(errText);
+    }
+
 }

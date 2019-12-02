@@ -1,13 +1,13 @@
 package de.upb.sede.composition.graphs.typing;
 
-import de.upb.sede.composition.graphs.types.IFieldType;
+import de.upb.sede.composition.graphs.types.TypeClass;
 
 public interface FieldTypeResolution {
 
 
-    IFieldType getFieldType(String fieldname);
+    TypeClass getFieldType(String fieldname);
 
-    void setFieldType(String fieldname, IFieldType valueType);
+    void setFieldType(String fieldname, TypeClass valueType);
 
 
 }

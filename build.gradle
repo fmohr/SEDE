@@ -16,7 +16,7 @@ subprojects {
     apply plugin: 'eclipse'
 
     group = 'de.upb.isys'
-    version = '0.0.12'
+    version = '0.0.13'
 
     configurations {
         provided

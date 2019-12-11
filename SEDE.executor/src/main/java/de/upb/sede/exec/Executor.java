@@ -157,7 +157,7 @@ public class Executor implements IExecutor {
 	@Override
 	public Execution exec(ExecRequest execRequest){
 		String execId = execRequest.getRequestID();
-		logger.debug("Executor has received execRequest: ExecutionId={}", execRequest.getRequestID());
+		logger.debug("Executor={} has received execRequest: ExecutionId={}", execId, execRequest.getRequestID());
 
 		/*
 		 * Retrieve the execution:
@@ -177,7 +177,10 @@ public class Executor implements IExecutor {
 		exec.getRunnableTasksObservable().observe(taskWorkerEnqueuer);
 
 		GraphJsonDeserializer.deserializeTasksInto(exec, execRequest.getCompositionGraph());
-
+        if(exec.hasExecutionFinished()) {
+            logger.error("Executor={}: Execution={} hasn't been started yet, but is marked finished.", execId, execRequest.getRequestID());
+            throw new IllegalStateException("Execution already finished: " + execRequest.getRequestID());
+        }
 		exec.getState().observe(executionGarbageCollector);
 		exec.start();
 		/*

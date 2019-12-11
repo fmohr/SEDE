@@ -10,8 +10,8 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.util.AsyncObserver;
-import de.upb.sede.util.JsonSerializable;
+import de.upb.sede.util.*;
+import de.upb.sede.util.Observer;
 import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -34,8 +34,6 @@ import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.InputFields;
 import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.requests.resolve.ResolveRequest;
-import de.upb.sede.util.FileUtil;
-import de.upb.sede.util.Observer;
 
 public class CoreClient implements ICoreClient{
 
@@ -73,6 +71,10 @@ public class CoreClient implements ICoreClient{
 
 	@Override
 	public void join(String requestId, boolean interruptExecution, long timeout, TimeUnit timeUnit) {
+	    if(Thread.interrupted()) {
+	        logger.warn("Client was interrupted before joining the execution={}.", requestId);
+	        throw new RuntimeException("Client was interrupted before join");
+        }
 		Optional<Execution> execution = executor.getExecution(requestId);
 		if(!execution.isPresent()) {
 			return;
@@ -90,7 +92,8 @@ public class CoreClient implements ICoreClient{
 			else
 				executionIsFinished.acquire();
 		} catch (InterruptedException e) {
-			logger.info("CoreClient was interrupted {} while joining execution={}.", requestId);
+		    if(Thread.interrupted())
+			    logger.info("CoreClient was interrupted while joining execution={}.", requestId);
 			if (interruptExecution) {
 				logger.info("Propagate interruption to execution={}", requestId);
 				interrupt(requestId);

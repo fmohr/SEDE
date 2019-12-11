@@ -1,5 +1,8 @@
 package de.upb.sede.util;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -11,6 +14,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @param <T> The message type of the observer.
  */
 public class AsyncObserver<T>  implements Observer<T>{
+
+
+    private final static Logger logger = LoggerFactory.getLogger(AsyncObserver.class);
 
 	private final Observer<T> synchronizedObserver;
 	private final ExecutorService asyncExecutor;
@@ -35,8 +41,13 @@ public class AsyncObserver<T>  implements Observer<T>{
 	}
 
 	public void notification(T t) {
-		NotificationTask<T> task = new NotificationTask<T>(synchronizedObserver, t);
-		Future<?> future = asyncExecutor.submit(task);
+		if(asyncExecutor.isShutdown()) {
+		    logger.warn("Execution has been shut down, but notification {} was still submitted. Executing it directly.", t);
+            synchronizedObserver.notification(t);
+        } else {
+            NotificationTask<T> task = new NotificationTask<T>(synchronizedObserver, t);
+            asyncExecutor.submit(task);
+        }
 	}
 
 	public boolean removeAfterNotification(T t) {

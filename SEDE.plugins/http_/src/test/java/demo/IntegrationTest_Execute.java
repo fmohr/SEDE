@@ -52,12 +52,12 @@ public class IntegrationTest_Execute {
 
 	@BeforeClass
 	public static void setup() {
-		String exec1Config = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Executor_1")
+		String exec1Config = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Executor_1").withThreadNumberId(2)
 				.withSupportedServices("demo.math.Addierer").toString();
 		ExecutorConfiguration config = ExecutorConfiguration.parseJSON(exec1Config);
 		executor1 = new ExecutorHttpServer(config, "localhost", 9010);
 
-		String exec2Config = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Executor_2")
+		String exec2Config = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Executor_2").withThreadNumberId(2)
 				.withSupportedServices("demo.math.Gerade").toString();
 		config = ExecutorConfiguration.parseJSON(exec2Config);
 		executor2 = new ExecutorHttpServer(config, "localhost", 9002);
@@ -67,7 +67,7 @@ public class IntegrationTest_Execute {
 		executor1.registerToGateway("localhost:9100");
 		executor2.registerToGateway("localhost:9100");
 
-		String clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core_Client_Services")
+		String clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core_Client_Services").withThreadNumberId(2)
 				.withSupportedServices("demo.math.Addierer", "demo.math.Gerade").toString();
 		config = ExecutorConfiguration.parseJSON(clientConfig);
 		Executor clientExecutor = new Executor(config);
@@ -75,7 +75,7 @@ public class IntegrationTest_Execute {
 		localClient.writeDotGraphToDir("testrsc/graphs/local-exec");
 
 		/* supports nothing */
-		clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core_Client")
+		clientConfig = ExecutorConfigurationCreator.newConfigFile().withExecutorId("Core_Client").withThreadNumberId(2)
 				.toString();
 		config = ExecutorConfiguration.parseJSON(clientConfig);
 		httpClient =  HttpCoreClient.createNew(config, "localhost", 9003, "localhost", 9100);
@@ -124,7 +124,7 @@ public class IntegrationTest_Execute {
 		testInterruptExecution(cc);
 		if(cc.getClientExecutor().getExecPool().hasExecution("SleepRequest")) {
 			Execution clientExec = cc.getClientExecutor().getExecution("SleepRequest").orElse(null);
-			Thread.sleep(100);
+			Thread.sleep(1000);
 			if (clientExec != null) {
 				Assert.assertTrue(clientExec.hasExecutionFinished());
 				Assert.assertFalse(cc.getClientExecutor().getWorkerPool().isExecutionOngoing(clientExec));
@@ -151,7 +151,7 @@ public class IntegrationTest_Execute {
 		String requestId = cc.run(rr, results);
 		Assert.assertEquals("SleepRequest", requestId);
 
-		Thread.sleep(300); // wait for the result to be calculated.
+		Thread.sleep(1000); // wait for the result to be calculated.
 
 		cc.interrupt(requestId);
 

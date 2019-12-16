@@ -39,7 +39,6 @@ public final class NumericParameter implements INumericParameter {
   private final @Nullable Integer splitsRefined;
   private final @Nullable Integer minInterval;
   private final @Nullable Double defaultValue;
-  private final String paramType;
   private final boolean isOptional;
   private final String qualifier;
   private final ImmutableList<String> metaTags;
@@ -56,9 +55,6 @@ public final class NumericParameter implements INumericParameter {
     if (builder.isIntegerIsSet()) {
       initShim.isInteger(builder.isInteger);
     }
-    if (builder.paramType != null) {
-      initShim.paramType(builder.paramType);
-    }
     if (builder.isOptionalIsSet()) {
       initShim.isOptional(builder.isOptional);
     }
@@ -66,7 +62,6 @@ public final class NumericParameter implements INumericParameter {
       initShim.simpleName(builder.simpleName);
     }
     this.isInteger = initShim.isInteger();
-    this.paramType = initShim.getParamType();
     this.isOptional = initShim.isOptional();
     this.simpleName = initShim.getSimpleName();
     this.initShim = null;
@@ -79,7 +74,6 @@ public final class NumericParameter implements INumericParameter {
       @Nullable Integer splitsRefined,
       @Nullable Integer minInterval,
       @Nullable Double defaultValue,
-      String paramType,
       boolean isOptional,
       String qualifier,
       ImmutableList<String> metaTags,
@@ -90,7 +84,6 @@ public final class NumericParameter implements INumericParameter {
     this.splitsRefined = splitsRefined;
     this.minInterval = minInterval;
     this.defaultValue = defaultValue;
-    this.paramType = paramType;
     this.isOptional = isOptional;
     this.qualifier = qualifier;
     this.metaTags = metaTags;
@@ -122,24 +115,6 @@ public final class NumericParameter implements INumericParameter {
     void isInteger(boolean isInteger) {
       this.isInteger = isInteger;
       isIntegerBuildStage = STAGE_INITIALIZED;
-    }
-
-    private byte paramTypeBuildStage = STAGE_UNINITIALIZED;
-    private String paramType;
-
-    String getParamType() {
-      if (paramTypeBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
-      if (paramTypeBuildStage == STAGE_UNINITIALIZED) {
-        paramTypeBuildStage = STAGE_INITIALIZING;
-        this.paramType = Objects.requireNonNull(getParamTypeInitialize(), "paramType");
-        paramTypeBuildStage = STAGE_INITIALIZED;
-      }
-      return this.paramType;
-    }
-
-    void paramType(String paramType) {
-      this.paramType = paramType;
-      paramTypeBuildStage = STAGE_INITIALIZED;
     }
 
     private byte isOptionalBuildStage = STAGE_UNINITIALIZED;
@@ -181,7 +156,6 @@ public final class NumericParameter implements INumericParameter {
     private String formatInitCycleMessage() {
       List<String> attributes = new ArrayList<>();
       if (isIntegerBuildStage == STAGE_INITIALIZING) attributes.add("isInteger");
-      if (paramTypeBuildStage == STAGE_INITIALIZING) attributes.add("paramType");
       if (isOptionalBuildStage == STAGE_INITIALIZING) attributes.add("isOptional");
       if (simpleNameBuildStage == STAGE_INITIALIZING) attributes.add("simpleName");
       return "Cannot build NumericParameter, attribute initializers form cycle " + attributes;
@@ -190,10 +164,6 @@ public final class NumericParameter implements INumericParameter {
 
   private boolean isIntegerInitialize() {
     return INumericParameter.super.isInteger();
-  }
-
-  private String getParamTypeInitialize() {
-    return INumericParameter.super.getParamType();
   }
 
   private boolean isOptionalInitialize() {
@@ -262,18 +232,6 @@ public final class NumericParameter implements INumericParameter {
   }
 
   /**
-   * @return The value of the {@code paramType} attribute
-   */
-  @JsonProperty("paramType")
-  @Override
-  public String getParamType() {
-    InitShim shim = this.initShim;
-    return shim != null
-        ? shim.getParamType()
-        : this.paramType;
-  }
-
-  /**
    * @return The value of the {@code isOptional} attribute
    */
   @JsonProperty("isOptional")
@@ -330,7 +288,6 @@ public final class NumericParameter implements INumericParameter {
         this.splitsRefined,
         this.minInterval,
         this.defaultValue,
-        this.paramType,
         this.isOptional,
         this.qualifier,
         this.metaTags,
@@ -352,7 +309,6 @@ public final class NumericParameter implements INumericParameter {
         this.splitsRefined,
         this.minInterval,
         this.defaultValue,
-        this.paramType,
         this.isOptional,
         this.qualifier,
         this.metaTags,
@@ -374,7 +330,6 @@ public final class NumericParameter implements INumericParameter {
         this.splitsRefined,
         this.minInterval,
         this.defaultValue,
-        this.paramType,
         this.isOptional,
         this.qualifier,
         this.metaTags,
@@ -396,7 +351,6 @@ public final class NumericParameter implements INumericParameter {
         value,
         this.minInterval,
         this.defaultValue,
-        this.paramType,
         this.isOptional,
         this.qualifier,
         this.metaTags,
@@ -418,7 +372,6 @@ public final class NumericParameter implements INumericParameter {
         this.splitsRefined,
         value,
         this.defaultValue,
-        this.paramType,
         this.isOptional,
         this.qualifier,
         this.metaTags,
@@ -440,30 +393,6 @@ public final class NumericParameter implements INumericParameter {
         this.splitsRefined,
         this.minInterval,
         value,
-        this.paramType,
-        this.isOptional,
-        this.qualifier,
-        this.metaTags,
-        this.simpleName);
-  }
-
-  /**
-   * Copy the current immutable object by setting a value for the {@link INumericParameter#getParamType() paramType} attribute.
-   * An equals check used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for paramType
-   * @return A modified copy of the {@code this} object
-   */
-  public final NumericParameter withParamType(String value) {
-    String newValue = Objects.requireNonNull(value, "paramType");
-    if (this.paramType.equals(newValue)) return this;
-    return new NumericParameter(
-        this.isInteger,
-        this.min,
-        this.max,
-        this.splitsRefined,
-        this.minInterval,
-        this.defaultValue,
-        newValue,
         this.isOptional,
         this.qualifier,
         this.metaTags,
@@ -485,7 +414,6 @@ public final class NumericParameter implements INumericParameter {
         this.splitsRefined,
         this.minInterval,
         this.defaultValue,
-        this.paramType,
         value,
         this.qualifier,
         this.metaTags,
@@ -508,7 +436,6 @@ public final class NumericParameter implements INumericParameter {
         this.splitsRefined,
         this.minInterval,
         this.defaultValue,
-        this.paramType,
         this.isOptional,
         newValue,
         this.metaTags,
@@ -529,7 +456,6 @@ public final class NumericParameter implements INumericParameter {
         this.splitsRefined,
         this.minInterval,
         this.defaultValue,
-        this.paramType,
         this.isOptional,
         this.qualifier,
         newValue,
@@ -552,7 +478,6 @@ public final class NumericParameter implements INumericParameter {
         this.splitsRefined,
         this.minInterval,
         this.defaultValue,
-        this.paramType,
         this.isOptional,
         this.qualifier,
         newValue,
@@ -575,7 +500,6 @@ public final class NumericParameter implements INumericParameter {
         this.splitsRefined,
         this.minInterval,
         this.defaultValue,
-        this.paramType,
         this.isOptional,
         this.qualifier,
         this.metaTags,
@@ -600,13 +524,12 @@ public final class NumericParameter implements INumericParameter {
         && Objects.equals(splitsRefined, another.splitsRefined)
         && Objects.equals(minInterval, another.minInterval)
         && Objects.equals(defaultValue, another.defaultValue)
-        && paramType.equals(another.paramType)
         && isOptional == another.isOptional
         && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code isInteger}, {@code min}, {@code max}, {@code splitsRefined}, {@code minInterval}, {@code defaultValue}, {@code paramType}, {@code isOptional}, {@code qualifier}.
+   * Computes a hash code from attributes: {@code isInteger}, {@code min}, {@code max}, {@code splitsRefined}, {@code minInterval}, {@code defaultValue}, {@code isOptional}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -618,7 +541,6 @@ public final class NumericParameter implements INumericParameter {
     h += (h << 5) + Objects.hashCode(splitsRefined);
     h += (h << 5) + Objects.hashCode(minInterval);
     h += (h << 5) + Objects.hashCode(defaultValue);
-    h += (h << 5) + paramType.hashCode();
     h += (h << 5) + Booleans.hashCode(isOptional);
     h += (h << 5) + qualifier.hashCode();
     return h;
@@ -638,7 +560,6 @@ public final class NumericParameter implements INumericParameter {
         .add("splitsRefined", splitsRefined)
         .add("minInterval", minInterval)
         .add("defaultValue", defaultValue)
-        .add("paramType", paramType)
         .add("isOptional", isOptional)
         .add("qualifier", qualifier)
         .toString();
@@ -661,7 +582,6 @@ public final class NumericParameter implements INumericParameter {
     @Nullable Integer splitsRefined;
     @Nullable Integer minInterval;
     @Nullable Double defaultValue;
-    @Nullable String paramType;
     boolean isOptional;
     boolean isOptionalIsSet;
     @Nullable String qualifier;
@@ -691,10 +611,6 @@ public final class NumericParameter implements INumericParameter {
     @JsonProperty("defaultValue")
     public void setDefaultValue(@Nullable Double defaultValue) {
       this.defaultValue = defaultValue;
-    }
-    @JsonProperty("paramType")
-    public void setParamType(String paramType) {
-      this.paramType = paramType;
     }
     @JsonProperty("isOptional")
     public void setIsOptional(boolean isOptional) {
@@ -726,8 +642,6 @@ public final class NumericParameter implements INumericParameter {
     @Override
     public Double getDefaultValue() { throw new UnsupportedOperationException(); }
     @Override
-    public String getParamType() { throw new UnsupportedOperationException(); }
-    @Override
     public boolean isOptional() { throw new UnsupportedOperationException(); }
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
@@ -735,6 +649,8 @@ public final class NumericParameter implements INumericParameter {
     public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
     @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
+    @Override
+    public String getParamType() { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -764,9 +680,6 @@ public final class NumericParameter implements INumericParameter {
     if (json.defaultValue != null) {
       builder.defaultValue(json.defaultValue);
     }
-    if (json.paramType != null) {
-      builder.paramType(json.paramType);
-    }
     if (json.isOptionalIsSet) {
       builder.isOptional(json.isOptional);
     }
@@ -780,6 +693,37 @@ public final class NumericParameter implements INumericParameter {
       builder.simpleName(json.simpleName);
     }
     return builder.build();
+  }
+
+  @SuppressWarnings("Immutable")
+  private transient volatile long lazyInitBitmap;
+
+  private static final long PARAM_TYPE_LAZY_INIT_BIT = 0x1L;
+
+  @SuppressWarnings("Immutable")
+  private transient String paramType;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link INumericParameter#getParamType() paramType} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code paramType} attribute
+   */
+  @Override
+  public String getParamType() {
+    if ((lazyInitBitmap & PARAM_TYPE_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & PARAM_TYPE_LAZY_INIT_BIT) == 0) {
+          this.paramType = Objects.requireNonNull(INumericParameter.super.getParamType(), "paramType");
+          lazyInitBitmap |= PARAM_TYPE_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return paramType;
   }
 
   /**
@@ -808,7 +752,6 @@ public final class NumericParameter implements INumericParameter {
    *    .splitsRefined(Integer | null) // nullable {@link INumericParameter#getSplitsRefined() splitsRefined}
    *    .minInterval(Integer | null) // nullable {@link INumericParameter#getMinInterval() minInterval}
    *    .defaultValue(Double | null) // nullable {@link INumericParameter#getDefaultValue() defaultValue}
-   *    .paramType(String) // optional {@link INumericParameter#getParamType() paramType}
    *    .isOptional(boolean) // optional {@link INumericParameter#isOptional() isOptional}
    *    .qualifier(String) // required {@link INumericParameter#getQualifier() qualifier}
    *    .addMetaTags|addAllMetaTags(String) // {@link INumericParameter#getMetaTags() metaTags} elements
@@ -843,7 +786,6 @@ public final class NumericParameter implements INumericParameter {
     private @Nullable Integer splitsRefined;
     private @Nullable Integer minInterval;
     private @Nullable Double defaultValue;
-    private @Nullable String paramType;
     private boolean isOptional;
     private @Nullable String qualifier;
     private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
@@ -881,7 +823,6 @@ public final class NumericParameter implements INumericParameter {
       if (defaultValueValue != null) {
         defaultValue(defaultValueValue);
       }
-      paramType(instance.getParamType());
       isOptional(instance.isOptional());
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
@@ -958,7 +899,6 @@ public final class NumericParameter implements INumericParameter {
       }
       if (object instanceof IParameter) {
         IParameter instance = (IParameter) object;
-        paramType(instance.getParamType());
         isOptional(instance.isOptional());
       }
       if (object instanceof IQualifiable) {
@@ -1040,19 +980,6 @@ public final class NumericParameter implements INumericParameter {
     @JsonProperty("defaultValue")
     public final Builder defaultValue(@Nullable Double defaultValue) {
       this.defaultValue = defaultValue;
-      return this;
-    }
-
-    /**
-     * Initializes the value for the {@link INumericParameter#getParamType() paramType} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link INumericParameter#getParamType() paramType}.</em>
-     * @param paramType The value for paramType 
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("paramType")
-    public final Builder paramType(String paramType) {
-      this.paramType = Objects.requireNonNull(paramType, "paramType");
       return this;
     }
 

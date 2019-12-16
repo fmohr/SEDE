@@ -38,7 +38,6 @@ public final class MutableNumericParameter implements INumericParameter {
   private @Nullable Integer splitsRefined;
   private @Nullable Integer minInterval;
   private @Nullable Double defaultValue;
-  private String paramType;
   private boolean isOptional;
   private String qualifier;
   private final ArrayList<String> metaTags = new ArrayList<String>();
@@ -111,17 +110,6 @@ public final class MutableNumericParameter implements INumericParameter {
   }
 
   /**
-   * @return assigned or, otherwise, newly computed, not cached value of {@code paramType} attribute
-   */
-  @JsonProperty("paramType")
-  @Override
-  public final String getParamType() {
-    return paramTypeIsSet()
-        ? paramType
-        : INumericParameter.super.getParamType();
-  }
-
-  /**
    * @return assigned or, otherwise, newly computed, not cached value of {@code isOptional} attribute
    */
   @JsonProperty("isOptional")
@@ -178,7 +166,6 @@ public final class MutableNumericParameter implements INumericParameter {
     splitsRefined = null;
     minInterval = null;
     defaultValue = null;
-    paramType = null;
     isOptional = false;
     qualifier = null;
     metaTags.clear();
@@ -260,7 +247,6 @@ public final class MutableNumericParameter implements INumericParameter {
       if (defaultValueValue != null) {
         setDefaultValue(defaultValueValue);
       }
-      setParamType(instance.getParamType());
       setIsOptional(instance.isOptional());
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
@@ -295,7 +281,6 @@ public final class MutableNumericParameter implements INumericParameter {
     }
     if (object instanceof IParameter) {
       IParameter instance = (IParameter) object;
-      setParamType(instance.getParamType());
       setIsOptional(instance.isOptional());
     }
     if (object instanceof IQualifiable) {
@@ -371,18 +356,6 @@ public final class MutableNumericParameter implements INumericParameter {
   @CanIgnoreReturnValue
   public MutableNumericParameter setDefaultValue(@Nullable Double defaultValue) {
     this.defaultValue = defaultValue;
-    return this;
-  }
-
-  /**
-   * Assigns a value to the {@link INumericParameter#getParamType() paramType} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link INumericParameter#getParamType() paramType}.</em>
-   * @param paramType The value for paramType
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableNumericParameter setParamType(String paramType) {
-    this.paramType = Objects.requireNonNull(paramType, "paramType");
     return this;
   }
 
@@ -498,14 +471,6 @@ public final class MutableNumericParameter implements INumericParameter {
   }
 
   /**
-   * Returns {@code true} if the default attribute {@link INumericParameter#getParamType() paramType} is set.
-   * @return {@code true} if set
-   */
-  public final boolean paramTypeIsSet() {
-    return paramType != null;
-  }
-
-  /**
    * Returns {@code true} if the default attribute {@link INumericParameter#getSimpleName() simpleName} is set.
    * @return {@code true} if set
    */
@@ -592,7 +557,6 @@ public final class MutableNumericParameter implements INumericParameter {
 
   private boolean equalTo(MutableNumericParameter another) {
     boolean isInteger = isInteger();
-    String paramType = getParamType();
     boolean isOptional = isOptional();
     return isInteger == another.isInteger()
         && Objects.equals(min, another.min)
@@ -600,13 +564,12 @@ public final class MutableNumericParameter implements INumericParameter {
         && Objects.equals(splitsRefined, another.splitsRefined)
         && Objects.equals(minInterval, another.minInterval)
         && Objects.equals(defaultValue, another.defaultValue)
-        && paramType.equals(another.getParamType())
         && isOptional == another.isOptional()
         && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code isInteger}, {@code min}, {@code max}, {@code splitsRefined}, {@code minInterval}, {@code defaultValue}, {@code paramType}, {@code isOptional}, {@code qualifier}.
+   * Computes a hash code from attributes: {@code isInteger}, {@code min}, {@code max}, {@code splitsRefined}, {@code minInterval}, {@code defaultValue}, {@code isOptional}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -619,8 +582,6 @@ public final class MutableNumericParameter implements INumericParameter {
     h += (h << 5) + Objects.hashCode(splitsRefined);
     h += (h << 5) + Objects.hashCode(minInterval);
     h += (h << 5) + Objects.hashCode(defaultValue);
-    String paramType = getParamType();
-    h += (h << 5) + paramType.hashCode();
     boolean isOptional = isOptional();
     h += (h << 5) + Booleans.hashCode(isOptional);
     h += (h << 5) + qualifier.hashCode();
@@ -641,7 +602,6 @@ public final class MutableNumericParameter implements INumericParameter {
         .add("splitsRefined", getSplitsRefined())
         .add("minInterval", getMinInterval())
         .add("defaultValue", getDefaultValue())
-        .add("paramType", getParamType())
         .add("isOptional", isOptional())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
         .toString();

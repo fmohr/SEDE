@@ -33,7 +33,6 @@ public final class MutableInterfaceParameter implements IInterfaceParameter {
   private long optBits;
 
   private String interfaceQualifier;
-  private String paramType;
   private boolean isOptional;
   private String qualifier;
   private final ArrayList<String> metaTags = new ArrayList<String>();
@@ -59,17 +58,6 @@ public final class MutableInterfaceParameter implements IInterfaceParameter {
       checkRequiredAttributes();
     }
     return interfaceQualifier;
-  }
-
-  /**
-   * @return assigned or, otherwise, newly computed, not cached value of {@code paramType} attribute
-   */
-  @JsonProperty("paramType")
-  @Override
-  public final String getParamType() {
-    return paramTypeIsSet()
-        ? paramType
-        : IInterfaceParameter.super.getParamType();
   }
 
   /**
@@ -124,7 +112,6 @@ public final class MutableInterfaceParameter implements IInterfaceParameter {
     initBits = 0x3L;
     optBits = 0;
     interfaceQualifier = null;
-    paramType = null;
     isOptional = false;
     qualifier = null;
     metaTags.clear();
@@ -188,7 +175,6 @@ public final class MutableInterfaceParameter implements IInterfaceParameter {
       if (instance.interfaceQualifierIsSet()) {
         setInterfaceQualifier(instance.getInterfaceQualifier());
       }
-      setParamType(instance.getParamType());
       setIsOptional(instance.isOptional());
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
@@ -203,7 +189,6 @@ public final class MutableInterfaceParameter implements IInterfaceParameter {
     }
     if (object instanceof IParameter) {
       IParameter instance = (IParameter) object;
-      setParamType(instance.getParamType());
       setIsOptional(instance.isOptional());
     }
     if (object instanceof IQualifiable) {
@@ -223,18 +208,6 @@ public final class MutableInterfaceParameter implements IInterfaceParameter {
   public MutableInterfaceParameter setInterfaceQualifier(String interfaceQualifier) {
     this.interfaceQualifier = Objects.requireNonNull(interfaceQualifier, "interfaceQualifier");
     initBits &= ~INIT_BIT_INTERFACE_QUALIFIER;
-    return this;
-  }
-
-  /**
-   * Assigns a value to the {@link IInterfaceParameter#getParamType() paramType} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IInterfaceParameter#getParamType() paramType}.</em>
-   * @param paramType The value for paramType
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableInterfaceParameter setParamType(String paramType) {
-    this.paramType = Objects.requireNonNull(paramType, "paramType");
     return this;
   }
 
@@ -350,14 +323,6 @@ public final class MutableInterfaceParameter implements IInterfaceParameter {
   }
 
   /**
-   * Returns {@code true} if the default attribute {@link IInterfaceParameter#getParamType() paramType} is set.
-   * @return {@code true} if set
-   */
-  public final boolean paramTypeIsSet() {
-    return paramType != null;
-  }
-
-  /**
    * Returns {@code true} if the default attribute {@link IInterfaceParameter#getSimpleName() simpleName} is set.
    * @return {@code true} if set
    */
@@ -445,24 +410,20 @@ public final class MutableInterfaceParameter implements IInterfaceParameter {
   }
 
   private boolean equalTo(MutableInterfaceParameter another) {
-    String paramType = getParamType();
     boolean isOptional = isOptional();
     return interfaceQualifier.equals(another.interfaceQualifier)
-        && paramType.equals(another.getParamType())
         && isOptional == another.isOptional()
         && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code interfaceQualifier}, {@code paramType}, {@code isOptional}, {@code qualifier}.
+   * Computes a hash code from attributes: {@code interfaceQualifier}, {@code isOptional}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     int h = 5381;
     h += (h << 5) + interfaceQualifier.hashCode();
-    String paramType = getParamType();
-    h += (h << 5) + paramType.hashCode();
     boolean isOptional = isOptional();
     h += (h << 5) + Booleans.hashCode(isOptional);
     h += (h << 5) + qualifier.hashCode();
@@ -478,7 +439,6 @@ public final class MutableInterfaceParameter implements IInterfaceParameter {
   public String toString() {
     return MoreObjects.toStringHelper("MutableInterfaceParameter")
         .add("interfaceQualifier", interfaceQualifierIsSet() ? getInterfaceQualifier() : "?")
-        .add("paramType", getParamType())
         .add("isOptional", isOptional())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
         .toString();

@@ -27,6 +27,7 @@ import org.immutables.value.Generated;
 public final class MutableMethodParameterDesc implements IMethodParameterDesc {
   private static final long INIT_BIT_TYPE = 0x1L;
   private static final long OPT_BIT_CALL_BY_VALUE = 0x1L;
+  private static final long OPT_BIT_READ_ONLY = 0x2L;
   private long initBits = 0x1L;
   private long optBits;
 
@@ -34,6 +35,7 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
   private @Nullable String name;
   private @Nullable String fixedValue;
   private boolean callByValue;
+  private boolean readOnly;
 
   private MutableMethodParameterDesc() {}
 
@@ -87,6 +89,17 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
   }
 
   /**
+   * @return assigned or, otherwise, newly computed, not cached value of {@code readOnly} attribute
+   */
+  @JsonProperty("readOnly")
+  @Override
+  public final boolean readOnly() {
+    return readOnlyIsSet()
+        ? readOnly
+        : IMethodParameterDesc.super.readOnly();
+  }
+
+  /**
    * Clears the object by setting all attributes to their initial values.
    * @return {@code this} for use in a chained invocation
    */
@@ -98,6 +111,7 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
     name = null;
     fixedValue = null;
     callByValue = false;
+    readOnly = false;
     return this;
   }
 
@@ -124,6 +138,7 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
       setFixedValue(fixedValueValue);
     }
     setCallByValue(instance.callByValue());
+    setReadOnly(instance.readOnly());
     return this;
   }
 
@@ -148,6 +163,7 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
       setFixedValue(fixedValueValue);
     }
     setCallByValue(instance.callByValue());
+    setReadOnly(instance.readOnly());
     return this;
   }
 
@@ -199,6 +215,19 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
   }
 
   /**
+   * Assigns a value to the {@link IMethodParameterDesc#readOnly() readOnly} attribute.
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IMethodParameterDesc#readOnly() readOnly}.</em>
+   * @param readOnly The value for readOnly
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public MutableMethodParameterDesc setReadOnly(boolean readOnly) {
+    this.readOnly = readOnly;
+    optBits |= OPT_BIT_READ_ONLY;
+    return this;
+  }
+
+  /**
    * Returns {@code true} if the required attribute {@link IMethodParameterDesc#getType() type} is set.
    * @return {@code true} if set
    */
@@ -212,6 +241,14 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
    */
   public final boolean callByValueIsSet() {
     return (optBits & OPT_BIT_CALL_BY_VALUE) != 0;
+  }
+
+  /**
+   * Returns {@code true} if the default attribute {@link IMethodParameterDesc#readOnly() readOnly} is set.
+   * @return {@code true} if set
+   */
+  public final boolean readOnlyIsSet() {
+    return (optBits & OPT_BIT_READ_ONLY) != 0;
   }
 
 
@@ -233,6 +270,16 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
   public final MutableMethodParameterDesc unsetCallByValue() {
     optBits |= 0;
     callByValue = false;
+    return this;
+  }
+  /**
+   * Reset an attribute to its initial value.
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
+  public final MutableMethodParameterDesc unsetReadOnly() {
+    optBits |= 0;
+    readOnly = false;
     return this;
   }
 
@@ -283,14 +330,16 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
 
   private boolean equalTo(MutableMethodParameterDesc another) {
     boolean callByValue = callByValue();
+    boolean readOnly = readOnly();
     return type.equals(another.type)
         && Objects.equals(name, another.name)
         && Objects.equals(fixedValue, another.fixedValue)
-        && callByValue == another.callByValue();
+        && callByValue == another.callByValue()
+        && readOnly == another.readOnly();
   }
 
   /**
-   * Computes a hash code from attributes: {@code type}, {@code name}, {@code fixedValue}, {@code callByValue}.
+   * Computes a hash code from attributes: {@code type}, {@code name}, {@code fixedValue}, {@code callByValue}, {@code readOnly}.
    * @return hashCode value
    */
   @Override
@@ -301,6 +350,8 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
     h += (h << 5) + Objects.hashCode(fixedValue);
     boolean callByValue = callByValue();
     h += (h << 5) + Booleans.hashCode(callByValue);
+    boolean readOnly = readOnly();
+    h += (h << 5) + Booleans.hashCode(readOnly);
     return h;
   }
 
@@ -316,6 +367,7 @@ public final class MutableMethodParameterDesc implements IMethodParameterDesc {
         .add("name", getName())
         .add("fixedValue", getFixedValue())
         .add("callByValue", callByValue())
+        .add("readOnly", readOnly())
         .toString();
   }
 }

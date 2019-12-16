@@ -25,4 +25,9 @@ public interface IMethodParameterDesc {
         return true;
     }
 
+    @Value.Default
+    default boolean readOnly() {
+        return false;
+    }
+
 }

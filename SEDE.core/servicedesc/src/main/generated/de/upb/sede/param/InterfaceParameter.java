@@ -34,7 +34,6 @@ import org.immutables.value.Generated;
 @CheckReturnValue
 public final class InterfaceParameter implements IInterfaceParameter {
   private final String interfaceQualifier;
-  private final String paramType;
   private final boolean isOptional;
   private final String qualifier;
   private final ImmutableList<String> metaTags;
@@ -44,16 +43,12 @@ public final class InterfaceParameter implements IInterfaceParameter {
     this.interfaceQualifier = builder.interfaceQualifier;
     this.qualifier = builder.qualifier;
     this.metaTags = builder.metaTags.build();
-    if (builder.paramType != null) {
-      initShim.paramType(builder.paramType);
-    }
     if (builder.isOptionalIsSet()) {
       initShim.isOptional(builder.isOptional);
     }
     if (builder.simpleName != null) {
       initShim.simpleName(builder.simpleName);
     }
-    this.paramType = initShim.getParamType();
     this.isOptional = initShim.isOptional();
     this.simpleName = initShim.getSimpleName();
     this.initShim = null;
@@ -61,13 +56,11 @@ public final class InterfaceParameter implements IInterfaceParameter {
 
   private InterfaceParameter(
       String interfaceQualifier,
-      String paramType,
       boolean isOptional,
       String qualifier,
       ImmutableList<String> metaTags,
       String simpleName) {
     this.interfaceQualifier = interfaceQualifier;
-    this.paramType = paramType;
     this.isOptional = isOptional;
     this.qualifier = qualifier;
     this.metaTags = metaTags;
@@ -83,24 +76,6 @@ public final class InterfaceParameter implements IInterfaceParameter {
 
   @Generated(from = "IInterfaceParameter", generator = "Immutables")
   private final class InitShim {
-    private byte paramTypeBuildStage = STAGE_UNINITIALIZED;
-    private String paramType;
-
-    String getParamType() {
-      if (paramTypeBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
-      if (paramTypeBuildStage == STAGE_UNINITIALIZED) {
-        paramTypeBuildStage = STAGE_INITIALIZING;
-        this.paramType = Objects.requireNonNull(getParamTypeInitialize(), "paramType");
-        paramTypeBuildStage = STAGE_INITIALIZED;
-      }
-      return this.paramType;
-    }
-
-    void paramType(String paramType) {
-      this.paramType = paramType;
-      paramTypeBuildStage = STAGE_INITIALIZED;
-    }
-
     private byte isOptionalBuildStage = STAGE_UNINITIALIZED;
     private boolean isOptional;
 
@@ -139,15 +114,10 @@ public final class InterfaceParameter implements IInterfaceParameter {
 
     private String formatInitCycleMessage() {
       List<String> attributes = new ArrayList<>();
-      if (paramTypeBuildStage == STAGE_INITIALIZING) attributes.add("paramType");
       if (isOptionalBuildStage == STAGE_INITIALIZING) attributes.add("isOptional");
       if (simpleNameBuildStage == STAGE_INITIALIZING) attributes.add("simpleName");
       return "Cannot build InterfaceParameter, attribute initializers form cycle " + attributes;
     }
-  }
-
-  private String getParamTypeInitialize() {
-    return IInterfaceParameter.super.getParamType();
   }
 
   private boolean isOptionalInitialize() {
@@ -165,18 +135,6 @@ public final class InterfaceParameter implements IInterfaceParameter {
   @Override
   public String getInterfaceQualifier() {
     return interfaceQualifier;
-  }
-
-  /**
-   * @return The value of the {@code paramType} attribute
-   */
-  @JsonProperty("paramType")
-  @Override
-  public String getParamType() {
-    InitShim shim = this.initShim;
-    return shim != null
-        ? shim.getParamType()
-        : this.paramType;
   }
 
   /**
@@ -230,25 +188,7 @@ public final class InterfaceParameter implements IInterfaceParameter {
   public final InterfaceParameter withInterfaceQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "interfaceQualifier");
     if (this.interfaceQualifier.equals(newValue)) return this;
-    return new InterfaceParameter(newValue, this.paramType, this.isOptional, this.qualifier, this.metaTags, this.simpleName);
-  }
-
-  /**
-   * Copy the current immutable object by setting a value for the {@link IInterfaceParameter#getParamType() paramType} attribute.
-   * An equals check used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for paramType
-   * @return A modified copy of the {@code this} object
-   */
-  public final InterfaceParameter withParamType(String value) {
-    String newValue = Objects.requireNonNull(value, "paramType");
-    if (this.paramType.equals(newValue)) return this;
-    return new InterfaceParameter(
-        this.interfaceQualifier,
-        newValue,
-        this.isOptional,
-        this.qualifier,
-        this.metaTags,
-        this.simpleName);
+    return new InterfaceParameter(newValue, this.isOptional, this.qualifier, this.metaTags, this.simpleName);
   }
 
   /**
@@ -259,7 +199,7 @@ public final class InterfaceParameter implements IInterfaceParameter {
    */
   public final InterfaceParameter withIsOptional(boolean value) {
     if (this.isOptional == value) return this;
-    return new InterfaceParameter(this.interfaceQualifier, this.paramType, value, this.qualifier, this.metaTags, this.simpleName);
+    return new InterfaceParameter(this.interfaceQualifier, value, this.qualifier, this.metaTags, this.simpleName);
   }
 
   /**
@@ -271,13 +211,7 @@ public final class InterfaceParameter implements IInterfaceParameter {
   public final InterfaceParameter withQualifier(String value) {
     String newValue = Objects.requireNonNull(value, "qualifier");
     if (this.qualifier.equals(newValue)) return this;
-    return new InterfaceParameter(
-        this.interfaceQualifier,
-        this.paramType,
-        this.isOptional,
-        newValue,
-        this.metaTags,
-        this.simpleName);
+    return new InterfaceParameter(this.interfaceQualifier, this.isOptional, newValue, this.metaTags, this.simpleName);
   }
 
   /**
@@ -287,13 +221,7 @@ public final class InterfaceParameter implements IInterfaceParameter {
    */
   public final InterfaceParameter withMetaTags(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new InterfaceParameter(
-        this.interfaceQualifier,
-        this.paramType,
-        this.isOptional,
-        this.qualifier,
-        newValue,
-        this.simpleName);
+    return new InterfaceParameter(this.interfaceQualifier, this.isOptional, this.qualifier, newValue, this.simpleName);
   }
 
   /**
@@ -305,13 +233,7 @@ public final class InterfaceParameter implements IInterfaceParameter {
   public final InterfaceParameter withMetaTags(Iterable<String> elements) {
     if (this.metaTags == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new InterfaceParameter(
-        this.interfaceQualifier,
-        this.paramType,
-        this.isOptional,
-        this.qualifier,
-        newValue,
-        this.simpleName);
+    return new InterfaceParameter(this.interfaceQualifier, this.isOptional, this.qualifier, newValue, this.simpleName);
   }
 
   /**
@@ -323,13 +245,7 @@ public final class InterfaceParameter implements IInterfaceParameter {
   public final InterfaceParameter withSimpleName(String value) {
     String newValue = Objects.requireNonNull(value, "simpleName");
     if (this.simpleName.equals(newValue)) return this;
-    return new InterfaceParameter(
-        this.interfaceQualifier,
-        this.paramType,
-        this.isOptional,
-        this.qualifier,
-        this.metaTags,
-        newValue);
+    return new InterfaceParameter(this.interfaceQualifier, this.isOptional, this.qualifier, this.metaTags, newValue);
   }
 
   /**
@@ -345,20 +261,18 @@ public final class InterfaceParameter implements IInterfaceParameter {
 
   private boolean equalTo(InterfaceParameter another) {
     return interfaceQualifier.equals(another.interfaceQualifier)
-        && paramType.equals(another.paramType)
         && isOptional == another.isOptional
         && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code interfaceQualifier}, {@code paramType}, {@code isOptional}, {@code qualifier}.
+   * Computes a hash code from attributes: {@code interfaceQualifier}, {@code isOptional}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
   public int hashCode() {
     @Var int h = 5381;
     h += (h << 5) + interfaceQualifier.hashCode();
-    h += (h << 5) + paramType.hashCode();
     h += (h << 5) + Booleans.hashCode(isOptional);
     h += (h << 5) + qualifier.hashCode();
     return h;
@@ -373,7 +287,6 @@ public final class InterfaceParameter implements IInterfaceParameter {
     return MoreObjects.toStringHelper("InterfaceParameter")
         .omitNullValues()
         .add("interfaceQualifier", interfaceQualifier)
-        .add("paramType", paramType)
         .add("isOptional", isOptional)
         .add("qualifier", qualifier)
         .toString();
@@ -390,7 +303,6 @@ public final class InterfaceParameter implements IInterfaceParameter {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IInterfaceParameter {
     @Nullable String interfaceQualifier;
-    @Nullable String paramType;
     boolean isOptional;
     boolean isOptionalIsSet;
     @Nullable String qualifier;
@@ -399,10 +311,6 @@ public final class InterfaceParameter implements IInterfaceParameter {
     @JsonProperty("interfaceQualifier")
     public void setInterfaceQualifier(String interfaceQualifier) {
       this.interfaceQualifier = interfaceQualifier;
-    }
-    @JsonProperty("paramType")
-    public void setParamType(String paramType) {
-      this.paramType = paramType;
     }
     @JsonProperty("isOptional")
     public void setIsOptional(boolean isOptional) {
@@ -424,8 +332,6 @@ public final class InterfaceParameter implements IInterfaceParameter {
     @Override
     public String getInterfaceQualifier() { throw new UnsupportedOperationException(); }
     @Override
-    public String getParamType() { throw new UnsupportedOperationException(); }
-    @Override
     public boolean isOptional() { throw new UnsupportedOperationException(); }
     @Override
     public String getQualifier() { throw new UnsupportedOperationException(); }
@@ -433,6 +339,8 @@ public final class InterfaceParameter implements IInterfaceParameter {
     public List<String> getMetaTags() { throw new UnsupportedOperationException(); }
     @Override
     public String getSimpleName() { throw new UnsupportedOperationException(); }
+    @Override
+    public String getParamType() { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -447,9 +355,6 @@ public final class InterfaceParameter implements IInterfaceParameter {
     if (json.interfaceQualifier != null) {
       builder.interfaceQualifier(json.interfaceQualifier);
     }
-    if (json.paramType != null) {
-      builder.paramType(json.paramType);
-    }
     if (json.isOptionalIsSet) {
       builder.isOptional(json.isOptional);
     }
@@ -463,6 +368,37 @@ public final class InterfaceParameter implements IInterfaceParameter {
       builder.simpleName(json.simpleName);
     }
     return builder.build();
+  }
+
+  @SuppressWarnings("Immutable")
+  private transient volatile long lazyInitBitmap;
+
+  private static final long PARAM_TYPE_LAZY_INIT_BIT = 0x1L;
+
+  @SuppressWarnings("Immutable")
+  private transient String paramType;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IInterfaceParameter#getParamType() paramType} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code paramType} attribute
+   */
+  @Override
+  public String getParamType() {
+    if ((lazyInitBitmap & PARAM_TYPE_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & PARAM_TYPE_LAZY_INIT_BIT) == 0) {
+          this.paramType = Objects.requireNonNull(IInterfaceParameter.super.getParamType(), "paramType");
+          lazyInitBitmap |= PARAM_TYPE_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return paramType;
   }
 
   /**
@@ -486,7 +422,6 @@ public final class InterfaceParameter implements IInterfaceParameter {
    * <pre>
    * InterfaceParameter.builder()
    *    .interfaceQualifier(String) // required {@link IInterfaceParameter#getInterfaceQualifier() interfaceQualifier}
-   *    .paramType(String) // optional {@link IInterfaceParameter#getParamType() paramType}
    *    .isOptional(boolean) // optional {@link IInterfaceParameter#isOptional() isOptional}
    *    .qualifier(String) // required {@link IInterfaceParameter#getQualifier() qualifier}
    *    .addMetaTags|addAllMetaTags(String) // {@link IInterfaceParameter#getMetaTags() metaTags} elements
@@ -516,7 +451,6 @@ public final class InterfaceParameter implements IInterfaceParameter {
     private long optBits;
 
     private @Nullable String interfaceQualifier;
-    private @Nullable String paramType;
     private boolean isOptional;
     private @Nullable String qualifier;
     private ImmutableList.Builder<String> metaTags = ImmutableList.builder();
@@ -536,7 +470,6 @@ public final class InterfaceParameter implements IInterfaceParameter {
       if (instance.interfaceQualifierIsSet()) {
         interfaceQualifier(instance.getInterfaceQualifier());
       }
-      paramType(instance.getParamType());
       isOptional(instance.isOptional());
       if (instance.qualifierIsSet()) {
         qualifier(instance.getQualifier());
@@ -593,7 +526,6 @@ public final class InterfaceParameter implements IInterfaceParameter {
       }
       if (object instanceof IParameter) {
         IParameter instance = (IParameter) object;
-        paramType(instance.getParamType());
         isOptional(instance.isOptional());
       }
       if (object instanceof IQualifiable) {
@@ -614,19 +546,6 @@ public final class InterfaceParameter implements IInterfaceParameter {
     public final Builder interfaceQualifier(String interfaceQualifier) {
       this.interfaceQualifier = Objects.requireNonNull(interfaceQualifier, "interfaceQualifier");
       initBits &= ~INIT_BIT_INTERFACE_QUALIFIER;
-      return this;
-    }
-
-    /**
-     * Initializes the value for the {@link IInterfaceParameter#getParamType() paramType} attribute.
-     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IInterfaceParameter#getParamType() paramType}.</em>
-     * @param paramType The value for paramType 
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("paramType")
-    public final Builder paramType(String paramType) {
-      this.paramType = Objects.requireNonNull(paramType, "paramType");
       return this;
     }
 

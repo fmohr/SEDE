@@ -35,25 +35,95 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
   private final @Nullable String name;
   private final @Nullable String fixedValue;
   private final boolean callByValue;
+  private final boolean readOnly;
 
   private MethodParameterDesc(MethodParameterDesc.Builder builder) {
     this.type = builder.type;
     this.name = builder.name;
     this.fixedValue = builder.fixedValue;
-    this.callByValue = builder.callByValueIsSet()
-        ? builder.callByValue
-        : IMethodParameterDesc.super.callByValue();
+    if (builder.callByValueIsSet()) {
+      initShim.callByValue(builder.callByValue);
+    }
+    if (builder.readOnlyIsSet()) {
+      initShim.readOnly(builder.readOnly);
+    }
+    this.callByValue = initShim.callByValue();
+    this.readOnly = initShim.readOnly();
+    this.initShim = null;
   }
 
   private MethodParameterDesc(
       String type,
       @Nullable String name,
       @Nullable String fixedValue,
-      boolean callByValue) {
+      boolean callByValue,
+      boolean readOnly) {
     this.type = type;
     this.name = name;
     this.fixedValue = fixedValue;
     this.callByValue = callByValue;
+    this.readOnly = readOnly;
+    this.initShim = null;
+  }
+
+  private static final byte STAGE_INITIALIZING = -1;
+  private static final byte STAGE_UNINITIALIZED = 0;
+  private static final byte STAGE_INITIALIZED = 1;
+  @SuppressWarnings("Immutable")
+  private transient volatile InitShim initShim = new InitShim();
+
+  @Generated(from = "IMethodParameterDesc", generator = "Immutables")
+  private final class InitShim {
+    private byte callByValueBuildStage = STAGE_UNINITIALIZED;
+    private boolean callByValue;
+
+    boolean callByValue() {
+      if (callByValueBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
+      if (callByValueBuildStage == STAGE_UNINITIALIZED) {
+        callByValueBuildStage = STAGE_INITIALIZING;
+        this.callByValue = callByValueInitialize();
+        callByValueBuildStage = STAGE_INITIALIZED;
+      }
+      return this.callByValue;
+    }
+
+    void callByValue(boolean callByValue) {
+      this.callByValue = callByValue;
+      callByValueBuildStage = STAGE_INITIALIZED;
+    }
+
+    private byte readOnlyBuildStage = STAGE_UNINITIALIZED;
+    private boolean readOnly;
+
+    boolean readOnly() {
+      if (readOnlyBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
+      if (readOnlyBuildStage == STAGE_UNINITIALIZED) {
+        readOnlyBuildStage = STAGE_INITIALIZING;
+        this.readOnly = readOnlyInitialize();
+        readOnlyBuildStage = STAGE_INITIALIZED;
+      }
+      return this.readOnly;
+    }
+
+    void readOnly(boolean readOnly) {
+      this.readOnly = readOnly;
+      readOnlyBuildStage = STAGE_INITIALIZED;
+    }
+
+    private String formatInitCycleMessage() {
+      List<String> attributes = new ArrayList<>();
+      if (callByValueBuildStage == STAGE_INITIALIZING) attributes.add("callByValue");
+      if (readOnlyBuildStage == STAGE_INITIALIZING) attributes.add("readOnly");
+      return "Cannot build MethodParameterDesc, attribute initializers form cycle " + attributes;
+    }
+  }
+
+  private boolean callByValueInitialize() {
+    return IMethodParameterDesc.super.callByValue();
+  }
+
+  private boolean readOnlyInitialize() {
+    return IMethodParameterDesc.super.readOnly();
   }
 
   /**
@@ -89,7 +159,22 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
   @JsonProperty("callByValue")
   @Override
   public boolean callByValue() {
-    return callByValue;
+    InitShim shim = this.initShim;
+    return shim != null
+        ? shim.callByValue()
+        : this.callByValue;
+  }
+
+  /**
+   * @return The value of the {@code readOnly} attribute
+   */
+  @JsonProperty("readOnly")
+  @Override
+  public boolean readOnly() {
+    InitShim shim = this.initShim;
+    return shim != null
+        ? shim.readOnly()
+        : this.readOnly;
   }
 
   /**
@@ -101,7 +186,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
   public final MethodParameterDesc withType(String value) {
     String newValue = Objects.requireNonNull(value, "type");
     if (this.type.equals(newValue)) return this;
-    return new MethodParameterDesc(newValue, this.name, this.fixedValue, this.callByValue);
+    return new MethodParameterDesc(newValue, this.name, this.fixedValue, this.callByValue, this.readOnly);
   }
 
   /**
@@ -112,7 +197,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
    */
   public final MethodParameterDesc withName(@Nullable String value) {
     if (Objects.equals(this.name, value)) return this;
-    return new MethodParameterDesc(this.type, value, this.fixedValue, this.callByValue);
+    return new MethodParameterDesc(this.type, value, this.fixedValue, this.callByValue, this.readOnly);
   }
 
   /**
@@ -123,7 +208,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
    */
   public final MethodParameterDesc withFixedValue(@Nullable String value) {
     if (Objects.equals(this.fixedValue, value)) return this;
-    return new MethodParameterDesc(this.type, this.name, value, this.callByValue);
+    return new MethodParameterDesc(this.type, this.name, value, this.callByValue, this.readOnly);
   }
 
   /**
@@ -134,7 +219,18 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
    */
   public final MethodParameterDesc withCallByValue(boolean value) {
     if (this.callByValue == value) return this;
-    return new MethodParameterDesc(this.type, this.name, this.fixedValue, value);
+    return new MethodParameterDesc(this.type, this.name, this.fixedValue, value, this.readOnly);
+  }
+
+  /**
+   * Copy the current immutable object by setting a value for the {@link IMethodParameterDesc#readOnly() readOnly} attribute.
+   * A value equality check is used to prevent copying of the same value by returning {@code this}.
+   * @param value A new value for readOnly
+   * @return A modified copy of the {@code this} object
+   */
+  public final MethodParameterDesc withReadOnly(boolean value) {
+    if (this.readOnly == value) return this;
+    return new MethodParameterDesc(this.type, this.name, this.fixedValue, this.callByValue, value);
   }
 
   /**
@@ -152,11 +248,12 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     return type.equals(another.type)
         && Objects.equals(name, another.name)
         && Objects.equals(fixedValue, another.fixedValue)
-        && callByValue == another.callByValue;
+        && callByValue == another.callByValue
+        && readOnly == another.readOnly;
   }
 
   /**
-   * Computes a hash code from attributes: {@code type}, {@code name}, {@code fixedValue}, {@code callByValue}.
+   * Computes a hash code from attributes: {@code type}, {@code name}, {@code fixedValue}, {@code callByValue}, {@code readOnly}.
    * @return hashCode value
    */
   @Override
@@ -166,6 +263,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     h += (h << 5) + Objects.hashCode(name);
     h += (h << 5) + Objects.hashCode(fixedValue);
     h += (h << 5) + Booleans.hashCode(callByValue);
+    h += (h << 5) + Booleans.hashCode(readOnly);
     return h;
   }
 
@@ -181,6 +279,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
         .add("name", name)
         .add("fixedValue", fixedValue)
         .add("callByValue", callByValue)
+        .add("readOnly", readOnly)
         .toString();
   }
 
@@ -199,6 +298,8 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     @Nullable String fixedValue;
     boolean callByValue;
     boolean callByValueIsSet;
+    boolean readOnly;
+    boolean readOnlyIsSet;
     @JsonProperty("type")
     public void setType(String type) {
       this.type = type;
@@ -216,6 +317,11 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
       this.callByValue = callByValue;
       this.callByValueIsSet = true;
     }
+    @JsonProperty("readOnly")
+    public void setReadOnly(boolean readOnly) {
+      this.readOnly = readOnly;
+      this.readOnlyIsSet = true;
+    }
     @Override
     public String getType() { throw new UnsupportedOperationException(); }
     @Override
@@ -224,6 +330,8 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     public String getFixedValue() { throw new UnsupportedOperationException(); }
     @Override
     public boolean callByValue() { throw new UnsupportedOperationException(); }
+    @Override
+    public boolean readOnly() { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -246,6 +354,9 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     }
     if (json.callByValueIsSet) {
       builder.callByValue(json.callByValue);
+    }
+    if (json.readOnlyIsSet) {
+      builder.readOnly(json.readOnly);
     }
     return builder.build();
   }
@@ -274,6 +385,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
    *    .name(String | null) // nullable {@link IMethodParameterDesc#getName() name}
    *    .fixedValue(String | null) // nullable {@link IMethodParameterDesc#getFixedValue() fixedValue}
    *    .callByValue(boolean) // optional {@link IMethodParameterDesc#callByValue() callByValue}
+   *    .readOnly(boolean) // optional {@link IMethodParameterDesc#readOnly() readOnly}
    *    .build();
    * </pre>
    * @return A new MethodParameterDesc builder
@@ -294,6 +406,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
   public static final class Builder {
     private static final long INIT_BIT_TYPE = 0x1L;
     private static final long OPT_BIT_CALL_BY_VALUE = 0x1L;
+    private static final long OPT_BIT_READ_ONLY = 0x2L;
     private long initBits = 0x1L;
     private long optBits;
 
@@ -301,6 +414,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     private @Nullable String name;
     private @Nullable String fixedValue;
     private boolean callByValue;
+    private boolean readOnly;
 
     private Builder() {
     }
@@ -325,6 +439,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
         fixedValue(fixedValueValue);
       }
       callByValue(instance.callByValue());
+      readOnly(instance.readOnly());
       return this;
     }
 
@@ -351,6 +466,7 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
         fixedValue(fixedValueValue);
       }
       callByValue(instance.callByValue());
+      readOnly(instance.readOnly());
       return this;
     }
 
@@ -406,6 +522,20 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
     }
 
     /**
+     * Initializes the value for the {@link IMethodParameterDesc#readOnly() readOnly} attribute.
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IMethodParameterDesc#readOnly() readOnly}.</em>
+     * @param readOnly The value for readOnly 
+     * @return {@code this} builder for use in a chained invocation
+     */
+    @CanIgnoreReturnValue 
+    @JsonProperty("readOnly")
+    public final Builder readOnly(boolean readOnly) {
+      this.readOnly = readOnly;
+      optBits |= OPT_BIT_READ_ONLY;
+      return this;
+    }
+
+    /**
      * Builds a new {@link MethodParameterDesc MethodParameterDesc}.
      * @return An immutable instance of MethodParameterDesc
      * @throws java.lang.IllegalStateException if any required attributes are missing
@@ -419,6 +549,10 @@ public final class MethodParameterDesc implements IMethodParameterDesc {
 
     private boolean callByValueIsSet() {
       return (optBits & OPT_BIT_CALL_BY_VALUE) != 0;
+    }
+
+    private boolean readOnlyIsSet() {
+      return (optBits & OPT_BIT_READ_ONLY) != 0;
     }
 
     private String formatRequiredAttributesMessage() {

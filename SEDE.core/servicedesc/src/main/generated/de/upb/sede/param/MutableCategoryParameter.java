@@ -33,7 +33,6 @@ public final class MutableCategoryParameter implements ICategoryParameter {
 
   private @Nullable String defaultValue;
   private final ArrayList<String> categories = new ArrayList<String>();
-  private String paramType;
   private boolean isOptional;
   private String qualifier;
   private final ArrayList<String> metaTags = new ArrayList<String>();
@@ -65,17 +64,6 @@ public final class MutableCategoryParameter implements ICategoryParameter {
   @Override
   public final List<String> getCategories() {
     return categories;
-  }
-
-  /**
-   * @return assigned or, otherwise, newly computed, not cached value of {@code paramType} attribute
-   */
-  @JsonProperty("paramType")
-  @Override
-  public final String getParamType() {
-    return paramTypeIsSet()
-        ? paramType
-        : ICategoryParameter.super.getParamType();
   }
 
   /**
@@ -131,7 +119,6 @@ public final class MutableCategoryParameter implements ICategoryParameter {
     optBits = 0;
     defaultValue = null;
     categories.clear();
-    paramType = null;
     isOptional = false;
     qualifier = null;
     metaTags.clear();
@@ -197,7 +184,6 @@ public final class MutableCategoryParameter implements ICategoryParameter {
         setDefaultValue(defaultValueValue);
       }
       addAllCategories(instance.getCategories());
-      setParamType(instance.getParamType());
       setIsOptional(instance.isOptional());
       if (instance.qualifierIsSet()) {
         setQualifier(instance.getQualifier());
@@ -208,7 +194,6 @@ public final class MutableCategoryParameter implements ICategoryParameter {
     }
     if (object instanceof IParameter) {
       IParameter instance = (IParameter) object;
-      setParamType(instance.getParamType());
       setIsOptional(instance.isOptional());
     }
     if (object instanceof IQualifiable) {
@@ -285,18 +270,6 @@ public final class MutableCategoryParameter implements ICategoryParameter {
     for (String e : elements) {
       addCategories(e);
     }
-    return this;
-  }
-
-  /**
-   * Assigns a value to the {@link ICategoryParameter#getParamType() paramType} attribute.
-   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link ICategoryParameter#getParamType() paramType}.</em>
-   * @param paramType The value for paramType
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableCategoryParameter setParamType(String paramType) {
-    this.paramType = Objects.requireNonNull(paramType, "paramType");
     return this;
   }
 
@@ -404,14 +377,6 @@ public final class MutableCategoryParameter implements ICategoryParameter {
   }
 
   /**
-   * Returns {@code true} if the default attribute {@link ICategoryParameter#getParamType() paramType} is set.
-   * @return {@code true} if set
-   */
-  public final boolean paramTypeIsSet() {
-    return paramType != null;
-  }
-
-  /**
    * Returns {@code true} if the default attribute {@link ICategoryParameter#getSimpleName() simpleName} is set.
    * @return {@code true} if set
    */
@@ -487,17 +452,15 @@ public final class MutableCategoryParameter implements ICategoryParameter {
   }
 
   private boolean equalTo(MutableCategoryParameter another) {
-    String paramType = getParamType();
     boolean isOptional = isOptional();
     return Objects.equals(defaultValue, another.defaultValue)
         && categories.equals(another.categories)
-        && paramType.equals(another.getParamType())
         && isOptional == another.isOptional()
         && qualifier.equals(another.qualifier);
   }
 
   /**
-   * Computes a hash code from attributes: {@code defaultValue}, {@code categories}, {@code paramType}, {@code isOptional}, {@code qualifier}.
+   * Computes a hash code from attributes: {@code defaultValue}, {@code categories}, {@code isOptional}, {@code qualifier}.
    * @return hashCode value
    */
   @Override
@@ -505,8 +468,6 @@ public final class MutableCategoryParameter implements ICategoryParameter {
     int h = 5381;
     h += (h << 5) + Objects.hashCode(defaultValue);
     h += (h << 5) + categories.hashCode();
-    String paramType = getParamType();
-    h += (h << 5) + paramType.hashCode();
     boolean isOptional = isOptional();
     h += (h << 5) + Booleans.hashCode(isOptional);
     h += (h << 5) + qualifier.hashCode();
@@ -523,7 +484,6 @@ public final class MutableCategoryParameter implements ICategoryParameter {
     return MoreObjects.toStringHelper("MutableCategoryParameter")
         .add("defaultValue", getDefaultValue())
         .add("categories", getCategories())
-        .add("paramType", getParamType())
         .add("isOptional", isOptional())
         .add("qualifier", qualifierIsSet() ? getQualifier() : "?")
         .toString();

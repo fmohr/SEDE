@@ -19,22 +19,22 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
- * Immutable implementation of {@link ITypeJournalPageModel}.
+ * Immutable implementation of {@link IFieldType}.
  * <p>
  * Use the builder to create immutable instances:
- * {@code TypeJournalPageModel.builder()}.
+ * {@code FieldType.builder()}.
  */
-@Generated(from = "ITypeJournalPageModel", generator = "Immutables")
+@Generated(from = "IFieldType", generator = "Immutables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
 @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
 @Immutable
 @CheckReturnValue
-public final class TypeJournalPageModel implements ITypeJournalPageModel {
+public final class FieldType implements IFieldType {
   private final String fieldname;
   private final TypeClass type;
 
-  private TypeJournalPageModel(String fieldname, TypeClass type) {
+  private FieldType(String fieldname, TypeClass type) {
     this.fieldname = fieldname;
     this.type = type;
   }
@@ -58,41 +58,41 @@ public final class TypeJournalPageModel implements ITypeJournalPageModel {
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link ITypeJournalPageModel#getFieldname() fieldname} attribute.
+   * Copy the current immutable object by setting a value for the {@link IFieldType#getFieldname() fieldname} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for fieldname
    * @return A modified copy of the {@code this} object
    */
-  public final TypeJournalPageModel withFieldname(String value) {
+  public final FieldType withFieldname(String value) {
     String newValue = Objects.requireNonNull(value, "fieldname");
     if (this.fieldname.equals(newValue)) return this;
-    return new TypeJournalPageModel(newValue, this.type);
+    return new FieldType(newValue, this.type);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link ITypeJournalPageModel#getType() type} attribute.
+   * Copy the current immutable object by setting a value for the {@link IFieldType#getType() type} attribute.
    * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
    * @param value A new value for type
    * @return A modified copy of the {@code this} object
    */
-  public final TypeJournalPageModel withType(TypeClass value) {
+  public final FieldType withType(TypeClass value) {
     if (this.type == value) return this;
     TypeClass newValue = Objects.requireNonNull(value, "type");
-    return new TypeJournalPageModel(this.fieldname, newValue);
+    return new FieldType(this.fieldname, newValue);
   }
 
   /**
-   * This instance is equal to all instances of {@code TypeJournalPageModel} that have equal attribute values.
+   * This instance is equal to all instances of {@code FieldType} that have equal attribute values.
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
   public boolean equals(@Nullable Object another) {
     if (this == another) return true;
-    return another instanceof TypeJournalPageModel
-        && equalTo((TypeJournalPageModel) another);
+    return another instanceof FieldType
+        && equalTo((FieldType) another);
   }
 
-  private boolean equalTo(TypeJournalPageModel another) {
+  private boolean equalTo(FieldType another) {
     return fieldname.equals(another.fieldname)
         && type.equals(another.type);
   }
@@ -110,12 +110,12 @@ public final class TypeJournalPageModel implements ITypeJournalPageModel {
   }
 
   /**
-   * Prints the immutable value {@code TypeJournalPageModel} with attribute values.
+   * Prints the immutable value {@code FieldType} with attribute values.
    * @return A string representation of the value
    */
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper("TypeJournalPageModel")
+    return MoreObjects.toStringHelper("FieldType")
         .omitNullValues()
         .add("fieldname", fieldname)
         .add("type", type)
@@ -126,12 +126,12 @@ public final class TypeJournalPageModel implements ITypeJournalPageModel {
    * Utility type used to correctly read immutable object from JSON representation.
    * @deprecated Do not use this type directly, it exists only for the <em>Jackson</em>-binding infrastructure
    */
-  @Generated(from = "ITypeJournalPageModel", generator = "Immutables")
+  @Generated(from = "IFieldType", generator = "Immutables")
   @Deprecated
   @SuppressWarnings("Immutable")
   @JsonDeserialize
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
-  static final class Json implements ITypeJournalPageModel {
+  static final class Json implements IFieldType {
     @Nullable String fieldname;
     @Nullable TypeClass type;
     @JsonProperty("fieldname")
@@ -155,8 +155,8 @@ public final class TypeJournalPageModel implements ITypeJournalPageModel {
    */
   @Deprecated
   @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-  static TypeJournalPageModel fromJson(Json json) {
-    TypeJournalPageModel.Builder builder = TypeJournalPageModel.builder();
+  static FieldType fromJson(Json json) {
+    FieldType.Builder builder = FieldType.builder();
     if (json.fieldname != null) {
       builder.fieldname(json.fieldname);
     }
@@ -167,43 +167,43 @@ public final class TypeJournalPageModel implements ITypeJournalPageModel {
   }
 
   /**
-   * Creates an immutable copy of a {@link ITypeJournalPageModel} value.
+   * Creates an immutable copy of a {@link IFieldType} value.
    * Uses accessors to get values to initialize the new immutable instance.
    * If an instance is already immutable, it is returned as is.
    * @param instance The instance to copy
-   * @return A copied immutable TypeJournalPageModel instance
+   * @return A copied immutable FieldType instance
    */
-  public static TypeJournalPageModel copyOf(ITypeJournalPageModel instance) {
-    if (instance instanceof TypeJournalPageModel) {
-      return (TypeJournalPageModel) instance;
+  public static FieldType copyOf(IFieldType instance) {
+    if (instance instanceof FieldType) {
+      return (FieldType) instance;
     }
-    return TypeJournalPageModel.builder()
+    return FieldType.builder()
         .from(instance)
         .build();
   }
 
   /**
-   * Creates a builder for {@link TypeJournalPageModel TypeJournalPageModel}.
+   * Creates a builder for {@link FieldType FieldType}.
    * <pre>
-   * TypeJournalPageModel.builder()
-   *    .fieldname(String) // required {@link ITypeJournalPageModel#getFieldname() fieldname}
-   *    .type(de.upb.sede.composition.graphs.types.TypeClass) // required {@link ITypeJournalPageModel#getType() type}
+   * FieldType.builder()
+   *    .fieldname(String) // required {@link IFieldType#getFieldname() fieldname}
+   *    .type(de.upb.sede.composition.graphs.types.TypeClass) // required {@link IFieldType#getType() type}
    *    .build();
    * </pre>
-   * @return A new TypeJournalPageModel builder
+   * @return A new FieldType builder
    */
-  public static TypeJournalPageModel.Builder builder() {
-    return new TypeJournalPageModel.Builder();
+  public static FieldType.Builder builder() {
+    return new FieldType.Builder();
   }
 
   /**
-   * Builds instances of type {@link TypeJournalPageModel TypeJournalPageModel}.
+   * Builds instances of type {@link FieldType FieldType}.
    * Initialize attributes and then invoke the {@link #build()} method to create an
    * immutable instance.
    * <p><em>{@code Builder} is not thread-safe and generally should not be stored in a field or collection,
    * but instead used immediately to create instances.</em>
    */
-  @Generated(from = "ITypeJournalPageModel", generator = "Immutables")
+  @Generated(from = "IFieldType", generator = "Immutables")
   @NotThreadSafe
   public static final class Builder {
     private static final long INIT_BIT_FIELDNAME = 0x1L;
@@ -217,12 +217,12 @@ public final class TypeJournalPageModel implements ITypeJournalPageModel {
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code MutableTypeJournalPageModel} instance.
+     * Fill a builder with attribute values from the provided {@code MutableFieldType} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(MutableTypeJournalPageModel instance) {
+    public final Builder from(MutableFieldType instance) {
       Objects.requireNonNull(instance, "instance");
       if (instance.fieldnameIsSet()) {
         fieldname(instance.getFieldname());
@@ -234,17 +234,17 @@ public final class TypeJournalPageModel implements ITypeJournalPageModel {
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code ITypeJournalPageModel} instance.
+     * Fill a builder with attribute values from the provided {@code IFieldType} instance.
      * Regular attribute values will be replaced with those from the given instance.
      * Absent optional values will not replace present values.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(ITypeJournalPageModel instance) {
+    public final Builder from(IFieldType instance) {
       Objects.requireNonNull(instance, "instance");
-      if (instance instanceof MutableTypeJournalPageModel) {
-        return from((MutableTypeJournalPageModel) instance);
+      if (instance instanceof MutableFieldType) {
+        return from((MutableFieldType) instance);
       }
       fieldname(instance.getFieldname());
       type(instance.getType());
@@ -252,7 +252,7 @@ public final class TypeJournalPageModel implements ITypeJournalPageModel {
     }
 
     /**
-     * Initializes the value for the {@link ITypeJournalPageModel#getFieldname() fieldname} attribute.
+     * Initializes the value for the {@link IFieldType#getFieldname() fieldname} attribute.
      * @param fieldname The value for fieldname 
      * @return {@code this} builder for use in a chained invocation
      */
@@ -265,7 +265,7 @@ public final class TypeJournalPageModel implements ITypeJournalPageModel {
     }
 
     /**
-     * Initializes the value for the {@link ITypeJournalPageModel#getType() type} attribute.
+     * Initializes the value for the {@link IFieldType#getType() type} attribute.
      * @param type The value for type 
      * @return {@code this} builder for use in a chained invocation
      */
@@ -278,22 +278,22 @@ public final class TypeJournalPageModel implements ITypeJournalPageModel {
     }
 
     /**
-     * Builds a new {@link TypeJournalPageModel TypeJournalPageModel}.
-     * @return An immutable instance of TypeJournalPageModel
+     * Builds a new {@link FieldType FieldType}.
+     * @return An immutable instance of FieldType
      * @throws java.lang.IllegalStateException if any required attributes are missing
      */
-    public TypeJournalPageModel build() {
+    public FieldType build() {
       if (initBits != 0) {
         throw new IllegalStateException(formatRequiredAttributesMessage());
       }
-      return new TypeJournalPageModel(fieldname, type);
+      return new FieldType(fieldname, type);
     }
 
     private String formatRequiredAttributesMessage() {
       List<String> attributes = new ArrayList<>();
       if ((initBits & INIT_BIT_FIELDNAME) != 0) attributes.add("fieldname");
       if ((initBits & INIT_BIT_TYPE) != 0) attributes.add("type");
-      return "Cannot build TypeJournalPageModel, some of required attributes are not set " + attributes;
+      return "Cannot build FieldType, some of required attributes are not set " + attributes;
     }
   }
 }

@@ -38,6 +38,13 @@ public class TypeJournal {
         }
     }
 
+    public void injectFirstPage(TypeJournalPage firstPage) {
+        if(!pages.isEmpty()) {
+            throw new IllegalStateException("Injecting a first page into a non empty journal.");
+        }
+        pages.add(firstPage);
+    }
+
     public TypeJournalPage getPageAfterInst(long instructionIndex) {
         return getPageAt(instructionIndex + 1);
     }
@@ -71,4 +78,7 @@ public class TypeJournal {
         return newPage;
     }
 
+    public TypeJournalPage getLastPage() {
+        return getPageAt(pages.size());
+    }
 }

@@ -6,5 +6,5 @@ class CompositionCompilerTest extends Specification {
 
     // TODO
 
-    
+
 }

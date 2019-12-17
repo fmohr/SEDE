@@ -32,13 +32,13 @@ import org.immutables.value.Generated;
 @CheckReturnValue
 public final class StaticInstAnalysis implements IStaticInstAnalysis {
   private final IIndexedInstruction instruction;
-  private final ImmutableList<ITypeJournalPageModel> typeContext;
+  private final ImmutableList<IInstTCResult> typeContext;
   private final IMethodCognition methodCognition;
   private final ImmutableList<IFieldAccess> fieldAccesses;
 
   private StaticInstAnalysis(
       IIndexedInstruction instruction,
-      ImmutableList<ITypeJournalPageModel> typeContext,
+      ImmutableList<IInstTCResult> typeContext,
       IMethodCognition methodCognition,
       ImmutableList<IFieldAccess> fieldAccesses) {
     this.instruction = instruction;
@@ -61,7 +61,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
    */
   @JsonProperty("typeContext")
   @Override
-  public ImmutableList<ITypeJournalPageModel> getTypeContext() {
+  public ImmutableList<IInstTCResult> getTypeContext() {
     return typeContext;
   }
 
@@ -100,8 +100,8 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
    * @param elements The elements to set
    * @return A modified copy of {@code this} object
    */
-  public final StaticInstAnalysis withTypeContext(ITypeJournalPageModel... elements) {
-    ImmutableList<ITypeJournalPageModel> newValue = ImmutableList.copyOf(elements);
+  public final StaticInstAnalysis withTypeContext(IInstTCResult... elements) {
+    ImmutableList<IInstTCResult> newValue = ImmutableList.copyOf(elements);
     return new StaticInstAnalysis(this.instruction, newValue, this.methodCognition, this.fieldAccesses);
   }
 
@@ -111,9 +111,9 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
    * @param elements An iterable of typeContext elements to set
    * @return A modified copy of {@code this} object
    */
-  public final StaticInstAnalysis withTypeContext(Iterable<? extends ITypeJournalPageModel> elements) {
+  public final StaticInstAnalysis withTypeContext(Iterable<? extends IInstTCResult> elements) {
     if (this.typeContext == elements) return this;
-    ImmutableList<ITypeJournalPageModel> newValue = ImmutableList.copyOf(elements);
+    ImmutableList<IInstTCResult> newValue = ImmutableList.copyOf(elements);
     return new StaticInstAnalysis(this.instruction, newValue, this.methodCognition, this.fieldAccesses);
   }
 
@@ -209,7 +209,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
   static final class Json implements IStaticInstAnalysis {
     @Nullable IIndexedInstruction instruction;
-    @Nullable List<ITypeJournalPageModel> typeContext = ImmutableList.of();
+    @Nullable List<IInstTCResult> typeContext = ImmutableList.of();
     @Nullable IMethodCognition methodCognition;
     @Nullable List<IFieldAccess> fieldAccesses = ImmutableList.of();
     @JsonProperty("instruction")
@@ -217,7 +217,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
       this.instruction = instruction;
     }
     @JsonProperty("typeContext")
-    public void setTypeContext(List<ITypeJournalPageModel> typeContext) {
+    public void setTypeContext(List<IInstTCResult> typeContext) {
       this.typeContext = typeContext;
     }
     @JsonProperty("methodCognition")
@@ -231,7 +231,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
     @Override
     public IIndexedInstruction getInstruction() { throw new UnsupportedOperationException(); }
     @Override
-    public List<ITypeJournalPageModel> getTypeContext() { throw new UnsupportedOperationException(); }
+    public List<IInstTCResult> getTypeContext() { throw new UnsupportedOperationException(); }
     @Override
     public IMethodCognition getMethodCognition() { throw new UnsupportedOperationException(); }
     @Override
@@ -283,7 +283,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
    * <pre>
    * StaticInstAnalysis.builder()
    *    .instruction(de.upb.sede.composition.IIndexedInstruction) // required {@link IStaticInstAnalysis#getInstruction() instruction}
-   *    .addTypeContext|addAllTypeContext(de.upb.sede.composition.ITypeJournalPageModel) // {@link IStaticInstAnalysis#getTypeContext() typeContext} elements
+   *    .addTypeContext|addAllTypeContext(de.upb.sede.composition.IInstTCResult) // {@link IStaticInstAnalysis#getTypeContext() typeContext} elements
    *    .methodCognition(de.upb.sede.composition.IMethodCognition) // required {@link IStaticInstAnalysis#getMethodCognition() methodCognition}
    *    .addFieldAccesses|addAllFieldAccesses(de.upb.sede.composition.IFieldAccess) // {@link IStaticInstAnalysis#getFieldAccesses() fieldAccesses} elements
    *    .build();
@@ -309,7 +309,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
     private long initBits = 0x3L;
 
     private @Nullable IIndexedInstruction instruction;
-    private ImmutableList.Builder<ITypeJournalPageModel> typeContext = ImmutableList.builder();
+    private ImmutableList.Builder<IInstTCResult> typeContext = ImmutableList.builder();
     private @Nullable IMethodCognition methodCognition;
     private ImmutableList.Builder<IFieldAccess> fieldAccesses = ImmutableList.builder();
 
@@ -375,7 +375,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder addTypeContext(ITypeJournalPageModel element) {
+    public final Builder addTypeContext(IInstTCResult element) {
       this.typeContext.add(element);
       return this;
     }
@@ -386,7 +386,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder addTypeContext(ITypeJournalPageModel... elements) {
+    public final Builder addTypeContext(IInstTCResult... elements) {
       this.typeContext.add(elements);
       return this;
     }
@@ -399,7 +399,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
      */
     @CanIgnoreReturnValue 
     @JsonProperty("typeContext")
-    public final Builder typeContext(Iterable<? extends ITypeJournalPageModel> elements) {
+    public final Builder typeContext(Iterable<? extends IInstTCResult> elements) {
       this.typeContext = ImmutableList.builder();
       return addAllTypeContext(elements);
     }
@@ -410,7 +410,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder addAllTypeContext(Iterable<? extends ITypeJournalPageModel> elements) {
+    public final Builder addAllTypeContext(Iterable<? extends IInstTCResult> elements) {
       this.typeContext.addAll(elements);
       return this;
     }

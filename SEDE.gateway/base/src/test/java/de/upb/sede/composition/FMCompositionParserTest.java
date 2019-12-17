@@ -394,17 +394,17 @@ public class FMCompositionParserTest {
 		if (expectedLeftside == null) {
 			Assert.assertEquals(false, node.getFieldName() != null);
 		} else {
-			Assert.assertEquals(expectedLeftside, node.getLeftSideFieldname());
+			Assert.assertEquals(expectedLeftside, node.getFieldName());
 		}
 		if (expectedHost == null) {
-			Assert.assertEquals(false, node.isAssignedHost());
+			Assert.assertEquals(false, node.getHost() != null);
 		} else {
 			Assert.assertEquals(expectedHost, node.getHost());
 		}
 		Assert.assertEquals(expectedContext, node.getContext());
 		Assert.assertEquals(expectedMethod, node.getMethod());
 		Assert.assertEquals(expectedInputs.length, node.getParameterFields().size());
-		Assert.assertEquals(contextIsField, node.isContextAFieldname());
+		Assert.assertEquals(contextIsField, node.getContextIsFieldFlag());
 		for (int i = 0, size = expectedInputs.length; i < size; i++) {
 			Assert.assertEquals(expectedInputs[i], node.getParameterFields().get(i));
 		}

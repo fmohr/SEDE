@@ -25,7 +25,7 @@ import java.util.stream.Stream;
 import static de.upb.sede.util.TypeUtil.getServiceType;
 import static de.upb.sede.util.TypeUtil.isService;
 
-class TypeCheckStep {
+class TypeCheckerModel {
 
     private TypeJournal typeJournal;
 
@@ -35,7 +35,7 @@ class TypeCheckStep {
 
     private ISDLLookupService lookupService;
 
-    TypeCheckStep(TCOutput output, InstructionIndexer instructions, ISDLLookupService lookupService) {
+    TypeCheckerModel(TCOutput output, InstructionIndexer instructions, ISDLLookupService lookupService) {
         this.methodCognitionMap = output.getMethodCognitionMap();
         this.typeJournal = output.getJournal();
         this.instructions = instructions;

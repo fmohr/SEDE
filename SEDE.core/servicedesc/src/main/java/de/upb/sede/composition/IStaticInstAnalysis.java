@@ -14,7 +14,7 @@ public interface IStaticInstAnalysis {
 
     IIndexedInstruction getInstruction();
 
-    List<ITypeJournalPageModel> getTypeContext();
+    List<IInstTCResult> getTypeContext();
 
     IMethodCognition getMethodCognition();
 

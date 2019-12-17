@@ -1,5 +1,6 @@
 package de.upb.sede.interfaces;
 
+import de.upb.sede.composition.IStaticCompositionAnalysis;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.ResolveRequest;
@@ -19,7 +20,7 @@ public interface IGateway {
 	 * @param resolveRequest request object from the client.
 	 * @return resolution of the composition.
 	 */
-	public GatewayResolution resolve(ResolveRequest resolveRequest);
+	public IStaticCompositionAnalysis resolve(ResolveRequest resolveRequest);
 
 	/**
 	 * Registers the executor who sent the given ExecutorRegistration.

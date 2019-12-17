@@ -29,7 +29,7 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
   private long initBits = 0x3L;
 
   private IIndexedInstruction instruction;
-  private final ArrayList<ITypeJournalPageModel> typeContext = new ArrayList<ITypeJournalPageModel>();
+  private final ArrayList<IInstTCResult> typeContext = new ArrayList<IInstTCResult>();
   private IMethodCognition methodCognition;
   private final ArrayList<IFieldAccess> fieldAccesses = new ArrayList<IFieldAccess>();
 
@@ -60,7 +60,7 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
    */
   @JsonProperty("typeContext")
   @Override
-  public final List<ITypeJournalPageModel> getTypeContext() {
+  public final List<IInstTCResult> getTypeContext() {
     return typeContext;
   }
 
@@ -159,7 +159,7 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableStaticInstAnalysis addTypeContext(ITypeJournalPageModel element) {
+  public MutableStaticInstAnalysis addTypeContext(IInstTCResult element) {
     Objects.requireNonNull(element, "typeContext element");
     this.typeContext.add(element);
     return this;
@@ -171,8 +171,8 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public final MutableStaticInstAnalysis addTypeContext(ITypeJournalPageModel... elements) {
-    for (ITypeJournalPageModel e : elements) {
+  public final MutableStaticInstAnalysis addTypeContext(IInstTCResult... elements) {
+    for (IInstTCResult e : elements) {
       addTypeContext(e);
     }
     return this;
@@ -184,7 +184,7 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableStaticInstAnalysis setTypeContext(Iterable<? extends ITypeJournalPageModel> elements) {
+  public MutableStaticInstAnalysis setTypeContext(Iterable<? extends IInstTCResult> elements) {
     this.typeContext.clear();
     addAllTypeContext(elements);
     return this;
@@ -196,8 +196,8 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableStaticInstAnalysis addAllTypeContext(Iterable<? extends ITypeJournalPageModel> elements) {
-    for (ITypeJournalPageModel e : elements) {
+  public MutableStaticInstAnalysis addAllTypeContext(Iterable<? extends IInstTCResult> elements) {
+    for (IInstTCResult e : elements) {
       addTypeContext(e);
     }
     return this;

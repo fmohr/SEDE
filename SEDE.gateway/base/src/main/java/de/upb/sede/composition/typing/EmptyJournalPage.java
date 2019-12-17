@@ -4,7 +4,7 @@ import de.upb.sede.composition.graphs.types.TypeClass;
 
 import javax.annotation.Nullable;
 
-public class EmptyJournalPage implements FieldTypeResolution {
+public class EmptyJournalPage implements TypeContext {
 
     @Override
     @Nullable

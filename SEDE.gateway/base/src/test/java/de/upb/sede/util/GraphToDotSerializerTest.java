@@ -4,10 +4,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 import de.upb.sede.composition.graphs.GraphConstruction;
-import de.upb.sede.util.FileUtil;
 import org.junit.Test;
 
 import de.upb.sede.composition.graphs.CompositionGraph;

@@ -26,7 +26,7 @@ public class FieldAccessAnalyser implements CompileStep<FAAInput, FAAOutput> {
                     throw FieldAccessAnalysisException.noMethodCognition();
                 }
                 checkAssignment(ii, output);
-                checkMethodContext(ii, output, methodCognition, input.getTypeJournal());
+                checkMethodContext(ii, output, methodCognition);
                 checkParams(ii, output, methodCognition);
             } catch(FieldAccessAnalysisException faaException) {
                 throw FieldAccessAnalysisException.stepError(ii, faaException);
@@ -88,29 +88,31 @@ public class FieldAccessAnalyser implements CompileStep<FAAInput, FAAOutput> {
         }
     }
 
-    private void checkMethodContext(IIndexedInstruction ii, FAAOutput output, IMethodCognition methodCognition, TypeJournal journal) {
+    private void checkMethodContext(IIndexedInstruction ii, FAAOutput output, IMethodCognition methodCognition) {
         /*
-         * If the context is a service instance, the method might perform a state transition.
-         * So the context fieldname might be written onto:
+         * If the context is a service instance,
+         * the method is assumed to read its state (read) and might alter its state too (write)
          */
         IInstructionNode inst = ii.getInstruction();
         Long index = ii.getIndex();
         String context = inst.getContext();
-
-        TypeJournalPage instTypeContext = journal.getPageAt(index);
-        TypeClass contextType = instTypeContext.getFieldType(context);
-        boolean contextIsService = TypeUtil.isService(contextType);
-        if(contextIsService) {
-            IFieldAccess contextRead = FieldAccess.builder()
-                .field(context)
-                .index(index)
-                .accessType(IFieldAccess.AccessType.READ)
-                .build();
-            output.getFAList().add(contextRead);
+        if(!inst.getContextIsFieldFlag()) {
+            /*
+             * The context is a service qualifier, like: `a.b.Classifier`
+             * There is nothing accessed.
+             */
+            return;
         }
 
+        IFieldAccess contextRead = FieldAccess.builder()
+            .field(context)
+            .index(index)
+            .accessType(IFieldAccess.AccessType.READ)
+            .build();
+        output.getFAList().add(contextRead);
+
         boolean methodChangesValue = ! methodCognition.getSignatureDesc().isPure();
-        if(contextIsService && methodChangesValue) {
+        if(methodChangesValue) {
             IFieldAccess fieldWrite = FieldAccess.builder()
                 .field(context)
                 .index(index)

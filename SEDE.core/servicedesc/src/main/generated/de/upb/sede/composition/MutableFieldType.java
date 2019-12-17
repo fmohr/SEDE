@@ -13,18 +13,18 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
- * A modifiable implementation of the {@link ITypeJournalPageModel ITypeJournalPageModel} type.
+ * A modifiable implementation of the {@link IFieldType IFieldType} type.
  * <p>Use the {@link #create()} static factory methods to create new instances.
  * Use the {@link #toImmutable()} method to convert to canonical immutable instances.
- * <p><em>MutableTypeJournalPageModel is not thread-safe</em>
- * @see TypeJournalPageModel
+ * <p><em>MutableFieldType is not thread-safe</em>
+ * @see FieldType
  */
-@Generated(from = "ITypeJournalPageModel", generator = "Modifiables")
+@Generated(from = "IFieldType", generator = "Modifiables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
-@javax.annotation.Generated({"Modifiables.generator", "ITypeJournalPageModel"})
+@javax.annotation.Generated({"Modifiables.generator", "IFieldType"})
 @NotThreadSafe
-public final class MutableTypeJournalPageModel implements ITypeJournalPageModel {
+public final class MutableFieldType implements IFieldType {
   private static final long INIT_BIT_FIELDNAME = 0x1L;
   private static final long INIT_BIT_TYPE = 0x2L;
   private long initBits = 0x3L;
@@ -32,14 +32,14 @@ public final class MutableTypeJournalPageModel implements ITypeJournalPageModel 
   private String fieldname;
   private TypeClass type;
 
-  private MutableTypeJournalPageModel() {}
+  private MutableFieldType() {}
 
   /**
-   * Construct a modifiable instance of {@code ITypeJournalPageModel}.
+   * Construct a modifiable instance of {@code IFieldType}.
    * @return A new modifiable instance
    */
-  public static MutableTypeJournalPageModel create() {
-    return new MutableTypeJournalPageModel();
+  public static MutableFieldType create() {
+    return new MutableFieldType();
   }
 
   /**
@@ -71,7 +71,7 @@ public final class MutableTypeJournalPageModel implements ITypeJournalPageModel 
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableTypeJournalPageModel clear() {
+  public MutableFieldType clear() {
     initBits = 0x3L;
     fieldname = null;
     type = null;
@@ -79,16 +79,16 @@ public final class MutableTypeJournalPageModel implements ITypeJournalPageModel 
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link ITypeJournalPageModel} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link IFieldType} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  public MutableTypeJournalPageModel from(ITypeJournalPageModel instance) {
+  public MutableFieldType from(IFieldType instance) {
     Objects.requireNonNull(instance, "instance");
-    if (instance instanceof MutableTypeJournalPageModel) {
-      from((MutableTypeJournalPageModel) instance);
+    if (instance instanceof MutableFieldType) {
+      from((MutableFieldType) instance);
       return this;
     }
     setFieldname(instance.getFieldname());
@@ -97,13 +97,13 @@ public final class MutableTypeJournalPageModel implements ITypeJournalPageModel 
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link ITypeJournalPageModel} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link IFieldType} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  public MutableTypeJournalPageModel from(MutableTypeJournalPageModel instance) {
+  public MutableFieldType from(MutableFieldType instance) {
     Objects.requireNonNull(instance, "instance");
     if (instance.fieldnameIsSet()) {
       setFieldname(instance.getFieldname());
@@ -115,31 +115,31 @@ public final class MutableTypeJournalPageModel implements ITypeJournalPageModel 
   }
 
   /**
-   * Assigns a value to the {@link ITypeJournalPageModel#getFieldname() fieldname} attribute.
+   * Assigns a value to the {@link IFieldType#getFieldname() fieldname} attribute.
    * @param fieldname The value for fieldname
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableTypeJournalPageModel setFieldname(String fieldname) {
+  public MutableFieldType setFieldname(String fieldname) {
     this.fieldname = Objects.requireNonNull(fieldname, "fieldname");
     initBits &= ~INIT_BIT_FIELDNAME;
     return this;
   }
 
   /**
-   * Assigns a value to the {@link ITypeJournalPageModel#getType() type} attribute.
+   * Assigns a value to the {@link IFieldType#getType() type} attribute.
    * @param type The value for type
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableTypeJournalPageModel setType(TypeClass type) {
+  public MutableFieldType setType(TypeClass type) {
     this.type = Objects.requireNonNull(type, "type");
     initBits &= ~INIT_BIT_TYPE;
     return this;
   }
 
   /**
-   * Returns {@code true} if the required attribute {@link ITypeJournalPageModel#getFieldname() fieldname} is set.
+   * Returns {@code true} if the required attribute {@link IFieldType#getFieldname() fieldname} is set.
    * @return {@code true} if set
    */
   public final boolean fieldnameIsSet() {
@@ -147,7 +147,7 @@ public final class MutableTypeJournalPageModel implements ITypeJournalPageModel 
   }
 
   /**
-   * Returns {@code true} if the required attribute {@link ITypeJournalPageModel#getType() type} is set.
+   * Returns {@code true} if the required attribute {@link IFieldType#getType() type} is set.
    * @return {@code true} if set
    */
   public final boolean typeIsSet() {
@@ -160,7 +160,7 @@ public final class MutableTypeJournalPageModel implements ITypeJournalPageModel 
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public final MutableTypeJournalPageModel unsetFieldname() {
+  public final MutableFieldType unsetFieldname() {
     initBits |= INIT_BIT_FIELDNAME;
     fieldname = null;
     return this;
@@ -171,7 +171,7 @@ public final class MutableTypeJournalPageModel implements ITypeJournalPageModel 
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public final MutableTypeJournalPageModel unsetType() {
+  public final MutableFieldType unsetType() {
     initBits |= INIT_BIT_TYPE;
     type = null;
     return this;
@@ -195,35 +195,35 @@ public final class MutableTypeJournalPageModel implements ITypeJournalPageModel 
     List<String> attributes = new ArrayList<>();
     if (!fieldnameIsSet()) attributes.add("fieldname");
     if (!typeIsSet()) attributes.add("type");
-    return "TypeJournalPageModel is not initialized, some of the required attributes are not set " + attributes;
+    return "FieldType is not initialized, some of the required attributes are not set " + attributes;
   }
 
   /**
-   * Converts to {@link TypeJournalPageModel TypeJournalPageModel}.
-   * @return An immutable instance of TypeJournalPageModel
+   * Converts to {@link FieldType FieldType}.
+   * @return An immutable instance of FieldType
    */
-  public final TypeJournalPageModel toImmutable() {
+  public final FieldType toImmutable() {
     checkRequiredAttributes();
-    return TypeJournalPageModel.copyOf(this);
+    return FieldType.copyOf(this);
   }
 
   /**
-   * This instance is equal to all instances of {@code MutableTypeJournalPageModel} that have equal attribute values.
+   * This instance is equal to all instances of {@code MutableFieldType} that have equal attribute values.
    * An uninitialized instance is equal only to itself.
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
   public boolean equals(@Nullable Object another) {
     if (this == another) return true;
-    if (!(another instanceof MutableTypeJournalPageModel)) return false;
-    MutableTypeJournalPageModel other = (MutableTypeJournalPageModel) another;
+    if (!(another instanceof MutableFieldType)) return false;
+    MutableFieldType other = (MutableFieldType) another;
     if (!isInitialized() || !other.isInitialized()) {
       return false;
     }
     return equalTo(other);
   }
 
-  private boolean equalTo(MutableTypeJournalPageModel another) {
+  private boolean equalTo(MutableFieldType another) {
     return fieldname.equals(another.fieldname)
         && type.equals(another.type);
   }
@@ -241,13 +241,13 @@ public final class MutableTypeJournalPageModel implements ITypeJournalPageModel 
   }
 
   /**
-   * Generates a string representation of this {@code ITypeJournalPageModel}.
+   * Generates a string representation of this {@code IFieldType}.
    * If uninitialized, some attribute values may appear as question marks.
    * @return A string representation
    */
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper("MutableTypeJournalPageModel")
+    return MoreObjects.toStringHelper("MutableFieldType")
         .add("fieldname", fieldnameIsSet() ? getFieldname() : "?")
         .add("type", typeIsSet() ? getType() : "?")
         .toString();

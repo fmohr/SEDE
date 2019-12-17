@@ -11,7 +11,9 @@ import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.composition.typing.TCInput;
 import de.upb.sede.composition.typing.TCOutput;
 import de.upb.sede.composition.typing.TypeChecker;
+import de.upb.sede.composition.typing.TypeJournalPage;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,6 +23,8 @@ public class CompositionCompiler {
 
     private final StaticCompositionAnalysis.Builder scaBuilder = StaticCompositionAnalysis.builder();
 
+    private final List<IFieldType> typeContext = new ArrayList<>();
+
     private static final CompileStep<TCInput, TCOutput> typeChecker = new TypeChecker();
 
     private static final CompileStep<FAAInput, FAAOutput> fieldAccessAnalyser = new FieldAccessAnalyser();
@@ -29,6 +33,10 @@ public class CompositionCompiler {
 
     public CompositionCompiler(ISDLLookupService isdlLookupService) {
         this.isdlLookupService = isdlLookupService;
+    }
+
+    public List<IFieldType> getTypeContext() {
+        return typeContext;
     }
 
     public void compileCode(String fmCompositionCode) {
@@ -48,7 +56,7 @@ public class CompositionCompiler {
         /*
          * Type check instructions
          */
-        TCInput tcInput = new TCInput(isdlLookupService, instIndexer);
+        TCInput tcInput = new TCInput(isdlLookupService, instIndexer, typeContext);
         TCOutput tcOutput = typeChecker.step(tcInput);
 
         /*
@@ -64,6 +72,14 @@ public class CompositionCompiler {
         PIOOutput pioOutput = programInstOrderer.step(pioInput);
 
         compose(instIndexer, tcOutput, faaOutput, pioOutput);
+        setContextToOutput(tcOutput);
+    }
+
+    private void setContextToOutput(TCOutput tcOutput) {
+        TypeJournalPage resultingTContext = tcOutput.getJournal().getLastPage();
+        IInstTCResult instTCResult = resultingTContext.collapseModel();
+        typeContext.clear();
+        typeContext.addAll(instTCResult.getFieldTypes());
     }
 
     private void compose(InstructionIndexer instructions,
@@ -76,10 +92,11 @@ public class CompositionCompiler {
             StaticInstAnalysis.Builder siaBuilder = StaticInstAnalysis.builder();
             siaBuilder.instruction(ii);
 
-            List<TypeJournalPageModel> typeJournalPageModel = tcOutput
+            List<IInstTCResult> typeJournalPageModel = tcOutput
                 .getJournal()
-                .getPageAfterInst(ii.getIndex())
-                .getModel();
+                .getLastPage()
+                .extractModel();
+
             siaBuilder.typeContext(typeJournalPageModel);
             siaBuilder.methodCognition(tcOutput.getMethodCognitionMap().get(ii.getIndex()));
 
@@ -90,7 +107,7 @@ public class CompositionCompiler {
         }
     }
 
-    public StaticCompositionAnalysis getStaticCompositionAnalysis() {
+    public IStaticCompositionAnalysis getStaticCompositionAnalysis() {
         return scaBuilder.build();
     }
 

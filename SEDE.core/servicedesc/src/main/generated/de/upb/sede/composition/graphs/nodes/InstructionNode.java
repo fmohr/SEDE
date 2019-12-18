@@ -37,7 +37,7 @@ public final class InstructionNode implements IInstructionNode {
   private final @Nullable String fieldName;
   private final @Nullable String fieldType;
   private final @Nullable String fieldClass;
-  private final String host;
+  private final @Nullable String host;
   private final String context;
   private final boolean contextIsFieldFlag;
   private final String method;
@@ -49,14 +49,19 @@ public final class InstructionNode implements IInstructionNode {
     this.fieldName = builder.fieldName;
     this.fieldType = builder.fieldType;
     this.fieldClass = builder.fieldClass;
-    this.host = builder.host;
     this.context = builder.context;
     this.contextIsFieldFlag = builder.contextIsFieldFlag;
     this.method = builder.method;
     this.parameterFields = builder.parameterFields.build();
-    this.outputIndex = builder.outputIndexIsSet()
-        ? builder.outputIndex
-        : IInstructionNode.super.getOutputIndex();
+    if (builder.hostIsSet()) {
+      initShim.host(builder.host);
+    }
+    if (builder.outputIndexIsSet()) {
+      initShim.outputIndex(builder.outputIndex);
+    }
+    this.host = initShim.getHost();
+    this.outputIndex = initShim.getOutputIndex();
+    this.initShim = null;
   }
 
   private InstructionNode(
@@ -64,7 +69,7 @@ public final class InstructionNode implements IInstructionNode {
       @Nullable String fieldName,
       @Nullable String fieldType,
       @Nullable String fieldClass,
-      String host,
+      @Nullable String host,
       String context,
       boolean contextIsFieldFlag,
       String method,
@@ -80,6 +85,67 @@ public final class InstructionNode implements IInstructionNode {
     this.method = method;
     this.outputIndex = outputIndex;
     this.parameterFields = parameterFields;
+    this.initShim = null;
+  }
+
+  private static final byte STAGE_INITIALIZING = -1;
+  private static final byte STAGE_UNINITIALIZED = 0;
+  private static final byte STAGE_INITIALIZED = 1;
+  @SuppressWarnings("Immutable")
+  private transient volatile InitShim initShim = new InitShim();
+
+  @Generated(from = "IInstructionNode", generator = "Immutables")
+  private final class InitShim {
+    private byte hostBuildStage = STAGE_UNINITIALIZED;
+    private String host;
+
+    String getHost() {
+      if (hostBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
+      if (hostBuildStage == STAGE_UNINITIALIZED) {
+        hostBuildStage = STAGE_INITIALIZING;
+        this.host = getHostInitialize();
+        hostBuildStage = STAGE_INITIALIZED;
+      }
+      return this.host;
+    }
+
+    void host(String host) {
+      this.host = host;
+      hostBuildStage = STAGE_INITIALIZED;
+    }
+
+    private byte outputIndexBuildStage = STAGE_UNINITIALIZED;
+    private int outputIndex;
+
+    int getOutputIndex() {
+      if (outputIndexBuildStage == STAGE_INITIALIZING) throw new IllegalStateException(formatInitCycleMessage());
+      if (outputIndexBuildStage == STAGE_UNINITIALIZED) {
+        outputIndexBuildStage = STAGE_INITIALIZING;
+        this.outputIndex = getOutputIndexInitialize();
+        outputIndexBuildStage = STAGE_INITIALIZED;
+      }
+      return this.outputIndex;
+    }
+
+    void outputIndex(int outputIndex) {
+      this.outputIndex = outputIndex;
+      outputIndexBuildStage = STAGE_INITIALIZED;
+    }
+
+    private String formatInitCycleMessage() {
+      List<String> attributes = new ArrayList<>();
+      if (hostBuildStage == STAGE_INITIALIZING) attributes.add("host");
+      if (outputIndexBuildStage == STAGE_INITIALIZING) attributes.add("outputIndex");
+      return "Cannot build InstructionNode, attribute initializers form cycle " + attributes;
+    }
+  }
+
+  private @Nullable String getHostInitialize() {
+    return IInstructionNode.super.getHost();
+  }
+
+  private int getOutputIndexInitialize() {
+    return IInstructionNode.super.getOutputIndex();
   }
 
   /**
@@ -124,8 +190,11 @@ public final class InstructionNode implements IInstructionNode {
   @JsonProperty("host")
   @Deprecated
   @Override
-  public String getHost() {
-    return host;
+  public @Nullable String getHost() {
+    InitShim shim = this.initShim;
+    return shim != null
+        ? shim.getHost()
+        : this.host;
   }
 
   /**
@@ -163,7 +232,10 @@ public final class InstructionNode implements IInstructionNode {
   @JsonProperty("outputIndex")
   @Override
   public int getOutputIndex() {
-    return outputIndex;
+    InitShim shim = this.initShim;
+    return shim != null
+        ? shim.getOutputIndex()
+        : this.outputIndex;
   }
 
   /**
@@ -270,19 +342,18 @@ public final class InstructionNode implements IInstructionNode {
   /**
    * Copy the current immutable object by setting a value for the {@link IInstructionNode#getHost() host} attribute.
    * An equals check used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for host
+   * @param value A new value for host (can be {@code null})
    * @return A modified copy of the {@code this} object
    */
   @Deprecated
-  public final InstructionNode withHost(String value) {
-    String newValue = Objects.requireNonNull(value, "host");
-    if (this.host.equals(newValue)) return this;
+  public final InstructionNode withHost(@Nullable String value) {
+    if (Objects.equals(this.host, value)) return this;
     return new InstructionNode(
         this.fMInstruction,
         this.fieldName,
         this.fieldType,
         this.fieldClass,
-        newValue,
+        value,
         this.context,
         this.contextIsFieldFlag,
         this.method,
@@ -434,7 +505,7 @@ public final class InstructionNode implements IInstructionNode {
         && Objects.equals(fieldName, another.fieldName)
         && Objects.equals(fieldType, another.fieldType)
         && Objects.equals(fieldClass, another.fieldClass)
-        && host.equals(another.host)
+        && Objects.equals(host, another.host)
         && context.equals(another.context)
         && contextIsFieldFlag == another.contextIsFieldFlag
         && method.equals(another.method)
@@ -453,7 +524,7 @@ public final class InstructionNode implements IInstructionNode {
     h += (h << 5) + Objects.hashCode(fieldName);
     h += (h << 5) + Objects.hashCode(fieldType);
     h += (h << 5) + Objects.hashCode(fieldClass);
-    h += (h << 5) + host.hashCode();
+    h += (h << 5) + Objects.hashCode(host);
     h += (h << 5) + context.hashCode();
     h += (h << 5) + Booleans.hashCode(contextIsFieldFlag);
     h += (h << 5) + method.hashCode();
@@ -498,6 +569,7 @@ public final class InstructionNode implements IInstructionNode {
     @Nullable String fieldType;
     @Nullable String fieldClass;
     @Nullable String host;
+    boolean hostIsSet;
     @Nullable String context;
     boolean contextIsFieldFlag;
     boolean contextIsFieldFlagIsSet;
@@ -522,8 +594,9 @@ public final class InstructionNode implements IInstructionNode {
       this.fieldClass = fieldClass;
     }
     @JsonProperty("host")
-    public void setHost(String host) {
+    public void setHost(@Nullable String host) {
       this.host = host;
+      this.hostIsSet = true;
     }
     @JsonProperty("context")
     public void setContext(String context) {
@@ -594,7 +667,7 @@ public final class InstructionNode implements IInstructionNode {
     if (json.fieldClass != null) {
       builder.fieldClass(json.fieldClass);
     }
-    if (json.host != null) {
+    if (json.hostIsSet) {
       builder.host(json.host);
     }
     if (json.context != null) {
@@ -698,7 +771,7 @@ public final class InstructionNode implements IInstructionNode {
    *    .fieldName(String | null) // nullable {@link IInstructionNode#getFieldName() fieldName}
    *    .fieldType(String | null) // nullable {@link IInstructionNode#getFieldType() fieldType}
    *    .fieldClass(String | null) // nullable {@link IInstructionNode#getFieldClass() fieldClass}
-   *    .host(String) // required {@link IInstructionNode#getHost() host}
+   *    .host(String | null) // nullable {@link IInstructionNode#getHost() host}
    *    .context(String) // required {@link IInstructionNode#getContext() context}
    *    .contextIsFieldFlag(boolean) // required {@link IInstructionNode#getContextIsFieldFlag() contextIsFieldFlag}
    *    .method(String) // required {@link IInstructionNode#getMethod() method}
@@ -723,12 +796,12 @@ public final class InstructionNode implements IInstructionNode {
   @NotThreadSafe
   public static final class Builder {
     private static final long INIT_BIT_F_M_INSTRUCTION = 0x1L;
-    private static final long INIT_BIT_HOST = 0x2L;
-    private static final long INIT_BIT_CONTEXT = 0x4L;
-    private static final long INIT_BIT_CONTEXT_IS_FIELD_FLAG = 0x8L;
-    private static final long INIT_BIT_METHOD = 0x10L;
-    private static final long OPT_BIT_OUTPUT_INDEX = 0x1L;
-    private long initBits = 0x1fL;
+    private static final long INIT_BIT_CONTEXT = 0x2L;
+    private static final long INIT_BIT_CONTEXT_IS_FIELD_FLAG = 0x4L;
+    private static final long INIT_BIT_METHOD = 0x8L;
+    private static final long OPT_BIT_HOST = 0x1L;
+    private static final long OPT_BIT_OUTPUT_INDEX = 0x2L;
+    private long initBits = 0xfL;
     private long optBits;
 
     private @Nullable String fMInstruction;
@@ -768,8 +841,9 @@ public final class InstructionNode implements IInstructionNode {
       if (fieldClassValue != null) {
         fieldClass(fieldClassValue);
       }
-      if (instance.hostIsSet()) {
-        host(instance.getHost());
+      @Nullable String hostValue = instance.getHost();
+      if (hostValue != null) {
+        host(hostValue);
       }
       if (instance.contextIsSet()) {
         context(instance.getContext());
@@ -839,7 +913,10 @@ public final class InstructionNode implements IInstructionNode {
           bits |= 0x1L;
         }
         method(instance.getMethod());
-        host(instance.getHost());
+        @Nullable String hostValue = instance.getHost();
+        if (hostValue != null) {
+          host(hostValue);
+        }
         context(instance.getContext());
         @Nullable String fieldTypeValue = instance.getFieldType();
         if (fieldTypeValue != null) {
@@ -903,15 +980,16 @@ public final class InstructionNode implements IInstructionNode {
 
     /**
      * Initializes the value for the {@link IInstructionNode#getHost() host} attribute.
-     * @param host The value for host 
+     * <p><em>If not set, this attribute will have a default value as returned by the initializer of {@link IInstructionNode#getHost() host}.</em>
+     * @param host The value for host (can be {@code null})
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
     @JsonProperty("host")
     @Deprecated
-    public final Builder host(String host) {
-      this.host = Objects.requireNonNull(host, "host");
-      initBits &= ~INIT_BIT_HOST;
+    public final Builder host(@Nullable String host) {
+      this.host = host;
+      optBits |= OPT_BIT_HOST;
       return this;
     }
 
@@ -1026,6 +1104,10 @@ public final class InstructionNode implements IInstructionNode {
       return new InstructionNode(this);
     }
 
+    private boolean hostIsSet() {
+      return (optBits & OPT_BIT_HOST) != 0;
+    }
+
     private boolean outputIndexIsSet() {
       return (optBits & OPT_BIT_OUTPUT_INDEX) != 0;
     }
@@ -1033,7 +1115,6 @@ public final class InstructionNode implements IInstructionNode {
     private String formatRequiredAttributesMessage() {
       List<String> attributes = new ArrayList<>();
       if ((initBits & INIT_BIT_F_M_INSTRUCTION) != 0) attributes.add("fMInstruction");
-      if ((initBits & INIT_BIT_HOST) != 0) attributes.add("host");
       if ((initBits & INIT_BIT_CONTEXT) != 0) attributes.add("context");
       if ((initBits & INIT_BIT_CONTEXT_IS_FIELD_FLAG) != 0) attributes.add("contextIsFieldFlag");
       if ((initBits & INIT_BIT_METHOD) != 0) attributes.add("method");

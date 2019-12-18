@@ -10,12 +10,12 @@ import de.upb.sede.types.IDataTypeRef;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-public class SDLLookupServiceAdapter implements ISDLLookupService {
+public class SDLLookupServiceAdapter implements SDLLookupService {
 
 
-    protected final ISDLLookupService lookupServiceDelegate;
+    protected final SDLLookupService lookupServiceDelegate;
 
-    public SDLLookupServiceAdapter(ISDLLookupService service) {
+    public SDLLookupServiceAdapter(SDLLookupService service) {
         lookupServiceDelegate = service;
     }
 

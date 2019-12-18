@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.upb.sede.composition.ICCRequest;
+import de.upb.sede.composition.ICompositionCompilation;
 import de.upb.sede.exec.ExecutorHandle;
 import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.config.DeploymentConfig;
@@ -91,7 +93,12 @@ public class Gateway implements IGateway {
 		return gc;
 	}
 
-	@Override
+    @Override
+    public ICompositionCompilation compileComposition(ICCRequest ccRequest) {
+	    throw new RuntimeException("Not compilation is not implemented in the old Gateway implementation");
+    }
+
+    @Override
 	public final GatewayResolution resolve(ResolveRequest resolveRequest) {
 		GraphConstruction gc = constructGraphs(resolveRequest);
 		CompositionGraph clientGraph = gc.getClientGraph();

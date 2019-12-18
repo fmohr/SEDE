@@ -63,29 +63,29 @@ public class TypeCheckException extends RuntimeException {
 
     static TypeCheckException unknownType(String qualifier, String kind) {
         String errText = String.format("Unknown %s: `%s`", kind, qualifier);
-        throw new TypeCheckException(errText);
+        return new TypeCheckException(errText);
     }
 
     static TypeCheckException unknownType(String fieldName, TypeClass fieldType) {
         String errText = String.format("Field %s Unknown type `%s`", fieldName, fieldType.getTypeQualifier());
-        throw new TypeCheckException(errText);
+        return new TypeCheckException(errText);
     }
 
     static TypeCheckException unknownMethodSignature(String serviceQualifier, String methodQualifier, IInstructionNode inst) {
         int expectedOutput = inst.isAssignment()? 1 : 0;
         int expectedInput = inst.getParameterFields().size();
 
-        String errText = "No one signature of method %s::%s matches the requested parameter count: " +
-            "Instruction exptexts %d -> %d" +
+        String errText = "No signature of method %s::%s matches the requested parameter count: " +
+            "Instruction expects %d -> %d" +
             "\nNote that currently method resolution works simply matching the input and output size. Parameter types are ignored." +
             "\nAdditionally note that this exception is also thrown if more than one method matches the instruction.";
         errText = String.format(errText, serviceQualifier, methodQualifier, expectedInput, expectedOutput);
-        throw new TypeCheckException(errText);
+        return new TypeCheckException(errText);
     }
 
     static TypeCheckException undefinedField(String fieldName) {
         String errText = String.format("Field is not defined: %s", fieldName);
-        throw new TypeCheckException(errText);
+        return new TypeCheckException(errText);
     }
 
     static TypeCheckException nonMatchingSemanticType(String sourceType, String sourceSemType,
@@ -93,18 +93,27 @@ public class TypeCheckException extends RuntimeException {
         String errText = String.format("Cannot coerce type %s -> %s " +
                 "because their semantic types doesn't match: %s ≠ %s",
             sourceType, targetType, sourceSemType, targetSemType);
-        throw new TypeCheckException(errText);
+        return new TypeCheckException(errText);
     }
 
     static TypeCheckException methodNoReturnValue(String method, String assignedField) {
         String errText = String.format("Cannot assign `%s`, " +
             "method `%s` doesn't return any value", method, assignedField);
-        throw new TypeCheckException(errText);
+        return new TypeCheckException(errText);
     }
 
     static TypeCheckException methodReturnsNullClass() {
         String errText = "Returns null class";
-        throw new TypeCheckException(errText);
+        return new TypeCheckException(errText);
     }
 
+    static TypeCheckException illegalNonStaticContext(String serviceContextQualifier, String methodQualifier) {
+        String errText = String.format("Cannot invoke method `%s:%s` from a non static context", serviceContextQualifier, methodQualifier);
+        return new TypeCheckException(errText);
+    }
+
+    static TypeCheckException illegalStaticContext(String serviceContextQualifier, String methodQualifier) {
+        String errText =  String.format("Cannot invoke method `%s:%s` from a static context", serviceContextQualifier, methodQualifier);
+        return new TypeCheckException(errText);
+    }
 }

@@ -1,14 +1,11 @@
 package de.upb.sede
 
-import de.upb.sede.exec.IMethodRef
-import de.upb.sede.exec.IServiceDesc
+
 import de.upb.sede.exec.IServiceRef
 import de.upb.sede.exec.MethodRef
-import de.upb.sede.util.FileUtil
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static de.upb.sede.IQualifiable.of
 import static de.upb.sede.IServiceCollectionRef.of
 
 class SDLLookupServiceTest extends Specification {
@@ -24,7 +21,7 @@ class SDLLookupServiceTest extends Specification {
         SDLReader reader = new SDLReader()
         reader.read(new File(TEST_BASE))
         def serviceDescCollection = reader.collections
-        def sdlBase = SDLBase.builder().collections(serviceDescCollection).build()
+        def sdlBase = SDLAssembly.builder().collections(serviceDescCollection).build()
         baseLookupService = new SDLBaseLookupService(sdlBase)
         cacheLookupService = new SDLCacheLookupService(baseLookupService)
         doubleCacheLookupService = new SDLCacheLookupService(cacheLookupService)
@@ -106,8 +103,8 @@ class SDLLookupServiceTest extends Specification {
         doubleCacheLookupService | _
     }
 
-    void "data-driven test method lookup"(ISDLLookupService ls,
-                              String collection, String service, String method, boolean result) {
+    void "data-driven test method lookup"(SDLLookupService ls,
+                                          String collection, String service, String method, boolean result) {
         when:
         def methodRef = MethodRef.builder()
             .serviceRef(IServiceRef.of(collection, service))

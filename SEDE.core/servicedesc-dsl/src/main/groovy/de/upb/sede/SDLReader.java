@@ -35,12 +35,13 @@ public class SDLReader {
     public SDLReader() {
         this(new HashMap<>());
     }
+
     public SDLReader(Map<String, MutableServiceCollectionDesc> database) {
         shell = new GroovyShell(this.getClass().getClassLoader(), createConfig());
         this.database = database;
     }
 
-    public static CompilerConfiguration createConfig() {
+    static CompilerConfiguration createConfig() {
         CompilerConfiguration config = new CompilerConfiguration();
 
         ImportCustomizer importCustomizer = new ImportCustomizer();
@@ -51,6 +52,12 @@ public class SDLReader {
         config.setScriptBaseClass(SDL.class.getName());
 
         return config;
+    }
+
+    public static ISDLAssembly assemble(@DelegatesTo(SDL.class) Closure sdlScript) {
+        SDLReader reader = new SDLReader();
+        reader.readClosure(sdlScript);
+        return reader.getSDLAssembly();
     }
 
     public void readFromFilePath(String serviceDescFilePath) {
@@ -96,12 +103,12 @@ public class SDLReader {
             .collect(Collectors.toList());
     }
 
-    public ISDLBase getSDLBase() {
-        return SDLBase.builder().collections(getCollections()).build();
+    public ISDLAssembly getSDLAssembly() {
+        return SDLAssembly.builder().collections(getCollections()).build();
     }
 
-    public ISDLBase getMutableSDLBase() {
-        return MutableSDLBase.create().setCollections(getMutableCollections());
+    public ISDLAssembly getMutableSDLBase() {
+        return MutableSDLAssembly.create().setCollections(getMutableCollections());
     }
 
     public  List<MutableServiceCollectionDesc> getMutableCollections() {

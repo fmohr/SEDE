@@ -14,7 +14,7 @@ public interface IStaticInstAnalysis {
 
     IIndexedInstruction getInstruction();
 
-    List<IInstTCResult> getTypeContext();
+    List<IFieldType> getTypeContext();
 
     IMethodCognition getMethodCognition();
 

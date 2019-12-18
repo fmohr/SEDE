@@ -27,16 +27,12 @@ import org.immutables.value.Generated;
 public final class MutableResolvePolicy implements IResolvePolicy {
   private static final long INIT_BIT_RETURN_POLICY = 0x1L;
   private static final long INIT_BIT_SERVICE_POLICY = 0x2L;
-  private static final long INIT_BIT_IS_BLOCK_EXEC_REQUESTED = 0x4L;
-  private static final long INIT_BIT_IS_DOT_GRAPH_REQUESTED = 0x8L;
-  private long initBits = 0xfL;
+  private long initBits = 0x3L;
 
   private IResolvePolicy.ReturnPolicy returnPolicy;
   private IResolvePolicy.ReturnPolicy servicePolicy;
   private final ArrayList<String> returnFieldnames = new ArrayList<String>();
   private final ArrayList<String> persistentServices = new ArrayList<String>();
-  private boolean isBlockExecRequested;
-  private boolean isDotGraphRequested;
 
   private MutableResolvePolicy() {}
 
@@ -91,27 +87,12 @@ public final class MutableResolvePolicy implements IResolvePolicy {
   }
 
   /**
-   * @return value of {@code isBlockExecRequested} attribute
-   */
-  @JsonProperty("isBlockExecRequested")
-  @Override
-  public final boolean isBlockExecRequested() {
-    if (!isBlockExecRequestedIsSet()) {
-      checkRequiredAttributes();
-    }
-    return isBlockExecRequested;
-  }
-
-  /**
-   * @return value of {@code isDotGraphRequested} attribute
+   * @return newly computed, not cached value of {@code isDotGraphRequested} attribute
    */
   @JsonProperty("isDotGraphRequested")
   @Override
   public final boolean isDotGraphRequested() {
-    if (!isDotGraphRequestedIsSet()) {
-      checkRequiredAttributes();
-    }
-    return isDotGraphRequested;
+    return IResolvePolicy.super.isDotGraphRequested();
   }
 
   /**
@@ -120,13 +101,11 @@ public final class MutableResolvePolicy implements IResolvePolicy {
    */
   @CanIgnoreReturnValue
   public MutableResolvePolicy clear() {
-    initBits = 0xfL;
+    initBits = 0x3L;
     returnPolicy = null;
     servicePolicy = null;
     returnFieldnames.clear();
     persistentServices.clear();
-    isBlockExecRequested = false;
-    isDotGraphRequested = false;
     return this;
   }
 
@@ -148,8 +127,6 @@ public final class MutableResolvePolicy implements IResolvePolicy {
     setServicePolicy(instance.getServicePolicy());
     addAllReturnFieldnames(instance.getReturnFieldnames());
     addAllPersistentServices(instance.getPersistentServices());
-    setIsBlockExecRequested(instance.isBlockExecRequested());
-    setIsDotGraphRequested(instance.isDotGraphRequested());
     return this;
   }
 
@@ -171,12 +148,6 @@ public final class MutableResolvePolicy implements IResolvePolicy {
     }
     addAllReturnFieldnames(instance.getReturnFieldnames());
     addAllPersistentServices(instance.getPersistentServices());
-    if (instance.isBlockExecRequestedIsSet()) {
-      setIsBlockExecRequested(instance.isBlockExecRequested());
-    }
-    if (instance.isDotGraphRequestedIsSet()) {
-      setIsDotGraphRequested(instance.isDotGraphRequested());
-    }
     return this;
   }
 
@@ -305,30 +276,6 @@ public final class MutableResolvePolicy implements IResolvePolicy {
   }
 
   /**
-   * Assigns a value to the {@link IResolvePolicy#isBlockExecRequested() isBlockExecRequested} attribute.
-   * @param isBlockExecRequested The value for isBlockExecRequested
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableResolvePolicy setIsBlockExecRequested(boolean isBlockExecRequested) {
-    this.isBlockExecRequested = isBlockExecRequested;
-    initBits &= ~INIT_BIT_IS_BLOCK_EXEC_REQUESTED;
-    return this;
-  }
-
-  /**
-   * Assigns a value to the {@link IResolvePolicy#isDotGraphRequested() isDotGraphRequested} attribute.
-   * @param isDotGraphRequested The value for isDotGraphRequested
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public MutableResolvePolicy setIsDotGraphRequested(boolean isDotGraphRequested) {
-    this.isDotGraphRequested = isDotGraphRequested;
-    initBits &= ~INIT_BIT_IS_DOT_GRAPH_REQUESTED;
-    return this;
-  }
-
-  /**
    * Returns {@code true} if the required attribute {@link IResolvePolicy#getReturnPolicy() returnPolicy} is set.
    * @return {@code true} if set
    */
@@ -342,22 +289,6 @@ public final class MutableResolvePolicy implements IResolvePolicy {
    */
   public final boolean servicePolicyIsSet() {
     return (initBits & INIT_BIT_SERVICE_POLICY) == 0;
-  }
-
-  /**
-   * Returns {@code true} if the required attribute {@link IResolvePolicy#isBlockExecRequested() isBlockExecRequested} is set.
-   * @return {@code true} if set
-   */
-  public final boolean isBlockExecRequestedIsSet() {
-    return (initBits & INIT_BIT_IS_BLOCK_EXEC_REQUESTED) == 0;
-  }
-
-  /**
-   * Returns {@code true} if the required attribute {@link IResolvePolicy#isDotGraphRequested() isDotGraphRequested} is set.
-   * @return {@code true} if set
-   */
-  public final boolean isDotGraphRequestedIsSet() {
-    return (initBits & INIT_BIT_IS_DOT_GRAPH_REQUESTED) == 0;
   }
 
 
@@ -384,28 +315,6 @@ public final class MutableResolvePolicy implements IResolvePolicy {
   }
 
   /**
-   * Reset an attribute to its initial value.
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public final MutableResolvePolicy unsetIsBlockExecRequested() {
-    initBits |= INIT_BIT_IS_BLOCK_EXEC_REQUESTED;
-    isBlockExecRequested = false;
-    return this;
-  }
-
-  /**
-   * Reset an attribute to its initial value.
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public final MutableResolvePolicy unsetIsDotGraphRequested() {
-    initBits |= INIT_BIT_IS_DOT_GRAPH_REQUESTED;
-    isDotGraphRequested = false;
-    return this;
-  }
-
-  /**
    * Returns {@code true} if all required attributes are set, indicating that the object is initialized.
    * @return {@code true} if set
    */
@@ -423,8 +332,6 @@ public final class MutableResolvePolicy implements IResolvePolicy {
     List<String> attributes = new ArrayList<>();
     if (!returnPolicyIsSet()) attributes.add("returnPolicy");
     if (!servicePolicyIsSet()) attributes.add("servicePolicy");
-    if (!isBlockExecRequestedIsSet()) attributes.add("isBlockExecRequested");
-    if (!isDotGraphRequestedIsSet()) attributes.add("isDotGraphRequested");
     return "ResolvePolicy is not initialized, some of the required attributes are not set " + attributes;
   }
 
@@ -454,16 +361,16 @@ public final class MutableResolvePolicy implements IResolvePolicy {
   }
 
   private boolean equalTo(MutableResolvePolicy another) {
+    boolean isDotGraphRequested = isDotGraphRequested();
     return returnPolicy.equals(another.returnPolicy)
         && servicePolicy.equals(another.servicePolicy)
         && returnFieldnames.equals(another.returnFieldnames)
         && persistentServices.equals(another.persistentServices)
-        && isBlockExecRequested == another.isBlockExecRequested
-        && isDotGraphRequested == another.isDotGraphRequested;
+        && isDotGraphRequested == another.isDotGraphRequested();
   }
 
   /**
-   * Computes a hash code from attributes: {@code returnPolicy}, {@code servicePolicy}, {@code returnFieldnames}, {@code persistentServices}, {@code isBlockExecRequested}, {@code isDotGraphRequested}.
+   * Computes a hash code from attributes: {@code returnPolicy}, {@code servicePolicy}, {@code returnFieldnames}, {@code persistentServices}, {@code isDotGraphRequested}.
    * @return hashCode value
    */
   @Override
@@ -473,7 +380,7 @@ public final class MutableResolvePolicy implements IResolvePolicy {
     h += (h << 5) + servicePolicy.hashCode();
     h += (h << 5) + returnFieldnames.hashCode();
     h += (h << 5) + persistentServices.hashCode();
-    h += (h << 5) + Booleans.hashCode(isBlockExecRequested);
+    boolean isDotGraphRequested = isDotGraphRequested();
     h += (h << 5) + Booleans.hashCode(isDotGraphRequested);
     return h;
   }
@@ -490,8 +397,6 @@ public final class MutableResolvePolicy implements IResolvePolicy {
         .add("servicePolicy", servicePolicyIsSet() ? getServicePolicy() : "?")
         .add("returnFieldnames", getReturnFieldnames())
         .add("persistentServices", getPersistentServices())
-        .add("isBlockExecRequested", isBlockExecRequestedIsSet() ? isBlockExecRequested() : "?")
-        .add("isDotGraphRequested", isDotGraphRequestedIsSet() ? isDotGraphRequested() : "?")
         .toString();
   }
 }

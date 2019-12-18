@@ -15,7 +15,7 @@ class MethodDomain
         return addSignature(MutableSignatureDesc.create(), signatureDescriber)
     }
 
-    MutableSignatureDesc signature(Map<String, List<String>> types,
+    MutableSignatureDesc signature(Map types,
                             @DelegatesTo(MutableSignatureDesc) Closure signatureDescriber) {
         def newSign = MutableSignatureDesc.create()
 
@@ -34,6 +34,9 @@ class MethodDomain
             outputParamReader('outs')
         else if('output' in types)
             outputParamReader('output')
+
+        if('static' in types && types['static'] == true)
+            newSign.setIsContextFree(true)
 
         return addSignature(newSign, signatureDescriber)
     }

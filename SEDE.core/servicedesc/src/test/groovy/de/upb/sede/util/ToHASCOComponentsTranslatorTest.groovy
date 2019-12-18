@@ -2,14 +2,9 @@ package de.upb.sede.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import de.upb.sede.ISDLLookupService
-import de.upb.sede.SDLBase
 import de.upb.sede.SDLBaseLookupService
 import de.upb.sede.SDLReader
-import de.upb.sede.ServiceCollectionDesc
 import spock.lang.Specification
-
-import java.util.function.Predicate
 
 import static de.upb.sede.util.ToHASCOComponentsTranslator.*
 
@@ -21,7 +16,7 @@ class ToHASCOComponentsTranslatorTest extends Specification {
 
     def "test basics translation"() {
         when:
-        def sdlBase = SDLGUtil.read {
+        def sdlBase = SDLReader.assemble {
             collection 'collection.1', {
                 service 'service.0', {
                     // no params

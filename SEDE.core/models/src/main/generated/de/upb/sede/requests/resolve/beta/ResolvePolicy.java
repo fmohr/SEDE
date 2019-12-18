@@ -2,6 +2,7 @@ package de.upb.sede.requests.resolve.beta;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.google.common.base.MoreObjects;
@@ -36,22 +37,18 @@ public final class ResolvePolicy implements IResolvePolicy {
   private final IResolvePolicy.ReturnPolicy servicePolicy;
   private final ImmutableList<String> returnFieldnames;
   private final ImmutableList<String> persistentServices;
-  private final boolean isBlockExecRequested;
-  private final boolean isDotGraphRequested;
+  private transient final boolean isDotGraphRequested;
 
   private ResolvePolicy(
       IResolvePolicy.ReturnPolicy returnPolicy,
       IResolvePolicy.ReturnPolicy servicePolicy,
       ImmutableList<String> returnFieldnames,
-      ImmutableList<String> persistentServices,
-      boolean isBlockExecRequested,
-      boolean isDotGraphRequested) {
+      ImmutableList<String> persistentServices) {
     this.returnPolicy = returnPolicy;
     this.servicePolicy = servicePolicy;
     this.returnFieldnames = returnFieldnames;
     this.persistentServices = persistentServices;
-    this.isBlockExecRequested = isBlockExecRequested;
-    this.isDotGraphRequested = isDotGraphRequested;
+    this.isDotGraphRequested = IResolvePolicy.super.isDotGraphRequested();
   }
 
   /**
@@ -91,16 +88,7 @@ public final class ResolvePolicy implements IResolvePolicy {
   }
 
   /**
-   * @return The value of the {@code isBlockExecRequested} attribute
-   */
-  @JsonProperty("isBlockExecRequested")
-  @Override
-  public boolean isBlockExecRequested() {
-    return isBlockExecRequested;
-  }
-
-  /**
-   * @return The value of the {@code isDotGraphRequested} attribute
+   * @return The computed-at-construction value of the {@code isDotGraphRequested} attribute
    */
   @JsonProperty("isDotGraphRequested")
   @Override
@@ -118,13 +106,7 @@ public final class ResolvePolicy implements IResolvePolicy {
     if (this.returnPolicy == value) return this;
     IResolvePolicy.ReturnPolicy newValue = Objects.requireNonNull(value, "returnPolicy");
     if (this.returnPolicy.equals(newValue)) return this;
-    return new ResolvePolicy(
-        newValue,
-        this.servicePolicy,
-        this.returnFieldnames,
-        this.persistentServices,
-        this.isBlockExecRequested,
-        this.isDotGraphRequested);
+    return new ResolvePolicy(newValue, this.servicePolicy, this.returnFieldnames, this.persistentServices);
   }
 
   /**
@@ -137,13 +119,7 @@ public final class ResolvePolicy implements IResolvePolicy {
     if (this.servicePolicy == value) return this;
     IResolvePolicy.ReturnPolicy newValue = Objects.requireNonNull(value, "servicePolicy");
     if (this.servicePolicy.equals(newValue)) return this;
-    return new ResolvePolicy(
-        this.returnPolicy,
-        newValue,
-        this.returnFieldnames,
-        this.persistentServices,
-        this.isBlockExecRequested,
-        this.isDotGraphRequested);
+    return new ResolvePolicy(this.returnPolicy, newValue, this.returnFieldnames, this.persistentServices);
   }
 
   /**
@@ -153,13 +129,7 @@ public final class ResolvePolicy implements IResolvePolicy {
    */
   public final ResolvePolicy withReturnFieldnames(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new ResolvePolicy(
-        this.returnPolicy,
-        this.servicePolicy,
-        newValue,
-        this.persistentServices,
-        this.isBlockExecRequested,
-        this.isDotGraphRequested);
+    return new ResolvePolicy(this.returnPolicy, this.servicePolicy, newValue, this.persistentServices);
   }
 
   /**
@@ -171,13 +141,7 @@ public final class ResolvePolicy implements IResolvePolicy {
   public final ResolvePolicy withReturnFieldnames(Iterable<String> elements) {
     if (this.returnFieldnames == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new ResolvePolicy(
-        this.returnPolicy,
-        this.servicePolicy,
-        newValue,
-        this.persistentServices,
-        this.isBlockExecRequested,
-        this.isDotGraphRequested);
+    return new ResolvePolicy(this.returnPolicy, this.servicePolicy, newValue, this.persistentServices);
   }
 
   /**
@@ -187,13 +151,7 @@ public final class ResolvePolicy implements IResolvePolicy {
    */
   public final ResolvePolicy withPersistentServices(String... elements) {
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new ResolvePolicy(
-        this.returnPolicy,
-        this.servicePolicy,
-        this.returnFieldnames,
-        newValue,
-        this.isBlockExecRequested,
-        this.isDotGraphRequested);
+    return new ResolvePolicy(this.returnPolicy, this.servicePolicy, this.returnFieldnames, newValue);
   }
 
   /**
@@ -205,47 +163,7 @@ public final class ResolvePolicy implements IResolvePolicy {
   public final ResolvePolicy withPersistentServices(Iterable<String> elements) {
     if (this.persistentServices == elements) return this;
     ImmutableList<String> newValue = ImmutableList.copyOf(elements);
-    return new ResolvePolicy(
-        this.returnPolicy,
-        this.servicePolicy,
-        this.returnFieldnames,
-        newValue,
-        this.isBlockExecRequested,
-        this.isDotGraphRequested);
-  }
-
-  /**
-   * Copy the current immutable object by setting a value for the {@link IResolvePolicy#isBlockExecRequested() isBlockExecRequested} attribute.
-   * A value equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for isBlockExecRequested
-   * @return A modified copy of the {@code this} object
-   */
-  public final ResolvePolicy withIsBlockExecRequested(boolean value) {
-    if (this.isBlockExecRequested == value) return this;
-    return new ResolvePolicy(
-        this.returnPolicy,
-        this.servicePolicy,
-        this.returnFieldnames,
-        this.persistentServices,
-        value,
-        this.isDotGraphRequested);
-  }
-
-  /**
-   * Copy the current immutable object by setting a value for the {@link IResolvePolicy#isDotGraphRequested() isDotGraphRequested} attribute.
-   * A value equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for isDotGraphRequested
-   * @return A modified copy of the {@code this} object
-   */
-  public final ResolvePolicy withIsDotGraphRequested(boolean value) {
-    if (this.isDotGraphRequested == value) return this;
-    return new ResolvePolicy(
-        this.returnPolicy,
-        this.servicePolicy,
-        this.returnFieldnames,
-        this.persistentServices,
-        this.isBlockExecRequested,
-        value);
+    return new ResolvePolicy(this.returnPolicy, this.servicePolicy, this.returnFieldnames, newValue);
   }
 
   /**
@@ -264,12 +182,11 @@ public final class ResolvePolicy implements IResolvePolicy {
         && servicePolicy.equals(another.servicePolicy)
         && returnFieldnames.equals(another.returnFieldnames)
         && persistentServices.equals(another.persistentServices)
-        && isBlockExecRequested == another.isBlockExecRequested
         && isDotGraphRequested == another.isDotGraphRequested;
   }
 
   /**
-   * Computes a hash code from attributes: {@code returnPolicy}, {@code servicePolicy}, {@code returnFieldnames}, {@code persistentServices}, {@code isBlockExecRequested}, {@code isDotGraphRequested}.
+   * Computes a hash code from attributes: {@code returnPolicy}, {@code servicePolicy}, {@code returnFieldnames}, {@code persistentServices}, {@code isDotGraphRequested}.
    * @return hashCode value
    */
   @Override
@@ -279,7 +196,6 @@ public final class ResolvePolicy implements IResolvePolicy {
     h += (h << 5) + servicePolicy.hashCode();
     h += (h << 5) + returnFieldnames.hashCode();
     h += (h << 5) + persistentServices.hashCode();
-    h += (h << 5) + Booleans.hashCode(isBlockExecRequested);
     h += (h << 5) + Booleans.hashCode(isDotGraphRequested);
     return h;
   }
@@ -296,7 +212,6 @@ public final class ResolvePolicy implements IResolvePolicy {
         .add("servicePolicy", servicePolicy)
         .add("returnFieldnames", returnFieldnames)
         .add("persistentServices", persistentServices)
-        .add("isBlockExecRequested", isBlockExecRequested)
         .add("isDotGraphRequested", isDotGraphRequested)
         .toString();
   }
@@ -315,10 +230,6 @@ public final class ResolvePolicy implements IResolvePolicy {
     @Nullable IResolvePolicy.ReturnPolicy servicePolicy;
     @Nullable List<String> returnFieldnames = ImmutableList.of();
     @Nullable List<String> persistentServices = ImmutableList.of();
-    boolean isBlockExecRequested;
-    boolean isBlockExecRequestedIsSet;
-    boolean isDotGraphRequested;
-    boolean isDotGraphRequestedIsSet;
     @JsonProperty("returnPolicy")
     public void setReturnPolicy(IResolvePolicy.ReturnPolicy returnPolicy) {
       this.returnPolicy = returnPolicy;
@@ -335,16 +246,6 @@ public final class ResolvePolicy implements IResolvePolicy {
     public void setPersistentServices(List<String> persistentServices) {
       this.persistentServices = persistentServices;
     }
-    @JsonProperty("isBlockExecRequested")
-    public void setIsBlockExecRequested(boolean isBlockExecRequested) {
-      this.isBlockExecRequested = isBlockExecRequested;
-      this.isBlockExecRequestedIsSet = true;
-    }
-    @JsonProperty("isDotGraphRequested")
-    public void setIsDotGraphRequested(boolean isDotGraphRequested) {
-      this.isDotGraphRequested = isDotGraphRequested;
-      this.isDotGraphRequestedIsSet = true;
-    }
     @Override
     public IResolvePolicy.ReturnPolicy getReturnPolicy() { throw new UnsupportedOperationException(); }
     @Override
@@ -353,8 +254,7 @@ public final class ResolvePolicy implements IResolvePolicy {
     public List<String> getReturnFieldnames() { throw new UnsupportedOperationException(); }
     @Override
     public List<String> getPersistentServices() { throw new UnsupportedOperationException(); }
-    @Override
-    public boolean isBlockExecRequested() { throw new UnsupportedOperationException(); }
+    @JsonIgnore
     @Override
     public boolean isDotGraphRequested() { throw new UnsupportedOperationException(); }
   }
@@ -379,12 +279,6 @@ public final class ResolvePolicy implements IResolvePolicy {
     }
     if (json.persistentServices != null) {
       builder.addAllPersistentServices(json.persistentServices);
-    }
-    if (json.isBlockExecRequestedIsSet) {
-      builder.isBlockExecRequested(json.isBlockExecRequested);
-    }
-    if (json.isDotGraphRequestedIsSet) {
-      builder.isDotGraphRequested(json.isDotGraphRequested);
     }
     return builder.build();
   }
@@ -413,8 +307,6 @@ public final class ResolvePolicy implements IResolvePolicy {
    *    .servicePolicy(de.upb.sede.requests.resolve.beta.IResolvePolicy.ReturnPolicy) // required {@link IResolvePolicy#getServicePolicy() servicePolicy}
    *    .addReturnFieldnames|addAllReturnFieldnames(String) // {@link IResolvePolicy#getReturnFieldnames() returnFieldnames} elements
    *    .addPersistentServices|addAllPersistentServices(String) // {@link IResolvePolicy#getPersistentServices() persistentServices} elements
-   *    .isBlockExecRequested(boolean) // required {@link IResolvePolicy#isBlockExecRequested() isBlockExecRequested}
-   *    .isDotGraphRequested(boolean) // required {@link IResolvePolicy#isDotGraphRequested() isDotGraphRequested}
    *    .build();
    * </pre>
    * @return A new ResolvePolicy builder
@@ -435,16 +327,12 @@ public final class ResolvePolicy implements IResolvePolicy {
   public static final class Builder {
     private static final long INIT_BIT_RETURN_POLICY = 0x1L;
     private static final long INIT_BIT_SERVICE_POLICY = 0x2L;
-    private static final long INIT_BIT_IS_BLOCK_EXEC_REQUESTED = 0x4L;
-    private static final long INIT_BIT_IS_DOT_GRAPH_REQUESTED = 0x8L;
-    private long initBits = 0xfL;
+    private long initBits = 0x3L;
 
     private @Nullable IResolvePolicy.ReturnPolicy returnPolicy;
     private @Nullable IResolvePolicy.ReturnPolicy servicePolicy;
     private ImmutableList.Builder<String> returnFieldnames = ImmutableList.builder();
     private ImmutableList.Builder<String> persistentServices = ImmutableList.builder();
-    private boolean isBlockExecRequested;
-    private boolean isDotGraphRequested;
 
     private Builder() {
     }
@@ -465,12 +353,6 @@ public final class ResolvePolicy implements IResolvePolicy {
       }
       addAllReturnFieldnames(instance.getReturnFieldnames());
       addAllPersistentServices(instance.getPersistentServices());
-      if (instance.isBlockExecRequestedIsSet()) {
-        isBlockExecRequested(instance.isBlockExecRequested());
-      }
-      if (instance.isDotGraphRequestedIsSet()) {
-        isDotGraphRequested(instance.isDotGraphRequested());
-      }
       return this;
     }
 
@@ -492,8 +374,6 @@ public final class ResolvePolicy implements IResolvePolicy {
       servicePolicy(instance.getServicePolicy());
       addAllReturnFieldnames(instance.getReturnFieldnames());
       addAllPersistentServices(instance.getPersistentServices());
-      isBlockExecRequested(instance.isBlockExecRequested());
-      isDotGraphRequested(instance.isDotGraphRequested());
       return this;
     }
 
@@ -616,32 +496,6 @@ public final class ResolvePolicy implements IResolvePolicy {
     }
 
     /**
-     * Initializes the value for the {@link IResolvePolicy#isBlockExecRequested() isBlockExecRequested} attribute.
-     * @param isBlockExecRequested The value for isBlockExecRequested 
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("isBlockExecRequested")
-    public final Builder isBlockExecRequested(boolean isBlockExecRequested) {
-      this.isBlockExecRequested = isBlockExecRequested;
-      initBits &= ~INIT_BIT_IS_BLOCK_EXEC_REQUESTED;
-      return this;
-    }
-
-    /**
-     * Initializes the value for the {@link IResolvePolicy#isDotGraphRequested() isDotGraphRequested} attribute.
-     * @param isDotGraphRequested The value for isDotGraphRequested 
-     * @return {@code this} builder for use in a chained invocation
-     */
-    @CanIgnoreReturnValue 
-    @JsonProperty("isDotGraphRequested")
-    public final Builder isDotGraphRequested(boolean isDotGraphRequested) {
-      this.isDotGraphRequested = isDotGraphRequested;
-      initBits &= ~INIT_BIT_IS_DOT_GRAPH_REQUESTED;
-      return this;
-    }
-
-    /**
      * Builds a new {@link ResolvePolicy ResolvePolicy}.
      * @return An immutable instance of ResolvePolicy
      * @throws java.lang.IllegalStateException if any required attributes are missing
@@ -650,21 +504,13 @@ public final class ResolvePolicy implements IResolvePolicy {
       if (initBits != 0) {
         throw new IllegalStateException(formatRequiredAttributesMessage());
       }
-      return new ResolvePolicy(
-          returnPolicy,
-          servicePolicy,
-          returnFieldnames.build(),
-          persistentServices.build(),
-          isBlockExecRequested,
-          isDotGraphRequested);
+      return new ResolvePolicy(returnPolicy, servicePolicy, returnFieldnames.build(), persistentServices.build());
     }
 
     private String formatRequiredAttributesMessage() {
       List<String> attributes = new ArrayList<>();
       if ((initBits & INIT_BIT_RETURN_POLICY) != 0) attributes.add("returnPolicy");
       if ((initBits & INIT_BIT_SERVICE_POLICY) != 0) attributes.add("servicePolicy");
-      if ((initBits & INIT_BIT_IS_BLOCK_EXEC_REQUESTED) != 0) attributes.add("isBlockExecRequested");
-      if ((initBits & INIT_BIT_IS_DOT_GRAPH_REQUESTED) != 0) attributes.add("isDotGraphRequested");
       return "Cannot build ResolvePolicy, some of required attributes are not set " + attributes;
     }
   }

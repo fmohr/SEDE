@@ -4,7 +4,7 @@ import de.upb.sede.composition.graphs.types.TypeClass;
 
 import javax.annotation.Nullable;
 
-public class EmptyJournalPage implements TypeContext {
+class EmptyJournalPage implements TypeContext {
 
     @Override
     @Nullable
@@ -23,7 +23,7 @@ public class EmptyJournalPage implements TypeContext {
         return "EmptyJournalPage";
     }
 
-    public EmptyJournalPage() {
+    EmptyJournalPage() {
     }
 
     @Override

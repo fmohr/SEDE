@@ -1,8 +1,8 @@
 package de.upb.sede.composition.graphs;
 
-import de.upb.sede.composition.graphs.TypeClass;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.composition.graphs.typing.TypeClass;
+import de.upb.sede.composition.graphs.types.TypeClass;
+import de.upb.sede.util.TypeUtil;
 
 /**
  * This class determines the type for each fieldname.
@@ -46,23 +46,23 @@ public class FieldType {
 	}
 
 	public boolean isServiceInstance() {
-		return typeClass == TypeClass.ServiceInstance;
+		return TypeUtil.isService(typeClass);
 	}
 
 	public boolean isServiceInstanceHandle() {
-		return typeClass == TypeClass.ServiceInstanceHandle;
+		return TypeUtil.isRefType(typeClass);
 	}
 
 	public boolean isSemanticData() {
-		return typeClass == TypeClass.SemanticDataType;
+		return TypeUtil.isData(typeClass);
 	}
 
 	public boolean isRealData() {
-		return typeClass == TypeClass.RealDataType;
+        return TypeUtil.isData(typeClass);
 	}
 
 	public boolean isPrimitive() {
-		return typeClass == TypeClass.PrimitiveType;
+		return TypeUtil.isData(typeClass);
 	}
 
 	public String toString() {

@@ -10,10 +10,8 @@ import java.util.stream.Stream;
 /**
  * This class exposes aspects of an SDLBase in a standard manner.
  *
- * This is done by:
- *      -
  */
-public interface ISDLLookupService {
+public interface SDLLookupService {
 
     Optional<IServiceCollectionDesc> lookupCollection(IServiceRef serviceRef);
 

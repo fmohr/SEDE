@@ -1,7 +1,7 @@
 package de.upb.sede.util;
 
 import de.upb.sede.IQualifiable;
-import de.upb.sede.ISDLLookupService;
+import de.upb.sede.SDLLookupService;
 import de.upb.sede.exec.IServiceDesc;
 import de.upb.sede.exec.IServiceRef;
 import de.upb.sede.param.*;
@@ -19,7 +19,7 @@ public class ToHASCOComponentsTranslator {
 
     private final static Logger logger = LoggerFactory.getLogger(ToHASCOComponentsTranslator.class);
 
-    private ISDLLookupService sdlService;
+    private SDLLookupService sdlService;
 
     private List<IServiceRef> serviceRefs;
 
@@ -52,7 +52,7 @@ public class ToHASCOComponentsTranslator {
         PARAM_TYPE_INT = "int"
     ;
 
-    private ToHASCOComponentsTranslator(ISDLLookupService sdlService,
+    private ToHASCOComponentsTranslator(SDLLookupService sdlService,
                                         List<IServiceRef> serviceRefs) {
         this.sdlService = sdlService;
         this.serviceRefs = serviceRefs;
@@ -222,7 +222,7 @@ public class ToHASCOComponentsTranslator {
         return components;
     }
 
-    public static List<Map> componentsOfServiceQualifiers(ISDLLookupService sdlService,
+    public static List<Map> componentsOfServiceQualifiers(SDLLookupService sdlService,
                                                           List<String> serviceNames) {
         List<IServiceRef> refs = serviceNames.stream()
             .map(qualifier -> IServiceRef.of(null, qualifier))
@@ -230,12 +230,12 @@ public class ToHASCOComponentsTranslator {
         return componentsOfServiceRefs(sdlService, refs);
     }
 
-    public static List<Map> componentsOfServiceRefs(ISDLLookupService sdlService,
+    public static List<Map> componentsOfServiceRefs(SDLLookupService sdlService,
                                                     List<IServiceRef> serviceRefs) {
         return componentsOfServiceRefs(sdlService, serviceRefs, false);
     }
 
-    public static List<Map> componentsOfServiceRefs(ISDLLookupService sdlService,
+    public static List<Map> componentsOfServiceRefs(SDLLookupService sdlService,
                                                     List<IServiceRef> serviceRefs, boolean skipOptParams) {
         ToHASCOComponentsTranslator translator = new ToHASCOComponentsTranslator(sdlService, serviceRefs);
         translator.skipOptParams = skipOptParams;

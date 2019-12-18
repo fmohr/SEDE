@@ -7,43 +7,41 @@ import de.upb.sede.types.IDataTypeRef;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
-public class SDLCacheLookupService extends SDLLookupServiceAdapter implements ISDLLookupService,
-    Function<ConstructReference, Object> {
+public class SDLCacheLookupService extends SDLLookupServiceAdapter implements SDLLookupService {
 
     private final Map<ConstructReference, Object> refCache = new HashMap<>();
 
 
-    public SDLCacheLookupService(ISDLLookupService lookupServiceDelegate) {
+    public SDLCacheLookupService(SDLLookupService lookupServiceDelegate) {
         super(lookupServiceDelegate);
     }
 
     @SuppressWarnings("unchecked")
-    private <T> Optional<T> lookupInCache(ConstructReference ref) {
+    private <T> Optional<T> lookupInRefCache(ConstructReference ref) {
         return Optional.ofNullable(
-            (T) refCache.computeIfAbsent(ref, this));
+            (T) refCache.computeIfAbsent(ref, this::lookupfMiss));
     }
 
 
     @Override
     public Optional<IServiceCollectionDesc> lookup(IServiceCollectionRef collectionRef) {
-        return lookupInCache(collectionRef);
+        return lookupInRefCache(collectionRef);
     }
 
     @Override
     public Optional<IServiceDesc> lookup(IServiceRef serviceRef) {
-        return lookupInCache(serviceRef);
+        return lookupInRefCache(serviceRef);
     }
 
     @Override
     public Optional<IMethodDesc> lookup(IMethodRef methodRef) {
-        return lookupInCache(methodRef);
+        return lookupInRefCache(methodRef);
     }
 
     @Override
     public Optional<IDataTypeDesc> lookup(IDataTypeRef dataTypeRef) {
-        return lookupInCache(dataTypeRef);
+        return lookupInRefCache(dataTypeRef);
     }
 
     /**
@@ -51,9 +49,8 @@ public class SDLCacheLookupService extends SDLLookupServiceAdapter implements IS
      * @param ref Has to be a ConstructReference
      * @return The resulting Construct
      */
-    @Override
     @SuppressWarnings("unchecked")
-    public Object apply(ConstructReference ref) {
+    private Object lookupfMiss(ConstructReference ref) {
         Optional construct;
         if(ref instanceof  IServiceCollectionRef) {
             IServiceCollectionRef collectionRef = (IServiceCollectionRef) ref;

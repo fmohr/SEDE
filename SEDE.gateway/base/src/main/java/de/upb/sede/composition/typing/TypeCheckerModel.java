@@ -1,11 +1,7 @@
 package de.upb.sede.composition.typing;
 
-import de.upb.sede.ISDLLookupService;
-import de.upb.sede.composition.FMCompositionParser;
-import de.upb.sede.composition.IMethodCognition;
-import de.upb.sede.composition.ITypeCoercion;
-import de.upb.sede.composition.InstructionIndexer;
-import de.upb.sede.composition.IIndexedInstruction;
+import de.upb.sede.SDLLookupService;
+import de.upb.sede.composition.*;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.composition.graphs.types.*;
 import de.upb.sede.core.PrimitiveType;
@@ -29,14 +25,14 @@ class TypeCheckerModel {
 
     private TypeJournal typeJournal;
 
-    private InstIndexMap<IMethodCognition> methodCognitionMap;
+    private IndexMap<IMethodCognition> methodCognitionMap;
 
     private InstructionIndexer instructions;
 
-    private ISDLLookupService lookupService;
+    private SDLLookupService lookupService;
 
-    TypeCheckerModel(TCOutput output, InstructionIndexer instructions, ISDLLookupService lookupService) {
-        this.methodCognitionMap = output.getMethodCognitionMap();
+    TypeCheckerModel(TCOutput output, InstructionIndexer instructions, SDLLookupService lookupService) {
+        this.methodCognitionMap = output.getMethodCognitionIndexMap();
         this.typeJournal = output.getJournal();
         this.instructions = instructions;
         this.lookupService = lookupService;
@@ -63,11 +59,10 @@ class TypeCheckerModel {
     }
 
     private void typeCheckInstruction(IInstructionNode inst, TypeJournalPage typeContext, Consumer<IMethodCognition> instMethodCognition) {
-
+        // TODO reformat this method to accept IndexedInstruction instead and remove the Consumer parameter and the IndexMap class
         String serviceContextQualifier;
 
-        @Nullable // null indicates a static invocation
-        TypeClass fieldContext;
+        boolean staticContext;
 
         if(inst.getContextIsFieldFlag()) {
             /*
@@ -80,11 +75,11 @@ class TypeCheckerModel {
             } else if(!isService(fieldType)) {
                 throw TypeCheckException.unexpectedFieldType(contextFieldName, fieldType, "Service Instance", "Service methods can only be invoked with service instances as a context.");
             }
-            fieldContext = fieldType;
+            staticContext = false;
             serviceContextQualifier = getServiceType(fieldType).getQualifier();
         } else {
             serviceContextQualifier = inst.getContext();
-            fieldContext = null;
+            staticContext = true;
         }
 
         /*
@@ -110,11 +105,23 @@ class TypeCheckerModel {
             .orElseThrow(()-> TypeCheckException.unknownType(serviceContextQualifier + "::" + methodQualifier,
                 "method"));
 
-
         /*
          * Select signature that matches the amount of parameters
          */
         ISignatureDesc signature = getMatchingSignature(serviceContextQualifier, method, inst);
+
+        /*
+         * Allow static context iff the method explicitly allows it:
+         */
+        if(staticContext && !signature.isContextFree()) {
+            throw TypeCheckException.illegalStaticContext(serviceContextQualifier, methodQualifier);
+        }
+        if(!staticContext && signature.isContextFree()) {
+            throw TypeCheckException.illegalNonStaticContext(serviceContextQualifier, methodQualifier);
+        }
+
+
+
         assert signature.getInputs().size() == inst.getParameterFields().size();
         /*
          * Type-check signature by creating type coercions.
@@ -122,7 +129,7 @@ class TypeCheckerModel {
          * If there exists a list of TypeCoercion then the parameter signature type checks.
          */
         List<ITypeCoercion> parameterTypeCoercions = coerceParameters(signature, inst, typeContext);
-        IMethodCognition mc = de.upb.sede.composition.MethodCognition.builder()
+        IMethodCognition mc = MethodCognition.builder()
             .serviceDesc(service)
             .methodDesc(method)
             .signatureDesc(signature)

@@ -29,7 +29,11 @@ public interface IInstructionNode extends BaseNode, IFieldContainer {
     String getFieldClass();
 
     @Deprecated
-    String getHost();
+    @Value.Default
+    @Nullable
+    default String getHost() {
+        return null;
+    }
 
     String getContext();
 

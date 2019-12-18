@@ -27,19 +27,19 @@ import org.immutables.value.Generated;
 @NotThreadSafe
 public final class MutableInstructionNode implements IInstructionNode {
   private static final long INIT_BIT_F_M_INSTRUCTION = 0x1L;
-  private static final long INIT_BIT_HOST = 0x2L;
-  private static final long INIT_BIT_CONTEXT = 0x4L;
-  private static final long INIT_BIT_CONTEXT_IS_FIELD_FLAG = 0x8L;
-  private static final long INIT_BIT_METHOD = 0x10L;
-  private static final long OPT_BIT_OUTPUT_INDEX = 0x1L;
-  private long initBits = 0x1fL;
+  private static final long INIT_BIT_CONTEXT = 0x2L;
+  private static final long INIT_BIT_CONTEXT_IS_FIELD_FLAG = 0x4L;
+  private static final long INIT_BIT_METHOD = 0x8L;
+  private static final long OPT_BIT_HOST = 0x1L;
+  private static final long OPT_BIT_OUTPUT_INDEX = 0x2L;
+  private long initBits = 0xfL;
   private long optBits;
 
   private String fMInstruction;
   private @Nullable String fieldName;
   private @Nullable String fieldType;
   private @Nullable String fieldClass;
-  private String host;
+  private @Nullable String host;
   private String context;
   private boolean contextIsFieldFlag;
   private String method;
@@ -96,16 +96,15 @@ public final class MutableInstructionNode implements IInstructionNode {
   }
 
   /**
-   * @return value of {@code host} attribute
+   * @return assigned or, otherwise, newly computed, not cached value of {@code host} attribute
    */
   @JsonProperty("host")
   @Deprecated
   @Override
-  public final String getHost() {
-    if (!hostIsSet()) {
-      checkRequiredAttributes();
-    }
-    return host;
+  public final @Nullable String getHost() {
+    return hostIsSet()
+        ? host
+        : IInstructionNode.super.getHost();
   }
 
   /**
@@ -179,7 +178,7 @@ public final class MutableInstructionNode implements IInstructionNode {
    */
   @CanIgnoreReturnValue
   public MutableInstructionNode clear() {
-    initBits = 0x1fL;
+    initBits = 0xfL;
     optBits = 0;
     fMInstruction = null;
     fieldName = null;
@@ -250,8 +249,9 @@ public final class MutableInstructionNode implements IInstructionNode {
       if (fieldClassValue != null) {
         setFieldClass(fieldClassValue);
       }
-      if (instance.hostIsSet()) {
-        setHost(instance.getHost());
+      @Nullable String hostValue = instance.getHost();
+      if (hostValue != null) {
+        setHost(hostValue);
       }
       if (instance.contextIsSet()) {
         setContext(instance.getContext());
@@ -291,7 +291,10 @@ public final class MutableInstructionNode implements IInstructionNode {
         bits |= 0x1L;
       }
       setMethod(instance.getMethod());
-      setHost(instance.getHost());
+      @Nullable String hostValue = instance.getHost();
+      if (hostValue != null) {
+        setHost(hostValue);
+      }
       setContext(instance.getContext());
       @Nullable String fieldTypeValue = instance.getFieldType();
       if (fieldTypeValue != null) {
@@ -351,14 +354,15 @@ public final class MutableInstructionNode implements IInstructionNode {
 
   /**
    * Assigns a value to the {@link IInstructionNode#getHost() host} attribute.
-   * @param host The value for host
+   * <p><em>If not set, this attribute will have a default value returned by the initializer of {@link IInstructionNode#getHost() host}.</em>
+   * @param host The value for host, can be {@code null}
    * @return {@code this} for use in a chained invocation
    */
   @Deprecated
   @CanIgnoreReturnValue
-  public MutableInstructionNode setHost(String host) {
-    this.host = Objects.requireNonNull(host, "host");
-    initBits &= ~INIT_BIT_HOST;
+  public MutableInstructionNode setHost(@Nullable String host) {
+    this.host = host;
+    optBits |= OPT_BIT_HOST;
     return this;
   }
 
@@ -470,14 +474,6 @@ public final class MutableInstructionNode implements IInstructionNode {
   }
 
   /**
-   * Returns {@code true} if the required attribute {@link IInstructionNode#getHost() host} is set.
-   * @return {@code true} if set
-   */
-  public final boolean hostIsSet() {
-    return (initBits & INIT_BIT_HOST) == 0;
-  }
-
-  /**
    * Returns {@code true} if the required attribute {@link IInstructionNode#getContext() context} is set.
    * @return {@code true} if set
    */
@@ -502,6 +498,14 @@ public final class MutableInstructionNode implements IInstructionNode {
   }
 
   /**
+   * Returns {@code true} if the default attribute {@link IInstructionNode#getHost() host} is set.
+   * @return {@code true} if set
+   */
+  public final boolean hostIsSet() {
+    return (optBits & OPT_BIT_HOST) != 0;
+  }
+
+  /**
    * Returns {@code true} if the default attribute {@link IInstructionNode#getOutputIndex() outputIndex} is set.
    * @return {@code true} if set
    */
@@ -518,17 +522,6 @@ public final class MutableInstructionNode implements IInstructionNode {
   public final MutableInstructionNode unsetFMInstruction() {
     initBits |= INIT_BIT_F_M_INSTRUCTION;
     fMInstruction = null;
-    return this;
-  }
-
-  /**
-   * Reset an attribute to its initial value.
-   * @return {@code this} for use in a chained invocation
-   */
-  @CanIgnoreReturnValue
-  public final MutableInstructionNode unsetHost() {
-    initBits |= INIT_BIT_HOST;
-    host = null;
     return this;
   }
 
@@ -569,6 +562,16 @@ public final class MutableInstructionNode implements IInstructionNode {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
+  public final MutableInstructionNode unsetHost() {
+    optBits |= 0;
+    host = null;
+    return this;
+  }
+  /**
+   * Reset an attribute to its initial value.
+   * @return {@code this} for use in a chained invocation
+   */
+  @CanIgnoreReturnValue
   public final MutableInstructionNode unsetOutputIndex() {
     optBits |= 0;
     outputIndex = 0;
@@ -592,7 +595,6 @@ public final class MutableInstructionNode implements IInstructionNode {
   private String formatRequiredAttributesMessage() {
     List<String> attributes = new ArrayList<>();
     if (!fMInstructionIsSet()) attributes.add("fMInstruction");
-    if (!hostIsSet()) attributes.add("host");
     if (!contextIsSet()) attributes.add("context");
     if (!contextIsFieldFlagIsSet()) attributes.add("contextIsFieldFlag");
     if (!methodIsSet()) attributes.add("method");
@@ -625,12 +627,13 @@ public final class MutableInstructionNode implements IInstructionNode {
   }
 
   private boolean equalTo(MutableInstructionNode another) {
+    String host = getHost();
     int outputIndex = getOutputIndex();
     return fMInstruction.equals(another.fMInstruction)
         && Objects.equals(fieldName, another.fieldName)
         && Objects.equals(fieldType, another.fieldType)
         && Objects.equals(fieldClass, another.fieldClass)
-        && host.equals(another.host)
+        && Objects.equals(host, another.getHost())
         && context.equals(another.context)
         && contextIsFieldFlag == another.contextIsFieldFlag
         && method.equals(another.method)
@@ -649,7 +652,8 @@ public final class MutableInstructionNode implements IInstructionNode {
     h += (h << 5) + Objects.hashCode(fieldName);
     h += (h << 5) + Objects.hashCode(fieldType);
     h += (h << 5) + Objects.hashCode(fieldClass);
-    h += (h << 5) + host.hashCode();
+    String host = getHost();
+    h += (h << 5) + Objects.hashCode(host);
     h += (h << 5) + context.hashCode();
     h += (h << 5) + Booleans.hashCode(contextIsFieldFlag);
     h += (h << 5) + method.hashCode();
@@ -671,7 +675,7 @@ public final class MutableInstructionNode implements IInstructionNode {
         .add("fieldName", getFieldName())
         .add("fieldType", getFieldType())
         .add("fieldClass", getFieldClass())
-        .add("host", hostIsSet() ? getHost() : "?")
+        .add("host", getHost())
         .add("context", contextIsSet() ? getContext() : "?")
         .add("contextIsFieldFlag", contextIsFieldFlagIsSet() ? getContextIsFieldFlag() : "?")
         .add("method", methodIsSet() ? getMethod() : "?")

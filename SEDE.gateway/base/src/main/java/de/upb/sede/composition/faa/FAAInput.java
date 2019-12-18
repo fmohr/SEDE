@@ -2,9 +2,10 @@ package de.upb.sede.composition.faa;
 
 import de.upb.sede.composition.IMethodCognition;
 import de.upb.sede.composition.InstructionIndexer;
-import de.upb.sede.composition.typing.InstIndexMap;
 import de.upb.sede.composition.typing.TCOutput;
 import de.upb.sede.composition.typing.TypeJournal;
+
+import java.util.Map;
 
 public class FAAInput {
 
@@ -22,7 +23,7 @@ public class FAAInput {
         return instructions;
     }
 
-    public InstIndexMap<IMethodCognition> getInstMethodCognition() {
+    public Map<Long, IMethodCognition> getInstMethodCognition() {
         return tcOutput.getMethodCognitionMap();
     }
 

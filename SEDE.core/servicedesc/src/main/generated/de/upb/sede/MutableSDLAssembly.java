@@ -12,28 +12,28 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
- * A modifiable implementation of the {@link ISDLBase ISDLBase} type.
+ * A modifiable implementation of the {@link ISDLAssembly ISDLAssembly} type.
  * <p>Use the {@link #create()} static factory methods to create new instances.
  * Use the {@link #toImmutable()} method to convert to canonical immutable instances.
- * <p><em>MutableSDLBase is not thread-safe</em>
- * @see SDLBase
+ * <p><em>MutableSDLAssembly is not thread-safe</em>
+ * @see SDLAssembly
  */
-@Generated(from = "ISDLBase", generator = "Modifiables")
+@Generated(from = "ISDLAssembly", generator = "Modifiables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
-@javax.annotation.Generated({"Modifiables.generator", "ISDLBase"})
+@javax.annotation.Generated({"Modifiables.generator", "ISDLAssembly"})
 @NotThreadSafe
-public final class MutableSDLBase implements ISDLBase {
+public final class MutableSDLAssembly implements ISDLAssembly {
   private final ArrayList<IServiceCollectionDesc> collections = new ArrayList<IServiceCollectionDesc>();
 
-  private MutableSDLBase() {}
+  private MutableSDLAssembly() {}
 
   /**
-   * Construct a modifiable instance of {@code ISDLBase}.
+   * Construct a modifiable instance of {@code ISDLAssembly}.
    * @return A new modifiable instance
    */
-  public static MutableSDLBase create() {
-    return new MutableSDLBase();
+  public static MutableSDLAssembly create() {
+    return new MutableSDLAssembly();
   }
 
   /**
@@ -50,23 +50,23 @@ public final class MutableSDLBase implements ISDLBase {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableSDLBase clear() {
+  public MutableSDLAssembly clear() {
     collections.clear();
     return this;
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link ISDLBase} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link ISDLAssembly} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
    * Collection elements and entries will be added, not replaced.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  public MutableSDLBase from(ISDLBase instance) {
+  public MutableSDLAssembly from(ISDLAssembly instance) {
     Objects.requireNonNull(instance, "instance");
-    if (instance instanceof MutableSDLBase) {
-      from((MutableSDLBase) instance);
+    if (instance instanceof MutableSDLAssembly) {
+      from((MutableSDLAssembly) instance);
       return this;
     }
     addAllCollections(instance.getCollections());
@@ -74,38 +74,38 @@ public final class MutableSDLBase implements ISDLBase {
   }
 
   /**
-   * Fill this modifiable instance with attribute values from the provided {@link ISDLBase} instance.
+   * Fill this modifiable instance with attribute values from the provided {@link ISDLAssembly} instance.
    * Regular attribute values will be overridden, i.e. replaced with ones of an instance.
    * Any of the instance's absent optional values will not be copied (will not override current values).
    * Collection elements and entries will be added, not replaced.
    * @param instance The instance from which to copy values
    * @return {@code this} for use in a chained invocation
    */
-  public MutableSDLBase from(MutableSDLBase instance) {
+  public MutableSDLAssembly from(MutableSDLAssembly instance) {
     Objects.requireNonNull(instance, "instance");
     addAllCollections(instance.getCollections());
     return this;
   }
 
   /**
-   * Adds one element to {@link ISDLBase#getCollections() collections} list.
+   * Adds one element to {@link ISDLAssembly#getCollections() collections} list.
    * @param element The collections element
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableSDLBase addCollections(IServiceCollectionDesc element) {
+  public MutableSDLAssembly addCollections(IServiceCollectionDesc element) {
     Objects.requireNonNull(element, "collections element");
     this.collections.add(element);
     return this;
   }
 
   /**
-   * Adds elements to {@link ISDLBase#getCollections() collections} list.
+   * Adds elements to {@link ISDLAssembly#getCollections() collections} list.
    * @param elements An array of collections elements
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public final MutableSDLBase addCollections(IServiceCollectionDesc... elements) {
+  public final MutableSDLAssembly addCollections(IServiceCollectionDesc... elements) {
     for (IServiceCollectionDesc e : elements) {
       addCollections(e);
     }
@@ -113,24 +113,24 @@ public final class MutableSDLBase implements ISDLBase {
   }
 
   /**
-   * Sets or replaces all elements for {@link ISDLBase#getCollections() collections} list.
+   * Sets or replaces all elements for {@link ISDLAssembly#getCollections() collections} list.
    * @param elements An iterable of collections elements
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableSDLBase setCollections(Iterable<? extends IServiceCollectionDesc> elements) {
+  public MutableSDLAssembly setCollections(Iterable<? extends IServiceCollectionDesc> elements) {
     this.collections.clear();
     addAllCollections(elements);
     return this;
   }
 
   /**
-   * Adds elements to {@link ISDLBase#getCollections() collections} list.
+   * Adds elements to {@link ISDLAssembly#getCollections() collections} list.
    * @param elements An iterable of collections elements
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableSDLBase addAllCollections(Iterable<? extends IServiceCollectionDesc> elements) {
+  public MutableSDLAssembly addAllCollections(Iterable<? extends IServiceCollectionDesc> elements) {
     for (IServiceCollectionDesc e : elements) {
       addCollections(e);
     }
@@ -147,26 +147,26 @@ public final class MutableSDLBase implements ISDLBase {
   }
 
   /**
-   * Converts to {@link SDLBase SDLBase}.
-   * @return An immutable instance of SDLBase
+   * Converts to {@link SDLAssembly SDLAssembly}.
+   * @return An immutable instance of SDLAssembly
    */
-  public final SDLBase toImmutable() {
-    return SDLBase.copyOf(this);
+  public final SDLAssembly toImmutable() {
+    return SDLAssembly.copyOf(this);
   }
 
   /**
-   * This instance is equal to all instances of {@code MutableSDLBase} that have equal attribute values.
+   * This instance is equal to all instances of {@code MutableSDLAssembly} that have equal attribute values.
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
   public boolean equals(@Nullable Object another) {
     if (this == another) return true;
-    if (!(another instanceof MutableSDLBase)) return false;
-    MutableSDLBase other = (MutableSDLBase) another;
+    if (!(another instanceof MutableSDLAssembly)) return false;
+    MutableSDLAssembly other = (MutableSDLAssembly) another;
     return equalTo(other);
   }
 
-  private boolean equalTo(MutableSDLBase another) {
+  private boolean equalTo(MutableSDLAssembly another) {
     return collections.equals(another.collections);
   }
 
@@ -182,13 +182,13 @@ public final class MutableSDLBase implements ISDLBase {
   }
 
   /**
-   * Generates a string representation of this {@code ISDLBase}.
+   * Generates a string representation of this {@code ISDLAssembly}.
    * If uninitialized, some attribute values may appear as question marks.
    * @return A string representation
    */
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper("MutableSDLBase")
+    return MoreObjects.toStringHelper("MutableSDLAssembly")
         .add("collections", getCollections())
         .toString();
   }

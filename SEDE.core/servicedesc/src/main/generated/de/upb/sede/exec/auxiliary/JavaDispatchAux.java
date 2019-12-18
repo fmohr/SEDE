@@ -331,6 +331,8 @@ public final class JavaDispatchAux implements IJavaDispatchAux {
     public String className() { throw new UnsupportedOperationException(); }
     @Override
     public String getMetaclass() { throw new UnsupportedOperationException(); }
+    @Override
+    public boolean constructorInvocation() { throw new UnsupportedOperationException(); }
   }
 
   /**
@@ -358,6 +360,37 @@ public final class JavaDispatchAux implements IJavaDispatchAux {
       builder.metaclass(json.metaclass);
     }
     return builder.build();
+  }
+
+  @SuppressWarnings("Immutable")
+  private transient volatile long lazyInitBitmap;
+
+  private static final long CONSTRUCTOR_INVOCATION_LAZY_INIT_BIT = 0x1L;
+
+  @SuppressWarnings("Immutable")
+  private transient boolean constructorInvocation;
+
+  /**
+   * {@inheritDoc}
+   * <p>
+   * Returns a lazily initialized value of the {@link IJavaDispatchAux#constructorInvocation() constructorInvocation} attribute.
+   * Initialized once and only once and stored for subsequent access with proper synchronization.
+   * In case of any exception or error thrown by the lazy value initializer,
+   * the result will not be memoised (i.e. remembered) and on next call computation
+   * will be attempted again.
+   * @return A lazily initialized value of the {@code constructorInvocation} attribute
+   */
+  @Override
+  public boolean constructorInvocation() {
+    if ((lazyInitBitmap & CONSTRUCTOR_INVOCATION_LAZY_INIT_BIT) == 0) {
+      synchronized (this) {
+        if ((lazyInitBitmap & CONSTRUCTOR_INVOCATION_LAZY_INIT_BIT) == 0) {
+          this.constructorInvocation = IJavaDispatchAux.super.constructorInvocation();
+          lazyInitBitmap |= CONSTRUCTOR_INVOCATION_LAZY_INIT_BIT;
+        }
+      }
+    }
+    return constructorInvocation;
   }
 
   /**

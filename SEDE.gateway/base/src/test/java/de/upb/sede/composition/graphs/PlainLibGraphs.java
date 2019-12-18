@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import de.upb.sede.requests.resolve.ResolvePolicy;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;

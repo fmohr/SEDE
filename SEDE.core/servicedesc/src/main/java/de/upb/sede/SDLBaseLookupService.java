@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import static de.upb.sede.util.Streams.pickOneOrNone;
 
@@ -19,13 +18,13 @@ import static java.util.Objects.requireNonNull;
  * This class exposes aspects of an SDLBase in a standard manner.
  *
  */
-public class SDLBaseLookupService implements ISDLLookupService{
+public class SDLBaseLookupService implements SDLLookupService {
 
-    private final ISDLBase sdlBase;
+    private final ISDLAssembly sdlBase;
 
 
 
-    public SDLBaseLookupService(ISDLBase sdlBase) {
+    public SDLBaseLookupService(ISDLAssembly sdlBase) {
         this.sdlBase = sdlBase;
     }
 

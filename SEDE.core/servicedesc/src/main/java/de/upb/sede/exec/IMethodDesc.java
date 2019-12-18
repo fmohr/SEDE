@@ -16,7 +16,7 @@ import java.util.List;
 public interface IMethodDesc extends IQualifiable, CommentAware {
 
 
-    String CONSTRUCTOR_METHOD_NAME = "$construct";
+    String CONSTRUCTOR_METHOD_NAME = "__construct";
 
     List<ISignatureDesc> getSignatures();
 

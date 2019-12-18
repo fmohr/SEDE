@@ -1,6 +1,7 @@
 package de.upb.sede.interfaces;
 
-import de.upb.sede.composition.IStaticCompositionAnalysis;
+import de.upb.sede.composition.ICCRequest;
+import de.upb.sede.composition.ICompositionCompilation;
 import de.upb.sede.requests.ExecutorRegistration;
 import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.ResolveRequest;
@@ -11,18 +12,16 @@ import de.upb.sede.requests.resolve.ResolveRequest;
  * Offers interface to register executors and resolving composition to graph.
  *
  */
-public interface IGateway {
+public interface IGateway extends ICCService {
 
-	/**
-	 * Accepts a ResolveRequest and parses the included fmcomposition and constructs the graph for the CoreClient to execute.
-	 * Together these series of actions are called 'resolve' and the resulting graph is called 'resolution'.
-	 *
-	 * @param resolveRequest request object from the client.
-	 * @return resolution of the composition.
-	 */
-	public IStaticCompositionAnalysis resolve(ResolveRequest resolveRequest);
+    /**
+     * This is the old way of executing compositions.
+     * It is now being replaced by compile composition.
+     */
+	@Deprecated
+    public GatewayResolution resolve(ResolveRequest resolveRequest);
 
-	/**
+    /**
 	 * Registers the executor who sent the given ExecutorRegistration.
 	 * Registered executor will be assigned to task in the resolution graph.
 	 * If an executor is already registered under the same host as the executor host in the given registration,

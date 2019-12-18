@@ -31,7 +31,7 @@ public class TypeJournal {
             return createFirstPage();
         }
 
-        if(pages.size() < index) {
+        if(pages.size() <= index) {
             return newPageAt(index);
         } else {
             return pages.get((int) index);

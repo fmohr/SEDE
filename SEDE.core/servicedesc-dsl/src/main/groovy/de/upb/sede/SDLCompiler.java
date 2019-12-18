@@ -69,16 +69,16 @@ public class SDLCompiler {
     }
 
 
-    public ISDLBase popSDLBase()  {
-        ISDLBase isdlBase = peekSDLBase();
+    public ISDLAssembly popSDLBase()  {
+        ISDLAssembly isdlAssembly = peekSDLBase();
         collections.set(null);
-        return isdlBase;
+        return isdlAssembly;
     }
 
-    public ISDLBase peekSDLBase() {
+    public ISDLAssembly peekSDLBase() {
         Map<String, MutableServiceCollectionDesc> colMap = collections.get();
         List<MutableServiceCollectionDesc> colList = new ArrayList<>(colMap.values());
-        SDLBase.Builder output = SDLBase.builder();
+        SDLAssembly.Builder output = SDLAssembly.builder();
 
         colList.stream()
             .map(col -> SDLUtil.toImmutable(col, ServiceCollectionDesc.class))
@@ -90,8 +90,8 @@ public class SDLCompiler {
     // TODO maybe there is a better place for these:
 
     private SDLBaseLookupService currentLookupService() {
-        ISDLBase isdlBase = peekSDLBase();
-        SDLBaseLookupService lookupService = new SDLBaseLookupService(isdlBase);
+        ISDLAssembly isdlAssembly = peekSDLBase();
+        SDLBaseLookupService lookupService = new SDLBaseLookupService(isdlAssembly);
         return lookupService;
     }
 

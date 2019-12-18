@@ -60,14 +60,11 @@ class ServiceDomain
         return constructor([:], defaults.constructor)
     }
 
-    def constructor(@DelegatesTo(MethodDomain) Closure signatureDescriber) {
-        def m = overloadMethod(IMethodDesc.CONSTRUCTOR_METHOD_NAME, signatureDescriber)
-        return m
-    }
-
     def constructor(Map signatureDef, @DelegatesTo(MethodSignatureDomain) Closure signatureDescriber = defaults.constructor) {
         def methodDef = new HashMap(signatureDef)
         methodDef["name"] = IMethodDesc.CONSTRUCTOR_METHOD_NAME
+        methodDef["output"] = model.qualifier
+        methodDef["static"] = true
         def m = method(methodDef, signatureDescriber)
         return m
     }

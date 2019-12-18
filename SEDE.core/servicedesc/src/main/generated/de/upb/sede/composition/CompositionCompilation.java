@@ -19,22 +19,22 @@ import javax.annotation.concurrent.NotThreadSafe;
 import org.immutables.value.Generated;
 
 /**
- * Immutable implementation of {@link IStaticCompositionAnalysis}.
+ * Immutable implementation of {@link ICompositionCompilation}.
  * <p>
  * Use the builder to create immutable instances:
- * {@code StaticCompositionAnalysis.builder()}.
+ * {@code CompositionCompilation.builder()}.
  */
-@Generated(from = "IStaticCompositionAnalysis", generator = "Immutables")
+@Generated(from = "ICompositionCompilation", generator = "Immutables")
 @SuppressWarnings({"all"})
 @ParametersAreNonnullByDefault
 @javax.annotation.Generated("org.immutables.processor.ProxyProcessor")
 @Immutable
 @CheckReturnValue
-public final class StaticCompositionAnalysis implements IStaticCompositionAnalysis {
+public final class CompositionCompilation implements ICompositionCompilation {
   private final ImmutableList<Long> programOrder;
   private final ImmutableList<IStaticInstAnalysis> instructionAnalysis;
 
-  private StaticCompositionAnalysis(
+  private CompositionCompilation(
       ImmutableList<Long> programOrder,
       ImmutableList<IStaticInstAnalysis> instructionAnalysis) {
     this.programOrder = programOrder;
@@ -60,61 +60,61 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
   }
 
   /**
-   * Copy the current immutable object with elements that replace the content of {@link IStaticCompositionAnalysis#getProgramOrder() programOrder}.
+   * Copy the current immutable object with elements that replace the content of {@link ICompositionCompilation#getProgramOrder() programOrder}.
    * @param elements The elements to set
    * @return A modified copy of {@code this} object
    */
-  public final StaticCompositionAnalysis withProgramOrder(long... elements) {
+  public final CompositionCompilation withProgramOrder(long... elements) {
     ImmutableList<Long> newValue = ImmutableList.copyOf(Longs.asList(elements));
-    return new StaticCompositionAnalysis(newValue, this.instructionAnalysis);
+    return new CompositionCompilation(newValue, this.instructionAnalysis);
   }
 
   /**
-   * Copy the current immutable object with elements that replace the content of {@link IStaticCompositionAnalysis#getProgramOrder() programOrder}.
+   * Copy the current immutable object with elements that replace the content of {@link ICompositionCompilation#getProgramOrder() programOrder}.
    * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
    * @param elements An iterable of programOrder elements to set
    * @return A modified copy of {@code this} object
    */
-  public final StaticCompositionAnalysis withProgramOrder(Iterable<Long> elements) {
+  public final CompositionCompilation withProgramOrder(Iterable<Long> elements) {
     if (this.programOrder == elements) return this;
     ImmutableList<Long> newValue = ImmutableList.copyOf(elements);
-    return new StaticCompositionAnalysis(newValue, this.instructionAnalysis);
+    return new CompositionCompilation(newValue, this.instructionAnalysis);
   }
 
   /**
-   * Copy the current immutable object with elements that replace the content of {@link IStaticCompositionAnalysis#getInstructionAnalysis() instructionAnalysis}.
+   * Copy the current immutable object with elements that replace the content of {@link ICompositionCompilation#getInstructionAnalysis() instructionAnalysis}.
    * @param elements The elements to set
    * @return A modified copy of {@code this} object
    */
-  public final StaticCompositionAnalysis withInstructionAnalysis(IStaticInstAnalysis... elements) {
+  public final CompositionCompilation withInstructionAnalysis(IStaticInstAnalysis... elements) {
     ImmutableList<IStaticInstAnalysis> newValue = ImmutableList.copyOf(elements);
-    return new StaticCompositionAnalysis(this.programOrder, newValue);
+    return new CompositionCompilation(this.programOrder, newValue);
   }
 
   /**
-   * Copy the current immutable object with elements that replace the content of {@link IStaticCompositionAnalysis#getInstructionAnalysis() instructionAnalysis}.
+   * Copy the current immutable object with elements that replace the content of {@link ICompositionCompilation#getInstructionAnalysis() instructionAnalysis}.
    * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
    * @param elements An iterable of instructionAnalysis elements to set
    * @return A modified copy of {@code this} object
    */
-  public final StaticCompositionAnalysis withInstructionAnalysis(Iterable<? extends IStaticInstAnalysis> elements) {
+  public final CompositionCompilation withInstructionAnalysis(Iterable<? extends IStaticInstAnalysis> elements) {
     if (this.instructionAnalysis == elements) return this;
     ImmutableList<IStaticInstAnalysis> newValue = ImmutableList.copyOf(elements);
-    return new StaticCompositionAnalysis(this.programOrder, newValue);
+    return new CompositionCompilation(this.programOrder, newValue);
   }
 
   /**
-   * This instance is equal to all instances of {@code StaticCompositionAnalysis} that have equal attribute values.
+   * This instance is equal to all instances of {@code CompositionCompilation} that have equal attribute values.
    * @return {@code true} if {@code this} is equal to {@code another} instance
    */
   @Override
   public boolean equals(@Nullable Object another) {
     if (this == another) return true;
-    return another instanceof StaticCompositionAnalysis
-        && equalTo((StaticCompositionAnalysis) another);
+    return another instanceof CompositionCompilation
+        && equalTo((CompositionCompilation) another);
   }
 
-  private boolean equalTo(StaticCompositionAnalysis another) {
+  private boolean equalTo(CompositionCompilation another) {
     return programOrder.equals(another.programOrder)
         && instructionAnalysis.equals(another.instructionAnalysis);
   }
@@ -132,12 +132,12 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
   }
 
   /**
-   * Prints the immutable value {@code StaticCompositionAnalysis} with attribute values.
+   * Prints the immutable value {@code CompositionCompilation} with attribute values.
    * @return A string representation of the value
    */
   @Override
   public String toString() {
-    return MoreObjects.toStringHelper("StaticCompositionAnalysis")
+    return MoreObjects.toStringHelper("CompositionCompilation")
         .omitNullValues()
         .add("programOrder", programOrder)
         .add("instructionAnalysis", instructionAnalysis)
@@ -148,12 +148,12 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
    * Utility type used to correctly read immutable object from JSON representation.
    * @deprecated Do not use this type directly, it exists only for the <em>Jackson</em>-binding infrastructure
    */
-  @Generated(from = "IStaticCompositionAnalysis", generator = "Immutables")
+  @Generated(from = "ICompositionCompilation", generator = "Immutables")
   @Deprecated
   @SuppressWarnings("Immutable")
   @JsonDeserialize
   @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.NONE)
-  static final class Json implements IStaticCompositionAnalysis {
+  static final class Json implements ICompositionCompilation {
     @Nullable List<Long> programOrder = ImmutableList.of();
     @Nullable List<IStaticInstAnalysis> instructionAnalysis = ImmutableList.of();
     @JsonProperty("programOrder")
@@ -177,8 +177,8 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
    */
   @Deprecated
   @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
-  static StaticCompositionAnalysis fromJson(Json json) {
-    StaticCompositionAnalysis.Builder builder = StaticCompositionAnalysis.builder();
+  static CompositionCompilation fromJson(Json json) {
+    CompositionCompilation.Builder builder = CompositionCompilation.builder();
     if (json.programOrder != null) {
       builder.addAllProgramOrder(json.programOrder);
     }
@@ -189,43 +189,43 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
   }
 
   /**
-   * Creates an immutable copy of a {@link IStaticCompositionAnalysis} value.
+   * Creates an immutable copy of a {@link ICompositionCompilation} value.
    * Uses accessors to get values to initialize the new immutable instance.
    * If an instance is already immutable, it is returned as is.
    * @param instance The instance to copy
-   * @return A copied immutable StaticCompositionAnalysis instance
+   * @return A copied immutable CompositionCompilation instance
    */
-  public static StaticCompositionAnalysis copyOf(IStaticCompositionAnalysis instance) {
-    if (instance instanceof StaticCompositionAnalysis) {
-      return (StaticCompositionAnalysis) instance;
+  public static CompositionCompilation copyOf(ICompositionCompilation instance) {
+    if (instance instanceof CompositionCompilation) {
+      return (CompositionCompilation) instance;
     }
-    return StaticCompositionAnalysis.builder()
+    return CompositionCompilation.builder()
         .from(instance)
         .build();
   }
 
   /**
-   * Creates a builder for {@link StaticCompositionAnalysis StaticCompositionAnalysis}.
+   * Creates a builder for {@link CompositionCompilation CompositionCompilation}.
    * <pre>
-   * StaticCompositionAnalysis.builder()
-   *    .addProgramOrder|addAllProgramOrder(long) // {@link IStaticCompositionAnalysis#getProgramOrder() programOrder} elements
-   *    .addInstructionAnalysis|addAllInstructionAnalysis(de.upb.sede.composition.IStaticInstAnalysis) // {@link IStaticCompositionAnalysis#getInstructionAnalysis() instructionAnalysis} elements
+   * CompositionCompilation.builder()
+   *    .addProgramOrder|addAllProgramOrder(long) // {@link ICompositionCompilation#getProgramOrder() programOrder} elements
+   *    .addInstructionAnalysis|addAllInstructionAnalysis(de.upb.sede.composition.IStaticInstAnalysis) // {@link ICompositionCompilation#getInstructionAnalysis() instructionAnalysis} elements
    *    .build();
    * </pre>
-   * @return A new StaticCompositionAnalysis builder
+   * @return A new CompositionCompilation builder
    */
-  public static StaticCompositionAnalysis.Builder builder() {
-    return new StaticCompositionAnalysis.Builder();
+  public static CompositionCompilation.Builder builder() {
+    return new CompositionCompilation.Builder();
   }
 
   /**
-   * Builds instances of type {@link StaticCompositionAnalysis StaticCompositionAnalysis}.
+   * Builds instances of type {@link CompositionCompilation CompositionCompilation}.
    * Initialize attributes and then invoke the {@link #build()} method to create an
    * immutable instance.
    * <p><em>{@code Builder} is not thread-safe and generally should not be stored in a field or collection,
    * but instead used immediately to create instances.</em>
    */
-  @Generated(from = "IStaticCompositionAnalysis", generator = "Immutables")
+  @Generated(from = "ICompositionCompilation", generator = "Immutables")
   @NotThreadSafe
   public static final class Builder {
     private ImmutableList.Builder<Long> programOrder = ImmutableList.builder();
@@ -235,12 +235,12 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code MutableStaticCompositionAnalysis} instance.
+     * Fill a builder with attribute values from the provided {@code MutableCompositionCompilation} instance.
      * @param instance The instance from which to copy values
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(MutableStaticCompositionAnalysis instance) {
+    public final Builder from(MutableCompositionCompilation instance) {
       Objects.requireNonNull(instance, "instance");
       addAllProgramOrder(instance.getProgramOrder());
       addAllInstructionAnalysis(instance.getInstructionAnalysis());
@@ -248,7 +248,7 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
     }
 
     /**
-     * Fill a builder with attribute values from the provided {@code IStaticCompositionAnalysis} instance.
+     * Fill a builder with attribute values from the provided {@code ICompositionCompilation} instance.
      * Regular attribute values will be replaced with those from the given instance.
      * Absent optional values will not replace present values.
      * Collection elements and entries will be added, not replaced.
@@ -256,10 +256,10 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    public final Builder from(IStaticCompositionAnalysis instance) {
+    public final Builder from(ICompositionCompilation instance) {
       Objects.requireNonNull(instance, "instance");
-      if (instance instanceof MutableStaticCompositionAnalysis) {
-        return from((MutableStaticCompositionAnalysis) instance);
+      if (instance instanceof MutableCompositionCompilation) {
+        return from((MutableCompositionCompilation) instance);
       }
       addAllProgramOrder(instance.getProgramOrder());
       addAllInstructionAnalysis(instance.getInstructionAnalysis());
@@ -267,7 +267,7 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
     }
 
     /**
-     * Adds one element to {@link IStaticCompositionAnalysis#getProgramOrder() programOrder} list.
+     * Adds one element to {@link ICompositionCompilation#getProgramOrder() programOrder} list.
      * @param element A programOrder element
      * @return {@code this} builder for use in a chained invocation
      */
@@ -278,7 +278,7 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
     }
 
     /**
-     * Adds elements to {@link IStaticCompositionAnalysis#getProgramOrder() programOrder} list.
+     * Adds elements to {@link ICompositionCompilation#getProgramOrder() programOrder} list.
      * @param elements An array of programOrder elements
      * @return {@code this} builder for use in a chained invocation
      */
@@ -290,7 +290,7 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
 
 
     /**
-     * Sets or replaces all elements for {@link IStaticCompositionAnalysis#getProgramOrder() programOrder} list.
+     * Sets or replaces all elements for {@link ICompositionCompilation#getProgramOrder() programOrder} list.
      * @param elements An iterable of programOrder elements
      * @return {@code this} builder for use in a chained invocation
      */
@@ -302,7 +302,7 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
     }
 
     /**
-     * Adds elements to {@link IStaticCompositionAnalysis#getProgramOrder() programOrder} list.
+     * Adds elements to {@link ICompositionCompilation#getProgramOrder() programOrder} list.
      * @param elements An iterable of programOrder elements
      * @return {@code this} builder for use in a chained invocation
      */
@@ -313,7 +313,7 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
     }
 
     /**
-     * Adds one element to {@link IStaticCompositionAnalysis#getInstructionAnalysis() instructionAnalysis} list.
+     * Adds one element to {@link ICompositionCompilation#getInstructionAnalysis() instructionAnalysis} list.
      * @param element A instructionAnalysis element
      * @return {@code this} builder for use in a chained invocation
      */
@@ -324,7 +324,7 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
     }
 
     /**
-     * Adds elements to {@link IStaticCompositionAnalysis#getInstructionAnalysis() instructionAnalysis} list.
+     * Adds elements to {@link ICompositionCompilation#getInstructionAnalysis() instructionAnalysis} list.
      * @param elements An array of instructionAnalysis elements
      * @return {@code this} builder for use in a chained invocation
      */
@@ -336,7 +336,7 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
 
 
     /**
-     * Sets or replaces all elements for {@link IStaticCompositionAnalysis#getInstructionAnalysis() instructionAnalysis} list.
+     * Sets or replaces all elements for {@link ICompositionCompilation#getInstructionAnalysis() instructionAnalysis} list.
      * @param elements An iterable of instructionAnalysis elements
      * @return {@code this} builder for use in a chained invocation
      */
@@ -348,7 +348,7 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
     }
 
     /**
-     * Adds elements to {@link IStaticCompositionAnalysis#getInstructionAnalysis() instructionAnalysis} list.
+     * Adds elements to {@link ICompositionCompilation#getInstructionAnalysis() instructionAnalysis} list.
      * @param elements An iterable of instructionAnalysis elements
      * @return {@code this} builder for use in a chained invocation
      */
@@ -359,12 +359,12 @@ public final class StaticCompositionAnalysis implements IStaticCompositionAnalys
     }
 
     /**
-     * Builds a new {@link StaticCompositionAnalysis StaticCompositionAnalysis}.
-     * @return An immutable instance of StaticCompositionAnalysis
+     * Builds a new {@link CompositionCompilation CompositionCompilation}.
+     * @return An immutable instance of CompositionCompilation
      * @throws java.lang.IllegalStateException if any required attributes are missing
      */
-    public StaticCompositionAnalysis build() {
-      return new StaticCompositionAnalysis(programOrder.build(), instructionAnalysis.build());
+    public CompositionCompilation build() {
+      return new CompositionCompilation(programOrder.build(), instructionAnalysis.build());
     }
   }
 }

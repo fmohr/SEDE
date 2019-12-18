@@ -4,18 +4,20 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.SEDEModelStyle;
 import org.immutables.value.Value;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
+/**
+ * Static Code Analysis Request
+ */
 @SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
-@JsonDeserialize(builder = StaticCompositionAnalysis.Builder.class)
-public interface IStaticCompositionAnalysis {
+@JsonDeserialize(builder = SCARequest.Builder.class)
+public interface ICCRequest {
 
-    List<Long> getProgramOrder();
+    String getComposition();
 
-    List<IStaticInstAnalysis> getInstructionAnalysis();
+    List<IFieldType> getInitialContext();
 
 }
 

@@ -11,6 +11,7 @@ import java.util.List;
 @Value.Modifiable
 @JsonDeserialize(builder = ResolvePolicy.Builder.class)
 public interface IResolvePolicy {
+
     ReturnPolicy getReturnPolicy();
 
     ReturnPolicy getServicePolicy();
@@ -19,9 +20,10 @@ public interface IResolvePolicy {
 
     List<String> getPersistentServices();
 
-    boolean isBlockExecRequested();
-
-    boolean isDotGraphRequested();
+    @Value.Derived
+    default boolean isDotGraphRequested() {
+        return false;
+    }
 
     enum ReturnPolicy {
          ALL, NONE, LISTED

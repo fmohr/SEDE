@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 
-public class DummyNode extends BaseNode {
+public class DummyNode implements BaseNode {
 
 	String name = "noname";
 

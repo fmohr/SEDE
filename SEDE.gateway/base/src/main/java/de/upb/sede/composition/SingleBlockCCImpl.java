@@ -1,6 +1,6 @@
 package de.upb.sede.composition;
 
-import de.upb.sede.ISDLLookupService;
+import de.upb.sede.SDLLookupService;
 import de.upb.sede.composition.faa.FAAInput;
 import de.upb.sede.composition.faa.FAAOutput;
 import de.upb.sede.composition.faa.FieldAccessAnalyser;
@@ -17,22 +17,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CompositionCompiler {
+public class SingleBlockCCImpl {
 
-    private final ISDLLookupService isdlLookupService;
+    private final SDLLookupService SDLLookupService;
 
-    private final StaticCompositionAnalysis.Builder scaBuilder = StaticCompositionAnalysis.builder();
+    private final CompositionCompilation.Builder scaBuilder = CompositionCompilation.builder();
 
     private final List<IFieldType> typeContext = new ArrayList<>();
 
-    private static final CompileStep<TCInput, TCOutput> typeChecker = new TypeChecker();
+    private final CompileStep<TCInput, TCOutput> typeChecker = new TypeChecker();
 
-    private static final CompileStep<FAAInput, FAAOutput> fieldAccessAnalyser = new FieldAccessAnalyser();
+    private final CompileStep<FAAInput, FAAOutput> fieldAccessAnalyser = new FieldAccessAnalyser();
 
-    private static final CompileStep<PIOInput, PIOOutput> programInstOrderer = new ProgramInstructionOrderer();
+    private final CompileStep<PIOInput, PIOOutput> programInstOrderer = new ProgramInstructionOrderer();
 
-    public CompositionCompiler(ISDLLookupService isdlLookupService) {
-        this.isdlLookupService = isdlLookupService;
+    public SingleBlockCCImpl(SDLLookupService SDLLookupService) {
+        this.SDLLookupService = SDLLookupService;
     }
 
     public List<IFieldType> getTypeContext() {
@@ -56,7 +56,7 @@ public class CompositionCompiler {
         /*
          * Type check instructions
          */
-        TCInput tcInput = new TCInput(isdlLookupService, instIndexer, typeContext);
+        TCInput tcInput = new TCInput(SDLLookupService, instIndexer, typeContext);
         TCOutput tcOutput = typeChecker.step(tcInput);
 
         /*
@@ -88,16 +88,17 @@ public class CompositionCompiler {
                                      PIOOutput pioOutput) {
         scaBuilder.programOrder(pioOutput.getProgramOrder());
 
+        List<IInstTCResult> typeJournalPageModel = tcOutput
+            .getJournal()
+            .getLastPage()
+            .extractModel();
+
         for(IIndexedInstruction ii : instructions) {
             StaticInstAnalysis.Builder siaBuilder = StaticInstAnalysis.builder();
             siaBuilder.instruction(ii);
 
-            List<IInstTCResult> typeJournalPageModel = tcOutput
-                .getJournal()
-                .getLastPage()
-                .extractModel();
 
-            siaBuilder.typeContext(typeJournalPageModel);
+            siaBuilder.typeContext(typeJournalPageModel.get(ii.getIndex().intValue()).getFieldTypes());
             siaBuilder.methodCognition(tcOutput.getMethodCognitionMap().get(ii.getIndex()));
 
             siaBuilder.addAllFieldAccesses(faaOutput.getFAList());
@@ -107,7 +108,7 @@ public class CompositionCompiler {
         }
     }
 
-    public IStaticCompositionAnalysis getStaticCompositionAnalysis() {
+    public ICompositionCompilation getStaticCompositionAnalysis() {
         return scaBuilder.build();
     }
 

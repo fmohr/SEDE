@@ -8,24 +8,17 @@ import de.upb.sede.exec.IServiceDesc;
 import de.upb.sede.exec.ISignatureDesc;
 import org.immutables.value.Value;
 
-import javax.annotation.Nullable;
 import java.util.List;
 
 @SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
-@JsonDeserialize(builder = MethodCognition.Builder.class)
-public interface IMethodCognition {
+@JsonDeserialize(builder = MethodResolution.Builder.class)
+public interface IMethodResolution {
 
     IMethodRef getMethodRef();
 
-    ISignatureDesc getSignatureDesc();
-
-    IMethodDesc getMethodDesc();
-
-    IServiceDesc getServiceDesc();
-
-    List<ITypeCoercion> getParameterTypeCoersion();
+    List<ITypeCoercion> getParamTypeCoercions();
 
 }
 

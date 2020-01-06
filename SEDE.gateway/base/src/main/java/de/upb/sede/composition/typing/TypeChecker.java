@@ -1,39 +1,37 @@
 package de.upb.sede.composition.typing;
 
-import de.upb.sede.composition.CompileStep;
+import de.upb.sede.composition.ChainedIWCompileStep;
+import de.upb.sede.composition.InstOutputIterator;
+import de.upb.sede.composition.InstWiseCompileStep;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Function;
 
-/**
- * Fills in the type journal.
- */
-public class TypeChecker implements CompileStep<TCInput, TCOutput> {
+public class TypeChecker extends ChainedIWCompileStep<TCInput, TCOutput> {
 
 
     @Override
-    public TCOutput step(TCInput input) {
-        TypeCheckerModel stepModel;
+    protected List<InstWiseCompileStep<TCInput, TCOutput>> initializeSteps() {
+        // All compile steps share an output:
+        InstOutputIterator<TCOutput> output = getOutput();
+        ContextResolver contextResolver = new ContextResolver(output);
+        MethodResolver methodResolver = new MethodResolver(output);
+        FieldTypeRecorder typeChecker = new FieldTypeRecorder(output);
+        ParamTypeCoercionResolver paramTypeCoercionResolver = new ParamTypeCoercionResolver(output);
 
-        TCOutput output = new TCOutput();
-
-        /*
-         * The initial Context may be defined and is not empty.
-         * Then inject the injected field types into it
-         */
-        if(input.getInitialTypeContext() != null && !input.getInitialTypeContext().isEmpty()) {
-            TypeJournalPage initialTC = new TypeJournalPage(input.getInitialTypeContext());
-            output.getJournal().injectFirstPage(initialTC);
-        }
-
-        stepModel = new TypeCheckerModel(output,
-            input.getInstructions(),
-            input.getLookupService());
-
-        /*
-         * Performs a line for line typecheck.
-         */
-        stepModel.checkAll();
-
-        return output;
+        List<InstWiseCompileStep<TCInput, TCOutput>> steps = Arrays.asList(contextResolver, methodResolver, typeChecker, paramTypeCoercionResolver);
+        steps.forEach(step -> step.setInput(getInput()));
+        return steps;
     }
+
+    @Override
+    protected InstOutputIterator<TCOutput> initializeOutput() {
+        return new InstOutputIterator<>(
+            (Function<TCOutput, TCOutput>) TCOutput::new,
+            getInput().getInstructions());
+    }
+
 
 }

@@ -16,7 +16,7 @@ public interface IStaticInstAnalysis {
 
     List<IFieldType> getTypeContext();
 
-    IMethodCognition getMethodCognition();
+    IMethodResolution getMethodResolution();
 
     List<IFieldAccess> getFieldAccesses();
 

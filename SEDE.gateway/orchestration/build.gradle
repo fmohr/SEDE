@@ -1,0 +1,30 @@
+dependencies {
+    provided project(':SEDE.core')
+    compile project(':SEDE.core-models')
+    compile project(':SEDE.servicedesc')
+
+    compile 'com.github.aminfa:TinyJavaDot:v1.3'
+
+    implementation "io.reactivex.rxjava3:rxjava:3.0.0-RC6"
+
+    // dependend on the builtin service configurations
+//    compile project.ext.isyslibs.builtins
+
+    compile project.ext.libs.okhttp3
+
+}
+
+//dependencies {
+//    asciidoclet project.ext.libs.asciidoclet
+//}
+
+//javadoc {
+//    options.docletpath = configurations.asciidoclet.files.asType(List)
+//    options.doclet = 'org.asciidoctor.Asciidoclet'
+//    options.overview = "src/main/java/overview.adoc"
+//    options.addStringOption "-base-dir", "${projectDir}"
+//    options.addStringOption "-attribute",
+//        "name=${project.name}," +
+//            "version=${project.version}," +
+//            "title-link=https://aminfa.github.io/SEDE[${project.name} ${project.version}]"
+//}

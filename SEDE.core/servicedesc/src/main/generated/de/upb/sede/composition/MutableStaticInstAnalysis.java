@@ -25,12 +25,12 @@ import org.immutables.value.Generated;
 @NotThreadSafe
 public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
   private static final long INIT_BIT_INSTRUCTION = 0x1L;
-  private static final long INIT_BIT_METHOD_COGNITION = 0x2L;
+  private static final long INIT_BIT_METHOD_RESOLUTION = 0x2L;
   private long initBits = 0x3L;
 
   private IIndexedInstruction instruction;
   private final ArrayList<IFieldType> typeContext = new ArrayList<IFieldType>();
-  private IMethodCognition methodCognition;
+  private IMethodResolution methodResolution;
   private final ArrayList<IFieldAccess> fieldAccesses = new ArrayList<IFieldAccess>();
 
   private MutableStaticInstAnalysis() {}
@@ -65,15 +65,15 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
   }
 
   /**
-   * @return value of {@code methodCognition} attribute
+   * @return value of {@code methodResolution} attribute
    */
-  @JsonProperty("methodCognition")
+  @JsonProperty("methodResolution")
   @Override
-  public final IMethodCognition getMethodCognition() {
-    if (!methodCognitionIsSet()) {
+  public final IMethodResolution getMethodResolution() {
+    if (!methodResolutionIsSet()) {
       checkRequiredAttributes();
     }
-    return methodCognition;
+    return methodResolution;
   }
 
   /**
@@ -94,7 +94,7 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
     initBits = 0x3L;
     instruction = null;
     typeContext.clear();
-    methodCognition = null;
+    methodResolution = null;
     fieldAccesses.clear();
     return this;
   }
@@ -115,7 +115,7 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
     }
     setInstruction(instance.getInstruction());
     addAllTypeContext(instance.getTypeContext());
-    setMethodCognition(instance.getMethodCognition());
+    setMethodResolution(instance.getMethodResolution());
     addAllFieldAccesses(instance.getFieldAccesses());
     return this;
   }
@@ -134,8 +134,8 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
       setInstruction(instance.getInstruction());
     }
     addAllTypeContext(instance.getTypeContext());
-    if (instance.methodCognitionIsSet()) {
-      setMethodCognition(instance.getMethodCognition());
+    if (instance.methodResolutionIsSet()) {
+      setMethodResolution(instance.getMethodResolution());
     }
     addAllFieldAccesses(instance.getFieldAccesses());
     return this;
@@ -204,14 +204,14 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
   }
 
   /**
-   * Assigns a value to the {@link IStaticInstAnalysis#getMethodCognition() methodCognition} attribute.
-   * @param methodCognition The value for methodCognition
+   * Assigns a value to the {@link IStaticInstAnalysis#getMethodResolution() methodResolution} attribute.
+   * @param methodResolution The value for methodResolution
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public MutableStaticInstAnalysis setMethodCognition(IMethodCognition methodCognition) {
-    this.methodCognition = Objects.requireNonNull(methodCognition, "methodCognition");
-    initBits &= ~INIT_BIT_METHOD_COGNITION;
+  public MutableStaticInstAnalysis setMethodResolution(IMethodResolution methodResolution) {
+    this.methodResolution = Objects.requireNonNull(methodResolution, "methodResolution");
+    initBits &= ~INIT_BIT_METHOD_RESOLUTION;
     return this;
   }
 
@@ -274,11 +274,11 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
   }
 
   /**
-   * Returns {@code true} if the required attribute {@link IStaticInstAnalysis#getMethodCognition() methodCognition} is set.
+   * Returns {@code true} if the required attribute {@link IStaticInstAnalysis#getMethodResolution() methodResolution} is set.
    * @return {@code true} if set
    */
-  public final boolean methodCognitionIsSet() {
-    return (initBits & INIT_BIT_METHOD_COGNITION) == 0;
+  public final boolean methodResolutionIsSet() {
+    return (initBits & INIT_BIT_METHOD_RESOLUTION) == 0;
   }
 
 
@@ -298,9 +298,9 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
    * @return {@code this} for use in a chained invocation
    */
   @CanIgnoreReturnValue
-  public final MutableStaticInstAnalysis unsetMethodCognition() {
-    initBits |= INIT_BIT_METHOD_COGNITION;
-    methodCognition = null;
+  public final MutableStaticInstAnalysis unsetMethodResolution() {
+    initBits |= INIT_BIT_METHOD_RESOLUTION;
+    methodResolution = null;
     return this;
   }
 
@@ -321,7 +321,7 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
   private String formatRequiredAttributesMessage() {
     List<String> attributes = new ArrayList<>();
     if (!instructionIsSet()) attributes.add("instruction");
-    if (!methodCognitionIsSet()) attributes.add("methodCognition");
+    if (!methodResolutionIsSet()) attributes.add("methodResolution");
     return "StaticInstAnalysis is not initialized, some of the required attributes are not set " + attributes;
   }
 
@@ -353,12 +353,12 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
   private boolean equalTo(MutableStaticInstAnalysis another) {
     return instruction.equals(another.instruction)
         && typeContext.equals(another.typeContext)
-        && methodCognition.equals(another.methodCognition)
+        && methodResolution.equals(another.methodResolution)
         && fieldAccesses.equals(another.fieldAccesses);
   }
 
   /**
-   * Computes a hash code from attributes: {@code instruction}, {@code typeContext}, {@code methodCognition}, {@code fieldAccesses}.
+   * Computes a hash code from attributes: {@code instruction}, {@code typeContext}, {@code methodResolution}, {@code fieldAccesses}.
    * @return hashCode value
    */
   @Override
@@ -366,7 +366,7 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
     int h = 5381;
     h += (h << 5) + instruction.hashCode();
     h += (h << 5) + typeContext.hashCode();
-    h += (h << 5) + methodCognition.hashCode();
+    h += (h << 5) + methodResolution.hashCode();
     h += (h << 5) + fieldAccesses.hashCode();
     return h;
   }
@@ -381,7 +381,7 @@ public final class MutableStaticInstAnalysis implements IStaticInstAnalysis {
     return MoreObjects.toStringHelper("MutableStaticInstAnalysis")
         .add("instruction", instructionIsSet() ? getInstruction() : "?")
         .add("typeContext", getTypeContext())
-        .add("methodCognition", methodCognitionIsSet() ? getMethodCognition() : "?")
+        .add("methodResolution", methodResolutionIsSet() ? getMethodResolution() : "?")
         .add("fieldAccesses", getFieldAccesses())
         .toString();
   }

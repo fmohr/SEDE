@@ -33,17 +33,17 @@ import org.immutables.value.Generated;
 public final class StaticInstAnalysis implements IStaticInstAnalysis {
   private final IIndexedInstruction instruction;
   private final ImmutableList<IFieldType> typeContext;
-  private final IMethodCognition methodCognition;
+  private final IMethodResolution methodResolution;
   private final ImmutableList<IFieldAccess> fieldAccesses;
 
   private StaticInstAnalysis(
       IIndexedInstruction instruction,
       ImmutableList<IFieldType> typeContext,
-      IMethodCognition methodCognition,
+      IMethodResolution methodResolution,
       ImmutableList<IFieldAccess> fieldAccesses) {
     this.instruction = instruction;
     this.typeContext = typeContext;
-    this.methodCognition = methodCognition;
+    this.methodResolution = methodResolution;
     this.fieldAccesses = fieldAccesses;
   }
 
@@ -66,12 +66,12 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
   }
 
   /**
-   * @return The value of the {@code methodCognition} attribute
+   * @return The value of the {@code methodResolution} attribute
    */
-  @JsonProperty("methodCognition")
+  @JsonProperty("methodResolution")
   @Override
-  public IMethodCognition getMethodCognition() {
-    return methodCognition;
+  public IMethodResolution getMethodResolution() {
+    return methodResolution;
   }
 
   /**
@@ -92,7 +92,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
   public final StaticInstAnalysis withInstruction(IIndexedInstruction value) {
     if (this.instruction == value) return this;
     IIndexedInstruction newValue = Objects.requireNonNull(value, "instruction");
-    return new StaticInstAnalysis(newValue, this.typeContext, this.methodCognition, this.fieldAccesses);
+    return new StaticInstAnalysis(newValue, this.typeContext, this.methodResolution, this.fieldAccesses);
   }
 
   /**
@@ -102,7 +102,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
    */
   public final StaticInstAnalysis withTypeContext(IFieldType... elements) {
     ImmutableList<IFieldType> newValue = ImmutableList.copyOf(elements);
-    return new StaticInstAnalysis(this.instruction, newValue, this.methodCognition, this.fieldAccesses);
+    return new StaticInstAnalysis(this.instruction, newValue, this.methodResolution, this.fieldAccesses);
   }
 
   /**
@@ -114,18 +114,18 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
   public final StaticInstAnalysis withTypeContext(Iterable<? extends IFieldType> elements) {
     if (this.typeContext == elements) return this;
     ImmutableList<IFieldType> newValue = ImmutableList.copyOf(elements);
-    return new StaticInstAnalysis(this.instruction, newValue, this.methodCognition, this.fieldAccesses);
+    return new StaticInstAnalysis(this.instruction, newValue, this.methodResolution, this.fieldAccesses);
   }
 
   /**
-   * Copy the current immutable object by setting a value for the {@link IStaticInstAnalysis#getMethodCognition() methodCognition} attribute.
+   * Copy the current immutable object by setting a value for the {@link IStaticInstAnalysis#getMethodResolution() methodResolution} attribute.
    * A shallow reference equality check is used to prevent copying of the same value by returning {@code this}.
-   * @param value A new value for methodCognition
+   * @param value A new value for methodResolution
    * @return A modified copy of the {@code this} object
    */
-  public final StaticInstAnalysis withMethodCognition(IMethodCognition value) {
-    if (this.methodCognition == value) return this;
-    IMethodCognition newValue = Objects.requireNonNull(value, "methodCognition");
+  public final StaticInstAnalysis withMethodResolution(IMethodResolution value) {
+    if (this.methodResolution == value) return this;
+    IMethodResolution newValue = Objects.requireNonNull(value, "methodResolution");
     return new StaticInstAnalysis(this.instruction, this.typeContext, newValue, this.fieldAccesses);
   }
 
@@ -136,7 +136,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
    */
   public final StaticInstAnalysis withFieldAccesses(IFieldAccess... elements) {
     ImmutableList<IFieldAccess> newValue = ImmutableList.copyOf(elements);
-    return new StaticInstAnalysis(this.instruction, this.typeContext, this.methodCognition, newValue);
+    return new StaticInstAnalysis(this.instruction, this.typeContext, this.methodResolution, newValue);
   }
 
   /**
@@ -148,7 +148,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
   public final StaticInstAnalysis withFieldAccesses(Iterable<? extends IFieldAccess> elements) {
     if (this.fieldAccesses == elements) return this;
     ImmutableList<IFieldAccess> newValue = ImmutableList.copyOf(elements);
-    return new StaticInstAnalysis(this.instruction, this.typeContext, this.methodCognition, newValue);
+    return new StaticInstAnalysis(this.instruction, this.typeContext, this.methodResolution, newValue);
   }
 
   /**
@@ -165,12 +165,12 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
   private boolean equalTo(StaticInstAnalysis another) {
     return instruction.equals(another.instruction)
         && typeContext.equals(another.typeContext)
-        && methodCognition.equals(another.methodCognition)
+        && methodResolution.equals(another.methodResolution)
         && fieldAccesses.equals(another.fieldAccesses);
   }
 
   /**
-   * Computes a hash code from attributes: {@code instruction}, {@code typeContext}, {@code methodCognition}, {@code fieldAccesses}.
+   * Computes a hash code from attributes: {@code instruction}, {@code typeContext}, {@code methodResolution}, {@code fieldAccesses}.
    * @return hashCode value
    */
   @Override
@@ -178,7 +178,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
     @Var int h = 5381;
     h += (h << 5) + instruction.hashCode();
     h += (h << 5) + typeContext.hashCode();
-    h += (h << 5) + methodCognition.hashCode();
+    h += (h << 5) + methodResolution.hashCode();
     h += (h << 5) + fieldAccesses.hashCode();
     return h;
   }
@@ -193,7 +193,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
         .omitNullValues()
         .add("instruction", instruction)
         .add("typeContext", typeContext)
-        .add("methodCognition", methodCognition)
+        .add("methodResolution", methodResolution)
         .add("fieldAccesses", fieldAccesses)
         .toString();
   }
@@ -210,7 +210,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
   static final class Json implements IStaticInstAnalysis {
     @Nullable IIndexedInstruction instruction;
     @Nullable List<IFieldType> typeContext = ImmutableList.of();
-    @Nullable IMethodCognition methodCognition;
+    @Nullable IMethodResolution methodResolution;
     @Nullable List<IFieldAccess> fieldAccesses = ImmutableList.of();
     @JsonProperty("instruction")
     public void setInstruction(IIndexedInstruction instruction) {
@@ -220,9 +220,9 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
     public void setTypeContext(List<IFieldType> typeContext) {
       this.typeContext = typeContext;
     }
-    @JsonProperty("methodCognition")
-    public void setMethodCognition(IMethodCognition methodCognition) {
-      this.methodCognition = methodCognition;
+    @JsonProperty("methodResolution")
+    public void setMethodResolution(IMethodResolution methodResolution) {
+      this.methodResolution = methodResolution;
     }
     @JsonProperty("fieldAccesses")
     public void setFieldAccesses(List<IFieldAccess> fieldAccesses) {
@@ -233,7 +233,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
     @Override
     public List<IFieldType> getTypeContext() { throw new UnsupportedOperationException(); }
     @Override
-    public IMethodCognition getMethodCognition() { throw new UnsupportedOperationException(); }
+    public IMethodResolution getMethodResolution() { throw new UnsupportedOperationException(); }
     @Override
     public List<IFieldAccess> getFieldAccesses() { throw new UnsupportedOperationException(); }
   }
@@ -253,8 +253,8 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
     if (json.typeContext != null) {
       builder.addAllTypeContext(json.typeContext);
     }
-    if (json.methodCognition != null) {
-      builder.methodCognition(json.methodCognition);
+    if (json.methodResolution != null) {
+      builder.methodResolution(json.methodResolution);
     }
     if (json.fieldAccesses != null) {
       builder.addAllFieldAccesses(json.fieldAccesses);
@@ -284,7 +284,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
    * StaticInstAnalysis.builder()
    *    .instruction(de.upb.sede.composition.IIndexedInstruction) // required {@link IStaticInstAnalysis#getInstruction() instruction}
    *    .addTypeContext|addAllTypeContext(de.upb.sede.composition.IFieldType) // {@link IStaticInstAnalysis#getTypeContext() typeContext} elements
-   *    .methodCognition(de.upb.sede.composition.IMethodCognition) // required {@link IStaticInstAnalysis#getMethodCognition() methodCognition}
+   *    .methodResolution(de.upb.sede.composition.IMethodResolution) // required {@link IStaticInstAnalysis#getMethodResolution() methodResolution}
    *    .addFieldAccesses|addAllFieldAccesses(de.upb.sede.composition.IFieldAccess) // {@link IStaticInstAnalysis#getFieldAccesses() fieldAccesses} elements
    *    .build();
    * </pre>
@@ -305,12 +305,12 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
   @NotThreadSafe
   public static final class Builder {
     private static final long INIT_BIT_INSTRUCTION = 0x1L;
-    private static final long INIT_BIT_METHOD_COGNITION = 0x2L;
+    private static final long INIT_BIT_METHOD_RESOLUTION = 0x2L;
     private long initBits = 0x3L;
 
     private @Nullable IIndexedInstruction instruction;
     private ImmutableList.Builder<IFieldType> typeContext = ImmutableList.builder();
-    private @Nullable IMethodCognition methodCognition;
+    private @Nullable IMethodResolution methodResolution;
     private ImmutableList.Builder<IFieldAccess> fieldAccesses = ImmutableList.builder();
 
     private Builder() {
@@ -328,8 +328,8 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
         instruction(instance.getInstruction());
       }
       addAllTypeContext(instance.getTypeContext());
-      if (instance.methodCognitionIsSet()) {
-        methodCognition(instance.getMethodCognition());
+      if (instance.methodResolutionIsSet()) {
+        methodResolution(instance.getMethodResolution());
       }
       addAllFieldAccesses(instance.getFieldAccesses());
       return this;
@@ -351,7 +351,7 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
       }
       instruction(instance.getInstruction());
       addAllTypeContext(instance.getTypeContext());
-      methodCognition(instance.getMethodCognition());
+      methodResolution(instance.getMethodResolution());
       addAllFieldAccesses(instance.getFieldAccesses());
       return this;
     }
@@ -416,15 +416,15 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
     }
 
     /**
-     * Initializes the value for the {@link IStaticInstAnalysis#getMethodCognition() methodCognition} attribute.
-     * @param methodCognition The value for methodCognition 
+     * Initializes the value for the {@link IStaticInstAnalysis#getMethodResolution() methodResolution} attribute.
+     * @param methodResolution The value for methodResolution 
      * @return {@code this} builder for use in a chained invocation
      */
     @CanIgnoreReturnValue 
-    @JsonProperty("methodCognition")
-    public final Builder methodCognition(IMethodCognition methodCognition) {
-      this.methodCognition = Objects.requireNonNull(methodCognition, "methodCognition");
-      initBits &= ~INIT_BIT_METHOD_COGNITION;
+    @JsonProperty("methodResolution")
+    public final Builder methodResolution(IMethodResolution methodResolution) {
+      this.methodResolution = Objects.requireNonNull(methodResolution, "methodResolution");
+      initBits &= ~INIT_BIT_METHOD_RESOLUTION;
       return this;
     }
 
@@ -483,13 +483,13 @@ public final class StaticInstAnalysis implements IStaticInstAnalysis {
       if (initBits != 0) {
         throw new IllegalStateException(formatRequiredAttributesMessage());
       }
-      return new StaticInstAnalysis(instruction, typeContext.build(), methodCognition, fieldAccesses.build());
+      return new StaticInstAnalysis(instruction, typeContext.build(), methodResolution, fieldAccesses.build());
     }
 
     private String formatRequiredAttributesMessage() {
       List<String> attributes = new ArrayList<>();
       if ((initBits & INIT_BIT_INSTRUCTION) != 0) attributes.add("instruction");
-      if ((initBits & INIT_BIT_METHOD_COGNITION) != 0) attributes.add("methodCognition");
+      if ((initBits & INIT_BIT_METHOD_RESOLUTION) != 0) attributes.add("methodResolution");
       return "Cannot build StaticInstAnalysis, some of required attributes are not set " + attributes;
     }
   }

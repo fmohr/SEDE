@@ -23,7 +23,6 @@ public class SDLBaseLookupService implements SDLLookupService {
     private final ISDLAssembly sdlBase;
 
 
-
     public SDLBaseLookupService(ISDLAssembly sdlBase) {
         this.sdlBase = sdlBase;
     }

@@ -21,10 +21,11 @@ public class CompositionCompileService implements ICCService {
     @Override
     public ICompositionCompilation compileComposition(ICCRequest ccRequest) throws TypeCheckException, FieldAccessAnalysisException {
         SingleBlockCCImpl ccImpl = new SingleBlockCCImpl(lookupService);
-        ccImpl.getTypeContext().clear();
-        ccImpl.getTypeContext().addAll(ccRequest.getInitialContext());
+        ccImpl.getCurrentTypeContext().clear();
+        ccImpl.getCurrentTypeContext().addAll(ccRequest.getInitialContext());
+        CompositionCompilation compositionCompilation;
         try {
-            ccImpl.compileCode(ccRequest.getComposition());
+            compositionCompilation = ccImpl.compileCode(ccRequest.getComposition());
         } catch (TypeCheckException ex) {
             logger.error("Error during Type Checking:\n{}", ccRequest.getComposition(), ex);
             throw ex;
@@ -32,7 +33,7 @@ public class CompositionCompileService implements ICCService {
             logger.error("Error during Field access analysis:\n{}", ccRequest.getComposition(), ex);
             throw ex;
         }
-        return ccImpl.getStaticCompositionAnalysis();
+        return compositionCompilation;
     }
 
 }

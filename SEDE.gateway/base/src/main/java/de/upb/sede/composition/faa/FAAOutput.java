@@ -21,5 +21,4 @@ public class FAAOutput {
         return fieldAccesses;
     }
 
-
 }

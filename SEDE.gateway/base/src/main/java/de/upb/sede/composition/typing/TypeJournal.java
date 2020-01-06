@@ -1,10 +1,15 @@
 package de.upb.sede.composition.typing;
 
+import de.upb.sede.composition.IFieldType;
+import de.upb.sede.composition.IInstTCResult;
+
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class TypeJournal {
-
+    // TODO fix: use Map<Long, TypeJournalPage> instead
     private List<TypeJournalPage> pages = new ArrayList<>();
 
     /**
@@ -80,5 +85,23 @@ public class TypeJournal {
 
     public TypeJournalPage getLastPage() {
         return getPageAt(pages.size());
+    }
+
+
+    public List<List<IFieldType>> getJournalModel() {
+        List<List<IFieldType>> journal = new ArrayList<>();
+        TypeJournalPage prevPage = new TypeJournalPage();
+        for (TypeJournalPage page : pages) {
+            page.copyInto(prevPage);
+            List<IFieldType> pageModel = new ArrayList<>();
+            prevPage.extractInto(pageModel);
+            journal.add(pageModel);
+        }
+        return journal;
+    }
+
+    public List<IFieldType> getResultingTypingContext() {
+        List<List<IFieldType>> journalModel = getJournalModel();
+        return journalModel.get(journalModel.size()-1);
     }
 }

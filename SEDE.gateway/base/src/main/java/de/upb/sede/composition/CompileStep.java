@@ -2,6 +2,16 @@ package de.upb.sede.composition;
 
 public interface CompileStep<I, O> {
 
-    O step(I input);
+    void setInput(I input);
 
+    O getOutput();
+
+    void step();
+
+    boolean isFinished();
+
+    default void stepToEnd() {
+        while(!isFinished())
+            step();
+    }
 }

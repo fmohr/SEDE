@@ -10,12 +10,7 @@ import de.upb.sede.types.IDataTypeDesc;
 import de.upb.sede.types.IDataTypeRef;
 import de.upb.sede.util.Streams;
 
-import javax.annotation.Nullable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.*;
 import java.util.stream.Stream;
 
 import static de.upb.sede.util.TypeUtil.getServiceType;
@@ -25,14 +20,14 @@ class TypeCheckerModel {
 
     private TypeJournal typeJournal;
 
-    private IndexMap<IMethodCognition> methodCognitionMap;
+    private Map<Long, MethodCognition> methodCognitionMap;
 
     private InstructionIndexer instructions;
 
     private SDLLookupService lookupService;
 
-    TypeCheckerModel(TCOutput output, InstructionIndexer instructions, SDLLookupService lookupService) {
-        this.methodCognitionMap = output.getMethodCognitionIndexMap();
+    TypeCheckerModel(TCOutput_2 output, InstructionIndexer instructions, SDLLookupService lookupService) {
+        this.methodCognitionMap = output.getMethodCognitionMap();
         this.typeJournal = output.getJournal();
         this.instructions = instructions;
         this.lookupService = lookupService;
@@ -49,18 +44,19 @@ class TypeCheckerModel {
         long index = indexedInstruction.getIndex();
 //        TypeJournalPage currentPage = typeJournal.getPageAt(index);
         TypeJournalPage nextPage = typeJournal.getPageAfterInst(index);
-        Consumer<IMethodCognition> indexedInstResolution;
-        indexedInstResolution = methodCognitionMap.setter(index);
         try {
-            typeCheckInstruction(inst, nextPage, indexedInstResolution);
+            typeCheckInstruction(indexedInstruction, nextPage, methodCognitionMap);
         } catch(NullPointerException | TypeCheckException typeError) {
             throw new TypeCheckException(indexedInstruction, typeError);
         }
     }
 
-    private void typeCheckInstruction(IInstructionNode inst, TypeJournalPage typeContext, Consumer<IMethodCognition> instMethodCognition) {
+    private void typeCheckInstruction(IIndexedInstruction indexedInst, TypeJournalPage typeContext, Map<Long, MethodCognition> methodCognitionMap) {
         // TODO reformat this method to accept IndexedInstruction instead and remove the Consumer parameter and the IndexMap class
         String serviceContextQualifier;
+
+        IInstructionNode inst = indexedInst.getInstruction();
+
 
         boolean staticContext;
 
@@ -129,13 +125,9 @@ class TypeCheckerModel {
          * If there exists a list of TypeCoercion then the parameter signature type checks.
          */
         List<ITypeCoercion> parameterTypeCoercions = coerceParameters(signature, inst, typeContext);
-        IMethodCognition mc = MethodCognition.builder()
-            .serviceDesc(service)
-            .methodDesc(method)
-            .signatureDesc(signature)
-            .methodRef(methodRef)
-            .parameterTypeCoersion(parameterTypeCoercions).build();
-        instMethodCognition.accept(mc);
+
+        MethodCognition mc = new MethodCognition(methodRef, signature, method, service, parameterTypeCoercions);
+        methodCognitionMap.put(indexedInst.getIndex(), mc);
 
         if(inst.isAssignment()) {
             /*
@@ -159,7 +151,6 @@ class TypeCheckerModel {
             }
             typeContext.setFieldType(assignedField, fieldType);
         }
-
     }
 
     private TypeClass getTypeClassOf(String typeQualifier) {

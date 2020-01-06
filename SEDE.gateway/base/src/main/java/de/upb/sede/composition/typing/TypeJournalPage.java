@@ -12,18 +12,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TypeJournalPage implements TypeContext {
+public class TypeJournalPage {
 
-    private final TypeContext readOnlyPrevPage;
+    private final TypeJournalPage prevPage;
 
     private final Map<String, TypeClass> typeMap = new HashMap<>();
 
-    TypeJournalPage(TypeJournalPage readOnlyPrevPage) {
-        this.readOnlyPrevPage = readOnlyPrevPage;
+    TypeJournalPage(TypeJournalPage prevPage) {
+        this.prevPage = prevPage;
     }
 
     TypeJournalPage() {
-        readOnlyPrevPage = new EmptyJournalPage();
+        prevPage = null;
     }
 
     TypeJournalPage(List<IFieldType> initialContext) {
@@ -33,68 +33,46 @@ public class TypeJournalPage implements TypeContext {
         );
     }
 
+    private boolean isFirstPage() {
+        return prevPage == null;
+    }
 
-    @Override
+    private TypeJournalPage getPrevPage() {
+        if(isFirstPage()) {
+            throw new IllegalStateException("Code error: already first page.");
+        }
+        return prevPage;
+    }
+
     @Nullable
     public TypeClass getFieldType(String fieldname) {
         if(typeMap.containsKey(fieldname)) {
             return typeMap.get(fieldname);
+        } else if(isFirstPage()) {
+            return null;
         } else {
-            return readOnlyPrevPage.getFieldType(fieldname);
+            return getPrevPage().getFieldType(fieldname);
         }
     }
 
-    @Override
     public void setFieldType(String fieldname, TypeClass valueType) {
         typeMap.put(fieldname, valueType);
     }
 
-    private void addPage(List<IInstTCResult> pages) {
-        if(readOnlyPrevPage instanceof TypeJournalPage) {
-           ((TypeJournalPage) readOnlyPrevPage).addPage(pages);
-        } else if(!(readOnlyPrevPage instanceof EmptyJournalPage)) {
-            throw new RuntimeException("Code error: new journal page class added");
-        }
-        List<IFieldType> fieldTypes = new ArrayList<>();
-        typeMap.entrySet().stream().map(typeContextEntry ->
-            FieldType.builder()
-                .fieldname(typeContextEntry.getKey())
-                .type(typeContextEntry.getValue())
-                .build())
-            .forEach(fieldTypes::add);
-        IInstTCResult page = InstTCResult.builder().fieldTypes(fieldTypes).build();
-        pages.add(page);
+    private static IFieldType toFieldType(Map.Entry<String, TypeClass> entry) {
+        return FieldType.builder()
+            .fieldname(entry.getKey())
+            .type(entry.getValue())
+            .build();
     }
 
-    public List<IInstTCResult> extractModel() {
-        List<IInstTCResult> pageModelList = new ArrayList<>();
-        addPage(pageModelList);
-        return pageModelList;
-    }
-
-    public IInstTCResult collapseModel() {
-        IInstTCResult prevModel;
-        if(readOnlyPrevPage instanceof TypeJournalPage) {
-            prevModel = ((TypeJournalPage) readOnlyPrevPage).collapseModel();
-        } else if(!(readOnlyPrevPage instanceof EmptyJournalPage)) {
-            throw new RuntimeException("Code error: new journal page class added");
-        } else {
-            prevModel = InstTCResult.builder().build();
-        }
-        InstTCResult.Builder modelBuilder = InstTCResult.builder();
-        prevModel.getFieldTypes().stream()
-            .filter(ft -> !typeMap.containsKey(ft.getFieldname()))
-            .forEach(modelBuilder::addFieldTypes);
-
+    public void extractInto(List<IFieldType> context) {
         typeMap.entrySet().stream()
-            .map(typeContextEntry ->
-                FieldType.builder()
-                    .fieldname(typeContextEntry.getKey())
-                    .type(typeContextEntry.getValue())
-                    .build())
-            .forEach(modelBuilder::addFieldTypes);
-
-        return modelBuilder.build();
+            .map(TypeJournalPage::toFieldType)
+            .forEach(context::add);
     }
 
+    public void copyInto(TypeJournalPage otherPage) {
+        typeMap.forEach(otherPage::setFieldType);
+    }
 }

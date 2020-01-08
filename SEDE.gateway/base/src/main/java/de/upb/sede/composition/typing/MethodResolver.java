@@ -1,9 +1,9 @@
 package de.upb.sede.composition.typing;
 
+import de.upb.sede.IServiceCollectionDesc;
 import de.upb.sede.SDLLookupService;
 import de.upb.sede.composition.InstOutputIterator;
 import de.upb.sede.composition.InstWiseCompileStep;
-import de.upb.sede.composition.InstructionIndexer;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.exec.*;
 import de.upb.sede.util.SDLUtil;
@@ -53,7 +53,7 @@ public class MethodResolver extends InstWiseCompileStep<TCInput, TCOutput> {
     private void resolveMethod() {
         TCOutput.ContextInfo context = getInstOutput().getContext();
 
-        boolean resolved = resolveMethodFrom(context.getServiceDesc());
+        boolean resolved = resolveMethodFrom(context.getServiceRef(), context.getServiceDesc());
         if(resolved) {
             return;
         }
@@ -63,7 +63,11 @@ public class MethodResolver extends InstWiseCompileStep<TCInput, TCOutput> {
         parents.remove(0);
         boolean methodResolved = false;
         for(IServiceDesc parent : parents) {
-            methodResolved = resolveMethodFrom(parent);
+            Optional<IServiceCollectionDesc> optCollection = getInput().getLookupService().lookupCollection(IServiceRef.of(null, parent.getQualifier()));
+            if(!optCollection.isPresent()) {
+                throw TypeCheckException.unknownCollectionOfParent(context.getServiceQualifier(), parent.getQualifier());
+            }
+            methodResolved = resolveMethodFrom(IServiceRef.of(optCollection.get().getQualifier(), parent.getQualifier()), parent);
             if(methodResolved) {
                 break;
             }
@@ -76,15 +80,13 @@ public class MethodResolver extends InstWiseCompileStep<TCInput, TCOutput> {
         }
     }
 
-    private boolean resolveMethodFrom(IServiceDesc contextService) {
+    private boolean resolveMethodFrom(IServiceRef serviceRef, IServiceDesc contextService) {
         String methodQualifier = getCurrentInstruction().getInstruction().getMethod();
         TCOutput.MethodInfo methodInfo = getInstOutput().getMethodInfo();
 
         SDLLookupService lookupService = getInput().getLookupService();
 
-        IMethodRef methodRef = IMethodRef.of(
-            IServiceRef.of(null, contextService.getQualifier()),
-            methodQualifier);
+        IMethodRef methodRef = IMethodRef.of(serviceRef, methodQualifier);
 
         Optional<IMethodDesc> optMethod = lookupService.lookup(methodRef);
 

@@ -2,8 +2,9 @@ package de.upb.sede.composition
 
 import de.upb.sede.ISDLAssembly
 import de.upb.sede.SDLReader
-import de.upb.sede.composition.graphs.types.DataValueType
+import de.upb.sede.composition.typing.TypeCheckException
 import de.upb.sede.gateway.SimpleGatewayImpl
+import de.upb.sede.misc.DSLMiscs
 import spock.lang.Specification
 
 class SingleBlockCCImplTest extends Specification {
@@ -39,7 +40,7 @@ class SingleBlockCCImplTest extends Specification {
 
     }
 
-    def positive() {
+    def "test positive scenario"() {
         when:
         def composition = """
         s1 = a.S1::__construct({1,2});
@@ -48,17 +49,11 @@ class SingleBlockCCImplTest extends Specification {
         c = s2::m1({a, b});
         b = s1::m2({c});
         c = s2::m1({c, b});
-        """.stripMargin()
-        def initialContext = [
-            FieldType.builder()
-                .fieldname('a')
-                .type(DataValueType.builder().qualifier('T3').build())
-            .build(),
-            FieldType.builder()
-                .fieldname('b')
-                .type(DataValueType.builder().qualifier('T2').build())
-            .build()
-        ]
+        """
+        def initialContext = DSLMiscs.newContext {
+            data('a', 'T3')
+            data('b', 'T2')
+        }
         def ccRequest = CCRequest.builder().composition(composition).initialContext(initialContext).build()
         def compiledComp = simpleGateway.compileComposition(ccRequest)
         def instAnalysis = compiledComp.getInstructionAnalysis()
@@ -78,19 +73,71 @@ class SingleBlockCCImplTest extends Specification {
          *
          */
         def inst = instAnalysis[0]
-        def accessS1 = inst.fieldAccesses[0]
+        def accesses = inst.fieldAccesses
         def types = inst.typeContext
         then:
-        inst.instruction.index == 0
-        accessS1.index == 0
-        accessS1.field == "s1"
-        accessS1.accessType == IFieldAccess.AccessType.ASSIGN
-        types.any {}
-
-
-
-
+        accesses.count { IFieldAccess access ->
+            access.index == 0
+            access.field == "s1"
+            access.accessType == IFieldAccess.AccessType.ASSIGN
+        } == 1
+        accesses.every {it.index == 0}
+        types.count {
+            it.fieldname == "a"
+            it.type.getTypeQualifier() == "T3"
+        } == 1
+        types.count {
+            it.fieldname == "b"
+            it.type.getTypeQualifier() == "T2"
+        } == 1
+        types.count {
+            it.fieldname == "s1"
+            it.type.getTypeQualifier() == "a.S1"
+        } == 1
+        inst.methodResolution.methodRef.ref.qualifier == "__construct"
+        inst.methodResolution.methodRef.serviceRef.ref.qualifier == "a.S1"
+        inst.methodResolution.methodRef.serviceRef.serviceCollectionRef.ref.qualifier == "c"
     }
 
+    def "test undeclared type usage"() {
+        /*
+         * The type `c#a.S2` is not defined. Try to create a service of this type:
+         */
+        when:
+        def composition = """
+        s1 = a.S1::__construct({0,0});
+        s2 = a.S2::__construct({12031,1295});
+        c = s2::m1();
+        """
+        def initialContext = []
+        def ccRequest = CCRequest.builder().composition(composition).initialContext(initialContext).build()
+        def compiledComp = simpleGateway.compileComposition(ccRequest)
+
+        then:
+        thrown(TypeCheckException)
+    }
+
+    def "test undeclared field access"() {
+        /*
+         * The field `b` is not in the initial context.
+         * Try to access it in an instruction
+         */
+        /*
+         * The type `c#a.S2` is not defined. Try to create a service of this type:
+         */
+        when:
+        def composition = """
+        c = s1::m1({a, b});
+        """
+        def initialContext = DSLMiscs.newContext {
+            serviceInstance("s1", 'a.S1')
+            data('a', 'T1')
+            // data('b', 'T2') is missing
+        }
+        def ccRequest = CCRequest.builder().composition(composition).initialContext(initialContext).build()
+        def compiledComp = simpleGateway.compileComposition(ccRequest)
+        then:
+        thrown(TypeCheckException)
+    }
 
 }

@@ -60,18 +60,23 @@ public class SDLUtil {
 
         // Create merge list:
         List<List<IServiceDesc>> mergeList =
-            Stream.concat(
                 baseService.getInterfaces().stream()
                     .distinct() // no duplicate parents
                     .map(interfaceQualifier -> IServiceRef.of(null, interfaceQualifier))
-                    .map(interfaceRef -> SDLUtil.c3Linearization(lookupService, interfaceRef, cyclicGuard)),
-                Stream.of(baseService.getInterfaces().stream()
-                    .distinct() // no duplicate parents
-                    .map(parentQualifier -> IServiceRef.of(null, parentQualifier))
-                    .map(parentRef -> lookupService.lookup(parentRef).orElseThrow(() ->
-                        new IllegalArgumentException("Cannot resolve parent of service "
-                            + baseServiceRef + " qualified as " + parentRef.getRef()))).collect(Collectors.toList())))
+                    .map(interfaceRef -> SDLUtil.c3Linearization(lookupService, interfaceRef, cyclicGuard))
             .collect(Collectors.toList());
+
+        // Add the direct parents:
+        List<IServiceDesc> parentList = baseService.getInterfaces().stream()
+            .distinct() // no duplicate parents
+            .map(parentQualifier -> IServiceRef.of(null, parentQualifier))
+            .map(parentRef -> lookupService.lookup(parentRef).orElseThrow(() ->
+                new IllegalArgumentException("Cannot resolve parent of service "
+                    + baseServiceRef + " qualified as " + parentRef.getRef())))
+            .collect(Collectors.toList());
+        mergeList.add(parentList);
+
+
         // we are done calling this method recursively in this method. So remove the guard:
         cyclicGuard.remove(baseServiceRef.getRef().getQualifier());
 

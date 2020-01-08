@@ -22,8 +22,21 @@ public class TypeChecker extends ChainedIWCompileStep<TCInput, TCOutput> {
         ParamTypeCoercionResolver paramTypeCoercionResolver = new ParamTypeCoercionResolver(output);
 
         List<InstWiseCompileStep<TCInput, TCOutput>> steps = Arrays.asList(contextResolver, methodResolver, typeChecker, paramTypeCoercionResolver);
-        steps.forEach(step -> step.setInput(getInput()));
+        try {
+            steps.forEach(step -> step.setInput(getInput()));
+        } catch(TypeCheckException ex) {
+            throw new TypeCheckException(getOutput().getCurrentInstruction(), ex);
+        }
         return steps;
+    }
+
+    @Override
+    protected void stepBlock() {
+        try {
+            super.stepBlock();
+        } catch(TypeCheckException ex) {
+            throw new TypeCheckException(getOutput().getCurrentInstruction(), ex);
+        }
     }
 
     @Override

@@ -66,6 +66,11 @@ public class TypeCheckException extends RuntimeException {
         return new TypeCheckException(errText);
     }
 
+    static TypeCheckException unknownCollectionOfParent(String serviceQualifier, String parentQualifier) {
+        String errText = "The service declares a parent from an unkown collection";
+        return new TypeCheckException(errText);
+    }
+
     static TypeCheckException unknownType(String fieldName, TypeClass fieldType) {
         String errText = String.format("Field %s Unknown type `%s`", fieldName, fieldType.getTypeQualifier());
         return new TypeCheckException(errText);

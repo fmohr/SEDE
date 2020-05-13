@@ -24,6 +24,11 @@ public final class DynTypeField extends DynTypeObject implements DynType {
 
     private Map<JavaType, Object> forms = new ConcurrentHashMap<>();
 
+    public DynTypeField() {
+        this(new HashMap<>());
+    }
+
+
     public DynTypeField(Object data) {
         super(data);
     }
@@ -33,7 +38,7 @@ public final class DynTypeField extends DynTypeObject implements DynType {
             return new DynTypeField(_MAPPER.readValue(jsonString, Object.class));
         }
         catch (Exception ex) {
-            throw new NotKneadableException(ex);
+            throw new CastToDynamicTypeException(ex);
         }
     }
 
@@ -43,8 +48,17 @@ public final class DynTypeField extends DynTypeObject implements DynType {
             Object knead = yamlMapper.readValue(yamlString, Object.class);
             return new DynTypeField(knead);
         } catch (IOException e) {
-            throw new NotKneadableException(e);
+            throw new CastToDynamicTypeException(e);
         }
+    }
+
+    public <T> T set(Class<T> form, T value) {
+        JavaType type = _MAPPER.constructType(form);
+        return set(type, value);
+    }
+
+    public <T> T set(JavaType type, T value) {
+        return (T) forms.put(type, value);
     }
 
 

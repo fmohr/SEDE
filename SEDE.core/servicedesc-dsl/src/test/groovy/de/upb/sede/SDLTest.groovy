@@ -8,7 +8,6 @@ import de.upb.sede.param.IBooleanParameter
 import de.upb.sede.param.ICategoryParameter
 import de.upb.sede.param.IInterfaceParameter
 import de.upb.sede.param.INumericParameter
-import de.upb.sede.param.IParameter
 import de.upb.sede.param.IParameterDependencyDesc
 import de.upb.sede.param.IServiceParameterizationDesc
 import de.upb.sede.param.auxiliary.IJavaParameterizationAux
@@ -203,8 +202,8 @@ class SDLTest extends Specification {
         when:
         IServiceDesc s1 = c1.services.find {it.qualifier == 'S1'}
         then:
-        s1.javaDispatchAux != null
-        s1.javaDispatchAux.staticInvocation() == true
+        s1.dynAux != null
+        s1.dynAux.staticInvocation() == true
 
         when:
         IServiceParameterizationDesc params = s1.serviceParameters
@@ -215,7 +214,7 @@ class SDLTest extends Specification {
         when:
         IDataTypeDesc t2 = c1.dataTypes.find {it.qualifier == 't2'}
         then:
-        t2.javaTypeAux.dataCastHandler != null
-        t2.javaTypeAux.dataCastHandler.className() == 'org.example.T2Handler'
+        t2.typeAux.dataCastHandler != null
+        t2.typeAux.dataCastHandler.className() == 'org.example.T2Handler'
     }
 }

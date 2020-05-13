@@ -101,7 +101,11 @@ collection ("services1") {
                  * Iterate over all signatures and change some properties:
                  */
                 eachSignature {
-                    javaAux.staticInvocation = true
+                    aux {
+                        javaDispatch {
+                            staticInvocation = true
+                        }
+                    }
                 }
             }
         }

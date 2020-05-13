@@ -3,7 +3,6 @@ package de.upb.sede.param;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.IQualifiable;
-import de.upb.sede.param.auxiliary.IJavaParameterizationAux;
 import de.upb.sede.util.TypeDeserializationDelegate;
 import org.immutables.value.Value;
 

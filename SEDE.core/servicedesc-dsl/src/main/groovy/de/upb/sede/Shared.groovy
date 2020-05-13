@@ -1,7 +1,9 @@
 package de.upb.sede
 
 import de.upb.sede.exec.IServiceDesc
+import de.upb.sede.exec.auxiliary.DynamicAuxAware
 import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
+import de.upb.sede.util.DynTypeField
 import groovy.transform.PackageScope
 
 @PackageScope
@@ -22,12 +24,32 @@ class Shared {
         return newJavaAux
     }
 
+    trait DomainExtension {
+        DomainAware getDom() {
+            if(!(this instanceof DomainAware)) {
+                throw new RuntimeException("Bug: " + this.class.name + " is AuxDomAware but not DomainAware.");
+            }
+            return this as DomainAware;
+        }
+    }
+
     @PackageScope
-    interface AuxAware<JAVAAUX> {
-
-        JAVAAUX setJavaAux(JAVAAUX javaAux);
-
-        JAVAAUX getJavaAux();
+    trait AuxDomAware extends DomainExtension {
+        void aux(@DelegatesTo(AuxDomain) Closure describer) {
+            if(!(getDom().model instanceof DynamicAuxAware)) {
+                throw new RuntimeException("Bug: model is instance of ${getDom().model.class} but not of DispatchAware.")
+            }
+            def disAware = getDom().model as DynamicAuxAware
+            def dynTypeField
+            if(disAware.dynAux  == null) {
+                dynTypeField = new DynTypeField()
+                disAware.setDynAux(dynTypeField)
+            } else {
+                dynTypeField = disAware.dynAux
+            }
+            AuxDomain dom = new AuxDomain();
+            getDom().delegateDown(dom, dynTypeField, describer)
+        }
     }
 
     @PackageScope

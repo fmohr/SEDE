@@ -10,7 +10,10 @@ import groovy.transform.NamedVariant
 
 class MethodSignatureDomain
     extends DomainAware<MutableSignatureDesc, MethodDomain>
-    implements Shared.AuxAware<MutableJavaDispatchAux>, Shared.CommentAware {
+    implements
+//        Shared.AuxAware<MutableJavaDispatchAux>,
+        Shared.CommentAware,
+        Shared.AuxDomAware {
 
     void setInputTypes(String... inputTypes) {
         model.inputs.clear()
@@ -111,17 +114,17 @@ class MethodSignatureDomain
         "signature"
     }
 
-    @Override
-    MutableJavaDispatchAux setJavaAux(MutableJavaDispatchAux javaAux) {
-        model.javaDispatchAux = javaAux
-        return javaAux
-    }
-
-    @Override
-    MutableJavaDispatchAux getJavaAux() {
-        if(model.javaDispatchAux == null) {
-            model.javaDispatchAux = MutableJavaDispatchAux.create()
-        }
-        return model.javaDispatchAux as MutableJavaDispatchAux
-    }
+//    @Override
+//    MutableJavaDispatchAux setJavaAux(MutableJavaDispatchAux javaAux) {
+//        model.javaDispatchAux = javaAux
+//        return javaAux
+//    }
+//
+//    @Override
+//    MutableJavaDispatchAux getJavaAux() {
+//        if(model.javaDispatchAux == null) {
+//            model.javaDispatchAux = MutableJavaDispatchAux.create()
+//        }
+//        return model.javaDispatchAux as MutableJavaDispatchAux
+//    }
 }

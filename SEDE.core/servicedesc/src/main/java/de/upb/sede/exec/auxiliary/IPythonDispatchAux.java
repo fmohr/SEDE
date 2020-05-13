@@ -7,6 +7,6 @@ import org.immutables.value.Value;
 @SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
-@JsonDeserialize(builder = PythonClassAux.Builder.class)
-public interface IPythonClassAux {
+@JsonDeserialize(builder = PythonDispatchAux.Builder.class)
+public interface IPythonDispatchAux {
 }

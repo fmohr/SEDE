@@ -12,7 +12,10 @@ import de.upb.sede.param.auxiliary.MutableJavaParameterizationAux
 
 class ParameterDomain
     extends DomainAware<MutableServiceParameterizationDesc, ServiceDomain>
-    implements Shared.CommentAware, Shared.AuxAware<MutableJavaParameterizationAux> {
+    implements
+        Shared.CommentAware,
+//        Shared.AuxAware<MutableJavaParameterizationAux>,
+        Shared.AuxDomAware {
 
 
     private void readDescription(Object parameter, Closure paramDescriber) {
@@ -245,23 +248,23 @@ class ParameterDomain
         return paramName;
     }
 
-    @Override
-    MutableJavaParameterizationAux setJavaAux(MutableJavaParameterizationAux javaAux) {
-        model.javaParameterizationAuxiliaries = javaAux
-        return javaAux
-    }
-
-
-    MutableJavaParameterizationAux setJavaParamAux(MutableJavaParameterizationAux javaAux) {
-        model.javaParameterizationAuxiliaries = javaAux
-        return javaAux
-    }
-
-    @Override
-    MutableJavaParameterizationAux getJavaAux() {
-        if(model.javaParameterizationAuxiliaries == null)
-            return setJavaAux(MutableJavaParameterizationAux.create())
-        else
-            return model.javaParameterizationAuxiliaries as MutableJavaParameterizationAux
-    }
+//    @Override
+//    MutableJavaParameterizationAux setJavaAux(MutableJavaParameterizationAux javaAux) {
+//        model.javaParameterizationAuxiliaries = javaAux
+//        return javaAux
+//    }
+//
+//
+//    MutableJavaParameterizationAux setJavaParamAux(MutableJavaParameterizationAux javaAux) {
+//        model.javaParameterizationAuxiliaries = javaAux
+//        return javaAux
+//    }
+//
+//    @Override
+//    MutableJavaParameterizationAux getJavaAux() {
+//        if(model.javaParameterizationAuxiliaries == null)
+//            return setJavaAux(MutableJavaParameterizationAux.create())
+//        else
+//            return model.javaParameterizationAuxiliaries as MutableJavaParameterizationAux
+//    }
 }

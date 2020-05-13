@@ -88,16 +88,18 @@ collection("service.Collection.1") {
 
             dependency 'b2 in {true}', 'b3 in {false}'
 
-            java {
-                parameterHandler = newJavaDispatchAux {
-                    className = 'Service1ParameterHandler'
+            aux {
+                javaParam {
+                    parameterHandler = newJavaDispatchAux {
+                        className = 'Service1ParameterHandler'
+                    }
+                    autoScanEachParam = true
+                    bundleInMap = true
+                    bundleInArray = true
+                    bundleInList = true
+                    precedeParamsWithNames = true
+                    paramOrder = ['b3', 'b2', 'b1']
                 }
-                autoScanEachParam = true
-                bundleInMap = true
-                bundleInArray = true
-                bundleInList = true
-                precedeParamsWithNames = true
-                paramOrder = ['b3', 'b2', 'b1']
             }
         }
     }

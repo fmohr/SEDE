@@ -4,13 +4,16 @@ import de.upb.sede.exec.IMethodDesc
 import de.upb.sede.exec.IServiceDesc
 import de.upb.sede.exec.MutableMethodDesc
 import de.upb.sede.exec.MutableServiceDesc
-import de.upb.sede.exec.auxiliary.IJavaDispatchAux
 import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
 import de.upb.sede.param.MutableServiceParameterizationDesc
+import de.upb.sede.util.DynTypeField
 
 class ServiceDomain
     extends DomainAware<MutableServiceDesc, ServiceCollectionDomain>
-    implements Shared.AuxAware<MutableJavaDispatchAux>, Shared.CommentAware {
+    implements
+//        Shared.AuxAware<MutableJavaDispatchAux>,
+        Shared.CommentAware,
+        Shared.AuxDomAware {
 
     def setStateful(Closure typeDescriber = Closure.IDENTITY) {
         setStateType(model.qualifier, typeDescriber)
@@ -102,18 +105,21 @@ class ServiceDomain
         "service"
     }
 
-    @Override
-    MutableJavaDispatchAux setJavaAux(MutableJavaDispatchAux javaAux) {
-        model.javaDispatchAux = javaAux
-        return javaAux
-    }
-
-
-    @Override
-    MutableJavaDispatchAux getJavaAux() {
-        if(model.javaDispatchAux == null) {
-            model.javaDispatchAux = MutableJavaDispatchAux.create()
-        }
-        return model.javaDispatchAux as MutableJavaDispatchAux
-    }
+//    @Override
+//    MutableJavaDispatchAux setJavaAux(MutableJavaDispatchAux javaAux) {
+//        if(model.dynAux == null) {
+//            model.dispatchAux = new DynTypeField()
+//        }
+//        model.dynAux.set(MutableJavaDispatchAux, javaAux)
+//        return javaAux
+//    }
+//
+//
+//    @Override
+//    MutableJavaDispatchAux getJavaAux() {
+//        if(model.dynAux == null) {
+//            model.dispatchAux = new DynTypeField()
+//        }
+//        return model.dynAux.cast(MutableJavaDispatchAux)
+//    }
 }

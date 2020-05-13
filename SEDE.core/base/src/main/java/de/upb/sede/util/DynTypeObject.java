@@ -30,7 +30,7 @@ public class DynTypeObject implements DynType {
             return new DynTypeObject(_MAPPER.readValue(jsonString, Object.class));
         }
         catch (Exception ex) {
-            throw new NotKneadableException(ex);
+            throw new CastToDynamicTypeException(ex);
         }
     }
 
@@ -40,7 +40,7 @@ public class DynTypeObject implements DynType {
             Object knead = yamlMapper.readValue(yamlString, Object.class);
             return new DynTypeObject(knead);
         } catch (IOException e) {
-            throw new NotKneadableException(e);
+            throw new CastToDynamicTypeException(e);
         }
     }
 
@@ -69,7 +69,7 @@ public class DynTypeObject implements DynType {
         try {
             kneaded = _MAPPER.convertValue(getData(), type);
         } catch(Exception ex) {
-            throw new NotKneadableException("Cannot knead into form " + type.toString(), ex);
+            throw new CastToDynamicTypeException("Cannot knead into form " + type.toString(), ex);
         }
         validate(kneaded);
         return kneaded;

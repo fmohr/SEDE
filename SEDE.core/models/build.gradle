@@ -1,30 +1,27 @@
 plugins {
     id 'java'
     id 'groovy'
+    id "net.ltgt.apt" version "0.21"
+    id "net.ltgt.apt-eclipse" version "0.21"
+    id "net.ltgt.apt-idea" version "0.21"
 }
 
 dependencies {
     compile project(":SEDE.core")
 
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.9.9'
-    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.9.9.3'
-    compile 'com.fasterxml.jackson.module:jackson-module-jsonSchema:2.10.0.pr2'
+    Map libs = project.ext.libs
+    compile libs.javax_bind_api
+    compile libs.java_annotation_api
+    compile libs.jackson_schema
 
-    compileOnly 'org.immutables:value:2.7.4'
-//    annotationProcessor 'org.immutables:value:2.7.4'
+    compileOnly libs.immutables
+    annotationProcessor  libs.immutables
 
     // mandatory dependencies for using Spock
     testCompile "org.codehaus.groovy:groovy-all:2.5.7"
     testCompile "org.spockframework:spock-core:1.3-groovy-2.5"
 }
 
-sourceSets {
-    main{
-        java {
-            srcDirs +=  'src/main/generated'
-        }
-    }
-}
 
 task genJsonSchema(type: JavaExec) {
     classpath += sourceSets.main.runtimeClasspath

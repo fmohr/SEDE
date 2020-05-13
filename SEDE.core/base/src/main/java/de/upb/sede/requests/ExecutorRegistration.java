@@ -12,8 +12,6 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import de.upb.sede.util.DynTypeField;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import de.upb.sede.util.JsonSerializable;

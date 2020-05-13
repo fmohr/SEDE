@@ -18,12 +18,20 @@ collection ("demolib") {
      * Types:
      */
     def NummerList = type('demo.types.NummerList') {
-        javaAux.mappedClassName = 'demo.types.DemoCaster'
+        aux {
+            javaType {
+                mappedClassName = 'demo.types.DemoCaster'
+            }
+        }
         semanticType = 'Arr'
     }
 
     def Punkt = type('demo.types.Punkt') {
-        javaAux.mappedClassName = 'demo.types.DemoCaster'
+        aux {
+            javaType {
+                mappedClassName = 'demo.types.DemoCaster'
+            }
+        }
         semanticType = 'Arr'
     }
 

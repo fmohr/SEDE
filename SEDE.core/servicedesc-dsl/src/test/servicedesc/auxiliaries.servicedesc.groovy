@@ -10,9 +10,11 @@ collection ("C1") {
      * Services:
      */
     service ('S1') {
-        javaAux = newJavaDispatchAux {
-            staticInvocation = true
-            className = "org.example.S1"
+        aux {
+            javaDispatch {
+                staticInvocation = true
+                className = "org.example.S1"
+            }
         }
         params {
             javaAux = newJavaParamAux {
@@ -25,11 +27,12 @@ collection ("C1") {
     }
 
     type('t2') {
-
-        javaAux = newJavaTypeAux {
-            mappedClassName = "org.example.T2"
-            dataCastHandler = newJavaDispatchAux {
-                className = 'org.example.T2Handler'
+        aux {
+            javaType {
+                mappedClassName = "org.example.T2"
+                dataCastHandler = newJavaDispatchAux {
+                    className = 'org.example.T2Handler'
+                }
             }
         }
     }

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
 import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.exec.auxiliary.IJavaDispatchAux;
-import de.upb.sede.types.auxiliary.IJavaTypeAux;
+import de.upb.sede.exec.auxiliary.DynamicAuxAware;
+import de.upb.sede.util.DynTypeField;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
@@ -14,11 +14,8 @@ import javax.annotation.Nullable;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = DataTypeDesc.Builder.class)
-public interface IDataTypeDesc extends IQualifiable, CommentAware {
+public interface IDataTypeDesc extends IQualifiable, CommentAware, DynamicAuxAware {
 
     String getSemanticType();
-
-    @Nullable
-    IJavaTypeAux getJavaTypeAux();
 
 }

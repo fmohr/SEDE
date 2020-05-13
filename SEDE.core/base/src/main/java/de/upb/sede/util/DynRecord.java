@@ -57,7 +57,7 @@ public class DynRecord extends DynTypeObject implements RecordForm {
         try {
             kneaded = _MAPPER.convertValue(getData(), type);
         } catch(Exception ex) {
-            throw new NotKneadableException("Cannot knead into form " + type.toString(), ex);
+            throw new CastToDynamicTypeException("Cannot knead into form " + type.toString(), ex);
         }
         super.validate(kneaded);
         setSource(kneaded);
@@ -81,7 +81,7 @@ public class DynRecord extends DynTypeObject implements RecordForm {
             JSONParser parser = new JSONParser();
             return new DynRecord((Map) parser.parse(jsonString));
         } catch (Exception ex) {
-            throw new NotKneadableException(ex);
+            throw new CastToDynamicTypeException(ex);
         }
     }
 
@@ -91,7 +91,7 @@ public class DynRecord extends DynTypeObject implements RecordForm {
             Map knead = yamlMapper.readValue(yamlString, Map.class);
             return new DynRecord(knead);
         } catch (IOException e) {
-            throw new NotKneadableException(e);
+            throw new CastToDynamicTypeException(e);
         }
     }
 
@@ -112,7 +112,7 @@ public class DynRecord extends DynTypeObject implements RecordForm {
                 kneads.add(kneadable);
             }
         } catch(Exception ex) {
-            throw new NotKneadableException("Cannot knead into list of objects.", ex);
+            throw new CastToDynamicTypeException("Cannot knead into list of objects.", ex);
         }
         return kneads;
     }
@@ -130,7 +130,7 @@ public class DynRecord extends DynTypeObject implements RecordForm {
         try {
             return new DynRecord(jsonObject);
         } catch(Exception ex) {
-            throw new NotKneadableException("Cannot form into Kneadable.", ex);
+            throw new CastToDynamicTypeException("Cannot form into Kneadable.", ex);
         }
     }
 

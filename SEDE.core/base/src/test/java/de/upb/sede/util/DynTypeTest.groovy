@@ -1,6 +1,6 @@
 package de.upb.sede.util
 
-import org.spockframework.compiler.model.ThenBlock
+
 import spock.lang.Specification
 
 class DynTypeTest extends Specification {
@@ -95,13 +95,13 @@ class DynTypeTest extends Specification {
         """
         DynTypeObject.fromJson(data)
         then:
-        thrown(NotKneadableException)
+        thrown(CastToDynamicTypeException)
 
         when:
         data = null
         DynTypeObject.fromJson(data)
         then:
-        thrown(NotKneadableException)
+        thrown(CastToDynamicTypeException)
 
     }
 }

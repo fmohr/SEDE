@@ -12,7 +12,7 @@ import java.util.List;
 @SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
-@JsonDeserialize(builder = SCARequest.Builder.class)
+@JsonDeserialize(builder = CCRequest.Builder.class)
 public interface ICCRequest {
 
     String getComposition();

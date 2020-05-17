@@ -3,369 +3,374 @@
     "services" : [ {
       "stateType" : "demo.math.Addierer",
       "methods" : [ {
-        "signatures" : [ {
-          "inputs" : [ {
-            "type" : "Number",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "outputs" : [ {
-            "type" : "demo.math.Addierer",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : false,
-          "isContextFree" : false
-        }, {
-          "inputs" : [ ],
-          "outputs" : [ {
-            "type" : "demo.math.Addierer",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : false,
-          "isContextFree" : false
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
         } ],
-        "qualifier" : "$construct",
+        "outputs" : [ {
+          "type" : "demo.math.Addierer",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        }, {
+          "type" : "demo.math.Addierer",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "qualifier" : "__construct",
         "metaTags" : [ ],
-        "simpleName" : "$construct",
-        "comments" : [ ]
+        "simpleName" : "__construct",
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : true,
+        "isPure" : false
       }, {
-        "signatures" : [ {
-          "inputs" : [ {
-            "type" : "Number",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "outputs" : [ {
-            "type" : "Number",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : true,
-          "isContextFree" : false
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "demo.math.Addierer",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        }, {
+          "type" : "demo.math.Addierer",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "qualifier" : "__construct",
+        "metaTags" : [ ],
+        "simpleName" : "__construct",
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : true,
+        "isPure" : false
+      }, {
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "outputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
         } ],
         "qualifier" : "addier",
         "metaTags" : [ ],
         "simpleName" : "addier",
-        "comments" : [ ]
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : false,
+        "isPure" : true
       }, {
-        "signatures" : [ {
-          "inputs" : [ {
-            "type" : "demo.types.NummerList",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "outputs" : [ {
-            "type" : "demo.types.NummerList",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : true,
-          "isContextFree" : false
+        "inputs" : [ {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "outputs" : [ {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
         } ],
         "qualifier" : "addierListe",
         "metaTags" : [ ],
         "simpleName" : "addierListe",
-        "comments" : [ ]
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : false,
+        "isPure" : true
       }, {
-        "signatures" : [ {
-          "inputs" : [ {
-            "type" : "demo.types.NummerList",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          }, {
-            "type" : "demo.types.NummerList",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "outputs" : [ {
-            "type" : "demo.types.NummerList",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : true,
-          "isContextFree" : true
+        "inputs" : [ {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        }, {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "outputs" : [ {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
         } ],
         "qualifier" : "summierListe",
         "metaTags" : [ ],
         "simpleName" : "summierListe",
-        "comments" : [ ]
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : true,
+        "isPure" : true
       }, {
-        "signatures" : [ {
-          "inputs" : [ {
-            "type" : "demo.types.NummerList",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "outputs" : [ {
-            "type" : "Number",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : true,
-          "isContextFree" : false
+        "inputs" : [ {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "outputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
         } ],
         "qualifier" : "summier",
         "metaTags" : [ ],
         "simpleName" : "summier",
-        "comments" : [ ]
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : false,
+        "isPure" : true
       }, {
-        "signatures" : [ {
-          "inputs" : [ ],
-          "outputs" : [ {
-            "type" : "demo.types.NummerList",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : false,
-          "isContextFree" : true
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "demo.types.NummerList",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
         } ],
         "qualifier" : "fail",
         "metaTags" : [ ],
         "simpleName" : "fail",
-        "comments" : [ ]
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : true,
+        "isPure" : false
       }, {
-        "signatures" : [ {
-          "inputs" : [ ],
-          "outputs" : [ ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : false,
-          "isContextFree" : true
-        } ],
+        "inputs" : [ ],
+        "outputs" : [ ],
         "qualifier" : "sleep",
         "metaTags" : [ ],
         "simpleName" : "sleep",
-        "comments" : [ ]
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : true,
+        "isPure" : false
       }, {
-        "signatures" : [ {
-          "inputs" : [ {
-            "type" : "builtin.List",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          }, {
-            "type" : "Number",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "outputs" : [ {
-            "type" : "builtin.List",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : false,
-          "isContextFree" : true
+        "inputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        }, {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "outputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
         } ],
         "qualifier" : "addierBuiltIn",
         "metaTags" : [ ],
         "simpleName" : "addierBuiltIn",
-        "comments" : [ ]
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : true,
+        "isPure" : false
       } ],
       "interfaces" : [ ],
       "fieldTypes" : {
         "state" : "demo.math.Addierer"
       },
-      "javaDispatchAux" : null,
-      "pythonClassAuxiliaries" : null,
       "serviceParameters" : null,
       "qualifier" : "demo.math.Addierer",
       "metaTags" : [ ],
       "simpleName" : "demo.math.Addierer",
       "comments" : [ ],
+      "dynAux" : null,
       "isAbstract" : false
     }, {
       "stateType" : "demo.math.Gerade",
       "methods" : [ {
-        "signatures" : [ {
-          "inputs" : [ {
-            "type" : "Number",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          }, {
-            "type" : "Number",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "outputs" : [ {
-            "type" : "demo.math.Gerade",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : false,
-          "isContextFree" : false
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        }, {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
         } ],
-        "qualifier" : "$construct",
+        "outputs" : [ {
+          "type" : "demo.math.Gerade",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        }, {
+          "type" : "demo.math.Gerade",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "qualifier" : "__construct",
         "metaTags" : [ ],
-        "simpleName" : "$construct",
-        "comments" : [ ]
+        "simpleName" : "__construct",
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : true,
+        "isPure" : false
       }, {
-        "signatures" : [ {
-          "inputs" : [ {
-            "type" : "Number",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "outputs" : [ {
-            "type" : "demo.types.Punkt",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : false,
-          "isContextFree" : false
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "outputs" : [ {
+          "type" : "demo.types.Punkt",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
         } ],
         "qualifier" : "calc",
         "metaTags" : [ ],
         "simpleName" : "calc",
-        "comments" : [ ]
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : false,
+        "isPure" : false
       }, {
-        "signatures" : [ {
-          "inputs" : [ {
-            "type" : "demo.types.Punkt",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "outputs" : [ {
-            "type" : "Bool",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : true,
-          "isContextFree" : false
+        "inputs" : [ {
+          "type" : "demo.types.Punkt",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "outputs" : [ {
+          "type" : "Bool",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
         } ],
         "qualifier" : "liagtAufGerade",
         "metaTags" : [ ],
         "simpleName" : "liagtAufGerade",
-        "comments" : [ ]
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : false,
+        "isPure" : true
       }, {
-        "signatures" : [ {
-          "inputs" : [ ],
-          "outputs" : [ {
-            "type" : "demo.types.Punkt",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : true,
-          "isContextFree" : false
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "demo.types.Punkt",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
         } ],
         "qualifier" : "achsenabschnitt",
         "metaTags" : [ ],
         "simpleName" : "achsenabschnitt",
-        "comments" : [ ]
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : false,
+        "isPure" : true
       }, {
-        "signatures" : [ {
-          "inputs" : [ ],
-          "outputs" : [ {
-            "type" : "demo.types.Punkt",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : true,
-          "isContextFree" : false
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "demo.types.Punkt",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
         } ],
         "qualifier" : "nullstelle",
         "metaTags" : [ ],
         "simpleName" : "nullstelle",
-        "comments" : [ ]
+        "comments" : [ ],
+        "dynAux" : null,
+        "isContextFree" : false,
+        "isPure" : true
       } ],
       "interfaces" : [ ],
       "fieldTypes" : {
         "state" : "demo.math.Gerade"
       },
-      "javaDispatchAux" : null,
-      "pythonClassAuxiliaries" : null,
       "serviceParameters" : null,
       "qualifier" : "demo.math.Gerade",
       "metaTags" : [ ],
       "simpleName" : "demo.math.Gerade",
       "comments" : [ ],
+      "dynAux" : null,
       "isAbstract" : false
     } ],
     "dataTypes" : [ {
       "semanticType" : "Arr",
-      "javaTypeAux" : {
-        "dataCastHandler" : null,
-        "mappedClassName" : "demo.types.DemoCaster"
-      },
       "qualifier" : "demo.types.NummerList",
       "metaTags" : [ ],
       "simpleName" : "demo.types.NummerList",
-      "comments" : [ ]
+      "comments" : [ ],
+      "dynAux" : {
+        "mappedClassName" : "demo.types.DemoCaster",
+        "dataCastHandler" : null
+      }
     }, {
       "semanticType" : "Arr",
-      "javaTypeAux" : {
-        "dataCastHandler" : null,
-        "mappedClassName" : "demo.types.DemoCaster"
-      },
       "qualifier" : "demo.types.Punkt",
       "metaTags" : [ ],
       "simpleName" : "demo.types.Punkt",
-      "comments" : [ ]
+      "comments" : [ ],
+      "dynAux" : {
+        "mappedClassName" : "demo.types.DemoCaster",
+        "dataCastHandler" : null
+      }
     }, {
       "semanticType" : "demo.math.Addierer",
-      "javaTypeAux" : null,
       "qualifier" : "demo.math.Addierer",
       "metaTags" : [ ],
       "simpleName" : "demo.math.Addierer",
-      "comments" : [ ]
+      "comments" : [ ],
+      "dynAux" : null
     }, {
       "semanticType" : "demo.math.Gerade",
-      "javaTypeAux" : null,
       "qualifier" : "demo.math.Gerade",
       "metaTags" : [ ],
       "simpleName" : "demo.math.Gerade",
-      "comments" : [ ]
+      "comments" : [ ],
+      "dynAux" : null
     } ],
     "comments" : [ "This library serves as a demonstration and testing library for integration tests in SEDE.", "Implementation: https://github.com/fmohr/SEDE.services/tree/master/demolib/src/main" ],
     "qualifier" : "demolib",

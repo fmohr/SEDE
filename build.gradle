@@ -96,15 +96,14 @@ subprojects {
 
     repositories {
         mavenLocal()
-
         jcenter()
         mavenCentral()
 
+        // we use jitpack in order to add dependecy to github projects:
+        maven { url 'https://jitpack.io' }
         maven {
             url "https://nexus.cs.upb.de/repository/maven-releases/"
         }
-        // we use jitpack in order to add dependecy to github projects:
-        maven { url 'https://jitpack.io' }
 
     }
 

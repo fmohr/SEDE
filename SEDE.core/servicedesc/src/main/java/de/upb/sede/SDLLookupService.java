@@ -4,6 +4,7 @@ import de.upb.sede.exec.*;
 import de.upb.sede.types.IDataTypeDesc;
 import de.upb.sede.types.IDataTypeRef;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
@@ -19,7 +20,7 @@ public interface SDLLookupService {
 
     Optional<IServiceDesc> lookup(IServiceRef serviceRef);
 
-    Optional<IMethodDesc> lookup(IMethodRef methodRef);
+    List<IMethodDesc> lookup(IMethodRef methodRef);
 
     Optional<IDataTypeDesc> lookup(IDataTypeRef dataTypeRef);
 

@@ -23,7 +23,6 @@ public class SDLCacheLookupService extends SDLLookupServiceAdapter implements SD
             (T) refCache.computeIfAbsent(ref, this::lookupfMiss));
     }
 
-
     @Override
     public Optional<IServiceCollectionDesc> lookup(IServiceCollectionRef collectionRef) {
         return lookupInRefCache(collectionRef);
@@ -32,11 +31,6 @@ public class SDLCacheLookupService extends SDLLookupServiceAdapter implements SD
     @Override
     public Optional<IServiceDesc> lookup(IServiceRef serviceRef) {
         return lookupInRefCache(serviceRef);
-    }
-
-    @Override
-    public Optional<IMethodDesc> lookup(IMethodRef methodRef) {
-        return lookupInRefCache(methodRef);
     }
 
     @Override
@@ -58,9 +52,6 @@ public class SDLCacheLookupService extends SDLLookupServiceAdapter implements SD
         }
         else if(ref instanceof  IServiceRef) {
             construct = lookupServiceDelegate.lookup((IServiceRef) ref);
-        }
-        else if(ref instanceof IMethodRef) {
-            construct = lookupServiceDelegate.lookup((IMethodRef) ref);
         }
         else if(ref instanceof IDataTypeRef) {
             construct = lookupServiceDelegate.lookup((IDataTypeRef)ref);

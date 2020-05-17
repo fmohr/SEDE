@@ -32,4 +32,5 @@ task genJsonSchema(type: JavaExec) {
     args ''
 }
 
-assemble.dependsOn genJsonSchema
+//assemble.dependsOn genJsonSchema
+//

@@ -17,11 +17,19 @@ collection ("C1") {
             }
         }
         params {
-            javaAux = newJavaParamAux {
-                 parameterHandler = newJavaDispatchAux {
-                    className = "org.example.S1ParamSetter"
+            aux {
+                javaParam {
+                    parameterHandler = newJavaDispatchAux {
+                        className = "org.example.S1ParamSetter"
+                    }
+                    paramOrder = ['1', '2', '3']
                 }
-                paramOrder = ['1', '2', '3']
+            }
+            aux {
+                setFields {
+                    a = 1
+                }
+
             }
         }
     }

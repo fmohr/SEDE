@@ -99,7 +99,7 @@ public class SDLReader {
     public List<ServiceCollectionDesc> getCollections() {
         return database.values()
             .stream()
-            .map( it ->  SDLUtil.toImmutable(it, ServiceCollectionDesc.class))
+            .map( it -> DeepImmutableCopier.copyAsImmutable(it, ServiceCollectionDesc.class))
             .collect(Collectors.toList());
     }
 

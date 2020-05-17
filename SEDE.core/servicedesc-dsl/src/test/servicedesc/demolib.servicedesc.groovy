@@ -89,7 +89,7 @@ collection ("demolib") {
             isPure = true
         }
 
-        method ('nullstelle', output: Punkt) {
+        method (name: 'nullstelle', output: Punkt) {
             isPure = true
         }
     }

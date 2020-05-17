@@ -95,7 +95,7 @@ public class DeepMutableCopier {
             String setterName = "set" + prop.substring(0, 1).toUpperCase(Locale.ENGLISH) + prop.substring(1);
             Method setter;
             Class<?> propType = getter.getReturnType();
-            if(propType.isAssignableFrom(List.class)) {
+            if(Iterable.class.isAssignableFrom(propType)) {
                 propType = Iterable.class;
             }
             try {
@@ -146,8 +146,8 @@ public class DeepMutableCopier {
             Package packageObject = valueObject.getClass().getPackage();
             String packageName;
             if(packageObject == null) {
+                // in java 8 packageObject is null when a class is in an unnamed package.
                 packageName = "";
-//                throw new RuntimeException("Package of object is null: " + valueObject.getClass());
             } else {
                 packageName = packageObject.getName();
             }
@@ -160,19 +160,7 @@ public class DeepMutableCopier {
     }
 
     static boolean isValueObject(Object o) {
-        String className = o.getClass().getSimpleName();
-        String interfaceName;
-        if(className.startsWith("Mutable")) {
-            interfaceName = "I" + className.substring("Mutable".length());
-        } else {
-            interfaceName = "I" + className;
-        }
-        for (Class<?> anInterface : o.getClass().getInterfaces()) {
-            if(anInterface.getSimpleName().equals(interfaceName)) {
-                return true;
-            }
-        }
-        return false;
+        return DeepImmutableCopier.isSMStyleAnnotated(o.getClass());
     }
 
     static boolean isCollection(Object o) {

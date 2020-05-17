@@ -13,6 +13,7 @@ dependencies {
 
     compile libs.javax_bind_api
     compile libs.java_annotation_api
+
     compile libs.jackson_schema
 
     compileOnly libs.immutables

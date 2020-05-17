@@ -40,6 +40,7 @@ public interface IJavaParameterizationAux {
     default boolean getPrecedeParamsWithNames() {
         return false;
     }
+
     @Nullable
     List<String> getParamOrder();
 

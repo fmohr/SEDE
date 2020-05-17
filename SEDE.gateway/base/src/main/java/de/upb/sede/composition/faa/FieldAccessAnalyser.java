@@ -5,8 +5,8 @@ import de.upb.sede.composition.IIndexedInstruction;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.composition.typing.MethodCognition;
 import de.upb.sede.composition.typing.TCOutput;
+import de.upb.sede.exec.IMethodDesc;
 import de.upb.sede.exec.IMethodParameterDesc;
-import de.upb.sede.exec.ISignatureDesc;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ public class FieldAccessAnalyser extends InstWiseCompileStep<FAAInput, FAAOutput
         /*
          * Each parameter that is a field is read:
          */
-        List<IMethodParameterDesc> methodInput = tcOutput.getMethodInfo().getSignatureDesc().getInputs();
+        List<IMethodParameterDesc> methodInput = tcOutput.getMethodInfo().getMethodDesc().getInputs();
         int inputParamSize = methodInput.size();
         for (int i = 0; i < inputParamSize; i++) {
             String arg = inst.getParameterFields().get(i);
@@ -111,8 +111,8 @@ public class FieldAccessAnalyser extends InstWiseCompileStep<FAAInput, FAAOutput
         output.getFAList().add(contextRead);
 
 
-        ISignatureDesc signature = getInput().getTcOutput().get(ii.getIndex()).getMethodInfo().getSignatureDesc();
-        boolean methodChangesValue = ! signature.isPure();
+        IMethodDesc methodDesc = getInput().getTcOutput().get(ii.getIndex()).getMethodInfo().getMethodDesc();
+        boolean methodChangesValue = ! methodDesc.isPure();
         if(methodChangesValue) {
             IFieldAccess fieldWrite = FieldAccess.builder()
                 .field(context)

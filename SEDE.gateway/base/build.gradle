@@ -1,3 +1,7 @@
+plugins {
+    id 'groovy'
+}
+
 dependencies {
     provided project(':SEDE.core')
     compile project(':SEDE.core-models')

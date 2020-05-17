@@ -96,8 +96,6 @@ public class TCOutput {
 
         private IMethodDesc methodDesc;
 
-        private ISignatureDesc signatureDesc;
-
         private List<ITypeCoercion> parameterTypeCoercions;
 
         public String getMethodQualifier() {
@@ -122,14 +120,6 @@ public class TCOutput {
 
         public void setMethodDesc(IMethodDesc methodDesc) {
             this.methodDesc = methodDesc;
-        }
-
-        public ISignatureDesc getSignatureDesc() {
-            return signatureDesc;
-        }
-
-        public void setSignatureDesc(ISignatureDesc signatureDesc) {
-            this.signatureDesc = signatureDesc;
         }
 
         public List<ITypeCoercion> getParameterTypeCoercions() {

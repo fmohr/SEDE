@@ -5,55 +5,55 @@
       "methods" : [ ],
       "interfaces" : [ ],
       "fieldTypes" : { },
-      "javaDispatchAux" : {
-        "staticInvocation" : true,
-        "redirectArg" : -1,
-        "methodName" : null,
-        "className" : "org.example.S1",
-        "metaclass" : null
-      },
-      "pythonClassAuxiliaries" : null,
       "serviceParameters" : {
         "parameters" : [ ],
         "parameterDependencies" : [ ],
-        "javaParameterizationAuxiliaries" : {
+        "dynAux" : {
+          "paramOrder" : [ "1", "2", "3" ],
+          "a" : 1,
+          "precedeParamsWithNames" : false,
+          "bundleInMap" : false,
+          "bundleInArray" : false,
+          "autoScanEachParam" : false,
+          "bundleInList" : false,
           "parameterHandler" : {
             "staticInvocation" : false,
             "redirectArg" : -1,
             "methodName" : null,
             "className" : "org.example.S1ParamSetter",
             "metaclass" : null
-          },
-          "autoScanEachParam" : false,
-          "bundleInMap" : false,
-          "bundleInArray" : false,
-          "bundleInList" : false,
-          "precedeParamsWithNames" : false,
-          "paramOrder" : [ "1", "2", "3" ]
+          }
         }
       },
       "qualifier" : "S1",
       "metaTags" : [ ],
       "simpleName" : "S1",
       "comments" : [ ],
+      "dynAux" : {
+        "staticInvocation" : true,
+        "methodName" : null,
+        "redirectArg" : -1,
+        "className" : "org.example.S1",
+        "metaclass" : null
+      },
       "isAbstract" : false
     } ],
     "dataTypes" : [ {
       "semanticType" : "t2",
-      "javaTypeAux" : {
+      "qualifier" : "t2",
+      "metaTags" : [ ],
+      "simpleName" : "t2",
+      "comments" : [ ],
+      "dynAux" : {
+        "mappedClassName" : "org.example.T2",
         "dataCastHandler" : {
           "staticInvocation" : false,
           "redirectArg" : -1,
           "methodName" : null,
           "className" : "org.example.T2Handler",
           "metaclass" : null
-        },
-        "mappedClassName" : "org.example.T2"
-      },
-      "qualifier" : "t2",
-      "metaTags" : [ ],
-      "simpleName" : "t2",
-      "comments" : [ ]
+        }
+      }
     } ],
     "comments" : [ ],
     "qualifier" : "C1",

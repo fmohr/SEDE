@@ -15,14 +15,14 @@ import java.util.Objects;
 public interface ITypeCoercion {
 
     @Nullable
-    public String getConstant();
+    String getConstant();
 
-    public String getSourceType();
+    String getSourceType();
 
     @Nullable
-    public String getSemanticType();
+    String getSemanticType();
 
-    public String getResultType();
+    String getResultType();
 
     @Value.Lazy
     public default boolean hasConstant() {

@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import static de.upb.sede.util.Streams.pickOneOrNone;
 
@@ -87,12 +88,12 @@ public class SDLBaseLookupService implements SDLLookupService {
     }
 
     @Override
-    public Optional<IMethodDesc> lookup(IMethodRef methodRef) {
+    public List<IMethodDesc> lookup(IMethodRef methodRef) {
         requireNonNull(methodRef, "Method reference is null");
 
         Optional<IServiceDesc> optServiceDesc = lookup(methodRef.getServiceRef());
         if (!optServiceDesc.isPresent()) {
-            return Optional.empty();
+            return Collections.emptyList();
         }
 
         IServiceDesc serviceDesc = optServiceDesc.get();
@@ -103,7 +104,7 @@ public class SDLBaseLookupService implements SDLLookupService {
             .stream()
             .filter(matcher);
 
-        return pickOneOrNone(methodStream); // TODO method overloading
+        return methodStream.collect(Collectors.toList());
     }
 
     @Override

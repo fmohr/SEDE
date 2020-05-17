@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.upb.sede.IQualifiable;
 import de.upb.sede.SDLLookupService;
 import de.upb.sede.SEDEModelStyle;
+import de.upb.sede.exec.IMethodDesc;
 import de.upb.sede.exec.IServiceDesc;
 import de.upb.sede.exec.IServiceRef;
 
@@ -13,24 +14,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class SDLUtil {
-
-    private static ObjectMapper MAPPER = new ObjectMapper()
-        .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    private static String serviceQualifier;
-
-    public static <I, T> T toImmutable(I input, Class<T> tClass) {
-        if(!isSMStyleAnnotated(input.getClass())) {
-            throw new IllegalArgumentException("Cannot convert object of unkown type: " + input.getClass().getName());
-        }
-        if(!isSMStyleAnnotated(tClass)) {
-            throw new IllegalArgumentException("Cannot convert to unkown immutable class: " + tClass);
-        }
-        return MAPPER.convertValue(input, tClass);
-    }
-
-    private static <T> boolean isSMStyleAnnotated(Class<T> tClass) {
-        return Stream.of(tClass.getInterfaces()).anyMatch(i -> i.isAnnotationPresent(SEDEModelStyle.class));
-    }
 
     /**
      * Linearizes the interfaces of the given service reference:
@@ -114,6 +97,13 @@ public class SDLUtil {
         return output;
     }
 
+    public static Map gatherAux(IMethodDesc signatureDesc) {
+        DynRecord aux = signatureDesc.getDynAux();
+        Map auxData = new HashMap();
+
+        auxData.putAll(aux.cast(Map.class));
+        return auxData;
+    }
 
 
 }

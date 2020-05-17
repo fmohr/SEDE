@@ -184,6 +184,11 @@ public class DynRecord extends DynTypeObject implements RecordForm {
         return Optional.empty();
     }
 
+    public void set(Object o) {
+        Map newFields = _MAPPER.convertValue(o, Map.class);
+        getData().putAll(newFields);
+    }
+
 
     static class InnerDeserializer<T> extends StdDeserializer<T> {
 

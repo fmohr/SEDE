@@ -4,7 +4,7 @@ import de.upb.sede.composition.*;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.composition.graphs.types.TypeClass;
 import de.upb.sede.core.PrimitiveType;
-import de.upb.sede.exec.ISignatureDesc;
+import de.upb.sede.exec.IMethodDesc;
 import de.upb.sede.types.IDataTypeDesc;
 import de.upb.sede.types.IDataTypeRef;
 
@@ -24,7 +24,7 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
         IInstructionNode inst = getCurrentInstruction().getInstruction();
         TCOutput output = getInstOutput();
         TCOutput.FieldTC fieldTC = output.getFieldTC();
-        ISignatureDesc signature = output.getMethodInfo().getSignatureDesc();
+        IMethodDesc method = output.getMethodInfo().getMethodDesc();
         String typeContext = output.getContext().getServiceQualifier() + "::" + output.getMethodInfo().getMethodQualifier();
 
         /*
@@ -33,9 +33,9 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
          * If there exists a list of TypeCoercion then the parameter signature type checks.
          */
         List<ITypeCoercion> parameterTypeCoercions = new ArrayList<>();
-        int inputParamSize = signature.getInputs().size();
+        int inputParamSize = method.getInputs().size();
         for (int i = 0; i < inputParamSize; i++) {
-            String expectedInputType = signature.getInputs().get(i).getType();
+            String expectedInputType = method.getInputs().get(i).getType();
             String instParam = inst.getParameterFields().get(i);
 
             Objects.requireNonNull(expectedInputType);

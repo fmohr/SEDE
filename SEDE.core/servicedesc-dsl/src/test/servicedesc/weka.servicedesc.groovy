@@ -12,9 +12,9 @@ collection ("weka.ml") {
 
     info = """
         Weka is a collection of machine learning algorithms for data mining tasks. It contains tools for data preparation, classification, regression, clustering, association rules mining, and visualization.
-        
+
         Weka is open source software issued under the GNU General Public License.
-        
+
         Website: https://www.cs.waikato.ac.nz/~ml/weka/index.html
     """
 
@@ -32,14 +32,15 @@ collection ("weka.ml") {
             inputs: [Instances, list],
             outputs: [Instances], {
                 input(0) { callByValue = false }
-                javaAux.redirectArg = 0
+                aux { javaDispatch { redirectArg = 0 } }
+
             }
 
         method name: 'setClassIndex',
             inputs: [Instances, number],
             outputs: [Instances], {
                 input(0) { callByValue = false }
-                javaAux.redirectArg = 0
+                aux { javaDispatch { redirectArg = 0 } }
             }
 
         method name: 'classIndicesToNames',
@@ -55,7 +56,7 @@ collection ("weka.ml") {
             outputs: [list]
 
         // All methods are statically invoked:
-        eachMethod { eachSignature { javaAux.staticInvocation = true } }
+        eachMethod { aux { javaDispatch { staticInvocation = true } } }
     }
 
     service('de.upb.sede.services.mls.DataSetService') {
@@ -68,13 +69,13 @@ collection ("weka.ml") {
         method name: 'createUnique',
                 inputs:[Instances],
                 ouputs:[service.stateType], {
-                    javaAux.staticInvocation = true
+                    aux { javaDispatch { staticInvocation = true } }
                 }
         method name: 'createNamed',
                 inputs: [Instances, str],
                 outputs:[service.stateType], {
-                    javaAux.staticInvocation = true
-                }
+                    aux { javaDispatch { staticInvocation = true } }
+        }
 
         /*
          * All following methods are pure.
@@ -114,8 +115,15 @@ collection ("weka.ml") {
 
     def BaseClassifier = service ('$base_classifier_config$') {
         isAbstract = true
-        overloadMethod 'train'
-        overloadMethod 'predict'
+
+        method name: 'train',
+            input: Instances
+
+        method name: 'predict',
+            input: [bool, Instances],
+            output: list, {
+            isPure = true
+        }
     }
 
     service ('de.upb.sede.services.mls.WekaBClassifierWrapper'){
@@ -133,7 +141,7 @@ collection ("weka.ml") {
     }
 
     service ('$Basic_Weka_Distribution_Classifier$') {
-        javaAux.metaclass = 'Wrapper'
+        aux { javaDispatch { metaclass = 'Wrapper' } }
     }
 
 }

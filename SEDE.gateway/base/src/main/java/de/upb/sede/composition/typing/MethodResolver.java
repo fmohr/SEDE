@@ -36,18 +36,18 @@ public class MethodResolver extends InstWiseCompileStep<TCInput, TCOutput> {
 
         String serviceContextQualifier = context.getServiceQualifier();
         boolean staticContext = context.isStatic();
-        ISignatureDesc signature = methodInfo.getSignatureDesc();
+        IMethodDesc methodDesc = methodInfo.getMethodDesc();
 
         /*
          * Allow static context iff the method explicitly allows it:
          */
-        if(staticContext && !signature.isContextFree()) {
+        if(staticContext && !methodDesc.isContextFree()) {
             throw TypeCheckException.illegalStaticContext(serviceContextQualifier, methodQualifier);
         }
-        if(!staticContext && signature.isContextFree()) {
+        if(!staticContext && methodDesc.isContextFree()) {
             throw TypeCheckException.illegalNonStaticContext(serviceContextQualifier, methodQualifier);
         }
-        assert signature.getInputs().size() == inst.getParameterFields().size();
+        assert methodDesc.getInputs().size() == inst.getParameterFields().size();
     }
 
     private void resolveMethod() {
@@ -88,37 +88,34 @@ public class MethodResolver extends InstWiseCompileStep<TCInput, TCOutput> {
 
         IMethodRef methodRef = IMethodRef.of(serviceRef, methodQualifier);
 
-        Optional<IMethodDesc> optMethod = lookupService.lookup(methodRef);
+        List<IMethodDesc> methodList = lookupService.lookup(methodRef);
 
-        if(!optMethod.isPresent()) {
+        if(methodList.isEmpty()) {
             return false; // the given serivce doesn't define a method with the given name
         }
 
-        IMethodDesc method = optMethod.get();
-        Optional<ISignatureDesc> optSignature = matchSignature(method, getCurrentInstruction().getInstruction());
+        Optional<IMethodDesc> optSignature = matchSignature(methodList, getCurrentInstruction().getInstruction());
         if(!optSignature.isPresent()) {
             return false; // the given service doesn't define a matching method signature
         }
         // method resolved!
-        ISignatureDesc signature = optSignature.get();
+        IMethodDesc method = optSignature.get();
 
         methodInfo.setMethodRef(methodRef);
-        methodInfo.setSignatureDesc(signature);
         methodInfo.setMethodDesc(method);
         return true;
     }
 
 
-    private Optional<ISignatureDesc> matchSignature(IMethodDesc method, IInstructionNode inst) {
-        List<ISignatureDesc> signatures = method.getSignatures();
+    private Optional<IMethodDesc> matchSignature(List<IMethodDesc> methodList, IInstructionNode inst) {
         boolean instructionIsAssignment = inst.getFieldName() != null;
-        Stream<ISignatureDesc> matchingSignatures = signatures.stream()
+        Stream<IMethodDesc> matchingSignatures = methodList.stream()
             // method input must match in size:
             .filter(signature -> signature.getInputs().size() == inst.getParameterFields().size())
             // method must have at least one output if instruction is an assingment to a field:
             .filter(signature -> !instructionIsAssignment || !signature.getOutputs().isEmpty());
         // Only a single method has to match:
-        Optional<ISignatureDesc> matchingSignature = Streams.pickOneOrNone(matchingSignatures);
+        Optional<IMethodDesc> matchingSignature = Streams.pickOneOrNone(matchingSignatures);
 
         return matchingSignature;
     }

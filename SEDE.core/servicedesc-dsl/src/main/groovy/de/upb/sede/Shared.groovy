@@ -1,8 +1,10 @@
 package de.upb.sede
 
+import de.upb.sede.exec.IMethodDesc
 import de.upb.sede.exec.IServiceDesc
 import de.upb.sede.exec.auxiliary.DynamicAuxAware
 import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
+import de.upb.sede.util.DynRecord
 import de.upb.sede.util.DynTypeField
 import groovy.transform.PackageScope
 
@@ -40,15 +42,15 @@ class Shared {
                 throw new RuntimeException("Bug: model is instance of ${getDom().model.class} but not of DispatchAware.")
             }
             def disAware = getDom().model as DynamicAuxAware
-            def dynTypeField
+            def dynRecord
             if(disAware.dynAux  == null) {
-                dynTypeField = new DynTypeField()
-                disAware.setDynAux(dynTypeField)
+                dynRecord = new DynRecord(new HashMap())
+                disAware.setDynAux(dynRecord)
             } else {
-                dynTypeField = disAware.dynAux
+                dynRecord = disAware.dynAux
             }
             AuxDomain dom = new AuxDomain();
-            getDom().delegateDown(dom, dynTypeField, describer)
+            getDom().delegateDown(dom, dynRecord, describer)
         }
     }
 
@@ -61,6 +63,8 @@ class Shared {
              */
             if(service.stateType != null) {
                 return service.stateType
+            } else {
+                return service.qualifier
             }
         }
         if(o instanceof  String) {
@@ -70,6 +74,20 @@ class Shared {
         } else {
             throw new IllegalArgumentException("Cannot parse qualifier of: " + o.toString() + " of type " + o.class.simpleName)
         }
+    }
+
+    @PackageScope
+    final static boolean matchingMethods(IMethodDesc method1, IMethodDesc method2) {
+        // qualifier needs to match
+        if(method1.qualifier != method2.qualifier) {
+            return false;
+        }
+        // number of inputs needs to match
+        if(method1.inputs.size() != method2.inputs.size()) {
+            return false
+        }
+        // else they match
+        return true
     }
 
     @PackageScope

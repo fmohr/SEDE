@@ -16,6 +16,7 @@ import java.util.stream.Stream;
 import static de.upb.sede.util.TypeUtil.getServiceType;
 import static de.upb.sede.util.TypeUtil.isService;
 
+@Deprecated
 class TypeCheckerModel {
 
     private TypeJournal typeJournal;
@@ -96,37 +97,36 @@ class TypeCheckerModel {
          */
         String methodQualifier = inst.getMethod();
         IMethodRef methodRef = IMethodRef.of(fullServiceRef, methodQualifier);
-        Optional<IMethodDesc> lookedUpMethod = lookupService.lookup(methodRef);
-        IMethodDesc method = lookedUpMethod
-            .orElseThrow(()-> TypeCheckException.unknownType(serviceContextQualifier + "::" + methodQualifier,
-                "method"));
-
+        List<IMethodDesc> lookedUpMethod = lookupService.lookup(methodRef);
+        if(lookedUpMethod.isEmpty())
+            throw TypeCheckException.unknownType(serviceContextQualifier + "::" + methodQualifier,
+                "method");
         /*
          * Select signature that matches the amount of parameters
          */
-        ISignatureDesc signature = getMatchingSignature(serviceContextQualifier, method, inst);
+        IMethodDesc methodDesc = getMatchingSignature(serviceContextQualifier, methodQualifier, lookedUpMethod, inst);
 
         /*
          * Allow static context iff the method explicitly allows it:
          */
-        if(staticContext && !signature.isContextFree()) {
+        if(staticContext && !methodDesc.isContextFree()) {
             throw TypeCheckException.illegalStaticContext(serviceContextQualifier, methodQualifier);
         }
-        if(!staticContext && signature.isContextFree()) {
+        if(!staticContext && methodDesc.isContextFree()) {
             throw TypeCheckException.illegalNonStaticContext(serviceContextQualifier, methodQualifier);
         }
 
 
 
-        assert signature.getInputs().size() == inst.getParameterFields().size();
+        assert methodDesc.getInputs().size() == inst.getParameterFields().size();
         /*
          * Type-check signature by creating type coercions.
          *
          * If there exists a list of TypeCoercion then the parameter signature type checks.
          */
-        List<ITypeCoercion> parameterTypeCoercions = coerceParameters(signature, inst, typeContext);
+        List<ITypeCoercion> parameterTypeCoercions = coerceParameters(methodDesc, inst, typeContext);
 
-        MethodCognition mc = new MethodCognition(methodRef, signature, method, service, parameterTypeCoercions);
+        MethodCognition mc = new MethodCognition(methodRef, methodDesc, service, parameterTypeCoercions);
         methodCognitionMap.put(indexedInst.getIndex(), mc);
 
         if(inst.isAssignment()) {
@@ -135,10 +135,10 @@ class TypeCheckerModel {
              * Record the resulting type
              */
             String assignedField = inst.getFieldName();
-            if(signature.getOutputs().isEmpty()) {
-                throw TypeCheckException.methodNoReturnValue(method.getQualifier(), assignedField);
+            if(methodDesc.getOutputs().isEmpty()) {
+                throw TypeCheckException.methodNoReturnValue(methodDesc.getQualifier(), assignedField);
             }
-            IMethodParameterDesc methodOutput = signature.getOutputs().get(0);
+            IMethodParameterDesc methodOutput = methodDesc.getOutputs().get(0);
             String returnType = methodOutput.getType();
             TypeClass fieldType;
             try {
@@ -146,7 +146,7 @@ class TypeCheckerModel {
             } catch (TypeCheckException e) {
                 throw new TypeCheckException(
                     String.format("Error classifying return type of method %s::%s",
-                        service.getQualifier(), method.getQualifier() ),
+                        service.getQualifier(), methodDesc.getQualifier() ),
                     e);
             }
             typeContext.setFieldType(assignedField, fieldType);
@@ -198,11 +198,11 @@ class TypeCheckerModel {
         throw TypeCheckException.unknownType(typeQualifier, "type");
     }
 
-    private List<ITypeCoercion> coerceParameters(ISignatureDesc signature, IInstructionNode inst, TypeJournalPage typeContext) {
+    private List<ITypeCoercion> coerceParameters(IMethodDesc method, IInstructionNode inst, TypeJournalPage typeContext) {
         List<ITypeCoercion> parameterTypeCoercion = new ArrayList<>();
-        int inputParamSize = signature.getInputs().size();
+        int inputParamSize = method.getInputs().size();
         for (int i = 0; i < inputParamSize; i++) {
-            String expectedInputType = signature.getInputs().get(i).getType();
+            String expectedInputType = method.getInputs().get(i).getType();
             String instParam = inst.getParameterFields().get(i);
 
             Objects.requireNonNull(expectedInputType);
@@ -231,19 +231,18 @@ class TypeCheckerModel {
     }
 
 
-    private ISignatureDesc getMatchingSignature(String serviceContextQualifier, IMethodDesc method, IInstructionNode inst) {
-        List<ISignatureDesc> signatures = method.getSignatures();
+    private IMethodDesc getMatchingSignature(String serviceContextQualifier, String methodQualifier, List<IMethodDesc> methods, IInstructionNode inst) {
         boolean instructionIsAssignment = inst.getFieldName() != null;
-        Stream<ISignatureDesc> matchingSignatures = signatures.stream()
+        Stream<IMethodDesc> matchingSignatures = methods.stream()
             // method input must match in size:
             .filter(signature -> signature.getInputs().size() == inst.getParameterFields().size())
             // method must have at least one output if instruction is an assingment to a field:
             .filter(signature -> !instructionIsAssignment || !signature.getOutputs().isEmpty());
         // Only a single method has to match:
-        Optional<ISignatureDesc> matchingSignature = Streams.pickOneOrNone(matchingSignatures);
+        Optional<IMethodDesc> matchingSignature = Streams.pickOneOrNone(matchingSignatures);
 
         return matchingSignature.orElseThrow(() ->
-            TypeCheckException.unknownMethodSignature(serviceContextQualifier, method.getQualifier(), inst));
+            TypeCheckException.unknownMethodSignature(serviceContextQualifier, methodQualifier, inst));
     }
 
     private ITypeCoercion constantParam(String constant, String targetPrimType) {

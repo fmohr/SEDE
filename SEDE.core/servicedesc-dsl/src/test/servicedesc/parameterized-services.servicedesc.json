@@ -3,145 +3,144 @@
     "services" : [ {
       "stateType" : null,
       "methods" : [ {
-        "signatures" : [ {
-          "inputs" : [ {
-            "type" : "T1",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          }, {
-            "type" : "T2",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          }, {
-            "type" : "T3",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "outputs" : [ {
-            "type" : "T4",
-            "name" : null,
-            "fixedValue" : null,
-            "callByValue" : true
-          } ],
-          "javaDispatchAux" : null,
-          "comments" : [ ],
-          "isPure" : false,
-          "isContextFree" : false
+        "inputs" : [ {
+          "type" : "T1",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        }, {
+          "type" : "T2",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        }, {
+          "type" : "T3",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "outputs" : [ {
+          "type" : "T4",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
         } ],
         "qualifier" : "m1",
         "metaTags" : [ ],
         "simpleName" : "m1",
-        "comments" : [ ]
+        "comments" : [ ],
+        "dynAux" : null,
+        "isPure" : false,
+        "isContextFree" : false
       } ],
       "interfaces" : [ "Provided_Interface_1", "Provided_Interface_2" ],
       "fieldTypes" : { },
-      "javaDispatchAux" : null,
-      "pythonClassAuxiliaries" : null,
       "serviceParameters" : {
         "parameters" : [ {
-          "defaultValue" : true,
           "paramType" : "BooleanParameter",
+          "defaultValue" : true,
           "qualifier" : "bParam",
           "metaTags" : [ ],
           "simpleName" : "bParam",
           "isOptional" : true
         }, {
-          "defaultValue" : true,
           "paramType" : "BooleanParameter",
+          "defaultValue" : true,
           "qualifier" : "bParam",
           "metaTags" : [ ],
           "simpleName" : "bParam",
           "isOptional" : true
         }, {
-          "defaultValue" : true,
           "paramType" : "BooleanParameter",
+          "defaultValue" : true,
           "qualifier" : "bParam",
           "metaTags" : [ ],
           "simpleName" : "bParam",
           "isOptional" : true
         }, {
+          "paramType" : "NumericParameter",
           "min" : 0.5,
           "max" : 20.5,
           "splitsRefined" : 4,
           "minInterval" : 10,
           "defaultValue" : 10.0,
-          "paramType" : "NumericParameter",
           "qualifier" : "nParam",
           "metaTags" : [ ],
           "simpleName" : "nParam",
-          "isOptional" : true,
-          "isInteger" : true
+          "isInteger" : true,
+          "isOptional" : true
         }, {
+          "paramType" : "NumericParameter",
           "min" : 0.5,
           "max" : 20.5,
           "splitsRefined" : 4,
           "minInterval" : 10,
           "defaultValue" : 10.0,
-          "paramType" : "NumericParameter",
           "qualifier" : "nParam",
           "metaTags" : [ ],
           "simpleName" : "nParam",
-          "isOptional" : true,
-          "isInteger" : true
+          "isInteger" : true,
+          "isOptional" : true
         }, {
+          "paramType" : "NumericParameter",
           "min" : 0.5,
           "max" : 20.5,
           "splitsRefined" : 4,
           "minInterval" : 10,
           "defaultValue" : 10.0,
-          "paramType" : "NumericParameter",
           "qualifier" : "nParam",
           "metaTags" : [ ],
           "simpleName" : "nParam",
-          "isOptional" : true,
-          "isInteger" : true
+          "isInteger" : true,
+          "isOptional" : true
         }, {
+          "paramType" : "CategoryParameter",
           "defaultValue" : "A",
           "categories" : [ "A", "B", "C" ],
-          "paramType" : "CategoryParameter",
           "qualifier" : "cParam",
           "metaTags" : [ ],
           "simpleName" : "cParam",
           "isOptional" : true
         }, {
+          "paramType" : "CategoryParameter",
           "defaultValue" : "A",
           "categories" : [ "A", "B", "C" ],
-          "paramType" : "CategoryParameter",
           "qualifier" : "cParam",
           "metaTags" : [ ],
           "simpleName" : "cParam",
           "isOptional" : true
         }, {
+          "paramType" : "CategoryParameter",
           "defaultValue" : "A",
           "categories" : [ "A", "B", "C" ],
-          "paramType" : "CategoryParameter",
           "qualifier" : "cParam",
           "metaTags" : [ ],
           "simpleName" : "cParam",
           "isOptional" : true
         }, {
+          "paramType" : "InterfaceParameter",
           "defaultValue" : null,
           "interfaceQualifier" : "interface.I1",
-          "paramType" : "InterfaceParameter",
           "qualifier" : "iParam",
           "metaTags" : [ ],
           "simpleName" : "iParam",
           "isOptional" : true
         }, {
+          "paramType" : "InterfaceParameter",
           "defaultValue" : null,
           "interfaceQualifier" : "interface.I1",
-          "paramType" : "InterfaceParameter",
           "qualifier" : "iParam",
           "metaTags" : [ ],
           "simpleName" : "iParam",
           "isOptional" : true
         }, {
+          "paramType" : "InterfaceParameter",
           "defaultValue" : null,
           "interfaceQualifier" : "interface.I1",
-          "paramType" : "InterfaceParameter",
           "qualifier" : "iParam",
           "metaTags" : [ ],
           "simpleName" : "iParam",
@@ -157,26 +156,27 @@
           "premise" : "b2 in {true}",
           "conclusion" : "b3 in {false}"
         } ],
-        "javaParameterizationAuxiliaries" : {
+        "dynAux" : {
+          "paramOrder" : [ "b3", "b2", "b1" ],
+          "precedeParamsWithNames" : true,
+          "bundleInMap" : true,
+          "bundleInArray" : true,
+          "autoScanEachParam" : true,
+          "bundleInList" : true,
           "parameterHandler" : {
             "staticInvocation" : false,
             "redirectArg" : -1,
             "methodName" : null,
             "className" : "Service1ParameterHandler",
             "metaclass" : null
-          },
-          "autoScanEachParam" : true,
-          "bundleInMap" : true,
-          "bundleInArray" : true,
-          "bundleInList" : true,
-          "precedeParamsWithNames" : true,
-          "paramOrder" : [ "b3", "b2", "b1" ]
+          }
         }
       },
       "qualifier" : "service1",
       "metaTags" : [ ],
       "simpleName" : "service1",
       "comments" : [ ],
+      "dynAux" : null,
       "isAbstract" : false
     } ],
     "dataTypes" : [ ],

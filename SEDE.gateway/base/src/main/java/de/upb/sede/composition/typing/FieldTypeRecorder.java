@@ -7,10 +7,10 @@ import de.upb.sede.composition.InstructionIndexer;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.composition.graphs.types.*;
 import de.upb.sede.core.PrimitiveType;
+import de.upb.sede.exec.IMethodDesc;
 import de.upb.sede.exec.IMethodParameterDesc;
 import de.upb.sede.exec.IServiceDesc;
 import de.upb.sede.exec.IServiceRef;
-import de.upb.sede.exec.ISignatureDesc;
 import de.upb.sede.types.IDataTypeDesc;
 import de.upb.sede.types.IDataTypeRef;
 
@@ -48,13 +48,13 @@ public class FieldTypeRecorder extends InstWiseCompileStep<TCInput, TCOutput> {
          * Instruction assigns to a field.
          * Record the resulting type
          */
-        ISignatureDesc signature = getInstOutput().getMethodInfo().getSignatureDesc();
+        IMethodDesc methodDesc = getInstOutput().getMethodInfo().getMethodDesc();
         String methodQualifier = getInstOutput().getMethodInfo().getMethodQualifier();
         String assignedField = inst.getFieldName();
-        if(signature.getOutputs().isEmpty()) {
+        if(methodDesc.getOutputs().isEmpty()) {
             throw TypeCheckException.methodNoReturnValue(methodQualifier, assignedField);
         }
-        IMethodParameterDesc methodOutput = signature.getOutputs().get(0);
+        IMethodParameterDesc methodOutput = methodDesc.getOutputs().get(0);
         String returnType = methodOutput.getType();
         TypeClass fieldType;
         try {

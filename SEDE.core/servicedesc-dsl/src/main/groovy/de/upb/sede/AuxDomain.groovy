@@ -1,16 +1,20 @@
 package de.upb.sede
 
 import de.upb.sede.exec.auxiliary.IJavaDispatchAux
+import de.upb.sede.exec.auxiliary.IPythonDispatchAux
 import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
 import de.upb.sede.exec.auxiliary.MutablePythonDispatchAux
+import de.upb.sede.param.auxiliary.IJavaParameterizationAux
 import de.upb.sede.param.auxiliary.MutableJavaParameterizationAux
+import de.upb.sede.types.auxiliary.IJavaTypeAux
 import de.upb.sede.types.auxiliary.MutableJavaTypeAux
+import de.upb.sede.util.DeepImmutableCopier
 import de.upb.sede.util.DeepMutableCopier
-import de.upb.sede.util.DynTypeField
+import de.upb.sede.util.DynRecord
 import groovy.transform.PackageScope
 
 class AuxDomain
-    extends DomainAware<DynTypeField, DomainAware> {
+    extends DomainAware<DynRecord, DomainAware> {
 
     @Override
     String getBindingName() {
@@ -18,31 +22,37 @@ class AuxDomain
     }
 
     @PackageScope
-    void runDelegate(Object aux, Closure describer) {
-        describer.delegate = Closure.aux
+    void runDescriberOnValue(Class valueClass, Closure describer) {
+        def value = model.cast(valueClass)
+        def mutable = DeepMutableCopier.copyAsMutable(value)
+        describer.delegate = mutable
         describer.resolveStrategy = Closure.DELEGATE_FIRST
         describer.run()
+        model.set(DeepImmutableCopier.copyAsImmutable(mutable))
     }
 
     def javaDispatch(@DelegatesTo(MutableJavaDispatchAux) Closure dispatchDescriber) {
-        def javaDispatchAux = model.cast(IJavaDispatchAux)
-        def mutable = DeepMutableCopier.copyAsMutable(javaDispatchAux)
-        runDelegate(mutable, dispatchDescriber)
+        runDescriberOnValue(IJavaDispatchAux, dispatchDescriber)
     }
 
     def pythonDispatch(@DelegatesTo(MutablePythonDispatchAux) Closure dispatchDescriber) {
-        def pythonDispatchAux = model.cast(MutablePythonDispatchAux)
-        runDelegate(pythonDispatchAux, dispatchDescriber)
+        runDescriberOnValue(IPythonDispatchAux, dispatchDescriber)
     }
 
     def javaParam(@DelegatesTo(MutableJavaParameterizationAux) Closure dispatchDescriber) {
-        def aux = model.cast(MutableJavaParameterizationAux)
-        runDelegate(aux, dispatchDescriber)
+        runDescriberOnValue(IJavaParameterizationAux, dispatchDescriber)
     }
 
     def javaType(@DelegatesTo(MutableJavaTypeAux) Closure dispatchDescriber) {
-        def aux = model.cast(MutableJavaTypeAux)
-        runDelegate(aux, dispatchDescriber)
+        runDescriberOnValue(IJavaTypeAux, dispatchDescriber)
+    }
+
+    def setFields(@DelegatesTo(Expando) Closure expandoDescriber) {
+        Expando expando = new Expando()
+        expandoDescriber.delegate = expando
+        expandoDescriber.resolveStrategy = Closure.DELEGATE_FIRST
+        expandoDescriber.run()
+        model.set(expando.getProperties())
     }
 
 }

@@ -53,6 +53,7 @@ task compileServiceDescs {
                 main = 'de.upb.sede.SDLCli'
 
                 args '-i', sourceAbsPath, '-o', targetAbsPath
+                jvmArgs '--illegal-access=permit'
             }
             javaexec {
                 classpath += sourceSets.main.runtimeClasspath
@@ -61,6 +62,7 @@ task compileServiceDescs {
                 main = 'de.upb.sede.SDLCli'
 
                 args '-c', '-i', sourceAbsPath, '-o', targetComponentsAbsPath
+                jvmArgs '--illegal-access=permit'
             }
         }
     }

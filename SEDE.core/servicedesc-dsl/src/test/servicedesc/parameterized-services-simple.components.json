@@ -11,6 +11,14 @@
       "refineSplits" : 4,
       "minInterval" : 10,
       "name" : "nParam",
+      "type" : "int"
+    }, {
+      "default" : 10.0,
+      "min" : 0.5,
+      "max" : 20.5,
+      "refineSplits" : 4,
+      "minInterval" : 10,
+      "name" : "nParam",
       "type" : "double"
     }, {
       "default" : "A",

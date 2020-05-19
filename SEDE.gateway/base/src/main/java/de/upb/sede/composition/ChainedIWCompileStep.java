@@ -58,6 +58,7 @@ public abstract class ChainedIWCompileStep<I extends InstInput, O> extends Block
              */
             getChainedSteps().forEach(InstWiseCompileStep::stepInst);
         }
+        getChainedSteps().forEach(InstWiseCompileStep::finishStep);
     }
 
 }

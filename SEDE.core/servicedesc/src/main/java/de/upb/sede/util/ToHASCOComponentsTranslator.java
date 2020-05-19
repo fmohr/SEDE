@@ -3,7 +3,7 @@ package de.upb.sede.util;
 import de.upb.sede.IQualifiable;
 import de.upb.sede.SDLLookupService;
 import de.upb.sede.exec.IServiceDesc;
-import de.upb.sede.exec.IServiceRef;
+import de.upb.sede.IServiceRef;
 import de.upb.sede.param.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

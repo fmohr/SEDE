@@ -1,6 +1,7 @@
 package de.upb.sede.gateway.edd;
 
 import de.upb.sede.exec.ExecutorHandle;
+import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.gateway.OnDemandExecutorSupplier;
 import de.upb.sede.requests.deploy.EDDRegistration;
 import de.upb.sede.util.ExpiringCache;
@@ -62,7 +63,7 @@ public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
 
     private EDDExecutorSupplier supplier;
 
-    private TTLCache<List<ExecutorHandle>> execHandleCache = new TTLCache<>(
+    private TTLCache<List<IExecutorHandle>> execHandleCache = new TTLCache<>(
         EXECUTOR_HANDLE_REFRESH_SECONDS,
         TimeUnit.SECONDS,
         this::retrieveExecHandles);
@@ -70,7 +71,7 @@ public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
     private List<ExpiringCache<String>> requestedServices = new ArrayList<>();
 
 
-    private Function<List<ExecutorHandle>, Optional<ExecutorHandle>> executorArbiter =
+    private Function<List<IExecutorHandle>, Optional<IExecutorHandle>> executorArbiter =
         new RandomArbiter<>();
 
 
@@ -78,7 +79,7 @@ public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
         this.supplier = new EDDExecutorSupplier(eddRegistration);
     }
 
-    private List<ExecutorHandle> retrieveExecHandles() {
+    private List<IExecutorHandle> retrieveExecHandles() {
         List<String> requestedServices = collectRequestedServices();
         try {
             return supplier.supplyList(collectRequestedServices());
@@ -123,7 +124,7 @@ public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public ExecutorHandle supply(String service) {
+    public IExecutorHandle supply(String service) {
         /*
          * TODO recheck if there are any cache miss problems here.
          *  Are the caches cleaned up?
@@ -133,7 +134,7 @@ public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
         if(!servicePreviouslyRequested) {
             addService(service);
         }
-        List<ExecutorHandle> executorHandles = execHandleCache.access().stream()
+        List<IExecutorHandle> executorHandles = execHandleCache.access().stream()
             .filter(handle ->
                 handle.getCapabilities()
                     .getServices().contains(service))
@@ -157,12 +158,12 @@ public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public List<ExecutorHandle> allHandles() {
+    public List<IExecutorHandle> allHandles() {
         return Collections.unmodifiableList(execHandleCache.access());
     }
 
     @Override
-    public Optional<ExecutorHandle> getHandle(String executorId) {
+    public Optional<IExecutorHandle> getHandle(String executorId) {
         return execHandleCache.access()
             .stream()
             .filter(handle -> handle.getQualifier().equals(executorId))

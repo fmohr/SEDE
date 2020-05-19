@@ -46,6 +46,11 @@ public abstract class BlockWiseCompileStep<I, O> implements CompileStep<I, O> {
         finishedFlag = true;
     }
 
+    @Override
+    public final void stepToEnd() {
+        step();
+    }
+
     protected abstract void stepBlock();
 
     @Override

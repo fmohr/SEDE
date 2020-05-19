@@ -17,6 +17,7 @@ import de.upb.sede.util.JsonSerializable;
  * @author aminfaez
  *
  */
+@Deprecated
 public class ResolvePolicy implements JsonSerializable {
 
 	private static final Logger log = LoggerFactory.getLogger(ResolvePolicy.class);

@@ -2,6 +2,7 @@ package de.upb.sede.gateway;
 
 import de.upb.sede.composition.RoundRobinScheduler;
 import de.upb.sede.exec.ExecutorHandle;
+import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.gateway.edd.CachedExecutorHandleSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,12 +27,12 @@ public class ExecutorSupplyCoordinator { // TODO let this class implement OnDema
 
 	private final List<OnDemandExecutorSupplier> executorSuppliers = new ArrayList<>();
 
-	public synchronized List<ExecutorHandle> supplyExecutor(String service) {
-		List<ExecutorHandle> capableExecutors = new ArrayList<>();
+	public synchronized List<IExecutorHandle> supplyExecutor(String service) {
+		List<IExecutorHandle> capableExecutors = new ArrayList<>();
 		for (OnDemandExecutorSupplier executorSupplier : executorSuppliers) {
 			if (executorSupplier.isSupported(service)) {
 				try {
-				    ExecutorHandle handle = executorSupplier.supply(service);
+                    IExecutorHandle handle = executorSupplier.supply(service);
                     capableExecutors.add(handle);
                 } catch(UnsupportedOperationException ex) {
                     logger.warn("Executor supplier {} didn't supply executors for the demanded service {}.", executorSupplier, service, ex);
@@ -41,8 +42,8 @@ public class ExecutorSupplyCoordinator { // TODO let this class implement OnDema
 		return capableExecutors;
 	}
 
-	public synchronized ExecutorHandle executorsWithServiceClass(String ServiceClass) {
-		List<ExecutorHandle> executors = supplyExecutor(ServiceClass);
+	public synchronized IExecutorHandle executorsWithServiceClass(String ServiceClass) {
+		List<IExecutorHandle> executors = supplyExecutor(ServiceClass);
 		if(executors.isEmpty()) {
 			throw new RuntimeException("No registered executor supports the given class: " + ServiceClass);
 		}
@@ -54,8 +55,8 @@ public class ExecutorSupplyCoordinator { // TODO let this class implement OnDema
 		return executorSuppliers.stream().anyMatch(h -> h.getIdentifier().equals(id));
 	}
 
-	public synchronized ExecutorHandle getExecutorFor(String id) {
-        Optional<ExecutorHandle> any = executorSuppliers.stream()
+	public synchronized IExecutorHandle getExecutorFor(String id) {
+        Optional<IExecutorHandle> any = executorSuppliers.stream()
             .map(supplier -> supplier.getHandle(id))
             .filter(Optional::isPresent)
             .map(Optional::get)
@@ -72,7 +73,7 @@ public class ExecutorSupplyCoordinator { // TODO let this class implement OnDema
 //		scheduler.updateExecutors(executors);
 //	}
 
-	List<ExecutorHandle> getExecutors() {
+	List<IExecutorHandle> getExecutors() {
 	    return executorSuppliers.stream()
             .map(OnDemandExecutorSupplier::allHandles)
             .flatMap(Collection::stream) // merge lists

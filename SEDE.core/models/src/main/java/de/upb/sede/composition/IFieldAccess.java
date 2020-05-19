@@ -21,6 +21,10 @@ public interface IFieldAccess {
 
     enum AccessType {
         READ, WRITE, ASSIGN;
+
+        public boolean isAssignOrWrite() {
+            return this == WRITE || this == ASSIGN;
+        }
     }
 
 }

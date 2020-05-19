@@ -8,6 +8,7 @@ import org.json.simple.JSONObject;
 
 import de.upb.sede.util.JsonSerializable;
 
+@Deprecated
 public class GatewayResolution implements JsonSerializable {
 
 	private Optional<String> compositionGraph;

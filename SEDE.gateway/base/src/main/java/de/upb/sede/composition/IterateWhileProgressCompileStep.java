@@ -1,21 +1,26 @@
 package de.upb.sede.composition;
 
-public abstract class LocalBestSolutionCompileStep<I, O> extends BlockWiseCompileStep<I, O> {
+public abstract class IterateWhileProgressCompileStep<I, O> extends BlockWiseCompileStep<I, O> {
 
-    boolean changedFlag = true;
+    boolean progressed = true;
 
     @Override
     protected final void stepBlock() {
-        while(changedFlag) {
-            changedFlag = false;
-            iterate();
+        while(checkProgressAndReset()) {
+            iterateSolution();
         }
     }
 
-    private boolean checkFlagAndReset() {
-        boolean iterationhangs =
+    private boolean checkProgressAndReset() {
+        boolean progressInIteration = progressed;
+        progressed = false;
+        return progressInIteration;
     }
 
-    protected abstract void iterate();
+    protected void setProgressed() {
+        this.progressed = true;
+    }
+
+    protected abstract void iterateSolution();
 
 }

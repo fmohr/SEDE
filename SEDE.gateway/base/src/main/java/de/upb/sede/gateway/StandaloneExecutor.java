@@ -1,6 +1,7 @@
 package de.upb.sede.gateway;
 
 import de.upb.sede.exec.ExecutorHandle;
+import de.upb.sede.exec.IExecutorHandle;
 
 import java.util.Collections;
 import java.util.List;
@@ -9,13 +10,13 @@ import java.util.Optional;
 
 public class StandaloneExecutor implements OnDemandExecutorSupplier {
 
-    private final ExecutorHandle handle;
+    private final IExecutorHandle handle;
 
-    public StandaloneExecutor(ExecutorHandle handle) {
+    public StandaloneExecutor(IExecutorHandle handle) {
         this.handle = Objects.requireNonNull(handle);
     }
 
-    public ExecutorHandle getHandle() {
+    public IExecutorHandle getHandle() {
         return handle;
     }
 
@@ -25,7 +26,7 @@ public class StandaloneExecutor implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public ExecutorHandle supply(String service) {
+    public IExecutorHandle supply(String service) {
         if(isSupported(service)) {
             return handle;
         } else {
@@ -44,12 +45,12 @@ public class StandaloneExecutor implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public List<ExecutorHandle> allHandles() {
+    public List<IExecutorHandle> allHandles() {
         return Collections.singletonList(handle);
     }
 
     @Override
-    public Optional<ExecutorHandle> getHandle(String executorId) {
+    public Optional<IExecutorHandle> getHandle(String executorId) {
         if(handle.getContactInfo().getQualifier().equals(executorId)) {
             return Optional.of(handle);
         } else {

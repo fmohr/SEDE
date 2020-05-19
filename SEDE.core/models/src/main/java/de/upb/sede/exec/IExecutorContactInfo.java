@@ -18,4 +18,8 @@ public interface IExecutorContactInfo extends IQualifiable {
     @Nullable
     String getHostAddress();
 
+    @Value.Default
+    default boolean isReachable() {
+        return true;
+    }
 }

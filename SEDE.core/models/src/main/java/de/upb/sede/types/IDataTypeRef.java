@@ -2,6 +2,8 @@ package de.upb.sede.types;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.*;
+import de.upb.sede.ConstructReference;
+import de.upb.sede.IServiceCollectionRef;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;

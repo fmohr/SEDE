@@ -1,7 +1,6 @@
-package de.upb.sede.exec;
+package de.upb.sede;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.*;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;

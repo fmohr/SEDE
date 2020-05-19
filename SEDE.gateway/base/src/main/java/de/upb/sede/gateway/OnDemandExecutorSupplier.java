@@ -1,6 +1,7 @@
 package de.upb.sede.gateway;
 
 import de.upb.sede.exec.ExecutorHandle;
+import de.upb.sede.exec.IExecutorHandle;
 
 import java.util.List;
 import java.util.Optional;
@@ -12,14 +13,14 @@ public interface OnDemandExecutorSupplier {
 
     boolean isSupported(String service);
 
-    ExecutorHandle supply(String service);
+    IExecutorHandle supply(String service);
 
     List<String> supportedServices();
 
     String getIdentifier();
 
-    List<ExecutorHandle> allHandles();
+    List<IExecutorHandle> allHandles();
 
-    Optional<ExecutorHandle> getHandle(String executorId);
+    Optional<IExecutorHandle> getHandle(String executorId);
 
 }

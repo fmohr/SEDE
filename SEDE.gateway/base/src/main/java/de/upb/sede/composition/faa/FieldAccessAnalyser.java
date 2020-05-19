@@ -25,6 +25,8 @@ public class FieldAccessAnalyser extends InstWiseCompileStep<FAAInput, FAAOutput
     public void stepInst() {
         try{
             checkAssignment();
+            checkParams();
+            checkMethodContext();
         } catch(FieldAccessAnalysisException faaException) {
             throw FieldAccessAnalysisException.stepError(getCurrentInstruction(), faaException);
         }
@@ -87,15 +89,17 @@ public class FieldAccessAnalyser extends InstWiseCompileStep<FAAInput, FAAOutput
         }
     }
 
-    private void checkMethodContext(IIndexedInstruction ii, FAAOutput output, IMethodResolution methodCognition) {
+    private void checkMethodContext() {
         /*
          * If the context is a service instance,
          * the method is assumed to read its state (read) and might alter its state too (write)
          */
-        IInstructionNode inst = ii.getInstruction();
-        Long index = ii.getIndex();
+        IInstructionNode inst = getCurrentInstruction().getInstruction();
+        Long index = getCurrentInstruction().getIndex();
+        FAAOutput output = getOutput().getCurrent();
         String context = inst.getContext();
-        if(!inst.getContextIsFieldFlag()) {
+        IMethodDesc methodDesc = getInput().getTcOutput().get(index).getMethodInfo().getMethodDesc();
+        if(!inst.getContextIsFieldFlag() || methodDesc.isContextFree()) {
             /*
              * The context is a service qualifier, like: `a.b.Classifier`
              * There is nothing accessed.
@@ -111,7 +115,6 @@ public class FieldAccessAnalyser extends InstWiseCompileStep<FAAInput, FAAOutput
         output.getFAList().add(contextRead);
 
 
-        IMethodDesc methodDesc = getInput().getTcOutput().get(ii.getIndex()).getMethodInfo().getMethodDesc();
         boolean methodChangesValue = ! methodDesc.isPure();
         if(methodChangesValue) {
             IFieldAccess fieldWrite = FieldAccess.builder()

@@ -1,22 +1,16 @@
 package de.upb.sede.composition.graphs;
 
-import java.util.*;
-import java.util.function.Predicate;
-
-import de.upb.sede.composition.FMCompositionParser;
-import de.upb.sede.composition.graphs.nodes.*;
-import de.upb.sede.config.ClassesConfig;
-import de.upb.sede.config.ClassesConfig.MethodInfo;
-import de.upb.sede.core.SEDEObject;
-import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.exceptions.CompositionSemanticException;
+import de.upb.sede.composition.ICompositionCompilation;
+import de.upb.sede.composition.graphs.nodes.BaseNode;
+import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.gateway.ResolveInfo;
-import de.upb.sede.requests.resolve.InputFields;
 import de.upb.sede.util.DefaultMap;
 
-public class DataFlowAnalysis {
+import java.util.*;
 
-	private final ResolveInfo resolveInfo;
+public class DataFlowAnalysis_1 {
+
+	private final ResolveInfo_1 resolveInfo;
 
 	// private final List<AcceptDataNode> clientInputNodes = new ArrayList<>();
 
@@ -25,9 +19,9 @@ public class DataFlowAnalysis {
 	/**
 	 * Node: the client executor is part of this list.
 	 */
-	private final List<ExecPlan> execPlans;
+	private final List<ExecPlan_1> execPlans;
 
-	private final ExecPlan clientExecPlan;
+	private final ExecPlan_1 clientExecPlan;
 
 	private final CompositionGraph dataTransmissionGraph;
 
@@ -39,18 +33,21 @@ public class DataFlowAnalysis {
 
 	private final List<String> returnFieldnames = new ArrayList<>();
 
-	public DataFlowAnalysis(ResolveInfo resolveInfo, List<InstructionNode> instructionNodes) {
+	public DataFlowAnalysis_1(ResolveInfo_1 resolveInfo, ICompositionCompilation cc) {
 		this.resolveInfo = Objects.requireNonNull(resolveInfo);
-		clientExecPlan = new ExecPlan(resolveInfo.getClientExecutor());
+
+		clientExecPlan = new ExecPlan_1(resolveInfo.getClientExecutor());
 		execPlans = new ArrayList<>();
 		execPlans.add(clientExecPlan);
 		dataTransmissionGraph = new CompositionGraph();
-//		analyzeDataFlow(Objects.requireNonNull(instructionNodes));
+		analyzeDataFlow(Objects.requireNonNull(cc));
 	}
 //
-//	private void analyzeDataFlow(List<InstructionNode> instructionNodes) {
-//		assert !instructionNodes.isEmpty();
-//		addInputNodesFieldTypes();
+	private void analyzeDataFlow(ICompositionCompilation cc) {
+	    if(cc.getProgramOrder().isEmpty()) {
+	        throw new IllegalArgumentException("Program is empty.");
+        }
+		addInputNodesFieldTypes(cc);
 //		for (InstructionNode instNode : instructionNodes) {
 //			resolveExecution(instNode);
 //			analyzeDataFlow(instNode);
@@ -64,7 +61,7 @@ public class DataFlowAnalysis {
 //		if(resolveInfo.getResolvePolicy().isBlockExecRequested()) {
 //			addFinishingNodes();
 //		}
-//	}
+	}
 //
 //	/**
 //	 * Merges a subset of {@link AcceptDataNode AcceptDataNodes} and their following {@link CastTypeNode CastTypeNodes} on every executor
@@ -115,35 +112,37 @@ public class DataFlowAnalysis {
 //	}
 //
 //
-//	private void addInputNodesFieldTypes() {
-//		InputFields inputFields = resolveInfo.getInputFields();
-//		for (String inputFieldname : inputFields.iterateInputs()) {
-//			AcceptDataNode acceptNode = clientAcceptInput(inputFieldname);
-//
-//			boolean isServiceInstance = inputFields.isServiceInstance(inputFieldname);
-//			String typeName;
-//			TypeClass typeClass;
-//			if (isServiceInstance) {
-//				String serviceClasspath = inputFields.getServiceInstanceHandle(inputFieldname).getClasspath();
-//				typeName = serviceClasspath;
-//				typeClass = TypeClass.ServiceInstanceHandle;
-//
-//				FieldType fieldType = new FieldType(acceptNode, inputFieldname, typeClass, typeName, true);
-//				addFieldType(fieldType);
-//			} else {
-//				typeName = inputFields.getInputFieldType(inputFieldname);
-//				if(SEDEObject.isPrimitive(typeName)) { // is the input either Number String boolean or nul?
-//					typeClass = TypeClass.PrimitiveType;
-//				} else if(resolveInfo.getTypeConfig().hasOnthologicalType(typeName)) { // is the input real data type?
-//					typeClass = TypeClass.RealDataType;
-//				} else {
-//					typeClass = TypeClass.SemanticDataType;
-//				}
-//				FieldType fieldType = new FieldType(acceptNode, inputFieldname, typeClass, typeName, true);
-//				addFieldType(fieldType);
-//			}
-//		}
-//	}
+	private void addInputNodesFieldTypes(ICompositionCompilation cc) {
+        Long firstIndex = cc.getProgramOrder().get(0);
+        cc.getInstructionAnalysis().get(firstIndex).getTypeContext();
+		InputFields inputFields = resolveInfo.getInputFields();
+		for (String inputFieldname : inputFields.iterateInputs()) {
+			AcceptDataNode acceptNode = clientAcceptInput(inputFieldname);
+
+			boolean isServiceInstance = inputFields.isServiceInstance(inputFieldname);
+			String typeName;
+			TypeClass typeClass;
+			if (isServiceInstance) {
+				String serviceClasspath = inputFields.getServiceInstanceHandle(inputFieldname).getClasspath();
+				typeName = serviceClasspath;
+				typeClass = TypeClass.ServiceInstanceHandle;
+
+				FieldType fieldType = new FieldType(acceptNode, inputFieldname, typeClass, typeName, true);
+				addFieldType(fieldType);
+			} else {
+				typeName = inputFields.getInputFieldType(inputFieldname);
+				if(SEDEObject.isPrimitive(typeName)) { // is the input either Number String boolean or nul?
+					typeClass = TypeClass.PrimitiveType;
+				} else if(resolveInfo.getTypeConfig().hasOnthologicalType(typeName)) { // is the input real data type?
+					typeClass = TypeClass.RealDataType;
+				} else {
+					typeClass = TypeClass.SemanticDataType;
+				}
+				FieldType fieldType = new FieldType(acceptNode, inputFieldname, typeClass, typeName, true);
+				addFieldType(fieldType);
+			}
+		}
+	}
 //
 //	private void resolveExecution(InstructionNode instNode) {
 //		ExecPlan resolvedExecPlan = null;

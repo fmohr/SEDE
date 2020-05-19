@@ -1,5 +1,6 @@
 package de.upb.sede.composition.typing;
 
+import de.upb.sede.IServiceRef;
 import de.upb.sede.composition.FieldType;
 import de.upb.sede.composition.IFieldType;
 import de.upb.sede.composition.ITypeCoercion;

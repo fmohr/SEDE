@@ -1,10 +1,9 @@
-package de.upb.sede.gateway;
+package de.upb.sede.composition.graphs;
 
-import de.upb.sede.config.ClassesConfig;
-import de.upb.sede.config.OnthologicalTypeConfig;
-import de.upb.sede.exec.ExecutorHandle;
-import de.upb.sede.requests.resolve.InputFields;
-import de.upb.sede.requests.resolve.beta.ResolvePolicy;
+import de.upb.sede.SDLLookupService;
+import de.upb.sede.exec.IExecutorHandle;
+import de.upb.sede.gateway.ExecutorSupplyCoordinator;
+import de.upb.sede.requests.resolve.beta.IResolveRequest;
 
 /**
  * This class bundles all classes whose pointers are needed for resolving a
@@ -12,59 +11,28 @@ import de.upb.sede.requests.resolve.beta.ResolvePolicy;
  */
 public class ResolveInfo_1 {
 
-	private ClassesConfig classesConfiguration;
-	private InputFields inputFields;
-	private ResolvePolicy resolvePolicy;
-	private ExecutorSupplyCoordinator executorSupplyCoordinator;
-	private ExecutorHandle clientExecutor;
-	private OnthologicalTypeConfig typeConfig;
+    private final SDLLookupService lookupService;
 
-	public ClassesConfig getClassesConfiguration() {
-		return classesConfiguration;
-	}
+    private final ExecutorSupplyCoordinator executorSupplyCoordinator;
 
-	public void setClassesConfiguration(ClassesConfig classConfiguration) {
-		this.classesConfiguration = classConfiguration;
-	}
+    private final IResolveRequest request;
 
-	public InputFields getInputFields() {
-		return inputFields;
-	}
+    public ResolveInfo_1(SDLLookupService lookupService, ExecutorSupplyCoordinator executorSupplyCoordinator, IResolveRequest clientExecutor) {
+        this.lookupService = lookupService;
+        this.executorSupplyCoordinator = executorSupplyCoordinator;
+        this.request = clientExecutor;
+    }
 
-	public void setInputFields(InputFields inputFields) {
-		this.inputFields = inputFields;
-	}
+    public SDLLookupService getLookupService() {
+        return lookupService;
+    }
 
-	public ResolvePolicy getResolvePolicy() {
-		return resolvePolicy;
-	}
+    public ExecutorSupplyCoordinator getExecutorSupplyCoordinator() {
+        return executorSupplyCoordinator;
+    }
 
-	public void setResolvePolicy(ResolvePolicy resolvePolicy) {
-		this.resolvePolicy = resolvePolicy;
-	}
-
-	public ExecutorSupplyCoordinator getExecutorSupplyCoordinator() {
-		return executorSupplyCoordinator;
-	}
-
-	public void setExecutorSupplyCoordinator(ExecutorSupplyCoordinator executorSupplyCoordinator) {
-		this.executorSupplyCoordinator = executorSupplyCoordinator;
-	}
-
-	public ExecutorHandle getClientExecutor() {
-		return clientExecutor;
-	}
-
-	public void setClientExecutor(ExecutorHandle clientExecutor) {
-		this.clientExecutor = clientExecutor;
-	}
-
-	public OnthologicalTypeConfig getTypeConfig() {
-		return typeConfig;
-	}
-
-	public void setTypeConfig(OnthologicalTypeConfig typeConfig) {
-		this.typeConfig = typeConfig;
-	}
+    public IExecutorHandle getClientExecutor() {
+        return request.getClientExecutorRegistration().getExecutorHandle();
+    }
 
 }

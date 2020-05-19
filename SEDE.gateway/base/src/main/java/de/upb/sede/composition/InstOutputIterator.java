@@ -12,6 +12,8 @@ public class InstOutputIterator<T> implements Iterator<T> {
 
     private final List<Long> sortedIndices = new ArrayList<>();
 
+    private final InstructionIndexer indexer;
+
     private final Iterator<IIndexedInstruction> iterator;
 
     private Long currentIndex = null;
@@ -22,12 +24,14 @@ public class InstOutputIterator<T> implements Iterator<T> {
         this.outputMap = new HashMap<>();
         this.nextOutputGenerator = nextOutputGenerator;
         this.iterator = indexer.iterator();
+        this.indexer = indexer;
     }
 
     public InstOutputIterator(Supplier<T> outputGenerator, InstructionIndexer indexer) {
         this.outputMap = new HashMap<>();
         this.nextOutputGenerator = oldOutput -> outputGenerator.get();
         this.iterator = indexer.iterator();
+        this.indexer = indexer;
     }
 
     public T next() {
@@ -60,6 +64,10 @@ public class InstOutputIterator<T> implements Iterator<T> {
             throw new IllegalStateException("Iterator in bad state. First call next()");
         }
         return outputMap.get(currentIndex);
+    }
+
+    public T getOfIndex(Long instIndex) {
+        return outputMap.get(instIndex);
     }
 
     public T getBefore() {

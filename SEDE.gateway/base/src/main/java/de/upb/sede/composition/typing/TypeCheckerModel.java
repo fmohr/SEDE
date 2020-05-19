@@ -1,5 +1,6 @@
 package de.upb.sede.composition.typing;
 
+import de.upb.sede.IServiceRef;
 import de.upb.sede.SDLLookupService;
 import de.upb.sede.composition.*;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;

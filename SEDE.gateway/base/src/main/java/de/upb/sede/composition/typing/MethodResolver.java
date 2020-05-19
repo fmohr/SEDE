@@ -1,6 +1,7 @@
 package de.upb.sede.composition.typing;
 
 import de.upb.sede.IServiceCollectionDesc;
+import de.upb.sede.IServiceRef;
 import de.upb.sede.SDLLookupService;
 import de.upb.sede.composition.InstOutputIterator;
 import de.upb.sede.composition.InstWiseCompileStep;

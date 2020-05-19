@@ -1,17 +1,12 @@
 package de.upb.sede.util;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import de.upb.sede.IQualifiable;
 import de.upb.sede.SDLLookupService;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.exec.IMethodDesc;
 import de.upb.sede.exec.IServiceDesc;
-import de.upb.sede.exec.IServiceRef;
+import de.upb.sede.IServiceRef;
+import de.upb.sede.exec.auxiliary.DynamicAuxAware;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SDLUtil {
 
@@ -97,11 +92,12 @@ public class SDLUtil {
         return output;
     }
 
-    public static Map gatherAux(IMethodDesc signatureDesc) {
-        DynRecord aux = signatureDesc.getDynAux();
+    public static Map gatherAux(List<DynamicAuxAware> auxStack) {
         Map auxData = new HashMap();
-
-        auxData.putAll(aux.cast(Map.class));
+        for (DynamicAuxAware dynamicAuxAware : auxStack) {
+            DynRecord aux = dynamicAuxAware.getDynAux();
+            auxData.putAll(aux.cast(Map.class));
+        }
         return auxData;
     }
 

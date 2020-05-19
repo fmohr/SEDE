@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import de.upb.sede.exec.IServiceDesc
 import de.upb.sede.exec.ServiceDesc
+import de.upb.sede.exec.auxiliary.JavaDispatchAux
 import de.upb.sede.param.IBooleanParameter
 import de.upb.sede.param.ICategoryParameter
 import de.upb.sede.param.IInterfaceParameter
@@ -11,7 +12,9 @@ import de.upb.sede.param.INumericParameter
 import de.upb.sede.param.IParameterDependencyDesc
 import de.upb.sede.param.IServiceParameterizationDesc
 import de.upb.sede.param.auxiliary.IJavaParameterizationAux
+import de.upb.sede.param.auxiliary.JavaParameterizationAux
 import de.upb.sede.types.IDataTypeDesc
+import de.upb.sede.types.auxiliary.JavaTypeAux
 import de.upb.sede.util.FileUtil
 import spock.lang.Specification
 
@@ -79,53 +82,18 @@ class SDLTest extends Specification {
 
         when:
         def constructor = serviceA.methods[0]
-        def method1 = serviceA.methods[1]
 
         then:
-        constructor.qualifier == '$construct'
-        constructor.signatures[0].inputs.isEmpty()
-        constructor.signatures[0].outputs[0].type == "a.A"
-        method1.simpleName == "method 1"
-        method1.signatures.size() == 4
-        method1.signatures.every {it.javaDispatchAux.staticInvocation()}
-
+        constructor.qualifier == '__construct'
+        constructor.inputs.isEmpty()
+        constructor.outputs[0].type == "a.A"
 
         when:
-        def sig1 = method1.signatures[0]
+        def method2 = serviceA.methods[1]
         then:
-        sig1.inputs.size() == 3
-        sig1.inputs[0].type == "t1"
-        sig1.inputs[1].type == "t2"
-        sig1.inputs[2].type == "t3"
-        sig1.outputs.size() == 2
-        sig1.outputs[0].type == "t4"
-
-        when:
-        def sig3 = method1.signatures[2]
-        then:
-        sig3.inputs[1].type == "t2"
-        sig3.inputs[1].name == null
-        !sig3.inputs[1].callByValue()
-        sig3.inputs[1].fixedValue == "SOME_FIXED_VALUE"
-
-        when:
-        def sig4 = method1.signatures[3]
-        then:
-        sig4.inputs[0].name == "First Input Parameter"
-        !sig4.inputs[1].callByValue()
-        sig4.outputs[0].name == "Return Value"
-        sig4.inputs[0].type == "t1"
-        sig4.inputs[1].type == "t2"
-        sig4.outputs[0].type == "t3"
-
-        when:
-        def method2 = serviceA.methods[2]
-        def m2sig1 = method2.signatures[0]
-        then:
-        method2.signatures.size() == 1
         method2.qualifier == "m2"
-        m2sig1.inputs[0].type == "t1"
-        m2sig1.inputs[0].name == "First Input Parameter of m2"
+        method2.inputs[0].type == "t1"
+        method2.inputs[0].name == "First Input Parameter of m2"
     }
 
 
@@ -180,7 +148,8 @@ class SDLTest extends Specification {
         dependencies.every {it.conclusion == 'b3 in {false}'}
 
         when:
-        def javaAux = params.getJavaParameterizationAuxiliaries()
+        def aux = params.dynAux
+        def javaAux = aux.cast(JavaParameterizationAux)
 
         then:
         javaAux.parameterHandler.className() == 'Service1ParameterHandler'
@@ -203,18 +172,19 @@ class SDLTest extends Specification {
         IServiceDesc s1 = c1.services.find {it.qualifier == 'S1'}
         then:
         s1.dynAux != null
-        s1.dynAux.staticInvocation() == true
+        s1.dynAux.cast(JavaDispatchAux).staticInvocation() == true
 
         when:
         IServiceParameterizationDesc params = s1.serviceParameters
-        IJavaParameterizationAux paramAux = params.javaParameterizationAuxiliaries
+        IJavaParameterizationAux paramAux = params.dynAux.cast(JavaParameterizationAux)
+
         then:
         paramAux.paramOrder == ['1', '2', '3']
 
         when:
         IDataTypeDesc t2 = c1.dataTypes.find {it.qualifier == 't2'}
         then:
-        t2.typeAux.dataCastHandler != null
-        t2.typeAux.dataCastHandler.className() == 'org.example.T2Handler'
+        t2.dynAux.cast(JavaTypeAux).dataCastHandler != null
+        t2.dynAux.cast(JavaTypeAux).dataCastHandler.className() == 'org.example.T2Handler'
     }
 }

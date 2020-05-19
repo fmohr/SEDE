@@ -1,7 +1,5 @@
 package de.upb.sede.composition.graphs;
 
-import java.util.*;
-
 import de.upb.sede.composition.FMCompositionParser;
 import de.upb.sede.composition.ICompositionCompilation;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
@@ -10,11 +8,13 @@ import de.upb.sede.composition.graphs.nodes.SendGraphNode;
 import de.upb.sede.composition.graphs.serialization.GraphJsonSerializer;
 import de.upb.sede.gateway.ResolveInfo;
 
-public class GraphConstruction {
+import java.util.*;
+
+public class GraphConstruction_1 {
 
 	private final DataFlowAnalysis dataFlow;
 
-	public final static GraphConstruction constructFromFMComp(String fmComposition, ResolveInfo resolveInformation) {
+	public final static GraphConstruction_1 constructFromFMComp(String fmComposition, ResolveInfo resolveInformation) {
 
 		/*
 		 * Parse the fm composition
@@ -25,17 +25,17 @@ public class GraphConstruction {
 			InstructionNode instruction = FMCompositionParser.parseInstruction(fmInstruction);
 			instructionList.add(instruction);
 		}
-		GraphConstruction gc = new GraphConstruction(resolveInformation, Collections.unmodifiableList(instructionList));
+		GraphConstruction_1 gc = new GraphConstruction_1(resolveInformation, Collections.unmodifiableList(instructionList));
 
 		return gc;
 	}
 
-	public final static GraphConstruction constructFromCC(ICompositionCompilation cc, ) {
-
+	public final static GraphConstruction_1 constructFromCC(ICompositionCompilation cc, ResolveInfo_1 resolveInformation) {
+        return new GraphConstruction_1(cc, resolveInformation);
     }
 
-	private GraphConstruction(ResolveInfo resolveInfo, List<InstructionNode> instructions) {
-		this.dataFlow = new DataFlowAnalysis(resolveInfo, instructions);
+	private GraphConstruction_1(ICompositionCompilation cc, ResolveInfo_1 resolveInformation) {
+		this.dataFlow = new DataFlowAnalysis_1(resolveInformation, cc);
 		calcResolvedClientGraph();
 	}
 

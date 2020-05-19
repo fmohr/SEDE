@@ -1,7 +1,6 @@
 package de.upb.sede;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
 import org.immutables.value.Value;
 
 @SEDEModelStyle

@@ -1,9 +1,6 @@
 package de.upb.sede;
 
-import de.upb.sede.exec.IMethodDesc;
-import de.upb.sede.exec.IMethodRef;
-import de.upb.sede.exec.IServiceDesc;
-import de.upb.sede.exec.IServiceRef;
+import de.upb.sede.exec.*;
 import de.upb.sede.types.IDataTypeDesc;
 import de.upb.sede.types.IDataTypeRef;
 

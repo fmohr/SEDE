@@ -1,12 +1,11 @@
 package de.upb.sede
 
 
-import de.upb.sede.exec.IServiceRef
 import de.upb.sede.exec.MethodRef
 import spock.lang.Specification
 import spock.lang.Unroll
 
-import static de.upb.sede.IServiceCollectionRef.of
+import static IServiceCollectionRef.of
 
 class SDLLookupServiceTest extends Specification {
 

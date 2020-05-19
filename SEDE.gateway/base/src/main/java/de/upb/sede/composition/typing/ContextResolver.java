@@ -3,11 +3,10 @@ package de.upb.sede.composition.typing;
 import de.upb.sede.SDLLookupService;
 import de.upb.sede.composition.InstWiseCompileStep;
 import de.upb.sede.composition.InstOutputIterator;
-import de.upb.sede.composition.InstructionIndexer;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.composition.graphs.types.TypeClass;
 import de.upb.sede.exec.IServiceDesc;
-import de.upb.sede.exec.IServiceRef;
+import de.upb.sede.IServiceRef;
 
 import java.util.Optional;
 

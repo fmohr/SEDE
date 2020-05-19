@@ -4,7 +4,7 @@ import de.upb.sede.requests.resolve.GatewayResolution;
 import de.upb.sede.requests.resolve.beta.IChoreography;
 import de.upb.sede.requests.resolve.beta.IResolveRequest;
 
-public interface IChoreographyComposer {
+public interface IChoreographyService {
 
     /**
      * This is the old way of executing compositions.

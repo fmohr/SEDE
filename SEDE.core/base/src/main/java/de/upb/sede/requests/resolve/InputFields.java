@@ -16,7 +16,9 @@ import de.upb.sede.util.JsonSerializable;
  * Sent by the user.
  *
  */
+@Deprecated
 public class InputFields implements JsonSerializable {
+
 	private Map<String, String> fieldTypes;
 	private Map<String, ServiceInstanceHandle> serviceInstanceMap;
 

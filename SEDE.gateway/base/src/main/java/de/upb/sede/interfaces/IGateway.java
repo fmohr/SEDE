@@ -1,10 +1,6 @@
 package de.upb.sede.interfaces;
 
-import de.upb.sede.composition.ICCRequest;
-import de.upb.sede.composition.ICompositionCompilation;
-import de.upb.sede.requests.ExecutorRegistration;
-import de.upb.sede.requests.resolve.GatewayResolution;
-import de.upb.sede.requests.resolve.ResolveRequest;
+import de.upb.sede.beta.IExecutorRegistration;
 
 /**
  * Interface of Gateway logic.
@@ -12,14 +8,7 @@ import de.upb.sede.requests.resolve.ResolveRequest;
  * Offers interface to register executors and resolving composition to graph.
  *
  */
-public interface IGateway extends ICCService {
-
-    /**
-     * This is the old way of executing compositions.
-     * It is now being replaced by compile composition.
-     */
-	@Deprecated
-    public GatewayResolution resolve(ResolveRequest resolveRequest);
+public interface IGateway extends ICCService, IChoreographyService {
 
     /**
 	 * Registers the executor who sent the given ExecutorRegistration.
@@ -30,5 +19,5 @@ public interface IGateway extends ICCService {
 	 * @param registry  sent by the executor that wants to be registered.
 	 * @return true, if registration was successful.
 	 */
-	public boolean register(ExecutorRegistration registry);
+	public boolean register(IExecutorRegistration registry);
 }

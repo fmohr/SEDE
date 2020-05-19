@@ -2,7 +2,6 @@ package de.upb.sede.gateway.edd;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.upb.sede.exec.ExecutorHandle;
 import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.gateway.OnDemandExecutorSupplier;
 import de.upb.sede.requests.deploy.EDDRegistration;
@@ -24,7 +23,7 @@ import static de.upb.sede.requests.deploy.ExecutorDemandRequest.SatMode.*;
 
 public class EDDExecutorSupplier implements OnDemandExecutorSupplier {
 
-    private EDDRegistration registration;
+    private final EDDRegistration registration;
 
     public EDDExecutorSupplier(EDDRegistration registration) {
         this.registration = Objects.requireNonNull(registration);
@@ -35,9 +34,9 @@ public class EDDExecutorSupplier implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public ExecutorHandle supply(String service) {
-        List<ExecutorHandle> handles = supplyList(Collections.singletonList(service));
-        for(ExecutorHandle handle : handles) {
+    public IExecutorHandle supply(String service) {
+        List<IExecutorHandle> handles = supplyList(Collections.singletonList(service));
+        for(IExecutorHandle handle : handles) {
             if(handle.getCapabilities().getServices().contains(service)) {
                 return handle;
             }
@@ -47,7 +46,7 @@ public class EDDExecutorSupplier implements OnDemandExecutorSupplier {
     }
 
 
-    public List<ExecutorHandle> supplyList(List<String> services) {
+    public List<IExecutorHandle> supplyList(List<String> services) {
         /*
          * Request a handle from the edd server using the demand request.
          */
@@ -127,13 +126,13 @@ public class EDDExecutorSupplier implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public List<ExecutorHandle> allHandles() {
+    public List<IExecutorHandle> allHandles() {
         return supplyList(Collections.emptyList());
     }
 
     @Override
     @Deprecated
-    public Optional<ExecutorHandle> getHandle(String executorId) {
+    public Optional<IExecutorHandle> getHandle(String executorId) {
         try {
             return supplyList(Collections.emptyList()).stream()
                 .filter(handle -> handle.getQualifier().equals(executorId))

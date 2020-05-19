@@ -48,6 +48,7 @@ public class SingleBlockCCImpl {
          * Index all the instructions:
          */
         InstructionIndexer instIndexer = new InstructionIndexer(instructions);
+        instIndexer.assertNotEmpty();
 
         /*
          * Type check instructions
@@ -95,6 +96,8 @@ public class SingleBlockCCImpl {
                                            Map<Long, FAAOutput> faaOutput,
                                            PIOOutput pioOutput) {
         CompositionCompilation.Builder ccBuilder = CompositionCompilation.builder();
+        ccBuilder.qualifier("main");
+        ccBuilder.instructions(instructions);
         ccBuilder.programOrder(pioOutput.getProgramOrder());
         for(IIndexedInstruction ii : instructions) {
             StaticInstAnalysis.Builder siaBuilder = StaticInstAnalysis.builder();
@@ -114,7 +117,7 @@ public class SingleBlockCCImpl {
             siaBuilder.fieldAccesses(instAccesses.getFAList());
 
             StaticInstAnalysis sia = siaBuilder.build();
-            ccBuilder.addInstructionAnalysis(sia);
+            ccBuilder.putInstructionAnalysis(ii.getIndex(), sia);
         }
         return ccBuilder.build();
     }

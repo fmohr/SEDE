@@ -1,13 +1,26 @@
 package de.upb.sede.core;
 
+import java.io.IOException;
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.json.simple.JSONObject;
 
 import de.upb.sede.util.JsonSerializable;
 
+@JsonDeserialize(using = ServiceInstanceHandle.Deserializer.class)
+@JsonSerialize(using = ServiceInstanceHandle.Serializer.class)
 public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 	/**
 	 *
@@ -83,4 +96,45 @@ public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 	public String toString() {
 		return "{serviceinstance: " + getClasspath() + " " + getId() + "/" + getExecutorId() + "}";
 	}
+
+
+
+    static class Serializer extends StdSerializer<ServiceInstanceHandle> {
+
+        protected Serializer() {
+            super(ServiceInstanceHandle.class);
+        }
+
+        protected Serializer(Class<ServiceInstanceHandle> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(ServiceInstanceHandle value, JsonGenerator gen, SerializerProvider provider) throws IOException {
+            gen.writeObject(value.toJson());
+        }
+    }
+
+    static class Deserializer extends StdDeserializer<ServiceInstanceHandle> {
+
+        protected Deserializer() {
+            super(ServiceInstanceHandle.class);
+        }
+
+        protected Deserializer(Class<ServiceInstanceHandle> vc) {
+            super(vc);
+        }
+
+        @Override
+        public ServiceInstanceHandle deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+            HashMap data = p.getCodec().readValue(p, HashMap.class);
+
+            ServiceInstanceHandle handle =  new ServiceInstanceHandle();
+            handle.fromJson(data);
+            return handle;
+        }
+    }
+
 }
+
+

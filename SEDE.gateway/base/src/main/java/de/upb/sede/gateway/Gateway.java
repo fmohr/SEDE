@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.upb.sede.beta.IExecutorRegistration;
 import de.upb.sede.composition.ICCRequest;
 import de.upb.sede.composition.ICompositionCompilation;
 import de.upb.sede.exec.ExecutorHandle;
@@ -13,6 +14,9 @@ import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.config.DeploymentConfig;
 import de.upb.sede.gateway.edd.CachedExecutorHandleSupplier;
 import de.upb.sede.requests.deploy.EDDRegistration;
+import de.upb.sede.requests.resolve.beta.Choreography;
+import de.upb.sede.requests.resolve.beta.IChoreography;
+import de.upb.sede.requests.resolve.beta.IResolveRequest;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,11 +84,12 @@ public class Gateway implements IGateway {
 	/**
 	 * Constructs the resolved graphs using the graph construction algorithm and returns the resolved graphs in the graph construction algorithm.
 	 */
-	public final GraphConstruction constructGraphs(ResolveRequest resolveRequest) {
+	public final GraphConstruction constructGraphs(IResolveRequest resolveRequest) {
 		/*
 		 * gather all the information to resolve the composition:
 		 */
 		ResolveInfo resolveInfo = resolveInfoFromRequest(resolveRequest);
+
 		/*
 		 * Resolve the composition by calculating the client graph:
 		 */
@@ -99,7 +104,7 @@ public class Gateway implements IGateway {
     }
 
     @Override
-	public final GatewayResolution resolve(ResolveRequest resolveRequest) {
+	public final IChoreography resolve(IResolveRequest resolveRequest) {
 		GraphConstruction gc = constructGraphs(resolveRequest);
 		CompositionGraph clientGraph = gc.getClientGraph();
 		List<String> returnFields = gc.getReturnFields();
@@ -109,74 +114,77 @@ public class Gateway implements IGateway {
 		GraphJsonSerializer gjs = new GraphJsonSerializer();
 		JSONObject jsonClientGraph = gjs.toJson(clientGraph);
 		/* Generate return resolution: */
-		GatewayResolution gatewayResolution = new GatewayResolution(jsonClientGraph.toJSONString(), returnFields);
-		/* If the client needs the visualisation of the graph appen it to the resolution */
-		if(resolveRequest.getPolicy().isToReturnDotGraph()) {
-			try{
-				String svg = GraphToDot.GCToSVG(gc);
-				gatewayResolution.setDotSvg(svg);
-			} catch(Exception ex) {
-				logger.error("Error trying to calculate the dot from graph: ", ex);
-			}
-		}
+		IChoreography gatewayResolution = Choreography.builder().compositionGraph(jsonClientGraph.toJSONString()).returnFields(returnFields).build();
+//		/* If the client needs the visualisation of the graph appen it to the resolution */
+//		if(resolveRequest.getPolicy().isToReturnDotGraph()) {
+//			try{
+//				String svg = GraphToDot.GCToSVG(gc);
+//				gatewayResolution.setDotSvg(svg);
+//			} catch(Exception ex) {
+//				logger.error("Error trying to calculate the dot from graph: ", ex);
+//			}
+//		}
 		logger.debug("Resolved graph. RequestId: {}", resolveRequest.getRequestID());
 		return gatewayResolution;
 	}
 
-	private ExecutorHandle createExecHandle(ExecutorRegistration registration){
+	private boolean checkServices(IExecutorRegistration registration){
         /*
          * Remove all the supported Services from the executor that are not supported by
          * this gateway:
          */
-        List<String> supportedServices = registration.getSupportedServices();
+        List<String> supportedServices = registration.getExecutorHandle().getCapabilities().getServices();
         boolean unsupportedServicesFound = supportedServices.removeIf(classesConfig::classunknown);
         if(logger.isWarnEnabled() && unsupportedServicesFound) {
             logger.warn("Executor registered with services that are unknown to the gateway. " +
                     "These services will be ignored:\n\t{}",
-                registration.getSupportedServices()
+                supportedServices
                     .stream().filter(classesConfig::classunknown)
                     .collect(Collectors.joining("\n\t")));
         }
 
-        ExecutorHandle execHandle = IExecutorHandle.fromRegistration(registration);
-		return execHandle;
-	}
+        if(supportedServices.isEmpty()) {
+            /*
+             * as this implementation doesn't support loading services onto the executor,
+             * registration with empty services are denied.
+             */
+            logger.warn("Executor tried to register with 0 amount of supported services. Denied registration. Executors id: {}", registration.getExecutorHandle().getQualifier());
+            return false;
+        }
+
+        return true;
+    }
 
 
 	@Override
-	public synchronized final boolean register(ExecutorRegistration execRegister) {
-		if(execCoordinator.hasExecutor(execRegister.getId())) {
+	public synchronized final boolean register(IExecutorRegistration execRegister) {
+        IExecutorHandle execHandle = execRegister.getExecutorHandle();
+        String id = execHandle.getQualifier();
+        if(execCoordinator.hasExecutor(id)) {
 			/*
 			 * Update the internal data for the executorId.
 			 * An executor may have changed some its informations
 			 * like a new address in contact info map or has dropped support for a service.
 			 * Delete the internal representation of the executor.
 			 */
-			logger.warn("ExecutorRegistration with an id that has already been registered: {} \nReplacing executor handle.",  execRegister.getId());
-			execCoordinator.removeExecutor(execRegister.getId());
+			logger.warn("ExecutorRegistration with an id that has already been registered: {} \nReplacing executor handle.",  id);
+			execCoordinator.removeExecutor(id);
 		}
-		ExecutorHandle execHandle = createExecHandle(execRegister);
-
-		if(execHandle.getCapabilities().getServices().isEmpty()) {
-			/*
-			 * as this implementation doesn't support loading services onto the executor, registration with empty services are denied.
-			 */
-			logger.warn("Executor tried to register with 0 amount of supported services. Denied registration. Executors host: {}", execHandle.getQualifier());
-			return false;
-
-		}  else {
-		    StandaloneExecutor standaloneExecutor = new StandaloneExecutor(execHandle);
-			execCoordinator.addSupplier(standaloneExecutor);
-			if(! logger.isTraceEnabled())
-			    logger.info("Executor registered successfully with {} services. Executor's id: {}",
-                    execHandle.getCapabilities().getServices().size(),
-                    execRegister.getId());
-			else
-                logger.trace("Supported service of executor with id {} are {}.",
-                    execRegister.getId(),
-                    execHandle.getCapabilities().getServices());
-			return true;
-		}
+        boolean legalRegistration = checkServices(execRegister);
+        if(!legalRegistration) {
+            return false;
+        }
+        StandaloneExecutor standaloneExecutor = new StandaloneExecutor(execHandle);
+        execCoordinator.addSupplier(standaloneExecutor);
+        if(! logger.isTraceEnabled())
+            logger.info("Executor registered successfully with {} services. Executor's id: {}",
+                execHandle.getCapabilities().getServices().size(),
+                id);
+        else
+            logger.trace("Supported service of executor with id {} are {}.",
+                id,
+                execHandle.getCapabilities().getServices());
+        return true;
 	}
 
 	public synchronized final boolean registerEDD(EDDRegistration registration) {
@@ -232,7 +240,7 @@ public class Gateway implements IGateway {
 		info.setInputFields(resolveRequest.getInputFields());
 		ExecutorRegistration clientExecRegistration = resolveRequest.getClientExecutorRegistration();
 
-		ExecutorHandle clientExecHandle = createExecHandle(clientExecRegistration);
+		ExecutorHandle clientExecHandle = checkServices(clientExecRegistration);
 		info.setClientExecutor(clientExecHandle);
 		return info;
 	}

@@ -7,6 +7,7 @@ import de.upb.sede.composition.InstructionIndexer;
 import java.util.Map;
 import java.util.function.Function;
 
+@Deprecated
 public class TCOutput_2 {
 
     private final TypeJournal journal;

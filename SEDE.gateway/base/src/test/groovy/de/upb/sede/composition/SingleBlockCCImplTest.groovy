@@ -72,7 +72,7 @@ class SingleBlockCCImplTest extends Specification {
          * takes 1, 2 primitve value with no type coercion
          *
          */
-        def inst = instAnalysis[0]
+        def inst = instAnalysis[0L]
         def accesses = inst.fieldAccesses
         def types = inst.typeContext
         then:

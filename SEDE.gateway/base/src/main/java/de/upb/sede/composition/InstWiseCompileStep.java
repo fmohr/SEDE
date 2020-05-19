@@ -79,9 +79,14 @@ public abstract class InstWiseCompileStep<T extends InstInput,U> implements Comp
                 getOutput().next();
                 stepInst();
             }
+            finishStep();
         }
     }
 
     public abstract void stepInst();
+
+    public void finishStep() {
+
+    }
 
 }

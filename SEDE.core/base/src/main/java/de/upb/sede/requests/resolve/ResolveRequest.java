@@ -10,6 +10,7 @@ import org.json.simple.JSONObject;
 
 import de.upb.sede.requests.Request;
 
+@Deprecated
 public class ResolveRequest extends Request {
 
 	private Optional<String> composition;

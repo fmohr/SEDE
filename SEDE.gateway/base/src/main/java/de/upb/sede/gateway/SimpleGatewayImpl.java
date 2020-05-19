@@ -4,6 +4,7 @@ import de.upb.sede.ISDLAssembly;
 import de.upb.sede.SDLBaseLookupService;
 import de.upb.sede.SDLCacheLookupService;
 import de.upb.sede.SDLLookupService;
+import de.upb.sede.composition.CCRequest;
 import de.upb.sede.composition.CompositionCompileService;
 import de.upb.sede.composition.ICCRequest;
 import de.upb.sede.composition.ICompositionCompilation;
@@ -30,6 +31,8 @@ public class SimpleGatewayImpl implements IGateway {
 
     @Override
     public GatewayResolution resolve(ResolveRequest resolveRequest) {
+        ICCRequest iccRequest = CCRequest.builder()
+            .composition(resolveRequest.getComposition())
         return null;
     }
 

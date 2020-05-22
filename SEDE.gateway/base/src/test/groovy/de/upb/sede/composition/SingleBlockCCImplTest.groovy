@@ -5,6 +5,7 @@ import de.upb.sede.SDLReader
 import de.upb.sede.composition.typing.TypeCheckException
 import de.upb.sede.gateway.SimpleGatewayImpl
 import de.upb.sede.misc.DSLMiscs
+import de.upb.sede.util.MappedList
 import spock.lang.Specification
 
 class SingleBlockCCImplTest extends Specification {
@@ -56,7 +57,6 @@ class SingleBlockCCImplTest extends Specification {
         }
         def ccRequest = CCRequest.builder().composition(composition).initialContext(initialContext).build()
         def compiledComp = simpleGateway.compileComposition(ccRequest)
-        def instAnalysis = compiledComp.getInstructionAnalysis()
 
         then:
         compiledComp.programOrder == [0L,1L,2L,3L,4L,5L]
@@ -72,9 +72,11 @@ class SingleBlockCCImplTest extends Specification {
          * takes 1, 2 primitve value with no type coercion
          *
          */
-        def inst = instAnalysis[0L]
-        def accesses = inst.fieldAccesses
-        def types = inst.typeContext
+        def staticAnalysisMap = new MappedList<>(compiledComp.staticInstAnalysis,
+            { IStaticInstAnalysis it ->  it.instruction.index});
+        def accesses = staticAnalysisMap[0L].instFieldAccesses
+        def types = staticAnalysisMap[0L].typeContext
+        def mr = staticAnalysisMap[0L].methodResolution
         then:
         accesses.count { IFieldAccess access ->
             access.index == 0
@@ -94,9 +96,9 @@ class SingleBlockCCImplTest extends Specification {
             it.fieldname == "s1"
             it.type.getTypeQualifier() == "a.S1"
         } == 1
-        inst.methodResolution.methodRef.ref.qualifier == "__construct"
-        inst.methodResolution.methodRef.serviceRef.ref.qualifier == "a.S1"
-        inst.methodResolution.methodRef.serviceRef.serviceCollectionRef.ref.qualifier == "c"
+        mr.methodRef.ref.qualifier == "__construct"
+        mr.methodRef.serviceRef.ref.qualifier == "a.S1"
+        mr.methodRef.serviceRef.serviceCollectionRef.ref.qualifier == "c"
     }
 
     def "test undeclared type usage"() {

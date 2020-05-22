@@ -7,13 +7,15 @@ import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.gateway.ExecutorSupplyCoordinator;
 import de.upb.sede.requests.resolve.beta.Choreography;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ExecutorCandidatesCollector extends
     InstWiseCompileStep
         <ExecutorCandidatesCollector.ECCInput, ExecutorCandidatesCollector.ECCOutput> {
+
+    public ExecutorCandidatesCollector() {
+        super();
+    }
 
     @Override
     protected ECCOutput initializeOutput() {
@@ -29,6 +31,10 @@ public class ExecutorCandidatesCollector extends
             String serviceUsed = currentMethod.getMethodRef().getServiceRef().getRef().getQualifier();
             List<IExecutorHandle> supportingExecutors = getInput().getExecutorSupplyCoordinator().supplyExecutor(serviceUsed);
             this.getInstOutput().getCandidates().addAll(supportingExecutors);
+        }
+        if(getInstOutput().getCandidates().isEmpty()) {
+            throw new ChoreographyException(String.format("No candidate executor found for instruction %d:%s",
+                getCurrentInstruction().getIndex(), getCurrentInstruction().getInstruction().getFMInstruction()));
         }
     }
 
@@ -56,7 +62,7 @@ public class ExecutorCandidatesCollector extends
     private void copyCandidatesOfInst(Long instIndex) {
         ECCOutput prevECCOutput = getOutput().getOfIndex(instIndex);
         if(prevECCOutput == null || prevECCOutput.candidates.isEmpty()) {
-            throw new RuntimeException("The previous output has no candidates.");
+            throw new ChoreographyException("The previous output has no candidates.");
         }
         this.getInstOutput().candidates.addAll(prevECCOutput.candidates);
     }
@@ -91,18 +97,22 @@ public class ExecutorCandidatesCollector extends
 
         private final InstructionIndexer indexer;
 
-        private final ICompositionCompilation cc;
+        private final Map<Long, MethodResolution> methodResolutions;
 
         private final ExecutorSupplyCoordinator executorSupplyCoordinator;
 
         private final FieldAccessExplorer fieldAccessExplorer;
 
-        ECCInput(InitialServices initialServices, InstructionIndexer indexer, ICompositionCompilation cc, ExecutorSupplyCoordinator executorSupplyCoordinator) {
+        ECCInput(InitialServices initialServices,
+                 InstructionIndexer indexer,
+                 Map<Long, MethodResolution> methodResolutions,
+                 ExecutorSupplyCoordinator executorSupplyCoordinator,
+                 FieldAccessExplorer fieldAccessExplorer) {
             this.initialServices = initialServices;
             this.indexer = indexer;
-            this.cc = cc;
+            this.methodResolutions = methodResolutions;
             this.executorSupplyCoordinator = executorSupplyCoordinator;
-            this.fieldAccessExplorer = new FieldAccessExplorer(indexer, cc);
+            this.fieldAccessExplorer = fieldAccessExplorer;
         }
 
         @Override
@@ -116,7 +126,7 @@ public class ExecutorCandidatesCollector extends
 
         IMethodResolution getCurrentMethod() {
             Long currentIndex = getCurrentInstruction().getIndex();
-            return cc.getInstructionAnalysis().get(currentIndex).getMethodResolution();
+            return methodResolutions.get(currentIndex);
         }
 
         FieldAccessExplorer getFieldAccessExplorer() {

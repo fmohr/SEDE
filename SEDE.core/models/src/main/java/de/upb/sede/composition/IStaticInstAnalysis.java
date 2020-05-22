@@ -18,7 +18,7 @@ public interface IStaticInstAnalysis {
 
     IMethodResolution getMethodResolution();
 
-    List<IFieldAccess> getFieldAccesses();
+    List<IFieldAccess> getInstFieldAccesses();
 
 }
 

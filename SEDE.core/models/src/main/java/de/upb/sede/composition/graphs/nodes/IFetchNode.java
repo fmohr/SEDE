@@ -5,13 +5,12 @@ import de.upb.sede.WithField;
 import de.upb.sede.SEDEModelStyle;
 import org.immutables.value.Value;
 
-/**
- *
- */
 @SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
-@JsonDeserialize(builder = DeleteFieldNode.Builder.class)
-public interface IDeleteFieldNode extends BaseNode, WithField {
+@JsonDeserialize(builder = FetchNode.Builder.class)
+public interface IFetchNode extends BaseNode,
+    WithField, WithInPlaceCast, WithExecutorConnection {
 
 }
+

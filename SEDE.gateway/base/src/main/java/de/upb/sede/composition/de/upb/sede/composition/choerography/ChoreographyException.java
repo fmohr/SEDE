@@ -1,5 +1,9 @@
 package de.upb.sede.composition.de.upb.sede.composition.choerography;
 
+import de.upb.sede.exec.IExecutorHandle;
+
+import java.util.List;
+
 public class ChoreographyException extends RuntimeException {
 
     public ChoreographyException() {
@@ -32,6 +36,12 @@ public class ChoreographyException extends RuntimeException {
         return new ChoreographyException(
             "No executor among collected candidates is reachable. " +
             "To execute a choreography at least one executor must be reachable."
+        );
+    }
+
+    public static ChoreographyException initialServiceMultipleCandidates(String contextFieldName, List<IExecutorHandle> candidates) {
+        return new ChoreographyException(
+            String.format("The initial service '%s' has multiple candidates: %s", contextFieldName, candidates.toString())
         );
     }
 }

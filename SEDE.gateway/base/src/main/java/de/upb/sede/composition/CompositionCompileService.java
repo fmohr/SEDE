@@ -23,7 +23,7 @@ public class CompositionCompileService implements ICCService {
         SingleBlockCCImpl ccImpl = new SingleBlockCCImpl(lookupService);
         ccImpl.getCurrentTypeContext().clear();
         ccImpl.getCurrentTypeContext().addAll(ccRequest.getInitialContext());
-        CompositionCompilation compositionCompilation;
+        ICompositionCompilation compositionCompilation;
         try {
             compositionCompilation = ccImpl.compileCode(ccRequest.getComposition());
         } catch (TypeCheckException ex) {

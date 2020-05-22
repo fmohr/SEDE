@@ -87,8 +87,30 @@ public class InstructionIndexer implements Iterable<IIndexedInstruction>{
         throw new IllegalArgumentException("No instruction has index: "+ instIndex);
     }
 
+    /**
+     * Returns true iff there is an instruction with index1 that comes before any other instruction with index2 in the program order.
+     * @param index1 index that should come first
+     * @param index2 index that should come after
+     * @return true if first index is executed before the seconds one.
+     */
+    public boolean comesBefore(Long index1, Long index2) {
+        if (index1.equals(index2)) {
+            return false;
+        }
+        for (IIndexedInstruction inst : this) {
+            if(inst.getIndex().equals(index1)) {
+                return true;
+            }
+            if(inst.getIndex().equals(index2)) {
+                return false;
+            }
+        }
+        throw new IllegalArgumentException("No instruction with index " + index1 + " or " + index2);
+    }
+
     @Override
     public Iterator<IIndexedInstruction> iterator() {
         return indexedInstList.iterator();
     }
+
 }

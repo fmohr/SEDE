@@ -14,7 +14,7 @@ public interface IParseConstantNode extends BaseNode {
 
     ConstantType getConstantType();
 
-    static enum ConstantType {
+    enum ConstantType {
         NULL, String, Number, Bool;
     }
 

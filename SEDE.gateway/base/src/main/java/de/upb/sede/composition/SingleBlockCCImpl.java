@@ -4,6 +4,7 @@ import de.upb.sede.SDLLookupService;
 import de.upb.sede.composition.faa.FAAInput;
 import de.upb.sede.composition.faa.FAAOutput;
 import de.upb.sede.composition.faa.FieldAccessAnalyser;
+import de.upb.sede.composition.faa.FieldAccessCollector;
 import de.upb.sede.composition.pio.PIOInput;
 import de.upb.sede.composition.pio.PIOOutput;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
@@ -35,7 +36,7 @@ public class SingleBlockCCImpl {
         return currentTypeContext;
     }
 
-    public CompositionCompilation compileCode(String fmCompositionCode) {
+    public ICompositionCompilation compileCode(String fmCompositionCode) {
         List<IInstructionNode> instructionsCode;
         instructionsCode = FMCompositionParser.separateInstructions(fmCompositionCode).stream()
             .map(FMCompositionParser::parseInstruction)
@@ -43,7 +44,7 @@ public class SingleBlockCCImpl {
         return compileInstructionBlock(instructionsCode);
     }
 
-    public CompositionCompilation compileInstructionBlock(List<IInstructionNode> instructions) {
+    public ICompositionCompilation compileInstructionBlock(List<IInstructionNode> instructions) {
         /*
          * Index all the instructions:
          */
@@ -70,15 +71,23 @@ public class SingleBlockCCImpl {
         Map<Long, FAAOutput> faaOutput = fieldAccessAnalyser.getOutput().getFinalOutput();
 
         /*
+         * Create a collection of field accesses from their point of view.
+         */
+        FieldAccessCollector collector = new FieldAccessCollector();
+        collector.setInput(new FieldAccessCollector.FACInput(instIndexer, tcOutput, faaOutput));
+        collector.stepToEnd();
+        Map<String, IFieldAccessCollection> facOutput = collector.getOutput().getFieldAccessCollection();
+
+        /*
          * Reorder Instruction and create a program instruction order
          */
         PIOInput pioInput = new PIOInput(instIndexer);
         ProgramInstructionOrderer orderer = new ProgramInstructionOrderer();
         orderer.setInput(pioInput);
         orderer.stepToEnd();
-        PIOOutput pioOutput = orderer.getOutput();
+        List<Long> pioOutput = orderer.getOutput().getProgramOrder();
 
-        CompositionCompilation compose = compose(instIndexer, tcOutput, faaOutput, pioOutput);
+        ICompositionCompilation compose = compose(instIndexer, tcOutput, faaOutput, facOutput, pioOutput);
         setContextToOutput(instIndexer, tcOutput);
         return compose;
     }
@@ -91,33 +100,34 @@ public class SingleBlockCCImpl {
         currentTypeContext.addAll(fields);
     }
 
-    private CompositionCompilation compose(InstructionIndexer instructions,
-                                           Map<Long, TCOutput> tcOutput,
-                                           Map<Long, FAAOutput> faaOutput,
-                                           PIOOutput pioOutput) {
+    private ICompositionCompilation compose(InstructionIndexer instructions,
+                                            Map<Long, TCOutput> tcOutput,
+                                            Map<Long, FAAOutput> faaOutput,
+                                            Map<String, IFieldAccessCollection> facOutput,
+                                            List<Long> pioOutput) {
         CompositionCompilation.Builder ccBuilder = CompositionCompilation.builder();
         ccBuilder.qualifier("main");
         ccBuilder.instructions(instructions);
-        ccBuilder.programOrder(pioOutput.getProgramOrder());
+        ccBuilder.programOrder(pioOutput);
+        ccBuilder.fieldAccesses(facOutput.values());
         for(IIndexedInstruction ii : instructions) {
-            StaticInstAnalysis.Builder siaBuilder = StaticInstAnalysis.builder();
-            siaBuilder.instruction(ii);
             TCOutput instTC = tcOutput.get(ii.getIndex());
+            StaticInstAnalysis.Builder siaBuilder = StaticInstAnalysis.builder();
             List<IFieldType> fieldTypes = new ArrayList<>();
             instTC.getFieldTC().extractInto(fieldTypes);
+            siaBuilder.instruction(ii);
             siaBuilder.typeContext(fieldTypes);
 
             MethodResolution.Builder mrBuilder = MethodResolution.builder();
             mrBuilder.addAllParamTypeCoercions(instTC.getMethodInfo().getParameterTypeCoercions());
             mrBuilder.methodRef(instTC.getMethodInfo().getMethodRef());
-
-            // TODO set method resoltuion
             siaBuilder.methodResolution(mrBuilder.build());
+
             FAAOutput instAccesses = faaOutput.get(ii.getIndex());
-            siaBuilder.fieldAccesses(instAccesses.getFAList());
+            siaBuilder.instFieldAccesses(instAccesses.getFAList());
 
             StaticInstAnalysis sia = siaBuilder.build();
-            ccBuilder.putInstructionAnalysis(ii.getIndex(), sia);
+            ccBuilder.addStaticInstAnalysis(sia);
         }
         return ccBuilder.build();
     }

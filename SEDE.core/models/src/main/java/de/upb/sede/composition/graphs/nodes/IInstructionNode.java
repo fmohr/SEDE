@@ -1,7 +1,7 @@
 package de.upb.sede.composition.graphs.nodes;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.IFieldContainer;
+import de.upb.sede.WithField;
 import de.upb.sede.SEDEModelStyle;
 import org.immutables.value.Value;
 
@@ -12,7 +12,7 @@ import java.util.List;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = InstructionNode.Builder.class)
-public interface IInstructionNode extends BaseNode, IFieldContainer {
+public interface IInstructionNode extends BaseNode, WithField {
 
     String UNASSIGNED_VALUE = "UNDEFINED";
 

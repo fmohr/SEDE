@@ -114,7 +114,7 @@ public class DataFlowAnalysis_1 {
 //
 	private void addInputNodesFieldTypes(ICompositionCompilation cc) {
         Long firstIndex = cc.getProgramOrder().get(0);
-        cc.getInstructionAnalysis().get(firstIndex).getTypeContext();
+        cc.getTypeContext().get(firstIndex);
 		InputFields inputFields = resolveInfo.getInputFields();
 		for (String inputFieldname : inputFields.iterateInputs()) {
 			AcceptDataNode acceptNode = clientAcceptInput(inputFieldname);

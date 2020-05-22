@@ -9,11 +9,8 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = SendGraphNode.Builder.class)
-public interface ISendGraphNode extends BaseNode {
+public interface ISendGraphNode extends BaseNode, WithExecutorConnection {
 
     String getGraph();
-
-    IExecutorContactInfo getContactInfo();
-
 
 }

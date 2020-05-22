@@ -2,6 +2,7 @@ package de.upb.sede.composition.graphs.nodes;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.SEDEModelStyle;
+import de.upb.sede.WithField;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
@@ -10,18 +11,19 @@ import javax.annotation.Nullable;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = ServiceInstanceStorageNode.Builder.class)
-public interface IServiceInstanceStorageNode extends BaseNode {
+public interface IServiceInstanceStorageNode extends BaseNode,
+    WithField {
 
     @Nullable
     String getInstanceId();
 
-    String getServiceInstanceFieldName();
+    @Value.Lazy
+    default String getServiceInstanceFieldName() {
+        return getFieldName();
+    }
 
     String getServiceClasspath();
 
-    @Value.Derived
-    default boolean isLoadInstruction() {
-        String instanceId = getInstanceId();
-        return instanceId != null && !instanceId.isEmpty();
-    }
+    boolean isLoadInstruction();
+
 }

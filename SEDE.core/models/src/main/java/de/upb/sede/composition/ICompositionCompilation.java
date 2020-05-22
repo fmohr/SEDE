@@ -24,7 +24,9 @@ public interface  ICompositionCompilation extends IQualifiable {
 
     List<Long> getProgramOrder();
 
-    Map<Long, IStaticInstAnalysis> getInstructionAnalysis();
+    List<IFieldAccessCollection> getFieldAccesses();
+
+    List<IStaticInstAnalysis> getStaticInstAnalysis();
 
 }
 

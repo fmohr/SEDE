@@ -4,7 +4,7 @@ package de.upb.sede;
  * This interface is extended by other model Interfaces that contain or refer to a fieldname.
  *
  */
-public interface IFieldContainer {
+public interface WithField {
 
     // TODO create a specific fieldreference type instead of referencing to a name.
     /**

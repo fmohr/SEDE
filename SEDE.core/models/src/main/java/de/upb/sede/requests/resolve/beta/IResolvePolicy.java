@@ -12,20 +12,20 @@ import java.util.List;
 @JsonDeserialize(builder = ResolvePolicy.Builder.class)
 public interface IResolvePolicy {
 
-    ReturnPolicy getReturnPolicy();
+    FieldSelection getReturnPolicy();
 
-    ReturnPolicy getServicePolicy();
+    FieldSelection getServicePolicy();
 
     List<String> getReturnFieldnames();
 
     List<String> getPersistentServices();
 
-    @Value.Derived
+    @Value.Default
     default boolean isDotGraphRequested() {
         return false;
     }
 
-    enum ReturnPolicy {
+    enum FieldSelection {
          ALL, NONE, LISTED
     }
 }

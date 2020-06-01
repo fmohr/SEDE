@@ -31,7 +31,14 @@ public interface ITypeCoercion {
 
     @Value.Lazy
     public default boolean hasTypeConversion() {
-        return getSemanticType() != null;
+        return getSemanticType() != null && !getSourceType().equals(getResultType());
+    }
+
+    @Value.Lazy
+    @Deprecated
+    public default boolean resultsInSemanticType() {
+        // TODO Find a better way to express no to semantic conversion than to abuse the typeCoercion class
+        return getSemanticType() != null && getResultType().equals(getSemanticType());
     }
 
 }

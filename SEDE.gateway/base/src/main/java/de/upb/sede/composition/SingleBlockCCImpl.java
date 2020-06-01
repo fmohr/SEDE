@@ -1,12 +1,11 @@
 package de.upb.sede.composition;
 
 import de.upb.sede.SDLLookupService;
-import de.upb.sede.composition.faa.FAAInput;
-import de.upb.sede.composition.faa.FAAOutput;
-import de.upb.sede.composition.faa.FieldAccessAnalyser;
-import de.upb.sede.composition.faa.FieldAccessCollector;
+import de.upb.sede.composition.faa.IFACInput;
+import de.upb.sede.composition.faa.IFACOutput;
+import de.upb.sede.composition.faa.InstructionFieldAccessCollector;
+import de.upb.sede.composition.faa.FieldAnalysisCollector;
 import de.upb.sede.composition.pio.PIOInput;
-import de.upb.sede.composition.pio.PIOOutput;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.composition.pio.ProgramInstructionOrderer;
 import de.upb.sede.composition.typing.*;
@@ -32,7 +31,12 @@ public class SingleBlockCCImpl {
         this.SDLLookupService = SDLLookupService;
     }
 
-    public List<IFieldType> getCurrentTypeContext() {
+    public SingleBlockCCImpl(SDLLookupService SDLLookupService, List<IFieldType> initialFields) {
+        this.SDLLookupService = SDLLookupService;
+        this.currentTypeContext.addAll(initialFields);
+    }
+
+    private List<IFieldType> getCurrentTypeContext() {
         return currentTypeContext;
     }
 
@@ -63,20 +67,20 @@ public class SingleBlockCCImpl {
         /*
          * Analyse field accesses
          */
-        FAAInput faaInput = new FAAInput(tcOutput, instIndexer);
+        IFACInput IFACInput = new IFACInput(tcOutput, instIndexer);
 
-        FieldAccessAnalyser fieldAccessAnalyser = new FieldAccessAnalyser();
-        fieldAccessAnalyser.setInput(faaInput);
+        InstructionFieldAccessCollector fieldAccessAnalyser = new InstructionFieldAccessCollector();
+        fieldAccessAnalyser.setInput(IFACInput);
         fieldAccessAnalyser.stepToEnd();
-        Map<Long, FAAOutput> faaOutput = fieldAccessAnalyser.getOutput().getFinalOutput();
+        Map<Long, IFACOutput> faaOutput = fieldAccessAnalyser.getOutput().getFinalOutput();
 
         /*
          * Create a collection of field accesses from their point of view.
          */
-        FieldAccessCollector collector = new FieldAccessCollector();
-        collector.setInput(new FieldAccessCollector.FACInput(instIndexer, tcOutput, faaOutput));
+        FieldAnalysisCollector collector = new FieldAnalysisCollector();
+        collector.setInput(new FieldAnalysisCollector.FACInput(instIndexer, currentTypeContext, tcOutput, faaOutput));
         collector.stepToEnd();
-        Map<String, IFieldAccessCollection> facOutput = collector.getOutput().getFieldAccessCollection();
+        Map<String, IFieldAnalysis> facOutput = collector.getOutput().getFieldAnalysis();
 
         /*
          * Reorder Instruction and create a program instruction order
@@ -102,8 +106,8 @@ public class SingleBlockCCImpl {
 
     private ICompositionCompilation compose(InstructionIndexer instructions,
                                             Map<Long, TCOutput> tcOutput,
-                                            Map<Long, FAAOutput> faaOutput,
-                                            Map<String, IFieldAccessCollection> facOutput,
+                                            Map<Long, IFACOutput> faaOutput,
+                                            Map<String, IFieldAnalysis> facOutput,
                                             List<Long> pioOutput) {
         CompositionCompilation.Builder ccBuilder = CompositionCompilation.builder();
         ccBuilder.qualifier("main");
@@ -123,7 +127,7 @@ public class SingleBlockCCImpl {
             mrBuilder.methodRef(instTC.getMethodInfo().getMethodRef());
             siaBuilder.methodResolution(mrBuilder.build());
 
-            FAAOutput instAccesses = faaOutput.get(ii.getIndex());
+            IFACOutput instAccesses = faaOutput.get(ii.getIndex());
             siaBuilder.instFieldAccesses(instAccesses.getFAList());
 
             StaticInstAnalysis sia = siaBuilder.build();

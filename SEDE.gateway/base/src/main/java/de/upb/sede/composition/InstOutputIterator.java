@@ -1,6 +1,7 @@
 package de.upb.sede.composition;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -8,13 +9,13 @@ public class InstOutputIterator<T> implements Iterator<T> {
 
     private final Map<Long, T> outputMap;
 
-    private final Function<T, T> nextOutputGenerator;
+    private Function<T, T> nextOutputGenerator;
 
     private final List<Long> sortedIndices = new ArrayList<>();
 
     private final InstructionIndexer indexer;
 
-    private final Iterator<IIndexedInstruction> iterator;
+    private Iterator<IIndexedInstruction> iterator;
 
     private Long currentIndex = null;
 
@@ -34,12 +35,25 @@ public class InstOutputIterator<T> implements Iterator<T> {
         this.indexer = indexer;
     }
 
+    public void repeatFromBeginning() {
+        iterator = indexer.iterator();
+
+        final Function<T, T> oldGen = nextOutputGenerator;
+        nextOutputGenerator = lastOutput -> {
+            if(outputMap.containsKey(currentInstruction.getIndex())) {
+                return outputMap.get(currentInstruction.getIndex());
+            } else {
+                return oldGen.apply(lastOutput);
+            }
+        };
+
+    }
+
     public T next() {
         if(iterator.hasNext()) {
-            IIndexedInstruction currentInst = iterator.next();
+            currentInstruction = iterator.next();
             T newOutput = nextOutputGenerator.apply(outputMap.get(currentIndex));
-            currentIndex = currentInst.getIndex();
-            currentInstruction = currentInst;
+            currentIndex = currentInstruction.getIndex();
             sortedIndices.add(currentIndex);
             outputMap.put(currentIndex, newOutput);
             return newOutput;

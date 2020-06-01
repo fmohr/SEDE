@@ -60,7 +60,7 @@ public class InstructionIndexer implements Iterable<IIndexedInstruction>{
         int startingIndex = getPositionOfInst(instIndex).orElseThrow(
             () -> new IllegalArgumentException("No instruction has index: " + instIndex)
         );
-        return new Iterator<>() {
+        return new Iterator<IIndexedInstruction>() {
             int index = startingIndex;
 
             @Override
@@ -113,4 +113,15 @@ public class InstructionIndexer implements Iterable<IIndexedInstruction>{
         return indexedInstList.iterator();
     }
 
+    public String recreateComposition() {
+        StringBuilder builder = new StringBuilder();
+        for (IIndexedInstruction inst : this) {
+            builder.append("\t")
+                .append(inst.getIndex())
+                .append(":")
+                .append(inst.getInstruction().getFMInstruction())
+                .append("\n");
+        }
+        return builder.toString();
+    }
 }

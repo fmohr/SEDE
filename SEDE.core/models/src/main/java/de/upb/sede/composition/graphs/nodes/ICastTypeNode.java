@@ -17,6 +17,4 @@ public interface ICastTypeNode extends BaseNode, WithField {
 
     boolean castToSemantic();
 
-    String getCasterClasspath();
-
 }

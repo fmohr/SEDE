@@ -39,7 +39,7 @@ class Shared {
     trait AuxDomAware extends DomainExtension {
         void aux(@DelegatesTo(AuxDomain) Closure describer) {
             if(!(getDom().model instanceof DynamicAuxAware)) {
-                throw new RuntimeException("Bug: model is instance of ${getDom().model.class} but not of DispatchAware.")
+                throw new RuntimeException("Bug: model is instance of ${getDom().model.class} but not of DynamicAuxAware.")
             }
             def disAware = getDom().model as DynamicAuxAware
             def dynRecord

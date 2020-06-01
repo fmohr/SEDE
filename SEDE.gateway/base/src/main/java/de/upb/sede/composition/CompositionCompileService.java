@@ -20,9 +20,8 @@ public class CompositionCompileService implements ICCService {
 
     @Override
     public ICompositionCompilation compileComposition(ICCRequest ccRequest) throws TypeCheckException, FieldAccessAnalysisException {
-        SingleBlockCCImpl ccImpl = new SingleBlockCCImpl(lookupService);
-        ccImpl.getCurrentTypeContext().clear();
-        ccImpl.getCurrentTypeContext().addAll(ccRequest.getInitialContext());
+        SingleBlockCCImpl ccImpl = new SingleBlockCCImpl(lookupService,
+            ccRequest.getInitialContext());
         ICompositionCompilation compositionCompilation;
         try {
             compositionCompilation = ccImpl.compileCode(ccRequest.getComposition());

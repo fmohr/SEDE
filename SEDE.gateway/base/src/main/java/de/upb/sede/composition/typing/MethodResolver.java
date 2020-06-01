@@ -8,11 +8,11 @@ import de.upb.sede.composition.InstWiseCompileStep;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.exec.*;
 import de.upb.sede.util.SDLUtil;
-import de.upb.sede.util.Streams;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
+
+import static de.upb.sede.util.SDLUtil.matchSignature;
 
 public class MethodResolver extends InstWiseCompileStep<TCInput, TCOutput> {
 
@@ -25,7 +25,6 @@ public class MethodResolver extends InstWiseCompileStep<TCInput, TCOutput> {
         IInstructionNode inst = getCurrentInstruction().getInstruction();
         TCOutput.ContextInfo context = getInstOutput().getContext();
         TCOutput.MethodInfo methodInfo = getInstOutput().getMethodInfo();
-        SDLLookupService lookupService = getInput().getLookupService();
 
         /*
          * Resolve the method
@@ -108,17 +107,6 @@ public class MethodResolver extends InstWiseCompileStep<TCInput, TCOutput> {
     }
 
 
-    private Optional<IMethodDesc> matchSignature(List<IMethodDesc> methodList, IInstructionNode inst) {
-        boolean instructionIsAssignment = inst.getFieldName() != null;
-        Stream<IMethodDesc> matchingSignatures = methodList.stream()
-            // method input must match in size:
-            .filter(signature -> signature.getInputs().size() == inst.getParameterFields().size())
-            // method must have at least one output if instruction is an assingment to a field:
-            .filter(signature -> !instructionIsAssignment || !signature.getOutputs().isEmpty());
-        // Only a single method has to match:
-        Optional<IMethodDesc> matchingSignature = Streams.pickOneOrNone(matchingSignatures);
 
-        return matchingSignature;
-    }
 
 }

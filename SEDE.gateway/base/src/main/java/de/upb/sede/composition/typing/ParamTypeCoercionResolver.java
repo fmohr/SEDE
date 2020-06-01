@@ -2,11 +2,13 @@ package de.upb.sede.composition.typing;
 
 import de.upb.sede.composition.*;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
+import de.upb.sede.composition.graphs.types.IDataValueType;
 import de.upb.sede.composition.graphs.types.TypeClass;
 import de.upb.sede.core.PrimitiveType;
 import de.upb.sede.exec.IMethodDesc;
 import de.upb.sede.types.IDataTypeDesc;
 import de.upb.sede.types.IDataTypeRef;
+import de.upb.sede.util.TypeUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,13 +59,18 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
                     throw TypeCheckException.undefinedField(instParam);
                 }
                 typeCoercion = castValue(paramType.getTypeQualifier(), expectedInputType);
+                if(typeCoercion.hasTypeConversion()) {
+                    TypeClass resultingTypeClass = TypeUtil.getTypeClassOf(getInput().getLookupService(), instParam);
+                    if(!(resultingTypeClass instanceof IDataValueType)) {
+                        throw new RuntimeException("BUG: the new type class was not data value");
+                    }
+                    fieldTC.setFieldType(instParam, resultingTypeClass);
+                }
             }
             parameterTypeCoercions.add(typeCoercion);
         }
         output.getMethodInfo().setParameterTypeCoercions(parameterTypeCoercions);
     }
-
-
 
     private ITypeCoercion constantParam(String constant, String targetPrimType) {
         /*
@@ -88,7 +95,7 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
             /*
              * No type coercion is needed:
              */
-            return sameType(sourceType);
+            return sameType(sourceType, sourceTypeDescOpt.get().getSemanticType());
         }
         IDataTypeRef targetTypeRef = IDataTypeRef.of(targetType);
         Optional<IDataTypeDesc> targetTypeDescOpt = getInput().getLookupService().lookup(targetTypeRef);
@@ -96,7 +103,7 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
             throw TypeCheckException.unknownType(targetType, "data type");
         }
         String sourceSemType = sourceTypeDescOpt.get().getSemanticType();
-        String targetSemType = sourceTypeDescOpt.get().getSemanticType();
+        String targetSemType = targetTypeDescOpt.get().getSemanticType();
         if(!sourceSemType.equals(targetSemType)) {
             throw TypeCheckException.nonMatchingSemanticType(sourceType, sourceSemType, targetType, targetSemType);
         }
@@ -115,13 +122,13 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
         return tc;
     }
 
-    static ITypeCoercion sameType(String type) {
+    static ITypeCoercion sameType(String sourceType, String semanticType) {
         ITypeCoercion tc = de.upb.sede.composition.TypeCoercion.builder()
-            .sourceType(type)
-            .resultType(type)
+            .sourceType(sourceType)
+            .resultType(sourceType)
+            .semanticType(semanticType)
             .build();
         assert tc.getConstant() == null;
-        assert tc.getSemanticType() == null;
         return tc;
     }
 

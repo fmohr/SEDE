@@ -11,7 +11,7 @@ import java.util.List;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = FieldAccess.Builder.class)
-public interface IFieldAccess extends Comparable<IFieldAccess> {
+public interface IFieldAccess {
 
     String getField();
 
@@ -22,12 +22,23 @@ public interface IFieldAccess extends Comparable<IFieldAccess> {
     enum AccessType {
         READ, WRITE, ASSIGN;
 
+        public boolean isAssignment() {
+            return this == ASSIGN;
+        }
+
+        public boolean isWrite() {
+            return this == WRITE;
+        }
+
         public boolean isAssignOrWrite() {
             return this == WRITE || this == ASSIGN;
         }
+
+        public boolean isRead() {
+            return this == READ;
+        }
     }
 
-    @Override
     default int compareTo(IFieldAccess a2) {
         int order = Long.compare(getIndex(), a2.getIndex());
         if(order != 0) {

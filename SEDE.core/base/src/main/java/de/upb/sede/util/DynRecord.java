@@ -17,6 +17,7 @@ import org.json.simple.parser.JSONParser;
 import java.io.IOException;
 import java.util.*;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 @JsonDeserialize(using = DynRecord.Deserializer.class)
 @JsonSerialize(using = DynRecord.Serializer.class)
 public class DynRecord extends DynTypeObject implements RecordForm {
@@ -71,7 +72,7 @@ public class DynRecord extends DynTypeObject implements RecordForm {
     }
 
     @Override
-    protected Map getData() {
+    public Map getData() {
         return (Map) super.getData();
     }
 

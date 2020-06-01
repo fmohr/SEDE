@@ -1,12 +1,15 @@
 package de.upb.sede.util;
 
 import de.upb.sede.SDLLookupService;
+import de.upb.sede.composition.graphs.nodes.IInstructionNode;
+import de.upb.sede.exec.IMethodDesc;
 import de.upb.sede.exec.IServiceDesc;
 import de.upb.sede.IServiceRef;
 import de.upb.sede.exec.auxiliary.DynamicAuxAware;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class SDLUtil {
 
@@ -92,13 +95,31 @@ public class SDLUtil {
         return output;
     }
 
+    public static Map gatherAux(DynamicAuxAware... auxAwares) {
+        return gatherAux(Arrays.asList(auxAwares));
+    }
+
     public static Map gatherAux(List<DynamicAuxAware> auxStack) {
         Map auxData = new HashMap();
         for (DynamicAuxAware dynamicAuxAware : auxStack) {
             DynRecord aux = dynamicAuxAware.getDynAux();
-            auxData.putAll(aux.cast(Map.class));
+            if(aux!=null)
+                auxData.putAll(aux.getData());
         }
         return auxData;
+    }
+
+    public static Optional<IMethodDesc> matchSignature(List<IMethodDesc> methodList, IInstructionNode inst) {
+        boolean instructionIsAssignment = inst.getFieldName() != null;
+        Stream<IMethodDesc> matchingSignatures = methodList.stream()
+            // method input must match in size:
+            .filter(signature -> signature.getInputs().size() == inst.getParameterFields().size())
+            // method must have at least one output if instruction is an assingment to a field:
+            .filter(signature -> !instructionIsAssignment || !signature.getOutputs().isEmpty());
+        // Only a single method has to match:
+        Optional<IMethodDesc> matchingSignature = Streams.pickOneOrNone(matchingSignatures);
+
+        return matchingSignature;
     }
 
 

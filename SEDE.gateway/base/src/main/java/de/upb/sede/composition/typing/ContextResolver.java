@@ -39,8 +39,8 @@ public class ContextResolver extends InstWiseCompileStep<TCInput, TCOutput> {
             context.setStatic(false);
             context.setServiceQualifier(getServiceType(fieldType).getQualifier());
         } else {
-            context.setServiceQualifier(inst.getContext());
             context.setStatic(true);
+            context.setServiceQualifier(inst.getContext());
         }
         SDLLookupService lookupService = getInput().getLookupService();
         String serviceQualifier = context.getServiceQualifier();

@@ -61,7 +61,7 @@ public class TypeCheckException extends RuntimeException {
 
 
 
-    static TypeCheckException unknownType(String qualifier, String kind) {
+    public static TypeCheckException unknownType(String qualifier, String kind) {
         String errText = String.format("Unknown %s: `%s`", kind, qualifier);
         return new TypeCheckException(errText);
     }
@@ -71,7 +71,7 @@ public class TypeCheckException extends RuntimeException {
         return new TypeCheckException(errText);
     }
 
-    static TypeCheckException unknownType(String fieldName, TypeClass fieldType) {
+    public static TypeCheckException unknownType(String fieldName, TypeClass fieldType) {
         String errText = String.format("Field %s Unknown type `%s`", fieldName, fieldType.getTypeQualifier());
         return new TypeCheckException(errText);
     }
@@ -107,7 +107,7 @@ public class TypeCheckException extends RuntimeException {
         return new TypeCheckException(errText);
     }
 
-    static TypeCheckException methodReturnsNullClass() {
+    public static TypeCheckException methodReturnsNullClass() {
         String errText = "Returns null class";
         return new TypeCheckException(errText);
     }

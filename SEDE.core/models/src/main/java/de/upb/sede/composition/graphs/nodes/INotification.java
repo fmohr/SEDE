@@ -11,7 +11,10 @@ import org.immutables.value.Value;
 @JsonDeserialize(builder = Notification.Builder.class)
 public interface INotification extends IQualifiable {
 
-    String getDescription();
+    @Value.Default
+    default String getDescription() {
+        return "Notification " + getQualifier();
+    }
 
 }
 

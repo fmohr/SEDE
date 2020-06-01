@@ -14,9 +14,6 @@ import javax.annotation.Nullable;
 public interface IServiceInstanceStorageNode extends BaseNode,
     WithField {
 
-    @Nullable
-    String getInstanceId();
-
     @Value.Lazy
     default String getServiceInstanceFieldName() {
         return getFieldName();

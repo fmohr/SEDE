@@ -415,7 +415,7 @@ public class Streams {
     }
 
     /**
-     * This utility function will reduce the given stream to an optional iff the stream contains exactly one element.
+     * This utility function will reduce the given stream to a non-empty optional iff the stream contains exactly one element.
      *
      * This function has a linear runtime.
      *

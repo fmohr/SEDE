@@ -57,7 +57,7 @@ public class FieldTypeRecorder extends InstWiseCompileStep<TCInput, TCOutput> {
         String returnType = methodOutput.getType();
         TypeClass fieldType;
         try {
-            fieldType = getTypeClassOf(returnType);
+            fieldType = getTypeClassOf(getInput().getLookupService(), returnType);
         } catch (TypeCheckException e) {
             throw new TypeCheckException(
                 String.format("Error classifying return type of method %s::%s",
@@ -68,7 +68,7 @@ public class FieldTypeRecorder extends InstWiseCompileStep<TCInput, TCOutput> {
     }
 
 
-    private TypeClass getTypeClassOf(String returnType) {
+    private static TypeClass getTypeClassOf(SDLLookupService lookupService, String returnType) {
         /*
          * Assume type is a primitive qualifier, i.e. "Number", "String", "Bool"
          */
@@ -87,7 +87,6 @@ public class FieldTypeRecorder extends InstWiseCompileStep<TCInput, TCOutput> {
         /*
          * Assume type is a service type qualifier.
          */
-        SDLLookupService lookupService = getInput().getLookupService();
         IServiceRef serviceRef = IServiceRef.of(null, returnType);
         Optional<IServiceDesc> serviceDescOpt = lookupService.lookup(serviceRef);
         if(serviceDescOpt.isPresent()) {

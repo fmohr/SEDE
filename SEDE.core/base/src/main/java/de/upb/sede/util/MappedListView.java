@@ -35,13 +35,17 @@ public class MappedListView<K, V, U> extends AbstractMap<K, V> {
         return cache.computeIfAbsent((K) key, super::get);
     }
 
+    public void flushCache() {
+        cache.clear();
+    }
+
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return new AbstractSet<>() {
+        return new AbstractSet<Entry<K, V>>() {
             @Override
             public Iterator<Entry<K, V>> iterator() {
                 final Iterator<U> listIterator = innerList.iterator();
-                return new Iterator<>() {
+                return new Iterator<Entry<K, V>>() {
 
                     @Override
                     public boolean hasNext() {

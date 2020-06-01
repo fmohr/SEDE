@@ -24,7 +24,7 @@ public abstract class BlockWiseCompileStep<I, O> implements CompileStep<I, O> {
         this.input = Objects.requireNonNull(input, "Input is null");
     }
 
-    protected  final I getInput() {
+    protected final I getInput() {
         return input;
     }
 

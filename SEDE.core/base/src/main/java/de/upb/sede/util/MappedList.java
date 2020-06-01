@@ -70,17 +70,21 @@ public class MappedList<K, V> extends AbstractMap<K, V> {
         return value;
     }
 
+    public V put(V value) {
+        return this.put(keyExtractor.apply(value), value);
+    }
+
     void clearCache() {
         cache.clear();
     }
 
     @Override
     public Set<Entry<K, V>> entrySet() {
-        return new AbstractSet<>() {
+        return new AbstractSet<Entry<K, V>>() {
             @Override
             public Iterator<Entry<K, V>> iterator() {
                 final Iterator<V> listIterator = innerList.iterator();
-                return new Iterator<>() {
+                return new Iterator<Entry<K, V>>() {
 
                     @Override
                     public boolean hasNext() {

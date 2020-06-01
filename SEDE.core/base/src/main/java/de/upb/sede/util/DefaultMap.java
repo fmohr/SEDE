@@ -7,10 +7,6 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class DefaultMap<K, V> {
-	/**
-	 *
-	 */
-	private static final long serialVersionUID = 1L;
 
 	private transient Supplier<V> defaultValueSupplier;
 

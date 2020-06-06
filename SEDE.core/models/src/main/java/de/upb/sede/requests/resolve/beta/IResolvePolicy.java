@@ -12,9 +12,15 @@ import java.util.List;
 @JsonDeserialize(builder = ResolvePolicy.Builder.class)
 public interface IResolvePolicy {
 
-    FieldSelection getReturnPolicy();
+    @Value.Default
+    default FieldSelection getReturnPolicy(){
+        return FieldSelection.ALL;
+    }
 
-    FieldSelection getServicePolicy();
+    @Value.Default
+    default FieldSelection getServicePolicy() {
+        return FieldSelection.ALL;
+    }
 
     List<String> getReturnFieldnames();
 

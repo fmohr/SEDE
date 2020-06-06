@@ -124,7 +124,7 @@ public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public IExecutorHandle supply(String service) {
+    public List<IExecutorHandle> supply(String service) {
         /*
          * TODO recheck if there are any cache miss problems here.
          *  Are the caches cleaned up?
@@ -140,11 +140,11 @@ public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
                     .getServices().contains(service))
             .collect(Collectors.toList());
 
-        return executorArbiter.apply(executorHandles)
+        return Collections.singletonList(executorArbiter.apply(executorHandles)
             .orElseThrow(()
                 -> new UnsuppliedExecutorException("Service " + service
                 + "  wasn't supplied by a demand request to "
-                + supplier.getEDDDisplayName()));
+                + supplier.getEDDDisplayName())));
     }
 
     @Override

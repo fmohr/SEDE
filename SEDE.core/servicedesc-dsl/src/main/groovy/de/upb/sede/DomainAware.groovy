@@ -1,6 +1,6 @@
 package de.upb.sede
 
-
+import de.upb.sede.exec.MutableServiceDesc
 import groovy.transform.PackageScope
 
 abstract class DomainAware<M, T> implements GroovyObject{

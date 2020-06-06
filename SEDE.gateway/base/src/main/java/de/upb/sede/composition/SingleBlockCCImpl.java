@@ -52,7 +52,8 @@ public class SingleBlockCCImpl {
         /*
          * Index all the instructions:
          */
-        InstructionIndexer instIndexer = new InstructionIndexer(instructions);
+        IndexFactory indexFactory = new IndexFactory();
+        InstructionIndexer instIndexer = new InstructionIndexer(indexFactory, instructions);
         instIndexer.assertNotEmpty();
 
         /*
@@ -61,7 +62,7 @@ public class SingleBlockCCImpl {
         TypeChecker typeChecker = new TypeChecker();
         TCInput tcInput = new TCInput(SDLLookupService, instIndexer, currentTypeContext);
         typeChecker.setInput(tcInput);
-        typeChecker.stepToEnd();
+        typeChecker.run();
         Map<Long, TCOutput> tcOutput = typeChecker.getOutput().getFinalOutput();
 
         /*
@@ -71,7 +72,7 @@ public class SingleBlockCCImpl {
 
         InstructionFieldAccessCollector fieldAccessAnalyser = new InstructionFieldAccessCollector();
         fieldAccessAnalyser.setInput(IFACInput);
-        fieldAccessAnalyser.stepToEnd();
+        fieldAccessAnalyser.run();
         Map<Long, IFACOutput> faaOutput = fieldAccessAnalyser.getOutput().getFinalOutput();
 
         /*
@@ -79,7 +80,7 @@ public class SingleBlockCCImpl {
          */
         FieldAnalysisCollector collector = new FieldAnalysisCollector();
         collector.setInput(new FieldAnalysisCollector.FACInput(instIndexer, currentTypeContext, tcOutput, faaOutput));
-        collector.stepToEnd();
+        collector.run();
         Map<String, IFieldAnalysis> facOutput = collector.getOutput().getFieldAnalysis();
 
         /*
@@ -88,7 +89,7 @@ public class SingleBlockCCImpl {
         PIOInput pioInput = new PIOInput(instIndexer);
         ProgramInstructionOrderer orderer = new ProgramInstructionOrderer();
         orderer.setInput(pioInput);
-        orderer.stepToEnd();
+        orderer.run();
         List<Long> pioOutput = orderer.getOutput().getProgramOrder();
 
         ICompositionCompilation compose = compose(instIndexer, tcOutput, faaOutput, facOutput, pioOutput);
@@ -113,7 +114,7 @@ public class SingleBlockCCImpl {
         ccBuilder.qualifier("main");
         ccBuilder.instructions(instructions);
         ccBuilder.programOrder(pioOutput);
-        ccBuilder.fieldAccesses(facOutput.values());
+        ccBuilder.fields(facOutput.values());
         for(IIndexedInstruction ii : instructions) {
             TCOutput instTC = tcOutput.get(ii.getIndex());
             StaticInstAnalysis.Builder siaBuilder = StaticInstAnalysis.builder();

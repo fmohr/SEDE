@@ -1,12 +1,13 @@
 package de.upb.sede.composition.choerography.emulation;
 
 import de.upb.sede.composition.BlockWiseCompileStep;
+import de.upb.sede.composition.choerography.emulation.executors.EmExecutor;
+import de.upb.sede.composition.choerography.emulation.executors.ExecutionParticipants;
 import de.upb.sede.composition.choerography.emulation.executors.ExecutorFactory;
 import de.upb.sede.exec.IExecutorHandle;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ExecutorBootstrapper
     extends BlockWiseCompileStep
@@ -24,7 +25,7 @@ public class ExecutorBootstrapper
     }
     private void bootstrapExecutor() {
         for (IExecutorHandle participant : getInput().participants) {
-            Emulation.Executor executor = getInput().executorFactory.createExecutor(participant);
+            EmExecutor executor = getInput().executorFactory.createExecutor(participant);
             getOutput().put(participant, executor);
         }
     }
@@ -44,21 +45,18 @@ public class ExecutorBootstrapper
         }
     }
 
-    static class EBOutput {
+    public static class EBOutput {
 
-        private final Map<String, IExecutorHandle> handles = new HashMap<>();
-
-        private final Map<String, Emulation.Executor> executors = new HashMap<>();
+        private final List<EmExecutor> executors = new ArrayList<>();
 
         private IExecutorHandle clientExecutor;
 
-        private void put(IExecutorHandle handle, Emulation.Executor executor) {
-            handles.put(handle.getQualifier(), handle);
-            executors.put(handle.getQualifier(), executor);
+        private void put(IExecutorHandle handle, EmExecutor executor) {
+            executors.add(executor);
         }
 
-        public Emulation.ExecutorRegistry getFinalOutput() {
-            return new Emulation.ExecutorRegistry(executors, handles, clientExecutor);
+        public ExecutionParticipants getFinalOutput() {
+            return new ExecutionParticipants(executors, clientExecutor);
         }
 
     }

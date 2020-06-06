@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -17,7 +18,7 @@ public class RoundRobinScheduler {
 	private final static Logger logger = LoggerFactory.getLogger(RoundRobinScheduler.class);
 
 	private Map<String, ExpiringCache<ExecutorAccessMonitor>> executorAccess =
-			new HashMap<>();
+			new ConcurrentHashMap<>();
 
 //	public synchronized void updateExecutors(Collection<ExecutorHandle> updatedList) {
 //		Iterator<String> iterator = executorAccess.keySet().iterator();
@@ -52,24 +53,30 @@ public class RoundRobinScheduler {
 //		}
 //	}
 
-	public synchronized String scheduleNextAmong(List<ExecutorHandle> candidates) {
+    private ExpiringCache<ExecutorAccessMonitor> createNewAccessMonitor(String id) {
+        ExecutorAccessMonitor monitor = new ExecutorAccessMonitor(id);
+        ExpiringCache<ExecutorAccessMonitor> monitorCache = new ExpiringCache<ExecutorAccessMonitor>(10, TimeUnit.MINUTES, monitor);
+        return monitorCache;
+    }
+
+    private ExpiringCache<ExecutorAccessMonitor> getOrCreateAccessMonitor(String id, ExpiringCache<ExecutorAccessMonitor> prevAM) {
+        if(prevAM == null || prevAM.isExpired()) {
+            return createNewAccessMonitor(id);
+        }
+        prevAM.prolong();
+        return prevAM;
+    }
+
+	public synchronized String scheduleNextAmong(List<String> candidates) {
 		if(candidates.isEmpty()) {
 			throw new IllegalArgumentException("Cannot decide between 0 candidates!");
 		}
 
 		ExecutorAccessMonitor highestPriority = null;
-		for(ExecutorHandle handle : candidates) {
-			ExecutorAccessMonitor monitor;
-            ExpiringCache<ExecutorAccessMonitor> monitorCache = executorAccess.get(handle.getContactInfo().getQualifier());
-
-            if(monitorCache == null || monitorCache.isExpired()) {
-                monitor = new ExecutorAccessMonitor(handle.getContactInfo().getQualifier());
-                monitorCache = new ExpiringCache<ExecutorAccessMonitor>(10, TimeUnit.MINUTES, monitor);
-                executorAccess.put(handle.getContactInfo().getQualifier(), monitorCache);
-            } else {
-                monitorCache.prolong();
-                monitor = monitorCache.forceAccess();
-            }
+		for(String id : candidates) {
+            ExpiringCache<ExecutorAccessMonitor> monitorCache = executorAccess
+                .compute(id, this::getOrCreateAccessMonitor);
+            ExecutorAccessMonitor monitor = monitorCache.get();
 
             if (highestPriority == null) {
 				highestPriority = monitor;
@@ -85,8 +92,7 @@ public class RoundRobinScheduler {
 			throw new IllegalArgumentException(String.format("None of the executor candidates are found in the access map of the round robin scheduler." +
 					"\nCandidates: %s" +
 					"\n%s",
-					candidates.stream()
-                        .map(handle -> handle.getContactInfo().getQualifier()).collect(Collectors.joining(", ")),
+                    String.join(", ", candidates),
 					this.toString()));
 		}
 	}

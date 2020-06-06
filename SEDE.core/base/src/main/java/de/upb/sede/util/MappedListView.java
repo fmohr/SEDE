@@ -7,26 +7,26 @@ import java.util.stream.Collectors;
 
 public class MappedListView<K, V, U> extends AbstractMap<K, V> {
 
-    private final List<U> innerList;
+    private final Collection<U> innerList;
 
     private final Function<U, K> keyExtractor;
     private final Function<U, V> valueExtractor;
 
     private final Map<K, V> cache = new HashMap<>();
 
-    public MappedListView(List<U> innerList, Function<U, K> keyExtractor) {
+    public MappedListView(Collection<U> innerList, Function<U, K> keyExtractor) {
         this.innerList = innerList;
         this.keyExtractor = keyExtractor;
         this.valueExtractor = u -> (V)u;
     }
 
-    public MappedListView(List<U> innerList, Function<U, K> keyExtractor, Function<U, V> valueExtractor) {
+    public MappedListView(Collection<U> innerList, Function<U, K> keyExtractor, Function<U, V> valueExtractor) {
         this.innerList = innerList;
         this.keyExtractor = keyExtractor;
         this.valueExtractor = valueExtractor;
     }
 
-    public List<U> getInnerList() {
+    public Collection<U> getInnerList() {
         return innerList;
     }
 

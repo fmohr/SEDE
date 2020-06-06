@@ -4,21 +4,21 @@ import de.upb.sede.SDLLookupService;
 import de.upb.sede.composition.*;
 import de.upb.sede.composition.faa.FieldAccessUtil;
 import de.upb.sede.composition.graphs.nodes.*;
-import de.upb.sede.composition.graphs.types.TypeClass;
+import de.upb.sede.composition.types.TypeClass;
 import de.upb.sede.composition.orchestration.DoubleCast;
 import de.upb.sede.composition.orchestration.IDoubleCast;
 import de.upb.sede.composition.orchestration.ITransmission;
 import de.upb.sede.composition.orchestration.Transmission;
 import de.upb.sede.composition.typing.TypeCheckException;
-import de.upb.sede.exec.IExecutorContactInfo;
 import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.requests.resolve.beta.IResolveRequest;
 import de.upb.sede.types.IDataTypeDesc;
 import de.upb.sede.types.IDataTypeRef;
 import de.upb.sede.util.ResolvePolicyUtil;
-import de.upb.sede.util.TypeUtil;
+import de.upb.sede.composition.typing.TypeUtil;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InstInputCollector
     extends BlockWiseCompileStep<InstInputCollector.DTCInput, InstInputCollector.DTCOutput> {
@@ -55,7 +55,7 @@ public class InstInputCollector
         IExecutorHandle executorH = getInput().instExecutorMap.get(instIndex);
 
         // make sure the context service instance is on the executor
-        MethodResolution mr = getInput().getMR().get(inst.getIndex());
+        IMethodResolution mr = getInput().getMR().get(inst.getIndex());
         if(inst.getInstruction().getContextIsFieldFlag()) {
             String contextFieldname = inst.getInstruction().getContext();
             Optional<IExecutorHandle> optFL = getOutput().getFieldLocation(contextFieldname);
@@ -79,6 +79,7 @@ public class InstInputCollector
                 IParseConstantNode parseC = ParseConstantNode.builder()
                     .constantValue(Objects.requireNonNull(typeCoercion.getConstant()))
                     .hostExecutor(executorH.getQualifier())
+                    .index(getInput().getIndexFactory().create())
                     .build();
                 getOutput().parseConstant(inst.getIndex(), parseC);
             } else {
@@ -97,6 +98,7 @@ public class InstInputCollector
                         IDoubleCast cast = DoubleCast.builder()
                             .firstCast(CastTypeNode.builder()
                                 .fieldName(fieldname)
+                                .index(getInput().getIndexFactory().create())
                                 .hostExecutor(executorH.getQualifier())
                                 .sourceType(typeCoercion.getSourceType())
                                 .targetType(Objects.requireNonNull(typeCoercion.getSemanticType()))
@@ -104,6 +106,7 @@ public class InstInputCollector
                                 .build())
                             .secondCast(CastTypeNode.builder()
                                 .fieldName(fieldname)
+                                .index(getInput().getIndexFactory().create())
                                 .hostExecutor(executorH.getQualifier())
                                 .sourceType(typeCoercion.getSemanticType())
                                 .targetType(typeCoercion.getResultType())
@@ -143,6 +146,7 @@ public class InstInputCollector
         CastTypeNode receiverCast;
         transmitterCast = CastTypeNode.builder()
             .fieldName(fieldname)
+            .index(getInput().getIndexFactory().create())
             .hostExecutor(src.getQualifier())
             .sourceType(typeCoercion.getSourceType())
             .targetType(Objects.requireNonNull(typeCoercion.getSemanticType()))
@@ -150,6 +154,7 @@ public class InstInputCollector
             .build();
         ITransmitDataNode transmitDataNode = TransmitDataNode.builder()
             .fieldName(fieldname)
+            .index(getInput().getIndexFactory().create())
             .hostExecutor(src.getQualifier())
             .contactInfo(trg.getContactInfo())
             .inPlaceCast(transmitterCast)
@@ -160,6 +165,7 @@ public class InstInputCollector
         } else {
             receiverCast = CastTypeNode.builder()
                 .fieldName(fieldname)
+                .index(getInput().getIndexFactory().create())
                 .hostExecutor(trg.getQualifier())
                 .sourceType(typeCoercion.getSemanticType())
                 .targetType(typeCoercion.getResultType())
@@ -168,6 +174,7 @@ public class InstInputCollector
         }
         IAcceptDataNode acceptDataNode = AcceptDataNode.builder()
             .fieldName(fieldname)
+            .index(getInput().getIndexFactory().create())
             .hostExecutor(trg.getQualifier())
             .inPlaceCast(receiverCast)
             .build();
@@ -185,6 +192,7 @@ public class InstInputCollector
 
         ITransmitDataNode transmitDataNode = TransmitDataNode.builder()
             .fieldName(fieldname)
+            .index(getInput().getIndexFactory().create())
             .hostExecutor(srcExecutorId)
             .contactInfo(trg.getContactInfo())
             // TODO for now we dont include inplace casts for service instance handles:
@@ -195,6 +203,7 @@ public class InstInputCollector
             .build();
         IAcceptDataNode acceptDataNode = AcceptDataNode.builder()
             .fieldName(fieldname)
+            .index(getInput().getIndexFactory().create())
             .hostExecutor(trg.getQualifier())
 //            .inPlaceCast(TypeUtil.createCastToServiceHandleNode()
 //                .fieldName(fieldname)
@@ -254,6 +263,7 @@ public class InstInputCollector
 
     public static class DTCInput {
 
+        private final IndexFactory indexFactory;
 
         private final SDLLookupService lookupService;
 
@@ -261,7 +271,7 @@ public class InstInputCollector
 
         private Map<Long, IExecutorHandle> instExecutorMap;
 
-        private final Map<Long, MethodResolution> mR;
+        private final Map<Long, IMethodResolution> mR;
 
         private IExecutorHandle clientExecutor;
 
@@ -269,7 +279,8 @@ public class InstInputCollector
 
         private IResolveRequest resolveRequest;
 
-        public DTCInput(SDLLookupService lookupService, InstructionIndexer indexer, Map<Long, IExecutorHandle> instExecutorMap, Map<Long, MethodResolution> mR, IExecutorHandle clientExecutor, FieldAccessUtil fieldAccessUtil, IResolveRequest resolveRequest) {
+        public DTCInput(IndexFactory indexFactory, SDLLookupService lookupService, InstructionIndexer indexer, Map<Long, IExecutorHandle> instExecutorMap, Map<Long, IMethodResolution> mR, IExecutorHandle clientExecutor, FieldAccessUtil fieldAccessUtil, IResolveRequest resolveRequest) {
+            this.indexFactory = indexFactory;
             this.lookupService = lookupService;
             this.indexer = indexer;
             this.instExecutorMap = instExecutorMap;
@@ -303,8 +314,12 @@ public class InstInputCollector
             return resolveRequest;
         }
 
-        public Map<Long, MethodResolution> getMR() {
+        public Map<Long, IMethodResolution> getMR() {
             return mR;
+        }
+
+        public IndexFactory getIndexFactory() {
+            return indexFactory;
         }
     }
 
@@ -324,15 +339,6 @@ public class InstInputCollector
             return Optional.ofNullable(fieldLocation.get(fieldname));
         }
 
-        private ITransmitDataNode createTransmission(IExecutorContactInfo source, IExecutorContactInfo target,
-                                                     String fieldname) {
-            return TransmitDataNode.builder()
-                .fieldName(fieldname)
-                .contactInfo(target)
-                .hostExecutor(source.getQualifier())
-                .build();
-        }
-
         private void parseConstant(Long index, IParseConstantNode parseC) {
             this.preInstParse.computeIfAbsent(index, i -> new ArrayList<>()).add(parseC);
         }
@@ -341,14 +347,35 @@ public class InstInputCollector
             this.preInstCasts.computeIfAbsent(instIndex, i -> new ArrayList<>()).add(doubleCast);
         }
 
-        public void addTransmission(Long instIndex, ITransmission transmission) {
+        private void addTransmission(Long instIndex, ITransmission transmission) {
             this.preInstTransmissions.computeIfAbsent(instIndex, i -> new ArrayList<>()).add(transmission);
         }
 
-        public void addOutputTransmission(ITransmission transmission) {
+        private void addOutputTransmission(ITransmission transmission) {
             this.outputTransmissions.add(transmission);
         }
 
+        public Map<Long, List<ITransmission>> getPreInstTransmissions() {
+            return preInstTransmissions;
+        }
+
+        public Map<Long, List<IDoubleCast>> getPreInstCasts() {
+            return preInstCasts;
+        }
+
+        public Map<Long, List<IParseConstantNode>> getPreInstParse() {
+            return preInstParse;
+        }
+
+        public List<ITransmission> getOutputTransmissions() {
+            return outputTransmissions;
+        }
+
+        public List<String> getReturnFields() {
+            return getOutputTransmissions().stream()
+                .map(trans -> trans.getAcceptDataNode().getFieldName())
+                .collect(Collectors.toList());
+        }
     }
 
 

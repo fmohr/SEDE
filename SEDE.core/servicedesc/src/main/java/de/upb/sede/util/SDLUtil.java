@@ -1,5 +1,7 @@
 package de.upb.sede.util;
 
+import de.upb.sede.ISDLAssembly;
+import de.upb.sede.IServiceCollectionDesc;
 import de.upb.sede.SDLLookupService;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.exec.IMethodDesc;
@@ -11,6 +13,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@SuppressWarnings({"unchecked", "rawtypes"})
 public class SDLUtil {
 
     /**
@@ -120,6 +123,15 @@ public class SDLUtil {
         Optional<IMethodDesc> matchingSignature = Streams.pickOneOrNone(matchingSignatures);
 
         return matchingSignature;
+    }
+
+    public static List<IServiceDesc> getAllServices(ISDLAssembly assembly) {
+        return assembly.getCollections().stream()
+            .map(IServiceCollectionDesc::getServices)
+            .reduce(new ArrayList<>(), (list1, list2) -> {
+                list1.addAll(list2);
+                return list1;
+            });
     }
 
 

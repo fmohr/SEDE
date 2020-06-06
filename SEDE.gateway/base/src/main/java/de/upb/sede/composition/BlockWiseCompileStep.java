@@ -47,7 +47,7 @@ public abstract class BlockWiseCompileStep<I, O> implements CompileStep<I, O> {
     }
 
     @Override
-    public final void stepToEnd() {
+    public final void run() {
         step();
     }
 

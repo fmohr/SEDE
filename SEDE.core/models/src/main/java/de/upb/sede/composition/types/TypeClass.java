@@ -1,18 +1,8 @@
-package de.upb.sede.composition.graphs.types;
+package de.upb.sede.composition.types;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.TreeNode;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.fasterxml.jackson.databind.node.ValueNode;
 import de.upb.sede.util.TypeDeserializationDelegate;
 import org.immutables.value.Value;
-
-import java.io.IOException;
 
 @JsonDeserialize(using = TypeClass.DeserializeDelegate.class)
 public interface TypeClass {

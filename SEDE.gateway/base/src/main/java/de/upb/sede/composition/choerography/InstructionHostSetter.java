@@ -25,7 +25,6 @@ public class InstructionHostSetter extends BlockWiseCompileStep<InstructionHostS
         getOutput().instructions.clear();
         for (IIndexedInstruction former : getInput().indexer) {
             IIndexedInstruction inst = IndexedInstruction.builder()
-                .index(former.getIndex())
                 .instruction(InstructionNode.builder()
                     .from(former.getInstruction())
                     .hostExecutor(getInput().instExecutorMap.get(former.getIndex()).getQualifier())

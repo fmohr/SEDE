@@ -8,10 +8,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class ExecutorParticipantCollector
-    extends BlockWiseCompileStep<ExecutorParticipantCollector.EPCInput, ExecutorParticipantCollector.EPCOutput> {
+public class ExecutionParticipantCollector
+    extends BlockWiseCompileStep<ExecutionParticipantCollector.EPCInput, ExecutionParticipantCollector.EPCOutput> {
 
-    public ExecutorParticipantCollector() {
+    public ExecutionParticipantCollector() {
     }
 
     @Override

@@ -72,7 +72,7 @@ abstract class AbstractExecutorDecorator<T extends EmulatedOp> implements GraphC
         }
     }
 
-    public abstract EmulatedOp handleOperation(T op);
+    public abstract EmulatedOp handleOperation(T op) throws EmulationException;
 
     @Override
     public void addNodes(List<BaseNode> nodes) {
@@ -109,6 +109,11 @@ abstract class AbstractExecutorDecorator<T extends EmulatedOp> implements GraphC
 
     protected final ExecutionGraph.GraphEdge edge(BaseNode n1, BaseNode n2) {
         return new ExecutionGraph.GraphEdge(n1, n2);
+    }
+
+    @Override
+    public ExecutionGraph getGraph() {
+        return getBase().getGraph();
     }
 
     protected final void assertNotHandled(EmulatedOp op) {

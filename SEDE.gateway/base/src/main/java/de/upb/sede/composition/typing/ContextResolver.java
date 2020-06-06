@@ -4,14 +4,14 @@ import de.upb.sede.SDLLookupService;
 import de.upb.sede.composition.InstWiseCompileStep;
 import de.upb.sede.composition.InstOutputIterator;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.composition.graphs.types.TypeClass;
+import de.upb.sede.composition.types.TypeClass;
 import de.upb.sede.exec.IServiceDesc;
 import de.upb.sede.IServiceRef;
 
 import java.util.Optional;
 
-import static de.upb.sede.util.TypeUtil.getServiceType;
-import static de.upb.sede.util.TypeUtil.isService;
+import static de.upb.sede.composition.typing.TypeUtil.getServiceType;
+import static de.upb.sede.composition.typing.TypeUtil.isService;
 
 public class ContextResolver extends InstWiseCompileStep<TCInput, TCOutput> {
 

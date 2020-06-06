@@ -9,7 +9,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Test;
 
-import de.upb.sede.composition.graphs.CompositionGraph;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.graphs.nodes.ParseConstantNode;
 import de.upb.sede.composition.graphs.nodes.AcceptDataNode;

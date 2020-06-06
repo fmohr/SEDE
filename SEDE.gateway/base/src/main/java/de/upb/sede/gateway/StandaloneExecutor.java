@@ -1,6 +1,5 @@
 package de.upb.sede.gateway;
 
-import de.upb.sede.exec.ExecutorHandle;
 import de.upb.sede.exec.IExecutorHandle;
 
 import java.util.Collections;
@@ -26,9 +25,9 @@ public class StandaloneExecutor implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public IExecutorHandle supply(String service) {
+    public List<IExecutorHandle> supply(String service) {
         if(isSupported(service)) {
-            return handle;
+            return Collections.singletonList(handle);
         } else {
             throw new IllegalArgumentException("Service '" + service + "' is not supported.");
         }

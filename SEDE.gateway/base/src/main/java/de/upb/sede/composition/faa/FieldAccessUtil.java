@@ -1,7 +1,7 @@
 package de.upb.sede.composition.faa;
 
 import de.upb.sede.composition.*;
-import de.upb.sede.composition.graphs.types.TypeClass;
+import de.upb.sede.composition.types.TypeClass;
 import de.upb.sede.util.MappedList;
 import de.upb.sede.util.MappedListView;
 
@@ -16,10 +16,6 @@ public class FieldAccessUtil {
     private final Map<Long, List<IFieldAccess>> instAccesses;
 
     private final Map<String, IFieldAnalysis> fieldAnalysis;
-
-    public FieldAccessUtil(ICompositionCompilation compilation) {
-        this(new InstructionIndexer(compilation.getInstructions()), compilation);
-    }
 
     public FieldAccessUtil(InstructionIndexer indexer, ICompositionCompilation compilation) {
         this.indexer = indexer;

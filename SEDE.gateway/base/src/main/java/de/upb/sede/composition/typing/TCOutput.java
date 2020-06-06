@@ -4,7 +4,7 @@ import de.upb.sede.IServiceRef;
 import de.upb.sede.composition.FieldType;
 import de.upb.sede.composition.IFieldType;
 import de.upb.sede.composition.ITypeCoercion;
-import de.upb.sede.composition.graphs.types.TypeClass;
+import de.upb.sede.composition.types.TypeClass;
 import de.upb.sede.exec.*;
 
 import javax.annotation.Nullable;

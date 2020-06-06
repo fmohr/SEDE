@@ -1,4 +1,4 @@
-package de.upb.sede.composition.graphs.types;
+package de.upb.sede.composition.types;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.SEDEModelStyle;

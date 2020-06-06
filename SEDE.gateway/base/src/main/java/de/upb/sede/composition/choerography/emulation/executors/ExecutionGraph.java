@@ -1,6 +1,8 @@
 package de.upb.sede.composition.choerography.emulation.executors;
 
 import de.upb.sede.composition.graphs.nodes.BaseNode;
+import de.upb.sede.composition.graphs.nodes.CompositionGraph;
+import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
 
 import java.util.*;
 
@@ -10,12 +12,12 @@ class ExecutionGraph {
 
     private final Set<GraphEdge> edges;
 
-    public ExecutionGraph() {
+    ExecutionGraph() {
         nodes = new HashSet<>();
         edges = new HashSet<>();
     }
 
-    public ExecutionGraph(HashSet<GraphNode> graphNodes, HashSet<GraphEdge> graphEdges) {
+    ExecutionGraph(HashSet<GraphNode> graphNodes, HashSet<GraphEdge> graphEdges) {
         this.nodes = graphNodes;
         this.edges = graphEdges;
     }
@@ -36,7 +38,7 @@ class ExecutionGraph {
         return () -> nodes.stream().map(GraphNode::getNode).iterator();
     }
 
-    public Collection<GraphEdge> getEdges() {
+    Collection<GraphEdge> getEdges() {
         return edges;
     }
 
@@ -64,6 +66,19 @@ class ExecutionGraph {
         return nodes.isEmpty();
     }
 
+    public CompositionGraph.Builder extractGraph() {
+        CompositionGraph.Builder builder = CompositionGraph.builder();
+        builder.addAllNodes(this.getNodes());
+        Map<String, List<Long>> edges = new HashMap<>();
+        for (ExecutionGraph.GraphEdge edge : GraphTraversal.iterateEdges(this)) {
+            edges.computeIfAbsent(edge.getSrc().getIndex().get().toString(),
+                src -> new ArrayList<>())
+                .add(edge.getTrg().getIndex().get());
+        }
+        builder.putAllEdges(edges);
+        return builder;
+    }
+
     static class GraphNode {
         private final BaseNode node;
 
@@ -83,21 +98,21 @@ class ExecutionGraph {
                 return false;
 
             if(o instanceof BaseNode) {
-                return node == o;
+                return node.getIndex().equals(((BaseNode) o).getIndex());
             }
             if(o instanceof GraphNode) {
-                return node == ((GraphNode) o).node;
+                return this.equals(((GraphNode) o).getNode());
             }
             return false;
         }
 
         @Override
         public int hashCode() {
-            return node.hashCode();
+            return node.getIndex().get().intValue();
         }
     }
 
-    static class GraphEdge {
+    public static class GraphEdge {
 
         private final GraphNode src, trg;
 
@@ -111,12 +126,20 @@ class ExecutionGraph {
             this.trg = new GraphNode(n2);
         }
 
-        public GraphNode getFrom() {
+        GraphNode getFrom() {
             return src;
         }
 
-        public GraphNode getTo() {
+        GraphNode getTo() {
             return trg;
+        }
+
+        public BaseNode getSrc() {
+            return src.node;
+        }
+
+        public BaseNode getTrg() {
+            return trg.node;
         }
 
         @Override

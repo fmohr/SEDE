@@ -20,7 +20,7 @@ public interface IJavaDispatchAux {
         return false;
     }
 
-    @Value.Lazy
+    @Value.Default
     default boolean constructorInvocation() {
         return Objects.equals(methodName(), CONSTRUCTOR_METHOD_NAME);
     }

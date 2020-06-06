@@ -2,8 +2,7 @@ package de.upb.sede.composition.typing;
 
 import de.upb.sede.composition.IIndexedInstruction;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.composition.graphs.types.TypeClass;
-import de.upb.sede.util.TypeUtil;
+import de.upb.sede.composition.types.TypeClass;
 
 public class TypeCheckException extends RuntimeException {
 

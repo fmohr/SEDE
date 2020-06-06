@@ -4,7 +4,7 @@ import de.upb.sede.SDLLookupService;
 import de.upb.sede.composition.InstWiseCompileStep;
 import de.upb.sede.composition.InstOutputIterator;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.composition.graphs.types.*;
+import de.upb.sede.composition.types.*;
 import de.upb.sede.core.PrimitiveType;
 import de.upb.sede.exec.IMethodDesc;
 import de.upb.sede.exec.IMethodParameterDesc;

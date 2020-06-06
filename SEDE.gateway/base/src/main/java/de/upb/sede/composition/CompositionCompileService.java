@@ -4,23 +4,24 @@ import de.upb.sede.SDLLookupService;
 import de.upb.sede.composition.faa.FieldAccessAnalysisException;
 import de.upb.sede.composition.typing.TypeCheckException;
 import de.upb.sede.interfaces.ICCService;
+import de.upb.sede.util.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
 public class CompositionCompileService implements ICCService {
 
-    private final SDLLookupService lookupService;
+    private final Cache<SDLLookupService> lookupService;
 
     private final static Logger logger = LoggerFactory.getLogger(CompositionCompileService.class);
 
-    public CompositionCompileService(SDLLookupService lookupService) {
+    public CompositionCompileService(Cache<SDLLookupService> lookupService) {
         this.lookupService = lookupService;
     }
 
     @Override
     public ICompositionCompilation compileComposition(ICCRequest ccRequest) throws TypeCheckException, FieldAccessAnalysisException {
-        SingleBlockCCImpl ccImpl = new SingleBlockCCImpl(lookupService,
+        SingleBlockCCImpl ccImpl = new SingleBlockCCImpl(lookupService.get(),
             ccRequest.getInitialContext());
         ICompositionCompilation compositionCompilation;
         try {

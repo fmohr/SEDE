@@ -9,6 +9,11 @@ class ClosureSDL extends SDL{
     }
 
     @Override
+    def runScript() {
+        return null
+    }
+
+    @Override
     Object run() {
         script.delegate = this;
         script.resolveStrategy = Closure.DELEGATE_FIRST;

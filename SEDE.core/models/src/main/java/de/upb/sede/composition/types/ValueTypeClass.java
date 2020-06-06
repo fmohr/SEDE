@@ -1,4 +1,4 @@
-package de.upb.sede.composition.graphs.types;
+package de.upb.sede.composition.types;
 
 import de.upb.sede.IQualifiable;
 import org.immutables.value.Value;

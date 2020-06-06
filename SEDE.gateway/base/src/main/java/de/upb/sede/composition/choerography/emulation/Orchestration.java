@@ -2,6 +2,8 @@ package de.upb.sede.composition.choerography.emulation;
 
 import de.upb.sede.IQualifiable;
 import de.upb.sede.composition.*;
+import de.upb.sede.composition.choerography.emulation.executors.EmExecutor;
+import de.upb.sede.composition.choerography.emulation.executors.ExecutionParticipants;
 import de.upb.sede.composition.graphs.nodes.*;
 import de.upb.sede.composition.orchestration.*;
 import de.upb.sede.exec.IExecutorHandle;
@@ -13,7 +15,7 @@ import java.util.*;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
-class Orchestration
+public class Orchestration
     extends BlockWiseCompileStep<Orchestration.OrchestrationInput, Orchestration.OrchestrationOutput> {
 
     private final static Logger logger = LoggerFactory.getLogger(Orchestration.class);
@@ -27,7 +29,7 @@ class Orchestration
     protected void stepBlock() {
         logger.info("Starting to orchestrate the composition \n{}\n with {} many emulated executors.",
             getInput().indexer.recreateComposition(),
-            getInput().executorRegistry.size());
+            getInput().executionParticipants.size());
         for (IIndexedInstruction inst : getInput().indexer) {
 
             fetchData(inst);
@@ -47,20 +49,20 @@ class Orchestration
         return String.format("%s:%s > %s", instIndex.getIndex().toString(), instIndex.getInstruction().getFMInstruction(), message);
     }
 
-    private Emulation.Executor hostOf(IIndexedInstruction inst) {
+    private EmExecutor hostOf(IIndexedInstruction inst) {
         return host(getInput().instExecutorMap.get(inst.getIndex()));
     }
 
-    private Emulation.Executor hostOf(WithExecutorHost withExecutorHost) {
+    private EmExecutor hostOf(WithExecutorHost withExecutorHost) {
         return host(requireNonNull(withExecutorHost.getHostExecutor(), "Node " + withExecutorHost + " has no executor set."));
     }
 
-    private Emulation.Executor host(IExecutorHandle handle) {
+    private EmExecutor host(IExecutorHandle handle) {
         return host(handle.getQualifier());
     }
 
-    private Emulation.Executor host(String qualifier) {
-        return getInput().executorRegistry.getExecutor(qualifier);
+    private EmExecutor host(String qualifier) {
+        return getInput().executionParticipants.getExecutor(qualifier);
     }
 
     private INotification createNtf(String description) {
@@ -85,7 +87,7 @@ class Orchestration
         }
         InstructionOp instructionOp = instOpBuilder.build();
         logger.info(instLog(indexedInst, "Executing instruction."));
-        Emulation.Executor executor = hostOf(indexedInst);
+        EmExecutor executor = hostOf(indexedInst);
         try {
             executor.execute(instructionOp);
         } catch(Exception ex) {
@@ -212,11 +214,11 @@ class Orchestration
     }
 
     private void finishExecution() {
-        Emulation.Executor clientExecutor = getInput().executorRegistry.getClientExecutor();
+        EmExecutor clientExecutor = getInput().executionParticipants.getClientExecutor();
         IExecutorHandle clientHandle = clientExecutor.getExecutorHandle();
         String clientId = clientHandle.getQualifier();
         List<IWaitForNotificationNode> clientWaitList = new ArrayList<>();
-        for (Emulation.Executor executor : getInput().executorRegistry) {
+        for (EmExecutor executor : getInput().executionParticipants) {
             String executorId = executor.getExecutorHandle().getQualifier();
             if(clientId.equals(executorId)) {
                 continue;
@@ -227,6 +229,7 @@ class Orchestration
             INotification executionFinishedNtf = createNtf("Execution " + executorId + " is finished");
             IFinishOp finishOp = FinishOp.builder()
                 .executionFinishedNtf(NotifyNode.builder()
+                    .index(getInput().indexFactory.create())
                     .hostExecutor(executorId)
                     .notification(executionFinishedNtf)
                     .contactInfo(clientHandle.getContactInfo())
@@ -244,11 +247,16 @@ class Orchestration
 				Add accept notification to client:
 			 */
             clientWaitList.add(WaitForNotificationNode.builder()
+                .index(getInput().indexFactory.create())
                 .notification(executionFinishedNtf)
                 .hostExecutor(clientId)
                 .build());
         }
         IWaitForFinishOp waitForFinishOp = WaitForFinishOp.builder()
+            .nopNode(NopNode.builder()
+                .hostExecutor(clientId)
+                .index(getInput().indexFactory.create())
+                .build())
             .addAllExFinishedNtf(clientWaitList)
             .build();
         try {
@@ -263,7 +271,7 @@ class Orchestration
 
     // -- orchestration methods
 
-    private void orchestrateCast(Emulation.Executor executor, IDoubleCast cast) throws EmulationException {
+    private void orchestrateCast(EmExecutor executor, IDoubleCast cast) throws EmulationException {
         ICastOp castOp = CastOp.builder()
             .firstCast(cast.getFirstCast())
             .secondCast(cast.getSecondCast())
@@ -274,7 +282,7 @@ class Orchestration
 
     }
 
-    private void orchestrateParse(Emulation.Executor executor, IParseConstantNode parse) throws EmulationException {
+    private void orchestrateParse(EmExecutor executor, IParseConstantNode parse) throws EmulationException {
         IParseOp parseOp = ParseOp.builder()
             .parseConstantNode(parse)
             .addDFields(parse.getConstantValue())
@@ -291,7 +299,7 @@ class Orchestration
             .serviceInstanceStorageNode(store)
             .build();
 
-        Emulation.Executor executor = hostOf(store);
+        EmExecutor executor = hostOf(store);
         executor.execute(op);
     }
 
@@ -304,7 +312,7 @@ class Orchestration
             .serviceInstanceStorageNode(load)
             .build();
 
-        Emulation.Executor executor = hostOf(load);
+        EmExecutor executor = hostOf(load);
         executor.execute(op);
     }
 
@@ -313,8 +321,8 @@ class Orchestration
             "Transmission " + t + " has no host executor contact info (source).");
         String trgQualifier = requireNonNull(t.getTarget().getQualifier(),
             "Transmission " + t + " has no contact info (target).");
-        Emulation.Executor srcEx = host(srcQualifier);
-        Emulation.Executor trgEx = host(trgQualifier);
+        EmExecutor srcEx = host(srcQualifier);
+        EmExecutor trgEx = host(trgQualifier);
         String fieldname = t.getAcceptDataNode().getFieldName();
 
         INotification srcReadyNtf = createNtf("Source executor is ready to transmit " + fieldname);
@@ -325,36 +333,47 @@ class Orchestration
             // transmission node with 3 notification for the handshake
             .transmitDataNode(t.getTransmission())
             .sourceReadyNtf(NotifyNode.builder()
+                .index(getInput().indexFactory.create())
                 .contactInfo(t.getTarget().getContactInfo())
                 .notification(srcReadyNtf)
                 .hostExecutor(srcQualifier)
                 .build())
             .targetReadyNtf(WaitForNotificationNode.builder()
+                .index(getInput().indexFactory.create())
                 .notification(trgReadyNtf)
                 .hostExecutor(srcQualifier)
                 .build())
             .targetReceivedNtf(WaitForNotificationNode.builder()
+                .index(getInput().indexFactory.create())
                 .notification(receivedNtf)
                 .hostExecutor(srcQualifier)
                 .build())
             // A transmission produces and consumes the transmitted field:
             .addDFields(fieldname)
+            .deleteFieldNode(DeleteFieldNode.builder()
+                .fieldName(fieldname)
+                .index(getInput().indexFactory.create())
+                .hostExecutor(srcQualifier)
+                .build())
             .build();
         srcEx.execute(transOp);
 
         IAcceptOp acceptOp = AcceptOp.builder()
             .acceptDataNode(t.getAcceptDataNode())
             .sourceReadyNtf(WaitForNotificationNode.builder()
+                .index(getInput().indexFactory.create())
                 .notification(srcReadyNtf)
                 .hostExecutor(trgQualifier)
                 .build())
             .targetReadyNtf(NotifyNode.builder()
                 .contactInfo(t.getSource().getContactInfo())
+                .index(getInput().indexFactory.create())
                 .notification(trgReadyNtf)
                 .hostExecutor(trgQualifier)
                 .build())
             .targetReceivedNtf(NotifyNode.builder()
                 .contactInfo(t.getSource().getContactInfo())
+                .index(getInput().indexFactory.create())
                 .notification(receivedNtf)
                 .hostExecutor(trgQualifier)
                 .build())
@@ -362,15 +381,26 @@ class Orchestration
             .build();
 
         trgEx.execute(acceptOp);
+
+        // delete field on src:
+//        IDeleteFieldOp deleteFieldOp = DeleteFieldOp.builder()
+//            .addDFields(fieldname)
+//            .deleteFieldNode(DeleteFieldNode.builder()
+//                .fieldName(fieldname)
+//                .index(getInput().indexFactory.create())
+//                .hostExecutor(srcQualifier)
+//                .build())
+//            .build();
     }
 
-    static class OrchestrationInput {
+    public static class OrchestrationInput {
 
 
         // Services used in orchestration
 
         private final NotificationFactory notificationFactory;
 
+        private final IndexFactory indexFactory;
 
         // The results of the static pipeline
 
@@ -380,7 +410,7 @@ class Orchestration
 
         private final Map<Long, IExecutorHandle> instExecutorMap;
 
-        private final Emulation.ExecutorRegistry executorRegistry;
+        private final ExecutionParticipants executionParticipants;
 
         private final Map<Long, List<ITransmission>> preInstTransmissions;
 
@@ -394,11 +424,12 @@ class Orchestration
 
         private final Map<Long, List<IServiceInstanceStorageNode>> postInstStores;
 
-        public OrchestrationInput(NotificationFactory notificationFactory, InstructionIndexer indexer, Map<Long, IExecutorHandle> instExecutorMap, Emulation.ExecutorRegistry executorRegistry, Map<Long, List<ITransmission>> preInstTransmissions, Map<Long, List<IDoubleCast>> preInstCasts, Map<Long, List<IParseConstantNode>> preInstParse, List<ITransmission> outputTransmissions, Map<Long, List<IServiceInstanceStorageNode>> preInstLoads, Map<Long, List<IServiceInstanceStorageNode>> postInstStores) {
+        public OrchestrationInput(NotificationFactory notificationFactory, IndexFactory indexFactory, InstructionIndexer indexer, Map<Long, IExecutorHandle> instExecutorMap, ExecutionParticipants executionParticipants, Map<Long, List<ITransmission>> preInstTransmissions, Map<Long, List<IDoubleCast>> preInstCasts, Map<Long, List<IParseConstantNode>> preInstParse, List<ITransmission> outputTransmissions, Map<Long, List<IServiceInstanceStorageNode>> preInstLoads, Map<Long, List<IServiceInstanceStorageNode>> postInstStores) {
             this.notificationFactory = notificationFactory;
+            this.indexFactory = indexFactory;
             this.indexer = indexer;
             this.instExecutorMap = instExecutorMap;
-            this.executorRegistry = executorRegistry;
+            this.executionParticipants = executionParticipants;
             this.preInstTransmissions = preInstTransmissions;
             this.preInstCasts = preInstCasts;
             this.preInstParse = preInstParse;
@@ -406,7 +437,6 @@ class Orchestration
             this.preInstLoads = preInstLoads;
             this.postInstStores = postInstStores;
         }
-
 
     }
 

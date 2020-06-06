@@ -2,11 +2,10 @@ package de.upb.sede.misc
 
 import de.upb.sede.composition.FieldType
 import de.upb.sede.composition.IFieldType
-import de.upb.sede.composition.graphs.types.DataValueType
-import de.upb.sede.composition.graphs.types.PrimitiveValueType
-import de.upb.sede.composition.graphs.types.ServiceInstanceType
-import de.upb.sede.composition.graphs.types.TypeClass
-import de.upb.sede.composition.graphs.types.ValueTypeClass
+import de.upb.sede.composition.types.DataValueType
+import de.upb.sede.composition.types.PrimitiveValueType
+import de.upb.sede.composition.types.ServiceInstanceType
+import de.upb.sede.composition.types.TypeClass
 import de.upb.sede.core.PrimitiveType
 
 class FieldContextCreator {

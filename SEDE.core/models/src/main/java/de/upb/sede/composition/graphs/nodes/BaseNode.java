@@ -20,7 +20,7 @@ import java.io.IOException;
  * For this reason nodeType ought not to be changed.
  */
 @JsonDeserialize(using = BaseNode.DeserializeDelegate.class)
-public interface BaseNode extends WithExecutorHost, WithAux {
+public interface BaseNode extends WithExecutorHost, WithAux, WithIndex {
 
     @Value.Lazy
     default String getNodeType() {

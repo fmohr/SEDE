@@ -3,7 +3,6 @@ package de.upb.sede.gateway;
 import de.upb.sede.composition.RoundRobinScheduler;
 import de.upb.sede.exec.ExecutorHandle;
 import de.upb.sede.exec.IExecutorHandle;
-import de.upb.sede.gateway.edd.CachedExecutorHandleSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
  * @author aminfaez
  *
  */
-public class ExecutorSupplyCoordinator { // TODO let this class implement OnDemandExecutorSupplier
+public class ExecutorSupplyCoordinator implements OnDemandExecutorSupplier { // TODO let this class implement OnDemandExecutorSupplier
 
     private final static Logger logger = LoggerFactory.getLogger(ExecutorSupplyCoordinator.class);
 
@@ -32,8 +31,8 @@ public class ExecutorSupplyCoordinator { // TODO let this class implement OnDema
 		for (OnDemandExecutorSupplier executorSupplier : executorSuppliers) {
 			if (executorSupplier.isSupported(service)) {
 				try {
-                    IExecutorHandle handle = executorSupplier.supply(service);
-                    capableExecutors.add(handle);
+                    List<IExecutorHandle> handles = executorSupplier.supply(service);
+                    capableExecutors.addAll(handles);
                 } catch(UnsupportedOperationException ex) {
                     logger.warn("Executor supplier {} didn't supply executors for the demanded service {}.", executorSupplier, service, ex);
                 }
@@ -85,7 +84,7 @@ public class ExecutorSupplyCoordinator { // TODO let this class implement OnDema
 	}
 
 	public ExecutorHandle scheduleNextAmong(List<ExecutorHandle> candidates) {
-		String id = scheduler.scheduleNextAmong(candidates);
+		String id = scheduler.scheduleNextAmong(candidates.stream().map(ExecutorHandle::getQualifier).collect(Collectors.toList()));
 		for (ExecutorHandle executor : candidates) {
 			if (executor.getContactInfo().getQualifier().equals(id)) {
 				return executor;
@@ -100,5 +99,47 @@ public class ExecutorSupplyCoordinator { // TODO let this class implement OnDema
 
     public synchronized void addSupplier(OnDemandExecutorSupplier supplier) {
         executorSuppliers.add(supplier);
+    }
+
+    @Override
+    public boolean isSupported(String service) {
+        return executorSuppliers.stream().anyMatch(es -> es.isSupported(service));
+    }
+
+    @Override
+    public List<IExecutorHandle> supply(String service) {
+        return supplyExecutor(service);
+    }
+
+
+    @Override
+    public List<String> supportedServices() {
+        return executorSuppliers.stream()
+            .map(OnDemandExecutorSupplier::supportedServices)
+            .reduce(new ArrayList<>(), (a1, a2) -> { a1.addAll(a2); return a1;})
+            .stream()
+            .distinct()
+            .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getIdentifier() {
+        throw new RuntimeException();
+    }
+
+    @Override
+    public List<IExecutorHandle> allHandles() {
+        return executorSuppliers.stream()
+            .map(OnDemandExecutorSupplier::allHandles)
+            .reduce(new ArrayList<>(), (a1, a2) -> { a1.addAll(a2); return a1;});
+    }
+
+    @Override
+    public Optional<IExecutorHandle> getHandle(String executorId) {
+	    return executorSuppliers.stream()
+            .map(es -> es.getHandle(executorId))
+            .filter(opt -> opt.isPresent())
+            .map(opt -> opt.get())
+            .findAny();
     }
 }

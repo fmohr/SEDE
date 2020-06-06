@@ -1,8 +1,6 @@
 package de.upb.sede.composition.choerography.emulation.executors;
 
-
 import de.upb.sede.composition.choerography.emulation.EmulationException;
-import de.upb.sede.composition.graphs.DependencyEdge;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.orchestration.EmulatedOp;
 import de.upb.sede.exec.IExecutorHandle;
@@ -61,7 +59,7 @@ public class BaseExecutor implements GraphCreatingExecutor {
             }
             for (BaseNode producer : fieldProducer.getProducers()) {
                 for (BaseNode consumer : consumers) {
-                    DependencyEdge edge = new DependencyEdge(producer, consumer);
+                    ExecutionGraph.GraphEdge edge = new ExecutionGraph.GraphEdge(producer, consumer);
                     graph.addEdge(producer, consumer);
                 }
             }

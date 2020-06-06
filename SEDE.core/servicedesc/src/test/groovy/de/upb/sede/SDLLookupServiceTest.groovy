@@ -113,7 +113,7 @@ class SDLLookupServiceTest extends Specification {
         def optMethod = ls.lookup(methodRef)
 
         then:
-        optMethod.isPresent() == result
+        !optMethod.isEmpty() == result
 
 
         where:
@@ -149,7 +149,7 @@ class SDLLookupServiceTest extends Specification {
         def optMethod = ls.lookup(methodRef)
 
         then:
-        optMethod.isPresent()
+        !optMethod.isEmpty()
 
         where:
         ls | _

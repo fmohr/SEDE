@@ -1,6 +1,6 @@
 package de.upb.sede.composition.orchestration;
 
-import de.upb.sede.composition.graphs.types.TypeClass;
+import de.upb.sede.composition.types.TypeClass;
 import de.upb.sede.util.TypeDeserializationDelegate;
 import org.immutables.value.Value;
 

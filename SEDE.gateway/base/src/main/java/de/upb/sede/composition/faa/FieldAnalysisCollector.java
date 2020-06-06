@@ -3,8 +3,10 @@ package de.upb.sede.composition.faa;
 import de.upb.sede.composition.*;
 import de.upb.sede.composition.typing.TCOutput;
 import de.upb.sede.util.DeepImmutableCopier;
+import de.upb.sede.util.MappedList;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static javax.swing.UIManager.get;
 
@@ -45,7 +47,7 @@ public class FieldAnalysisCollector
         // sort the field accesses by:
         //  - index
         //  - READ < WRITE < ASSIGN
-        for (IFieldAnalysis fieldAccessCollection : getOutput().getFieldAnalysis().values()) {
+        for (IFieldAnalysis fieldAccessCollection : getOutput().fieldAnalysisMap.values()) {
             fieldAccessCollection.getFieldAccesses().sort(comparator);
         }
     }
@@ -81,7 +83,11 @@ public class FieldAnalysisCollector
         private final Map<String, MutableFieldAnalysis> fieldAnalysisMap = new HashMap<>();
 
         private MutableFieldAnalysis getFieldAnalysis(String fieldname) {
-            return this.fieldAnalysisMap.computeIfAbsent(fieldname, f -> MutableFieldAnalysis.create());
+            return this.fieldAnalysisMap.computeIfAbsent(fieldname, f -> {
+                MutableFieldAnalysis fieldAnalysis = MutableFieldAnalysis.create();
+                fieldAnalysis.setFieldname(fieldname);
+                return fieldAnalysis;
+            });
         }
 
         private void addInitialField(IFieldType initialField) {
@@ -99,7 +105,11 @@ public class FieldAnalysisCollector
         }
 
         public Map<String, IFieldAnalysis> getFieldAnalysis() {
-            return DeepImmutableCopier.copyAsImmutable(fieldAnalysisMap);
+            List<IFieldAnalysis> collection = fieldAnalysisMap.values().stream()
+                .map(DeepImmutableCopier::copyAsImmutable)
+                .map(o -> (IFieldAnalysis) o)
+                .collect(Collectors.toList());
+            return new MappedList<>(collection, IFieldAnalysis::getFieldname);
         }
     }
 

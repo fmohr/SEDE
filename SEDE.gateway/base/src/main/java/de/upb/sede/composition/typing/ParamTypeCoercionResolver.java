@@ -2,13 +2,12 @@ package de.upb.sede.composition.typing;
 
 import de.upb.sede.composition.*;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.composition.graphs.types.IDataValueType;
-import de.upb.sede.composition.graphs.types.TypeClass;
+import de.upb.sede.composition.types.IDataValueType;
+import de.upb.sede.composition.types.TypeClass;
 import de.upb.sede.core.PrimitiveType;
 import de.upb.sede.exec.IMethodDesc;
 import de.upb.sede.types.IDataTypeDesc;
 import de.upb.sede.types.IDataTypeRef;
-import de.upb.sede.util.TypeUtil;
 
 import java.util.ArrayList;
 import java.util.List;

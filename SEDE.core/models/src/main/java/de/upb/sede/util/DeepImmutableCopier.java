@@ -11,6 +11,8 @@ public class DeepImmutableCopier {
     private static final ObjectMapper MAPPER = new ObjectMapper()
         .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
+
+
     public static <T> T copyAsImmutable(Object input) {
         if(!isSMStyleAnnotated(input.getClass())) {
             throw new IllegalArgumentException("Cannot convert object of unknown type: " + input.getClass().getName());

@@ -10,7 +10,7 @@ public interface CompileStep<I, O> {
 
     boolean isFinished();
 
-    default void stepToEnd() {
+    default void run() {
         while(!isFinished())
             step();
     }

@@ -2,12 +2,9 @@ package de.upb.sede.composition.typing;
 
 import de.upb.sede.composition.IFieldType;
 import de.upb.sede.composition.FieldType;
-import de.upb.sede.composition.IInstTCResult;
-import de.upb.sede.composition.InstTCResult;
-import de.upb.sede.composition.graphs.types.TypeClass;
+import de.upb.sede.composition.types.TypeClass;
 
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

@@ -26,7 +26,7 @@ public class ExecutorCandidatesCollector extends
         if(getCurrentInstruction().getInstruction().getContextIsFieldFlag()) {
             chooseExecutorHostingServiceInstance();
         }  else {
-            IMethodResolution currentMethod = getInput().getCurrentMethod();
+            IMethodResolution currentMethod = getInput().getMethod(getCurrentInstruction().getIndex());
             String serviceUsed = currentMethod.getMethodRef().getServiceRef().getRef().getQualifier();
             List<IExecutorHandle> supportingExecutors = getInput().getExecutorSupplyCoordinator().supplyExecutor(serviceUsed);
             this.getInstOutput().getCandidates().addAll(supportingExecutors);
@@ -71,6 +71,7 @@ public class ExecutorCandidatesCollector extends
         ServiceInstanceHandle serviceInstanceHandle = getInput()
             .getInitialServices()
             .get(contextField);
+        if(getInput().get)
         if(!getInput().getExecutorSupplyCoordinator().hasExecutor(serviceInstanceHandle.getId())) {
             throw ChoreographyException.initialServiceHostNotRegistered(contextField, serviceInstanceHandle.getId(), serviceInstanceHandle.getClasspath(), serviceInstanceHandle.getExecutorId());
         }
@@ -90,21 +91,21 @@ public class ExecutorCandidatesCollector extends
         return false;
     }
 
-    class ECCInput implements InstInput {
+    static class ECCInput implements InstInput {
 
         private final Map<String, ServiceInstanceHandle> initialServices;
 
         private final InstructionIndexer indexer;
 
-        private final Map<Long, MethodResolution> methodResolutions;
+        private final Map<Long, IMethodResolution> methodResolutions;
 
         private final ExecutorSupplyCoordinator executorSupplyCoordinator;
 
         private final FieldAccessUtil fieldAccessUtil;
 
-        ECCInput(Map<String, ServiceInstanceHandle> initialServices,
+        public ECCInput(Map<String, ServiceInstanceHandle> initialServices,
                  InstructionIndexer indexer,
-                 Map<Long, MethodResolution> methodResolutions,
+                 Map<Long, IMethodResolution> methodResolutions,
                  ExecutorSupplyCoordinator executorSupplyCoordinator,
                  FieldAccessUtil fieldAccessUtil) {
             this.initialServices = initialServices;
@@ -123,8 +124,7 @@ public class ExecutorCandidatesCollector extends
             return executorSupplyCoordinator;
         }
 
-        IMethodResolution getCurrentMethod() {
-            Long currentIndex = getCurrentInstruction().getIndex();
+        IMethodResolution getMethod(Long currentIndex) {
             return methodResolutions.get(currentIndex);
         }
 

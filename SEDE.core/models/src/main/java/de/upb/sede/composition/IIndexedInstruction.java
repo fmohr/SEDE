@@ -13,9 +13,12 @@ import javax.annotation.Nullable;
 @JsonDeserialize(builder = IndexedInstruction.Builder.class)
 public interface IIndexedInstruction {
 
-    public IInstructionNode getInstruction();
+    IInstructionNode getInstruction();
 
-    public Long getIndex();
+    @Value.Derived
+    default Long getIndex() {
+        return getInstruction().getIndex().get();
+    }
 
 }
 

@@ -34,12 +34,13 @@ public class EDDExecutorSupplier implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public IExecutorHandle supply(String service) {
+    public List<IExecutorHandle> supply(String service) {
         List<IExecutorHandle> handles = supplyList(Collections.singletonList(service));
-        for(IExecutorHandle handle : handles) {
-            if(handle.getCapabilities().getServices().contains(service)) {
-                return handle;
-            }
+        List<IExecutorHandle> supportingExecutors = handles.stream()
+            .filter(h -> h.getCapabilities().getServices().contains(service))
+            .collect(Collectors.toList());
+        if(!supportingExecutors.isEmpty()) {
+            return supportingExecutors;
         }
         throw new UnsuppliedExecutorException("No executor can be supplied for service '" + service
             + "' by " + getEDDDisplayName());

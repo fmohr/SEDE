@@ -2,7 +2,6 @@ package de.upb.sede.composition.choerography.emulation.executors;
 
 import de.upb.sede.ConstructReference;
 import de.upb.sede.SDLLookupService;
-import de.upb.sede.composition.choerography.emulation.Emulation;
 import de.upb.sede.exec.IExecutorHandle;
 
 import java.util.HashMap;
@@ -23,7 +22,7 @@ public class ExecutorFactory {
         this.sdlLookupService = sdlLookupService;
     }
 
-    public Emulation.Executor createExecutor(IExecutorHandle handle) {
+    public EmExecutor createExecutor(IExecutorHandle handle) {
         GraphCreatingExecutor executor = new BaseExecutor(handle);
         executor = DefaultExecutorDecorations.addDefaultDecorators(executor);
         executor = new AuxDecorator(executor, sdlLookupService, cachedAuxiliaries);

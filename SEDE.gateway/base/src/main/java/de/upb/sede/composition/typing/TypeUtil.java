@@ -1,10 +1,10 @@
-package de.upb.sede.util;
+package de.upb.sede.composition.typing;
 
 import de.upb.sede.IServiceRef;
 import de.upb.sede.SDLLookupService;
 import de.upb.sede.composition.graphs.nodes.CastTypeNode;
 import de.upb.sede.composition.graphs.nodes.ICastTypeNode;
-import de.upb.sede.composition.graphs.types.*;
+import de.upb.sede.composition.types.*;
 import de.upb.sede.composition.typing.TypeCheckException;
 import de.upb.sede.core.PrimitiveType;
 import de.upb.sede.exec.IServiceDesc;
@@ -62,12 +62,14 @@ public class TypeUtil {
         return tc.getTypeClass();
     }
 
+    @Deprecated
     public static boolean isServiceHandleCastNode(ICastTypeNode castTypeNode) {
         return castTypeNode.getSourceType().equals("SERVICE_INSTANCE_HANDLE")
             && castTypeNode.getTargetType().equals("SERVICE_INSTANCE_HANDLE")
             && !castTypeNode.castToSemantic();
     }
 
+    @Deprecated
     public static CastTypeNode.Builder createCastToServiceHandleNode() {
         return CastTypeNode.builder()
             .sourceType("SERVICE_INSTANCE_HANDLE")

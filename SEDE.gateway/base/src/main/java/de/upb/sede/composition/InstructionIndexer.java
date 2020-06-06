@@ -1,6 +1,7 @@
 package de.upb.sede.composition;
 
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
+import de.upb.sede.composition.graphs.nodes.InstructionNode;
 
 import java.util.*;
 
@@ -8,12 +9,10 @@ public class InstructionIndexer implements Iterable<IIndexedInstruction>{
 
     private List<IIndexedInstruction> indexedInstList;
 
-    public InstructionIndexer(Iterable<IInstructionNode> instructions) {
+    public InstructionIndexer(IndexFactory indexFactory, Iterable<IInstructionNode> instructions) {
         this.indexedInstList = new ArrayList<>();
-        long currentIndex = 0;
         for (IInstructionNode instruction : instructions) {
-            this.indexedInstList.add(IndexedInstruction.builder().instruction(instruction).index(currentIndex).build());
-            currentIndex ++;
+            this.indexedInstList.add(IndexedInstruction.builder().instruction(InstructionNode.builder().from(instruction).index(indexFactory.create()).build()).build());
         }
     }
 

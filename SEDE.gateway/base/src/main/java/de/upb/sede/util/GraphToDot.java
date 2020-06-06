@@ -2,16 +2,16 @@ package de.upb.sede.util;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
+import de.upb.sede.requests.resolve.beta.IChoreography;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.upb.o4.tinyjavadot.DotGraph;
 import de.upb.o4.tinyjavadot.DotNode;
-import de.upb.sede.composition.graphs.CompositionGraph;
-import de.upb.sede.composition.graphs.GraphConstruction;
-import de.upb.sede.composition.graphs.GraphTraversal;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 
 
@@ -45,8 +45,8 @@ public class GraphToDot {
 		}
 	}
 
-	private static void addNodesToGraph(DotGraph graph, Map<BaseNode, DotNode> nodeMap, CompositionGraph compGraph, boolean dotted) {
-		for (BaseNode baseNode : GraphTraversal.iterateNodes(compGraph)) {
+	private static void addNodesToGraph(DotGraph graph, Map<BaseNode, DotNode> nodeMap, ICompositionGraph compGraph, boolean dotted) {
+		for (BaseNode baseNode : compGraph.getNodes()) {
 			if(nodeMap.containsKey(baseNode)) {
 				continue;
 			}
@@ -55,9 +55,13 @@ public class GraphToDot {
 			nodeMap.put(baseNode, node);
 			graph.addNode(node);
 		}
-		for (BaseNode baseNode : GraphTraversal.iterateNodes(compGraph)) {
+		for (BaseNode baseNode : compGraph.getNodes()) {
 			DotNode dotNode = nodeMap.get(baseNode);
-			for(BaseNode neighbor : GraphTraversal.targetingNodes(compGraph, baseNode)) {
+            List<Long> targets = compGraph.getEdges().get(baseNode.getIndex().get().toString());
+            for(BaseNode neighbor : compGraph.getNodes()) {
+                if(!targets.contains(neighbor.getIndex().get())) {
+                    continue;
+                }
 				DotNode dotNeighbor = nodeMap.get(neighbor);
 				graph.connect(dotNode, dotNeighbor).style(dotted?DotGraph.EdgeStyle.dotted : DotGraph.EdgeStyle.filled);
 			}
@@ -68,41 +72,44 @@ public class GraphToDot {
 		return baseNode.toString().replaceAll("\"", "");
 	}
 
-	public static String graphToDotString(CompositionGraph compGraph) {
+	public static String graphToDotString(ICompositionGraph compGraph) {
 		DotGraph dotGraph = new DotGraph();
 		Map<BaseNode, DotNode> nodeMap = new HashMap<>();
 		addNodesToGraph(dotGraph, nodeMap, compGraph, false);
 		return dotGraph.toDot();
 	}
 
-	public static String graphToSVGString(CompositionGraph compGraph) {
+	public static String graphToSVGString(ICompositionGraph compGraph) {
 		return formatDotToSVG(graphToDotString(compGraph));
 	}
 
-	private static DotGraph createClusterGraphs(Map<String, CompositionGraph> comps, CompositionGraph tranmissionGraph) {
+	private static DotGraph createClusterGraphs(List<ICompositionGraph> comps) {
 		DotGraph clusterGraph = new DotGraph();
 		Map<BaseNode, DotNode> nodeMap = new HashMap<>();
-		for(String executorID : comps.keySet()) {
-			CompositionGraph cg = comps.get(executorID);
+        for (ICompositionGraph comp : comps) {
+            String executorId = comp.getExecutorHandle().getQualifier();
+            if(comp.isClient()) {
+                executorId += " : Client";
+            }
 			DotGraph innerGraph = new DotGraph();
-			addNodesToGraph(innerGraph, nodeMap, cg, false);
-			DotNode executorNameBox = new DotNode(executorID);
+			addNodesToGraph(innerGraph, nodeMap, comp, false);
+			DotNode executorNameBox = new DotNode(executorId);
 			executorNameBox.setShape(DotNode.Shape.diamond);
 			innerGraph.addNode(executorNameBox);
 
 			clusterGraph.addGraph(innerGraph);
 		}
-		addNodesToGraph(clusterGraph, nodeMap, tranmissionGraph, true);
 		return clusterGraph;
 	}
 
-	public static String GCToDot(GraphConstruction gc) {
-		Map<String, CompositionGraph> comps = gc.getInvolvedExecutions();
-		return createClusterGraphs(comps, gc.getTransmissionGraph()).toDot();
+	public static String choreographyToDot(IChoreography gc) {
+        List<ICompositionGraph> graphs = gc.getCompositionGraph();
+
+		return createClusterGraphs(graphs).toDot();
 	}
 
-	public static String GCToSVG(GraphConstruction gc) {
-		return formatDotToSVG(GCToDot(gc));
+	public static String choreographyToSag(IChoreography gc) {
+		return formatDotToSVG(choreographyToDot(gc));
 	}
 
 	private static String formatDot(String dot, String format) {

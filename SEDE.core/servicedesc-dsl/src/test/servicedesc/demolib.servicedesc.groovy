@@ -1,10 +1,7 @@
+import static de.upb.sede.StandardDefs.*;
+
 @groovy.transform.BaseScript de.upb.sede.SDL description
 
-def number = 'Number'
-def str = 'String'
-def bool = 'Bool'
-def list = 'builtin.List'
-def dict = 'builtin.Dict'
 
 collection ("demolib") {
     simpleName = "SEDE Demo Library"

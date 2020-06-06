@@ -13,7 +13,7 @@ public interface OnDemandExecutorSupplier {
 
     boolean isSupported(String service);
 
-    IExecutorHandle supply(String service);
+    List<IExecutorHandle> supply(String service);
 
     List<String> supportedServices();
 

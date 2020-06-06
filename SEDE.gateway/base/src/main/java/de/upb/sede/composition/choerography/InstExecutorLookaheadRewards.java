@@ -174,12 +174,12 @@ public class InstExecutorLookaheadRewards extends
 
         private final Map<Long, IExecutorHandle> candidateSelection = new HashMap<>();
 
-        void rewardCandidate(Long index, String executorId) {
+        private void rewardCandidate(Long index, String executorId) {
             Map<String, Integer> instCandidateScore = candidateScores.computeIfAbsent(index, i -> new HashMap<>());
             instCandidateScore.compute(executorId, (e, score) -> (score == null)  ? 0 : score+1 );
         }
 
-        Optional<String> bestScoredExecutor(Long index) {
+        private Optional<String> bestScoredExecutor(Long index) {
             int bestScore = -1;
             String bestExecutorId = null;
             Map<String, Integer> candidateScore = candidateScores.get(index);
@@ -199,12 +199,14 @@ public class InstExecutorLookaheadRewards extends
             }
         }
 
-        void selectCandidate(Long index, IExecutorHandle handle) {
+        private void selectCandidate(Long index, IExecutorHandle handle) {
             Objects.requireNonNull(handle);
             candidateSelection.put(index, handle);
         }
 
-
+        public Map<Long, IExecutorHandle> getCandidateSelection() {
+            return candidateSelection;
+        }
     }
 
 

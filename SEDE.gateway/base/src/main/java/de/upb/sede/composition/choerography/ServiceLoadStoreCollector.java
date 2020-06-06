@@ -4,13 +4,12 @@ import de.upb.sede.composition.*;
 import de.upb.sede.composition.faa.FieldAccessUtil;
 import de.upb.sede.composition.graphs.nodes.IServiceInstanceStorageNode;
 import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
-import de.upb.sede.composition.graphs.types.TypeClass;
+import de.upb.sede.composition.types.TypeClass;
 import de.upb.sede.exec.IExecutorContactInfo;
 import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.requests.resolve.beta.IResolvePolicy;
 import de.upb.sede.util.ResolvePolicyUtil;
-import de.upb.sede.util.TypeUtil;
-import org.checkerframework.common.reflection.qual.GetMethod;
+import de.upb.sede.composition.typing.TypeUtil;
 
 import java.util.*;
 
@@ -47,7 +46,8 @@ public class ServiceLoadStoreCollector
                 if(isService && wasWritten && toBeStored) {
                     // the previous service instance needs to be stored:
                     IExecutorContactInfo host = getInput().getInstExecutorMap().get(lastWritten).getContactInfo();
-                    getOutput().store(lastWritten, host.getQualifier(), field.getFieldname(), fieldType.getTypeQualifier());
+                    getOutput().store(lastWritten, getInput().getIndexFactory().create(),
+                        host.getQualifier(), field.getFieldname(), fieldType.getTypeQualifier());
                     wasWritten = false;
                     lastWritten = null;
                 }
@@ -63,7 +63,7 @@ public class ServiceLoadStoreCollector
                     IExecutorContactInfo host = getInput().getInstExecutorMap().get(index).getContactInfo();
                     IMethodResolution iMethodResolution = getInput().getMR().get(index);
                     // TODO add method reference
-                    getOutput().load(index, host.getQualifier(),
+                    getOutput().load(index, getInput().getIndexFactory().create(), host.getQualifier(),
                         fieldAccess.getField(), fieldType.getTypeQualifier());
 
                     wasLoaded = true;
@@ -77,7 +77,8 @@ public class ServiceLoadStoreCollector
         // Add an additional store at the end all instructions:
         if(isService && wasWritten && toBeStored) {
             IExecutorContactInfo host = getInput().getInstExecutorMap().get(lastWritten).getContactInfo();
-            getOutput().store(lastWritten, host.getQualifier(), field.getFieldname(), fieldType.getTypeQualifier());
+            getOutput().store(lastWritten, getInput().indexFactory.create(),
+                host.getQualifier(), field.getFieldname(), fieldType.getTypeQualifier());
         }
 
     }
@@ -89,6 +90,8 @@ public class ServiceLoadStoreCollector
 
     public static class SLSCInput {
 
+        private final IndexFactory indexFactory;
+
         private final Map<Long, IMethodResolution> mR;
 
         private final FieldAccessUtil fieldAccessUtil;
@@ -99,12 +102,17 @@ public class ServiceLoadStoreCollector
 
         private final IResolvePolicy resolvePolicy;
 
-        public SLSCInput(Map<Long, IMethodResolution> methodResolution, FieldAccessUtil fieldAccessUtil, Map<Long, IExecutorHandle> instExecutorMap, IExecutorHandle clientExecutor, IResolvePolicy resolvePolicy) {
+        public SLSCInput(IndexFactory indexFactory, Map<Long, IMethodResolution> methodResolution, FieldAccessUtil fieldAccessUtil, Map<Long, IExecutorHandle> instExecutorMap, IExecutorHandle clientExecutor, IResolvePolicy resolvePolicy) {
+            this.indexFactory = indexFactory;
             this.mR = methodResolution;
             this.fieldAccessUtil = fieldAccessUtil;
             this.instExecutorMap = instExecutorMap;
             this.clientExecutor = clientExecutor;
             this.resolvePolicy = resolvePolicy;
+        }
+
+        public IndexFactory getIndexFactory() {
+            return indexFactory;
         }
 
         public Map<Long, IMethodResolution> getMR() {
@@ -134,9 +142,10 @@ public class ServiceLoadStoreCollector
 
         Map<Long, List<IServiceInstanceStorageNode>> postInstStores = new HashMap<>();
 
-        private void load(Long instIndex, String host, String field, String typeQualifier) {
+        private void load(Long instIndex, Long nodeIndex, String host, String field, String typeQualifier) {
             IServiceInstanceStorageNode loadField = ServiceInstanceStorageNode.builder()
                 .fieldName(field)
+                .index(nodeIndex)
                 .serviceClasspath(typeQualifier)
                 .isLoadInstruction(true)
                 .hostExecutor(host)
@@ -144,17 +153,26 @@ public class ServiceLoadStoreCollector
             preInstLoads.computeIfAbsent(instIndex, i -> new ArrayList<>()).add(loadField);
         }
 
-        private void store(Long instIndex, String host, String field, String typeQualifier) {
+        private void store(Long instIndex, Long nodeIndex, String host, String field, String typeQualifier) {
             Objects.requireNonNull(instIndex);
             Objects.requireNonNull(field);
             Objects.requireNonNull(typeQualifier);
             IServiceInstanceStorageNode storeField = ServiceInstanceStorageNode.builder()
                 .fieldName(field)
+                .index(nodeIndex)
                 .serviceClasspath(typeQualifier)
                 .isLoadInstruction(false)
                 .hostExecutor(host)
                 .build();
             postInstStores.computeIfAbsent(instIndex, i -> new ArrayList<>()).add(storeField);
+        }
+
+        public Map<Long, List<IServiceInstanceStorageNode>> getPreInstLoads() {
+            return preInstLoads;
+        }
+
+        public Map<Long, List<IServiceInstanceStorageNode>> getPostInstStores() {
+            return postInstStores;
         }
     }
 }

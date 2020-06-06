@@ -1,5 +1,6 @@
 package de.upb.sede.composition.choerography.emulation.executors;
 
+import de.upb.sede.composition.choerography.emulation.EmulationException;
 import de.upb.sede.composition.graphs.nodes.*;
 import de.upb.sede.composition.orchestration.*;
 
@@ -30,7 +31,7 @@ class DefaultExecutorDecorations {
         }
 
         @Override
-        public EmulatedOp handleOperation(ITransmissionOp op) {
+        public EmulatedOp handleOperation(ITransmissionOp op) throws EmulationException {
 
             addNodes(
                 op.getSourceReadyNtf(),
@@ -45,8 +46,16 @@ class DefaultExecutorDecorations {
                 edge(op.getTransmitDataNode(), op.getTargetReceivedNtf())
             );
 
+
             consumeFields(op.getDFields(), op.getSourceReadyNtf());
             produceFields(op.getDFields(), op.getTargetReceivedNtf());
+
+
+            if(op.getDeleteFieldNode() !=null) {
+                // Rerun delete field operation:
+                IDeleteFieldOp deleteOp = DeleteFieldOp.builder().addAllDFields(op.getDFields()).deleteFieldNode(op.getDeleteFieldNode()).build();
+                getHead().execute(deleteOp);
+            }
 
             return TransmissionOp.builder().from(op).wasHandled(true).build();
         }
@@ -226,9 +235,7 @@ class DefaultExecutorDecorations {
 
         @Override
         public EmulatedOp handleOperation(IWaitForFinishOp op) {
-            INopNode nopeNode = NopNode.builder()
-                .hostExecutor(getExecutorHandle().getQualifier())
-                .build();
+            INopNode nopeNode = op.getNopNode();
 
             addNodes(nopeNode);
             for (IWaitForNotificationNode waitNode : op.getExFinishedNtf()) {

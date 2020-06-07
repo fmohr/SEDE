@@ -25,11 +25,11 @@ public class StandaloneExecutor implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public List<IExecutorHandle> supply(String service) {
+    public List<IExecutorHandle> supplyWithService(String service) {
         if(isSupported(service)) {
             return Collections.singletonList(handle);
         } else {
-            throw new IllegalArgumentException("Service '" + service + "' is not supported.");
+            return Collections.emptyList();
         }
     }
 
@@ -44,12 +44,7 @@ public class StandaloneExecutor implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public List<IExecutorHandle> allHandles() {
-        return Collections.singletonList(handle);
-    }
-
-    @Override
-    public Optional<IExecutorHandle> getHandle(String executorId) {
+    public Optional<IExecutorHandle> supplyWithExecutorId(String executorId) {
         if(handle.getContactInfo().getQualifier().equals(executorId)) {
             return Optional.of(handle);
         } else {

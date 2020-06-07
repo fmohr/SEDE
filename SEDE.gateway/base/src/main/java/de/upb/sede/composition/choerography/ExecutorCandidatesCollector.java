@@ -4,7 +4,7 @@ import de.upb.sede.composition.*;
 import de.upb.sede.composition.faa.FieldAccessUtil;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.IExecutorHandle;
-import de.upb.sede.gateway.ExecutorSupplyCoordinator;
+import de.upb.sede.gateway.OnDemandExecutorSupplier;
 
 import java.util.*;
 
@@ -28,7 +28,7 @@ public class ExecutorCandidatesCollector extends
         }  else {
             IMethodResolution currentMethod = getInput().getMethod(getCurrentInstruction().getIndex());
             String serviceUsed = currentMethod.getMethodRef().getServiceRef().getRef().getQualifier();
-            List<IExecutorHandle> supportingExecutors = getInput().getExecutorSupplyCoordinator().supplyExecutor(serviceUsed);
+            List<IExecutorHandle> supportingExecutors = getInput().getExecutors().supplyWithService(serviceUsed);
             this.getInstOutput().getCandidates().addAll(supportingExecutors);
         }
         if(getInstOutput().getCandidates().isEmpty()) {
@@ -71,11 +71,11 @@ public class ExecutorCandidatesCollector extends
         ServiceInstanceHandle serviceInstanceHandle = getInput()
             .getInitialServices()
             .get(contextField);
-        if(getInput().get)
-        if(!getInput().getExecutorSupplyCoordinator().hasExecutor(serviceInstanceHandle.getId())) {
+        Optional<IExecutorHandle> hostEH = getInput().getExecutors().supplyWithExecutorId(serviceInstanceHandle.getExecutorId());
+        if(!hostEH.isPresent()) {
             throw ChoreographyException.initialServiceHostNotRegistered(contextField, serviceInstanceHandle.getId(), serviceInstanceHandle.getClasspath(), serviceInstanceHandle.getExecutorId());
         }
-        IExecutorHandle handle = getInput().getExecutorSupplyCoordinator().getExecutorFor(serviceInstanceHandle.getId());
+        IExecutorHandle handle = hostEH.get();
         getInstOutput().getCandidates().add(handle);
     }
 
@@ -99,19 +99,19 @@ public class ExecutorCandidatesCollector extends
 
         private final Map<Long, IMethodResolution> methodResolutions;
 
-        private final ExecutorSupplyCoordinator executorSupplyCoordinator;
+        private final OnDemandExecutorSupplier executors;
 
         private final FieldAccessUtil fieldAccessUtil;
 
         public ECCInput(Map<String, ServiceInstanceHandle> initialServices,
-                 InstructionIndexer indexer,
-                 Map<Long, IMethodResolution> methodResolutions,
-                 ExecutorSupplyCoordinator executorSupplyCoordinator,
-                 FieldAccessUtil fieldAccessUtil) {
+                        InstructionIndexer indexer,
+                        Map<Long, IMethodResolution> methodResolutions,
+                        OnDemandExecutorSupplier executors,
+                        FieldAccessUtil fieldAccessUtil) {
             this.initialServices = initialServices;
             this.indexer = indexer;
             this.methodResolutions = methodResolutions;
-            this.executorSupplyCoordinator = executorSupplyCoordinator;
+            this.executors = executors;
             this.fieldAccessUtil = fieldAccessUtil;
         }
 
@@ -120,8 +120,8 @@ public class ExecutorCandidatesCollector extends
             return indexer;
         }
 
-        ExecutorSupplyCoordinator getExecutorSupplyCoordinator() {
-            return executorSupplyCoordinator;
+        OnDemandExecutorSupplier getExecutors() {
+            return executors;
         }
 
         IMethodResolution getMethod(Long currentIndex) {

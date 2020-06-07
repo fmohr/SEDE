@@ -23,7 +23,7 @@
     <Loggers>
         <Root level="debug">
             <AppenderRef ref="STDOUT"/>
-            <AppenderRef ref="defaultfile"/>
+<!--            <AppenderRef ref="defaultfile"/>-->
         </Root>
     </Loggers>
 

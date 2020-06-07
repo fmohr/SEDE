@@ -31,7 +31,7 @@ public class Orchestration
             getInput().indexer.recreateComposition(),
             getInput().executionParticipants.size());
         for (IIndexedInstruction inst : getInput().indexer) {
-
+            logger.info(instLog(inst, "Starting to orchestrate on executor {}."), inst.getInstruction().getHostExecutor());
             fetchData(inst);
             loadServices(inst);
             castDataTypes(inst);
@@ -40,7 +40,7 @@ public class Orchestration
             storeServices(inst);
         }
         transmitOutputs();
-        finishExecution();
+        letClientWaitForOthers();
     }
 
 
@@ -80,10 +80,14 @@ public class Orchestration
         IInstructionNode inst = indexedInst.getInstruction();
         InstructionOp.Builder instOpBuilder = InstructionOp.builder();
         instOpBuilder.addAllDFields(inst.getParameterFields())
-            .instructionNode(indexedInst.getInstruction());
+            .instructionNode(indexedInst.getInstruction())
+            .mR(getInput().mr.get(indexedInst.getIndex()));
 
         if(inst.getContextIsFieldFlag()) {
             instOpBuilder.addDFields(inst.getContext());
+        }
+        if(inst.isAssignment()) {
+            instOpBuilder.addDFields(inst.getFieldName());
         }
         InstructionOp instructionOp = instOpBuilder.build();
         logger.info(instLog(indexedInst, "Executing instruction."));
@@ -106,6 +110,7 @@ public class Orchestration
         }
         for (IDoubleCast cast : casts) {
             try {
+                logger.info(instLog(inst, "Casting field {} using:\n{}\nand:\n{}"),cast.getFirstCast().getFieldName(), cast.getFirstCast(), cast.getSecondCast());
                 orchestrateCast(hostOf(inst), cast);
             } catch(Exception ex) {
                 throw new OrchestrationException(
@@ -127,6 +132,7 @@ public class Orchestration
         }
         for (IParseConstantNode parse : parses) {
             try {
+                logger.info(instLog(inst, "Parsing constant {}."), parse.getConstantValue());
                 orchestrateParse(hostOf(inst), parse);
             } catch(Exception ex) {
                 throw new OrchestrationException(
@@ -144,6 +150,7 @@ public class Orchestration
         }
         for (IServiceInstanceStorageNode store : stores) {
             try {
+                logger.info(instLog(inst, "Storing service: {}"), store);
                 orchestrateStore(store);
             } catch(Exception ex) {
                 throw new OrchestrationException(String.format("Error while orchestrating service stores for " +
@@ -162,6 +169,7 @@ public class Orchestration
         }
         for (IServiceInstanceStorageNode load : loads) {
             try {
+                logger.info(instLog(inst, "Loading service: {}"), load);
                 orchestrateLoad(load);
             } catch(Exception ex) {
                 throw new OrchestrationException(String.format("Error while orchestrating service loads for " +
@@ -175,7 +183,7 @@ public class Orchestration
     private void fetchData(IIndexedInstruction inst) {
         List<ITransmission> transmissions = getInput().preInstTransmissions.get(inst.getIndex());
         if(transmissions == null || transmissions.isEmpty()) {
-            logger.info(instLog(inst, "No transmissions store before instruction."));
+            logger.info(instLog(inst, "No transmissions before instruction."));
             return;
         }
         for (ITransmission t : transmissions) {
@@ -213,7 +221,7 @@ public class Orchestration
         }
     }
 
-    private void finishExecution() {
+    private void letClientWaitForOthers() {
         EmExecutor clientExecutor = getInput().executionParticipants.getClientExecutor();
         IExecutorHandle clientHandle = clientExecutor.getExecutorHandle();
         String clientId = clientHandle.getQualifier();
@@ -252,6 +260,10 @@ public class Orchestration
                 .hostExecutor(clientId)
                 .build());
         }
+        if(clientWaitList.isEmpty()) {
+            logger.info("Execution finishes on the client without waiting for other executors.");
+            return;
+        }
         IWaitForFinishOp waitForFinishOp = WaitForFinishOp.builder()
             .nopNode(NopNode.builder()
                 .hostExecutor(clientId)
@@ -260,6 +272,7 @@ public class Orchestration
             .addAllExFinishedNtf(clientWaitList)
             .build();
         try {
+            logger.info("Let the client executor wait for {} other executors to notify it that their execution is finished.", clientWaitList.size());
             clientExecutor.execute(waitForFinishOp);
         } catch(Exception ex) {
             throw new OrchestrationException(String.format("Error while orchestrating " +
@@ -406,6 +419,8 @@ public class Orchestration
 
         private final InstructionIndexer indexer;
 
+        private final Map<Long, IMethodResolution> mr;
+
         // The results of the runtime pipelines
 
         private final Map<Long, IExecutorHandle> instExecutorMap;
@@ -424,10 +439,11 @@ public class Orchestration
 
         private final Map<Long, List<IServiceInstanceStorageNode>> postInstStores;
 
-        public OrchestrationInput(NotificationFactory notificationFactory, IndexFactory indexFactory, InstructionIndexer indexer, Map<Long, IExecutorHandle> instExecutorMap, ExecutionParticipants executionParticipants, Map<Long, List<ITransmission>> preInstTransmissions, Map<Long, List<IDoubleCast>> preInstCasts, Map<Long, List<IParseConstantNode>> preInstParse, List<ITransmission> outputTransmissions, Map<Long, List<IServiceInstanceStorageNode>> preInstLoads, Map<Long, List<IServiceInstanceStorageNode>> postInstStores) {
+        public OrchestrationInput(NotificationFactory notificationFactory, IndexFactory indexFactory, InstructionIndexer indexer, Map<Long, IMethodResolution> mr, Map<Long, IExecutorHandle> instExecutorMap, ExecutionParticipants executionParticipants, Map<Long, List<ITransmission>> preInstTransmissions, Map<Long, List<IDoubleCast>> preInstCasts, Map<Long, List<IParseConstantNode>> preInstParse, List<ITransmission> outputTransmissions, Map<Long, List<IServiceInstanceStorageNode>> preInstLoads, Map<Long, List<IServiceInstanceStorageNode>> postInstStores) {
             this.notificationFactory = notificationFactory;
             this.indexFactory = indexFactory;
             this.indexer = indexer;
+            this.mr = mr;
             this.instExecutorMap = instExecutorMap;
             this.executionParticipants = executionParticipants;
             this.preInstTransmissions = preInstTransmissions;

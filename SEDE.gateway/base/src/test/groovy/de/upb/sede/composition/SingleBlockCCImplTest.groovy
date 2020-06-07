@@ -3,6 +3,7 @@ package de.upb.sede.composition
 import de.upb.sede.ISDLAssembly
 import de.upb.sede.SDLReader
 import de.upb.sede.composition.typing.TypeCheckException
+import de.upb.sede.gateway.ExecutorArbiter
 import de.upb.sede.gateway.SimpleGatewayImpl
 import de.upb.sede.misc.DSLMiscs
 import de.upb.sede.util.MappedList
@@ -36,9 +37,7 @@ class SingleBlockCCImplTest extends Specification {
                 }
             }
         }
-
-        simpleGateway = new SimpleGatewayImpl(assembly)
-
+        simpleGateway = new SimpleGatewayImpl(assembly, new ExecutorArbiter())
     }
 
     def "test positive scenario"() {

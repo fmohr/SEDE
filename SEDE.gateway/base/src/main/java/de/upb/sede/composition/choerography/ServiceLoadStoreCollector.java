@@ -29,7 +29,7 @@ public class ServiceLoadStoreCollector
     private void processField(IFieldAnalysis field) {
         TypeClass fieldType = null;
 
-        Optional<TypeClass> initialType = field.getInitialType();
+        Optional<TypeClass> initialType = Optional.ofNullable(field.getInitialType());
         boolean toBeStored = toBeStored(field.getFieldname());
         boolean wasLoaded = false;
         boolean isService = false;
@@ -56,6 +56,7 @@ public class ServiceLoadStoreCollector
                 if(TypeUtil.isService(fieldType)) {
                     isService = true;
                     wasWritten = true;
+                    wasLoaded = true;
                     lastWritten = index;
                 }
             } else if(isService) {

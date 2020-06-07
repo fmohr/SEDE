@@ -64,7 +64,7 @@ public class InstructionIndexer implements Iterable<IIndexedInstruction>{
 
             @Override
             public boolean hasNext() {
-                return index-1 > 0;
+                return index-1 >= 0;
             }
 
             @Override

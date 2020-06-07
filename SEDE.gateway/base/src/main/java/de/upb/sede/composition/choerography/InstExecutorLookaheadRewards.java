@@ -49,9 +49,10 @@ public class InstExecutorLookaheadRewards extends
         }
         // there are multiple options.
         // First consider if the context is bound to another executor:
-        if(getCurrentInstruction().getInstruction().getContextIsFieldFlag()) {
-            String contextFieldName = getCurrentInstruction().getInstruction().getFieldName();
-            Optional<Long> prevAccess = getInput().getFieldAccessUtil().getPrevAccess(getCurrentInstruction().getIndex(), access -> access.getField().equals(contextFieldName) && access.getAccessType().isAssignOrWrite());
+        else if(getCurrentInstruction().getInstruction().getContextIsFieldFlag()) {
+            String contextFieldName = getCurrentInstruction().getInstruction().getContext();
+            Optional<Long> prevAccess = getInput().getFieldAccessUtil()
+                .getPrevAccess(getCurrentInstruction().getIndex(), access -> access.getField().equals(contextFieldName) && access.getAccessType().isAssignOrWrite());
             if(!prevAccess.isPresent()) {
                 throw ChoreographyException.initialServiceMultipleCandidates(contextFieldName, candidates);
             }

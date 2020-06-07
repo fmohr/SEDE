@@ -14,10 +14,10 @@ public class DeepImmutableCopier {
 
 
     public static <T> T copyAsImmutable(Object input) {
-        if(!isSMStyleAnnotated(input.getClass())) {
+        if(!implementsSMSStyleInterface(input.getClass())) {
             throw new IllegalArgumentException("Cannot convert object of unknown type: " + input.getClass().getName());
         }
-        String immutableClassName = getImmutableClassName(input);
+        String immutableClassName = getInterfaceClassName(input);
         Class<?> immutableClass;
         try {
             immutableClass = input.getClass().forName(immutableClassName);
@@ -31,40 +31,45 @@ public class DeepImmutableCopier {
     }
 
     public static <T> T copyAsImmutable(Object input, Class<T> tClass) {
-        if(!isSMStyleAnnotated(input.getClass())) {
+        if(!implementsSMSStyleInterface(input.getClass())) {
             throw new IllegalArgumentException("Cannot convert object of unknown type: " + input.getClass().getName());
         }
         if(!isSMStyleAnnotated(tClass)) {
-            throw new IllegalArgumentException("Cannot convert to unknown immutable class: " + tClass);
+            throw new IllegalArgumentException("Cannot convert to unknown class: " + tClass);
         }
         return MAPPER.convertValue(input, tClass);
     }
 
     static <T> boolean isSMStyleAnnotated(Class<T> tClass) {
-        return Stream.of(tClass.getInterfaces()).anyMatch(i -> i.isAnnotationPresent(SEDEModelStyle.class));
+        return tClass.isAnnotationPresent(SEDEModelStyle.class);
+    }
+
+    static <T> boolean implementsSMSStyleInterface(Class<T> tClass) {
+        return Stream.of(tClass.getInterfaces()).anyMatch(DeepImmutableCopier::isSMStyleAnnotated);
     }
 
 
-    private static String getImmutableClassName(Object valueObject) {
+    private static String getInterfaceClassName(Object valueObject) {
         String className = valueObject.getClass().getSimpleName();
-        if(!className.startsWith("Mutable")) {
-            return valueObject.getClass().getName();
+        String prefix;
+        if(className.startsWith("Mutable"))
+            prefix = "Mutable";
+        else
+            prefix = "";
+        // Remove Mutable from the path:
+        Package packageObject = valueObject.getClass().getPackage();
+        String packageName;
+        if(packageObject == null) {
+            // in java 8 packageObject is null when a class is in an unnamed package.
+            packageName = "";
         } else {
-            // Remove Mutable from the path:
-            Package packageObject = valueObject.getClass().getPackage();
-            String packageName;
-            if(packageObject == null) {
-                // in java 8 packageObject is null when a class is in an unnamed package.
-                packageName = "";
-            } else {
-                packageName = packageObject.getName();
-            }
-            String immutableClassName = className.substring("Mutable".length());
-            if(packageName.isEmpty()) {
-                return immutableClassName;
-            } else {
-                return packageName + "." + immutableClassName;
-            }
+            packageName = packageObject.getName();
+        }
+        String interfaceClassname = "I" + className.substring(prefix.length());
+        if(packageName.isEmpty()) {
+            return interfaceClassname;
+        } else {
+            return packageName + "." + interfaceClassname;
         }
     }
 

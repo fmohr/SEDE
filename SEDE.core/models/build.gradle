@@ -17,6 +17,7 @@ dependencies {
     compileOnly libs.immutables
     annotationProcessor  libs.immutables
 
+    testRuntimeOnly libs.log4j
     // mandatory dependencies for using Spock
     testCompile "org.codehaus.groovy:groovy-all:2.5.7"
     testCompile "org.spockframework:spock-core:1.3-groovy-2.5"

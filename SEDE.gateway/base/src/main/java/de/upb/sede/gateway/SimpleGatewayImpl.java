@@ -4,8 +4,6 @@ import de.upb.sede.ISDLAssembly;
 import de.upb.sede.SDLBaseLookupService;
 import de.upb.sede.SDLCacheLookupService;
 import de.upb.sede.SDLLookupService;
-import de.upb.sede.beta.IExecutorRegistration;
-import de.upb.sede.composition.CCRequest;
 import de.upb.sede.composition.CompositionCompileService;
 import de.upb.sede.composition.ICCRequest;
 import de.upb.sede.composition.ICompositionCompilation;
@@ -31,13 +29,13 @@ public class SimpleGatewayImpl implements IGateway {
 
     private final Cache<SDLLookupService> lookupServiceCache;
 
-    private final ExecutorSupplyCoordinator executorSupplier;
+    private final ExecutorArbiter executorSupplier;
 
     private final ICCService iccService;
 
     private final IChoreographyService icgService;
 
-    public SimpleGatewayImpl(Cache<SDLLookupService> lookupServiceCache, ExecutorSupplyCoordinator executorSupplier) {
+    public SimpleGatewayImpl(Cache<SDLLookupService> lookupServiceCache, ExecutorArbiter executorSupplier) {
         this.lookupServiceCache = lookupServiceCache;
         this.executorSupplier = executorSupplier;
         iccService = new CompositionCompileService(lookupServiceCache);
@@ -45,14 +43,14 @@ public class SimpleGatewayImpl implements IGateway {
     }
 
     public SimpleGatewayImpl(SDLLookupService baseLookupService,
-                             ExecutorSupplyCoordinator executorSupplier) {
+                             ExecutorArbiter executorSupplier) {
         this(new TTLCache<>(10, TimeUnit.SECONDS, () ->
                 new SDLCacheLookupService(baseLookupService)),
             executorSupplier);
     }
 
     public SimpleGatewayImpl(ISDLAssembly sdlAssembly,
-                             ExecutorSupplyCoordinator executorSupplier) {
+                             ExecutorArbiter executorSupplier) {
         this(
             new StaticCache<>(
                 new SDLCacheLookupService(new SDLBaseLookupService(sdlAssembly))),
@@ -74,7 +72,7 @@ public class SimpleGatewayImpl implements IGateway {
 				logger.error("Error trying to calculate the dot from graph: ", ex);
 			}
 		}
-        return null;
+        return choreography;
     }
 
 

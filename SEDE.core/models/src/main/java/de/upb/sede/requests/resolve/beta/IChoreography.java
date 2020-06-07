@@ -5,7 +5,7 @@ import de.upb.sede.SEDEModelStyle;
 import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
 import org.immutables.value.Value;
 
-import javax.validation.constraints.Null;
+import javax.annotation.Nullable;
 import java.util.List;
 
 @SEDEModelStyle
@@ -18,7 +18,7 @@ public interface IChoreography {
 
     List<String> getReturnFields();
 
-    @Null
+    @Nullable
     String getDotSVG();
 
 }

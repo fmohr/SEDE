@@ -11,8 +11,10 @@ import javax.annotation.Nullable;
 
 public class DummyNode implements BaseNode {
 
+    static long GLOBAL_INDEX = 0;
 	String name = "noname";
 
+    long index = GLOBAL_INDEX++;
 	private Collection<String> producingFields;
 	private Collection<String> consumingFields;
 
@@ -41,6 +43,6 @@ public class DummyNode implements BaseNode {
 
     @Override
     public Optional<Long> getIndex() {
-        return Optional.empty();
+        return Optional.of(index);
     }
 }

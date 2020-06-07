@@ -43,7 +43,7 @@ class ExecutionGraph {
     }
 
     public boolean contains(BaseNode source) {
-        return nodes.contains(source);
+        return nodes.contains(new GraphNode(source));
     }
 
     public GraphEdge edge(BaseNode n1, BaseNode n2) {
@@ -55,7 +55,9 @@ class ExecutionGraph {
     }
 
     public void removeNode(BaseNode next) {
-        nodes.remove(next);
+        GraphNode graphNode = new GraphNode(next);
+        nodes.remove(graphNode);
+        edges.removeIf(e -> e.contains(next));
     }
 
     public boolean containsEdge(BaseNode node, BaseNode otherNode) {
@@ -108,7 +110,7 @@ class ExecutionGraph {
 
         @Override
         public int hashCode() {
-            return node.getIndex().get().intValue();
+            return node.hashCode();
         }
     }
 

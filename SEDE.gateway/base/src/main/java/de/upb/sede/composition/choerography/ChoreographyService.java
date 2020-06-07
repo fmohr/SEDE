@@ -14,7 +14,10 @@ import de.upb.sede.composition.orchestration.IDoubleCast;
 import de.upb.sede.composition.orchestration.ITransmission;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.IExecutorHandle;
-import de.upb.sede.gateway.ExecutorSupplyCoordinator;
+import de.upb.sede.gateway.ExecutorArbiter;
+import de.upb.sede.gateway.OnDemandExecutorSupplier;
+import de.upb.sede.gateway.OnDemandExecutorSupplierChain;
+import de.upb.sede.gateway.StandaloneExecutor;
 import de.upb.sede.interfaces.ICCService;
 import de.upb.sede.interfaces.IChoreographyService;
 import de.upb.sede.requests.resolve.beta.Choreography;
@@ -32,9 +35,9 @@ public class ChoreographyService implements IChoreographyService {
 
     private final Cache<SDLLookupService> lookupServiceCache;
 
-    private final ExecutorSupplyCoordinator executorSupplyCoordinator;
+    private final ExecutorArbiter executorSupplyCoordinator;
 
-    public ChoreographyService(ICCService iccService, Cache<SDLLookupService> lookupService, ExecutorSupplyCoordinator executorSupplyCoordinator) {
+    public ChoreographyService(ICCService iccService, Cache<SDLLookupService> lookupService, ExecutorArbiter executorSupplyCoordinator) {
         this.iccService = iccService;
         this.lookupServiceCache = lookupService;
         this.executorSupplyCoordinator = executorSupplyCoordinator;
@@ -69,8 +72,12 @@ public class ChoreographyService implements IChoreographyService {
             .map(IIndexedInstruction::getIndex)
             .forEach(indexFactory::setOccupiedIndex);
 
+        OnDemandExecutorSupplier registeredExecutors = executorSupplyCoordinator.supplier();
+        OnDemandExecutorSupplier clientExecutor = new StandaloneExecutor(resolveRequest.getClientExecutorRegistration().getExecutorHandle());
+        OnDemandExecutorSupplier allExecutors = new OnDemandExecutorSupplierChain(registeredExecutors, clientExecutor);
+
         ExecutorCandidatesCollector ecc = new ExecutorCandidatesCollector();
-        ecc.setInput(new ExecutorCandidatesCollector.ECCInput(initialServices, indexer, mrMap, executorSupplyCoordinator, fieldAccessUtil));
+        ecc.setInput(new ExecutorCandidatesCollector.ECCInput(initialServices, indexer, mrMap, allExecutors, fieldAccessUtil));
         ecc.run();
         MappedListView<Long, List<IExecutorHandle>, Map.Entry<Long, ExecutorCandidatesCollector.ECCOutput>> candidates;
         candidates = new MappedListView<>(ecc.getOutput().getFinalOutput().entrySet(), Map.Entry::getKey, entry -> entry.getValue().getCandidates());
@@ -116,7 +123,7 @@ public class ChoreographyService implements IChoreographyService {
         NotificationFactory nf = new NotificationFactory();
 
         Orchestration orchestration = new Orchestration();
-        orchestration.setInput(new Orchestration.OrchestrationInput(nf, indexFactory, indexer, candidateSelection, participants1,
+        orchestration.setInput(new Orchestration.OrchestrationInput(nf, indexFactory, indexer, mrMap, candidateSelection, participants1,
             preInstTransmissions, preInstCasts, preInstParse, outputTransmissions, preInstLoads, postInstStores));
         orchestration.run();
         // no formal output

@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
  * @author aminfaez
  *
  */
-public class ExecutorSupplyCoordinator implements OnDemandExecutorSupplier { // TODO let this class implement OnDemandExecutorSupplier
+public class ExecutorArbiter { // TODO let this class implement OnDemandExecutorSupplier
 
-    private final static Logger logger = LoggerFactory.getLogger(ExecutorSupplyCoordinator.class);
+    private final static Logger logger = LoggerFactory.getLogger(ExecutorArbiter.class);
 
 	/*
 	 * The scheduler:
@@ -31,7 +31,7 @@ public class ExecutorSupplyCoordinator implements OnDemandExecutorSupplier { // 
 		for (OnDemandExecutorSupplier executorSupplier : executorSuppliers) {
 			if (executorSupplier.isSupported(service)) {
 				try {
-                    List<IExecutorHandle> handles = executorSupplier.supply(service);
+                    List<IExecutorHandle> handles = executorSupplier.supplyWithService(service);
                     capableExecutors.addAll(handles);
                 } catch(UnsupportedOperationException ex) {
                     logger.warn("Executor supplier {} didn't supply executors for the demanded service {}.", executorSupplier, service, ex);
@@ -56,7 +56,7 @@ public class ExecutorSupplyCoordinator implements OnDemandExecutorSupplier { // 
 
 	public synchronized IExecutorHandle getExecutorFor(String id) {
         Optional<IExecutorHandle> any = executorSuppliers.stream()
-            .map(supplier -> supplier.getHandle(id))
+            .map(supplier -> supplier.supplyWithExecutorId(id))
             .filter(Optional::isPresent)
             .map(Optional::get)
             .findAny();
@@ -72,12 +72,6 @@ public class ExecutorSupplyCoordinator implements OnDemandExecutorSupplier { // 
 //		scheduler.updateExecutors(executors);
 //	}
 
-	List<IExecutorHandle> getExecutors() {
-	    return executorSuppliers.stream()
-            .map(OnDemandExecutorSupplier::allHandles)
-            .flatMap(Collection::stream) // merge lists
-            .collect(Collectors.toList());
-	}
 
 	public synchronized void removeExecutor(String executorId) {
         executorSuppliers.removeIf(supplier -> supplier.getIdentifier().equals(executorId));
@@ -100,46 +94,44 @@ public class ExecutorSupplyCoordinator implements OnDemandExecutorSupplier { // 
     public synchronized void addSupplier(OnDemandExecutorSupplier supplier) {
         executorSuppliers.add(supplier);
     }
+    public synchronized OnDemandExecutorSupplier supplier() {
+	    return new OnDemandExecutorSupplier() {
 
-    @Override
-    public boolean isSupported(String service) {
-        return executorSuppliers.stream().anyMatch(es -> es.isSupported(service));
-    }
+            @Override
+            public boolean isSupported(String service) {
+                return executorSuppliers.stream().anyMatch(es -> es.isSupported(service));
+            }
 
-    @Override
-    public List<IExecutorHandle> supply(String service) {
-        return supplyExecutor(service);
-    }
+            @Override
+            public List<IExecutorHandle> supplyWithService(String service) {
+                return supplyExecutor(service);
+            }
 
 
-    @Override
-    public List<String> supportedServices() {
-        return executorSuppliers.stream()
-            .map(OnDemandExecutorSupplier::supportedServices)
-            .reduce(new ArrayList<>(), (a1, a2) -> { a1.addAll(a2); return a1;})
-            .stream()
-            .distinct()
-            .collect(Collectors.toList());
-    }
+            @Override
+            public List<String> supportedServices() {
+                return executorSuppliers.stream()
+                    .map(OnDemandExecutorSupplier::supportedServices)
+                    .reduce(new ArrayList<>(), (a1, a2) -> { a1.addAll(a2); return a1;})
+                    .stream()
+                    .distinct()
+                    .collect(Collectors.toList());
+            }
 
-    @Override
-    public String getIdentifier() {
-        throw new RuntimeException();
-    }
+            @Override
+            public String getIdentifier() {
+                throw new RuntimeException();
+            }
 
-    @Override
-    public List<IExecutorHandle> allHandles() {
-        return executorSuppliers.stream()
-            .map(OnDemandExecutorSupplier::allHandles)
-            .reduce(new ArrayList<>(), (a1, a2) -> { a1.addAll(a2); return a1;});
-    }
 
-    @Override
-    public Optional<IExecutorHandle> getHandle(String executorId) {
-	    return executorSuppliers.stream()
-            .map(es -> es.getHandle(executorId))
-            .filter(opt -> opt.isPresent())
-            .map(opt -> opt.get())
-            .findAny();
+            @Override
+            public Optional<IExecutorHandle> supplyWithExecutorId(String executorId) {
+                return executorSuppliers.stream()
+                    .map(es -> es.supplyWithExecutorId(executorId))
+                    .filter(opt -> opt.isPresent())
+                    .map(opt -> opt.get())
+                    .findAny();
+            }
+        };
     }
 }

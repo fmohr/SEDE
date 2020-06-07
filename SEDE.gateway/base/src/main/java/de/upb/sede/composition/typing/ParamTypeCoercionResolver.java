@@ -59,7 +59,7 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
                 }
                 typeCoercion = castValue(paramType.getTypeQualifier(), expectedInputType);
                 if(typeCoercion.hasTypeConversion()) {
-                    TypeClass resultingTypeClass = TypeUtil.getTypeClassOf(getInput().getLookupService(), instParam);
+                    TypeClass resultingTypeClass = TypeUtil.getTypeClassOf(getInput().getLookupService(), typeCoercion.getResultType());
                     if(!(resultingTypeClass instanceof IDataValueType)) {
                         throw new RuntimeException("BUG: the new type class was not data value");
                     }

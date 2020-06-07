@@ -34,7 +34,7 @@ public class EDDExecutorSupplier implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public List<IExecutorHandle> supply(String service) {
+    public List<IExecutorHandle> supplyWithService(String service) {
         List<IExecutorHandle> handles = supplyList(Collections.singletonList(service));
         List<IExecutorHandle> supportingExecutors = handles.stream()
             .filter(h -> h.getCapabilities().getServices().contains(service))
@@ -127,13 +127,8 @@ public class EDDExecutorSupplier implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public List<IExecutorHandle> allHandles() {
-        return supplyList(Collections.emptyList());
-    }
-
-    @Override
     @Deprecated
-    public Optional<IExecutorHandle> getHandle(String executorId) {
+    public Optional<IExecutorHandle> supplyWithExecutorId(String executorId) {
         try {
             return supplyList(Collections.emptyList()).stream()
                 .filter(handle -> handle.getQualifier().equals(executorId))

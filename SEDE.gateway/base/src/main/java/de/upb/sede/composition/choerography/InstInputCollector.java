@@ -38,8 +38,18 @@ public class InstInputCollector
         initializeInitialFields();
         for (IIndexedInstruction inst : getInput().getIndexer()) {
             prepareInputFields(inst);
+            setOutputFieldLocation(inst);
         }
         transmitOutputs();
+    }
+
+    private void setOutputFieldLocation(IIndexedInstruction inst) {
+        if(inst.getInstruction().isAssignment()) {
+            Long instIndex = inst.getIndex();
+            IExecutorHandle executorH = getInput().instExecutorMap.get(instIndex);
+            String outputField = inst.getInstruction().getFieldName();
+            getOutput().setFieldLocation(outputField, executorH);
+        }
     }
 
     private void initializeInitialFields() {
@@ -70,6 +80,7 @@ public class InstInputCollector
                 String serviceQualifier = mr.getMethodRef().getServiceRef().getRef().getQualifier();
                 ITransmission serviceTransmission = createServiceTransmission(locationOfContext, executorH, serviceQualifier);
                 getOutput().addTransmission(instIndex, serviceTransmission);
+                getOutput().setFieldLocation(contextFieldname, executorH);
             }
         }
         List<String> params = inst.getInstruction().getParameterFields();
@@ -122,6 +133,7 @@ public class InstInputCollector
                     // create transmission with the correct inplace casts:
                     ITransmission dataTransmission = createDataTransmission(sourceLocation, executorH, fieldname, typeCoercion);
                     getOutput().addTransmission(instIndex, dataTransmission);
+                    getOutput().setFieldLocation(fieldname, executorH);
                 }
             }
         }
@@ -375,6 +387,10 @@ public class InstInputCollector
             return getOutputTransmissions().stream()
                 .map(trans -> trans.getAcceptDataNode().getFieldName())
                 .collect(Collectors.toList());
+        }
+
+        public void setFieldLocation(String fieldname, IExecutorHandle executorH) {
+            this.fieldLocation.put(fieldname, executorH);
         }
     }
 

@@ -96,10 +96,10 @@ public class SDLReader {
         database.clear();
     }
 
-    public List<ServiceCollectionDesc> getCollections() {
+    public List<IServiceCollectionDesc> getCollections() {
         return database.values()
             .stream()
-            .map( it -> DeepImmutableCopier.copyAsImmutable(it, ServiceCollectionDesc.class))
+            .map( it -> DeepImmutableCopier.copyAsImmutable(it, IServiceCollectionDesc.class))
             .collect(Collectors.toList());
     }
 

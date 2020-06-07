@@ -13,14 +13,12 @@ public interface OnDemandExecutorSupplier {
 
     boolean isSupported(String service);
 
-    List<IExecutorHandle> supply(String service);
+    List<IExecutorHandle> supplyWithService(String service);
+
+    Optional<IExecutorHandle> supplyWithExecutorId(String executorId);
 
     List<String> supportedServices();
 
     String getIdentifier();
-
-    List<IExecutorHandle> allHandles();
-
-    Optional<IExecutorHandle> getHandle(String executorId);
 
 }

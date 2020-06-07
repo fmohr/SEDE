@@ -1,6 +1,7 @@
 package de.upb.sede.util;
 
 import java.io.File;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,7 @@ public class GraphToDot {
 		}
 		for (BaseNode baseNode : compGraph.getNodes()) {
 			DotNode dotNode = nodeMap.get(baseNode);
-            List<Long> targets = compGraph.getEdges().get(baseNode.getIndex().get().toString());
+            List<Long> targets = compGraph.getEdges().getOrDefault(baseNode.getIndex().get().toString(), Collections.EMPTY_LIST);
             for(BaseNode neighbor : compGraph.getNodes()) {
                 if(!targets.contains(neighbor.getIndex().get())) {
                     continue;

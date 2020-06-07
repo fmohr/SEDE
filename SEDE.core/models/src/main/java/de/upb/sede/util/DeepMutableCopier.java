@@ -160,7 +160,7 @@ public class DeepMutableCopier {
     }
 
     static boolean isValueObject(Object o) {
-        return DeepImmutableCopier.isSMStyleAnnotated(o.getClass());
+        return DeepImmutableCopier.implementsSMSStyleInterface(o.getClass());
     }
 
     static boolean isCollection(Object o) {

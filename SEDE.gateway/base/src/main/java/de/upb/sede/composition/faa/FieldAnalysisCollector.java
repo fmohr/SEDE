@@ -93,6 +93,7 @@ public class FieldAnalysisCollector
         private void addInitialField(IFieldType initialField) {
             MutableFieldAnalysis fieldAnalysis = getFieldAnalysis(initialField.getFieldname());
             fieldAnalysis.setInitialType(initialField.getType());
+
         }
 
         private void setNewType(Long index, IFieldType newType) {

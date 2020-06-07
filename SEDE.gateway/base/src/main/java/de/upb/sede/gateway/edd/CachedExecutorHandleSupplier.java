@@ -1,6 +1,5 @@
 package de.upb.sede.gateway.edd;
 
-import de.upb.sede.exec.ExecutorHandle;
 import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.gateway.OnDemandExecutorSupplier;
 import de.upb.sede.requests.deploy.EDDRegistration;
@@ -14,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+@Deprecated
 public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
 
     private final static Logger logger = LoggerFactory.getLogger(CachedExecutorHandleSupplier.class);
@@ -124,7 +123,7 @@ public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public List<IExecutorHandle> supply(String service) {
+    public List<IExecutorHandle> supplyWithService(String service) {
         /*
          * TODO recheck if there are any cache miss problems here.
          *  Are the caches cleaned up?
@@ -158,12 +157,7 @@ public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
     }
 
     @Override
-    public List<IExecutorHandle> allHandles() {
-        return Collections.unmodifiableList(execHandleCache.access());
-    }
-
-    @Override
-    public Optional<IExecutorHandle> getHandle(String executorId) {
+    public Optional<IExecutorHandle> supplyWithExecutorId(String executorId) {
         return execHandleCache.access()
             .stream()
             .filter(handle -> handle.getQualifier().equals(executorId))

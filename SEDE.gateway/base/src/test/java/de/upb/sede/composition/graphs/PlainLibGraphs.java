@@ -2,7 +2,6 @@ package de.upb.sede.composition.graphs;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +18,9 @@ import de.upb.sede.composition.types.ServiceInstanceType;
 import de.upb.sede.exec.ExecutorCapabilities;
 import de.upb.sede.exec.ExecutorContactInfo;
 import de.upb.sede.exec.ExecutorHandle;
-import de.upb.sede.gateway.ExecutorSupplyCoordinator;
+import de.upb.sede.gateway.ExecutorArbiter;
 import de.upb.sede.gateway.SimpleGatewayImpl;
 import de.upb.sede.interfaces.IGateway;
-import de.upb.sede.requests.resolve.ResolvePolicy;
 import de.upb.sede.requests.resolve.beta.IChoreography;
 import de.upb.sede.requests.resolve.beta.MutableResolvePolicy;
 import de.upb.sede.requests.resolve.beta.MutableResolveRequest;
@@ -32,12 +30,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.upb.sede.core.SEDEObject;
-import de.upb.sede.core.ServiceInstanceField;
 import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.requests.ExecutorRegistration;
-import de.upb.sede.requests.resolve.InputFields;
-import de.upb.sede.requests.resolve.ResolveRequest;
 import de.upb.sede.util.FileUtil;
 
 public class PlainLibGraphs {
@@ -55,7 +48,7 @@ public class PlainLibGraphs {
 	public static void setupGateway() {
 	    plainlibServices = getSDLAssembly();
 		gateway = new SimpleGatewayImpl(plainlibServices,
-		    new ExecutorSupplyCoordinator()
+		    new ExecutorArbiter()
         );
 
 	}
@@ -115,9 +108,6 @@ public class PlainLibGraphs {
 
 
 	private static IExecutorRegistration getClientRegistration() {
-
-		Map<String, Object> contactInfo = new HashMap<>();
-		contactInfo.put("id", "python_executor");
         List<String> supportedServices = SDLUtil.getAllServices(plainlibServices)
             .stream()
             .map(IQualifiable::getQualifier)
@@ -125,7 +115,7 @@ public class PlainLibGraphs {
 		IExecutorRegistration registration1 = de.upb.sede.beta.ExecutorRegistration.builder()
             .executorHandle(ExecutorHandle.builder()
                 .capabilities(ExecutorCapabilities.builder()
-                    .addAllFeatures(supportedServices)
+                    .addAllServices(supportedServices)
                 .build())
                 .contactInfo(ExecutorContactInfo.builder()
                     .qualifier("python_executor")

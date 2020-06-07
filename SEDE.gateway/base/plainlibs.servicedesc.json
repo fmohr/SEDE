@@ -28,8 +28,8 @@
         "simpleName" : "__construct",
         "comments" : [ ],
         "dynAux" : null,
-        "isContextFree" : true,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : true
       }, {
         "inputs" : [ {
           "type" : "Number",
@@ -50,8 +50,8 @@
         "simpleName" : "calc",
         "comments" : [ ],
         "dynAux" : null,
-        "isContextFree" : false,
-        "isPure" : true
+        "isPure" : true,
+        "isContextFree" : false
       }, {
         "inputs" : [ {
           "type" : "plainlib.package1.b.Numbers",
@@ -72,8 +72,8 @@
         "simpleName" : "calc_append_inplace",
         "comments" : [ ],
         "dynAux" : null,
-        "isContextFree" : false,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : false
       }, {
         "inputs" : [ {
           "type" : "plainlib.package1.b.Numbers",
@@ -100,8 +100,8 @@
         "simpleName" : "calc_append",
         "comments" : [ ],
         "dynAux" : null,
-        "isContextFree" : false,
-        "isPure" : true
+        "isPure" : true,
+        "isContextFree" : false
       }, {
         "inputs" : [ {
           "type" : "Number",
@@ -116,8 +116,8 @@
         "simpleName" : "set_a",
         "comments" : [ ],
         "dynAux" : null,
-        "isContextFree" : false,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : false
       }, {
         "inputs" : [ {
           "type" : "Number",
@@ -132,8 +132,8 @@
         "simpleName" : "set_b",
         "comments" : [ ],
         "dynAux" : null,
-        "isContextFree" : false,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : false
       }, {
         "inputs" : [ {
           "type" : "String",
@@ -154,8 +154,8 @@
         "simpleName" : "upper",
         "comments" : [ ],
         "dynAux" : null,
-        "isContextFree" : true,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : true
       }, {
         "inputs" : [ ],
         "outputs" : [ {
@@ -170,8 +170,8 @@
         "simpleName" : "__str__",
         "comments" : [ ],
         "dynAux" : null,
-        "isContextFree" : false,
-        "isPure" : true
+        "isPure" : true,
+        "isContextFree" : false
       }, {
         "inputs" : [ ],
         "outputs" : [ {
@@ -186,8 +186,8 @@
         "simpleName" : "random",
         "comments" : [ ],
         "dynAux" : null,
-        "isContextFree" : true,
-        "isPure" : false
+        "isPure" : false,
+        "isContextFree" : true
       } ],
       "interfaces" : [ ],
       "fieldTypes" : { },

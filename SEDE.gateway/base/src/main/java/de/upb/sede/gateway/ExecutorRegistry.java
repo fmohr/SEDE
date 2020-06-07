@@ -3,7 +3,6 @@ package de.upb.sede.gateway;
 import de.upb.sede.IServiceRef;
 import de.upb.sede.SDLLookupService;
 import de.upb.sede.beta.IExecutorRegistration;
-import de.upb.sede.exec.ExecutorHandle;
 import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.interfaces.IExecutorRegistry;
 import de.upb.sede.util.Cache;
@@ -19,9 +18,9 @@ public class ExecutorRegistry implements IExecutorRegistry {
 
     private final Cache<SDLLookupService> lookupServiceCache;
 
-    private final ExecutorSupplyCoordinator execCoordinator;
+    private final ExecutorArbiter execCoordinator;
 
-    public ExecutorRegistry(Cache<SDLLookupService> lookupServiceCache, ExecutorSupplyCoordinator supplyCoordinator) {
+    public ExecutorRegistry(Cache<SDLLookupService> lookupServiceCache, ExecutorArbiter supplyCoordinator) {
         this.lookupServiceCache = lookupServiceCache;
         this.execCoordinator = supplyCoordinator;
     }

@@ -5,6 +5,8 @@ import de.upb.sede.SEDEModelStyle;
 import de.upb.sede.composition.types.TypeClass;
 import org.immutables.value.Value;
 
+import javax.annotation.Nullable;
+import javax.validation.constraints.Null;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -17,12 +19,13 @@ public interface IFieldAnalysis {
 
     @Value.Derived
     default boolean isInjected() {
-        return getInitialType().isPresent();
+        return getInitialType() != null;
     }
 
     String getFieldname();
 
-    Optional<TypeClass> getInitialType();
+    @Nullable
+    TypeClass getInitialType();
 
     Map<Long, TypeClass> getInstTyping();
 

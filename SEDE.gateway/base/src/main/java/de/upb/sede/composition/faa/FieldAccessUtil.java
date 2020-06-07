@@ -43,7 +43,7 @@ public class FieldAccessUtil {
                 .get(prevInst.getIndex());
             Optional<IFieldAccess> optAccess = fieldAccesses.stream()
                 .filter(accessTypePredicate)
-                .findAny();
+                .reduce((first, second) -> second);
             if(optAccess.isPresent()) {
                 return Optional.of(prevInst.getIndex());
             }
@@ -89,7 +89,7 @@ public class FieldAccessUtil {
     }
 
     public TypeClass getInitialTyping(String field) {
-        return fieldAnalysis.get(field).getInitialType().get();
+        return fieldAnalysis.get(field).getInitialType();
     }
 
     public Optional<Long> getPrevFieldAccess(Long instIndex, String fieldname) {
@@ -127,7 +127,7 @@ public class FieldAccessUtil {
     public TypeClass fieldTypePreInstIndex(String fieldname, Long instIndex) {
         IFieldAnalysis field = fieldAnalysis.get(fieldname);
         if(instIndex == null) {
-            return field.getInitialType().orElse(null);
+            return field.getInitialType();
         }
         Iterator<IIndexedInstruction> it = indexer.iteratePrevInst(instIndex);
         while(it.hasNext()) {
@@ -136,7 +136,7 @@ public class FieldAccessUtil {
                 return field.getInstTyping().get(prevInst.getIndex());
             }
         }
-        return field.getInitialType().orElse(null);
+        return field.getInitialType();
     }
 
     public TypeClass fieldTypeAfterInstIndex(String fieldname, Long instIndex) {

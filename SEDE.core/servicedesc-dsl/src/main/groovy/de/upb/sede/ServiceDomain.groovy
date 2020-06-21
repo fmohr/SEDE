@@ -5,27 +5,49 @@ import de.upb.sede.exec.IServiceDesc
 import de.upb.sede.exec.MutableMethodDesc
 import de.upb.sede.exec.MutableMethodParameterDesc
 import de.upb.sede.exec.MutableServiceDesc
+import de.upb.sede.param.MutableParameterDependencyDesc
 import de.upb.sede.param.MutableServiceParameterizationDesc
+import de.upb.sede.types.MutableDataTypeDesc
+import de.upb.sede.util.DynRecord
 import groovy.transform.PackageScope
 
 class ServiceDomain
     extends DomainAware<MutableServiceDesc, ServiceCollectionDomain>
-    implements
-        Shared.CommentAware,
-        Shared.AuxDomAware {
+{
 
-    def setStateful(Closure typeDescriber = Closure.IDENTITY) {
-        setStateType(model.qualifier, typeDescriber)
+    // model MutableServiceDesc
+
+    // topDom ServiceCollectionDomain
+
+    static MutableServiceDesc aux(MutableServiceDesc model, @DelegatesTo(DynRecord) Closure desc) {
+        Shared.aux(model, desc)
+        return model
+    }
+
+    static MutableServiceDesc comment(MutableServiceDesc model, String ... comments) {
+        Shared.comment(model, comments)
+        return model
+    }
+
+    static MutableServiceDesc setInfo(MutableServiceDesc model, String commentBlock) {
+        Shared.setInfo(model, commentBlock)
+        return model
+    }
+
+    static def setStateful(MutableServiceDesc model, Closure typeDescriber = Closure.IDENTITY) {
+        setStateType(model, model.qualifier, typeDescriber)
     }
 
     @PackageScope
-    def setStateType(String dataTypeQualifier, Closure typeDescriber = Closure.IDENTITY) {
-        topDomain.type(dataTypeQualifier, typeDescriber)
+    static def setStateType(MutableServiceDesc model, String dataTypeQualifier, Closure typeDescriber = Closure.IDENTITY) {
+//        topDomain.type(dataTypeQualifier, typeDescriber)
         model.fieldTypes[IServiceDesc.STATE_FIELD] = dataTypeQualifier
     }
 
-
-    def method(Map methodDef, @DelegatesTo(MethodDomain) Closure methodDescriber = defaults.method) {
+    static def method(MutableServiceDesc model, Map methodDef) {
+        return method(model, methodDef, Defaults.defaults.method)
+    }
+    static def method(MutableServiceDesc model, Map methodDef, @DelegatesTo(MutableMethodDesc) Closure methodDescriber) {
         if(! "name" in methodDef) {
             throw new RuntimeException("Provided method declaration needs to define method name. Provided method definition: " + methodDef.toString())
         }
@@ -34,14 +56,14 @@ class ServiceDomain
         def signatureDef = new HashMap(methodDef)
         signatureDef.remove("name")
 
-        def methodDesc = getOrDefineMethod (methodName, methodDef);
+        def methodDesc = getOrDefineMethod(model, methodName, methodDef);
 
         def mDom = new MethodDomain()
         delegateDown(mDom, methodDesc, methodDescriber)
         return methodDesc
     }
 
-    private MutableMethodDesc getOrDefineMethod(String methodQualifier, Map methodDefs) {
+    private static MutableMethodDesc getOrDefineMethod(MutableServiceDesc model, String methodQualifier, Map methodDefs) {
 //                                                @DelegatesTo(MethodDomain) Closure describer = defaults.method) {
         def methodDesc = MethodDomain.createMethod(methodQualifier, methodDefs)
         def matchingMethod = model.methods.find { Shared.matchingMethods(it, methodDesc) }
@@ -54,20 +76,23 @@ class ServiceDomain
     }
 
 
-    def constructor() {
-        return constructor([:], defaults.constructor)
+    static def constructor(MutableServiceDesc model) {
+        return constructor(model, [:], Defaults.defaults.constructor)
     }
 
-    def constructor(Map signatureDef, @DelegatesTo(MethodDomain) Closure signatureDescriber = defaults.constructor) {
+    static def constructor(MutableServiceDesc model, Map methodDef) {
+        return constructor(model, methodDef, Defaults.defaults.constructor)
+    }
+    static def constructor(MutableServiceDesc model, Map signatureDef, @DelegatesTo(MutableMethodDesc) Closure signatureDescriber) {
         def methodDef = new HashMap(signatureDef)
         methodDef["name"] = IMethodDesc.CONSTRUCTOR_METHOD_NAME
         methodDef["output"] = model.qualifier
         methodDef["static"] = true
-        def m = method(methodDef, signatureDescriber)
+        def m = method(model, methodDef, signatureDescriber)
         return m
     }
 
-    def params(@DelegatesTo(ParameterDomain) Closure describer) {
+    static def params(MutableServiceDesc model, @DelegatesTo(MutableServiceParameterizationDesc) Closure describer) {
         Objects.requireNonNull(describer)
 
         if(model.serviceParameters == null) {
@@ -80,25 +105,19 @@ class ServiceDomain
         return model.serviceParameters
     }
 
-    def eachMethod(@DelegatesTo(MethodDomain) Closure describer) {
+    static def eachMethod(MutableServiceDesc model, @DelegatesTo(MutableMethodDesc) Closure describer) {
         model.methods.each {
             def methodDom =  new MethodDomain()
             delegateDown(methodDom, it, describer)
         }
     }
 
-    def implOf(String... additionalInterfaces) {
+    static def implOf(MutableServiceDesc model, String... additionalInterfaces) {
         model.interfaces += additionalInterfaces.collect()
     }
 
-    def implOf(IServiceDesc... additionalInterfaces) {
+    static def implOf(MutableServiceDesc model, IServiceDesc... additionalInterfaces) {
         model.interfaces += additionalInterfaces.collect {it.qualifier}
-    }
-
-    @PackageScope
-    @Override
-    String getBindingName() {
-        "service"
     }
 
 }

@@ -1,32 +1,50 @@
 package de.upb.sede
 
 import de.upb.sede.exec.IMethodParameterDesc
-import de.upb.sede.exec.MethodParameterDesc
 import de.upb.sede.exec.MutableMethodDesc
 import de.upb.sede.exec.MutableMethodParameterDesc
+import de.upb.sede.types.MutableDataTypeDesc
+import de.upb.sede.util.DynRecord
 import groovy.transform.NamedVariant
 import groovy.transform.PackageScope
 
 class MethodDomain
-    extends DomainAware<MutableMethodDesc, ServiceDomain>
-    implements Shared.CommentAware,
-        Shared.AuxDomAware  {
+    extends DomainAware<MutableMethodDesc, ServiceDomain> {
 
-    MutableMethodParameterDesc input(int paramIndex,
+    // model MutableMethodDesc
+
+    // topDom ServiceDomain
+
+    static void aux(MutableMethodDesc model, @DelegatesTo(DynRecord) desc) {
+        Shared.aux(model, desc)
+    }
+
+    static MutableMethodDesc comment(MutableMethodDesc model, String ... comments) {
+        Shared.comment(model, comments)
+        return model
+    }
+
+    static MutableMethodDesc setInfo(MutableMethodDesc model, String commentBlock) {
+        Shared.setInfo(model, commentBlock)
+        return model
+    }
+
+
+    static MutableMethodParameterDesc input(MutableMethodDesc model, int paramIndex,
                                      @DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
-        return redefineParameter(model.inputs, paramIndex, paramDescriber)
+        return redefineParameter(model, model.inputs, paramIndex, paramDescriber)
     }
 
-    MutableMethodParameterDesc output(int paramIndex,
+    static MutableMethodParameterDesc output(MutableMethodDesc model, int paramIndex,
                                       @DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
-        return redefineParameter(model.outputs, paramIndex, paramDescriber)
+        return redefineParameter(model, model.outputs, paramIndex, paramDescriber)
     }
 
-    MutableMethodParameterDesc output(@DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
-        return output(0, paramDescriber)
+    static MutableMethodParameterDesc output(MutableMethodDesc model, @DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
+        return output(model, 0, paramDescriber)
     }
 
-    private MutableMethodParameterDesc redefineParameter(List<IMethodParameterDesc> paramList,
+    private static MutableMethodParameterDesc redefineParameter(MutableMethodDesc model, List<IMethodParameterDesc> paramList,
                                                          int paramIndex,
                                                          @DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
         if(paramIndex >= paramList.size()) {
@@ -49,12 +67,12 @@ class MethodDomain
     }
 
 
-    void setInputTypes(String... inputTypes) {
+    static void setInputTypes(MutableMethodDesc model, String... inputTypes) {
         model.inputs.clear()
-        addInputTypes(inputTypes)
+        addInputTypes(model, inputTypes)
     }
 
-    void addInputTypes(String... inputTypes) {
+    static void addInputTypes(MutableMethodDesc model, String... inputTypes) {
         for(String inputType: inputTypes) {
             model.inputs += param {
                 type = inputType
@@ -62,12 +80,12 @@ class MethodDomain
         }
     }
 
-    void setOutputTypes(String... outputTypes) {
-        signature.outputs.clear()
-        addOutputTypes(outputTypes)
+    static void setOutputTypes(MutableMethodDesc model, String... outputTypes) {
+        model.outputs.clear()
+        addOutputTypes(model, outputTypes)
     }
 
-    void addOutputTypes(String... outputTypes) {
+    static void addOutputTypes(MutableMethodDesc model, String... outputTypes) {
         for(String outputType: outputTypes) {
             model.outputs += param {
                 type = outputType
@@ -75,27 +93,25 @@ class MethodDomain
         }
     }
 
-    @NamedVariant
-    void addInput(String type, String name) {
+    static void addInput(MutableMethodDesc model, String type, String name) {
         String t = type
         String n = name
-        model.inputs += param type: type, name: name
+        model.inputs += param model, [type: type, name: name]
     }
 
-    @NamedVariant
-    void addOutput(String type, String name) {
-        model.outputs += param type: type, name: name
+    static void addOutput(MutableMethodDesc model, String type, String name) {
+        model.outputs += param model, [type: type, name: name]
     }
 
-    static MutableMethodParameterDesc param(String t, String n) {
+    static MutableMethodParameterDesc param(MutableMethodDesc model, String t, String n) {
         return param {
             type = t
             name = n
         }
     }
 
-    static MutableMethodParameterDesc param(Map<String, String> paramDesc) {
-        return param(paramDesc["type"], paramDesc["name"])
+    static MutableMethodParameterDesc param(MutableMethodDesc model, Map<String, String> paramDesc) {
+        return param(model, paramDesc["type"], paramDesc["name"])
     }
 
     static MutableMethodParameterDesc param(@DelegatesTo(MutableMethodParameterDesc) Closure paramDescriber) {
@@ -152,8 +168,4 @@ class MethodDomain
     }
 
 
-    @Override
-    def String getBindingName() {
-        return "method"
-    }
 }

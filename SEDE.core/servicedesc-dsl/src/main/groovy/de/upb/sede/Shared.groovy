@@ -5,7 +5,6 @@ import de.upb.sede.exec.IServiceDesc
 import de.upb.sede.exec.auxiliary.DynamicAuxAware
 import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
 import de.upb.sede.util.DynRecord
-import de.upb.sede.util.DynTypeField
 import groovy.transform.PackageScope
 
 @PackageScope
@@ -26,32 +25,16 @@ class Shared {
         return newJavaAux
     }
 
-    trait DomainExtension {
-        DomainAware getDom() {
-            if(!(this instanceof DomainAware)) {
-                throw new RuntimeException("Bug: " + this.class.name + " is AuxDomAware but not DomainAware.");
-            }
-            return this as DomainAware;
-        }
-    }
 
-    @PackageScope
-    trait AuxDomAware extends DomainExtension {
-        void aux(@DelegatesTo(AuxDomain) Closure describer) {
-            if(!(getDom().model instanceof DynamicAuxAware)) {
-                throw new RuntimeException("Bug: model is instance of ${getDom().model.class} but not of DynamicAuxAware.")
-            }
-            def disAware = getDom().model as DynamicAuxAware
-            def dynRecord
-            if(disAware.dynAux  == null) {
-                dynRecord = new DynRecord(new HashMap())
-                disAware.setDynAux(dynRecord)
-            } else {
-                dynRecord = disAware.dynAux
-            }
-            AuxDomain dom = new AuxDomain();
-            getDom().delegateDown(dom, dynRecord, describer)
+    static void aux(DynamicAuxAware disAware, Closure describer) {
+        def dynRecord
+        if(disAware.dynAux  == null) {
+            dynRecord = new DynRecord(new HashMap())
+            disAware.setDynAux(dynRecord)
+        } else {
+            dynRecord = disAware.dynAux
         }
+        DomainAware.delegateDown(new AuxDomain(), dynRecord, describer)
     }
 
     @PackageScope
@@ -109,6 +92,23 @@ class Shared {
             model.comments = newComments
         }
     }
+
+    static def comment(de.upb.sede.CommentAware model, String ... comments) {
+        for(def comment : comments) {
+            model.comments += comment
+        }
+    }
+    static def setInfo(de.upb.sede.CommentAware model, String commentBlock) {
+        commentBlock = commentBlock
+            .replaceFirst("\\n","")
+            .stripIndent()
+            .trim()
+
+        def newComments = new ArrayList<>(Arrays.asList(commentBlock.split("\\n")))
+        newComments.removeIf { it.isEmpty() }
+        model.comments = newComments
+    }
+
 
 }
 

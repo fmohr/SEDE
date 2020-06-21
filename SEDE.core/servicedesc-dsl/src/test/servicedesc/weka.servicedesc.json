@@ -23,12 +23,13 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "labelDataset",
         "metaTags" : [ ],
         "simpleName" : "labelDataset",
+        "qualifier" : "labelDataset",
         "comments" : [ ],
         "dynAux" : {
           "staticInvocation" : true,
+          "constructorInvocation" : false,
           "methodName" : null,
           "redirectArg" : 0,
           "className" : null,
@@ -57,12 +58,13 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "setClassIndex",
         "metaTags" : [ ],
         "simpleName" : "setClassIndex",
+        "qualifier" : "setClassIndex",
         "comments" : [ ],
         "dynAux" : {
           "staticInvocation" : true,
+          "constructorInvocation" : false,
           "methodName" : null,
           "redirectArg" : 0,
           "className" : null,
@@ -91,12 +93,13 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "classIndicesToNames",
         "metaTags" : [ ],
         "simpleName" : "classIndicesToNames",
+        "qualifier" : "classIndicesToNames",
         "comments" : [ ],
         "dynAux" : {
           "staticInvocation" : true,
+          "constructorInvocation" : false,
           "methodName" : null,
           "redirectArg" : -1,
           "className" : null,
@@ -119,12 +122,13 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "classIndicesPrettify",
         "metaTags" : [ ],
         "simpleName" : "classIndicesPrettify",
+        "qualifier" : "classIndicesPrettify",
         "comments" : [ ],
         "dynAux" : {
           "staticInvocation" : true,
+          "constructorInvocation" : false,
           "methodName" : null,
           "redirectArg" : -1,
           "className" : null,
@@ -147,12 +151,13 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "categorize",
         "metaTags" : [ ],
         "simpleName" : "categorize",
+        "qualifier" : "categorize",
         "comments" : [ ],
         "dynAux" : {
           "staticInvocation" : true,
+          "constructorInvocation" : false,
           "methodName" : null,
           "redirectArg" : -1,
           "className" : null,
@@ -164,9 +169,9 @@
       "interfaces" : [ ],
       "fieldTypes" : { },
       "serviceParameters" : null,
-      "qualifier" : "de.upb.sede.services.mls.Labeler",
       "metaTags" : [ ],
       "simpleName" : "de.upb.sede.services.mls.Labeler",
+      "qualifier" : "de.upb.sede.services.mls.Labeler",
       "comments" : [ ],
       "dynAux" : null,
       "isAbstract" : false
@@ -186,16 +191,10 @@
           "fixedValue" : null,
           "callByValue" : true,
           "readOnly" : false
-        }, {
-          "type" : "de.upb.sede.services.mls.DataSetService",
-          "name" : null,
-          "fixedValue" : null,
-          "callByValue" : true,
-          "readOnly" : false
         } ],
-        "qualifier" : "__construct",
         "metaTags" : [ ],
         "simpleName" : "__construct",
+        "qualifier" : "__construct",
         "comments" : [ ],
         "dynAux" : null,
         "isPure" : false,
@@ -209,12 +208,13 @@
           "readOnly" : false
         } ],
         "outputs" : [ ],
-        "qualifier" : "createUnique",
         "metaTags" : [ ],
         "simpleName" : "createUnique",
+        "qualifier" : "createUnique",
         "comments" : [ ],
         "dynAux" : {
           "staticInvocation" : true,
+          "constructorInvocation" : false,
           "methodName" : null,
           "redirectArg" : -1,
           "className" : null,
@@ -243,12 +243,13 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "createNamed",
         "metaTags" : [ ],
         "simpleName" : "createNamed",
+        "qualifier" : "createNamed",
         "comments" : [ ],
         "dynAux" : {
           "staticInvocation" : true,
+          "constructorInvocation" : false,
           "methodName" : null,
           "redirectArg" : -1,
           "className" : null,
@@ -265,9 +266,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "all",
         "metaTags" : [ ],
         "simpleName" : "all",
+        "qualifier" : "all",
         "comments" : [ ],
         "dynAux" : null,
         "isPure" : true,
@@ -287,9 +288,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "allLabeled",
         "metaTags" : [ ],
         "simpleName" : "allLabeled",
+        "qualifier" : "allLabeled",
         "comments" : [ ],
         "dynAux" : null,
         "isPure" : true,
@@ -309,9 +310,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "fromIndices",
         "metaTags" : [ ],
         "simpleName" : "fromIndices",
+        "qualifier" : "fromIndices",
         "comments" : [ ],
         "dynAux" : null,
         "isPure" : true,
@@ -337,9 +338,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "fromIndicesLabeled",
         "metaTags" : [ ],
         "simpleName" : "fromIndicesLabeled",
+        "qualifier" : "fromIndicesLabeled",
         "comments" : [ ],
         "dynAux" : null,
         "isPure" : true,
@@ -350,9 +351,9 @@
         "state" : "de.upb.sede.services.mls.DataSetService"
       },
       "serviceParameters" : null,
-      "qualifier" : "de.upb.sede.services.mls.DataSetService",
       "metaTags" : [ ],
       "simpleName" : "de.upb.sede.services.mls.DataSetService",
+      "qualifier" : "de.upb.sede.services.mls.DataSetService",
       "comments" : [ ],
       "dynAux" : null,
       "isAbstract" : false
@@ -367,9 +368,9 @@
           "readOnly" : false
         } ],
         "outputs" : [ ],
-        "qualifier" : "set_options",
         "metaTags" : [ ],
         "simpleName" : "set_options",
+        "qualifier" : "set_options",
         "comments" : [ ],
         "dynAux" : null,
         "isPure" : false,
@@ -378,9 +379,9 @@
       "interfaces" : [ ],
       "fieldTypes" : { },
       "serviceParameters" : null,
-      "qualifier" : "$list_option_handler_config$",
       "metaTags" : [ ],
       "simpleName" : "$list_option_handler_config$",
+      "qualifier" : "$list_option_handler_config$",
       "comments" : [ ],
       "dynAux" : null,
       "isAbstract" : true
@@ -395,9 +396,9 @@
           "readOnly" : false
         } ],
         "outputs" : [ ],
-        "qualifier" : "set_options_dict",
         "metaTags" : [ ],
         "simpleName" : "set_options_dict",
+        "qualifier" : "set_options_dict",
         "comments" : [ ],
         "dynAux" : null,
         "isPure" : false,
@@ -406,9 +407,9 @@
       "interfaces" : [ ],
       "fieldTypes" : { },
       "serviceParameters" : null,
-      "qualifier" : "$dict_option_handler_config$",
       "metaTags" : [ ],
       "simpleName" : "$dict_option_handler_config$",
+      "qualifier" : "$dict_option_handler_config$",
       "comments" : [ ],
       "dynAux" : null,
       "isAbstract" : true
@@ -423,69 +424,9 @@
           "readOnly" : false
         } ],
         "outputs" : [ ],
-        "qualifier" : "train",
         "metaTags" : [ ],
         "simpleName" : "train",
-        "comments" : [ ],
-        "dynAux" : null,
-        "isPure" : false,
-        "isContextFree" : false
-      }, {
-        "inputs" : [ ],
-        "outputs" : [ ],
-        "qualifier" : "predict",
-        "metaTags" : [ ],
-        "simpleName" : "predict",
-        "comments" : [ ],
-        "dynAux" : null,
-        "isPure" : false,
-        "isContextFree" : false
-      } ],
-      "interfaces" : [ ],
-      "fieldTypes" : { },
-      "serviceParameters" : null,
-      "qualifier" : "$base_classifier_config$",
-      "metaTags" : [ ],
-      "simpleName" : "$base_classifier_config$",
-      "comments" : [ ],
-      "dynAux" : null,
-      "isAbstract" : true
-    }, {
-      "stateType" : null,
-      "methods" : [ {
-        "inputs" : [ {
-          "type" : "String",
-          "name" : null,
-          "fixedValue" : null,
-          "callByValue" : true,
-          "readOnly" : false
-        } ],
-        "outputs" : [ {
-          "type" : "de.upb.sede.services.mls.WekaBClassifierWrapper",
-          "name" : null,
-          "fixedValue" : null,
-          "callByValue" : true,
-          "readOnly" : false
-        } ],
-        "qualifier" : "__construct",
-        "metaTags" : [ ],
-        "simpleName" : "__construct",
-        "comments" : [ ],
-        "dynAux" : null,
-        "isPure" : false,
-        "isContextFree" : true
-      }, {
-        "inputs" : [ {
-          "type" : "LabeledInstances",
-          "name" : null,
-          "fixedValue" : null,
-          "callByValue" : true,
-          "readOnly" : false
-        } ],
-        "outputs" : [ ],
         "qualifier" : "train",
-        "metaTags" : [ ],
-        "simpleName" : "train",
         "comments" : [ ],
         "dynAux" : null,
         "isPure" : false,
@@ -511,9 +452,87 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "predict",
         "metaTags" : [ ],
         "simpleName" : "predict",
+        "qualifier" : "predict",
+        "comments" : [ ],
+        "dynAux" : null,
+        "isPure" : true,
+        "isContextFree" : false
+      } ],
+      "interfaces" : [ ],
+      "fieldTypes" : { },
+      "serviceParameters" : null,
+      "metaTags" : [ ],
+      "simpleName" : "$base_classifier_config$",
+      "qualifier" : "$base_classifier_config$",
+      "comments" : [ ],
+      "dynAux" : null,
+      "isAbstract" : true
+    }, {
+      "stateType" : null,
+      "methods" : [ {
+        "inputs" : [ {
+          "type" : "String",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "outputs" : [ {
+          "type" : "de.upb.sede.services.mls.WekaBClassifierWrapper",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "metaTags" : [ ],
+        "simpleName" : "__construct",
+        "qualifier" : "__construct",
+        "comments" : [ ],
+        "dynAux" : null,
+        "isPure" : false,
+        "isContextFree" : true
+      }, {
+        "inputs" : [ {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "outputs" : [ ],
+        "metaTags" : [ ],
+        "simpleName" : "train",
+        "qualifier" : "train",
+        "comments" : [ ],
+        "dynAux" : null,
+        "isPure" : false,
+        "isContextFree" : false
+      }, {
+        "inputs" : [ {
+          "type" : "Bool",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        }, {
+          "type" : "LabeledInstances",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "outputs" : [ {
+          "type" : "builtin.List",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "metaTags" : [ ],
+        "simpleName" : "predict",
+        "qualifier" : "predict",
         "comments" : [ ],
         "dynAux" : null,
         "isPure" : true,
@@ -522,9 +541,9 @@
       "interfaces" : [ "$list_option_handler_config$", "$dict_option_handler_config$", "$base_classifier_config$" ],
       "fieldTypes" : { },
       "serviceParameters" : null,
-      "qualifier" : "de.upb.sede.services.mls.WekaBClassifierWrapper",
       "metaTags" : [ ],
       "simpleName" : "de.upb.sede.services.mls.WekaBClassifierWrapper",
+      "qualifier" : "de.upb.sede.services.mls.WekaBClassifierWrapper",
       "comments" : [ ],
       "dynAux" : null,
       "isAbstract" : false
@@ -534,12 +553,13 @@
       "interfaces" : [ ],
       "fieldTypes" : { },
       "serviceParameters" : null,
-      "qualifier" : "$Basic_Weka_Distribution_Classifier$",
       "metaTags" : [ ],
       "simpleName" : "$Basic_Weka_Distribution_Classifier$",
+      "qualifier" : "$Basic_Weka_Distribution_Classifier$",
       "comments" : [ ],
       "dynAux" : {
         "staticInvocation" : false,
+        "constructorInvocation" : false,
         "methodName" : null,
         "redirectArg" : -1,
         "className" : null,
@@ -547,17 +567,8 @@
       },
       "isAbstract" : false
     } ],
-    "dataTypes" : [ {
-      "semanticType" : "de.upb.sede.services.mls.DataSetService",
-      "qualifier" : "de.upb.sede.services.mls.DataSetService",
-      "metaTags" : [ ],
-      "simpleName" : "de.upb.sede.services.mls.DataSetService",
-      "comments" : [ ],
-      "dynAux" : null
-    } ],
+    "dataTypes" : [ ],
     "comments" : [ "Weka is a collection of machine learning algorithms for data mining tasks. It contains tools for data preparation, classification, regression, clustering, association rules mining, and visualization.", "Weka is open source software issued under the GNU General Public License.", "Website: https://www.cs.waikato.ac.nz/~ml/weka/index.html" ],
-    "qualifier" : "weka.ml",
-    "metaTags" : [ ],
-    "simpleName" : "Weka Library"
+    "qualifier" : "weka"
   } ]
 }

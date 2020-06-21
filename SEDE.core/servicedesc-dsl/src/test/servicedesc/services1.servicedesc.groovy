@@ -36,7 +36,7 @@ collection ("services1") {
                 /*
                  * Customizing the first input parameter:
                  */
-                name = "First Input Parameter of ${method.qualifier}"
+                name = "First Input Parameter of ${qualifier}"
             }
             input(1) {
                 callByValue = false

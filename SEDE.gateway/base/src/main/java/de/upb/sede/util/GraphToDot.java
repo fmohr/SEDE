@@ -58,9 +58,9 @@ public class GraphToDot {
 		}
 		for (BaseNode baseNode : compGraph.getNodes()) {
 			DotNode dotNode = nodeMap.get(baseNode);
-            List<Long> targets = compGraph.getEdges().getOrDefault(baseNode.getIndex().get().toString(), Collections.EMPTY_LIST);
+            List<Long> targets = compGraph.getEdges().getOrDefault(baseNode.getIndex().toString(), Collections.EMPTY_LIST);
             for(BaseNode neighbor : compGraph.getNodes()) {
-                if(!targets.contains(neighbor.getIndex().get())) {
+                if(!targets.contains(neighbor.getIndex())) {
                     continue;
                 }
 				DotNode dotNeighbor = nodeMap.get(neighbor);

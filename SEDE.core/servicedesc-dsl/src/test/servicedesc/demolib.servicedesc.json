@@ -16,16 +16,10 @@
           "fixedValue" : null,
           "callByValue" : true,
           "readOnly" : false
-        }, {
-          "type" : "demo.math.Addierer",
-          "name" : null,
-          "fixedValue" : null,
-          "callByValue" : true,
-          "readOnly" : false
         } ],
-        "qualifier" : "__construct",
         "metaTags" : [ ],
         "simpleName" : "__construct",
+        "qualifier" : "__construct",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : true,
@@ -38,16 +32,10 @@
           "fixedValue" : null,
           "callByValue" : true,
           "readOnly" : false
-        }, {
-          "type" : "demo.math.Addierer",
-          "name" : null,
-          "fixedValue" : null,
-          "callByValue" : true,
-          "readOnly" : false
         } ],
-        "qualifier" : "__construct",
         "metaTags" : [ ],
         "simpleName" : "__construct",
+        "qualifier" : "__construct",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : true,
@@ -67,9 +55,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "addier",
         "metaTags" : [ ],
         "simpleName" : "addier",
+        "qualifier" : "addier",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : false,
@@ -89,9 +77,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "addierListe",
         "metaTags" : [ ],
         "simpleName" : "addierListe",
+        "qualifier" : "addierListe",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : false,
@@ -117,9 +105,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "summierListe",
         "metaTags" : [ ],
         "simpleName" : "summierListe",
+        "qualifier" : "summierListe",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : true,
@@ -139,9 +127,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "summier",
         "metaTags" : [ ],
         "simpleName" : "summier",
+        "qualifier" : "summier",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : false,
@@ -155,9 +143,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "fail",
         "metaTags" : [ ],
         "simpleName" : "fail",
+        "qualifier" : "fail",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : true,
@@ -165,9 +153,9 @@
       }, {
         "inputs" : [ ],
         "outputs" : [ ],
-        "qualifier" : "sleep",
         "metaTags" : [ ],
         "simpleName" : "sleep",
+        "qualifier" : "sleep",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : true,
@@ -193,9 +181,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "addierBuiltIn",
         "metaTags" : [ ],
         "simpleName" : "addierBuiltIn",
+        "qualifier" : "addierBuiltIn",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : true,
@@ -206,9 +194,9 @@
         "state" : "demo.math.Addierer"
       },
       "serviceParameters" : null,
-      "qualifier" : "demo.math.Addierer",
       "metaTags" : [ ],
       "simpleName" : "demo.math.Addierer",
+      "qualifier" : "demo.math.Addierer",
       "comments" : [ ],
       "dynAux" : null,
       "isAbstract" : false
@@ -234,16 +222,10 @@
           "fixedValue" : null,
           "callByValue" : true,
           "readOnly" : false
-        }, {
-          "type" : "demo.math.Gerade",
-          "name" : null,
-          "fixedValue" : null,
-          "callByValue" : true,
-          "readOnly" : false
         } ],
-        "qualifier" : "__construct",
         "metaTags" : [ ],
         "simpleName" : "__construct",
+        "qualifier" : "__construct",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : true,
@@ -263,9 +245,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "calc",
         "metaTags" : [ ],
         "simpleName" : "calc",
+        "qualifier" : "calc",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : false,
@@ -285,9 +267,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "liagtAufGerade",
         "metaTags" : [ ],
         "simpleName" : "liagtAufGerade",
+        "qualifier" : "liagtAufGerade",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : false,
@@ -301,9 +283,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "achsenabschnitt",
         "metaTags" : [ ],
         "simpleName" : "achsenabschnitt",
+        "qualifier" : "achsenabschnitt",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : false,
@@ -317,9 +299,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "nullstelle",
         "metaTags" : [ ],
         "simpleName" : "nullstelle",
+        "qualifier" : "nullstelle",
         "comments" : [ ],
         "dynAux" : null,
         "isContextFree" : false,
@@ -330,18 +312,18 @@
         "state" : "demo.math.Gerade"
       },
       "serviceParameters" : null,
-      "qualifier" : "demo.math.Gerade",
       "metaTags" : [ ],
       "simpleName" : "demo.math.Gerade",
+      "qualifier" : "demo.math.Gerade",
       "comments" : [ ],
       "dynAux" : null,
       "isAbstract" : false
     } ],
     "dataTypes" : [ {
       "semanticType" : "Arr",
-      "qualifier" : "demo.types.NummerList",
       "metaTags" : [ ],
       "simpleName" : "demo.types.NummerList",
+      "qualifier" : "demo.types.NummerList",
       "comments" : [ ],
       "dynAux" : {
         "mappedClassName" : "demo.types.DemoCaster",
@@ -349,32 +331,16 @@
       }
     }, {
       "semanticType" : "Arr",
-      "qualifier" : "demo.types.Punkt",
       "metaTags" : [ ],
       "simpleName" : "demo.types.Punkt",
+      "qualifier" : "demo.types.Punkt",
       "comments" : [ ],
       "dynAux" : {
         "mappedClassName" : "demo.types.DemoCaster",
         "dataCastHandler" : null
       }
-    }, {
-      "semanticType" : "demo.math.Addierer",
-      "qualifier" : "demo.math.Addierer",
-      "metaTags" : [ ],
-      "simpleName" : "demo.math.Addierer",
-      "comments" : [ ],
-      "dynAux" : null
-    }, {
-      "semanticType" : "demo.math.Gerade",
-      "qualifier" : "demo.math.Gerade",
-      "metaTags" : [ ],
-      "simpleName" : "demo.math.Gerade",
-      "comments" : [ ],
-      "dynAux" : null
     } ],
     "comments" : [ "This library serves as a demonstration and testing library for integration tests in SEDE.", "Implementation: https://github.com/fmohr/SEDE.services/tree/master/demolib/src/main" ],
-    "qualifier" : "demolib",
-    "metaTags" : [ ],
-    "simpleName" : "SEDE Demo Library"
+    "qualifier" : "demolib"
   } ]
 }

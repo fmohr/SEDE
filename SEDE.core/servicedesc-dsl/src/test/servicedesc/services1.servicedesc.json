@@ -10,16 +10,10 @@
           "fixedValue" : null,
           "callByValue" : true,
           "readOnly" : false
-        }, {
-          "type" : "a.A",
-          "name" : null,
-          "fixedValue" : null,
-          "callByValue" : true,
-          "readOnly" : false
         } ],
-        "qualifier" : "__construct",
         "metaTags" : [ ],
         "simpleName" : "__construct",
+        "qualifier" : "__construct",
         "comments" : [ ],
         "dynAux" : null,
         "isPure" : false,
@@ -45,9 +39,9 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "m2",
         "metaTags" : [ ],
         "simpleName" : "m2",
+        "qualifier" : "m2",
         "comments" : [ ],
         "dynAux" : null,
         "isPure" : false,
@@ -58,24 +52,15 @@
         "state" : "a.A"
       },
       "serviceParameters" : null,
-      "qualifier" : "a.A",
       "metaTags" : [ ],
       "simpleName" : "Service A",
+      "qualifier" : "a.A",
       "comments" : [ ],
       "dynAux" : null,
       "isAbstract" : true
     } ],
-    "dataTypes" : [ {
-      "semanticType" : "semantics.A",
-      "qualifier" : "a.A",
-      "metaTags" : [ ],
-      "simpleName" : "a.A",
-      "comments" : [ ],
-      "dynAux" : null
-    } ],
+    "dataTypes" : [ ],
     "comments" : [ "This is a comment." ],
-    "qualifier" : "services1",
-    "metaTags" : [ ],
-    "simpleName" : "SERVICES1_COLLECTION"
+    "qualifier" : "services1"
   } ]
 }

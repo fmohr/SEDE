@@ -1,3 +1,7 @@
+import de.upb.sede.Defaults
+
+import static de.upb.sede.Defaults.*
+
 @groovy.transform.BaseScript de.upb.sede.SDL sdl
 
 def Instances = 'LabeledInstances'
@@ -7,7 +11,7 @@ def bool = 'Bool'
 def list = 'builtin.List'
 def dict = 'builtin.Dict'
 
-collection ("weka.ml") {
+collection ("weka") {
     simpleName = "Weka Library"
 
     info = """
@@ -68,12 +72,12 @@ collection ("weka.ml") {
         constructor inputs: [str]
         method name: 'createUnique',
                 inputs:[Instances],
-                ouputs:[service.stateType], {
+                ouputs:[qualifier], {
                     aux { javaDispatch { staticInvocation = true } }
                 }
         method name: 'createNamed',
                 inputs: [Instances, str],
-                outputs:[service.stateType], {
+                outputs:[qualifier], {
                     aux { javaDispatch { staticInvocation = true } }
         }
 
@@ -81,7 +85,7 @@ collection ("weka.ml") {
          * All following methods are pure.
          * Set a default method configuration:
          */
-        defaults.method = { isPure = true }
+        setDefaultMethod { isPure = true }
         method name: 'all',
                 outputs: [Instances]
 
@@ -98,7 +102,7 @@ collection ("weka.ml") {
                 outputs: [Instances]
 
         // Clear default method configuration
-        defaults.clearMethod()
+        clearMethod()
     }
 
     def ListOptionHandler = service('$list_option_handler_config$') {

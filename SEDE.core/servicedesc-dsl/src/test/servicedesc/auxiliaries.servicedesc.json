@@ -18,19 +18,21 @@
           "bundleInList" : false,
           "parameterHandler" : {
             "staticInvocation" : false,
+            "constructorInvocation" : false,
             "redirectArg" : -1,
             "methodName" : null,
-            "className" : "org.example.S1ParamSetter",
+            "className" : null,
             "metaclass" : null
           }
         }
       },
-      "qualifier" : "S1",
       "metaTags" : [ ],
       "simpleName" : "S1",
+      "qualifier" : "S1",
       "comments" : [ ],
       "dynAux" : {
         "staticInvocation" : true,
+        "constructorInvocation" : false,
         "methodName" : null,
         "redirectArg" : -1,
         "className" : "org.example.S1",
@@ -40,24 +42,23 @@
     } ],
     "dataTypes" : [ {
       "semanticType" : "t2",
-      "qualifier" : "t2",
       "metaTags" : [ ],
       "simpleName" : "t2",
+      "qualifier" : "t2",
       "comments" : [ ],
       "dynAux" : {
         "mappedClassName" : "org.example.T2",
         "dataCastHandler" : {
           "staticInvocation" : false,
+          "constructorInvocation" : false,
           "redirectArg" : -1,
           "methodName" : null,
-          "className" : "org.example.T2Handler",
+          "className" : null,
           "metaclass" : null
         }
       }
     } ],
     "comments" : [ ],
-    "qualifier" : "C1",
-    "metaTags" : [ ],
-    "simpleName" : "C1"
+    "qualifier" : "C1"
   } ]
 }

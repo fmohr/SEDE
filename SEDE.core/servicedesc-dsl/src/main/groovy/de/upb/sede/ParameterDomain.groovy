@@ -9,16 +9,23 @@ import de.upb.sede.param.MutableParameterDependencyDesc
 import de.upb.sede.param.MutableServiceParameterizationDesc
 import de.upb.sede.param.auxiliary.JavaParameterizationAux
 import de.upb.sede.param.auxiliary.MutableJavaParameterizationAux
+import de.upb.sede.types.MutableDataTypeDesc
+import de.upb.sede.util.DynRecord
 
 class ParameterDomain
-    extends DomainAware<MutableServiceParameterizationDesc, ServiceDomain>
-    implements
-        Shared.CommentAware,
-//        Shared.AuxAware<MutableJavaParameterizationAux>,
-        Shared.AuxDomAware {
+    extends DomainAware<MutableServiceParameterizationDesc, ServiceDomain> {
 
 
-    private void readDescription(Object parameter, Closure paramDescriber) {
+    // model MutableServiceParameterizationDesc
+
+    // topDom ServiceDomain
+
+    static MutableServiceParameterizationDesc aux(MutableServiceParameterizationDesc model, @DelegatesTo(DynRecord) Closure desc) {
+        Shared.aux(model, desc)
+        return model
+    }
+
+    private static void readDescription(Object parameter, Closure paramDescriber) {
         paramDescriber.delegate = parameter
         paramDescriber.resolveStrategy = Closure.DELEGATE_FIRST
         paramDescriber.run()
@@ -47,23 +54,23 @@ class ParameterDomain
 
 
 
-    MutableBooleanParameter bool(@DelegatesTo(MutableBooleanParameter) Closure paramDescriber) {
+    static MutableBooleanParameter bool(MutableServiceParameterizationDesc model, @DelegatesTo(MutableBooleanParameter) Closure paramDescriber) {
         def boolParam = MutableBooleanParameter.create()
         readDescription(boolParam, paramDescriber)
         model.parameters.add(boolParam)
         return boolParam
     }
 
-    MutableBooleanParameter bool(String name, boolean defaultVal = false, boolean opt = false) {
-        return bool {
+    static MutableBooleanParameter bool(MutableServiceParameterizationDesc model, String name, boolean defaultVal = false, boolean opt = false) {
+        return bool (model) {
             qualifier = name
             isOptional = opt
             defaultValue = defaultVal
         }
     }
 
-    MutableBooleanParameter bool(Map paramDef) {
-        def boolParam = bool {
+    static MutableBooleanParameter bool(MutableServiceParameterizationDesc model, Map paramDef) {
+        def boolParam = bool (model) {
             if ('default' in paramDef) {
                 defaultValue = paramDef['default']
             }
@@ -73,23 +80,23 @@ class ParameterDomain
         return boolParam
     }
 
-    MutableInterfaceParameter requiredInterface(@DelegatesTo(MutableInterfaceParameter) Closure paramDescriber) {
+    static MutableInterfaceParameter requiredInterface(MutableServiceParameterizationDesc model, @DelegatesTo(MutableInterfaceParameter) Closure paramDescriber) {
         def intfaceParam = MutableInterfaceParameter.create()
         readDescription(intfaceParam, paramDescriber)
         model.parameters.add(intfaceParam)
         return intfaceParam
     }
 
-    MutableInterfaceParameter requiredInterface(String name, String intfaceQualifier, boolean opt = false) {
-        return requiredInterface() {
+    static MutableInterfaceParameter requiredInterface(MutableServiceParameterizationDesc model, String name, String intfaceQualifier, boolean opt = false) {
+        return requiredInterface(model) {
             qualifier = name
             isOptional = opt
             interfaceQualifier = intfaceQualifier
         }
     }
 
-    MutableInterfaceParameter requiredInterface(Map paramDef) {
-        def intfaceParam = requiredInterface {
+    static MutableInterfaceParameter requiredInterface(MutableServiceParameterizationDesc model, Map paramDef) {
+        def intfaceParam = requiredInterface(model)  {
             if ('interfaceQualifier' in paramDef) {
                 interfaceQualifier = paramDef['interfaceQualifier']
             }
@@ -103,29 +110,29 @@ class ParameterDomain
         return intfaceParam
     }
 
-    MutableInterfaceParameter requiredInterface(String intface) {
-        return requiredInterface {
+    static MutableInterfaceParameter requiredInterface(MutableServiceParameterizationDesc model, String intface) {
+        return requiredInterface(model)  {
             qualifier = intface
             isOptional = false
             interfaceQualifier = intface
         };
     }
 
-    void requiredInterfaces(String... interfaceQualifiers) {
+    static void requiredInterfaces(MutableServiceParameterizationDesc model, String... interfaceQualifiers) {
         for(String interfaceQualifier : Objects.requireNonNull(interfaceQualifiers, "No interface qualifiers provided.")){
             requiredInterface(interfaceQualifier)
         }
     }
 
-    MutableNumericParameter numeric(@DelegatesTo(MutableNumericParameter) Closure description) {
+    static MutableNumericParameter numeric(MutableServiceParameterizationDesc model, @DelegatesTo(MutableNumericParameter) Closure description) {
         def numbParam = MutableNumericParameter.create()
         readDescription(numbParam, description)
         model.parameters.add(numbParam)
         return numbParam
     }
 
-    MutableNumericParameter numeric(String name, double defaultVal, Double minParam = null, Double maxParam = null, boolean isIntegerParam = false, Integer refineSplitsParam = null, Integer minIntervalParam = null,  boolean opt = false) {
-        return numeric {
+    static MutableNumericParameter numeric(MutableServiceParameterizationDesc model, String name, double defaultVal, Double minParam = null, Double maxParam = null, boolean isIntegerParam = false, Integer refineSplitsParam = null, Integer minIntervalParam = null,  boolean opt = false) {
+        return numeric(model)  {
             qualifier = name
             defaultValue = defaultVal
             min = minParam
@@ -137,8 +144,8 @@ class ParameterDomain
         }
     }
 
-    MutableNumericParameter numeric(Map paramDef) {
-        def num = numeric {
+    static MutableNumericParameter numeric(MutableServiceParameterizationDesc model, Map paramDef) {
+        def num = numeric(model)  {
             min = paramDef.getOrDefault('min', null)
             max = paramDef.getOrDefault('max', null)
             defaultValue = paramDef.getOrDefault('default', null)
@@ -151,15 +158,15 @@ class ParameterDomain
         return num
     }
 
-    MutableCategoryParameter category(@DelegatesTo(MutableCategoryParameter) Closure describer) {
+    static MutableCategoryParameter category(MutableServiceParameterizationDesc model, @DelegatesTo(MutableCategoryParameter) Closure describer) {
         def cat = MutableCategoryParameter.create()
         readDescription(cat, describer)
         model.parameters.add(cat)
         return cat
     }
 
-    MutableCategoryParameter category(String name, String defaultVal, List<String> categoriesParam, boolean opt) {
-        return category {
+    static MutableCategoryParameter category(MutableServiceParameterizationDesc model, String name, String defaultVal, List<String> categoriesParam, boolean opt) {
+        return category(model)  {
             qualifier = name
             defaultValue = defaultVal
             categories = categoriesParam
@@ -167,8 +174,8 @@ class ParameterDomain
         }
     }
 
-    MutableCategoryParameter category(Map catDef) {
-        def cat =  category {
+    static MutableCategoryParameter category(MutableServiceParameterizationDesc model, Map catDef) {
+        def cat =  category(model)  {
             defaultValue = catDef.getOrDefault('default', null)
             if('categories' in catDef) {
                 categories = catDef['categories']
@@ -179,32 +186,22 @@ class ParameterDomain
         return cat
     }
 
-    MutableJavaParameterizationAux java(@DelegatesTo(MutableJavaParameterizationAux) Closure auxDescriber) {
-        def javaAux = model.javaParameterizationAuxiliaries
-        if(javaAux == null) {
-            model.javaParameterizationAuxiliaries = MutableJavaParameterizationAux.create()
-            javaAux = model.javaParameterizationAuxiliaries
-        }
-        readDescription(javaAux, auxDescriber)
-        return javaAux
-    }
-
-    MutableParameterDependencyDesc dependency(@DelegatesTo(MutableParameterDependencyDesc) Closure describer) {
+    static MutableParameterDependencyDesc dependency(MutableServiceParameterizationDesc model, @DelegatesTo(MutableParameterDependencyDesc) Closure describer) {
         def dependencyDesc = MutableParameterDependencyDesc.create().setPremise("").setConclusion("")
         readDescription(dependencyDesc, describer)
         model.parameterDependencies += dependencyDesc
         return dependencyDesc
     }
 
-    MutableParameterDependencyDesc dependency(String pre, String con) {
-        return dependency {
+    static MutableParameterDependencyDesc dependency(MutableServiceParameterizationDesc model, String pre, String con) {
+        return dependency(model) {
             premise = pre
             conclusion = con
         }
     }
 
-    MutableParameterDependencyDesc dependency(Map dependencyDef) {
-        return dependency {
+    static MutableParameterDependencyDesc dependency(MutableServiceParameterizationDesc model, Map dependencyDef) {
+        return dependency(model) {
             def pre = null
             if('pre' in dependencyDef) {
                 pre = dependencyDef['pre']
@@ -234,12 +231,8 @@ class ParameterDomain
     }
 
 
-    @Override
-    def String getBindingName() {
-        return 'params'
-    }
 
-    private String extractParamName(Map paramDef) {
+    private static String extractParamName(Map paramDef) {
         if(! "name" in paramDef) {
             throw new RuntimeException("Provided boolean parameter declaration needs to define parameter name. Provided param definition: " + paramDef.toString())
         }
@@ -247,24 +240,4 @@ class ParameterDomain
         String paramName = paramDef["name"] as String
         return paramName;
     }
-
-//    @Override
-//    MutableJavaParameterizationAux setJavaAux(MutableJavaParameterizationAux javaAux) {
-//        model.javaParameterizationAuxiliaries = javaAux
-//        return javaAux
-//    }
-//
-//
-//    MutableJavaParameterizationAux setJavaParamAux(MutableJavaParameterizationAux javaAux) {
-//        model.javaParameterizationAuxiliaries = javaAux
-//        return javaAux
-//    }
-//
-//    @Override
-//    MutableJavaParameterizationAux getJavaAux() {
-//        if(model.javaParameterizationAuxiliaries == null)
-//            return setJavaAux(MutableJavaParameterizationAux.create())
-//        else
-//            return model.javaParameterizationAuxiliaries as MutableJavaParameterizationAux
-//    }
 }

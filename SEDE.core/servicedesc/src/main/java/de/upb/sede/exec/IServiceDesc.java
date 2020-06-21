@@ -3,6 +3,7 @@ package de.upb.sede.exec;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.CommentAware;
 import de.upb.sede.IQualifiable;
+import de.upb.sede.QualifierDefinition;
 import de.upb.sede.SEDEModelStyle;
 import de.upb.sede.exec.auxiliary.DynamicAuxAware;
 import de.upb.sede.param.IServiceParameterizationDesc;
@@ -16,7 +17,7 @@ import java.util.Map;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = ServiceDesc.Builder.class)
-public interface IServiceDesc extends IQualifiable, CommentAware, DynamicAuxAware {
+public interface IServiceDesc extends QualifierDefinition, CommentAware, DynamicAuxAware {
 
     public static final String STATE_FIELD = "state";
 

@@ -2,16 +2,31 @@ package de.upb.sede
 
 import de.upb.sede.exec.MutableServiceDesc
 import de.upb.sede.types.MutableDataTypeDesc
+import de.upb.sede.util.DynRecord
 
 class ServiceCollectionDomain
-    extends DomainAware<MutableServiceCollectionDesc, Object>
-    implements Shared.CommentAware{
+    extends DomainAware<MutableServiceCollectionDesc, MutableSDLAssembly> {
+
+    // model MutableServiceCollectionDesc
+
+    // topDom MutableSDLAssembly
+
+    static MutableServiceCollectionDesc comment(MutableServiceCollectionDesc model, String ... comments) {
+        Shared.comment(model, comments)
+        return model
+    }
+
+    static MutableServiceCollectionDesc setInfo(MutableServiceCollectionDesc model, String commentBlock) {
+        Shared.setInfo(model, commentBlock)
+        return model
+    }
+
 
     /**
      * Redefines the service with the given qualifier by running the given describer against it.
      * A new service will be created if the qualifier is unused in this service collection.
      */
-    def service(String qualifier, @DelegatesTo(ServiceDomain) Closure describer) {
+    static def service(MutableServiceCollectionDesc model, String qualifier, @DelegatesTo(MutableServiceDesc) Closure describer) {
         /*
          * Find or create service:
          */
@@ -34,7 +49,7 @@ class ServiceCollectionDomain
      * Redefines the type with the given qualifier by running the given describer against it.
      * A new type will be created if the qualifier is unused in this service collection.
      */
-    def type(String qualifier, @DelegatesTo(DataTypeDomain) Closure describer) {
+    static def type(MutableServiceCollectionDesc model, String qualifier, @DelegatesTo(MutableDataTypeDesc) Closure describer) {
         /*
          * Find or create datatype:
          */
@@ -52,17 +67,13 @@ class ServiceCollectionDomain
         return dataType
     }
 
-    def getService(String qualifier) {
+    static def getService(MutableServiceCollectionDesc model, String qualifier) {
         model.services.find {it.qualifier == qualifier}
     }
 
-    
-    def getType(String qualifier) {
+
+    static def getType(MutableServiceCollectionDesc model, String qualifier) {
         model.dataTypes.find {it.qualifier == qualifier}
     }
 
-    @Override
-    String getBindingName() {
-        return "collection"
-    }
 }

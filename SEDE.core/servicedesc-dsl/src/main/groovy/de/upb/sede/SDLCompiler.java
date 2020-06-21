@@ -80,7 +80,7 @@ public class SDLCompiler {
         SDLAssembly.Builder output = SDLAssembly.builder();
 
         colList.stream()
-            .map(col -> DeepImmutableCopier.copyAsImmutable(col, ServiceCollectionDesc.class))
+            .map(col -> DeepImmutableCopier.copyAsImmutable(col, IServiceCollectionDesc.class))
             .forEachOrdered(output::addCollections);
 
         return output.build();

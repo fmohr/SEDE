@@ -3,7 +3,7 @@ package de.upb.sede;
 import java.util.Collections;
 import java.util.List;
 
-class ConstQualifier implements IQualifiable {
+class ConstQualifier implements QualifierDefinition {
 
     private final String qualifier;
 

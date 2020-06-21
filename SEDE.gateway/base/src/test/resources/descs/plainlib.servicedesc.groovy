@@ -46,7 +46,7 @@ collection("plainlibs") {
         method name: "__str__", output: str, {
             isPure = true
         }
-        method name: "random", output: model.qualifier, {
+        method name: "random", output: "a", {
             isContextFree = true
         }
     }

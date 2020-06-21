@@ -10,8 +10,6 @@
           "paramType" : "BooleanParameter",
           "defaultValue" : true,
           "qualifier" : "bParam",
-          "metaTags" : [ ],
-          "simpleName" : "bParam",
           "isOptional" : true
         }, {
           "paramType" : "NumericParameter",
@@ -21,8 +19,6 @@
           "minInterval" : 10,
           "defaultValue" : 10.0,
           "qualifier" : "nParam",
-          "metaTags" : [ ],
-          "simpleName" : "nParam",
           "isOptional" : true,
           "isInteger" : true
         }, {
@@ -33,8 +29,6 @@
           "minInterval" : 10,
           "defaultValue" : 10.0,
           "qualifier" : "nParam",
-          "metaTags" : [ ],
-          "simpleName" : "nParam",
           "isOptional" : true,
           "isInteger" : false
         }, {
@@ -42,16 +36,12 @@
           "defaultValue" : "A",
           "categories" : [ "A", "B", "C" ],
           "qualifier" : "cParam",
-          "metaTags" : [ ],
-          "simpleName" : "cParam",
           "isOptional" : true
         }, {
           "paramType" : "InterfaceParameter",
           "defaultValue" : null,
           "interfaceQualifier" : "interface.I1",
           "qualifier" : "iParam",
-          "metaTags" : [ ],
-          "simpleName" : "iParam",
           "isOptional" : true
         } ],
         "parameterDependencies" : [ {
@@ -60,17 +50,15 @@
         } ],
         "dynAux" : null
       },
-      "qualifier" : "service1",
       "metaTags" : [ ],
       "simpleName" : "service1",
+      "qualifier" : "service1",
       "comments" : [ ],
       "dynAux" : null,
       "isAbstract" : false
     } ],
     "dataTypes" : [ ],
     "comments" : [ ],
-    "qualifier" : "service.Collection.1",
-    "metaTags" : [ ],
-    "simpleName" : "service.Collection.1"
+    "qualifier" : "service.Collection.1"
   } ]
 }

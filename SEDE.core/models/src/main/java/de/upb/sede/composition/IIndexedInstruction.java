@@ -17,7 +17,7 @@ public interface IIndexedInstruction {
 
     @Value.Derived
     default Long getIndex() {
-        return getInstruction().getIndex().get();
+        return getInstruction().getIndex();
     }
 
 }

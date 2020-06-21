@@ -13,16 +13,10 @@ import de.upb.sede.util.DeepMutableCopier
 import de.upb.sede.util.DynRecord
 import groovy.transform.PackageScope
 
-class AuxDomain
-    extends DomainAware<DynRecord, DomainAware> {
-
-    @Override
-    String getBindingName() {
-        return "aux"
-    }
+class AuxDomain {
 
     @PackageScope
-    void runDescriberOnValue(Class valueClass, Closure describer) {
+    static void runDescriberOnValue(DynRecord model, Class valueClass, Closure describer) {
         def value = model.cast(valueClass)
         def mutable = DeepMutableCopier.copyAsMutable(value)
         describer.delegate = mutable
@@ -31,23 +25,23 @@ class AuxDomain
         model.set(DeepImmutableCopier.copyAsImmutable(mutable))
     }
 
-    def javaDispatch(@DelegatesTo(MutableJavaDispatchAux) Closure dispatchDescriber) {
-        runDescriberOnValue(IJavaDispatchAux, dispatchDescriber)
+    static def javaDispatch(DynRecord model, @DelegatesTo(MutableJavaDispatchAux) Closure dispatchDescriber) {
+        runDescriberOnValue(model, IJavaDispatchAux, dispatchDescriber)
     }
 
-    def pythonDispatch(@DelegatesTo(MutablePythonDispatchAux) Closure dispatchDescriber) {
-        runDescriberOnValue(IPythonDispatchAux, dispatchDescriber)
+    static def pythonDispatch(DynRecord model, @DelegatesTo(MutablePythonDispatchAux) Closure dispatchDescriber) {
+        runDescriberOnValue(model, IPythonDispatchAux, dispatchDescriber)
     }
 
-    def javaParam(@DelegatesTo(MutableJavaParameterizationAux) Closure dispatchDescriber) {
-        runDescriberOnValue(IJavaParameterizationAux, dispatchDescriber)
+    static def javaParam(DynRecord model, @DelegatesTo(MutableJavaParameterizationAux) Closure dispatchDescriber) {
+        runDescriberOnValue(model, IJavaParameterizationAux, dispatchDescriber)
     }
 
-    def javaType(@DelegatesTo(MutableJavaTypeAux) Closure dispatchDescriber) {
-        runDescriberOnValue(IJavaTypeAux, dispatchDescriber)
+    static def javaType(DynRecord model, @DelegatesTo(MutableJavaTypeAux) Closure dispatchDescriber) {
+        runDescriberOnValue(model, IJavaTypeAux, dispatchDescriber)
     }
 
-    def setFields(@DelegatesTo(Expando) Closure expandoDescriber) {
+    static def setFields(DynRecord model, @DelegatesTo(Expando) Closure expandoDescriber) {
         Expando expando = new Expando()
         expandoDescriber.delegate = expando
         expandoDescriber.resolveStrategy = Closure.DELEGATE_FIRST

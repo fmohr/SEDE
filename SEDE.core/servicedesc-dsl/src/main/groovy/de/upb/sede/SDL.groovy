@@ -11,7 +11,7 @@ abstract class SDL extends Script {
     Map<String, MutableServiceCollectionDesc> cols = new LinkedHashMap<>()
 
 
-    def collection(String qualifier, @DelegatesTo(ServiceCollectionDomain) Closure describer) {
+    def collection(String qualifier, @DelegatesTo(MutableServiceCollectionDesc) Closure describer) {
         /*
          * Search for an existing collection with the given qualifier.
          */
@@ -24,11 +24,10 @@ abstract class SDL extends Script {
             cols[qualifier] = col
         }
 
-        def colDomain = new ServiceCollectionDomain(model: col)
         /*
          * Apply user script
          */
-        colDomain.read(describer)
+        DomainAware.read(col, describer)
 
         return col
     }

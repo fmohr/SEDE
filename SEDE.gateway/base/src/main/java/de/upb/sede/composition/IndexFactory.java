@@ -20,7 +20,7 @@ public class IndexFactory {
 
     public void setOccupiedIndices(Iterable<WithIndex> occupiedIndices) {
         for (WithIndex occupiedIndex : occupiedIndices) {
-            Optional<Long> index = occupiedIndex.getIndex();
+            Optional<Long> index = Optional.ofNullable(occupiedIndex.getIndex());
             index.ifPresent(this::setOccupiedIndex);
         }
     }

@@ -42,7 +42,6 @@ includeAt documentationProjects, "SEDE.docs", "base"
  */
 def gatewayProjects = "SEDE.gateway"
 includeAt gatewayProjects, "SEDE.gateway", "base"
-includeAt gatewayProjects, "SEDE.orchestration", "orchestration"
 
 
 /*

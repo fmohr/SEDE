@@ -3,31 +3,28 @@ package de.upb.sede
 
 import de.upb.sede.types.MutableDataTypeDesc
 import de.upb.sede.types.auxiliary.MutableJavaTypeAux
+import de.upb.sede.util.DynRecord
 
-class DataTypeDomain
-    extends DomainAware<MutableDataTypeDesc, ServiceCollectionDomain>
-    implements
-//        Shared.AuxAware<MutableJavaTypeAux>,
-        Shared.CommentAware,
-        Shared.AuxDomAware {
+class DataTypeDomain {
 
-    @Override
-    def String getBindingName() {
-        "type"
+    // model MutableDataTypeDesc
+
+    // topDom MutableServiceCollectionDesc
+
+    static MutableDataTypeDesc aux(MutableDataTypeDesc model, @DelegatesTo(DynRecord) Closure desc) {
+        Shared.aux(model, desc)
+        return model
     }
 
-//    @Override
-//    MutableJavaTypeAux setJavaAux(MutableJavaTypeAux javaAux) {
-//        model.javaTypeAux = javaAux
-//        return javaAux
-//    }
-//
-//    @Override
-//    MutableJavaTypeAux getJavaAux() {
-//        if(model.typeAux == null) {
-//            model.javaTypeAux = MutableJavaTypeAux.create()
-//        }
-//        return model.typeAux
-//    }
+    static MutableDataTypeDesc comment(MutableDataTypeDesc model, String ... comments) {
+        Shared.comment(model, comments)
+        return model
+    }
+
+    static MutableDataTypeDesc setInfo(MutableDataTypeDesc model, String commentBlock) {
+        Shared.setInfo(model, commentBlock)
+        return model
+    }
+
 
 }

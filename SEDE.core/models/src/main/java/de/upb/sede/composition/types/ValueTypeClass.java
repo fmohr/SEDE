@@ -14,17 +14,5 @@ public interface ValueTypeClass extends IQualifiable, TypeClass {
         return getQualifier();
     }
 
-    @Override
-    @Value.Lazy
-    default String getSimpleName() {
-        return getQualifier();
-    }
-
-    @Override
-    @Value.Lazy
-    default List<String> getMetaTags() {
-        return Collections.EMPTY_LIST;
-    }
-
 
 }

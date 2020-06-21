@@ -29,13 +29,13 @@
           "callByValue" : true,
           "readOnly" : false
         } ],
-        "qualifier" : "m1",
         "metaTags" : [ ],
         "simpleName" : "m1",
+        "qualifier" : "m1",
         "comments" : [ ],
         "dynAux" : null,
-        "isPure" : false,
-        "isContextFree" : false
+        "isContextFree" : false,
+        "isPure" : false
       } ],
       "interfaces" : [ "Provided_Interface_1", "Provided_Interface_2" ],
       "fieldTypes" : { },
@@ -44,22 +44,16 @@
           "paramType" : "BooleanParameter",
           "defaultValue" : true,
           "qualifier" : "bParam",
-          "metaTags" : [ ],
-          "simpleName" : "bParam",
           "isOptional" : true
         }, {
           "paramType" : "BooleanParameter",
           "defaultValue" : true,
           "qualifier" : "bParam",
-          "metaTags" : [ ],
-          "simpleName" : "bParam",
           "isOptional" : true
         }, {
           "paramType" : "BooleanParameter",
           "defaultValue" : true,
           "qualifier" : "bParam",
-          "metaTags" : [ ],
-          "simpleName" : "bParam",
           "isOptional" : true
         }, {
           "paramType" : "NumericParameter",
@@ -69,10 +63,8 @@
           "minInterval" : 10,
           "defaultValue" : 10.0,
           "qualifier" : "nParam",
-          "metaTags" : [ ],
-          "simpleName" : "nParam",
-          "isInteger" : true,
-          "isOptional" : true
+          "isOptional" : true,
+          "isInteger" : true
         }, {
           "paramType" : "NumericParameter",
           "min" : 0.5,
@@ -81,10 +73,8 @@
           "minInterval" : 10,
           "defaultValue" : 10.0,
           "qualifier" : "nParam",
-          "metaTags" : [ ],
-          "simpleName" : "nParam",
-          "isInteger" : true,
-          "isOptional" : true
+          "isOptional" : true,
+          "isInteger" : true
         }, {
           "paramType" : "NumericParameter",
           "min" : 0.5,
@@ -93,57 +83,43 @@
           "minInterval" : 10,
           "defaultValue" : 10.0,
           "qualifier" : "nParam",
-          "metaTags" : [ ],
-          "simpleName" : "nParam",
-          "isInteger" : true,
+          "isOptional" : true,
+          "isInteger" : true
+        }, {
+          "paramType" : "CategoryParameter",
+          "defaultValue" : "A",
+          "categories" : [ "A", "B", "C" ],
+          "qualifier" : "cParam",
           "isOptional" : true
         }, {
           "paramType" : "CategoryParameter",
           "defaultValue" : "A",
           "categories" : [ "A", "B", "C" ],
           "qualifier" : "cParam",
-          "metaTags" : [ ],
-          "simpleName" : "cParam",
           "isOptional" : true
         }, {
           "paramType" : "CategoryParameter",
           "defaultValue" : "A",
           "categories" : [ "A", "B", "C" ],
           "qualifier" : "cParam",
-          "metaTags" : [ ],
-          "simpleName" : "cParam",
-          "isOptional" : true
-        }, {
-          "paramType" : "CategoryParameter",
-          "defaultValue" : "A",
-          "categories" : [ "A", "B", "C" ],
-          "qualifier" : "cParam",
-          "metaTags" : [ ],
-          "simpleName" : "cParam",
           "isOptional" : true
         }, {
           "paramType" : "InterfaceParameter",
           "defaultValue" : null,
           "interfaceQualifier" : "interface.I1",
           "qualifier" : "iParam",
-          "metaTags" : [ ],
-          "simpleName" : "iParam",
           "isOptional" : true
         }, {
           "paramType" : "InterfaceParameter",
           "defaultValue" : null,
           "interfaceQualifier" : "interface.I1",
           "qualifier" : "iParam",
-          "metaTags" : [ ],
-          "simpleName" : "iParam",
           "isOptional" : true
         }, {
           "paramType" : "InterfaceParameter",
           "defaultValue" : null,
           "interfaceQualifier" : "interface.I1",
           "qualifier" : "iParam",
-          "metaTags" : [ ],
-          "simpleName" : "iParam",
           "isOptional" : true
         } ],
         "parameterDependencies" : [ {
@@ -165,24 +141,23 @@
           "bundleInList" : true,
           "parameterHandler" : {
             "staticInvocation" : false,
+            "constructorInvocation" : false,
             "redirectArg" : -1,
             "methodName" : null,
-            "className" : "Service1ParameterHandler",
+            "className" : null,
             "metaclass" : null
           }
         }
       },
-      "qualifier" : "service1",
       "metaTags" : [ ],
       "simpleName" : "service1",
+      "qualifier" : "service1",
       "comments" : [ ],
       "dynAux" : null,
       "isAbstract" : false
     } ],
     "dataTypes" : [ ],
     "comments" : [ ],
-    "qualifier" : "service.Collection.1",
-    "metaTags" : [ ],
-    "simpleName" : "service.Collection.1"
+    "qualifier" : "service.Collection.1"
   } ]
 }

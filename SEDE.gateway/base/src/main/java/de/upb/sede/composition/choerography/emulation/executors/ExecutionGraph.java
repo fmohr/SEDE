@@ -73,9 +73,9 @@ class ExecutionGraph {
         builder.addAllNodes(this.getNodes());
         Map<String, List<Long>> edges = new HashMap<>();
         for (ExecutionGraph.GraphEdge edge : GraphTraversal.iterateEdges(this)) {
-            edges.computeIfAbsent(edge.getSrc().getIndex().get().toString(),
+            edges.computeIfAbsent(edge.getSrc().getIndex().toString(),
                 src -> new ArrayList<>())
-                .add(edge.getTrg().getIndex().get());
+                .add(edge.getTrg().getIndex());
         }
         builder.putAllEdges(edges);
         return builder;

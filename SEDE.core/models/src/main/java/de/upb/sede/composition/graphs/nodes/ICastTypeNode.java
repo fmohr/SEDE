@@ -17,4 +17,8 @@ public interface ICastTypeNode extends BaseNode, WithField {
 
     boolean castToSemantic();
 
+    @Override
+    default String getText() {
+        return String.format("cast %s from %s to %s", getFieldName(), getSourceType(), getTargetType());
+    }
 }

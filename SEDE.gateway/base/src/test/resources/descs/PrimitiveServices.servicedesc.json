@@ -1,0 +1,64 @@
+{
+  "collections" : [ {
+    "services" : [ {
+      "stateType" : null,
+      "methods" : [ {
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "p.PrimService",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "metaTags" : [ ],
+        "simpleName" : "const",
+        "qualifier" : "const",
+        "comments" : [ ],
+        "dynAux" : null,
+        "isPure" : false,
+        "isContextFree" : true
+      }, {
+        "inputs" : [ {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        }, {
+          "type" : "Number",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "outputs" : [ {
+          "type" : "p.PrimService",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "metaTags" : [ ],
+        "simpleName" : "constNumber_Number",
+        "qualifier" : "constNumber_Number",
+        "comments" : [ ],
+        "dynAux" : null,
+        "isPure" : false,
+        "isContextFree" : true
+      } ],
+      "interfaces" : [ ],
+      "fieldTypes" : { },
+      "serviceParameters" : null,
+      "metaTags" : [ ],
+      "simpleName" : "p.PrimService",
+      "qualifier" : "p.PrimService",
+      "comments" : [ ],
+      "dynAux" : null,
+      "isAbstract" : false
+    } ],
+    "dataTypes" : [ ],
+    "comments" : [ ],
+    "qualifier" : "PrimitiveServices"
+  } ]
+}

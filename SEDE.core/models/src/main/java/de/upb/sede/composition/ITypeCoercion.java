@@ -6,7 +6,6 @@ import de.upb.sede.core.PrimitiveType;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
-import java.util.Objects;
 
 @SEDEModelStyle
 @Value.Immutable
@@ -31,7 +30,7 @@ public interface ITypeCoercion {
 
     @Value.Lazy
     public default boolean hasTypeConversion() {
-        return getSemanticType() != null && !getSourceType().equals(getResultType());
+        return !isNullPlug() && getSemanticType() != null && !getSourceType().equals(getResultType());
     }
 
     @Value.Lazy
@@ -39,6 +38,11 @@ public interface ITypeCoercion {
     public default boolean resultsInSemanticType() {
         // TODO Find a better way to express no to semantic conversion than to abuse the typeCoercion class
         return getSemanticType() != null && getResultType().equals(getSemanticType());
+    }
+
+    @Value.Lazy
+    public default boolean isNullPlug() {
+        return getSourceType().equals(PrimitiveType.NULL.name());
     }
 
 }

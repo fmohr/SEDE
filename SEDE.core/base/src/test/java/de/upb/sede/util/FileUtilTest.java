@@ -1,18 +1,19 @@
 package de.upb.sede.util;
 
+import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
 
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.CoreMatchers.*;
 
 public class FileUtilTest {
 	@Test
 	public void test_readFileAsString() {
 		String testFilePath = FileUtil.getPathOfResource("ReadTest.txt");
-		Assert.assertEquals("A\nB\nC\nD", FileUtil.readFileAsString(testFilePath));
+		Assert.assertEquals("A\nB\nC\nD\n", FileUtil.readFileAsString(testFilePath));
 	}
 
 	@Test

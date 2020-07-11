@@ -3,23 +3,39 @@ package de.upb.sede.composition.choerography.emulation.executors;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.CompositionGraph;
 import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
+import de.upb.sede.util.MappedList;
 
 import java.util.*;
 
-class ExecutionGraph {
+public class ExecutionGraph {
 
     private final Set<GraphNode> nodes;
 
     private final Set<GraphEdge> edges;
 
-    ExecutionGraph() {
+    public ExecutionGraph() {
         nodes = new HashSet<>();
         edges = new HashSet<>();
     }
 
-    ExecutionGraph(HashSet<GraphNode> graphNodes, HashSet<GraphEdge> graphEdges) {
+    public ExecutionGraph(HashSet<GraphNode> graphNodes, HashSet<GraphEdge> graphEdges) {
         this.nodes = graphNodes;
         this.edges = graphEdges;
+    }
+
+    public ExecutionGraph(ICompositionGraph compositionGraph) {
+        this();
+        for (BaseNode node : compositionGraph.getNodes()) {
+            addNode(node);
+        }
+        Map<Long, BaseNode> nodeMap = new MappedList<>(compositionGraph.getNodes(), BaseNode::getIndex);
+        for (Map.Entry<String, List<Long>> nodeEdges : compositionGraph.getEdges().entrySet()) {
+            long nodeIndex = Long.parseLong(nodeEdges.getKey());
+            BaseNode node = nodeMap.get(nodeIndex);
+            for (Long neighbor : nodeEdges.getValue()) {
+                addEdge(node, nodeMap.get(neighbor));
+            }
+        }
     }
 
     public void addNode(BaseNode baseNode) {

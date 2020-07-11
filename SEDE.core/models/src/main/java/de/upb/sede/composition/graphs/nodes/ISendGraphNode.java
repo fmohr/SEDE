@@ -13,4 +13,8 @@ public interface ISendGraphNode extends BaseNode, WithExecutorConnection {
 
     String getGraph();
 
+    @Override
+    default String getText() {
+        return String.format("send graph to %s", getContactInfo().getQualifier());
+    }
 }

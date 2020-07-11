@@ -15,4 +15,8 @@ import javax.annotation.Nullable;
 public interface ITransmitDataNode extends BaseNode,
     WithField, WithExecutorConnection, WithInPlaceCast {
 
+    @Override
+    default String getText() {
+        return String.format("transmit %s to %s", getFieldName(), getContactInfo().getQualifier());
+    }
 }

@@ -3,6 +3,7 @@ package de.upb.sede.composition.typing;
 import de.upb.sede.composition.IIndexedInstruction;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.composition.types.TypeClass;
+import de.upb.sede.core.PrimitiveType;
 
 public class TypeCheckException extends RuntimeException {
 
@@ -49,6 +50,11 @@ public class TypeCheckException extends RuntimeException {
         return unexpectedType(typeText, expectedType, message);
     }
 
+    public static TypeCheckException unexpectedConstantTypeDeclaration(PrimitiveType givenConstantType, String expectedType) {
+        return new TypeCheckException(String.format("Unexpected primitive type `%s` while method expects input type of `%s`.", givenConstantType, expectedType) +
+            "\nHint: methods cannot declare NULL as input type. Check if input type declaration matched the enum fields in PrimitiveType.");
+    }
+
     static TypeCheckException unexpectedFieldType(String fieldName, TypeClass fieldType, String expectedType, String message) {
         String typeText = String.format("Field `%s` of  type `%s`", fieldName, TypeUtil.typeToText(fieldType));
         return unexpectedType(typeText, expectedType, message);
@@ -80,7 +86,7 @@ public class TypeCheckException extends RuntimeException {
         int expectedInput = inst.getParameterFields().size();
 
         String errText = "No signature of method %s::%s matches the requested parameter count: " +
-            "Instruction expects %d -> %d" +
+            "Instruction expects inputs count: %d, output count: %d" +
             "\nNote that currently method resolution works simply matching the input and output size. Parameter types are ignored." +
             "\nAdditionally note that this exception is also thrown if more than one method matches the instruction.";
         errText = String.format(errText, serviceQualifier, methodQualifier, expectedInput, expectedOutput);
@@ -95,7 +101,7 @@ public class TypeCheckException extends RuntimeException {
     static TypeCheckException nonMatchingSemanticType(String sourceType, String sourceSemType,
                                                              String targetType, String targetSemType) {
         String errText = String.format("Cannot coerce type %s -> %s " +
-                "because their semantic types doesn't match: %s ≠ %s",
+                "because their semantic types doesn't match: %s != %s",
             sourceType, targetType, sourceSemType, targetSemType);
         return new TypeCheckException(errText);
     }

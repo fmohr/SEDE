@@ -68,7 +68,28 @@ class ServiceDomain
         def methodDesc = MethodDomain.createMethod(methodQualifier, methodDefs)
         def matchingMethod = model.methods.find { Shared.matchingMethods(it, methodDesc) }
         if(matchingMethod != null) {
-            return matchingMethod
+            boolean mismatchDetected = false
+            for (int i = 0; i < matchingMethod.inputs.size(); i++) {
+                def existingInput =  matchingMethod.inputs.get(i)
+                def definedInput = methodDesc.inputs.get(i)
+                if(existingInput != definedInput) {
+                    mismatchDetected = true
+                }
+            }
+            for (int i = 0; i < matchingMethod.outputs.size(); i++) {
+                def existingOutput =  matchingMethod.outputs.get(i)
+                def definedOutput = methodDesc.outputs.get(i)
+                if(existingOutput != definedOutput) {
+                    mismatchDetected = true
+                }
+            }
+            if(mismatchDetected) {
+                throw new IllegalArgumentException("The defined method ${methodQualifier} already exists with different signature:" +
+                    "\nDefined method:${methodDesc}" +
+                    "\nExisting method:${matchingMethod}")
+            } else {
+                return matchingMethod
+            }
         } else {
             model.methods.add(methodDesc)
             return methodDesc;
@@ -83,9 +104,12 @@ class ServiceDomain
     static def constructor(MutableServiceDesc model, Map methodDef) {
         return constructor(model, methodDef, Defaults.defaults.constructor)
     }
+
     static def constructor(MutableServiceDesc model, Map signatureDef, @DelegatesTo(MutableMethodDesc) Closure signatureDescriber) {
         def methodDef = new HashMap(signatureDef)
-        methodDef["name"] = IMethodDesc.CONSTRUCTOR_METHOD_NAME
+        if(!(methodDef.containsKey("name"))) {
+            methodDef["name"] = IMethodDesc.CONSTRUCTOR_METHOD_NAME
+        }
         methodDef["output"] = model.qualifier
         methodDef["static"] = true
         def m = method(model, methodDef, signatureDescriber)

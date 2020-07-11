@@ -25,11 +25,15 @@ import de.upb.sede.requests.resolve.beta.IChoreography;
 import de.upb.sede.requests.resolve.beta.IResolveRequest;
 import de.upb.sede.util.Cache;
 import de.upb.sede.util.MappedListView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
 
 public class ChoreographyService implements IChoreographyService {
+
+    private final static Logger logger = LoggerFactory.getLogger(ChoreographyService.class);
 
     private final ICCService iccService;
 
@@ -53,8 +57,14 @@ public class ChoreographyService implements IChoreographyService {
 
     @Override
     public IChoreography resolve(IResolveRequest resolveRequest) {
-
-        ICompositionCompilation cc = compile(resolveRequest);
+        ICompositionCompilation cc;
+        if(resolveRequest.getCC() != null) {
+            logger.debug("Composition compilation is present in the resolve request. Skipping compilation.");
+            cc = resolveRequest.getCC();
+        } else {
+            logger.debug("Compiling composition before resolving it.");
+            cc = compile(resolveRequest);
+        }
 
         SDLLookupService lookupService = lookupServiceCache.get();
 
@@ -125,9 +135,10 @@ public class ChoreographyService implements IChoreographyService {
         Orchestration orchestration = new Orchestration();
         orchestration.setInput(new Orchestration.OrchestrationInput(nf, indexFactory, indexer, mrMap, candidateSelection, participants1,
             preInstTransmissions, preInstCasts, preInstParse, outputTransmissions, preInstLoads, postInstStores));
+        logger.info("Simulation of the orchestration is ready. Starting to build a choerography");
         orchestration.run();
         // no formal output
-
+        logger.info("Orchestration simulation is finished. Finalizing choreography by building composition graphs.");
         ChoreographyFinalizer finalizer = new ChoreographyFinalizer();
         finalizer.setInput(new ChoreographyFinalizer.CFInput(participants1));
         finalizer.run();
@@ -138,6 +149,7 @@ public class ChoreographyService implements IChoreographyService {
             .compositionGraph(graphs)
             .build();
 
+        logger.info("Choreography finished building.");
         return choreography;
     }
 

@@ -32,6 +32,7 @@ public interface IResolvePolicy {
     }
 
     enum FieldSelection {
-         ALL, NONE, LISTED
+        ALL, NONE, LISTED
     }
 }
+

@@ -10,6 +10,9 @@ import org.codehaus.groovy.control.customizers.ImportCustomizer;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,6 +70,21 @@ public class SDLReader {
 
     public void read(String serviceDesc, String fileName) {
         SDL collector = (SDL) shell.parse(serviceDesc, fileName);
+        runSDL(collector);
+    }
+
+    public void readResource(String resourcePath) throws IOException {
+        URL resource = Thread.currentThread().getContextClassLoader().getResource(resourcePath);
+        if(resource == null) {
+            throw new IllegalArgumentException("Resource not found: " + resourcePath);
+        }
+        URI uri;
+        try {
+            uri = resource.toURI();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException("Couldn't create URI from resource path url: " + resource.toString(), e);
+        }
+        SDL collector = (SDL)  shell.parse(uri);
         runSDL(collector);
     }
 

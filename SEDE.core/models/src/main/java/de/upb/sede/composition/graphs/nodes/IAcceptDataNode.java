@@ -11,4 +11,8 @@ import org.immutables.value.Value;
 @JsonDeserialize(builder = AcceptDataNode.Builder.class)
 public interface IAcceptDataNode extends BaseNode, WithField, WithInPlaceCast {
 
+    @Override
+    default String getText() {
+        return String.format("accept %s", getFieldName());
+    }
 }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.SerializationFeature
 import de.upb.sede.util.FileUtil
 import groovy.cli.Option
 import groovy.cli.Unparsed
-import groovy.cli.commons.CliBuilder
+import groovy.cli.picocli.CliBuilder
 import groovy.util.logging.Log
 
 @Log

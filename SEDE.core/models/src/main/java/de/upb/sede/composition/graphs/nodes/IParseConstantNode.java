@@ -2,6 +2,7 @@ package de.upb.sede.composition.graphs.nodes;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.SEDEModelStyle;
+import de.upb.sede.core.PrimitiveType;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
@@ -14,11 +15,10 @@ public interface IParseConstantNode extends BaseNode {
 
     String getConstantValue();
 
-    @Nullable
-    ConstantType getConstantType();
+    PrimitiveType getConstantType();
 
-    enum ConstantType {
-        NULL, String, Number, Bool;
+    @Override
+    default String getText() {
+        return String.format("parse %s to %s", getConstantValue(), getConstantType());
     }
-
 }

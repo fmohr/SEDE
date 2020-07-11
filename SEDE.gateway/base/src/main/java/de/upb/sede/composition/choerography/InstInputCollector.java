@@ -10,6 +10,7 @@ import de.upb.sede.composition.orchestration.IDoubleCast;
 import de.upb.sede.composition.orchestration.ITransmission;
 import de.upb.sede.composition.orchestration.Transmission;
 import de.upb.sede.composition.typing.TypeCheckException;
+import de.upb.sede.core.PrimitiveType;
 import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.requests.resolve.beta.IResolveRequest;
 import de.upb.sede.types.IDataTypeDesc;
@@ -78,7 +79,7 @@ public class InstInputCollector
             if(!srcExecutorId.equals(executorH.getQualifier())) {
                 // if the context is on another executor:
                 String serviceQualifier = mr.getMethodRef().getServiceRef().getRef().getQualifier();
-                ITransmission serviceTransmission = createServiceTransmission(locationOfContext, executorH, serviceQualifier);
+                ITransmission serviceTransmission = createServiceTransmission(locationOfContext, executorH, contextFieldname);
                 getOutput().addTransmission(instIndex, serviceTransmission);
                 getOutput().setFieldLocation(contextFieldname, executorH);
             }
@@ -86,9 +87,12 @@ public class InstInputCollector
         List<String> params = inst.getInstruction().getParameterFields();
         for (int paramIndex = 0; paramIndex < params.size(); paramIndex++) {
             ITypeCoercion typeCoercion = mr.getParamTypeCoercions().get(paramIndex);
-            if(typeCoercion.hasConstant()) {
+            if(typeCoercion.isNullPlug()) {
+                // no need to type cast a null plug.
+            } else if(typeCoercion.hasConstant()) {
                 IParseConstantNode parseC = ParseConstantNode.builder()
                     .constantValue(Objects.requireNonNull(typeCoercion.getConstant()))
+                    .constantType(PrimitiveType.valueOf(typeCoercion.getSourceType()))
                     .hostExecutor(executorH.getQualifier())
                     .index(getInput().getIndexFactory().create())
                     .build();

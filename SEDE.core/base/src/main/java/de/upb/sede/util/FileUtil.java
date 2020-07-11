@@ -2,7 +2,6 @@ package de.upb.sede.util;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,7 +10,6 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -310,6 +308,33 @@ public class FileUtil {
             parent = root.getParentFile();
         }
         return root;
+    }
+
+    public static File prepareTestOutputDir(String outputDirPath, boolean clear) {
+        File buildFolder = new File("build");
+        File testOutFolder = new File(buildFolder, "test-out");
+        File outputFolder = new File(testOutFolder, outputDirPath);
+        boolean mkdirs = outputFolder.mkdirs();
+        if(!mkdirs && !outputFolder.isDirectory()) {
+            throw new IllegalStateException("Coudln't create output folder: " + outputFolder.getAbsolutePath());
+        }
+        if(clear) {
+            clearDirectory(outputFolder);
+        }
+        return outputFolder;
+    }
+
+    private static void clearDirectory(File directory) {
+        assert directory.isDirectory();
+        for (File file : directory.listFiles()) {
+            if(file.isDirectory()) {
+                clearDirectory(file);
+            }
+            boolean deleted = file.delete();
+            if(!deleted) {
+                throw new IllegalArgumentException("Couldn't delete file: " + file.getAbsolutePath());
+            }
+        }
     }
 
 }

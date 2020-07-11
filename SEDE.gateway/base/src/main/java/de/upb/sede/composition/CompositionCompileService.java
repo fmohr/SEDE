@@ -27,10 +27,10 @@ public class CompositionCompileService implements ICCService {
         try {
             compositionCompilation = ccImpl.compileCode(ccRequest.getComposition());
         } catch (TypeCheckException ex) {
-            logger.error("Error during Type Checking:\n{}", ccRequest.getComposition(), ex);
+//            logger.error("Error during Type Checking:\n{}", ccRequest.getComposition(), ex);
             throw ex;
         } catch(FieldAccessAnalysisException ex) {
-            logger.error("Error during Field access analysis:\n{}", ccRequest.getComposition(), ex);
+//            logger.error("Error during Field access analysis:\n{}", ccRequest.getComposition(), ex);
             throw ex;
         }
         return compositionCompilation;

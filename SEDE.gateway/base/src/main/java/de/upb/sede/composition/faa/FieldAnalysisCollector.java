@@ -35,11 +35,8 @@ public class FieldAnalysisCollector
                     .type(fieldTC.getFieldType(field))
                     .build();
                 getOutput().setNewType(inst.getIndex(), fieldType);
-                faList
-                    .stream()
-                    .filter(access -> access.getField().equals(field))
-                    .forEach(access -> getOutput().recordFieldAccess(access));
             }
+            faList.forEach(access -> getOutput().recordFieldAccess(access));
 
         }
 

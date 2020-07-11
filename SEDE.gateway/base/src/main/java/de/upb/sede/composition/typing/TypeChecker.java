@@ -21,7 +21,7 @@ public class TypeChecker extends ChainedIWCompileStep<TCInput, TCOutput> {
         FieldTypeRecorder typeChecker = new FieldTypeRecorder(output);
         ParamTypeCoercionResolver paramTypeCoercionResolver = new ParamTypeCoercionResolver(output);
 
-        List<InstWiseCompileStep<TCInput, TCOutput>> steps = Arrays.asList(contextResolver, methodResolver, typeChecker, paramTypeCoercionResolver);
+        List<InstWiseCompileStep<TCInput, TCOutput>> steps = Arrays.asList(contextResolver, methodResolver, paramTypeCoercionResolver, typeChecker);
         try {
             steps.forEach(step -> step.setInput(getInput()));
         } catch(TypeCheckException ex) {

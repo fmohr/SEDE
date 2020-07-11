@@ -69,8 +69,8 @@ public class ToHASCOComponentsTranslator {
             } else {
                 IServiceDesc service = optionalServiceDesc.get();
                 if(service.getServiceParameters() == null) {
-                    logger.debug("Skipping Service `{}`, because it doesn't define service parameters.", service.getQualifier());
-                    continue;
+                    logger.warn("Service `{}` doesn't define service parameters.", service.getQualifier());
+//                    continue;
                 }
                 logger.debug("Creating the HASCO component for service: " + service.getQualifier());
                 /*
@@ -123,9 +123,14 @@ public class ToHASCOComponentsTranslator {
                 logger.debug("Skipping parameter `{}` because its optional.", serviceParam.getQualifier());
                 continue;
             }
-            Map param = translateParam(serviceParam);
+            if(serviceParam instanceof IInterfaceParameter) {
+                logger.trace("Service parameter {} not included as component parameter as it is an interface parameter.", serviceParam);
+            } else {
+                Map param = translateParam(serviceParam);
+                Objects.requireNonNull(param);
 //            if(param!=null) // TODO decide whether services are included even if they dont specify param options
-            params.add(param);
+                params.add(param);
+            }
         }
         return params;
     }
@@ -228,6 +233,14 @@ public class ToHASCOComponentsTranslator {
             .map(qualifier -> IServiceRef.of(null, qualifier))
             .collect(Collectors.toList());
         return componentsOfServiceRefs(sdlService, refs);
+    }
+    public static List<Map> componentsOfServiceQualifiers(SDLLookupService sdlService,
+                                                          List<String> serviceNames,
+                                                          boolean skipOptParams) {
+        List<IServiceRef> refs = serviceNames.stream()
+            .map(qualifier -> IServiceRef.of(null, qualifier))
+            .collect(Collectors.toList());
+        return componentsOfServiceRefs(sdlService, refs, skipOptParams);
     }
 
     public static List<Map> componentsOfServiceRefs(SDLLookupService sdlService,

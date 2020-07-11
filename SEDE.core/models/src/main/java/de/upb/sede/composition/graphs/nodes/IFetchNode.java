@@ -12,5 +12,10 @@ import org.immutables.value.Value;
 public interface IFetchNode extends BaseNode,
     WithField, WithInPlaceCast, WithExecutorConnection {
 
+    @Override
+    default String getText() {
+        return String.format("fetch %s from %s", getFieldName(), getContactInfo().getQualifier());
+    }
+
 }
 

@@ -215,7 +215,8 @@ class DefaultExecutorDecorations {
             addNodes(executionFinishedNtf);
             List<ExecutionGraph.GraphEdge> edges = new ArrayList<>();
             for (BaseNode lastNode : GraphTraversal.lastNodes(getBase().getGraph())) {
-                edges.add(edge(lastNode, executionFinishedNtf));
+                if(!lastNode.equals(executionFinishedNtf))
+                    edges.add(edge(lastNode, executionFinishedNtf));
             }
             addEdges(edges);
 

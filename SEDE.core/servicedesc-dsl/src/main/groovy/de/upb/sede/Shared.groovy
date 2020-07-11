@@ -4,6 +4,7 @@ import de.upb.sede.exec.IMethodDesc
 import de.upb.sede.exec.IServiceDesc
 import de.upb.sede.exec.auxiliary.DynamicAuxAware
 import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
+import de.upb.sede.types.IDataTypeDesc
 import de.upb.sede.util.DynRecord
 import groovy.transform.PackageScope
 
@@ -49,6 +50,8 @@ class Shared {
             } else {
                 return service.qualifier
             }
+        } else if(o instanceof IDataTypeDesc) {
+            return o.qualifier
         }
         if(o instanceof  String) {
             return o

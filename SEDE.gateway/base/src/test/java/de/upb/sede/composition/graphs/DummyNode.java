@@ -42,7 +42,7 @@ public class DummyNode implements BaseNode {
     }
 
     @Override
-    public Optional<Long> getIndex() {
-        return Optional.of(index);
+    public Long getIndex() {
+        return index;
     }
 }

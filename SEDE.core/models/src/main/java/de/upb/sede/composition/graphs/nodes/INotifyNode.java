@@ -13,5 +13,10 @@ import org.immutables.value.Value;
 public interface INotifyNode extends BaseNode,
     WithExecutorConnection, WithNotification {
 
+    @Override
+    default String getText() {
+        return String.format("ntf %s with '%s'", getContactInfo().getQualifier(), getNotification().getDescription());
+    }
+
 }
 

@@ -23,9 +23,9 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.TimeUnit;
 
-public class SimpleGatewayImpl implements IGateway {
+public class StdGatewayImpl implements IGateway {
 
-    private final static Logger logger = LoggerFactory.getLogger(SimpleGatewayImpl.class);
+    private final static Logger logger = LoggerFactory.getLogger(StdGatewayImpl.class);
 
     private final Cache<SDLLookupService> lookupServiceCache;
 
@@ -33,23 +33,23 @@ public class SimpleGatewayImpl implements IGateway {
 
     private final ICCService iccService;
 
-    private final IChoreographyService icgService;
+    private final IChoreographyService choreographyService;
 
-    public SimpleGatewayImpl(Cache<SDLLookupService> lookupServiceCache, ExecutorArbiter executorSupplier) {
+    public StdGatewayImpl(Cache<SDLLookupService> lookupServiceCache, ExecutorArbiter executorSupplier) {
         this.lookupServiceCache = lookupServiceCache;
         this.executorSupplier = executorSupplier;
         iccService = new CompositionCompileService(lookupServiceCache);
-        icgService = new ChoreographyService(iccService, lookupServiceCache, this.executorSupplier);
+        choreographyService = new ChoreographyService(iccService, lookupServiceCache, this.executorSupplier);
     }
 
-    public SimpleGatewayImpl(SDLLookupService baseLookupService,
+    public StdGatewayImpl(SDLLookupService baseLookupService,
                              ExecutorArbiter executorSupplier) {
         this(new TTLCache<>(10, TimeUnit.SECONDS, () ->
                 new SDLCacheLookupService(baseLookupService)),
             executorSupplier);
     }
 
-    public SimpleGatewayImpl(ISDLAssembly sdlAssembly,
+    public StdGatewayImpl(ISDLAssembly sdlAssembly,
                              ExecutorArbiter executorSupplier) {
         this(
             new StaticCache<>(
@@ -59,10 +59,11 @@ public class SimpleGatewayImpl implements IGateway {
 
     @Override
     public IChoreography resolve(IResolveRequest resolveRequest) {
-        IChoreography choreography = icgService.resolve(resolveRequest);
+        IChoreography choreography = choreographyService.resolve(resolveRequest);
         /* If the client needs the visualisation of the graph appen it to the resolution */
 		if(resolveRequest.getResolvePolicy().isDotGraphRequested()) {
 			try{
+			    logger.info("Dot graph was requested. Creating the dot graph from the composition graphs.");
 				String svg = GraphToDot.choreographyToSag(choreography);
                 choreography = Choreography.builder()
                     .from(choreography)

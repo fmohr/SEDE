@@ -47,7 +47,30 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
                 /*
                  * The given param is a constant, e.g. a number like `5`
                  */
-                typeCoercion = constantParam(instParam, expectedInputType);
+                PrimitiveType givenConstantType = FMCompositionParser.primitiveTypeFor(instParam);
+
+                if(givenConstantType == PrimitiveType.NULL) {
+                    /*
+                     * null can be plugged into any expected type.
+                     *
+                     */
+                    typeCoercion = nullParam(instParam, expectedInputType);
+                } else {
+                    /*
+                     * Typecheck primitive types: check if the given primitive type matches the declared one:
+                     */
+                    PrimitiveType expectedConstantType;
+                    expectedConstantType = PrimitiveType.insensitiveValueOf(expectedInputType).orElse(null);
+
+                    if (expectedConstantType == null || expectedConstantType == PrimitiveType.NULL) {
+                        throw TypeCheckException.unexpectedConstantTypeDeclaration(givenConstantType, expectedInputType);
+                    }
+                    if(expectedConstantType != givenConstantType) {
+                        throw TypeCheckException.unexpectedConstantType(instParam, givenConstantType.name(), expectedInputType,
+                            "Expected primitive type doesn't match the given constant.");
+                    }
+                    typeCoercion = constantParam(instParam, givenConstantType);
+                }
             } else {
                 /*
                  * The given param is a field, e.g. `a`
@@ -71,17 +94,21 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
         output.getMethodInfo().setParameterTypeCoercions(parameterTypeCoercions);
     }
 
-    private ITypeCoercion constantParam(String constant, String targetPrimType) {
+    private ITypeCoercion nullParam(String constant, String expectedType) {
+        return TypeCoercion.builder()
+            .constant(constant)
+            .sourceType(PrimitiveType.NULL.name())
+            .resultType(expectedType)
+            .build();
+    }
+
+    private ITypeCoercion constantParam(String constant, PrimitiveType primType) {
         /*
          * The parameter is a constant.
          * Replace the input type by the primitive type:
          */
-        ITypeCoercion typeCoercion = primType(constant);
-        if(!typeCoercion.getResultType().equals(targetPrimType)) {
-            throw TypeCheckException.unexpectedConstantType(constant, typeCoercion.getSourceType(), targetPrimType,
-                "The expected type");
-        }
-        return typeCoercion;
+
+        return primType(constant, primType);
     }
 
     private ITypeCoercion castValue(String sourceType, String targetType) {
@@ -110,8 +137,7 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
     }
 
 
-    static ITypeCoercion primType(String constant) {
-        PrimitiveType primT = FMCompositionParser.primitiveTypeFor(constant);
+    static ITypeCoercion primType(String constant, PrimitiveType primT) {
         ITypeCoercion tc = de.upb.sede.composition.TypeCoercion.builder()
             .constant(constant)
             .sourceType(primT.name())

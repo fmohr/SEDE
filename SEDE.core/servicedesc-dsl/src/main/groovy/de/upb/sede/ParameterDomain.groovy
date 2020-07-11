@@ -120,7 +120,7 @@ class ParameterDomain
 
     static void requiredInterfaces(MutableServiceParameterizationDesc model, String... interfaceQualifiers) {
         for(String interfaceQualifier : Objects.requireNonNull(interfaceQualifiers, "No interface qualifiers provided.")){
-            requiredInterface(interfaceQualifier)
+            requiredInterface(model, interfaceQualifier)
         }
     }
 

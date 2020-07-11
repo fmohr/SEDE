@@ -70,7 +70,7 @@ public class GraphToDot {
 	}
 
 	private static String toString(BaseNode baseNode) {
-		return baseNode.toString().replaceAll("\"", "");
+		return baseNode.getText().replaceAll("\"", "");
 	}
 
 	public static String graphToDotString(ICompositionGraph compGraph) {

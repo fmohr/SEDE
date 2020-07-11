@@ -16,5 +16,10 @@ public interface ICollectErrorsNode extends BaseNode, WithField {
     String EXECUTION_ERRORS_FIELDNAME = "__execution_errors_%s";
 
     List<String> getErrorFields();
+
+    @Override
+    default String getText() {
+        return String.format("Collect errors into %s", getFieldName());
+    }
 }
 

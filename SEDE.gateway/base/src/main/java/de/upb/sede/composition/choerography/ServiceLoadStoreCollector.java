@@ -31,9 +31,16 @@ public class ServiceLoadStoreCollector
 
         Optional<TypeClass> initialType = Optional.ofNullable(field.getInitialType());
         boolean toBeStored = toBeStored(field.getFieldname());
-        boolean wasLoaded = false;
+        // isPresent flag indicates that the service is present on the executor
+        // if it is false it means that it needs to be loaded before it can be used
+        boolean isPresent = false;
+        // this flag indicates if the current field is a service
         boolean isService = false;
+        // this flag indicates if the field has been written onto
+        // if it is true, it needs to be stored at the end
         boolean wasWritten = false;
+        //This indicated the last index where there was a write to the field
+        // Used to create a store after the last write
         Long lastWritten = null;
 
         if(initialType.isPresent()) {
@@ -43,7 +50,8 @@ public class ServiceLoadStoreCollector
         for (IFieldAccess fieldAccess : field.getFieldAccesses()) {
             Long index = fieldAccess.getIndex();
             if(fieldAccess.getAccessType().isAssignment()) {
-                if(isService && wasWritten && toBeStored) {
+                if(isService && wasWritten && toBeStored && field.isInjected()) {
+                    // we check for `isInjected` because else the client can't get a pointer to the service anyway.
                     // the previous service instance needs to be stored:
                     IExecutorContactInfo host = getInput().getInstExecutorMap().get(lastWritten).getContactInfo();
                     getOutput().store(lastWritten, getInput().getIndexFactory().create(),
@@ -56,18 +64,18 @@ public class ServiceLoadStoreCollector
                 if(TypeUtil.isService(fieldType)) {
                     isService = true;
                     wasWritten = true;
-                    wasLoaded = true;
+                    isPresent = true;
                     lastWritten = index;
                 }
             } else if(isService) {
-                if(fieldAccess.getAccessType().isRead() && !wasLoaded) {
+                if(fieldAccess.getAccessType().isRead() && !isPresent) {
                     IExecutorContactInfo host = getInput().getInstExecutorMap().get(index).getContactInfo();
                     IMethodResolution iMethodResolution = getInput().getMR().get(index);
                     // TODO add method reference
                     getOutput().load(index, getInput().getIndexFactory().create(), host.getQualifier(),
                         fieldAccess.getField(), fieldType.getTypeQualifier());
 
-                    wasLoaded = true;
+                    isPresent = true;
                 }
                 if(fieldAccess.getAccessType().isWrite()) {
                     wasWritten = true;

@@ -2,9 +2,7 @@ package de.upb.sede.composition.graphs;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +17,7 @@ import de.upb.sede.exec.ExecutorCapabilities;
 import de.upb.sede.exec.ExecutorContactInfo;
 import de.upb.sede.exec.ExecutorHandle;
 import de.upb.sede.gateway.ExecutorArbiter;
-import de.upb.sede.gateway.SimpleGatewayImpl;
+import de.upb.sede.gateway.StdGatewayImpl;
 import de.upb.sede.interfaces.IGateway;
 import de.upb.sede.requests.resolve.beta.IChoreography;
 import de.upb.sede.requests.resolve.beta.MutableResolvePolicy;
@@ -47,7 +45,7 @@ public class PlainLibGraphs {
 	@BeforeClass
 	public static void setupGateway() {
 	    plainlibServices = getSDLAssembly();
-		gateway = new SimpleGatewayImpl(plainlibServices,
+		gateway = new StdGatewayImpl(plainlibServices,
 		    new ExecutorArbiter()
         );
 

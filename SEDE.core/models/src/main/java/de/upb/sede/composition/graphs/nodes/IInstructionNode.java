@@ -68,4 +68,8 @@ public interface IInstructionNode extends BaseNode, WithField {
         return getFieldName() != null;
     }
 
+    @Override
+    default String getText() {
+        return String.format("%s", getFMInstruction());
+    }
 }

@@ -72,7 +72,7 @@ class ToHASCOComponentsTranslatorTest extends Specification {
 
         def lookupService = new SDLBaseLookupService(sdlBase)
         def componentRepos = componentsOfServiceQualifiers(lookupService,
-            ['service.0', 'service.1'])
+            ['service.0', 'service.1'], true)
         println(MAPPER.writeValueAsString(sdlBase))
         println(MAPPER.writeValueAsString(componentRepos))
         then:
@@ -83,11 +83,12 @@ class ToHASCOComponentsTranslatorTest extends Specification {
         List components = componentRepos[0][KEY_COMPONENTS] as List
 
         then:
-        components.size() == 1
-        components[0][KEY_NAME] == 'service.1'
+        components.size() == 2
+        components[0][KEY_NAME] == 'service.0'
+        components[1][KEY_NAME] == 'service.1'
 
         when:
-        def service1Component = components[0]
+        def service1Component = components[1]
         then:
         service1Component[KEY_NAME] == 'service.1'
         service1Component[KEY_REQ_INTFACE] == ['interface4', 'interface5', 'interface6']

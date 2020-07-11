@@ -9,6 +9,10 @@ import org.immutables.value.Value;
 @Value.Modifiable
 @JsonDeserialize(builder = NopNode.Builder.class)
 public interface INopNode extends BaseNode {
+    @Override
+    default String getText() {
+        return String.format("nop");
+    }
 
 }
 

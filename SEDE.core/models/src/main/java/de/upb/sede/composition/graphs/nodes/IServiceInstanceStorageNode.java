@@ -23,4 +23,9 @@ public interface IServiceInstanceStorageNode extends BaseNode,
 
     boolean isLoadInstruction();
 
+    @Override
+    default String getText() {
+        return String.format("%s service %s", isLoadInstruction()?"load":"store", getServiceInstanceFieldName());
+    }
+
 }

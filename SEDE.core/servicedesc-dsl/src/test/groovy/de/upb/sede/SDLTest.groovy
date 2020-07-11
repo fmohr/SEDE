@@ -18,6 +18,8 @@ import de.upb.sede.types.auxiliary.JavaTypeAux
 import de.upb.sede.util.FileUtil
 import spock.lang.Specification
 
+import static de.upb.sede.Helpers.newJavaDispatchAux
+
 class SDLTest extends Specification {
 
 
@@ -33,8 +35,7 @@ class SDLTest extends Specification {
     }
 
     private final List<IServiceCollectionDesc> readCollectionResource(String resourceFilePrefix) {
-        String resourceFilePath = getResourcePath(resourceFilePrefix)
-        reader.read(FileUtil.readResourceAsString(resourceFilePath), resourceFilePath)
+        reader.readResource(getResourcePath(resourceFilePrefix))
         return reader.collections
     }
 
@@ -67,7 +68,6 @@ class SDLTest extends Specification {
 
         when:
         def serviceA = serviceCollection.services[0]
-        def typeA = serviceCollection.dataTypes[0]
 
         then:
         serviceA.qualifier == 'a.A'
@@ -77,8 +77,7 @@ class SDLTest extends Specification {
         serviceA.stateType != null
         serviceA.stateType == "a.A"
         serviceA.fieldTypes == ['state' : 'a.A']
-        typeA.qualifier == serviceA.qualifier
-        typeA.semanticType == 'semantics.A'
+        serviceCollection.dataTypes.isEmpty()
 
         when:
         def constructor = serviceA.methods[0]

@@ -22,6 +22,11 @@ import java.io.IOException;
 @JsonDeserialize(using = BaseNode.DeserializeDelegate.class)
 public interface BaseNode extends WithExecutorHost, WithAux, WithIndex {
 
+    @Value.Auxiliary
+    default String getText() {
+        return this.toString();
+    }
+
     @Value.Lazy
     default String getNodeType() {
         return TypeDeserializationDelegate.stripPrefix(this.getClass().getSimpleName());

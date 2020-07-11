@@ -14,4 +14,8 @@ import org.immutables.value.Value;
 @JsonDeserialize(builder = DeleteFieldNode.Builder.class)
 public interface IDeleteFieldNode extends BaseNode, WithField {
 
+    @Override
+    default String getText() {
+        return String.format("delete %s", getFieldName());
+    }
 }

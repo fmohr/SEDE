@@ -8,7 +8,7 @@ class Helpers {
 
     private static void runDescriber(Object o, Closure describer) {
         describer.delegate = o
-        describer.resolveStrategy == Closure.DELEGATE_FIRST
+        describer.resolveStrategy = Closure.DELEGATE_FIRST
         describer.run()
     }
 

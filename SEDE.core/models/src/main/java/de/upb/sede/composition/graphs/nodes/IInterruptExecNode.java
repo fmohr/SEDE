@@ -12,4 +12,9 @@ import org.immutables.value.Value;
 @JsonDeserialize(builder = InterruptExecNode.Builder.class)
 public interface IInterruptExecNode  extends BaseNode, WithField, WithExecutorConnection {
 
+    @Override
+    default String getText() {
+        return String.format("send interrupt %s to %s", getFieldName(), getContactInfo().getQualifier());
+    }
+
 }

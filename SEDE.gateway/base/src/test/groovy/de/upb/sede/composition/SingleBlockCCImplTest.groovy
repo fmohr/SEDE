@@ -4,7 +4,7 @@ import de.upb.sede.ISDLAssembly
 import de.upb.sede.SDLReader
 import de.upb.sede.composition.typing.TypeCheckException
 import de.upb.sede.gateway.ExecutorArbiter
-import de.upb.sede.gateway.SimpleGatewayImpl
+import de.upb.sede.gateway.StdGatewayImpl
 import de.upb.sede.misc.DSLMiscs
 import de.upb.sede.util.MappedList
 import spock.lang.Specification
@@ -13,7 +13,7 @@ class SingleBlockCCImplTest extends Specification {
 
     static ISDLAssembly assembly
 
-    static SimpleGatewayImpl simpleGateway
+    static StdGatewayImpl simpleGateway
 
     def setupSpec() {
         assembly = SDLReader.assemble {
@@ -37,7 +37,7 @@ class SingleBlockCCImplTest extends Specification {
                 }
             }
         }
-        simpleGateway = new SimpleGatewayImpl(assembly, new ExecutorArbiter())
+        simpleGateway = new StdGatewayImpl(assembly, new ExecutorArbiter())
     }
 
     def "test positive scenario"() {

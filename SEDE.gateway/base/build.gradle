@@ -17,8 +17,13 @@ dependencies {
     compile project.ext.libs.okhttp3
 
 
-    testRuntimeOnly libs.log4j
     testCompile project(':SEDE.sdl')
+    testRuntimeOnly libs.log4j
+    testCompile (
+        libs.junit,
+        libs.groovy,
+        libs.spock
+    )
 
 }
 

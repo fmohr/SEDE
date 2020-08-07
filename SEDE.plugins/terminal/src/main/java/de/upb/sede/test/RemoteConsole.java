@@ -26,7 +26,7 @@ import de.upb.sede.util.FileUtil;
 import de.upb.sede.util.Streams;
 
 public class RemoteConsole {
-	private final static Logger logger = LoggerFactory.getLogger(RemoteConsole.class);
+	private static final Logger logger = LoggerFactory.getLogger(RemoteConsole.class);
 	public static void main(String[]  args) throws IOException, InterruptedException {
 		Terminal t = TerminalBuilder.builder().system(false).streams(Streams.EmptyInStream(), Streams.DiscardOutStream()).build();
 		Attributes attrs = t.getAttributes();

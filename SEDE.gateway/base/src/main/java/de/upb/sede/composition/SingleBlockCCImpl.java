@@ -66,6 +66,11 @@ public class SingleBlockCCImpl {
         Map<Long, TCOutput> tcOutput = typeChecker.getOutput().getFinalOutput();
 
         /*
+         * Set the field assignment types
+         */
+        instIndexer = new InstructionIndexer(instIndexer, tcOutput);
+
+        /*
          * Analyse field accesses
          */
         IFACInput IFACInput = new IFACInput(tcOutput, instIndexer);

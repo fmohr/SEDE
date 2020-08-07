@@ -7,15 +7,15 @@ import java.util.Optional;
 //@JsonSerialize(using = KneadableJsonObject.Serializer.class, converter = JsonKnibble.FromForm.class)
 public interface RecordForm extends DynType {
 
-    List<DynType> knibbleList(String field);
+    List<DynType> list(String field);
 
-    DynType knibbleObject(String field);
+    DynType dynObject(String field);
 
-    Number knibbleNumber(String field);
+    Number number(String field);
 
-    String knibbleString(String field);
+    String string(String field);
 
-    Boolean knibbleBoolean(String field);
+    Boolean bool(String field);
 
     <T> void setField(String fieldName, T value);
 

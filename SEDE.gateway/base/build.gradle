@@ -5,11 +5,11 @@ plugins {
 dependencies {
     Map libs = project.ext.libs
 
-    provided project(':SEDE.core')
-    compile project(':SEDE.core-models')
-    compile project(':SEDE.servicedesc')
+    implementation project(':SEDE.core')
+    api project(':SEDE.core-models')
+    api project(':SEDE.servicedesc')
 
-    compile 'com.github.aminfa:TinyJavaDot:v1.3'
+    implementation 'com.github.aminfa:TinyJavaDot:v1.3'
 
     // dependend on the builtin service configurations
 //    compile project.ext.isyslibs.builtins

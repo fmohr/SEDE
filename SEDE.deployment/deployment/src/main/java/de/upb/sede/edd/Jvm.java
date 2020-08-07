@@ -14,7 +14,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Jvm {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(Jvm.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Jvm.class);
 
     private final OperatingSystem os;
     //supplied java location

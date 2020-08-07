@@ -11,7 +11,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 public class SunHttpHandler implements HttpHandler {
-	private final static Logger logger = LoggerFactory.getLogger(SunHttpHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(SunHttpHandler.class);
 
 	private final Supplier<HTTPServerResponse> serverResponder;
 

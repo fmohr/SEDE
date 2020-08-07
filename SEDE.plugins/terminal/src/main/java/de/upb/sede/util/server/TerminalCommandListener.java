@@ -32,7 +32,7 @@ import de.upb.sede.webinterfaces.server.CommandTree;
 import de.upb.sede.webinterfaces.server.CommandTree.Node;
 
 public class TerminalCommandListener implements CommandListener {
-	private final static Logger logger = LoggerFactory.getLogger(TerminalCommandListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(TerminalCommandListener.class);
 
 	private final List<CommandTree> commandTrees = new ArrayList<>();
 

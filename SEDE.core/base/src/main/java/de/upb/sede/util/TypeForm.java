@@ -29,28 +29,28 @@ public class TypeForm implements RecordForm {
     }
 
     @Override
-    public List<DynType> knibbleList(String field) {
-        return source.orElseThrow(this::noSourceSet).knibbleList(field);
+    public List<DynType> list(String field) {
+        return source.orElseThrow(this::noSourceSet).list(field);
     }
 
     @Override
-    public DynType knibbleObject(String field) {
-        return source.orElseThrow(this::noSourceSet).knibbleObject(field);
+    public DynType dynObject(String field) {
+        return source.orElseThrow(this::noSourceSet).dynObject(field);
     }
 
     @Override
-    public Number knibbleNumber(String field) {
-        return source.orElseThrow(this::noSourceSet).knibbleNumber(field);
+    public Number number(String field) {
+        return source.orElseThrow(this::noSourceSet).number(field);
     }
 
     @Override
-    public String knibbleString(String field) {
-        return source.orElseThrow(this::noSourceSet).knibbleString(field);
+    public String string(String field) {
+        return source.orElseThrow(this::noSourceSet).string(field);
     }
 
     @Override
-    public Boolean knibbleBoolean(String field) {
-        return source.orElseThrow(this::noSourceSet).knibbleBoolean(field);
+    public Boolean bool(String field) {
+        return source.orElseThrow(this::noSourceSet).bool(field);
     }
 
     private IllegalStateException noSourceSet() {

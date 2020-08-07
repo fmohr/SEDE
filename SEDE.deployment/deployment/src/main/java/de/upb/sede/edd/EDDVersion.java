@@ -8,7 +8,7 @@ import static de.upb.sede.edd.EDDVersion.Version.*;
 
 public class EDDVersion {
 
-    private final static Logger logger = LoggerFactory.getLogger(EDDVersion.class);
+    private static final Logger logger = LoggerFactory.getLogger(EDDVersion.class);
 
     private EDDHome home;
 

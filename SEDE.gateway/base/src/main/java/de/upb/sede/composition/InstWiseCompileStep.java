@@ -5,7 +5,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class InstWiseCompileStep<T extends InstInput,U> implements CompileStep<T, InstOutputIterator<U>> {
 
-    private final static Logger logger = LoggerFactory.getLogger(InstructionIndexer.class);
+    private static final Logger logger = LoggerFactory.getLogger(InstructionIndexer.class);
 
     private T input;
 

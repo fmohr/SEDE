@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class LocalDeplEngine extends DeplEngine {
 
-    private final static Logger logger = LoggerFactory.getLogger(LocalDeplEngine.class);
+    private static final Logger logger = LoggerFactory.getLogger(LocalDeplEngine.class);
 
     private final EDD daemon;
 

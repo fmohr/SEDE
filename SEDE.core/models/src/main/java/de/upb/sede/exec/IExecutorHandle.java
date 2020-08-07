@@ -17,27 +17,29 @@ public interface IExecutorHandle extends IQualifiable {
 
     IExecutorCapabilities getCapabilities();
 
-    @Value.Derived
+    @Value.Default
     default String getQualifier() {
         return getContactInfo().getQualifier();
     }
 
 
+    /**
+     * @deprecated
+     */
+    @Deprecated(since = "0.1.2", forRemoval = true)
     static ExecutorHandle fromRegistration(ExecutorRegistration registration) {
-        // TODO migrate to the new ExecutorRegistration
-        ExecutorHandle execHandle = ExecutorHandle.builder()
+        return ExecutorHandle.builder()
             .contactInfo(
                 ExecutorContactInfo.builder()
                     .qualifier(registration.getId())
-                    .hostAddress(registration.getContactInfo().get("host-address").toString())
+                    .uRL(registration.getContactInfo().get("host-address").toString())
                     .build())
             .capabilities(
                 ExecutorCapabilities.builder()
                     .services(registration.getSupportedServices())
                     .features(registration.getCapabilities())
-                    .build()) // TODO add capabilities
+                    .build())
             .build();
-        return execHandle;
     }
 
 

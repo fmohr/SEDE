@@ -19,8 +19,8 @@
           "minInterval" : 10,
           "defaultValue" : 10.0,
           "qualifier" : "nParam",
-          "isOptional" : true,
-          "isInteger" : true
+          "isInteger" : true,
+          "isOptional" : true
         }, {
           "paramType" : "NumericParameter",
           "min" : 0.5,
@@ -29,8 +29,8 @@
           "minInterval" : 10,
           "defaultValue" : 10.0,
           "qualifier" : "nParam",
-          "isOptional" : true,
-          "isInteger" : false
+          "isInteger" : false,
+          "isOptional" : true
         }, {
           "paramType" : "CategoryParameter",
           "defaultValue" : "A",

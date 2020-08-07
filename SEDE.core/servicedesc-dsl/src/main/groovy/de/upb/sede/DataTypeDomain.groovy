@@ -2,7 +2,6 @@ package de.upb.sede
 
 
 import de.upb.sede.types.MutableDataTypeDesc
-import de.upb.sede.types.auxiliary.MutableJavaTypeAux
 import de.upb.sede.util.DynRecord
 
 class DataTypeDomain {

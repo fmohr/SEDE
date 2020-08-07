@@ -13,7 +13,7 @@ import de.upb.sede.webinterfaces.server.ServerCommandListeners;
 
 public class HttpExecutorCommands {
 
-	private final static Logger logger = LoggerFactory.getLogger(HttpExecutorCommands.class);
+	private static final Logger logger = LoggerFactory.getLogger(HttpExecutorCommands.class);
 
 	private final HttpExecutor executor;
 	private final Executor basis;

@@ -14,7 +14,7 @@ public class KneadableInterfaces {
         }
 
         default String getA() {
-            return knibbleString("a");
+            return string("a");
         }
 
     }
@@ -26,7 +26,7 @@ public class KneadableInterfaces {
         }
 
         default float getB() {
-            return knibbleNumber("b").floatValue();
+            return number("b").floatValue();
         }
 
     }

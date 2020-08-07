@@ -10,7 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Terminals {
-	private final static Logger logger = LoggerFactory.getLogger(Terminals.class);
+	private static final Logger logger = LoggerFactory.getLogger(Terminals.class);
 	public static void setupLogging() {
 		System.setProperty("java.util.logging.manager", "org.apache.logging.log4j.jul.LogManager");
 	}

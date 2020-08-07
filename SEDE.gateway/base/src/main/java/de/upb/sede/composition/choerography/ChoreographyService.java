@@ -33,7 +33,7 @@ import java.util.Map;
 
 public class ChoreographyService implements IChoreographyService {
 
-    private final static Logger logger = LoggerFactory.getLogger(ChoreographyService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ChoreographyService.class);
 
     private final ICCService iccService;
 

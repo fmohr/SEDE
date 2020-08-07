@@ -19,7 +19,7 @@ import static de.upb.sede.util.SDLUtil.gatherAux;
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
 
-    private final static Logger logger = LoggerFactory.getLogger(AuxDecorator.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuxDecorator.class);
 
     private final SDLLookupService lookupService;
 

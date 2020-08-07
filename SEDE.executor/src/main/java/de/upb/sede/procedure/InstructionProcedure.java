@@ -33,7 +33,7 @@ import de.upb.sede.exec.Task;
  */
 public class InstructionProcedure implements Procedure {
 
-	private final static Logger logger = LoggerFactory.getLogger(InstructionProcedure.class);
+	private static final Logger logger = LoggerFactory.getLogger(InstructionProcedure.class);
 
 	/**
 	 * If there is a fieldname on the leftside of the instruction signal the execution-environment that the fieldname wont be available.

@@ -19,7 +19,7 @@ import java.util.concurrent.Callable;
 
 class InstallationEnv {
 
-    private final static Logger logger = LoggerFactory.getLogger(InstallationEnv.class);
+    private static final Logger logger = LoggerFactory.getLogger(InstallationEnv.class);
 
     private final EDD daemon;
 

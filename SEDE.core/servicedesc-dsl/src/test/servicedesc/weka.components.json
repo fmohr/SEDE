@@ -1,1 +1,46 @@
-[ ]
+[ {
+  "components" : [ {
+    "parameter" : [ ],
+    "name" : "de.upb.sede.services.mls.Labeler",
+    "requiredInterface" : [ ],
+    "providedInterface" : [ ],
+    "dependencies" : [ ]
+  }, {
+    "parameter" : [ ],
+    "name" : "de.upb.sede.services.mls.DataSetService",
+    "requiredInterface" : [ ],
+    "providedInterface" : [ ],
+    "dependencies" : [ ]
+  }, {
+    "parameter" : [ ],
+    "name" : "$list_option_handler_config$",
+    "requiredInterface" : [ ],
+    "providedInterface" : [ ],
+    "dependencies" : [ ]
+  }, {
+    "parameter" : [ ],
+    "name" : "$dict_option_handler_config$",
+    "requiredInterface" : [ ],
+    "providedInterface" : [ ],
+    "dependencies" : [ ]
+  }, {
+    "parameter" : [ ],
+    "name" : "$base_classifier_config$",
+    "requiredInterface" : [ ],
+    "providedInterface" : [ ],
+    "dependencies" : [ ]
+  }, {
+    "parameter" : [ ],
+    "name" : "de.upb.sede.services.mls.WekaBClassifierWrapper",
+    "requiredInterface" : [ ],
+    "providedInterface" : [ "$list_option_handler_config$", "$dict_option_handler_config$", "$base_classifier_config$" ],
+    "dependencies" : [ ]
+  }, {
+    "parameter" : [ ],
+    "name" : "$Basic_Weka_Distribution_Classifier$",
+    "requiredInterface" : [ ],
+    "providedInterface" : [ ],
+    "dependencies" : [ ]
+  } ],
+  "repository" : "weka"
+} ]

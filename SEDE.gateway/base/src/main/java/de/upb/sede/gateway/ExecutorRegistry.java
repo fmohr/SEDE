@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 public class ExecutorRegistry implements IExecutorRegistry {
 
-    private final static Logger logger = LoggerFactory.getLogger(ExecutorRegistry.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExecutorRegistry.class);
 
     private final Cache<SDLLookupService> lookupServiceCache;
 

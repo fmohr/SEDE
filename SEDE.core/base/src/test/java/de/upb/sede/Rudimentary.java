@@ -14,7 +14,7 @@ import de.upb.sede.util.FileUtil;
 
 public class Rudimentary {
 
-	private final static Logger logger = LoggerFactory.getLogger(Rudimentary.class);
+	private static final Logger logger = LoggerFactory.getLogger(Rudimentary.class);
 
 	@Test
 	public void testTrue() {

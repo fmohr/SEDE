@@ -20,6 +20,8 @@ public class TCOutput {
 
     private FieldTC fieldTC;
 
+    private FieldAssignmentType fieldAssignmentType;
+
     TCOutput() {
 
     }
@@ -45,6 +47,13 @@ public class TCOutput {
         if(fieldTC == null)
             fieldTC = new FieldTC(null);
         return fieldTC;
+    }
+
+    public FieldAssignmentType getFieldAssignmentType() {
+        if(fieldAssignmentType == null) {
+            fieldAssignmentType = new FieldAssignmentType();
+        }
+        return fieldAssignmentType;
     }
 
     public static class ContextInfo {
@@ -174,6 +183,19 @@ public class TCOutput {
             typeMap.forEach(otherPage::setFieldType);
         }
 
+    }
+
+    public static class FieldAssignmentType {
+
+        private TypeClass typeClass;
+
+        public TypeClass getTypeClass() {
+            return typeClass;
+        }
+
+        public void setTypeClass(TypeClass typeClass) {
+            this.typeClass = typeClass;
+        }
     }
 
 }

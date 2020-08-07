@@ -15,7 +15,7 @@ import de.upb.sede.exec.Task;
 import de.upb.sede.util.Observer;
 
 public class AcceptDataProcedure implements Procedure, Function<SemanticDataField, SEDEObject> {
-	private final static Logger logger = LoggerFactory.getLogger(AcceptDataProcedure.class);
+	private static final Logger logger = LoggerFactory.getLogger(AcceptDataProcedure.class);
 	private String fieldname;
 	private JSONObject castType;
 	private Task task;

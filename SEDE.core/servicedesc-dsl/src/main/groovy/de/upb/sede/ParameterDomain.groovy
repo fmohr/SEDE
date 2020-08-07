@@ -1,14 +1,11 @@
 package de.upb.sede
 
-import de.upb.sede.param.IParameter
 import de.upb.sede.param.MutableBooleanParameter
 import de.upb.sede.param.MutableCategoryParameter
 import de.upb.sede.param.MutableInterfaceParameter
 import de.upb.sede.param.MutableNumericParameter
 import de.upb.sede.param.MutableParameterDependencyDesc
 import de.upb.sede.param.MutableServiceParameterizationDesc
-import de.upb.sede.param.auxiliary.JavaParameterizationAux
-import de.upb.sede.param.auxiliary.MutableJavaParameterizationAux
 import de.upb.sede.types.MutableDataTypeDesc
 import de.upb.sede.util.DynRecord
 

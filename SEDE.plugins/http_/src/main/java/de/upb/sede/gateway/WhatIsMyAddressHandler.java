@@ -17,7 +17,7 @@ public class WhatIsMyAddressHandler extends SunHttpHandler {
 		server.addHandle("/what-is-my-addr", new WhatIsMyAddressHandler());
 	}
 
-	private final static Logger logger = LoggerFactory.getLogger(WhatIsMyAddressHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(WhatIsMyAddressHandler.class);
 
 	private WhatIsMyAddressHandler() {
 		super(null);

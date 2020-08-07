@@ -18,7 +18,7 @@ import de.upb.sede.util.Streams;
 
 public final class ServerCommandListeners {
 
-	private final static Logger logger = LoggerFactory.getLogger(ServerCommandListeners.class);
+	private static final Logger logger = LoggerFactory.getLogger(ServerCommandListeners.class);
 
 	private final Set<CommandListener> listeners = new HashSet<>();
 

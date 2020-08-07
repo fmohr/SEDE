@@ -13,7 +13,7 @@ public abstract class EDDInfo {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private final static Logger logger = LoggerFactory.getLogger(EDDInfo.class);
+    private static final Logger logger = LoggerFactory.getLogger(EDDInfo.class);
 
     private Cache<EDDInfoModel> sourceData;
 

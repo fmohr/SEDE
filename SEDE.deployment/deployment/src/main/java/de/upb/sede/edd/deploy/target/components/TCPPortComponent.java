@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 public class TCPPortComponent extends TargetComponent{
 
-    private final static Logger logger = LoggerFactory.getLogger(TCPPortComponent.class);
+    private static final Logger logger = LoggerFactory.getLogger(TCPPortComponent.class);
 
     private LockableDir portsDir;
 

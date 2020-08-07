@@ -12,7 +12,7 @@ import java.util.UUID;
 public class EDDInfoModel {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
-    private final static Logger logger = LoggerFactory.getLogger(EDDInfoModel.class);
+    private static final Logger logger = LoggerFactory.getLogger(EDDInfoModel.class);
 
     private OptionalField<String> identifier;
 

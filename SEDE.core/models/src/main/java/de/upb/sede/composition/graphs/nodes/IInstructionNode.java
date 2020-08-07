@@ -3,6 +3,7 @@ package de.upb.sede.composition.graphs.nodes;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.WithField;
 import de.upb.sede.SEDEModelStyle;
+import de.upb.sede.composition.types.TypeClass;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
@@ -23,10 +24,7 @@ public interface IInstructionNode extends BaseNode, WithField {
     String getFieldName();
 
     @Nullable
-    String getFieldType();
-
-    @Nullable
-    String getFieldClass();
+    TypeClass getFieldType();
 
     @Deprecated
     @Value.Default

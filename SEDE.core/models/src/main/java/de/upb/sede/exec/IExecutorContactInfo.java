@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 public interface IExecutorContactInfo extends IQualifiable {
 
     @Nullable
-    String getHostAddress();
+    String getURL();
 
     @Value.Default
     default boolean isReachable() {

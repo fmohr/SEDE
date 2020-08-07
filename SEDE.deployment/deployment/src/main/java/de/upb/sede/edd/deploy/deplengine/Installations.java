@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 
 public class Installations {
 
-    private final static Logger logger = LoggerFactory.getLogger(Installations.class);
+    private static final Logger logger = LoggerFactory.getLogger(Installations.class);
 
     private final List<DeploymentSpecification> deployments;
 

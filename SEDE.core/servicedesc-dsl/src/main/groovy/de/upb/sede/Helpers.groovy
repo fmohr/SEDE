@@ -1,8 +1,8 @@
 package de.upb.sede
 
 import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
-import de.upb.sede.param.auxiliary.MutableJavaParameterizationAux
-import de.upb.sede.types.auxiliary.MutableJavaTypeAux
+import de.upb.sede.exec.auxiliary.MutableJavaParameterizationAux
+import de.upb.sede.exec.auxiliary.MutableJavaTypeAux
 
 class Helpers {
 

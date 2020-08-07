@@ -8,7 +8,7 @@ import java.util.concurrent.Executor;
 
 public class SEDECodeBaseComponent extends TargetComponent {
 
-    private final static Logger logger = LoggerFactory.getLogger(SEDECodeBaseComponent.class);
+    private static final Logger logger = LoggerFactory.getLogger(SEDECodeBaseComponent.class);
 
     private SEDECodeBase codeBase;
 

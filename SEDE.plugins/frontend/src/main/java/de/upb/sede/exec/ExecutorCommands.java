@@ -14,7 +14,7 @@ import de.upb.sede.webinterfaces.server.CommandTree;
 import de.upb.sede.webinterfaces.server.ServerCommandListeners;
 
 public class ExecutorCommands {
-	private final static Logger logger = LoggerFactory.getLogger(ExecutorCommands.class);
+	private static final Logger logger = LoggerFactory.getLogger(ExecutorCommands.class);
 	private final Executor executor;
 
 	public static ExecutorCommands enablePlugin(Executor executor, ServerCommandListeners scl){

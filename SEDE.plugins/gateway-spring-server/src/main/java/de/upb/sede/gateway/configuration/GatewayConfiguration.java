@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @Configuration
 public class GatewayConfiguration {
 
-    private final static Logger logger = LoggerFactory.getLogger(GatewayConfiguration.class);
+    private static final Logger logger = LoggerFactory.getLogger(GatewayConfiguration.class);
 
     @Bean
     public Gateway gateway() {

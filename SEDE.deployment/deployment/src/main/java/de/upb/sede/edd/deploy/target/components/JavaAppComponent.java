@@ -12,7 +12,7 @@ import java.util.concurrent.Executor;
 
 public class JavaAppComponent extends TargetComponent{
 
-    private final static Logger logger = LoggerFactory.getLogger(JavaAppComponent.class);
+    private static final Logger logger = LoggerFactory.getLogger(JavaAppComponent.class);
 
     private JavaProcessHandleBuilder javaProcessBuilder;
 

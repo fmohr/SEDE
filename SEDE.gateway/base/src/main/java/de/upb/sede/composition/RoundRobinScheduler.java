@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * This class schedules executors per round robin.
  */
 public class RoundRobinScheduler {
-	private final static Logger logger = LoggerFactory.getLogger(RoundRobinScheduler.class);
+	private static final Logger logger = LoggerFactory.getLogger(RoundRobinScheduler.class);
 
 	private Map<String, ExpiringCache<ExecutorAccessMonitor>> executorAccess =
 			new ConcurrentHashMap<>();

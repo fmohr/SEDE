@@ -7,7 +7,7 @@ import de.upb.sede.config.ExecutorConfiguration;
 import de.upb.sede.util.WebUtil;
 
 public class SimpleHttpExecutorStarter {
-	private final static Logger logger = LoggerFactory.getLogger(SimpleHttpExecutorStarter.class);
+	private static final Logger logger = LoggerFactory.getLogger(SimpleHttpExecutorStarter.class);
 	public static void main(String[] args) {
 		if(args.length < 2) {
 			throw new RuntimeException("Please provide at least 2 arguments:" +

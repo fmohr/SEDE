@@ -28,7 +28,7 @@ import de.upb.sede.webinterfaces.server.ServerCommandListeners;
 
 public class GatewayCommands {
 	private final Gateway gateway;
-	private final static Logger logger = LoggerFactory.getLogger(GatewayCommands.class);
+	private static final Logger logger = LoggerFactory.getLogger(GatewayCommands.class);
 
 	public static GatewayCommands enablePlugin(Gateway gateway, ServerCommandListeners scl){
 		return new GatewayCommands(gateway, scl);

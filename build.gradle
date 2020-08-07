@@ -18,6 +18,7 @@ subprojects {
     group = 'de.upb.isys'
     version = '0.1.2'
 
+
     configurations {
         provided
         compile.extendsFrom provided
@@ -51,7 +52,7 @@ subprojects {
             /*
              * Commons
              */
-            commons: [group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'],
+            commons: [group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'],
             commons_io: [group: 'commons-io', name: 'commons-io', version: '2.6'],
 
             guava: 'com.google.guava:guava:28.0-jre',

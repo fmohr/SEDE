@@ -27,7 +27,7 @@ class DynTypeOptionalField extends Specification {
         when:
         b.b.set(13)
         then:
-        b.knibbleNumber("b") == 12
+        b.number("b") == 12
         b.b.get() == 13
         new ObjectMapper().convertValue(b, Map) == ["b" : 13]
         new ObjectMapper().convertValue(a, Map) == ["a" : "test"]

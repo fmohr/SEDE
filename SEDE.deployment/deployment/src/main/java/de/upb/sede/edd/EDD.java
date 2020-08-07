@@ -11,7 +11,7 @@ import java.util.concurrent.Executors;
 
 public class EDD {
 
-    private final static Logger logger = LoggerFactory.getLogger(EDD.class);
+    private static final Logger logger = LoggerFactory.getLogger(EDD.class);
 
     private static final EDD instance = new EDD();
 

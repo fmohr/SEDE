@@ -18,7 +18,7 @@ import static java.util.Optional.ofNullable;
 public class Orchestration
     extends BlockWiseCompileStep<Orchestration.OrchestrationInput, Orchestration.OrchestrationOutput> {
 
-    private final static Logger logger = LoggerFactory.getLogger(Orchestration.class);
+    private static final Logger logger = LoggerFactory.getLogger(Orchestration.class);
 
     @Override
     protected OrchestrationOutput initializeOutput() {

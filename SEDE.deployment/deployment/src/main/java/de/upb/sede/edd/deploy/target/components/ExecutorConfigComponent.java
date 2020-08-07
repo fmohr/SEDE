@@ -11,7 +11,7 @@ import java.util.*;
 
 public class ExecutorConfigComponent extends TargetComponent {
 
-    private final static Logger logger = LoggerFactory.getLogger(ExecutorConfigComponent.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExecutorConfigComponent.class);
 
     private File executorDir;
 

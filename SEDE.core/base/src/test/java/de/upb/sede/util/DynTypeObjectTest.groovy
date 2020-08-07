@@ -100,9 +100,9 @@ class DynTypeObjectTest extends Specification {
         container.clone.setA(200)
 
         then:
-        kneadable.knibbleObject("bean").knibbleNumber("a") == 1
-        kneadable.knibbleObject("view").knibbleNumber("a") == 10
-        kneadable.knibbleObject("clone").knibbleNumber("a") == 100
+        kneadable.dynObject("bean").knibbleNumber("a") == 1
+        kneadable.dynObject("view").knibbleNumber("a") == 10
+        kneadable.dynObject("clone").knibbleNumber("a") == 100
 
         when:
         def bean = container.bean.cast(ABean)
@@ -148,7 +148,7 @@ class DynTypeObjectTest extends Specification {
 
         when:
         DynType object = DynRecord.fromJson(jsonData)
-        List<ABean> aList = object.knibbleList("list")
+        List<ABean> aList = object.list("list")
                 .stream().map {
             ABean bean = it.cast(ABean)
             return bean
@@ -163,7 +163,7 @@ class DynTypeObjectTest extends Specification {
         when:
         aList[2].setA(0)
         then:
-        object.knibbleList("list")[2].cast(ABean).a == 0
+        object.list("list")[2].cast(ABean).a == 0
 
     }
 
@@ -290,7 +290,7 @@ class DynTypeObjectTest extends Specification {
         static final String a_FIELD = "a"
 
         def getA() {
-            return super.knibbleNumber(a_FIELD).intValue()
+            return super.number(a_FIELD).intValue()
         }
 
         def setA(int a) {

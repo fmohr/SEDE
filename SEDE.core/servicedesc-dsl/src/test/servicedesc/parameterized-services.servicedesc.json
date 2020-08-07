@@ -144,7 +144,7 @@
             "constructorInvocation" : false,
             "redirectArg" : -1,
             "methodName" : null,
-            "className" : null,
+            "className" : "Service1ParameterHandler",
             "metaclass" : null
           }
         }

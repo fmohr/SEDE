@@ -10,7 +10,7 @@ import de.upb.sede.util.Streams;
 
 public class ImServerCommandListener implements CommandListener {
 
-	private final static Logger logger = LoggerFactory.getLogger(ImServerCommandListener.class);
+	private static final Logger logger = LoggerFactory.getLogger(ImServerCommandListener.class);
 	private final ImServer innerServer;
 	private final String executorId;
 	private final CommandTree commandResponders = new CommandTree(CommandTree.node(Command.nothing()));

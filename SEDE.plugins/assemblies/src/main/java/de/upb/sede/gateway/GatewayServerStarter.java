@@ -19,7 +19,7 @@ import de.upb.sede.webinterfaces.server.ServerCommandListeners;
 import de.upb.sede.webinterfaces.server.StdShellCommands;
 
 public class GatewayServerStarter {
-	private final static Logger logger = LoggerFactory.getLogger(GatewayServerStarter.class);
+	private static final Logger logger = LoggerFactory.getLogger(GatewayServerStarter.class);
 
 	public static void main(String[] args) throws InterruptedException {
 

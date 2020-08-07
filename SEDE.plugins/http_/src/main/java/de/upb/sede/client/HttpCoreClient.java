@@ -15,7 +15,7 @@ import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
  * This class offers a few static methods that create a CoreClient which can reach a gateway over http.
  */
 public final class HttpCoreClient {
-	private final static Logger logger = LoggerFactory.getLogger(HttpCoreClient.class);
+	private static final Logger logger = LoggerFactory.getLogger(HttpCoreClient.class);
 
 	public static CoreClient createWithGiven(Executor executor, String gatewayAddress, int gatewayPort) {
 		return new CoreClient(executor, rr -> resolveRequestOverHttp(rr, gatewayAddress, gatewayPort));

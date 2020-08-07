@@ -12,7 +12,7 @@ import de.upb.sede.util.server.TerminalCommandListener;
 
 public class PluginUtil {
 
-	private final static Logger logger = LoggerFactory.getLogger(PluginUtil.class);
+	private static final Logger logger = LoggerFactory.getLogger(PluginUtil.class);
 
 	public static void enablePlugin_SystemTerminal(TerminalCommandListener terminalListener){
 

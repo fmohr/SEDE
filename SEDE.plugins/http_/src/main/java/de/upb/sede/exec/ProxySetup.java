@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 public class ProxySetup {
 
 
-	private final static Logger logger = LoggerFactory.getLogger(ProxySetup.class);
+	private static final Logger logger = LoggerFactory.getLogger(ProxySetup.class);
 
 	private final Map<String, String> fetchedMapping = new HashMap<>();
 	private Long lastMappingFetch = Long.MIN_VALUE;

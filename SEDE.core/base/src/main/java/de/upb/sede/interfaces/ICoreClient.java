@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+@Deprecated
 public interface ICoreClient {
 
 	public String run(RunRequest runRequest, Consumer<Result> resultConsumer);

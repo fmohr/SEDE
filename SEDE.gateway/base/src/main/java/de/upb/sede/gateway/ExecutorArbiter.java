@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  */
 public class ExecutorArbiter { // TODO let this class implement OnDemandExecutorSupplier
 
-    private final static Logger logger = LoggerFactory.getLogger(ExecutorArbiter.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExecutorArbiter.class);
 
 	/*
 	 * The scheduler:

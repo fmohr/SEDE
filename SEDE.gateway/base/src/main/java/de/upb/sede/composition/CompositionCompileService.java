@@ -13,7 +13,7 @@ public class CompositionCompileService implements ICCService {
 
     private final Cache<SDLLookupService> lookupService;
 
-    private final static Logger logger = LoggerFactory.getLogger(CompositionCompileService.class);
+    private static final Logger logger = LoggerFactory.getLogger(CompositionCompileService.class);
 
     public CompositionCompileService(Cache<SDLLookupService> lookupService) {
         this.lookupService = lookupService;

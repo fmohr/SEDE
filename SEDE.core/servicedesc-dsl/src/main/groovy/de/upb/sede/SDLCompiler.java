@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 public class SDLCompiler {
 
-    private final static Logger logger = LoggerFactory.getLogger(SDLCompiler.class);
+    private static final Logger logger = LoggerFactory.getLogger(SDLCompiler.class);
 
     private List<File> inputFiles;
 

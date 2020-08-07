@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 
 public class CollectErrorsProcedure implements Procedure {
-	private final static Logger logger = LoggerFactory.getLogger(CollectErrorsProcedure.class);
+	private static final Logger logger = LoggerFactory.getLogger(CollectErrorsProcedure.class);
 	@Override
 	public void processTask(Task task) {
 		String fieldname = task.getAttribute("fieldname");

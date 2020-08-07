@@ -10,7 +10,7 @@ import java.util.*;
 
 public class DeepMutableCopier {
 
-    private final static Logger logger = LoggerFactory.getLogger(DeepMutableCopier.class);
+    private static final Logger logger = LoggerFactory.getLogger(DeepMutableCopier.class);
 
     private final static Set<String> WARNED_MESSAGES = Collections.synchronizedSet(new HashSet<>());
 

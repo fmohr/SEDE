@@ -11,7 +11,7 @@ import de.upb.sede.webinterfaces.client.HttpURLConnectionClientRequest;
 
 public class AddressRetriever {
 
-	private final static Logger logger = LoggerFactory.getLogger(AddressRetriever.class);
+	private static final Logger logger = LoggerFactory.getLogger(AddressRetriever.class);
 
 	public static void enablePlugin(HttpExecutor executor) {
 		Optional<String> myAddress = retrieveAddressFromEnvironmentVar();

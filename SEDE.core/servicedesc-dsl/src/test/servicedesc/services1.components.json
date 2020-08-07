@@ -1,1 +1,10 @@
-[ ]
+[ {
+  "components" : [ {
+    "parameter" : [ ],
+    "name" : "a.A",
+    "requiredInterface" : [ ],
+    "providedInterface" : [ "abstracts.A" ],
+    "dependencies" : [ ]
+  } ],
+  "repository" : "services1"
+} ]

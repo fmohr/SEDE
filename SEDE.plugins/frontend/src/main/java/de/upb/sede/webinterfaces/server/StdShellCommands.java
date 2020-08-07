@@ -12,7 +12,7 @@ import static de.upb.sede.webinterfaces.server.CommandTree.*;
 import static de.upb.sede.webinterfaces.server.Command.*;
 
 public class StdShellCommands {
-	private final static Logger logger = LoggerFactory.getLogger(StdShellCommands.class);
+	private static final Logger logger = LoggerFactory.getLogger(StdShellCommands.class);
 	public static void enablePlugin(ServerCommandListeners scl) {
 		CommandTree cat = new CommandTree(
 				node(new Strings("cat"),

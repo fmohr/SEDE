@@ -17,7 +17,7 @@ import java.util.concurrent.Executor;
 
 public class JExecutorTarget extends DefaultTarget implements ExecutorTarget {
 
-    private final static Logger logger = LoggerFactory.getLogger(JExecutorTarget.class);
+    private static final Logger logger = LoggerFactory.getLogger(JExecutorTarget.class);
 
     private JavaAppComponent executorProcess;
 

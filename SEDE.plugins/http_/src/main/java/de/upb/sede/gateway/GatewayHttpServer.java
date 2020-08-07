@@ -26,7 +26,7 @@ import de.upb.sede.webinterfaces.server.SunHttpHandler;
 
 public final class GatewayHttpServer implements ImServer {
 
-	private final static Logger logger = LoggerFactory.getLogger(GatewayHttpServer.class);
+	private static final Logger logger = LoggerFactory.getLogger(GatewayHttpServer.class);
 
 	private final static int DEFAULT_PORT = 6060;
 

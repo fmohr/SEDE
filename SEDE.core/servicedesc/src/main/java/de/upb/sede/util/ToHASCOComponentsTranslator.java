@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @SuppressWarnings("unchecked")
 public class ToHASCOComponentsTranslator {
 
-    private final static Logger logger = LoggerFactory.getLogger(ToHASCOComponentsTranslator.class);
+    private static final Logger logger = LoggerFactory.getLogger(ToHASCOComponentsTranslator.class);
 
     private SDLLookupService sdlService;
 

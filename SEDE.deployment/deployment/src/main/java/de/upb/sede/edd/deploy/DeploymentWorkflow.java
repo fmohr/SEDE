@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class DeploymentWorkflow {
 
-    private final static Logger logger = LoggerFactory.getLogger(DeploymentWorkflow.class);
+    private static final Logger logger = LoggerFactory.getLogger(DeploymentWorkflow.class);
 
     private List<ServiceDeployment> steps;
 

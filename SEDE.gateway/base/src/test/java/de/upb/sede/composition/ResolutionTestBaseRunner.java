@@ -34,7 +34,7 @@ import java.util.function.Predicate;
 
 public class ResolutionTestBaseRunner {
 
-    private final static Logger logger = LoggerFactory.getLogger(ResolutionTestBaseRunner.class);
+    private static final Logger logger = LoggerFactory.getLogger(ResolutionTestBaseRunner.class);
 
     private static final ObjectWriter WRITER = new ObjectMapper().writerWithDefaultPrettyPrinter();
 

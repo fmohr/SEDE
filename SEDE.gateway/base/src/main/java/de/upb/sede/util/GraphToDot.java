@@ -18,7 +18,7 @@ import de.upb.sede.composition.graphs.nodes.BaseNode;
 
 public class GraphToDot {
 
-	private final static Logger logger = LoggerFactory.getLogger(GraphToDot.class);
+	private static final Logger logger = LoggerFactory.getLogger(GraphToDot.class);
 
 	private static final String PATH_TO_DOT;
 

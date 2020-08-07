@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ExecutorRuntime {
 
-    private final static Logger logger = LoggerFactory.getLogger(ExecutorRuntime.class);
+    private static final Logger logger = LoggerFactory.getLogger(ExecutorRuntime.class);
 
     private ExecutorService executorService = Executors.newCachedThreadPool();
 

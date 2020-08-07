@@ -52,7 +52,7 @@ import static java.lang.String.format;
  */
 public class DefaultProcessHandle implements ProcessHandle {
 
-    private final static Logger LOGGER = LoggerFactory.getLogger(DefaultProcessHandle.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultProcessHandle.class);
 
     private final String displayName;
 

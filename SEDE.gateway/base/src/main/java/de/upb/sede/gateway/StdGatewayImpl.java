@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 
 public class StdGatewayImpl implements IGateway {
 
-    private final static Logger logger = LoggerFactory.getLogger(StdGatewayImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(StdGatewayImpl.class);
 
     private final Cache<SDLLookupService> lookupServiceCache;
 

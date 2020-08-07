@@ -1,31 +1,28 @@
 package de.upb.sede.exec.auxiliary;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.SEDEModelStyle;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Objects;
-
-import static de.upb.sede.exec.IMethodDesc.CONSTRUCTOR_METHOD_NAME;
 
 @SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = JavaDispatchAux.Builder.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public interface IJavaDispatchAux {
 
-    @Value.Default
-    default boolean staticInvocation() {
-        return false;
-    }
+    String CONSTRUCTOR_METHOD_NAME = "__construct";
 
-    @Value.Default
-    default boolean constructorInvocation() {
-        return Objects.equals(methodName(), CONSTRUCTOR_METHOD_NAME);
-    }
+    @Nullable
+    Boolean staticInvocation();
 
-//    Map<String, String> returnArgs(); // TODO map inputs to outputs instead of the index method:
+    @Nullable
+    Boolean constructorInvocation();
 
     @Value.Default
     default int redirectArg() {
@@ -39,6 +36,6 @@ public interface IJavaDispatchAux {
     String className();
 
     @Nullable
-    String getMetaclass();
+    List<String> paramTypes();
 
 }

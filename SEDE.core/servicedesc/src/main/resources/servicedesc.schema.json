@@ -2,12 +2,99 @@
   "type" : "object",
   "id" : "urn:jsonschema:de:upb:sede:IServiceCollectionDesc",
   "properties" : {
+    "dataTypes" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "id" : "urn:jsonschema:de:upb:sede:types:IDataTypeDesc",
+        "properties" : {
+          "semanticType" : {
+            "type" : "string"
+          },
+          "metaTags" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "simpleName" : {
+            "type" : "string"
+          },
+          "qualifier" : {
+            "type" : "string"
+          },
+          "comments" : {
+            "type" : "array",
+            "items" : {
+              "type" : "string"
+            }
+          },
+          "dynAux" : {
+            "type" : "any"
+          }
+        }
+      }
+    },
     "services" : {
       "type" : "array",
       "items" : {
         "type" : "object",
         "id" : "urn:jsonschema:de:upb:sede:exec:IServiceDesc",
         "properties" : {
+          "fieldTypes" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "serviceParameters" : {
+            "type" : "object",
+            "id" : "urn:jsonschema:de:upb:sede:param:IServiceParameterizationDesc",
+            "properties" : {
+              "parameterDependencies" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "object",
+                  "id" : "urn:jsonschema:de:upb:sede:param:IParameterDependencyDesc",
+                  "properties" : {
+                    "premise" : {
+                      "type" : "string"
+                    },
+                    "conclusion" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "parameters" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "object",
+                  "id" : "urn:jsonschema:de:upb:sede:param:IParameter",
+                  "properties" : {
+                    "optional" : {
+                      "type" : "boolean"
+                    },
+                    "paramType" : {
+                      "type" : "string"
+                    },
+                    "defaultValue" : {
+                      "type" : "any"
+                    },
+                    "qualifier" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "dynAux" : {
+                "type" : "any"
+              }
+            }
+          },
+          "stateType" : {
+            "type" : "string"
+          },
           "interfaces" : {
             "type" : "array",
             "items" : {
@@ -20,59 +107,41 @@
               "type" : "object",
               "id" : "urn:jsonschema:de:upb:sede:exec:IMethodDesc",
               "properties" : {
-                "signatures" : {
+                "inputs" : {
                   "type" : "array",
                   "items" : {
                     "type" : "object",
-                    "id" : "urn:jsonschema:de:upb:sede:exec:ISignatureDesc",
+                    "id" : "urn:jsonschema:de:upb:sede:exec:IMethodParameterDesc",
                     "properties" : {
-                      "pure" : {
-                        "type" : "boolean"
+                      "fixedValue" : {
+                        "type" : "string"
                       },
-                      "inputs" : {
-                        "type" : "array",
-                        "items" : {
-                          "type" : "object",
-                          "id" : "urn:jsonschema:de:upb:sede:exec:IMethodParameterDesc",
-                          "properties" : {
-                            "name" : {
-                              "type" : "string"
-                            },
-                            "type" : {
-                              "type" : "string"
-                            },
-                            "fixedValue" : {
-                              "type" : "string"
-                            }
-                          }
-                        }
+                      "name" : {
+                        "type" : "string"
                       },
-                      "contextFree" : {
-                        "type" : "boolean"
-                      },
-                      "outputs" : {
-                        "type" : "array",
-                        "items" : {
-                          "type" : "object",
-                          "$ref" : "urn:jsonschema:de:upb:sede:exec:IMethodParameterDesc"
-                        }
-                      },
-                      "javaAux" : {
-                        "type" : "object",
-                        "id" : "urn:jsonschema:de:upb:sede:exec:aux:IJavaDispatchAux",
-                        "properties" : {
-                          "metaclass" : {
-                            "type" : "string"
-                          }
-                        }
-                      },
-                      "comments" : {
-                        "type" : "array",
-                        "items" : {
-                          "type" : "string"
-                        }
+                      "type" : {
+                        "type" : "string"
                       }
                     }
+                  }
+                },
+                "outputs" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "object",
+                    "$ref" : "urn:jsonschema:de:upb:sede:exec:IMethodParameterDesc"
+                  }
+                },
+                "pure" : {
+                  "type" : "boolean"
+                },
+                "contextFree" : {
+                  "type" : "boolean"
+                },
+                "metaTags" : {
+                  "type" : "array",
+                  "items" : {
+                    "type" : "string"
                   }
                 },
                 "simpleName" : {
@@ -86,6 +155,9 @@
                   "items" : {
                     "type" : "string"
                   }
+                },
+                "dynAux" : {
+                  "type" : "any"
                 }
               }
             }
@@ -93,22 +165,11 @@
           "abstract" : {
             "type" : "boolean"
           },
-          "fieldTypes" : {
-            "type" : "object",
-            "additionalProperties" : {
+          "metaTags" : {
+            "type" : "array",
+            "items" : {
               "type" : "string"
             }
-          },
-          "javaAux" : {
-            "type" : "object",
-            "$ref" : "urn:jsonschema:de:upb:sede:exec:aux:IJavaDispatchAux"
-          },
-          "pythonClassAuxiliaries" : {
-            "type" : "object",
-            "id" : "urn:jsonschema:de:upb:sede:exec:aux:IPythonClassAux"
-          },
-          "stateType" : {
-            "type" : "string"
           },
           "simpleName" : {
             "type" : "string"
@@ -121,34 +182,9 @@
             "items" : {
               "type" : "string"
             }
-          }
-        }
-      }
-    },
-    "dataTypes" : {
-      "type" : "array",
-      "items" : {
-        "type" : "object",
-        "id" : "urn:jsonschema:de:upb:sede:types:IDataTypeDesc",
-        "properties" : {
-          "semanticType" : {
-            "type" : "string"
           },
-          "javaAux" : {
-            "type" : "object",
-            "$ref" : "urn:jsonschema:de:upb:sede:exec:aux:IJavaDispatchAux"
-          },
-          "simpleName" : {
-            "type" : "string"
-          },
-          "qualifier" : {
-            "type" : "string"
-          },
-          "comments" : {
-            "type" : "array",
-            "items" : {
-              "type" : "string"
-            }
+          "dynAux" : {
+            "type" : "any"
           }
         }
       }
@@ -158,9 +194,6 @@
       "items" : {
         "type" : "string"
       }
-    },
-    "simpleName" : {
-      "type" : "string"
     },
     "qualifier" : {
       "type" : "string"

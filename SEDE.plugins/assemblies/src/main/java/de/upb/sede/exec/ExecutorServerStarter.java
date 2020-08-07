@@ -14,7 +14,7 @@ import de.upb.sede.webinterfaces.server.StdShellCommands;
 
 public class ExecutorServerStarter {
 
-	private final static Logger logger = LoggerFactory.getLogger(ExecutorServerStarter.class);
+	private static final Logger logger = LoggerFactory.getLogger(ExecutorServerStarter.class);
 
 	public static void main(String[] args) {
 		System.out.println(Arrays.toString(args));

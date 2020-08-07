@@ -8,12 +8,14 @@ import org.immutables.value.Value;
 @SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
-@JsonDeserialize(builder = NotifyNode.Builder.class)
+@JsonDeserialize(builder = WaitForNotificationNode.Builder.class)
 public interface IWaitForNotificationNode extends BaseNode,
     WithNotification {
+
     @Override
     default String getText() {
         return String.format("wait for %s", getNotification().getDescription());
     }
+
 }
 

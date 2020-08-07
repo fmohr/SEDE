@@ -10,7 +10,7 @@ public class PrimitiveDataField extends SEDEObject {
     private Object primitiveObject;
 
 
-	private PrimitiveDataField(PrimitiveType type, Object primitiveObject) {
+	public PrimitiveDataField(PrimitiveType type, Object primitiveObject) {
 		super(type.name());
 		this.primitiveObject = primitiveObject;
 	}

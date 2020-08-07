@@ -1,1 +1,16 @@
-[ ]
+[ {
+  "components" : [ {
+    "parameter" : [ ],
+    "name" : "demo.math.Addierer",
+    "requiredInterface" : [ ],
+    "providedInterface" : [ ],
+    "dependencies" : [ ]
+  }, {
+    "parameter" : [ ],
+    "name" : "demo.math.Gerade",
+    "requiredInterface" : [ ],
+    "providedInterface" : [ ],
+    "dependencies" : [ ]
+  } ],
+  "repository" : "demolib"
+} ]

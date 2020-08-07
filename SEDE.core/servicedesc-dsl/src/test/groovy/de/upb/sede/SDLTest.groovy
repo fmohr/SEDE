@@ -11,14 +11,11 @@ import de.upb.sede.param.IInterfaceParameter
 import de.upb.sede.param.INumericParameter
 import de.upb.sede.param.IParameterDependencyDesc
 import de.upb.sede.param.IServiceParameterizationDesc
-import de.upb.sede.param.auxiliary.IJavaParameterizationAux
+import de.upb.sede.exec.auxiliary.IJavaParameterizationAux
 import de.upb.sede.param.auxiliary.JavaParameterizationAux
 import de.upb.sede.types.IDataTypeDesc
 import de.upb.sede.types.auxiliary.JavaTypeAux
-import de.upb.sede.util.FileUtil
 import spock.lang.Specification
-
-import static de.upb.sede.Helpers.newJavaDispatchAux
 
 class SDLTest extends Specification {
 

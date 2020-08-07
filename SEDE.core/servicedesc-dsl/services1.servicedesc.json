@@ -1,0 +1,66 @@
+{
+  "collections" : [ {
+    "services" : [ {
+      "stateType" : "a.A",
+      "methods" : [ {
+        "inputs" : [ ],
+        "outputs" : [ {
+          "type" : "a.A",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "metaTags" : [ ],
+        "simpleName" : "__construct",
+        "qualifier" : "__construct",
+        "comments" : [ ],
+        "dynAux" : null,
+        "isPure" : false,
+        "isContextFree" : true
+      }, {
+        "inputs" : [ {
+          "type" : "t1",
+          "name" : "First Input Parameter of m2",
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        }, {
+          "type" : "t2",
+          "name" : null,
+          "fixedValue" : null,
+          "callByValue" : false,
+          "readOnly" : false
+        } ],
+        "outputs" : [ {
+          "type" : "t3",
+          "name" : "Return Value",
+          "fixedValue" : null,
+          "callByValue" : true,
+          "readOnly" : false
+        } ],
+        "metaTags" : [ ],
+        "simpleName" : "m2",
+        "qualifier" : "m2",
+        "comments" : [ ],
+        "dynAux" : null,
+        "isPure" : false,
+        "isContextFree" : false
+      } ],
+      "interfaces" : [ "abstracts.A" ],
+      "fieldTypes" : {
+        "state" : "a.A"
+      },
+      "serviceParameters" : null,
+      "metaTags" : [ ],
+      "simpleName" : "Service A",
+      "qualifier" : "a.A",
+      "comments" : [ ],
+      "dynAux" : null,
+      "isAbstract" : true
+    } ],
+    "dataTypes" : [ ],
+    "comments" : [ "This is a comment." ],
+    "qualifier" : "services1"
+  } ]
+}

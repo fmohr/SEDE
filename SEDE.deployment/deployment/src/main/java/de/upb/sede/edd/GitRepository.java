@@ -15,7 +15,7 @@ import java.io.File;
 import java.util.Optional;
 
 public class GitRepository {
-    private final static Logger logger = LoggerFactory.getLogger(GitRepository.class);
+    private static final Logger logger = LoggerFactory.getLogger(GitRepository.class);
     private String remoteURL;
     private OptionalField<String> remoteBranch;
 

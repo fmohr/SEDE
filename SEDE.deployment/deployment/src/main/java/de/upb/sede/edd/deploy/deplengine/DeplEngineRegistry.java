@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public class DeplEngineRegistry {
 
-    private final static Logger logger = LoggerFactory.getLogger(DeplEngineRegistry.class);
+    private static final Logger logger = LoggerFactory.getLogger(DeplEngineRegistry.class);
 
     private List<DeplEngine> engines = new ArrayList<>();
 

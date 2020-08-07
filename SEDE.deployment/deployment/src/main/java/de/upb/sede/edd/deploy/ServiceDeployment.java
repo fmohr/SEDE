@@ -24,7 +24,7 @@ import java.util.concurrent.Executor;
 
 public class ServiceDeployment {
 
-    private final static Logger logger = LoggerFactory.getLogger(ServiceDeployment.class);
+    private static final Logger logger = LoggerFactory.getLogger(ServiceDeployment.class);
 
     private final static String DEFAULT_ACRONYM = "0";
 

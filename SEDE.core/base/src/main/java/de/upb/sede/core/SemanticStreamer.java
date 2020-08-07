@@ -24,7 +24,7 @@ public final class SemanticStreamer {
 
 	private static final Pattern REALTYPE_PATTERN = Pattern.compile("([a-zA-Z_0-9\\.]+\\.)*(?<classpath>[a-zA-Z_]\\w*)$");
 
-	private final static Logger logger = LoggerFactory.getLogger(SemanticStreamer.class);
+	private static final Logger logger = LoggerFactory.getLogger(SemanticStreamer.class);
 
 	public static SEDEObject readFrom(InputStream is, String type) {
 		SEDEObject parsedObject;

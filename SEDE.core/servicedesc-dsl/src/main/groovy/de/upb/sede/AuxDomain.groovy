@@ -3,11 +3,11 @@ package de.upb.sede
 import de.upb.sede.exec.auxiliary.IJavaDispatchAux
 import de.upb.sede.exec.auxiliary.IPythonDispatchAux
 import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
+import de.upb.sede.exec.auxiliary.MutableJavaParameterizationAux
+import de.upb.sede.exec.auxiliary.MutableJavaTypeAux
 import de.upb.sede.exec.auxiliary.MutablePythonDispatchAux
-import de.upb.sede.param.auxiliary.IJavaParameterizationAux
-import de.upb.sede.param.auxiliary.MutableJavaParameterizationAux
-import de.upb.sede.types.auxiliary.IJavaTypeAux
-import de.upb.sede.types.auxiliary.MutableJavaTypeAux
+import de.upb.sede.exec.auxiliary.IJavaParameterizationAux
+import de.upb.sede.exec.auxiliary.IJavaTypeAux
 import de.upb.sede.util.DeepImmutableCopier
 import de.upb.sede.util.DeepMutableCopier
 import de.upb.sede.util.DynRecord

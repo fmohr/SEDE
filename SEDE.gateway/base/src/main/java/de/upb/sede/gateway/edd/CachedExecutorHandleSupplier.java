@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Deprecated
 public class CachedExecutorHandleSupplier implements OnDemandExecutorSupplier {
 
-    private final static Logger logger = LoggerFactory.getLogger(CachedExecutorHandleSupplier.class);
+    private static final Logger logger = LoggerFactory.getLogger(CachedExecutorHandleSupplier.class);
 
     private static final long SERVICE_REQUEST_EXPIRATION_MINUTES;
 

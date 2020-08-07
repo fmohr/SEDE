@@ -73,7 +73,7 @@ task compileServiceDescs {
 }
 
 
-assemble.dependsOn(compileServiceDescs)
+//assemble.dependsOn(compileServiceDescs)
 
 shadowJar {
     archiveFileName = "sdlc.jar"

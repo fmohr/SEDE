@@ -1,0 +1,74 @@
+package ai.services.execution;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Predicate;
+
+/**
+ * A registry where one can atomically create and get execution instances.
+ * One executor usually has a single execution registry.
+ */
+public class ExecutionRegistry {
+
+    private static final Logger logger = LoggerFactory.getLogger(ExecutionRegistry.class);
+
+    private Map<String, Execution> execs = new HashMap<>();
+
+    protected boolean isClosed = false;
+
+    private void assertNoClosed() {
+        if(isClosed)
+            throw new IllegalStateException("Execution registry is closed.");
+    }
+
+    public void close() {
+        logger.info("Execution registry closed.");
+        isClosed = true;
+    }
+
+    public synchronized Execution create(String execId) {
+        if(execs.containsKey(execId)) {
+            throw new IllegalStateException(String.format("Execution `%s` already exists.", execId));
+        } else {
+            return internalCreate(execId);
+        }
+    }
+
+    public synchronized Execution createOrGet(String execId) {
+        if(execs.containsKey(execId)) {
+            return execs.get(execId);
+        } else {
+            return internalCreate(execId);
+        }
+    }
+
+    public synchronized Optional<Execution> get(String execId) {
+        return Optional.ofNullable(execs.getOrDefault(execId, null));
+    }
+
+    public synchronized Iterator<Execution> iterate() {
+        return execs.values().iterator();
+    }
+
+    public synchronized void removeIf(Predicate<Execution> executionsToBeRemovedPredicate) {
+        execs.values().removeIf(executionsToBeRemovedPredicate);
+    }
+
+    public synchronized boolean remove(String execId) {
+        return execs.remove(execId) != null;
+    }
+
+    private Execution internalCreate(String execId) {
+        assertNoClosed();
+        Execution execution = new Execution(execId);
+        execs.put(execId, execution);
+        logger.info("Defined a new execution.");
+        return execution;
+    }
+
+}

@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 
 public abstract class DeplEngine {
 
-    private final static Logger logger = LoggerFactory.getLogger(DeplEngine.class);
+    private static final Logger logger = LoggerFactory.getLogger(DeplEngine.class);
 
     public abstract String getName();
 

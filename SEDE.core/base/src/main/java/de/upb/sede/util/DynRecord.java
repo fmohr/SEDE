@@ -97,7 +97,7 @@ public class DynRecord extends DynTypeObject implements RecordForm {
     }
 
     @Override
-    public List<DynType> knibbleList(String field) {
+    public List<DynType> list(String field) {
         if(! getData().containsKey(field)) {
             throw new IllegalArgumentException("Data does not have field '"
                 + field + "'." );
@@ -119,7 +119,7 @@ public class DynRecord extends DynTypeObject implements RecordForm {
     }
 
     @Override
-    public DynType knibbleObject(String field) {
+    public DynType dynObject(String field) {
         if(! getData().containsKey(field)) {
             throw new IllegalArgumentException("Data does not have field '"
                 + field + "'." );
@@ -136,7 +136,7 @@ public class DynRecord extends DynTypeObject implements RecordForm {
     }
 
     @Override
-    public Number knibbleNumber(String field) {
+    public Number number(String field) {
         if(! getData().containsKey(field)) {
             throw new IllegalArgumentException("Data does not have field '"
                 + field + "'." );
@@ -148,7 +148,7 @@ public class DynRecord extends DynTypeObject implements RecordForm {
     }
 
     @Override
-    public String knibbleString(String field) {
+    public String string(String field) {
         if(! getData().containsKey(field)) {
             throw new IllegalArgumentException("Data does not have field '"
                 + field + "'." );
@@ -160,7 +160,7 @@ public class DynRecord extends DynTypeObject implements RecordForm {
     }
 
     @Override
-    public Boolean knibbleBoolean(String field) {
+    public Boolean bool(String field) {
         if(! getData().containsKey(field)) {
             throw new IllegalArgumentException("Data does not have field '"
                 + field + "'." );

@@ -2,6 +2,7 @@ package de.upb.sede.composition;
 
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
+import de.upb.sede.composition.typing.TCOutput;
 
 import java.util.*;
 
@@ -18,6 +19,18 @@ public class InstructionIndexer implements Iterable<IIndexedInstruction>{
 
     public InstructionIndexer(List<IIndexedInstruction> instructions) {
         this.indexedInstList = new ArrayList<>(instructions);
+    }
+
+    public InstructionIndexer(InstructionIndexer indexer, Map<Long, TCOutput> tcOutput) {
+        this.indexedInstList = new ArrayList<>();
+        for (IIndexedInstruction instruction : indexer) {
+            this.indexedInstList.add(IndexedInstruction.builder().instruction(InstructionNode.builder()
+                    .from(instruction.getInstruction())
+                    .fieldType(tcOutput.get(instruction.getIndex())
+                        .getFieldAssignmentType().getTypeClass())
+                        .build())
+                .build());
+        }
     }
 
     public void assertNotEmpty() {

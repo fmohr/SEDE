@@ -31,7 +31,7 @@ class DynTypeObjectSerializationTest extends Specification {
         Container container = kneadable.cast(Container)
 
         then:
-        kneadable.knibbleNumber("third") == 3
+        kneadable.number("third") == 3
 
         container.first.cast(A).a == 1
         container.first.cast(B).b == "one"
@@ -62,7 +62,7 @@ class DynTypeObjectSerializationTest extends Specification {
         container.second.cast(C).c[1].cast(B).b == "two"
 
         when:
-        kneadable.knibbleNumber("third")
+        kneadable.number("third")
         then:
         thrown(IllegalArgumentException)
 

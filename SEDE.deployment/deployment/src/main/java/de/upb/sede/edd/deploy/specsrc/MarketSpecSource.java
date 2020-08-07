@@ -14,7 +14,7 @@ import java.io.IOException;
 
 public class MarketSpecSource extends SpecSourceFromURI implements Cache<DeploymentSpecificationRegistry>, SpecSource {
 
-    private final static Logger logger = LoggerFactory.getLogger(MarketSpecSource.class);
+    private static final Logger logger = LoggerFactory.getLogger(MarketSpecSource.class);
 
     public MarketSpecSource(UnmodifiableURI specURI) {
         super(specURI);

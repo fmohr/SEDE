@@ -26,7 +26,7 @@ import java.io.OutputStream;
 import java.util.concurrent.CountDownLatch;
 
 public class ProcessStreamRunner implements Runnable {
-    private final static Logger LOGGER = LoggerFactory.getLogger(ProcessStreamRunner.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ProcessStreamRunner.class);
 
     private final String displayName;
     private final InputStream inputStream;

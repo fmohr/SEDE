@@ -22,7 +22,7 @@ import java.util.UUID;
 @SuppressWarnings("ALL")
 public class ClientSetup {
 
-	private final static Logger logger = LoggerFactory.getLogger(ClientSetup.class);
+	private static final Logger logger = LoggerFactory.getLogger(ClientSetup.class);
 
 	/**
 	 * Builds a SEDE client from the given ClientProperties.

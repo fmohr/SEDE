@@ -1,9 +1,11 @@
 package de.upb.sede.composition.choerography;
 
 import de.upb.sede.composition.*;
+import de.upb.sede.composition.choerography.emulation.OpsSchedule;
 import de.upb.sede.composition.faa.FieldAccessUtil;
 import de.upb.sede.composition.graphs.nodes.IServiceInstanceStorageNode;
 import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
+import de.upb.sede.composition.orchestration.scheduled.ServiceLoadStore;
 import de.upb.sede.composition.types.TypeClass;
 import de.upb.sede.exec.IExecutorContactInfo;
 import de.upb.sede.exec.IExecutorHandle;
@@ -111,13 +113,16 @@ public class ServiceLoadStoreCollector
 
         private final IResolvePolicy resolvePolicy;
 
-        public SLSCInput(IndexFactory indexFactory, Map<Long, IMethodResolution> methodResolution, FieldAccessUtil fieldAccessUtil, Map<Long, IExecutorHandle> instExecutorMap, IExecutorHandle clientExecutor, IResolvePolicy resolvePolicy) {
+        private final OpsSchedule opsSchedule;
+
+        public SLSCInput(IndexFactory indexFactory, Map<Long, IMethodResolution> methodResolution, FieldAccessUtil fieldAccessUtil, Map<Long, IExecutorHandle> instExecutorMap, IExecutorHandle clientExecutor, IResolvePolicy resolvePolicy, OpsSchedule opsSchedule) {
             this.indexFactory = indexFactory;
             this.mR = methodResolution;
             this.fieldAccessUtil = fieldAccessUtil;
             this.instExecutorMap = instExecutorMap;
             this.clientExecutor = clientExecutor;
             this.resolvePolicy = resolvePolicy;
+            this.opsSchedule = opsSchedule;
         }
 
         public IndexFactory getIndexFactory() {
@@ -143,13 +148,17 @@ public class ServiceLoadStoreCollector
         public IResolvePolicy getResolvePolicy() {
             return resolvePolicy;
         }
+
+        public OpsSchedule getOpsSchedule() {
+            return opsSchedule;
+        }
     }
 
-    public static class SLSCOutput {
+    public class SLSCOutput {
 
-        Map<Long, List<IServiceInstanceStorageNode>> preInstLoads = new HashMap<>();
-
-        Map<Long, List<IServiceInstanceStorageNode>> postInstStores = new HashMap<>();
+//        Map<Long, List<IServiceInstanceStorageNode>> preInstLoads = new HashMap<>();
+//
+//        Map<Long, List<IServiceInstanceStorageNode>> postInstStores = new HashMap<>();
 
         private void load(Long instIndex, Long nodeIndex, String host, String field, String typeQualifier) {
             IServiceInstanceStorageNode loadField = ServiceInstanceStorageNode.builder()
@@ -159,7 +168,9 @@ public class ServiceLoadStoreCollector
                 .isLoadInstruction(true)
                 .hostExecutor(host)
                 .build();
-            preInstLoads.computeIfAbsent(instIndex, i -> new ArrayList<>()).add(loadField);
+            getInput().getOpsSchedule().getInstOps(instIndex).addPreOp(ServiceLoadStore.builder()
+                .serviceInstanceStorageNode(loadField)
+                .build());
         }
 
         private void store(Long instIndex, Long nodeIndex, String host, String field, String typeQualifier) {
@@ -173,15 +184,10 @@ public class ServiceLoadStoreCollector
                 .isLoadInstruction(false)
                 .hostExecutor(host)
                 .build();
-            postInstStores.computeIfAbsent(instIndex, i -> new ArrayList<>()).add(storeField);
+            getInput().getOpsSchedule().getInstOps(instIndex).addPostOp(ServiceLoadStore.builder()
+                .serviceInstanceStorageNode(storeField)
+                .build());
         }
 
-        public Map<Long, List<IServiceInstanceStorageNode>> getPreInstLoads() {
-            return preInstLoads;
-        }
-
-        public Map<Long, List<IServiceInstanceStorageNode>> getPostInstStores() {
-            return postInstStores;
-        }
     }
 }

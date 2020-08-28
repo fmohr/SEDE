@@ -1,3 +1,5 @@
+package requests
+
 import de.upb.sede.beta.ExecutorRegistration
 import de.upb.sede.composition.FieldType
 import de.upb.sede.composition.RRGen
@@ -25,7 +27,7 @@ ResolveRequest.builder()
             .executorHandle(ExecutorHandle.builder()
                 .contactInfo(ExecutorContactInfo.builder()
                     .qualifier("Cl_Exec")
-                    .hostAddress("localhost:5000")
+                    .uRL("localhost:5000")
                     .isReachable(true)
                     .build())
                 .capabilities(ExecutorCapabilities.builder()
@@ -38,13 +40,13 @@ ResolveRequest.builder()
         FieldType.builder()
             .fieldname("f1")
             .type(DataValueType.builder()
-                .qualifier("T1")
+                .typeQualifier("T1")
                 .build())
             .build(),
         FieldType.builder()
             .fieldname("f2")
             .type(DataValueType.builder()
-                .qualifier("T2")
+                .typeQualifier("T2")
                 .build())
             .build(),
         FieldType.builder()
@@ -56,7 +58,7 @@ ResolveRequest.builder()
         FieldType.builder()
             .fieldname("f4")
             .type(ServiceInstanceType.builder()
-                .qualifier("S1")
+                .typeQualifier("S1")
                 .build())
             .build())
     .putInitialServices("f4", new ServiceInstanceHandle(

@@ -1,8 +1,11 @@
 package de.upb.sede.composition.choerography.emulation.executors;
 
 import de.upb.sede.*;
+import de.upb.sede.composition.choerography.emulation.OrchestrationException;
 import de.upb.sede.composition.graphs.nodes.*;
-import de.upb.sede.composition.orchestration.*;
+import de.upb.sede.composition.orchestration.emulated.*;
+import de.upb.sede.composition.types.IDataValueType;
+import de.upb.sede.composition.types.serialization.IMarshalling;
 import de.upb.sede.exec.IMethodDesc;
 import de.upb.sede.exec.IMethodRef;
 import de.upb.sede.exec.IServiceDesc;
@@ -57,8 +60,8 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
     }
 
     private EmulatedOp injectCastingAuxData(ICastOp castOp) {
-        ICastTypeNode firstCast = injectCastingAuxData(castOp.getFirstCast());
-        ICastTypeNode secondCast = injectCastingAuxData(castOp.getSecondCast());
+        IMarshalNode firstCast = injectCastingAuxData(castOp.getFirstCast());
+        IMarshalNode secondCast = injectCastingAuxData(castOp.getSecondCast());
         return CastOp.builder()
             .from(castOp)
             .firstCast(firstCast)
@@ -66,19 +69,19 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
             .build();
     }
 
-    private ICastTypeNode injectCastingAuxData(ICastTypeNode castTypeNode) {
+    private IMarshalNode injectCastingAuxData(IMarshalNode castTypeNode) {
         if(castTypeNode == null) {
             return null;
         }
-        String dataTypeQualifier;
-        if(castTypeNode.castToSemantic()) {
-            dataTypeQualifier = castTypeNode.getSourceType();
-        } else {
-            dataTypeQualifier = castTypeNode.getTargetType();
+        IMarshalling marshalling = castTypeNode.getMarshalling();
+        if(!(marshalling.getValueType() instanceof IDataValueType)) {
+            logger.error("CastTypeNode with a marshalling that is not of type IDataValue: {}", marshalling);
+            throw new OrchestrationException("Malformed Marshalling in CastTypeNode: " + castTypeNode);
         }
+        IDataValueType dataValueType = (IDataValueType) marshalling.getValueType();
 
-        Map typeAux = getTypeAux(dataTypeQualifier);
-        return CastTypeNode.builder()
+        Map typeAux = getTypeAux(dataValueType.getTypeQualifier());
+        return MarshalNode.builder()
             .from(castTypeNode)
             .putAllRuntimeAuxiliaries(typeAux)
             .build();
@@ -111,7 +114,9 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
     }
 
     private Map getTypeAux(String typeQualifier) {
-        return cachedAuxiliaries.computeIfAbsent(IDataTypeRef.of(typeQualifier), this::gatherTypeAux);
+        return cachedAuxiliaries.computeIfAbsent(
+            IDataTypeRef.of(typeQualifier),
+            this::gatherTypeAux);
     }
 
     private Map gatherTypeAux(ConstructReference cref) {

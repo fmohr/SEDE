@@ -39,6 +39,15 @@ public class ExecutionRegistry {
         }
     }
 
+    /**
+     * Returns an execution if it is already created and not removed.
+     * If the the execution doesn't exist it will be created and then returned.
+     * This method will always return a valid execution.
+     *
+     * @deprecated the atomic create or get should not be used anymore.
+     * There is only a single time when a execution should be created and that in the case of a execRequest and then it should just be created and an error should be cought,
+     */
+    @Deprecated
     public synchronized Execution createOrGet(String execId) {
         if(execs.containsKey(execId)) {
             return execs.get(execId);

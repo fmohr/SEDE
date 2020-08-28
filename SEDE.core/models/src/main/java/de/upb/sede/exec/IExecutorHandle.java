@@ -3,7 +3,6 @@ package de.upb.sede.exec;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.IQualifiable;
 import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.exec.*;
 import de.upb.sede.requests.ExecutorRegistration;
 import org.immutables.value.Value;
 
@@ -21,8 +20,6 @@ public interface IExecutorHandle extends IQualifiable {
     default String getQualifier() {
         return getContactInfo().getQualifier();
     }
-
-
     /**
      * @deprecated
      */

@@ -8,10 +8,7 @@ import de.upb.sede.composition.choerography.emulation.executors.ExecutionPartici
 import de.upb.sede.composition.choerography.emulation.executors.ExecutorFactory;
 import de.upb.sede.composition.faa.FieldAccessUtil;
 import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
-import de.upb.sede.composition.graphs.nodes.IParseConstantNode;
 import de.upb.sede.composition.graphs.nodes.IServiceInstanceStorageNode;
-import de.upb.sede.composition.orchestration.IDoubleCast;
-import de.upb.sede.composition.orchestration.ITransmission;
 import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.gateway.ExecutorArbiter;
@@ -108,21 +105,19 @@ public class ChoreographyService implements IChoreographyService {
         List<IIndexedInstruction> instructions = ihs.getOutput().getInstructions();
 
         indexer = new InstructionIndexer(instructions);
+        OpsSchedule operationSchedule = new OpsSchedule(indexer);
 
         InstInputCollector iic = new InstInputCollector();
-        iic.setInput(new InstInputCollector.DTCInput(indexFactory, lookupService, indexer, candidateSelection, mrMap, clientEH, fieldAccessUtil, resolveRequest));
+        iic.setInput(new InstInputCollector.DTCInput(indexFactory, lookupService, indexer,
+            candidateSelection, mrMap, clientEH,
+            fieldAccessUtil, resolveRequest, operationSchedule));
         iic.run();
-        List<ITransmission> outputTransmissions = iic.getOutput().getOutputTransmissions();
-        Map<Long, List<IDoubleCast>> preInstCasts = iic.getOutput().getPreInstCasts();
-        Map<Long, List<IParseConstantNode>> preInstParse = iic.getOutput().getPreInstParse();
-        Map<Long, List<ITransmission>> preInstTransmissions = iic.getOutput().getPreInstTransmissions();
         List<String> returnFields = iic.getOutput().getReturnFields();
 
         ServiceLoadStoreCollector slsc = new ServiceLoadStoreCollector();
-        slsc.setInput(new ServiceLoadStoreCollector.SLSCInput(indexFactory, mrMap, fieldAccessUtil, candidateSelection, clientEH, resolveRequest.getResolvePolicy()));
+        slsc.setInput(new ServiceLoadStoreCollector.SLSCInput(indexFactory, mrMap, fieldAccessUtil, candidateSelection,
+            clientEH, resolveRequest.getResolvePolicy(), operationSchedule));
         slsc.run();
-        Map<Long, List<IServiceInstanceStorageNode>> postInstStores = slsc.getOutput().getPostInstStores();
-        Map<Long, List<IServiceInstanceStorageNode>> preInstLoads = slsc.getOutput().getPreInstLoads();
 
         ExecutorFactory ef = new ExecutorFactory(lookupService);
         ExecutorBootstrapper eb = new ExecutorBootstrapper();
@@ -134,7 +129,7 @@ public class ChoreographyService implements IChoreographyService {
 
         Orchestration orchestration = new Orchestration();
         orchestration.setInput(new Orchestration.OrchestrationInput(nf, indexFactory, indexer, mrMap, candidateSelection, participants1,
-            preInstTransmissions, preInstCasts, preInstParse, outputTransmissions, preInstLoads, postInstStores));
+            operationSchedule));
         logger.info("Simulation of the orchestration is ready. Starting to build a choerography");
         orchestration.run();
         // no formal output

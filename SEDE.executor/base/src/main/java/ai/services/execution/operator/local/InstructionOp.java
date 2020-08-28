@@ -1,8 +1,12 @@
-package ai.services.execution.operator;
+package ai.services.execution.operator.local;
 
 import ai.services.execution.FieldContext;
 import ai.services.execution.Task;
 import ai.services.execution.TaskTransition;
+import ai.services.execution.operator.MainTaskOperator;
+import ai.services.execution.operator.OpException;
+import ai.services.execution.operator.RuntimeAuxiliariesConverter;
+import ai.services.execution.operator.ServiceInstanceFactory;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.composition.types.IDataValueType;
@@ -48,10 +52,18 @@ public class InstructionOp extends MainTaskOperator {
         if(instNode.isAssignment() && instNode.getFieldType() == null) {
             throw new OpException("Assignment has no type specified: " + instNode);
         }
-
+        /*
+         * First fetch the context and parameters using the execution context and the instruction line itself.
+         */
         Optional<Object> context = fetchContextValue(instNode, task.getFieldContext());
         Object[] paramValues = fetchParamValues(instNode, task.getFieldContext());
+        /*
+         * Next create a dispatch aux which is used to find the handle that runs the instruction.
+         * Dispatch aux can be defined by the service description.
+         * If it is undefined, we default to the inspection of the collected types:
+         */
         IJavaDispatchAux javaDispatch = constructDispatchAux(instNode, context, paramValues);
+
 
         castNumbers(javaDispatch, paramValues);
         Object returnVal = invoke(javaDispatch, context, paramValues);

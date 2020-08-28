@@ -20,24 +20,15 @@ public class GraphToDot {
 
 	private static final Logger logger = LoggerFactory.getLogger(GraphToDot.class);
 
-	private static final String PATH_TO_DOT;
+	private static final String PATH_TO_DOT = new SystemSettingLookup(
+	    "/usr/local/bin/dot",
+        "sede.gw.DotPath",
+        "DOT_PATH"
+    ).lookup();
 
 	private static final boolean DISABLED;
 
 	static {
-		/*
-		 * Read the path to dot from environment variable: 'DOT_PATH'
-		 */
-		Map<String, String> env = System.getenv();
-		if(System.getenv().containsKey("DOT_PATH") && System.getenv().get("DOT_PATH") != null) {
-			PATH_TO_DOT = System.getenv().get("DOT_PATH");
-			logger.info("DOT_PATH: {}", PATH_TO_DOT);
-		} else {
-			PATH_TO_DOT = "/usr/local/bin/dot";
-			logger.info("Environment variable 'DOT_PATH' isn't defined.");
-			logger.info("Using {} as default path to dot. Change default in: GraphToDot.java", PATH_TO_DOT);
-		}
-
 		if(! new File(PATH_TO_DOT).exists()) {
 			logger.warn("Dot doesn't exist on the specified path: {}. DISABLED GraphToDot.java", PATH_TO_DOT);
 			DISABLED = true;

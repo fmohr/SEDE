@@ -2,13 +2,13 @@ package de.upb.sede.composition.choerography;
 
 import de.upb.sede.SDLLookupService;
 import de.upb.sede.composition.*;
+import de.upb.sede.composition.choerography.emulation.OpsSchedule;
 import de.upb.sede.composition.faa.FieldAccessUtil;
 import de.upb.sede.composition.graphs.nodes.*;
-import de.upb.sede.composition.types.TypeClass;
-import de.upb.sede.composition.orchestration.DoubleCast;
-import de.upb.sede.composition.orchestration.IDoubleCast;
-import de.upb.sede.composition.orchestration.ITransmission;
-import de.upb.sede.composition.orchestration.Transmission;
+import de.upb.sede.composition.orchestration.scheduled.*;
+import de.upb.sede.composition.types.*;
+import de.upb.sede.composition.types.serialization.Marshalling;
+import de.upb.sede.composition.types.serialization.IMarshalling;
 import de.upb.sede.composition.typing.TypeCheckException;
 import de.upb.sede.core.PrimitiveType;
 import de.upb.sede.exec.IExecutorHandle;
@@ -42,6 +42,15 @@ public class InstInputCollector
             setOutputFieldLocation(inst);
         }
         transmitOutputs();
+        setReturnFields();
+    }
+
+    private void setReturnFields() {
+        getOutput().returnFields = getInput().operationSchedule.getFinalOps().stream()
+            .filter(op -> op instanceof ITransmission)
+            .map(trans -> ((ITransmission)trans).getAcceptDataNode().getFieldName())
+            .distinct()
+            .collect(Collectors.toList());
     }
 
     private void setOutputFieldLocation(IIndexedInstruction inst) {
@@ -79,8 +88,10 @@ public class InstInputCollector
             if(!srcExecutorId.equals(executorH.getQualifier())) {
                 // if the context is on another executor:
                 String serviceQualifier = mr.getMethodRef().getServiceRef().getRef().getQualifier();
-                ITransmission serviceTransmission = createServiceTransmission(locationOfContext, executorH, contextFieldname);
-                getOutput().addTransmission(instIndex, serviceTransmission);
+                IFieldCast serviceInstanceHandleCast = createServiceInstanceHandleTransmissionSerialisation(locationOfContext, executorH, contextFieldname,
+                    RefType.builder().typeOfRef(ServiceInstanceType.builder().typeQualifier(serviceQualifier).build()).build());
+                ITransmission serviceTransmission = createTransmission(locationOfContext, executorH, contextFieldname, serviceInstanceHandleCast);
+                getOutput().serializeAndTransmit(instIndex, serviceInstanceHandleCast, serviceTransmission);
                 getOutput().setFieldLocation(contextFieldname, executorH);
             }
         }
@@ -110,22 +121,30 @@ public class InstInputCollector
                     // field is already at host executor.
                     if(typeCoercion.hasTypeConversion()) {
                         // We need to cast field:
-                        IDoubleCast cast = DoubleCast.builder()
-                            .firstCast(CastTypeNode.builder()
+                        IFieldCast cast = FieldCast.builder()
+                            .firstCast(MarshalNode.builder()
                                 .fieldName(fieldname)
                                 .index(getInput().getIndexFactory().create())
                                 .hostExecutor(executorH.getQualifier())
-                                .sourceType(typeCoercion.getSourceType())
-                                .targetType(Objects.requireNonNull(typeCoercion.getSemanticType()))
-                                .castToSemantic(true)
+                                .marshalling(Marshalling.builder()
+                                    .direction(IMarshalling.Direction.MARSHAL)
+                                    .valueType(DataValueType.builder()
+                                        .typeQualifier(typeCoercion.getSourceType())
+                                        .build())
+                                    .semanticName(Objects.requireNonNull(typeCoercion.getSemanticType()))
+                                    .build())
                                 .build())
-                            .secondCast(CastTypeNode.builder()
+                            .secondCast(MarshalNode.builder()
                                 .fieldName(fieldname)
                                 .index(getInput().getIndexFactory().create())
                                 .hostExecutor(executorH.getQualifier())
-                                .sourceType(typeCoercion.getSemanticType())
-                                .targetType(typeCoercion.getResultType())
-                                .castToSemantic(false)
+                                .marshalling(Marshalling.builder()
+                                    .direction(IMarshalling.Direction.UNMARSHAL)
+                                    .valueType(DataValueType.builder()
+                                        .typeQualifier(typeCoercion.getResultType())
+                                        .build())
+                                    .semanticName(Objects.requireNonNull(typeCoercion.getSemanticType()))
+                                    .build())
                                 .build())
                             .build();
                         getOutput().castField(instIndex, cast);
@@ -135,13 +154,16 @@ public class InstInputCollector
                 } else {
                     // field is on another executor
                     // create transmission with the correct inplace casts:
-                    ITransmission dataTransmission = createDataTransmission(sourceLocation, executorH, fieldname, typeCoercion);
-                    getOutput().addTransmission(instIndex, dataTransmission);
+                    IFieldCast serialisation = createDataValueTransmissionSerialisation(sourceLocation, executorH,
+                        fieldname, typeCoercion);
+                    ITransmission dataTransmission = createTransmission(sourceLocation, executorH, fieldname, serialisation);
+                    getOutput().serializeAndTransmit(instIndex, serialisation, dataTransmission);
                     getOutput().setFieldLocation(fieldname, executorH);
                 }
             }
         }
     }
+
 
     private void transmitOutputs() {
         getInput().getFieldAccessUtil()
@@ -150,89 +172,6 @@ public class InstInputCollector
             .filter(field -> getInput().getFieldAccessUtil().hasWriteAccess(field.getFieldname()))
             .filter(this::isToBeReturned)
             .forEach(this::transmitOutputToClient);
-    }
-
-
-    private ITransmission createDataTransmission(IExecutorHandle src, IExecutorHandle trg, String fieldname,
-                                                 ITypeCoercion typeCoercion) {
-        if(typeCoercion.getSemanticType() == null) {
-            throw new IllegalArgumentException("Type-coercion has no semantic type: " + typeCoercion);
-        }
-        CastTypeNode transmitterCast;
-        CastTypeNode receiverCast;
-        transmitterCast = CastTypeNode.builder()
-            .fieldName(fieldname)
-            .index(getInput().getIndexFactory().create())
-            .hostExecutor(src.getQualifier())
-            .sourceType(typeCoercion.getSourceType())
-            .targetType(Objects.requireNonNull(typeCoercion.getSemanticType()))
-            .castToSemantic(true)
-            .build();
-        ITransmitDataNode transmitDataNode = TransmitDataNode.builder()
-            .fieldName(fieldname)
-            .index(getInput().getIndexFactory().create())
-            .hostExecutor(src.getQualifier())
-            .contactInfo(trg.getContactInfo())
-            .inPlaceCast(transmitterCast)
-            .build();
-        if(typeCoercion.resultsInSemanticType()) {
-            // if semantic type equals result type do convert at accept stage:
-            receiverCast = null;
-        } else {
-            receiverCast = CastTypeNode.builder()
-                .fieldName(fieldname)
-                .index(getInput().getIndexFactory().create())
-                .hostExecutor(trg.getQualifier())
-                .sourceType(typeCoercion.getSemanticType())
-                .targetType(typeCoercion.getResultType())
-                .castToSemantic(false)
-                .build();
-        }
-        IAcceptDataNode acceptDataNode = AcceptDataNode.builder()
-            .fieldName(fieldname)
-            .index(getInput().getIndexFactory().create())
-            .hostExecutor(trg.getQualifier())
-            .inPlaceCast(receiverCast)
-            .build();
-        ITransmission transmission = Transmission.builder()
-            .source(src)
-            .target(trg)
-            .transmission(transmitDataNode)
-            .acceptDataNode(acceptDataNode)
-            .build();
-        return transmission;
-    }
-
-    private ITransmission createServiceTransmission(IExecutorHandle src, IExecutorHandle trg, String fieldname) {
-        String srcExecutorId = src.getQualifier();
-
-        ITransmitDataNode transmitDataNode = TransmitDataNode.builder()
-            .fieldName(fieldname)
-            .index(getInput().getIndexFactory().create())
-            .hostExecutor(srcExecutorId)
-            .contactInfo(trg.getContactInfo())
-            // TODO for now we dont include inplace casts for service instance handles:
-//            .inPlaceCast(TypeUtil.createCastToServiceHandleNode()
-//                .fieldName(fieldname)
-//                .hostExecutor(srcExecutorId)
-//                .build())
-            .build();
-        IAcceptDataNode acceptDataNode = AcceptDataNode.builder()
-            .fieldName(fieldname)
-            .index(getInput().getIndexFactory().create())
-            .hostExecutor(trg.getQualifier())
-//            .inPlaceCast(TypeUtil.createCastToServiceHandleNode()
-//                .fieldName(fieldname)
-//                .hostExecutor(trg.getQualifier())
-//                .build())
-            .build();
-        ITransmission transmission = Transmission.builder()
-            .source(src)
-            .target(trg)
-            .transmission(transmitDataNode)
-            .acceptDataNode(acceptDataNode)
-            .build();
-        return transmission;
     }
 
     private void transmitOutputToClient(IFieldAnalysis field) {
@@ -246,10 +185,12 @@ public class InstInputCollector
         IExecutorHandle sourceH = fieldLocation.get();
         if(!sourceH.getQualifier().equals(clientH.getQualifier())) {
             // get the semantic type:
+
             TypeClass outputType = getInput().fieldAccessUtil.resultingFieldType(field);
             if(TypeUtil.isService(outputType)) {
-                ITransmission serviceTransmission = createServiceTransmission(sourceH, clientH, fieldname);
-                getOutput().addOutputTransmission(serviceTransmission);
+                IFieldCast serviceHandleCast = createServiceInstanceHandleTransmissionSerialisation(sourceH, clientH, fieldname, outputType);
+                ITransmission serviceTransmission = createTransmission(sourceH, clientH, fieldname, serviceHandleCast);
+                getOutput().serializeAndTransmitOutput(serviceHandleCast, serviceTransmission);
             } else if(TypeUtil.isDataValueType(outputType) && !TypeUtil.isRefType(outputType)) {
                 String outputTypeQualifier = outputType.getTypeQualifier();
                 Optional<IDataTypeDesc> dataTypeDesc = getInput().getLookupService()
@@ -264,12 +205,103 @@ public class InstInputCollector
                     .semanticType(semanticType)
                     .resultType(semanticType)
                     .build();
-                ITransmission dataTransmission = createDataTransmission(sourceH, clientH, fieldname, typeCoercion);
-                getOutput().addOutputTransmission(dataTransmission);
+                IFieldCast transmissionSerialisation = createDataValueTransmissionSerialisation(sourceH, clientH, fieldname, typeCoercion);
+                ITransmission dataTransmission = createTransmission(sourceH, clientH, fieldname, transmissionSerialisation);
+                getOutput().serializeAndTransmitOutput(transmissionSerialisation, dataTransmission);
             } else {
                 throw new IllegalStateException("Field \n" + field + "\n is being returned to client. But its type \n" + outputType + "\n is not data nor service.");
             }
         }
+    }
+
+
+    private ITransmission createTransmission(IExecutorHandle src, IExecutorHandle trg, String fieldname,
+                                             IFieldCast serialisation) {
+        ITransmitDataNode transmitDataNode = TransmitDataNode.builder()
+            .fieldName(fieldname)
+            .index(getInput().getIndexFactory().create())
+            .hostExecutor(src.getQualifier())
+            .contactInfo(trg.getContactInfo())
+            .marshalling(serialisation.getFirstCast().getMarshalling())
+            .build();
+        IMarshalling receiverMarshal = null;
+        if(serialisation.getSecondCast() != null) {
+            receiverMarshal = serialisation.getSecondCast().getMarshalling();
+        }
+        IAcceptDataNode acceptDataNode = AcceptDataNode.builder()
+            .fieldName(fieldname)
+            .index(getInput().getIndexFactory().create())
+            .hostExecutor(trg.getQualifier())
+            .marshalling(receiverMarshal)
+            .build();
+        ITransmission transmission = Transmission.builder()
+            .source(src)
+            .target(trg)
+            .transmission(transmitDataNode)
+            .acceptDataNode(acceptDataNode)
+            .build();
+        return transmission;
+    }
+
+    private IFieldCast createServiceInstanceHandleTransmissionSerialisation(IExecutorHandle src, IExecutorHandle trg, String fieldname,
+                                                                            TypeClass serviceType) {
+        if(!TypeUtil.isRefType(serviceType) && !TypeUtil.isService(serviceType)) {
+            throw new IllegalArgumentException("Expected service type. Got: " + serviceType);
+        }
+        return createTransmissionSerialisation(src, trg, fieldname, serviceType, serviceType, IRefType.SEMANTIC_SERVICE_INSTANCE_HANDLE_TYPE);
+    }
+
+    private IFieldCast createDataValueTransmissionSerialisation(IExecutorHandle src, IExecutorHandle trg, String fieldname,
+                                                                ITypeCoercion typeCoercion) {
+        if(typeCoercion.getSemanticType() == null) {
+            throw new IllegalArgumentException("Type-coercion has no semantic type: " + typeCoercion);
+        }
+        TypeClass srcType = DataValueType.builder().typeQualifier(typeCoercion.getSourceType()).build();
+        TypeClass trgType = null;
+        if(!typeCoercion.resultsInSemanticType()) {
+            trgType = DataValueType.builder().typeQualifier(typeCoercion.getResultType()).build();
+        }
+        return createTransmissionSerialisation(src, trg, fieldname, srcType, trgType, typeCoercion.getSemanticType());
+    }
+
+    private IFieldCast createTransmissionSerialisation(IExecutorHandle src, IExecutorHandle trg, String fieldname,
+                                                       TypeClass srcType, TypeClass trgType, String semanticTypeName) {
+        IMarshalNode firstCast = null;
+        firstCast = MarshalNode.builder()
+            .index(getInput().getIndexFactory().create())
+            .hostExecutor(src.getQualifier())
+            .marshalling(Marshalling.builder()
+                .valueType(srcType)
+                .direction(IMarshalling.Direction.MARSHAL)
+                .semanticName(semanticTypeName)
+                .build())
+            .fieldName(fieldname)
+            .build();
+        IMarshalling receiverMarshal;
+        if(trgType == null) {
+            // if semantic type equals result type do convert at accept stage:
+            receiverMarshal = null;
+        } else {
+            receiverMarshal = Marshalling.builder()
+                .valueType(trgType)
+                .direction(IMarshalling.Direction.UNMARSHAL)
+                .semanticName(semanticTypeName)
+                .build();
+        }
+        IMarshalNode secondCast = null;
+        if(receiverMarshal != null) {
+            secondCast = MarshalNode.builder()
+                .index(getInput().getIndexFactory().create())
+                .fieldName(fieldname)
+                .hostExecutor(trg.getQualifier())
+                .marshalling(receiverMarshal)
+                .build();
+        }
+
+        return FieldCast.builder()
+            .firstCast(firstCast)
+            .secondCast(secondCast)
+            .build();
     }
 
     private boolean isToBeReturned(IFieldAnalysis field) {
@@ -295,7 +327,12 @@ public class InstInputCollector
 
         private IResolveRequest resolveRequest;
 
-        public DTCInput(IndexFactory indexFactory, SDLLookupService lookupService, InstructionIndexer indexer, Map<Long, IExecutorHandle> instExecutorMap, Map<Long, IMethodResolution> mR, IExecutorHandle clientExecutor, FieldAccessUtil fieldAccessUtil, IResolveRequest resolveRequest) {
+        private OpsSchedule operationSchedule;
+
+        public DTCInput(IndexFactory indexFactory, SDLLookupService lookupService, InstructionIndexer indexer,
+                        Map<Long, IExecutorHandle> instExecutorMap, Map<Long, IMethodResolution> mR,
+                        IExecutorHandle clientExecutor, FieldAccessUtil fieldAccessUtil,
+                        IResolveRequest resolveRequest, OpsSchedule operationSchedule) {
             this.indexFactory = indexFactory;
             this.lookupService = lookupService;
             this.indexer = indexer;
@@ -304,6 +341,7 @@ public class InstInputCollector
             this.clientExecutor = clientExecutor;
             this.fieldAccessUtil = fieldAccessUtil;
             this.resolveRequest = resolveRequest;
+            this.operationSchedule = operationSchedule;
         }
 
         public SDLLookupService getLookupService() {
@@ -339,58 +377,50 @@ public class InstInputCollector
         }
     }
 
-    public static class DTCOutput {
+    public class DTCOutput {
 
         private final Map<String, IExecutorHandle> fieldLocation = new HashMap<>();
 
-        private final Map<Long, List<ITransmission>> preInstTransmissions = new HashMap<>();
+        private List<String> returnFields;
 
-        private final Map<Long, List<IDoubleCast>> preInstCasts = new HashMap<>();
+        private void addPreOp(Long index, ScheduledOperation op) {
+            getInput().operationSchedule.getInstOps(index).addPreOp(op);
+        }
 
-        private final Map<Long, List<IParseConstantNode>> preInstParse = new HashMap<>();
-
-        private final List<ITransmission> outputTransmissions = new ArrayList<>();
+        private void addOutputOp(ScheduledOperation op) {
+            getInput().operationSchedule.getFinalOps().add(op);
+        }
 
         private Optional<IExecutorHandle>  getFieldLocation(String fieldname) {
             return Optional.ofNullable(fieldLocation.get(fieldname));
         }
 
         private void parseConstant(Long index, IParseConstantNode parseC) {
-            this.preInstParse.computeIfAbsent(index, i -> new ArrayList<>()).add(parseC);
+            addPreOp(index, ParseConstant.builder().parseConstantNode(parseC).build());
         }
 
-        private void castField(Long instIndex, IDoubleCast doubleCast) {
-            this.preInstCasts.computeIfAbsent(instIndex, i -> new ArrayList<>()).add(doubleCast);
+        private void castField(Long instIndex, IFieldCast doubleCast) {
+            addPreOp(instIndex, doubleCast);
         }
 
-        private void addTransmission(Long instIndex, ITransmission transmission) {
-            this.preInstTransmissions.computeIfAbsent(instIndex, i -> new ArrayList<>()).add(transmission);
+        private void serializeAndTransmit(Long instIndex, IFieldCast fieldCast, ITransmission transmission) {
+            addPreOp(instIndex, FieldMarshal.builder().marshall(fieldCast.getFirstCast()).build());
+            addPreOp(instIndex, transmission);
+            if(fieldCast.getSecondCast() != null) {
+                addPreOp(instIndex, FieldMarshal.builder().marshall(fieldCast.getSecondCast()).build());
+            }
         }
 
-        private void addOutputTransmission(ITransmission transmission) {
-            this.outputTransmissions.add(transmission);
-        }
-
-        public Map<Long, List<ITransmission>> getPreInstTransmissions() {
-            return preInstTransmissions;
-        }
-
-        public Map<Long, List<IDoubleCast>> getPreInstCasts() {
-            return preInstCasts;
-        }
-
-        public Map<Long, List<IParseConstantNode>> getPreInstParse() {
-            return preInstParse;
-        }
-
-        public List<ITransmission> getOutputTransmissions() {
-            return outputTransmissions;
+        private void serializeAndTransmitOutput(IFieldCast fieldCast, ITransmission transmission) {
+            addOutputOp(FieldMarshal.builder().marshall(fieldCast.getFirstCast()).build());
+            addOutputOp(transmission);
+            if(fieldCast.getSecondCast() != null) {
+                addOutputOp(FieldMarshal.builder().marshall(fieldCast.getSecondCast()).build());
+            }
         }
 
         public List<String> getReturnFields() {
-            return getOutputTransmissions().stream()
-                .map(trans -> trans.getAcceptDataNode().getFieldName())
-                .collect(Collectors.toList());
+            return returnFields;
         }
 
         public void setFieldLocation(String fieldname, IExecutorHandle executorH) {

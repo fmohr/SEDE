@@ -3,8 +3,8 @@ package de.upb.sede.composition.graphs;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
-import java.util.Optional;
 
+import de.upb.sede.composition.IIndexedInstruction;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 
 import javax.annotation.Nullable;

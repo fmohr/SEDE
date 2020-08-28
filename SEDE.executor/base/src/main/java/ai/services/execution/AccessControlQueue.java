@@ -48,12 +48,10 @@ public class AccessControlQueue extends ExecutionRegistry {
     }
 
     private boolean canBeRemoved(Execution execution) {
-        if(execution.isFinished()) {
-            return true;
-        }
-        return execution.isInterrupted();
+        return execution.isFinished() || execution.isInterrupted();
     }
 
+    @Deprecated
     public synchronized boolean computeIfPresent(String execId, Consumer<Execution> execTask) {
         Optional<Execution> first = get(execId);
         if(first.isPresent()) {
@@ -64,6 +62,7 @@ public class AccessControlQueue extends ExecutionRegistry {
         }
     }
 
+    @Deprecated
     public synchronized void compute(String execId, Consumer<Execution> execTask) {
         compute(createOrGet(execId), execTask);
     }

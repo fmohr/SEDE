@@ -49,6 +49,10 @@ public class Task {
         return node;
     }
 
+    public boolean isOfType(Class<? extends BaseNode> baseNodeClass) {
+        return baseNodeClass == null || baseNodeClass.isInstance(node);
+    }
+
     private Execution getExecution() {
         return execution;
     }
@@ -134,6 +138,10 @@ public class Task {
             }
         }
         return false;
+    }
+
+    public String getServiceStoreLocation() {
+        return getExecution().
     }
 
     public enum State {

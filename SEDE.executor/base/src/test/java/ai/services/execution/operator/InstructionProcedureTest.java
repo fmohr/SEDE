@@ -2,6 +2,7 @@ package ai.services.execution.operator;
 
 import ai.services.execution.Execution;
 import ai.services.execution.Task;
+import ai.services.execution.operator.local.InstructionOp;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
 import de.upb.sede.composition.graphs.nodes.InstructionNode;
 import de.upb.sede.composition.types.DataValueType;
@@ -15,9 +16,6 @@ import org.junit.Test;
 
 import demo.math.Gerade;
 import demo.types.Punkt;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class InstructionProcedureTest {
     private static String executor_id = "Executor_id";

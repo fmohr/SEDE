@@ -10,7 +10,7 @@ import org.immutables.value.Value;
 @Value.Modifiable
 @JsonDeserialize(builder = FetchNode.Builder.class)
 public interface IFetchNode extends BaseNode,
-    WithField, WithInPlaceCast, WithExecutorConnection {
+    WithField, WithMarshalling, WithExecutorConnection {
 
     @Override
     default String getText() {

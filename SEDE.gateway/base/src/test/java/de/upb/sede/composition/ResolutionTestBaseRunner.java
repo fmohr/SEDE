@@ -29,7 +29,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 
 public class ResolutionTestBaseRunner {
@@ -110,7 +109,7 @@ public class ResolutionTestBaseRunner {
         this.addExecutor(ExecutorHandle.builder()
             .contactInfo(ExecutorContactInfo.builder()
                 .qualifier(executorId)
-                .hostAddress("host::"+executorId)
+                .uRL("host::"+executorId)
                 .build())
             .capabilities(ExecutorCapabilities.builder()
                 .addServices(services)
@@ -127,7 +126,7 @@ public class ResolutionTestBaseRunner {
             .executorHandle(ExecutorHandle.builder()
                 .contactInfo(ExecutorContactInfo.builder()
                     .qualifier(executorId)
-                    .hostAddress("host::" + executorId)
+                    .uRL("host::" + executorId)
                     .build())
                 .capabilities(ExecutorCapabilities.builder()
                     .addServices(services)

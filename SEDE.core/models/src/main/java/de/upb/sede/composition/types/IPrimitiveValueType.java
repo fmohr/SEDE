@@ -13,7 +13,7 @@ public interface IPrimitiveValueType extends TypeClass, ValueTypeClass {
 
     @Override
     @Value.Lazy
-    default String getQualifier() {
+    default String getTypeQualifier() {
         return getPrimitiveType().toString();
     }
 

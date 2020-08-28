@@ -102,6 +102,7 @@ public class ExecutionGraph {
 
         private GraphNode(BaseNode node) {
             this.node = Objects.requireNonNull(node);
+            Objects.requireNonNull(node.getIndex());
         }
 
         public BaseNode getNode() {

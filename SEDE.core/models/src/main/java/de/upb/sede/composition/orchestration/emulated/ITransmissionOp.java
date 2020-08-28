@@ -1,4 +1,4 @@
-package de.upb.sede.composition.orchestration;
+package de.upb.sede.composition.orchestration.emulated;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.SEDEModelStyle;
@@ -17,7 +17,7 @@ public interface ITransmissionOp extends EmulatedOp {
 
     IWaitForNotificationNode getTargetReadyNtf();
 
-    WaitForNotificationNode getTargetReceivedNtf();
+    IWaitForNotificationNode getTargetReceivedNtf();
 
     ITransmitDataNode getTransmitDataNode();
 

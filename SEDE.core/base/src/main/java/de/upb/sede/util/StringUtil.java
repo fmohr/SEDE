@@ -25,4 +25,10 @@ public class StringUtil {
         }
         return false;
     }
+
+    public static String unexpectedTypeMsg(String expectedType, Object object) {
+        return String.format("Expected type '%s' but found object of unexpected type: Class:'%s'\n .toString(): %s",
+            expectedType, object.getClass().toString(), object.toString());
+    }
+
 }

@@ -28,7 +28,7 @@ public interface BaseNode extends WithExecutorHost, WithAux, WithIndex {
     }
 
     @Value.Lazy
-    default String getNodeType() {
+    default String getNodeKind() {
         return TypeDeserializationDelegate.stripPrefix(this.getClass().getSimpleName());
     }
 
@@ -44,7 +44,7 @@ public interface BaseNode extends WithExecutorHost, WithAux, WithIndex {
 
         @Override
         protected String getTypeField() {
-            return "nodeType";
+            return "nodeKind";
         }
 
     }

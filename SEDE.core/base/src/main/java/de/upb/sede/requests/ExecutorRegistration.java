@@ -22,7 +22,6 @@ public class ExecutorRegistration implements JsonSerializable {
 
 	private Optional<Map<String, Object>> contactInformation = Optional.empty();
 
-
 	private Optional<List<String>> capabilities = Optional.empty();
 
 	private Optional<List<String>> supportedServices = Optional.empty();

@@ -91,7 +91,7 @@ public class FieldTypeRecorder extends InstWiseCompileStep<TCInput, TCOutput> {
         Optional<IServiceDesc> serviceDescOpt = lookupService.lookup(serviceRef);
         if(serviceDescOpt.isPresent()) {
             IServiceInstanceType serviceInstanceType = ServiceInstanceType.builder()
-                .qualifier(returnType)
+                .typeQualifier(returnType)
                 .build();
             return serviceInstanceType;
         }
@@ -102,7 +102,7 @@ public class FieldTypeRecorder extends InstWiseCompileStep<TCInput, TCOutput> {
         Optional<IDataTypeDesc> dataTypeOpt = lookupService.lookup(dataTypeRef);
         if(dataTypeOpt.isPresent()) {
             IDataValueType dataValueType = DataValueType.builder()
-                .qualifier(returnType)
+                .typeQualifier(returnType)
                 .build();
             return dataValueType;
         }

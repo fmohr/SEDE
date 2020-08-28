@@ -20,5 +20,4 @@ public interface IDataTypeRef extends ConstructReference {
 
     @Nullable
     IServiceCollectionRef getServiceCollectionRef();
-
 }

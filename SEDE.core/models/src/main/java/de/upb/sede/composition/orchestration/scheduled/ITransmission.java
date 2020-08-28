@@ -1,4 +1,4 @@
-package de.upb.sede.composition.orchestration;
+package de.upb.sede.composition.orchestration.scheduled;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.SEDEModelStyle;
@@ -11,7 +11,7 @@ import org.immutables.value.Value;
 @Value.Immutable
 @Value.Modifiable
 @JsonDeserialize(builder = Transmission.Builder.class)
-public interface ITransmission {
+public interface ITransmission extends ScheduledOperation{
 
     ITransmitDataNode getTransmission();
 

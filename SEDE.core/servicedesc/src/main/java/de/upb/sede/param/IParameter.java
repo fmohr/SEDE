@@ -15,7 +15,7 @@ public interface IParameter extends IQualifiable {
     Object getDefaultValue();
 
     @Value.Lazy
-    default String getParamType() {
+    default String getParamKind() {
         return TypeDeserializationDelegate.stripPrefix(this.getClass().getSimpleName());
     }
 
@@ -31,7 +31,7 @@ public interface IParameter extends IQualifiable {
 
         @Override
         protected String getTypeField() {
-            return "paramType";
+            return "paramKind";
         }
 
     }

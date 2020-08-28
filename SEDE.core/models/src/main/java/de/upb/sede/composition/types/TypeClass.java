@@ -8,11 +8,10 @@ import org.immutables.value.Value;
 public interface TypeClass {
 
     @Value.Lazy
-    default String getTypeClass() {
+    default String getTypeKind() {
         return TypeDeserializationDelegate.stripPrefix(this.getClass().getSimpleName());
     }
 
-    @Value.Lazy
     String getTypeQualifier();
 
     class DeserializeDelegate extends TypeDeserializationDelegate<TypeClass> {
@@ -27,7 +26,7 @@ public interface TypeClass {
 
         @Override
         protected String getTypeField() {
-            return "typeClass";
+            return "typeKind";
         }
     }
 

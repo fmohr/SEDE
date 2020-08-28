@@ -1,6 +1,7 @@
-package ai.services.execution;
+package ai.services.execution.operator;
 
-import ai.services.execution.operator.TaskOperator;
+import ai.services.execution.Task;
+import ai.services.execution.TaskTransition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

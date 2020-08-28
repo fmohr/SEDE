@@ -70,7 +70,7 @@ public class PlainLibGraphs {
         rr.addInitialContext(FieldType.builder()
                 .fieldname("b")
                 .type(ServiceInstanceType.builder()
-                .qualifier("plainlib.package1.b.B")
+                .typeQualifier("plainlib.package1.b.B")
                 .build())
             .build());
 
@@ -117,7 +117,7 @@ public class PlainLibGraphs {
                 .build())
                 .contactInfo(ExecutorContactInfo.builder()
                     .qualifier("python_executor")
-                    .hostAddress("localhost")
+                    .uRL("localhost")
                 .build())
             .build())
             .build();

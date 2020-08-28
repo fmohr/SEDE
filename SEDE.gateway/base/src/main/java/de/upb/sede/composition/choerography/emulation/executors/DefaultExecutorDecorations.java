@@ -2,7 +2,7 @@ package de.upb.sede.composition.choerography.emulation.executors;
 
 import de.upb.sede.composition.choerography.emulation.EmulationException;
 import de.upb.sede.composition.graphs.nodes.*;
-import de.upb.sede.composition.orchestration.*;
+import de.upb.sede.composition.orchestration.emulated.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +18,7 @@ class DefaultExecutorDecorations {
         decorator = new ServiceLoadStoreDecorator(decorator);
         decorator = new DeleteDecorator(decorator);
         decorator = new CastDecorator(decorator);
+        decorator = new MarshalDecorator(decorator);
         decorator = new FinishDecorator(decorator);
         decorator = new ClientFinishDecorator(decorator);
 
@@ -51,7 +52,7 @@ class DefaultExecutorDecorations {
             produceFields(op.getDFields(), op.getTargetReceivedNtf());
 
 
-            if(op.getDeleteFieldNode() !=null) {
+            if (op.getDeleteFieldNode() != null) {
                 // Rerun delete field operation:
                 IDeleteFieldOp deleteOp = DeleteFieldOp.builder().addAllDFields(op.getDFields()).deleteFieldNode(op.getDeleteFieldNode()).build();
                 getHead().execute(deleteOp);
@@ -173,19 +174,19 @@ class DefaultExecutorDecorations {
     static class CastDecorator extends AbstractExecutorDecorator<ICastOp> {
 
         public CastDecorator(GraphCreatingExecutor delegate) {
-            super(delegate, ICastOp.class, false);
+            super(delegate, ICastOp.class);
         }
 
         @Override
         public EmulatedOp handleOperation(ICastOp op) {
-            ICastTypeNode firstCast = op.getFirstCast();
+            IMarshalNode firstCast = op.getFirstCast();
 
             addNodes(firstCast);
             if (op.getSecondCast() == null) {
                 consumeFields(op.getDFields(), firstCast);
                 produceFields(op.getDFields(), firstCast);
             } else {
-                ICastTypeNode secondCast = op.getSecondCast();
+                IMarshalNode secondCast = op.getSecondCast();
                 addNodes(secondCast);
                 addEdges(
                     edge(firstCast, secondCast)
@@ -201,6 +202,25 @@ class DefaultExecutorDecorations {
         }
     }
 
+    static class MarshalDecorator extends AbstractExecutorDecorator<IMarshalOp> {
+
+        public MarshalDecorator(GraphCreatingExecutor delegate) {
+            super(delegate, IMarshalOp.class);
+        }
+
+        @Override
+        public EmulatedOp handleOperation(IMarshalOp op) {
+            addNodes(op.getMarshalNode());
+            consumeFields(op.getDFields(), op.getMarshalNode());
+            produceFields(op.getDFields(), op.getMarshalNode());
+
+            return MarshalOp.builder()
+                .from(op)
+                .wasHandled(true)
+                .build();
+        }
+
+    }
 
     static class FinishDecorator extends AbstractExecutorDecorator<IFinishOp> {
 
@@ -215,7 +235,7 @@ class DefaultExecutorDecorations {
             addNodes(executionFinishedNtf);
             List<ExecutionGraph.GraphEdge> edges = new ArrayList<>();
             for (BaseNode lastNode : GraphTraversal.lastNodes(getBase().getGraph())) {
-                if(!lastNode.equals(executionFinishedNtf))
+                if (!lastNode.equals(executionFinishedNtf))
                     edges.add(edge(lastNode, executionFinishedNtf));
             }
             addEdges(edges);

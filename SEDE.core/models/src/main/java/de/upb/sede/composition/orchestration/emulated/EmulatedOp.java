@@ -1,4 +1,4 @@
-package de.upb.sede.composition.orchestration;
+package de.upb.sede.composition.orchestration.emulated;
 
 import de.upb.sede.composition.types.TypeClass;
 import de.upb.sede.util.TypeDeserializationDelegate;
@@ -16,7 +16,7 @@ public interface EmulatedOp {
     List<String> getDFields();
 
     @Value.Lazy
-    default String getEmOpType() {
+    default String getEmOpKind() {
         return TypeDeserializationDelegate.stripPrefix(this.getClass().getSimpleName());
     }
 
@@ -32,7 +32,7 @@ public interface EmulatedOp {
 
         @Override
         protected String getTypeField() {
-            return "emulatedOperationType";
+            return "emOpKind";
         }
     }
 

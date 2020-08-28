@@ -93,7 +93,7 @@ class BasicResolveRequestTest extends Specification {
                 initialContext.add FieldType.builder().tap {
                     fieldname "s0"
                     type ServiceInstanceType.builder().tap {
-                        qualifier "c0.S0"
+                        typeQualifier( "c0.S0")
                     }.build()
                 }.build()
             }
@@ -210,14 +210,14 @@ class BasicResolveRequestTest extends Specification {
             initialContext.add FieldType.builder().tap {
                 fieldname "t0"
                 type DataValueType.builder().tap {
-                    qualifier "c0.T0"
+                    typeQualifier "c0.T0"
                 }.build()
             }.build()
             if(addContext) {
                 initialContext.add FieldType.builder().tap {
                     fieldname "t1"
                     type DataValueType.builder().tap {
-                        qualifier "c0.T0"
+                        typeQualifier "c0.T0"
                     }.build()
                 }.build()
             }
@@ -275,13 +275,13 @@ class BasicResolveRequestTest extends Specification {
                 initialContext.add FieldType.builder().tap {
                     fieldname "t0"
                     type DataValueType.builder().tap {
-                        qualifier "c0.T0"
+                        typeQualifier "c0.T0"
                     }.build()
                 }.build()
                 initialContext.add FieldType.builder().tap {
                     fieldname "t1"
                     type DataValueType.builder().tap {
-                        qualifier "c0.T1"
+                        typeQualifier "c0.T1"
                     }.build()
                 }.build()
             }

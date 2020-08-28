@@ -60,7 +60,8 @@ public abstract class TaskDispatch {
 
         acq.compute(getExecution(), exec -> {
             setRunning();
-            exec.registerJobDispatch(this);
+            exec.registerTaskDispatch(this);
+            logger.trace("Registered job dispatch '{}' for task '{}' to execution '{}'.", this, task, exec);
         });
 
         // Task operator will now try to finish the task:
@@ -83,7 +84,7 @@ public abstract class TaskDispatch {
 
         AtomicBoolean toContinue = new AtomicBoolean(false);
         acq.compute(getExecution(), ex -> {
-            ex.deregisterJobDispatch(this);
+            ex.deregisterTaskDispatch(this);
             if(isInterrupted.get()) {
                 task.setError(new InterruptedException());
                 task.set(Task.State.FAILURE);

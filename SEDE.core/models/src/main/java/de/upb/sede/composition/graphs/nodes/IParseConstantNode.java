@@ -5,8 +5,6 @@ import de.upb.sede.SEDEModelStyle;
 import de.upb.sede.core.PrimitiveType;
 import org.immutables.value.Value;
 
-import javax.annotation.Nullable;
-
 @SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable

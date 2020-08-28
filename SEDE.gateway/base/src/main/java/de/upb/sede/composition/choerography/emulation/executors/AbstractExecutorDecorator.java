@@ -2,7 +2,7 @@ package de.upb.sede.composition.choerography.emulation.executors;
 
 import de.upb.sede.composition.choerography.emulation.EmulationException;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.composition.orchestration.EmulatedOp;
+import de.upb.sede.composition.orchestration.emulated.EmulatedOp;
 import de.upb.sede.exec.IExecutorHandle;
 
 import java.util.List;
@@ -22,20 +22,20 @@ abstract class AbstractExecutorDecorator<T extends EmulatedOp> implements GraphC
         setHead(this);
     }
 
-    public AbstractExecutorDecorator(GraphCreatingExecutor delegate, Class<? extends T> handlesOpClass, boolean handlesUnhandledOp) {
+    public AbstractExecutorDecorator(GraphCreatingExecutor delegate, Class<? extends T> handlesOpClass, boolean acceptsHandled) {
         this(delegate, op -> {
            if(!handlesOpClass.isInstance(op)) {
                return false;
            }
-           if(!handlesUnhandledOp) {
-               return !op.wasHandled();
+           if(!acceptsHandled && op.wasHandled()) {
+               return false;
            }
            return true;
         });
     }
 
     public AbstractExecutorDecorator(GraphCreatingExecutor delegate, Class<? extends T> handlesOpClass) {
-        this(delegate, handlesOpClass, true);
+        this(delegate, handlesOpClass, false);
     }
 
 

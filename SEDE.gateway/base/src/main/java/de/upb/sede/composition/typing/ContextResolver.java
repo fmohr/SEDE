@@ -37,7 +37,7 @@ public class ContextResolver extends InstWiseCompileStep<TCInput, TCOutput> {
                 throw TypeCheckException.unexpectedFieldType(contextFieldName, fieldType, "Service Instance", "Service methods can only be invoked with service instances as a context.");
             }
             context.setStatic(false);
-            context.setServiceQualifier(getServiceType(fieldType).getQualifier());
+            context.setServiceQualifier(getServiceType(fieldType).getTypeQualifier());
         } else {
             context.setStatic(true);
             context.setServiceQualifier(inst.getContext());

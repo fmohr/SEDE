@@ -33,13 +33,13 @@ class FieldContextCreator {
 
     def data(String fieldName, String dataValueType) {
         addType(fieldName, DataValueType.builder()
-            .qualifier(dataValueType)
+            .typeQualifier(dataValueType)
             .build());
     }
 
     def serviceInstance(String fieldName, String serviceQualifier) {
         addType(fieldName, ServiceInstanceType.builder()
-            .qualifier(serviceQualifier)
+            .typeQualifier(serviceQualifier)
             .build());
     }
 

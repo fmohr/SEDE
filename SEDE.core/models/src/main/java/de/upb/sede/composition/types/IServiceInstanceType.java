@@ -9,4 +9,5 @@ import org.immutables.value.Value;
 @Value.Modifiable
 @JsonDeserialize(builder = ServiceInstanceType.Builder.class)
 public interface IServiceInstanceType extends TypeClass, ValueTypeClass {
+
 }

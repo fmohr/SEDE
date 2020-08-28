@@ -5,8 +5,10 @@ import de.upb.sede.composition.*;
 import de.upb.sede.composition.choerography.emulation.executors.EmExecutor;
 import de.upb.sede.composition.choerography.emulation.executors.ExecutionParticipants;
 import de.upb.sede.composition.graphs.nodes.*;
-import de.upb.sede.composition.orchestration.*;
+import de.upb.sede.composition.orchestration.emulated.*;
+import de.upb.sede.composition.orchestration.scheduled.*;
 import de.upb.sede.exec.IExecutorHandle;
+import de.upb.sede.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,18 +33,39 @@ public class Orchestration
             getInput().indexer.recreateComposition(),
             getInput().executionParticipants.size());
         for (IIndexedInstruction inst : getInput().indexer) {
-            logger.info(instLog(inst, "Starting to orchestrate on executor {}."), inst.getInstruction().getHostExecutor());
-            fetchData(inst);
-            loadServices(inst);
-            castDataTypes(inst);
-            parseConstants(inst);
+            logger.info(instLog(inst, "Starting to orchestrate on executor {}."),
+                inst.getInstruction().getHostExecutor());
+            Long index = inst.getIndex();
+            performScheduledOperations(inst, getInput().getOpsSchedule().getInstOps(index).getPreInstOps());
             executeInstruction(inst);
-            storeServices(inst);
+            performScheduledOperations(inst, getInput().getOpsSchedule().getInstOps(index).getPostInstOps());
         }
         transmitOutputs();
         letClientWaitForOthers();
     }
 
+    private void performScheduledOperations(IIndexedInstruction inst, List<ScheduledOperation> operations) {
+        for (ScheduledOperation operation : operations) {
+            if (operation instanceof ITransmission) {
+                transmitData(inst, (ITransmission) operation);
+            } else if (operation instanceof IFieldCast) {
+                castDataType(inst, (IFieldCast) operation);
+            } else if (operation instanceof IFieldMarshal) {
+                marshalField(inst, ((IFieldMarshal) operation).getMarshall());
+            } else if (operation instanceof IServiceLoadStore) {
+                IServiceLoadStore serviceLoadStore = (IServiceLoadStore) operation;
+                if (serviceLoadStore.getServiceInstanceStorageNode().isLoadInstruction()) {
+                    loadService(inst, serviceLoadStore.getServiceInstanceStorageNode());
+                } else {
+                    storeService(inst, serviceLoadStore.getServiceInstanceStorageNode());
+                }
+            } else if (operation instanceof IParseConstant) {
+                parseConstant(inst, ((IParseConstant) operation).getParseConstantNode());
+            } else {
+                throw new OrchestrationException(StringUtil.unexpectedTypeMsg("ScheduledOperation", operation));
+            }
+        }
+    }
 
 
     private String instLog(IIndexedInstruction instIndex, String message) {
@@ -83,10 +106,10 @@ public class Orchestration
             .instructionNode(indexedInst.getInstruction())
             .mR(getInput().mr.get(indexedInst.getIndex()));
 
-        if(inst.getContextIsFieldFlag()) {
+        if (inst.getContextIsFieldFlag()) {
             instOpBuilder.addDFields(inst.getContext());
         }
-        if(inst.isAssignment()) {
+        if (inst.isAssignment()) {
             instOpBuilder.addDFields(inst.getFieldName());
         }
         InstructionOp instructionOp = instOpBuilder.build();
@@ -94,131 +117,96 @@ public class Orchestration
         EmExecutor executor = hostOf(indexedInst);
         try {
             executor.execute(instructionOp);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new OrchestrationException(String.format("Error while orchestrating execution of instruction %s:%s",
                 indexedInst.getIndex().toString(), indexedInst.getInstruction().getFMInstruction()), ex);
         }
     }
 
-
-
-    private void castDataTypes(IIndexedInstruction inst) {
-        List<IDoubleCast> casts = getInput().preInstCasts.get(inst.getIndex());
-        if(casts == null || casts.isEmpty()) {
-            logger.info(instLog(inst, "No casts before instruction."));
-            return;
+    private void castDataType(IIndexedInstruction inst, IFieldCast cast) {
+        try {
+            logger.info(instLog(inst, "Casting field {} using:\n{}\nand:\n{}"), cast.getFirstCast().getFieldName(), cast.getFirstCast(), cast.getSecondCast());
+            orchestrateCast(hostOf(inst), cast);
+        } catch (Exception ex) {
+            throw new OrchestrationException(
+                String.format("Error while orchestrating double casting: \n - %s \n - %s",
+                    cast.getFirstCast().getText(),
+                    Optional.ofNullable(cast.getSecondCast()).map(IMarshalNode::getText).orElse("Nop")), ex);
         }
-        for (IDoubleCast cast : casts) {
-            try {
-                logger.info(instLog(inst, "Casting field {} using:\n{}\nand:\n{}"),cast.getFirstCast().getFieldName(), cast.getFirstCast(), cast.getSecondCast());
-                orchestrateCast(hostOf(inst), cast);
-            } catch(Exception ex) {
-                throw new OrchestrationException(
-                    String.format("Error while orchestrating cast of field '%s' from '%s' to '%s' through semantic type '%s'.",
-                        cast.getFirstCast().getFieldName(),
-                        cast.getFirstCast().getSourceType(),
-                        cast.getSecondCast().getTargetType(),
-                        cast.getFirstCast().getTargetType()), ex);
-            }
+    }
+
+    private void marshalField(IIndexedInstruction inst, IMarshalNode marshal) {
+        String taskDescription = instLog(inst, marshal.getText());
+        try {
+            logger.info(taskDescription);
+            orchestrateMarshal(marshal);
+        } catch (Exception ex) {
+            throw new OrchestrationException("Error while marshalling field: \n - " + taskDescription, ex);
         }
     }
 
 
-    private void parseConstants(IIndexedInstruction inst) {
-        List<IParseConstantNode> parses = getInput().preInstParse.get(inst.getIndex());
-        if(parses == null || parses.isEmpty()) {
-            logger.info(instLog(inst, "No const to be parsed before instruction."));
-            return;
-        }
-        for (IParseConstantNode parse : parses) {
-            try {
-                logger.info(instLog(inst, "Parsing constant {}."), parse.getConstantValue());
-                orchestrateParse(hostOf(inst), parse);
-            } catch(Exception ex) {
-                throw new OrchestrationException(
-                    String.format("Error while orchestrating parse of '%s'",
-                        parse.getConstantValue()), ex);
-            }
+    private void parseConstant(IIndexedInstruction inst, IParseConstantNode parse) {
+        try {
+            logger.info(instLog(inst, "Parsing constant {}."), parse.getConstantValue());
+            orchestrateParse(hostOf(inst), parse);
+        } catch (Exception ex) {
+            throw new OrchestrationException(
+                String.format("Error while orchestrating parse of '%s'",
+                    parse.getConstantValue()), ex);
         }
     }
 
-    private void storeServices(IIndexedInstruction inst) {
-        List<IServiceInstanceStorageNode> stores = getInput().postInstStores.get(inst.getIndex());
-        if(stores == null || stores.isEmpty()) {
-            logger.info(instLog(inst, "No service store after instruction."));
-            return;
-        }
-        for (IServiceInstanceStorageNode store : stores) {
-            try {
-                logger.info(instLog(inst, "Storing service: {}"), store);
-                orchestrateStore(store);
-            } catch(Exception ex) {
-                throw new OrchestrationException(String.format("Error while orchestrating service stores for " +
-                        "instruction: %s:%s. " +
-                        "store: %s",
-                    inst.getIndex(), inst.getInstruction().getFMInstruction(), store.toString()), ex);
-            }
+    private void storeService(IIndexedInstruction inst, IServiceInstanceStorageNode store) {
+        try {
+            logger.info(instLog(inst, "Storing service: {}"), store);
+            orchestrateStore(store);
+        } catch (Exception ex) {
+            throw new OrchestrationException(String.format("Error while orchestrating service stores for " +
+                    "instruction: %s:%s. " +
+                    "store: %s",
+                inst.getIndex(), inst.getInstruction().getFMInstruction(), store.toString()), ex);
         }
     }
 
-    private void loadServices(IIndexedInstruction inst) {
-        List<IServiceInstanceStorageNode> loads = getInput().preInstLoads.get(inst.getIndex());
-        if(loads == null || loads.isEmpty()) {
-            logger.info(instLog(inst, "No service loads before instruction."));
-            return;
-        }
-        for (IServiceInstanceStorageNode load : loads) {
-            try {
-                logger.info(instLog(inst, "Loading service: {}"), load);
-                orchestrateLoad(load);
-            } catch(Exception ex) {
-                throw new OrchestrationException(String.format("Error while orchestrating service loads for " +
+    private void loadService(IIndexedInstruction inst, IServiceInstanceStorageNode load) {
+        try {
+            logger.info(instLog(inst, "Loading service: {}"), load);
+            orchestrateLoad(load);
+        } catch (Exception ex) {
+            throw new OrchestrationException(String.format("Error while orchestrating service loads for " +
                     "instruction: %s:%s. " +
                     "load: %s",
-                    inst.getIndex(), inst.getInstruction().getFMInstruction(), load.toString()), ex);
-            }
+                inst.getIndex(), inst.getInstruction().getFMInstruction(), load.toString()), ex);
         }
     }
 
-    private void fetchData(IIndexedInstruction inst) {
-        List<ITransmission> transmissions = getInput().preInstTransmissions.get(inst.getIndex());
-        if(transmissions == null || transmissions.isEmpty()) {
-            logger.info(instLog(inst, "No transmissions before instruction."));
-            return;
-        }
-        for (ITransmission t : transmissions) {
-            try {
-                logger.info(instLog(inst, "Transmitting {} from {} to {}."),
-                    t.getAcceptDataNode().getFieldName(),
-                    ofNullable(t.getSource()).map(IQualifiable::getQualifier).orElse("null"),
-                    t.getTarget().getQualifier());
-                orchestrateTransmission(t);
-            } catch(Exception ex) {
-                throw new OrchestrationException(String.format("Error while orchestrating transmissions for instruction: %s:%s. Transmission: %s",
-                    inst.getIndex().toString(), inst.getInstruction().getFMInstruction(), t.toString()), ex);
-            }
+    private void transmitData(IIndexedInstruction inst, ITransmission t) {
+        try {
+            logger.info(instLog(inst, "Transmitting {} from {} to {}."),
+                t.getAcceptDataNode().getFieldName(),
+                ofNullable(t.getSource()).map(IQualifiable::getQualifier).orElse("null"),
+                t.getTarget().getQualifier());
+            orchestrateTransmission(t);
+        } catch (Exception ex) {
+            throw new OrchestrationException(String.format("Error while orchestrating transmissions for instruction: %s:%s. Transmission: %s",
+                inst.getIndex().toString(), inst.getInstruction().getFMInstruction(), t.toString()), ex);
         }
     }
-
-
 
     private void transmitOutputs() {
-        if(getInput().outputTransmissions == null || getInput().outputTransmissions.isEmpty()) {
-            logger.info("No output transmissions to be done.");
-            return;
-        }
-        for (ITransmission transmission : getInput().outputTransmissions) {
-            try {
-                logger.info("Transmitting output {} from {} to client.",
-                    transmission.getAcceptDataNode().getFieldName(),
-                    transmission.getSource().getQualifier());
-                orchestrateTransmission(transmission);
-            } catch(Exception ex) {
-                throw new OrchestrationException("Error orchestrating transmission of output "
-                    + transmission.getAcceptDataNode().getFieldName() + " from "
-                    + transmission.getSource().getQualifier(), ex);
-            }
-        }
+        List<ScheduledOperation> finalOps = getInput().getOpsSchedule().getFinalOps();
+        // we use a dummy instruction for now to be able to use the logging function.
+        IIndexedInstruction dummyReturnInstruction = IndexedInstruction.builder()
+            .instruction(InstructionNode.builder()
+                .fMInstruction("ReturnOutputs;")
+                .context("return")
+                .contextIsFieldFlag(false)
+                .method("return")
+                .index(-1L)
+                .build())
+            .build();
+        performScheduledOperations(dummyReturnInstruction, finalOps);
     }
 
     private void letClientWaitForOthers() {
@@ -228,7 +216,7 @@ public class Orchestration
         List<IWaitForNotificationNode> clientWaitList = new ArrayList<>();
         for (EmExecutor executor : getInput().executionParticipants) {
             String executorId = executor.getExecutorHandle().getQualifier();
-            if(clientId.equals(executorId)) {
+            if (clientId.equals(executorId)) {
                 continue;
             }
             /*
@@ -248,7 +236,7 @@ public class Orchestration
                 executor.execute(finishOp);
             } catch (Exception ex) {
                 throw new OrchestrationException(String.format("Error while orchestrating " +
-                    "%s on executor %s", finishOp.toString(), executorId) , ex);
+                    "%s on executor %s", finishOp.toString(), executorId), ex);
             }
 
 			/*
@@ -260,7 +248,7 @@ public class Orchestration
                 .hostExecutor(clientId)
                 .build());
         }
-        if(clientWaitList.isEmpty()) {
+        if (clientWaitList.isEmpty()) {
             logger.info("Execution finishes on the client without waiting for other executors.");
             return;
         }
@@ -274,9 +262,9 @@ public class Orchestration
         try {
             logger.info("Let the client executor wait for {} other executors to notify it that their execution is finished.", clientWaitList.size());
             clientExecutor.execute(waitForFinishOp);
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             throw new OrchestrationException(String.format("Error while orchestrating " +
-                "%s notification' on executor %s", waitForFinishOp.toString(), clientId) , ex);
+                "%s notification' on executor %s", waitForFinishOp.toString(), clientId), ex);
         }
 
     }
@@ -284,7 +272,7 @@ public class Orchestration
 
     // -- orchestration methods
 
-    private void orchestrateCast(EmExecutor executor, IDoubleCast cast) throws EmulationException {
+    private void orchestrateCast(EmExecutor executor, IFieldCast cast) throws EmulationException {
         ICastOp castOp = CastOp.builder()
             .firstCast(cast.getFirstCast())
             .secondCast(cast.getSecondCast())
@@ -293,6 +281,16 @@ public class Orchestration
 
         executor.execute(castOp);
 
+    }
+
+    private void orchestrateMarshal(IMarshalNode marshal) throws EmulationException {
+        IMarshalOp marshalOp = MarshalOp.builder()
+            .marshalNode(marshal)
+            .addDFields(marshal.getFieldName())
+            .build();
+
+        EmExecutor executor = host(requireNonNull(marshal.getHostExecutor()));
+        executor.execute(marshalOp);
     }
 
     private void orchestrateParse(EmExecutor executor, IParseConstantNode parse) throws EmulationException {
@@ -304,7 +302,7 @@ public class Orchestration
     }
 
     private void orchestrateStore(IServiceInstanceStorageNode store) throws EmulationException {
-        if(store.isLoadInstruction()) {
+        if (store.isLoadInstruction()) {
             throw new IllegalStateException("Expected post inst store opeation but found service load.");
         }
         IServiceLoadStoreOp op = ServiceLoadStoreOp.builder()
@@ -317,7 +315,7 @@ public class Orchestration
     }
 
     private void orchestrateLoad(IServiceInstanceStorageNode load) throws EmulationException {
-        if(!load.isLoadInstruction()) {
+        if (!load.isLoadInstruction()) {
             throw new IllegalStateException("Expected pre inst load operation but found service store.");
         }
         IServiceLoadStoreOp op = ServiceLoadStoreOp.builder()
@@ -427,33 +425,23 @@ public class Orchestration
 
         private final ExecutionParticipants executionParticipants;
 
-        private final Map<Long, List<ITransmission>> preInstTransmissions;
+        private final OpsSchedule opsSchedule;
 
-        private final Map<Long, List<IDoubleCast>> preInstCasts;
-
-        private final Map<Long, List<IParseConstantNode>> preInstParse;
-
-        private final List<ITransmission> outputTransmissions;
-
-        private final Map<Long, List<IServiceInstanceStorageNode>> preInstLoads;
-
-        private final Map<Long, List<IServiceInstanceStorageNode>> postInstStores;
-
-        public OrchestrationInput(NotificationFactory notificationFactory, IndexFactory indexFactory, InstructionIndexer indexer, Map<Long, IMethodResolution> mr, Map<Long, IExecutorHandle> instExecutorMap, ExecutionParticipants executionParticipants, Map<Long, List<ITransmission>> preInstTransmissions, Map<Long, List<IDoubleCast>> preInstCasts, Map<Long, List<IParseConstantNode>> preInstParse, List<ITransmission> outputTransmissions, Map<Long, List<IServiceInstanceStorageNode>> preInstLoads, Map<Long, List<IServiceInstanceStorageNode>> postInstStores) {
+        public OrchestrationInput(NotificationFactory notificationFactory, IndexFactory indexFactory, InstructionIndexer indexer,
+                                  Map<Long, IMethodResolution> mr, Map<Long, IExecutorHandle> instExecutorMap, ExecutionParticipants executionParticipants,
+                                  OpsSchedule scheduledOperation) {
             this.notificationFactory = notificationFactory;
             this.indexFactory = indexFactory;
             this.indexer = indexer;
             this.mr = mr;
             this.instExecutorMap = instExecutorMap;
             this.executionParticipants = executionParticipants;
-            this.preInstTransmissions = preInstTransmissions;
-            this.preInstCasts = preInstCasts;
-            this.preInstParse = preInstParse;
-            this.outputTransmissions = outputTransmissions;
-            this.preInstLoads = preInstLoads;
-            this.postInstStores = postInstStores;
+            this.opsSchedule = scheduledOperation;
         }
 
+        public OpsSchedule getOpsSchedule() {
+            return opsSchedule;
+        }
     }
 
     static class OrchestrationOutput {

@@ -10,6 +10,10 @@ import org.immutables.value.Value;
 @JsonDeserialize(builder = RefType.Builder.class)
 public interface IRefType extends TypeClass {
 
+    String SERVICE_INSTANCE_HANDLE_TYPE = "ServiceInstanceHandle";
+
+    String SEMANTIC_SERVICE_INSTANCE_HANDLE_TYPE = "ServiceInstanceHandle.json";
+
     ValueTypeClass getTypeOfRef();
 
     @Override

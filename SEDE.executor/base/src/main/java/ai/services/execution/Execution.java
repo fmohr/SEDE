@@ -31,7 +31,7 @@ public class Execution implements FieldContext {
 
     private final Set<Task> waitingTasks = new HashSet<>();
 
-    private final Set<TaskDispatch> activeTasks = new HashSet<>();
+    private final Set<TaskDispatch> runningTaskDispatches = new HashSet<>();
 
     private final Map<String, SEDEObject> context = new HashMap<>();
 
@@ -101,7 +101,7 @@ public class Execution implements FieldContext {
 
     public synchronized void interruptExecution() {
         this.isInterrupted = true;
-        this.activeTasks.forEach(TaskDispatch::interrupt);
+        this.runningTaskDispatches.forEach(TaskDispatch::interrupt);
     }
 
     synchronized Optional<Task> takeNextWaitingTask(WorkerProfile workerProfile) {
@@ -177,12 +177,12 @@ public class Execution implements FieldContext {
             throw new IllegalArgumentException("field is unassigned: " + fieldname);
     }
 
-    public synchronized void registerJobDispatch(TaskDispatch taskDispatch) {
-        this.activeTasks.add(taskDispatch);
+    public synchronized void registerTaskDispatch(TaskDispatch taskDispatch) {
+        this.runningTaskDispatches.add(taskDispatch);
     }
 
-    public synchronized void deregisterJobDispatch(TaskDispatch taskDispatch) {
-        this.activeTasks.remove(taskDispatch);
+    public synchronized void deregisterTaskDispatch(TaskDispatch taskDispatch) {
+        this.runningTaskDispatches.remove(taskDispatch);
     }
 
     static class FinalTaskOperation implements GraphOperator {

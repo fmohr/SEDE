@@ -2,7 +2,7 @@ package de.upb.sede.composition.choerography.emulation.executors;
 
 import de.upb.sede.composition.choerography.emulation.EmulationException;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.composition.orchestration.EmulatedOp;
+import de.upb.sede.composition.orchestration.emulated.EmulatedOp;
 import de.upb.sede.exec.IExecutorHandle;
 
 import java.util.*;

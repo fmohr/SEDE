@@ -178,7 +178,7 @@ public class ToHASCOComponentsTranslator {
         else if((serviceParam instanceof IInterfaceParameter)) {
             return null;
         } else {
-            logger.warn("Parameter unrecognized. No translation for param type: {}", serviceParam.getParamType());
+            logger.warn("Parameter unrecognized. No translation for param type: {}", serviceParam.getParamKind());
             return null;
         }
         return param;

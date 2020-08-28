@@ -15,15 +15,15 @@ public abstract class AbstractOperator implements TaskOperator {
             return runTask(task);
         } catch (Exception exception) {
             logger.error("Error during execution of task {}, performer of type: {}",
-                task.getNode().getText(), this.getClass().getSimpleName(), exception);
+                task, this.getClass().getSimpleName(), exception);
             return TaskTransition.error(exception);
         } catch(Throwable thr) {
             logger.error("Unexpected throwable while executing task {}, performer of type: {}. Masking it in a RuntimeException",
-                task.getNode().getText(), this.getClass().getSimpleName(), thr);
+                task, this.getClass().getSimpleName(), thr);
             return TaskTransition.error(new Exception(thr.getMessage(), thr));
         }
     }
 
-    abstract TaskTransition runTask(Task t) throws Exception;
+    public abstract TaskTransition runTask(Task t) throws Exception;
 
 }

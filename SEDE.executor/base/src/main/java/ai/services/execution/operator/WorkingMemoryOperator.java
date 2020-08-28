@@ -36,7 +36,7 @@ public abstract class WorkingMemoryOperator<T> extends AbstractOperator {
 	}
 
 	@Override
-    TaskTransition runTask(Task task) {
+    public TaskTransition runTask(Task task) {
 		try {
 			return runTask(task, fetchData(task));
         } catch (Exception exception) {

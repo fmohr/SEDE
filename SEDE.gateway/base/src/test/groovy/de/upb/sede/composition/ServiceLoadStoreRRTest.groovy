@@ -207,7 +207,7 @@ class ServiceLoadStoreRRTest extends Specification {
                 FieldType.builder().tap {
                     fieldname("s0")
                     type(ServiceInstanceType.builder()
-                        .qualifier("c0.S0")
+                        .typeQualifier("c0.S0")
                         .build())
                 }.build()
             )

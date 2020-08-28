@@ -1,8 +1,8 @@
-package de.upb.sede.composition.orchestration;
+package de.upb.sede.composition.orchestration.emulated;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.composition.graphs.nodes.ICastTypeNode;
+import de.upb.sede.composition.graphs.nodes.IMarshalNode;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
@@ -13,10 +13,10 @@ import javax.annotation.Nullable;
 @JsonDeserialize(builder = CastOp.Builder.class)
 public interface ICastOp extends EmulatedOp {
 
-    ICastTypeNode getFirstCast();
+    IMarshalNode getFirstCast();
 
     @Nullable
-    ICastTypeNode getSecondCast();
+    IMarshalNode getSecondCast();
 
 
 

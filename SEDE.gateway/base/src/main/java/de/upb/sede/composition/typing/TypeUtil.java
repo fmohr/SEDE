@@ -2,10 +2,11 @@ package de.upb.sede.composition.typing;
 
 import de.upb.sede.IServiceRef;
 import de.upb.sede.SDLLookupService;
-import de.upb.sede.composition.graphs.nodes.CastTypeNode;
-import de.upb.sede.composition.graphs.nodes.ICastTypeNode;
+import de.upb.sede.composition.graphs.nodes.MarshalNode;
+import de.upb.sede.composition.graphs.nodes.IMarshalNode;
 import de.upb.sede.composition.types.*;
-import de.upb.sede.composition.typing.TypeCheckException;
+import de.upb.sede.composition.types.serialization.IMarshalling;
+import de.upb.sede.composition.types.serialization.Marshalling;
 import de.upb.sede.core.PrimitiveType;
 import de.upb.sede.exec.IServiceDesc;
 import de.upb.sede.types.IDataTypeDesc;
@@ -59,22 +60,23 @@ public class TypeUtil {
         if(isRefType(tc)) {
             return String.format("Ref<%s>", typeToText(((IRefType)tc).getTypeOfRef()));
         }
-        return tc.getTypeClass();
+        return tc.getTypeKind();
     }
 
-    @Deprecated
-    public static boolean isServiceHandleCastNode(ICastTypeNode castTypeNode) {
-        return castTypeNode.getSourceType().equals("SERVICE_INSTANCE_HANDLE")
-            && castTypeNode.getTargetType().equals("SERVICE_INSTANCE_HANDLE")
-            && !castTypeNode.castToSemantic();
+    public static boolean isServiceHandleCastNode(IMarshalNode castTypeNode) {
+        return isService(castTypeNode.getMarshalling().getValueType());
     }
 
-    @Deprecated
-    public static CastTypeNode.Builder createCastToServiceHandleNode() {
-        return CastTypeNode.builder()
-            .sourceType("SERVICE_INSTANCE_HANDLE")
-            .targetType("SERVICE_INSTANCE_HANDLE")
-            .castToSemantic(false);
+    public static MarshalNode.Builder createCastToServiceHandleNode(IMarshalling.Direction direction,
+                                                                    TypeClass serviceType) {
+        if(!TypeUtil.isService(serviceType)) {
+            throw new IllegalArgumentException("Type is not service: " + serviceType);
+        }
+        return MarshalNode.builder()
+            .marshalling(Marshalling.builder()
+                .direction(direction)
+                .valueType(serviceType)
+                .build());
     }
 
     public static TypeClass getTypeClassOf(SDLLookupService lookupService, String returnType) {
@@ -100,7 +102,7 @@ public class TypeUtil {
         Optional<IServiceDesc> serviceDescOpt = lookupService.lookup(serviceRef);
         if(serviceDescOpt.isPresent()) {
             IServiceInstanceType serviceInstanceType = ServiceInstanceType.builder()
-                .qualifier(returnType)
+                .typeQualifier(returnType)
                 .build();
             return serviceInstanceType;
         }
@@ -111,7 +113,7 @@ public class TypeUtil {
         Optional<IDataTypeDesc> dataTypeOpt = lookupService.lookup(dataTypeRef);
         if(dataTypeOpt.isPresent()) {
             IDataValueType dataValueType = DataValueType.builder()
-                .qualifier(returnType)
+                .typeQualifier(returnType)
                 .build();
             return dataValueType;
         }

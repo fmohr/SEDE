@@ -63,8 +63,8 @@ public class TypeUtil {
         return tc.getTypeKind();
     }
 
-    public static boolean isServiceHandleCastNode(IMarshalNode castTypeNode) {
-        return isService(castTypeNode.getMarshalling().getValueType());
+    public static boolean isServiceHandleCastNode(IMarshalNode marshalNode) {
+        return isService(marshalNode.getMarshalling().getValueType());
     }
 
     public static MarshalNode.Builder createCastToServiceHandleNode(IMarshalling.Direction direction,

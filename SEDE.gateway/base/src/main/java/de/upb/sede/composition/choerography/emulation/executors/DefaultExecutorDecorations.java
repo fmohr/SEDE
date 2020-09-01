@@ -179,20 +179,20 @@ class DefaultExecutorDecorations {
 
         @Override
         public EmulatedOp handleOperation(ICastOp op) {
-            IMarshalNode firstCast = op.getFirstCast();
+            IMarshalNode firstMarshal = op.getFirstCast();
 
-            addNodes(firstCast);
+            addNodes(firstMarshal);
             if (op.getSecondCast() == null) {
-                consumeFields(op.getDFields(), firstCast);
-                produceFields(op.getDFields(), firstCast);
+                consumeFields(op.getDFields(), firstMarshal);
+                produceFields(op.getDFields(), firstMarshal);
             } else {
-                IMarshalNode secondCast = op.getSecondCast();
-                addNodes(secondCast);
+                IMarshalNode secondMarshal = op.getSecondCast();
+                addNodes(secondMarshal);
                 addEdges(
-                    edge(firstCast, secondCast)
+                    edge(firstMarshal, secondMarshal)
                 );
-                consumeFields(op.getDFields(), firstCast);
-                produceFields(op.getDFields(), secondCast);
+                consumeFields(op.getDFields(), firstMarshal);
+                produceFields(op.getDFields(), secondMarshal);
             }
 
             return CastOp.builder()

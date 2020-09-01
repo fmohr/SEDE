@@ -11,7 +11,7 @@ import org.immutables.value.Value;
 @JsonDeserialize(builder = FieldMarshal.Builder.class)
 public interface IFieldMarshal extends ScheduledOperation {
 
-    IMarshalNode getMarshall();
+    IMarshalNode getMarshal();
 
 }
 

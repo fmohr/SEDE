@@ -40,7 +40,7 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
         if(op instanceof IServiceLoadStoreOp) {
             op = injectServiceSerializationAuxData((IServiceLoadStoreOp) op);
         } else if(op instanceof ICastOp){
-            op = injectCastingAuxData((ICastOp) op);
+            op = injectMarshallingAuxData((ICastOp) op);
         } else if(op instanceof IInstructionOp) {
             op = injectInstructionAuxData((IInstructionOp) op);
         }
@@ -59,30 +59,30 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
             .build();
     }
 
-    private EmulatedOp injectCastingAuxData(ICastOp castOp) {
-        IMarshalNode firstCast = injectCastingAuxData(castOp.getFirstCast());
-        IMarshalNode secondCast = injectCastingAuxData(castOp.getSecondCast());
+    private EmulatedOp injectMarshallingAuxData(ICastOp castOp) {
+        IMarshalNode firstMarshal = injectMarshallingAuxData(castOp.getFirstCast());
+        IMarshalNode secondMarshal = injectMarshallingAuxData(castOp.getSecondCast());
         return CastOp.builder()
             .from(castOp)
-            .firstCast(firstCast)
-            .secondCast(secondCast)
+            .firstCast(firstMarshal)
+            .secondCast(secondMarshal)
             .build();
     }
 
-    private IMarshalNode injectCastingAuxData(IMarshalNode castTypeNode) {
-        if(castTypeNode == null) {
+    private IMarshalNode injectMarshallingAuxData(IMarshalNode marshalNode) {
+        if(marshalNode == null) {
             return null;
         }
-        IMarshalling marshalling = castTypeNode.getMarshalling();
+        IMarshalling marshalling = marshalNode.getMarshalling();
         if(!(marshalling.getValueType() instanceof IDataValueType)) {
             logger.error("CastTypeNode with a marshalling that is not of type IDataValue: {}", marshalling);
-            throw new OrchestrationException("Malformed Marshalling in CastTypeNode: " + castTypeNode);
+            throw new OrchestrationException("Malformed Marshalling in CastTypeNode: " + marshalNode);
         }
         IDataValueType dataValueType = (IDataValueType) marshalling.getValueType();
 
         Map typeAux = getTypeAux(dataValueType.getTypeQualifier());
         return MarshalNode.builder()
-            .from(castTypeNode)
+            .from(marshalNode)
             .putAllRuntimeAuxiliaries(typeAux)
             .build();
     }

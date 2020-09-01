@@ -51,7 +51,7 @@ public class Orchestration
             } else if (operation instanceof IFieldCast) {
                 castDataType(inst, (IFieldCast) operation);
             } else if (operation instanceof IFieldMarshal) {
-                marshalField(inst, ((IFieldMarshal) operation).getMarshall());
+                marshalField(inst, ((IFieldMarshal) operation).getMarshal());
             } else if (operation instanceof IServiceLoadStore) {
                 IServiceLoadStore serviceLoadStore = (IServiceLoadStore) operation;
                 if (serviceLoadStore.getServiceInstanceStorageNode().isLoadInstruction()) {

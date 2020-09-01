@@ -1,13 +1,17 @@
 package de.upb.sede.composition
 
-
+import de.upb.sede.composition.graphs.nodes.AcceptDataNode
 import de.upb.sede.composition.graphs.nodes.IAcceptDataNode
+import de.upb.sede.composition.graphs.nodes.IMarshalNode
 import de.upb.sede.composition.graphs.nodes.ITransmitDataNode
+import de.upb.sede.composition.types.DataValueType
 import de.upb.sede.composition.types.IDataValueType
 import de.upb.sede.composition.types.IRefType
 import de.upb.sede.composition.types.IServiceInstanceType
+import de.upb.sede.composition.types.RefType
 import de.upb.sede.composition.types.ServiceInstanceType
 import de.upb.sede.composition.types.serialization.IMarshalling
+import de.upb.sede.composition.types.serialization.Marshalling
 import de.upb.sede.core.ServiceInstanceHandle
 import spock.lang.Specification
 
@@ -49,7 +53,7 @@ class TransmissionRRTest extends Specification {
         testRunner.assertSimulationExceptionMatches(null)
         testRunner.writeOutputs()
 
-        def cc = testRunner.getCc()
+//        def cc = testRunner.getCc()
         def ch = testRunner.getChoreography()
 
         def clientGraph = ch.compositionGraph.find { it.client }
@@ -133,9 +137,79 @@ class TransmissionRRTest extends Specification {
         [res0T, res1T].each {
             it.tap {
                 assert marshalling.direction == IMarshalling.Direction.MARSHAL
-                assert marshalling.valueType instanceof IServiceInstanceType
+                assert marshalling.valueType instanceof IRefType
             }
         }
+
+        def res0A = clientGraph.nodes.find { (it instanceof IAcceptDataNode) && it.fieldName == "s0" } as IAcceptDataNode
+        def res1A = clientGraph.nodes.find { (it instanceof IAcceptDataNode) && it.fieldName == "s1" } as IAcceptDataNode
+
+        res0A == AcceptDataNode.builder()
+            .index(res0A.index)
+            .fieldName("s0")
+            .hostExecutor("client")
+            .marshalling(Marshalling.builder()
+                .direction(IMarshalling.Direction.UNMARSHAL)
+                .semanticName(IRefType.SEMANTIC_SERVICE_INSTANCE_HANDLE_TYPE)
+                .valueType(RefType.builder().typeOfRef(ServiceInstanceType.builder().typeQualifier("c0.S0").build()).build())
+                .build())
+            .build()
+        res1A == AcceptDataNode.builder()
+            .index(res1A.index)
+            .fieldName("s1")
+            .hostExecutor("client")
+            .marshalling(Marshalling.builder()
+                .direction(IMarshalling.Direction.UNMARSHAL)
+                .semanticName(IRefType.SEMANTIC_SERVICE_INSTANCE_HANDLE_TYPE)
+                .valueType(RefType.builder().typeOfRef(ServiceInstanceType.builder().typeQualifier("c0.S1").build()).build())
+                .build())
+            .build()
+
+        def ret0T = ex1Graph.nodes.find { (it instanceof ITransmitDataNode) && it.fieldName == "t0" } as ITransmitDataNode
+        def ret1T = ex1Graph.nodes.find { (it instanceof ITransmitDataNode) && it.fieldName == "t1" } as ITransmitDataNode
+
+        ret0T.tap {
+            assert hostExecutor == "executor1"
+            marshalling.tap {
+                assert direction == IMarshalling.Direction.MARSHAL
+                assert semanticName == "sem0"
+                assert valueType == DataValueType.builder().typeQualifier("c0.T0").build()
+            }
+        }
+        ret1T.tap {
+            assert hostExecutor == "executor1"
+            marshalling.tap {
+                assert direction == IMarshalling.Direction.MARSHAL
+                assert semanticName == "sem1"
+                assert valueType == DataValueType.builder().typeQualifier("c0.T1").build()
+            }
+        }
+
+        /*
+         * The client should receive the fields.
+         * But there are no MarshalNodes because we dont have any information on what is expected.
+         */
+
+        def ret0A = clientGraph.nodes.find { (it instanceof IAcceptDataNode) && it.fieldName == "t0" } as IAcceptDataNode
+        def ret1A = clientGraph.nodes.find { (it instanceof IAcceptDataNode) && it.fieldName == "t1" } as IAcceptDataNode
+
+        ret0A.tap {
+            assert hostExecutor == "client"
+            assert marshalling == null
+        }
+        ret1A.tap {
+            assert hostExecutor == "client"
+            assert marshalling == null
+        }
+
+        /*
+         * Check if the fields are marshalled before and after they are sent:
+         */
+        def s1HandleMarshal = clientGraph.nodes.find { (it instanceof IMarshalNode) && it.fieldName == "s1" && it.marshalling.direction == IMarshalling.Direction.MARSHAL } as IMarshalNode
+        def s1HandleUnmarshal = ex2Graph.nodes.find { (it instanceof IMarshalNode) && it.fieldName == "s1" && it.marshalling.direction == IMarshalling.Direction.UNMARSHAL } as IMarshalNode
+
+        RRTestHelpers.assertExecutedBefore(clientGraph, s1HandleMarshal, s1HandleT)
+        RRTestHelpers.assertExecutedBefore(ex2Graph, s1HandleA, s1HandleUnmarshal)
 
     }
 

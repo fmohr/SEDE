@@ -248,6 +248,12 @@ public class InstInputCollector
         if(!TypeUtil.isRefType(serviceType) && !TypeUtil.isService(serviceType)) {
             throw new IllegalArgumentException("Expected service type. Got: " + serviceType);
         }
+        if(!TypeUtil.isRefType(serviceType)) {
+            // TODO manually change the type of the service handle to a ref type.
+            // What we need to do is another type checking after the executors have been selected and transmission and service load store nodes has been added.
+            // Because after a load or a store the type of the service field transition from (and to) IRefType
+            serviceType = RefType.builder().typeOfRef((ValueTypeClass) serviceType).build();
+        }
         return createTransmissionSerialisation(src, trg, fieldname, serviceType, serviceType, IRefType.SEMANTIC_SERVICE_INSTANCE_HANDLE_TYPE);
     }
 
@@ -266,8 +272,8 @@ public class InstInputCollector
 
     private IFieldCast createTransmissionSerialisation(IExecutorHandle src, IExecutorHandle trg, String fieldname,
                                                        TypeClass srcType, TypeClass trgType, String semanticTypeName) {
-        IMarshalNode firstCast = null;
-        firstCast = MarshalNode.builder()
+        IMarshalNode firstMarshal = null;
+        firstMarshal = MarshalNode.builder()
             .index(getInput().getIndexFactory().create())
             .hostExecutor(src.getQualifier())
             .marshalling(Marshalling.builder()
@@ -288,9 +294,9 @@ public class InstInputCollector
                 .semanticName(semanticTypeName)
                 .build();
         }
-        IMarshalNode secondCast = null;
+        IMarshalNode secondMarshal = null;
         if(receiverMarshal != null) {
-            secondCast = MarshalNode.builder()
+            secondMarshal = MarshalNode.builder()
                 .index(getInput().getIndexFactory().create())
                 .fieldName(fieldname)
                 .hostExecutor(trg.getQualifier())
@@ -299,8 +305,8 @@ public class InstInputCollector
         }
 
         return FieldCast.builder()
-            .firstCast(firstCast)
-            .secondCast(secondCast)
+            .firstCast(firstMarshal)
+            .secondCast(secondMarshal)
             .build();
     }
 
@@ -404,18 +410,18 @@ public class InstInputCollector
         }
 
         private void serializeAndTransmit(Long instIndex, IFieldCast fieldCast, ITransmission transmission) {
-            addPreOp(instIndex, FieldMarshal.builder().marshall(fieldCast.getFirstCast()).build());
+            addPreOp(instIndex, FieldMarshal.builder().marshal(fieldCast.getFirstCast()).build());
             addPreOp(instIndex, transmission);
             if(fieldCast.getSecondCast() != null) {
-                addPreOp(instIndex, FieldMarshal.builder().marshall(fieldCast.getSecondCast()).build());
+                addPreOp(instIndex, FieldMarshal.builder().marshal(fieldCast.getSecondCast()).build());
             }
         }
 
         private void serializeAndTransmitOutput(IFieldCast fieldCast, ITransmission transmission) {
-            addOutputOp(FieldMarshal.builder().marshall(fieldCast.getFirstCast()).build());
+            addOutputOp(FieldMarshal.builder().marshal(fieldCast.getFirstCast()).build());
             addOutputOp(transmission);
             if(fieldCast.getSecondCast() != null) {
-                addOutputOp(FieldMarshal.builder().marshall(fieldCast.getSecondCast()).build());
+                addOutputOp(FieldMarshal.builder().marshal(fieldCast.getSecondCast()).build());
             }
         }
 

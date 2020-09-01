@@ -2,6 +2,7 @@ package ai.services.execution;
 
 import ai.services.execution.local.GraphOperator;
 import ai.services.execution.operator.TaskOperator;
+import ai.services.executor.AccessControlQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +23,7 @@ public abstract class TaskDispatch {
 
     private final AccessControlQueue acq;
 
-    private Execution execution;
+    private GraphTaskExecution execution;
 
     private Task task;
 
@@ -34,7 +35,7 @@ public abstract class TaskDispatch {
         this.acq = acq;
     }
 
-    protected Execution getExecution() {
+    protected GraphTaskExecution getExecution() {
         return Objects.requireNonNull(execution);
     }
 

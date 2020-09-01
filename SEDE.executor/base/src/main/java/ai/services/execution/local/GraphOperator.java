@@ -1,7 +1,7 @@
 package ai.services.execution.local;
 
 import ai.services.execution.Task;
-import ai.services.execution.Execution;
+import ai.services.execution.GraphTaskExecution;
 
 /**
  * This operator is applied on the graph.
@@ -12,6 +12,6 @@ import ai.services.execution.Execution;
  */
 public interface GraphOperator {
 
-    void perform(Execution ex, Task performer);
+    void perform(GraphTaskExecution ex, Task performer);
 
 }

@@ -116,7 +116,7 @@ public class ChoreographyService implements IChoreographyService {
 
         ServiceLoadStoreCollector slsc = new ServiceLoadStoreCollector();
         slsc.setInput(new ServiceLoadStoreCollector.SLSCInput(indexFactory, mrMap, fieldAccessUtil, candidateSelection,
-            clientEH, resolveRequest.getResolvePolicy(), operationSchedule));
+            clientEH, resolveRequest.getResolvePolicy(), operationSchedule, initialServices));
         slsc.run();
 
         ExecutorFactory ef = new ExecutorFactory(lookupService);

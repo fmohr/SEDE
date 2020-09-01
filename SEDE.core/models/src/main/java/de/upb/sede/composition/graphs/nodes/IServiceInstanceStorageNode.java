@@ -5,6 +5,8 @@ import de.upb.sede.SEDEModelStyle;
 import de.upb.sede.WithField;
 import org.immutables.value.Value;
 
+import javax.annotation.Nullable;
+
 @SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
@@ -16,6 +18,9 @@ public interface IServiceInstanceStorageNode extends BaseNode,
     default String getServiceInstanceFieldName() {
         return getFieldName();
     }
+
+    @Nullable
+    String getInstanceIdentifier();
 
     String getServiceClasspath();
 

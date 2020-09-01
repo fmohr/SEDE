@@ -1,5 +1,6 @@
-package ai.services.execution;
+package ai.services.executor;
 
+import ai.services.execution.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,9 +36,9 @@ public class AccessControlQueue extends ExecutionRegistry {
     }
 
     private Optional<TaskEntry> searchNextJob(WorkerProfile workerProfile) {
-        Iterator<Execution> it = iterate();
+        Iterator<GraphTaskExecution> it = iterate();
         while(it.hasNext()) {
-            Execution execution = it.next();
+            GraphTaskExecution execution = it.next();
             Optional<Task> task = execution.takeNextWaitingTask(workerProfile);
             if(task.isPresent()) {
                 TaskEntry job = new TaskEntry(this, execution, task.get());
@@ -47,13 +48,13 @@ public class AccessControlQueue extends ExecutionRegistry {
         return Optional.empty();
     }
 
-    private boolean canBeRemoved(Execution execution) {
+    private boolean canBeRemoved(GraphTaskExecution execution) {
         return execution.isFinished() || execution.isInterrupted();
     }
 
     @Deprecated
-    public synchronized boolean computeIfPresent(String execId, Consumer<Execution> execTask) {
-        Optional<Execution> first = get(execId);
+    public synchronized boolean computeIfPresent(String execId, Consumer<GraphTaskExecution> execTask) {
+        Optional<GraphTaskExecution> first = get(execId);
         if(first.isPresent()) {
             compute(first.get(), execTask);
             return true;
@@ -63,11 +64,11 @@ public class AccessControlQueue extends ExecutionRegistry {
     }
 
     @Deprecated
-    public synchronized void compute(String execId, Consumer<Execution> execTask) {
+    public synchronized void compute(String execId, Consumer<GraphTaskExecution> execTask) {
         compute(createOrGet(execId), execTask);
     }
 
-    public synchronized void compute(final Execution executor, Consumer<Execution> execTask) {
+    public synchronized void compute(final GraphTaskExecution executor, Consumer<GraphTaskExecution> execTask) {
         this.compute(() -> execTask.accept(executor));
     }
 
@@ -76,9 +77,9 @@ public class AccessControlQueue extends ExecutionRegistry {
         this.notifyAll();
     }
 
-    public synchronized Execution waitUntil(String execId,
-                                            Predicate<Optional<Execution>> condition) throws InterruptedException {
-        Optional<Execution> first = get(execId);
+    public synchronized GraphTaskExecution waitUntil(String execId,
+                                                     Predicate<Optional<GraphTaskExecution>> condition) throws InterruptedException {
+        Optional<GraphTaskExecution> first = get(execId);
         while(!condition.test(first)) {
             this.wait();
             if(!first.isPresent()) {
@@ -91,6 +92,5 @@ public class AccessControlQueue extends ExecutionRegistry {
     public synchronized void waitUntilFinished(String execId) throws InterruptedException {
         waitUntil(execId, exec -> exec.map(e -> e.isFinished() || e.isInterrupted()).orElse(true));
     }
-
 
 }

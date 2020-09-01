@@ -2,21 +2,27 @@ package de.upb.sede.composition.choerography;
 
 import de.upb.sede.composition.*;
 import de.upb.sede.composition.choerography.emulation.OpsSchedule;
+import de.upb.sede.composition.choerography.emulation.OrchestrationException;
 import de.upb.sede.composition.faa.FieldAccessUtil;
 import de.upb.sede.composition.graphs.nodes.IServiceInstanceStorageNode;
 import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
 import de.upb.sede.composition.orchestration.scheduled.ServiceLoadStore;
 import de.upb.sede.composition.types.TypeClass;
+import de.upb.sede.core.ServiceInstanceHandle;
 import de.upb.sede.exec.IExecutorContactInfo;
 import de.upb.sede.exec.IExecutorHandle;
 import de.upb.sede.requests.resolve.beta.IResolvePolicy;
 import de.upb.sede.util.ResolvePolicyUtil;
 import de.upb.sede.composition.typing.TypeUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 public class ServiceLoadStoreCollector
     extends BlockWiseCompileStep<ServiceLoadStoreCollector.SLSCInput, ServiceLoadStoreCollector.SLSCOutput> {
+
+    private static final Logger logger = LoggerFactory.getLogger(ServiceLoadStoreCollector.class);
 
     @Override
     protected SLSCOutput initializeOutput() {
@@ -44,26 +50,41 @@ public class ServiceLoadStoreCollector
         //This indicated the last index where there was a write to the field
         // Used to create a store after the last write
         Long lastWritten = null;
+        // Indicates if the service was loaded and not created
+        boolean wasLoaded = false;
 
         if(initialType.isPresent()) {
             fieldType = initialType.get();
             isService = TypeUtil.isService(fieldType);
         }
+        String fieldName = field.getFieldname();
         for (IFieldAccess fieldAccess : field.getFieldAccesses()) {
             Long index = fieldAccess.getIndex();
             if(fieldAccess.getAccessType().isAssignment()) {
-                if(isService && wasWritten && toBeStored && field.isInjected()) {
-                    // we check for `isInjected` because else the client can't get a pointer to the service anyway.
-                    // the previous service instance needs to be stored:
-                    IExecutorContactInfo host = getInput().getInstExecutorMap().get(lastWritten).getContactInfo();
-                    getOutput().store(lastWritten, getInput().getIndexFactory().create(),
-                        host.getQualifier(), field.getFieldname(), fieldType.getTypeQualifier());
-                    wasWritten = false;
-                    lastWritten = null;
+                if (isService && wasWritten && toBeStored) {
+                    if (field.isInjected()) {
+                        // store the service instance on this field before replacing its field with a new value.
+                        IExecutorContactInfo host = getInput().getInstExecutorMap().get(lastWritten).getContactInfo();
+                        String serviceId = null;
+                        if (wasLoaded) {
+                            serviceId = getInput().getInitialServices().get(fieldName).getId();
+                        }
+                        getOutput().store(lastWritten, getInput().getIndexFactory().create(),
+                            host.getQualifier(), field.getFieldname(), fieldType.getTypeQualifier(), serviceId);
+                        wasWritten = false;
+                        lastWritten = null;
+                    } else {
+                        // if a service is not injected (isInjected returns false) then it is not stored.
+                        // The reason for this is that the client does not have a handle for the service and the stored service couldn't be accessed anyway.
+                        logger.info("Not storing service with field '{}' and type '{}' as it is not injected by the client and no client can receive a handle for it.",
+                            fieldName, fieldType
+                        );
+                    }
                 }
                 fieldType = field.getInstTyping()
                     .get(index);
-                if(TypeUtil.isService(fieldType)) {
+                if (TypeUtil.isService(fieldType)) {
+                    wasLoaded = false;
                     isService = true;
                     wasWritten = true;
                     isPresent = true;
@@ -71,12 +92,17 @@ public class ServiceLoadStoreCollector
                 }
             } else if(isService) {
                 if(fieldAccess.getAccessType().isRead() && !isPresent) {
+                    if(!field.isInjected()) {
+                        throw new OrchestrationException("Cannot load a non injected (initial) service:  " + fieldName + ", with type: " + fieldType.getTypeQualifier());
+                    }
                     IExecutorContactInfo host = getInput().getInstExecutorMap().get(index).getContactInfo();
-                    IMethodResolution iMethodResolution = getInput().getMR().get(index);
-                    // TODO add method reference
+                    ServiceInstanceHandle serviceInstanceHandle = getInput().getInitialServices().get(fieldName);
+                    if(serviceInstanceHandle == null) {
+                        throw new OrchestrationException("Among initial services, no handle found for service: " + fieldName + ", with type: " + fieldType.getTypeQualifier());
+                    }
                     getOutput().load(index, getInput().getIndexFactory().create(), host.getQualifier(),
-                        fieldAccess.getField(), fieldType.getTypeQualifier());
-
+                        fieldName, fieldType.getTypeQualifier(), serviceInstanceHandle.getId());
+                    wasLoaded = true;
                     isPresent = true;
                 }
                 if(fieldAccess.getAccessType().isWrite()) {
@@ -88,10 +114,13 @@ public class ServiceLoadStoreCollector
         // Add an additional store at the end all instructions:
         if(isService && wasWritten && toBeStored) {
             IExecutorContactInfo host = getInput().getInstExecutorMap().get(lastWritten).getContactInfo();
+            String serviceId = null;
+            if(wasLoaded) {
+                serviceId = getInput().getInitialServices().get(fieldName).getId();
+            }
             getOutput().store(lastWritten, getInput().indexFactory.create(),
-                host.getQualifier(), field.getFieldname(), fieldType.getTypeQualifier());
+                host.getQualifier(), field.getFieldname(), fieldType.getTypeQualifier(), serviceId);
         }
-
     }
 
     private boolean toBeStored(String fieldname) {
@@ -115,7 +144,11 @@ public class ServiceLoadStoreCollector
 
         private final OpsSchedule opsSchedule;
 
-        public SLSCInput(IndexFactory indexFactory, Map<Long, IMethodResolution> methodResolution, FieldAccessUtil fieldAccessUtil, Map<Long, IExecutorHandle> instExecutorMap, IExecutorHandle clientExecutor, IResolvePolicy resolvePolicy, OpsSchedule opsSchedule) {
+        private final Map<String,ServiceInstanceHandle> initialServices;
+
+        public SLSCInput(IndexFactory indexFactory, Map<Long, IMethodResolution> methodResolution, FieldAccessUtil fieldAccessUtil,
+                         Map<Long, IExecutorHandle> instExecutorMap, IExecutorHandle clientExecutor, IResolvePolicy resolvePolicy, OpsSchedule opsSchedule,
+                         Map<String, ServiceInstanceHandle> initialServices) {
             this.indexFactory = indexFactory;
             this.mR = methodResolution;
             this.fieldAccessUtil = fieldAccessUtil;
@@ -123,6 +156,7 @@ public class ServiceLoadStoreCollector
             this.clientExecutor = clientExecutor;
             this.resolvePolicy = resolvePolicy;
             this.opsSchedule = opsSchedule;
+            this.initialServices = initialServices;
         }
 
         public IndexFactory getIndexFactory() {
@@ -152,18 +186,20 @@ public class ServiceLoadStoreCollector
         public OpsSchedule getOpsSchedule() {
             return opsSchedule;
         }
+
+        public Map<String, ServiceInstanceHandle> getInitialServices() {
+            return initialServices;
+        }
+
     }
 
     public class SLSCOutput {
 
-//        Map<Long, List<IServiceInstanceStorageNode>> preInstLoads = new HashMap<>();
-//
-//        Map<Long, List<IServiceInstanceStorageNode>> postInstStores = new HashMap<>();
-
-        private void load(Long instIndex, Long nodeIndex, String host, String field, String typeQualifier) {
+        private void load(Long instIndex, Long nodeIndex, String host, String field, String typeQualifier, String instanceId) {
             IServiceInstanceStorageNode loadField = ServiceInstanceStorageNode.builder()
                 .fieldName(field)
                 .index(nodeIndex)
+                .instanceIdentifier(Objects.requireNonNull(instanceId))
                 .serviceClasspath(typeQualifier)
                 .isLoadInstruction(true)
                 .hostExecutor(host)
@@ -173,13 +209,14 @@ public class ServiceLoadStoreCollector
                 .build());
         }
 
-        private void store(Long instIndex, Long nodeIndex, String host, String field, String typeQualifier) {
+        private void store(Long instIndex, Long nodeIndex, String host, String field, String typeQualifier, String instanceId) {
             Objects.requireNonNull(instIndex);
             Objects.requireNonNull(field);
             Objects.requireNonNull(typeQualifier);
             IServiceInstanceStorageNode storeField = ServiceInstanceStorageNode.builder()
                 .fieldName(field)
                 .index(nodeIndex)
+                .instanceIdentifier(instanceId)
                 .serviceClasspath(typeQualifier)
                 .isLoadInstruction(false)
                 .hostExecutor(host)

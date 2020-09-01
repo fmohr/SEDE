@@ -1,10 +1,13 @@
 package ai.services.execution;
 
 import ai.services.execution.local.GraphOperator;
+import ai.services.execution.operator.TaskDispatchContainer;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
 import ai.services.execution.operator.GraphDependencyOperator;
+import de.upb.sede.composition.graphs.nodes.INotification;
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.exec.IExecutorConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +18,9 @@ import java.util.*;
  * Each execution on each executor has exactly one of these instances.
  *
  */
-public class Execution implements FieldContext {
+public class GraphTaskExecution implements FieldContext, TaskDispatchContainer {
 
-    private static final Logger logger = LoggerFactory.getLogger(Execution.class);
+    private static final Logger logger = LoggerFactory.getLogger(GraphTaskExecution.class);
 
     private boolean isRunning = false;
 
@@ -35,7 +38,9 @@ public class Execution implements FieldContext {
 
     private final Map<String, SEDEObject> context = new HashMap<>();
 
-    public Execution(String executionId) {
+    private final Set<INotification> ntfPool = new HashSet<>();
+
+    public GraphTaskExecution(String executionId) {
         this.executionId = executionId;
     }
 
@@ -104,7 +109,7 @@ public class Execution implements FieldContext {
         this.runningTaskDispatches.forEach(TaskDispatch::interrupt);
     }
 
-    synchronized Optional<Task> takeNextWaitingTask(WorkerProfile workerProfile) {
+    public synchronized Optional<Task> takeNextWaitingTask(WorkerProfile workerProfile) {
         if(!isRunning) {
             return Optional.empty();
         }
@@ -177,6 +182,16 @@ public class Execution implements FieldContext {
             throw new IllegalArgumentException("field is unassigned: " + fieldname);
     }
 
+    @Override
+    public synchronized void pushNotification(INotification ntf) {
+        this.ntfPool.add(ntf);
+    }
+
+    @Override
+    public synchronized boolean hasNotification(INotification ntf) {
+        return ntfPool.contains(ntf);
+    }
+
     public synchronized void registerTaskDispatch(TaskDispatch taskDispatch) {
         this.runningTaskDispatches.add(taskDispatch);
     }
@@ -188,7 +203,7 @@ public class Execution implements FieldContext {
     static class FinalTaskOperation implements GraphOperator {
 
         @Override
-        public void perform(Execution ex, Task performer) {
+        public void perform(GraphTaskExecution ex, Task performer) {
             ex.finalTasks.remove(performer);
         }
     }

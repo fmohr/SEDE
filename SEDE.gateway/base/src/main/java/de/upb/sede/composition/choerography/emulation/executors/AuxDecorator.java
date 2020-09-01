@@ -1,11 +1,13 @@
 package de.upb.sede.composition.choerography.emulation.executors;
 
 import de.upb.sede.*;
+import de.upb.sede.composition.choerography.emulation.EmulationException;
 import de.upb.sede.composition.choerography.emulation.OrchestrationException;
 import de.upb.sede.composition.graphs.nodes.*;
 import de.upb.sede.composition.orchestration.emulated.*;
 import de.upb.sede.composition.types.IDataValueType;
 import de.upb.sede.composition.types.serialization.IMarshalling;
+import de.upb.sede.composition.typing.TypeUtil;
 import de.upb.sede.exec.IMethodDesc;
 import de.upb.sede.exec.IMethodRef;
 import de.upb.sede.exec.IServiceDesc;
@@ -35,17 +37,24 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
     }
 
     @Override
-    public EmulatedOp handleOperation(EmulatedOp op) {
+    public EmulatedOp handleOperation(EmulatedOp op) throws EmulationException {
         assertNotHandled(op);
         if(op instanceof IServiceLoadStoreOp) {
             op = injectServiceSerializationAuxData((IServiceLoadStoreOp) op);
         } else if(op instanceof ICastOp){
             op = injectMarshallingAuxData((ICastOp) op);
-        } else if(op instanceof IInstructionOp) {
+        } else if(op instanceof IMarshalOp) {
+            op = injectMarshallingAuxData((IMarshalOp)op);
+        } else if(op instanceof ITransmissionOp) {
+            op = injectMarshallingAuxData((ITransmissionOp)op);
+        }else if(op instanceof IInstructionOp) {
             op = injectInstructionAuxData((IInstructionOp) op);
+        } else {
+            logger.trace("No aux data added to operation {}.", op);
         }
         return op;
     }
+
 
     private EmulatedOp injectServiceSerializationAuxData(IServiceLoadStoreOp loadStoreOp) {
         IServiceInstanceStorageNode node = loadStoreOp.getServiceInstanceStorageNode();
@@ -69,22 +78,48 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
             .build();
     }
 
+    private EmulatedOp injectMarshallingAuxData(IMarshalOp op) {
+        IMarshalNode marshal = injectMarshallingAuxData(op.getMarshalNode());
+        return MarshalOp.builder().from(op).marshalNode(marshal).build();
+    }
+
+    private EmulatedOp injectMarshallingAuxData(ITransmissionOp op) {
+        Map typeAux = getAuxFromMarshalling(op.getTransmitDataNode().getMarshalling());
+        return TransmissionOp.builder()
+            .from(op)
+            .transmitDataNode(TransmitDataNode.builder()
+                .from(op.getTransmitDataNode())
+                .putAllRuntimeAuxiliaries(typeAux)
+                .build())
+            .build();
+    }
+
     private IMarshalNode injectMarshallingAuxData(IMarshalNode marshalNode) {
         if(marshalNode == null) {
             return null;
         }
         IMarshalling marshalling = marshalNode.getMarshalling();
-        if(!(marshalling.getValueType() instanceof IDataValueType)) {
-            logger.error("CastTypeNode with a marshalling that is not of type IDataValue: {}", marshalling);
-            throw new OrchestrationException("Malformed Marshalling in CastTypeNode: " + marshalNode);
-        }
-        IDataValueType dataValueType = (IDataValueType) marshalling.getValueType();
 
-        Map typeAux = getTypeAux(dataValueType.getTypeQualifier());
+        Map typeAux = getAuxFromMarshalling(marshalling);
         return MarshalNode.builder()
             .from(marshalNode)
             .putAllRuntimeAuxiliaries(typeAux)
             .build();
+    }
+
+    @SuppressWarnings({"rawtypes"})
+    private Map getAuxFromMarshalling(IMarshalling marshalling) {
+        if(marshalling == null) {
+            return Collections.emptyMap();
+        } else if(marshalling.getValueType() instanceof IDataValueType){
+            IDataValueType dataValueType = (IDataValueType) marshalling.getValueType();
+            return getTypeAux(dataValueType.getTypeQualifier());
+        } else if(TypeUtil.isService(marshalling.getValueType())) {
+            return Collections.emptyMap(); // There are no aux from service instance handle marshalling. It is assumed to be a built in functionality.
+        } else {
+            logger.warn("Unrecognized type marshalling: {}", marshalling);
+            return Collections.emptyMap();
+        }
     }
 
     private IInstructionOp injectInstructionAuxData(IInstructionOp instOp) {
@@ -108,7 +143,7 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
         Optional<IServiceDesc> lookup = lookupService.lookup(serviceRef);
         if(!lookup.isPresent()) {
             logger.warn("No service desc found for service {}.", serviceRef);
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
         return gatherAux(lookup.get());
     }
@@ -124,7 +159,7 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
         Optional<IDataTypeDesc> lookup = lookupService.lookup(ref);
         if(!lookup.isPresent()) {
             logger.warn("No type desc found for type {}.", ref);
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
         return gatherAux(lookup.get());
     }
@@ -139,7 +174,7 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
         Optional<IMethodDesc> optMethod = SDLUtil.matchSignature(methods, node);
         if(!optMethod.isPresent()) {
             logger.warn("No method desc found for method {} used by instruction:\n{}", methodRef, node.getFMInstruction());
-            return Collections.EMPTY_MAP;
+            return Collections.emptyMap();
         }
 
         Optional<IServiceDesc> serviceLookup = lookupService.lookup(methodRef.getServiceRef());

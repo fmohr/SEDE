@@ -1,6 +1,6 @@
 package ai.services.execution.local;
 
-import ai.services.execution.AccessControlQueue;
+import ai.services.executor.AccessControlQueue;
 import ai.services.execution.QueueClosedException;
 import ai.services.execution.operator.TaskOperator;
 import org.slf4j.Logger;

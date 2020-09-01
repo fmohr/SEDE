@@ -1,6 +1,6 @@
 package ai.services.execution.operator;
 
-import ai.services.execution.Execution;
+import ai.services.execution.GraphTaskExecution;
 import ai.services.execution.Task;
 import ai.services.execution.operator.local.InstructionOp;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;
@@ -19,7 +19,7 @@ import demo.types.Punkt;
 
 public class InstructionProcedureTest {
     private static String executor_id = "Executor_id";
-    private static Execution execution = new Execution(executor_id);
+    private static GraphTaskExecution execution = new GraphTaskExecution(null, executor_id);
     private static TaskOperator op = new InstructionOp(new ServiceInstanceFactory(executor_id));
 	@Test
 	public void testStaticConstantTypeInvocation() {
@@ -198,7 +198,7 @@ public class InstructionProcedureTest {
             .method("calc")
             .fieldName(resultCalc)
             .fieldType(DataValueType.builder()
-                .qualifier(Punkt.class.getName())
+                .typeQualifier(Punkt.class.getName())
                 .build())
             .context("geradeFieldName")
             .contextIsFieldFlag(true)
@@ -226,7 +226,7 @@ public class InstructionProcedureTest {
             .method("__construct")
             .fieldName(newInstance)
             .fieldType(ServiceInstanceType.builder()
-                .qualifier(Gerade.class.getName())
+                .typeQualifier(Gerade.class.getName())
                 .build())
             .context("demo.math.Gerade")
             .contextIsFieldFlag(false)
@@ -251,7 +251,7 @@ public class InstructionProcedureTest {
             .method("randomGerade")
             .fieldName("randomInstance")
             .fieldType(ServiceInstanceType.builder()
-                .qualifier(Gerade.class.getName())
+                .typeQualifier(Gerade.class.getName())
                 .build())
             .context("demo.math.Gerade")
             .contextIsFieldFlag(false)

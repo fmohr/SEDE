@@ -1,5 +1,6 @@
 package ai.services.execution;
 
+import de.upb.sede.composition.graphs.nodes.INotification;
 import de.upb.sede.core.SEDEObject;
 
 /**
@@ -15,5 +16,9 @@ public interface FieldContext {
     SEDEObject getFieldValue(String fieldname);
 
     void deleteField(String fieldname);
+
+    void pushNotification(INotification ntf);
+
+    boolean hasNotification(INotification ntf);
 
 }

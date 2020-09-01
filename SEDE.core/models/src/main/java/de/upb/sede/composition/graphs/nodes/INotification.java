@@ -12,6 +12,7 @@ import org.immutables.value.Value;
 public interface INotification extends IQualifiable {
 
     @Value.Default
+    @Value.Auxiliary
     default String getDescription() {
         return "Notification " + getQualifier();
     }

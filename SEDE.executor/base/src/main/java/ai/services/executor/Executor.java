@@ -1,13 +1,13 @@
 package ai.services.executor;
 
-import ai.services.execution.AccessControlQueue;
-import ai.services.execution.Execution;
+import ai.services.execution.GraphTaskExecution;
 import de.upb.sede.beta.ExecutorRegistration;
 import de.upb.sede.beta.IExecutorRegistration;
 import de.upb.sede.exec.*;
 
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.function.Predicate;
 
 public class Executor {
 
@@ -50,9 +50,9 @@ public class Executor {
     public void shutdown() {
         acq.compute(() -> {
             acq.close();
-            Iterator<Execution> it = acq.iterate();
+            Iterator<GraphTaskExecution> it = acq.iterate();
             while(it.hasNext()) {
-                Execution execution = it.next();
+                GraphTaskExecution execution = it.next();
                 execution.interruptExecution();
             }
         });

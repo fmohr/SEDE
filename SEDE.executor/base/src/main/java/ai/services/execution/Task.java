@@ -19,7 +19,7 @@ public class Task {
 
     private BaseNode node;
 
-    private Execution execution;
+    private GraphTaskExecution execution;
 
     private List<GraphOperator> graphOps = new ArrayList<>();
 
@@ -35,7 +35,7 @@ public class Task {
 
     private Exception error;
 
-    public Task(Execution execution, BaseNode node) {
+    public Task(GraphTaskExecution execution, BaseNode node) {
         this.node = node;
         this.execution = execution;
         this.waitingCondition = (task) -> false;
@@ -53,7 +53,7 @@ public class Task {
         return baseNodeClass == null || baseNodeClass.isInstance(node);
     }
 
-    private Execution getExecution() {
+    private GraphTaskExecution getExecution() {
         return execution;
     }
 
@@ -138,10 +138,6 @@ public class Task {
             }
         }
         return false;
-    }
-
-    public String getServiceStoreLocation() {
-        return getExecution().
     }
 
     public enum State {

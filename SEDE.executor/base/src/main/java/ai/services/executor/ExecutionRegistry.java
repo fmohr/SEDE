@@ -1,5 +1,6 @@
-package ai.services.execution;
+package ai.services.executor;
 
+import ai.services.execution.GraphTaskExecution;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +18,7 @@ public class ExecutionRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(ExecutionRegistry.class);
 
-    private Map<String, Execution> execs = new HashMap<>();
+    private Map<String, GraphTaskExecution> execs = new HashMap<>();
 
     protected boolean isClosed = false;
 
@@ -31,7 +32,7 @@ public class ExecutionRegistry {
         isClosed = true;
     }
 
-    public synchronized Execution create(String execId) {
+    public synchronized GraphTaskExecution create(String execId) {
         if(execs.containsKey(execId)) {
             throw new IllegalStateException(String.format("Execution `%s` already exists.", execId));
         } else {
@@ -48,7 +49,7 @@ public class ExecutionRegistry {
      * There is only a single time when a execution should be created and that in the case of a execRequest and then it should just be created and an error should be cought,
      */
     @Deprecated
-    public synchronized Execution createOrGet(String execId) {
+    public synchronized GraphTaskExecution createOrGet(String execId) {
         if(execs.containsKey(execId)) {
             return execs.get(execId);
         } else {
@@ -56,15 +57,15 @@ public class ExecutionRegistry {
         }
     }
 
-    public synchronized Optional<Execution> get(String execId) {
+    public synchronized Optional<GraphTaskExecution> get(String execId) {
         return Optional.ofNullable(execs.getOrDefault(execId, null));
     }
 
-    public synchronized Iterator<Execution> iterate() {
+    public synchronized Iterator<GraphTaskExecution> iterate() {
         return execs.values().iterator();
     }
 
-    public synchronized void removeIf(Predicate<Execution> executionsToBeRemovedPredicate) {
+    public synchronized void removeIf(Predicate<GraphTaskExecution> executionsToBeRemovedPredicate) {
         execs.values().removeIf(executionsToBeRemovedPredicate);
     }
 
@@ -72,9 +73,9 @@ public class ExecutionRegistry {
         return execs.remove(execId) != null;
     }
 
-    private Execution internalCreate(String execId) {
+    private GraphTaskExecution internalCreate(String execId) {
         assertNoClosed();
-        Execution execution = new Execution(execId);
+        GraphTaskExecution execution = new GraphTaskExecution(execId);
         execs.put(execId, execution);
         logger.info("Defined a new execution.");
         return execution;

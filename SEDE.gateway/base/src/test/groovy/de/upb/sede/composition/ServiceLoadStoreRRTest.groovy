@@ -249,6 +249,131 @@ class ServiceLoadStoreRRTest extends Specification {
         else
             assertServiceStoredAndReturned(execGraph, "s0")
 
+        def s0Load = execGraph.nodes.find { (it instanceof IServiceInstanceStorageNode) && it.isLoadInstruction() } as IServiceInstanceStorageNode
+        assert s0Load != null
+        s0Load.tap {
+            assert instanceIdentifier == "serviceInstance1"
+        }
+
+        RRTestHelpers.assertExecutedBefore(execGraph, s0Load, 0L)
+        RRTestHelpers.assertExecutedBefore(execGraph, s0Load, 1L)
+
+
+        def s0Store = execGraph.nodes.find { (it instanceof IServiceInstanceStorageNode) && !it.isLoadInstruction() } as IServiceInstanceStorageNode
+        if(storeService) {
+            assert s0Store != null
+            s0Store.tap {
+                assert instanceIdentifier == "serviceInstance1"
+            }
+            RRTestHelpers.assertExecutedAfter(execGraph, s0Store, 0L);
+            RRTestHelpers.assertExecutedAfter(execGraph, s0Store, 1L);
+        } else {
+            assert s0Store == null
+        }
+
+        where:
+        storeService << [true, false]
+    }
+
+
+    @Unroll("overwrite injected service: store(s0)=#storeService")
+    def "overwrite injected service"() {
+        def description =
+            """A service is injected into the composition. But on the field a new service is initialed. Only the new one is returned. Both are stored though.
+               |Check that the service is being stored if requested.""".stripMargin()
+
+        when:
+        def rr = RRGen.fromClosure {
+            composition = """
+            t0 = s0::m__T0();
+            s0 = c0.S0::__construct();
+            t1 = s0::m__T1();
+            """
+            initialContext.add(
+                FieldType.builder().tap {
+                    fieldname("s0")
+                    type(ServiceInstanceType.builder()
+                        .typeQualifier("c0.S0")
+                        .build())
+                }.build()
+            )
+            initialServices.put("s0",
+                new ServiceInstanceHandle("executor1", "c0.S0", "serviceInstance1")
+            )
+            resolvePolicy = ResolvePolicy.builder()
+                .tap {
+                    isDotGraphRequested(true)
+                    returnPolicy(IResolvePolicy.FieldSelection.ALL)
+                    servicePolicy(IResolvePolicy.FieldSelection.LISTED)
+                    if(storeService) {
+                        addPersistentServices("s0")
+                    }
+                }
+                .build();
+        }
+
+        def testRunner = new ResolutionTestBaseRunner("ServiceLoadStore",
+            "04_OverwriteInjectedService(store=${storeService})")
+        testRunner.setClientExecutor("client")
+
+        testRunner.testPlainText = description
+        testRunner.addExecutor("executor1", "c0.S0")
+
+        then:
+        testRunner.start(rr)
+        testRunner.assertStaticAnalysisExceptionMatches(null)
+        testRunner.assertSimulationExceptionMatches(null)
+        testRunner.writeOutputs()
+
+        def cc = testRunner.getCc()
+        def ch = testRunner.getChoreography()
+
+        def execGraph = new ExecutionGraph(ch.compositionGraph.find {it.executorHandle.qualifier == "executor1"})
+        if(!storeService)
+            assertServiceNotStored(execGraph, "s0")
+        else
+            assertServiceStoredAndReturned(execGraph, "s0")
+
+        def s0Load = execGraph.nodes.find { (it instanceof IServiceInstanceStorageNode) && it.isLoadInstruction() } as IServiceInstanceStorageNode
+        assert s0Load != null
+        s0Load.tap {
+            assert instanceIdentifier == "serviceInstance1"
+        }
+        RRTestHelpers.assertExecutedBefore(execGraph, s0Load, 0L)
+
+        def s0InjectedStore = execGraph.nodes.find { (it instanceof IServiceInstanceStorageNode) && !it.isLoadInstruction() && it.instanceIdentifier != null  } as IServiceInstanceStorageNode
+        if(storeService) {
+            assert s0InjectedStore != null
+            s0InjectedStore.tap {
+                assert instanceIdentifier == "serviceInstance1"
+            }
+            RRTestHelpers.assertExecutedAfter(execGraph, s0InjectedStore, 0L)
+            RRTestHelpers.assertExecutedBefore(execGraph, s0InjectedStore, 1L)
+        } else {
+            assert s0InjectedStore == null
+        }
+
+        def s0NewStore = execGraph.nodes.find { (it instanceof IServiceInstanceStorageNode) && !it.isLoadInstruction() && it.instanceIdentifier == null  } as IServiceInstanceStorageNode
+        if(storeService) {
+            assert s0NewStore != null
+            s0NewStore.tap {
+                assert instanceIdentifier == null
+            }
+            RRTestHelpers.assertExecutedAfter(execGraph, s0NewStore, 2L)
+        } else {
+            assert s0NewStore == null
+        }
+
+        def s0NewReturn = execGraph.nodes.find {(it instanceof ITransmitDataNode) && it.fieldName == "s0" } as ITransmitDataNode
+
+        if(storeService) {
+            assert s0NewReturn != null
+            RRTestHelpers.assertExecutedBefore(execGraph, s0NewStore, s0NewReturn)
+
+        } else {
+            assert s0NewReturn == null
+        }
+
         where:
         storeService << [true, false]
     }

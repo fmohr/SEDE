@@ -1,6 +1,6 @@
 package ai.services.execution.operator;
 
-import ai.services.execution.Execution;
+import ai.services.execution.GraphTaskExecution;
 import ai.services.execution.Task;
 import ai.services.execution.local.GraphOperator;
 
@@ -24,7 +24,7 @@ public class GraphDependencyOperator implements GraphOperator {
     }
 
     @Override
-    public synchronized void perform(Execution ex, Task finishedTask) {
+    public synchronized void perform(GraphTaskExecution ex, Task finishedTask) {
         if(!finishedTask.isFinished()) {
             throw new IllegalArgumentException(String.format("Task was not finished before calling its graph dependency operation: %s", finishedTask));
         }

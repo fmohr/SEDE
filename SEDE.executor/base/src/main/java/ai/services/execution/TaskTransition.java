@@ -15,10 +15,30 @@ public interface TaskTransition {
         return task -> task.getFieldContext().setFieldValue(fieldName, newField);
     }
 
-    public void performTransition(Task task);
+    void performTransition(Task task);
+
+
+    default TaskTransition then(TaskTransition other) {
+        return task -> {
+            performTransition(task);
+            other.performTransition(task);
+        };
+    }
 
     static TaskTransition success() {
-        return task -> task.set(Task.State.SUCCESS);
+        return new TaskTransition() {
+            @Override
+            public void performTransition(Task task) {
+                task.set(Task.State.SUCCESS);
+            }
+
+            @Override
+            public TaskTransition then(TaskTransition other) {
+                throw new IllegalStateException("Cannot transition after success!");
+            }
+        };
+
+
     }
 
     static TaskTransition mainTaskPerformed() {
@@ -26,9 +46,16 @@ public interface TaskTransition {
     }
 
     static TaskTransition error(Exception ex) {
-        return task -> {
-            task.setError(ex);
-            task.set(Task.State.FAILURE);
+        return new TaskTransition() {
+            @Override
+            public void performTransition(Task task) {
+                task.setError(ex);
+                task.set(Task.State.FAILURE);
+            }
+            @Override
+            public TaskTransition then(TaskTransition other) {
+                throw new IllegalStateException("Cannot transition after error!");
+            }
         };
     }
 

@@ -33,34 +33,28 @@ public class ServiceStorageOp extends MainTaskOperator {
     @Override
     public TaskTransition runTask(Task t) throws Exception {
         IServiceInstanceStorageNode storageNode = (IServiceInstanceStorageNode) t.getNode();
-        return handleStorage(t, storageNode);
+        TaskTransition taskTransition = handleStorage(t, storageNode);
+        t.setMainTaskPerformed();
+        return taskTransition;
     }
 
     private TaskTransition handleStorage(Task task, IServiceInstanceStorageNode node) throws IOException, ClassNotFoundException {
-        /* gather information regarding load store operation */
         boolean isLoadInstruction = node.isLoadInstruction();
-        String fieldname = node.getFieldName();
-        String serviceClasspath = node.getServiceClasspath();
-
-        String instanceId;
-
         if (isLoadInstruction) {
             SEDEObject loadedSedeObject = load(node);
-            return TaskTransition.fieldAssignment(fieldname, loadedSedeObject);
+            return TaskTransition.fieldAssignment(node.getFieldName(), loadedSedeObject);
         } else {
-            /*
-             * First retrieve the values needed for storage:
-             */
-            store(task, node);
-            return TaskTransition.success();
+            SEDEObject replacementObj = store(task, node);
+            return TaskTransition.fieldAssignment(node.getFieldName(), replacementObj);
         }
     }
 
-    private void store(Task task, IServiceInstanceStorageNode node) throws IOException {
+    private ServiceInstanceField store(Task task, IServiceInstanceStorageNode node) throws IOException {
         ServiceInstanceField serviceInstanceObj = (ServiceInstanceField) task.getFieldContext().getFieldValue(node.getFieldName());
         BasicClientRequest storeRequest = getStoreRequest(node.getInstanceIdentifier(), node.getServiceClasspath());
         writeServiceInstance(serviceInstanceObj.getServiceHandle(), storeRequest.send());
         storeRequest.close();
+        return new ServiceInstanceField(new ServiceInstanceHandle(serviceInstanceObj.getServiceHandle()));
     }
 
     private SEDEObject load(IServiceInstanceStorageNode node) throws IOException, ClassNotFoundException {

@@ -53,7 +53,11 @@ public class ServiceInstanceHandle implements Serializable, JsonSerializable {
 		this.id = Optional.empty();
 	}
 
-	/**
+    public ServiceInstanceHandle(ServiceInstanceHandle serviceHandle) {
+        this(serviceHandle.getExecutorId(), serviceHandle.getClasspath(), serviceHandle.getId());
+    }
+
+    /**
 	 * Returns the id of the service. Throws Runtime-Exception if wasSerialized()
 	 * returns false.
 	 */

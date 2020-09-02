@@ -22,6 +22,7 @@ public class ParseConstantOp extends MainTaskOperator {
     public TaskTransition runTask(Task t) throws Exception {
         IParseConstantNode node = (IParseConstantNode) t.getNode();
         SEDEObject parsedVal = parsePrimitive(node.getConstantValue(), node.getConstantType());
+        t.setMainTaskPerformed();
         return TaskTransition.fieldAssignment(node.getConstantValue(), parsedVal);
     }
 

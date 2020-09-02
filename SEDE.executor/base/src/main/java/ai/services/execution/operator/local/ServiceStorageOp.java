@@ -3,37 +3,40 @@ package ai.services.execution.operator.local;
 import ai.services.execution.Task;
 import ai.services.execution.TaskTransition;
 import ai.services.execution.operator.MainTaskOperator;
+import com.fasterxml.jackson.core.*;
 import de.upb.sede.composition.graphs.nodes.IServiceInstanceStorageNode;
 import de.upb.sede.core.SEDEObject;
+import de.upb.sede.core.ServiceInstance;
 import de.upb.sede.core.ServiceInstanceField;
 import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.util.Streams;
+import de.upb.sede.util.ExtendedByteArrayOutputStream;
 import de.upb.sede.webinterfaces.client.BasicClientRequest;
 import de.upb.sede.webinterfaces.client.ReadFileRequest;
 import de.upb.sede.webinterfaces.client.WriteFileRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.UncheckedIOException;
+import java.io.*;
+import java.util.Objects;
 
 public class ServiceStorageOp extends MainTaskOperator {
+
+    private static final Logger logger = LoggerFactory.getLogger(ServiceStorageOp.class);
 
     private final String serviceStoreLocation;
 
     public ServiceStorageOp(String serviceStoreLocation) {
         super(IServiceInstanceStorageNode.class);
-        this.serviceStoreLocation = serviceStoreLocation;
+        this.serviceStoreLocation = Objects.requireNonNull(serviceStoreLocation);
     }
 
     @Override
     public TaskTransition runTask(Task t) throws Exception {
         IServiceInstanceStorageNode storageNode = (IServiceInstanceStorageNode) t.getNode();
-        handleStorage(t, storageNode);
-        return TaskTransition.success();
+        return handleStorage(t, storageNode);
     }
 
-    private void handleStorage(Task task, IServiceInstanceStorageNode node) {
+    private TaskTransition handleStorage(Task task, IServiceInstanceStorageNode node) throws IOException, ClassNotFoundException {
         /* gather information regarding load store operation */
         boolean isLoadInstruction = node.isLoadInstruction();
         String fieldname = node.getFieldName();
@@ -42,44 +45,95 @@ public class ServiceStorageOp extends MainTaskOperator {
         String instanceId;
 
         if (isLoadInstruction) {
-            /* load the service instance and put it into the execution environment */
-            instanceId = node.getService
-            BasicClientRequest loadRequest = getLoadRequest(task, instanceId, serviceClasspath);
-            SEDEObject loadedSedeObject;
-            try (ObjectInputStream objectIn = new ObjectInputStream(loadRequest.receive())) {
-                Object instanceObject = objectIn.readObject();
-                ServiceInstance serviceInstance = new ServiceInstance(
-                    task.getExecution().getConfiguration().getExecutorId(),
-                    serviceClasspath, instanceId, instanceObject);
-                loadedSedeObject = new ServiceInstanceField(serviceInstance);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-            task.getExecution().performLater( () -> {
-                task.getExecution().getEnvironment().put(fieldname, loadedSedeObject);
-                task.setSucceeded();
-            });
+            SEDEObject loadedSedeObject = load(node);
+            return TaskTransition.fieldAssignment(fieldname, loadedSedeObject);
         } else {
-            /* store the service instance which the fieldname is pointing to */
-            ServiceInstanceHandle instanceHandle = task.getExecution().getEnvironment().get(fieldname)
-                .getServiceHandle();
-            instanceId = instanceHandle.getId();
-            BasicClientRequest storeRequest = getStoreRequest(task, instanceId, serviceClasspath);
-
-            try (ObjectOutputStream objectOut = new ObjectOutputStream(storeRequest.send())) {
-                objectOut.writeObject(instanceHandle.getServiceInstance().get());
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
-            String answer = Streams.InReadString(storeRequest.receive());
-            if (!answer.isEmpty()) {
-                throw new RuntimeException(
-                    "Error during service storage: " + instanceHandle.toString() + "\nmessage: " + answer);
-            }
-            task.setSucceeded();
+            /*
+             * First retrieve the values needed for storage:
+             */
+            store(task, node);
+            return TaskTransition.success();
         }
+    }
+
+    private void store(Task task, IServiceInstanceStorageNode node) throws IOException {
+        ServiceInstanceField serviceInstanceObj = (ServiceInstanceField) task.getFieldContext().getFieldValue(node.getFieldName());
+        BasicClientRequest storeRequest = getStoreRequest(node.getInstanceIdentifier(), node.getServiceClasspath());
+        writeServiceInstance(serviceInstanceObj.getServiceHandle(), storeRequest.send());
+        storeRequest.close();
+    }
+
+    private SEDEObject load(IServiceInstanceStorageNode node) throws IOException, ClassNotFoundException {
+        BasicClientRequest loadRequest = getLoadRequest(node.getInstanceIdentifier(), node.getServiceClasspath());
+        ServiceInstance serviceInstance = readServiceInstance(loadRequest.receive());
+        loadRequest.close();
+        return new ServiceInstanceField(serviceInstance);
+    }
+
+    private void writeServiceInstance(ServiceInstanceHandle serviceInstance, OutputStream stream) throws IOException {
+        JsonFactory jsonFactory = new JsonFactory();
+        JsonGenerator jGenerator = jsonFactory
+            .createGenerator(stream, JsonEncoding.UTF8);
+        jGenerator.writeStringField("classpath", serviceInstance.getClasspath());
+        jGenerator.writeStringField("executorId", serviceInstance.getExecutorId());
+        jGenerator.writeStringField("id", serviceInstance.getId());
+        jGenerator.writeFieldName("instance");
+
+        if(serviceInstance.getServiceInstance().isPresent()) {
+            ExtendedByteArrayOutputStream byteOut = new ExtendedByteArrayOutputStream(128);
+            ObjectOutputStream objectOut = new ObjectOutputStream(byteOut);
+            objectOut.writeObject(serviceInstance.getServiceInstance().get());
+            objectOut.flush();
+            objectOut.close();
+            InputStream inputStream = byteOut.toInputStream();
+            jGenerator.writeBinary(Base64Variants.getDefaultVariant(), inputStream, byteOut.size());
+        } else {
+            jGenerator.writeNull();
+        }
+        jGenerator.writeEndObject();
+    }
+
+
+    private ServiceInstance readServiceInstance(InputStream stream) throws IOException, ClassNotFoundException {
+        JsonFactory jsonFactory = new JsonFactory();
+        JsonParser jsonParser = jsonFactory.createParser(stream);
+
+        String classpath = null;
+        String executorId = null;
+        String id = null;
+        Object instance = null;
+        boolean instanceWasRead = false;
+        while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
+            String field = jsonParser.getCurrentName();
+            switch (field) {
+                case "classpath":
+                    classpath = jsonParser.getValueAsString();
+                    break;
+                case "executorId":
+                    executorId = jsonParser.getValueAsString();
+                    break;
+                case "id":
+                    id = jsonParser.getValueAsString();
+                    break;
+                case "instance": {
+                    byte[] binaryValue = jsonParser.getBinaryValue(Base64Variants.getDefaultVariant());
+                    ByteArrayInputStream binInput = new ByteArrayInputStream(binaryValue);
+                    ObjectInputStream objectIn = new ObjectInputStream(binInput);
+                    instance = objectIn.readObject();
+                    instanceWasRead = true;
+                    break;
+                }
+                default:
+                    logger.warn("Unrecognized field in service instance serialization: {}", field);
+            }
+        }
+        Objects.requireNonNull(classpath, "Service instance serialisation did not provide the classpath.");
+        Objects.requireNonNull(executorId, "Service instance serialisation did not provide the executorId.");
+        Objects.requireNonNull(id, "Service instance serialisation did not provide the id.");
+        if(!instanceWasRead) {
+            throw new IllegalStateException("Service instance serialisation did not provide the service instance.");
+        }
+        return new ServiceInstance(executorId, classpath, id, instance);
     }
 
     /**
@@ -103,12 +157,12 @@ public class ServiceStorageOp extends MainTaskOperator {
         return servicesPath + "/" + serviceClasspath + "/" + instanceid;
     }
 
-    private BasicClientRequest getStoreRequest(Task task, String instanceId, String serviceClassPath) {
+    private BasicClientRequest getStoreRequest(String instanceId, String serviceClassPath) {
         String path = pathFor(serviceStoreLocation, serviceClassPath, instanceId);
         return new WriteFileRequest(path, "");
     }
 
-    private BasicClientRequest getLoadRequest(Task task, String instanceId, String serviceClassPath) {
+    private BasicClientRequest getLoadRequest( String instanceId, String serviceClassPath) {
         String path = pathFor(serviceStoreLocation, serviceClassPath, instanceId);
         return new ReadFileRequest(path);
     }

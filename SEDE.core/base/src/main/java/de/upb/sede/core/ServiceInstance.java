@@ -15,6 +15,10 @@ public class ServiceInstance extends ServiceInstanceHandle {
 		this.serviceInstance = Objects.requireNonNull(serviceInstance);
 	}
 
+	public ServiceInstance(final ServiceInstanceHandle serviceInstanceHandler, Object serviceInstance) {
+	    this(serviceInstanceHandler.getExecutorId(), serviceInstanceHandler.getClasspath(), serviceInstanceHandler.getId(), serviceInstance);
+    }
+
 	public Optional<Object> getServiceInstance() {
 		return Optional.of(serviceInstance);
 	}

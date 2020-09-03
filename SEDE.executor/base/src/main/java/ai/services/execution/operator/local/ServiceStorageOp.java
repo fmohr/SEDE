@@ -51,17 +51,17 @@ public class ServiceStorageOp extends MainTaskOperator {
 
     private ServiceInstanceField store(Task task, IServiceInstanceStorageNode node) throws IOException {
         ServiceInstanceField serviceInstanceObj = (ServiceInstanceField) task.getFieldContext().getFieldValue(node.getFieldName());
-        BasicClientRequest storeRequest = getStoreRequest(node.getInstanceIdentifier(), node.getServiceClasspath());
-        writeServiceInstance(serviceInstanceObj.getServiceHandle(), storeRequest.send());
-        storeRequest.close();
-        return new ServiceInstanceField(new ServiceInstanceHandle(serviceInstanceObj.getServiceHandle()));
+        try(BasicClientRequest storeRequest = getStoreRequest(node.getInstanceIdentifier(), node.getServiceClasspath())) {
+            writeServiceInstance(serviceInstanceObj.getServiceHandle(), storeRequest.send());
+            return new ServiceInstanceField(new ServiceInstanceHandle(serviceInstanceObj.getServiceHandle()));
+        }
     }
 
     private SEDEObject load(IServiceInstanceStorageNode node) throws IOException, ClassNotFoundException {
-        BasicClientRequest loadRequest = getLoadRequest(node.getInstanceIdentifier(), node.getServiceClasspath());
-        ServiceInstance serviceInstance = readServiceInstance(loadRequest.receive());
-        loadRequest.close();
-        return new ServiceInstanceField(serviceInstance);
+        try (BasicClientRequest loadRequest = getLoadRequest(node.getInstanceIdentifier(), node.getServiceClasspath())) {
+            ServiceInstanceHandle serviceInstance = readServiceInstance(loadRequest.receive());
+            return new ServiceInstanceField(serviceInstance);
+        }
     }
 
     private void writeServiceInstance(ServiceInstanceHandle serviceInstance, OutputStream stream) throws IOException {
@@ -85,10 +85,11 @@ public class ServiceStorageOp extends MainTaskOperator {
             jGenerator.writeNull();
         }
         jGenerator.writeEndObject();
+        jGenerator.close();
     }
 
 
-    private ServiceInstance readServiceInstance(InputStream stream) throws IOException, ClassNotFoundException {
+    private ServiceInstanceHandle readServiceInstance(InputStream stream) throws IOException, ClassNotFoundException {
         JsonFactory jsonFactory = new JsonFactory();
         JsonParser jsonParser = jsonFactory.createParser(stream);
 
@@ -121,6 +122,7 @@ public class ServiceStorageOp extends MainTaskOperator {
                     logger.warn("Unrecognized field in service instance serialization: {}", field);
             }
         }
+        jsonParser.close();
         Objects.requireNonNull(classpath, "Service instance serialisation did not provide the classpath.");
         Objects.requireNonNull(executorId, "Service instance serialisation did not provide the executorId.");
         Objects.requireNonNull(id, "Service instance serialisation did not provide the id.");

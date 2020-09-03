@@ -30,4 +30,24 @@ public interface TypeClass {
         }
     }
 
+
+    static ValueTypeClass tryDeref(TypeClass tc) {
+        if(isRefType(tc)) {
+            IRefType refType = (IRefType) tc;
+            return refType.getTypeOfRef();
+        } else if(tc instanceof ValueTypeClass) {
+            return (ValueTypeClass) tc;
+        } else {
+            throw new IllegalArgumentException("Cannot dereference type " + tc);
+        }
+    }
+
+    static boolean isRefType(TypeClass tc) {
+        return tc instanceof IRefType;
+    }
+
+    static boolean isServiceHandle(TypeClass tc) {
+        return tryDeref(tc) instanceof IServiceInstanceType;
+    }
+
 }

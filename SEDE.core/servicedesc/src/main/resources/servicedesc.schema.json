@@ -8,6 +8,60 @@
         "type" : "object",
         "id" : "urn:jsonschema:de:upb:sede:exec:IServiceDesc",
         "properties" : {
+          "fieldTypes" : {
+            "type" : "object",
+            "additionalProperties" : {
+              "type" : "string"
+            }
+          },
+          "serviceParameters" : {
+            "type" : "object",
+            "id" : "urn:jsonschema:de:upb:sede:param:IServiceParameterizationDesc",
+            "properties" : {
+              "parameterDependencies" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "object",
+                  "id" : "urn:jsonschema:de:upb:sede:param:IParameterDependencyDesc",
+                  "properties" : {
+                    "premise" : {
+                      "type" : "string"
+                    },
+                    "conclusion" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "parameters" : {
+                "type" : "array",
+                "items" : {
+                  "type" : "object",
+                  "id" : "urn:jsonschema:de:upb:sede:param:IParameter",
+                  "properties" : {
+                    "optional" : {
+                      "type" : "boolean"
+                    },
+                    "paramKind" : {
+                      "type" : "string"
+                    },
+                    "defaultValue" : {
+                      "type" : "any"
+                    },
+                    "qualifier" : {
+                      "type" : "string"
+                    }
+                  }
+                }
+              },
+              "dynAux" : {
+                "type" : "any"
+              }
+            }
+          },
+          "stateType" : {
+            "type" : "string"
+          },
           "interfaces" : {
             "type" : "array",
             "items" : {
@@ -26,13 +80,13 @@
                     "type" : "object",
                     "id" : "urn:jsonschema:de:upb:sede:exec:IMethodParameterDesc",
                     "properties" : {
+                      "fixedValue" : {
+                        "type" : "string"
+                      },
                       "name" : {
                         "type" : "string"
                       },
                       "type" : {
-                        "type" : "string"
-                      },
-                      "fixedValue" : {
                         "type" : "string"
                       }
                     }
@@ -51,14 +105,14 @@
                 "contextFree" : {
                   "type" : "boolean"
                 },
-                "simpleName" : {
-                  "type" : "string"
-                },
                 "metaTags" : {
                   "type" : "array",
                   "items" : {
                     "type" : "string"
                   }
+                },
+                "simpleName" : {
+                  "type" : "string"
                 },
                 "qualifier" : {
                   "type" : "string"
@@ -78,68 +132,14 @@
           "abstract" : {
             "type" : "boolean"
           },
-          "serviceParameters" : {
-            "type" : "object",
-            "id" : "urn:jsonschema:de:upb:sede:param:IServiceParameterizationDesc",
-            "properties" : {
-              "parameters" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "object",
-                  "id" : "urn:jsonschema:de:upb:sede:param:IParameter",
-                  "properties" : {
-                    "defaultValue" : {
-                      "type" : "any"
-                    },
-                    "optional" : {
-                      "type" : "boolean"
-                    },
-                    "paramKind" : {
-                      "type" : "string"
-                    },
-                    "qualifier" : {
-                      "type" : "string"
-                    }
-                  }
-                }
-              },
-              "parameterDependencies" : {
-                "type" : "array",
-                "items" : {
-                  "type" : "object",
-                  "id" : "urn:jsonschema:de:upb:sede:param:IParameterDependencyDesc",
-                  "properties" : {
-                    "premise" : {
-                      "type" : "string"
-                    },
-                    "conclusion" : {
-                      "type" : "string"
-                    }
-                  }
-                }
-              },
-              "dynAux" : {
-                "type" : "any"
-              }
-            }
-          },
-          "stateType" : {
-            "type" : "string"
-          },
-          "fieldTypes" : {
-            "type" : "object",
-            "additionalProperties" : {
-              "type" : "string"
-            }
-          },
-          "simpleName" : {
-            "type" : "string"
-          },
           "metaTags" : {
             "type" : "array",
             "items" : {
               "type" : "string"
             }
+          },
+          "simpleName" : {
+            "type" : "string"
           },
           "qualifier" : {
             "type" : "string"
@@ -165,14 +165,14 @@
           "semanticType" : {
             "type" : "string"
           },
-          "simpleName" : {
-            "type" : "string"
-          },
           "metaTags" : {
             "type" : "array",
             "items" : {
               "type" : "string"
             }
+          },
+          "simpleName" : {
+            "type" : "string"
           },
           "qualifier" : {
             "type" : "string"

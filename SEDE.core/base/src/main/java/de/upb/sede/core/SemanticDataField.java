@@ -4,7 +4,9 @@ import de.upb.sede.util.Streams;
 import org.json.simple.JSONObject;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.UncheckedIOException;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +18,7 @@ import java.util.Map;
 @SuppressWarnings("unchecked")
 public class SemanticDataField extends SEDEObject{
 
-	private InputStream semanticData;
+	private byte[] semanticData;
 
 	private boolean persistent;
 
@@ -30,15 +32,27 @@ public class SemanticDataField extends SEDEObject{
 	 *                   non-persistent input streams are those whose needs to be processed immediately or else the data may become unavailable, e.g. input streams of the body an http request.
 	 *                   Use non-persistent if you want to free up the resources bounded to the input stream.
 	 */
+	@Deprecated
 	public SemanticDataField(String type, InputStream inputStream, boolean persistent) {
 		super(type);
-		this.semanticData = inputStream;
-		this.persistent = persistent;
+        try {
+            this.semanticData = inputStream.readAllBytes();
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        this.persistent = persistent;
 	}
+
+	public SemanticDataField(String type, byte[] data) {
+	    super(type);
+	    semanticData = data;
+	    persistent = true;
+    }
+
 
 
 	@Override
-	public InputStream getDataField() {
+	public byte[] getDataField() {
 		return semanticData;
 	}
 
@@ -46,6 +60,7 @@ public class SemanticDataField extends SEDEObject{
 	 *
 	 * @return True if the input stream is persistent and can be left untouched for a while.
 	 */
+	@Deprecated
 	public boolean isPersistent() {
 		return this.persistent;
 	}
@@ -57,7 +72,7 @@ public class SemanticDataField extends SEDEObject{
 	@Override
 	public JSONObject toJson() {
 		JSONObject jsonObject = super.toJson();
-		byte[] byteArr = (byte[]) Streams.InReadByteArr(getDataField());
+		byte[] byteArr = getDataField();
 		String stringData = new String(byteArr);
 		jsonObject.put("data", stringData);
 		return jsonObject;
@@ -68,7 +83,7 @@ public class SemanticDataField extends SEDEObject{
 		super.fromJson(jsonData);
 		Object data = jsonData.get("data");
 		String stringData = (String) data;
-		this.semanticData = new ByteArrayInputStream(stringData.getBytes());
+		this.semanticData = stringData.getBytes();
 		this.persistent = true;
 	}
 

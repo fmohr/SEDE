@@ -14,9 +14,6 @@ import javax.annotation.Nullable;
 public interface IJavaTypeAux {
 
     @Nullable
-    IJavaDispatchAux getDataCastHandler();
-
-    @Nullable
-    String getMappedClassName();
+    IJavaMarshalAux getJavaMarshalAux();
 
 }

@@ -22,4 +22,5 @@ public interface IRefType extends TypeClass {
         return getTypeOfRef().getTypeQualifier();
     }
 
+
 }

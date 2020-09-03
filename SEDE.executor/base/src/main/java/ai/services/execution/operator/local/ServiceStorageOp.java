@@ -19,6 +19,9 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.util.Objects;
 
+import static ai.services.execution.operator.local.ServiceInstanceHandleSerialisation.readServiceInstance;
+import static ai.services.execution.operator.local.ServiceInstanceHandleSerialisation.writeServiceInstance;
+
 public class ServiceStorageOp extends MainTaskOperator {
 
     private static final Logger logger = LoggerFactory.getLogger(ServiceStorageOp.class);
@@ -64,73 +67,6 @@ public class ServiceStorageOp extends MainTaskOperator {
         }
     }
 
-    private void writeServiceInstance(ServiceInstanceHandle serviceInstance, OutputStream stream) throws IOException {
-        JsonFactory jsonFactory = new JsonFactory();
-        JsonGenerator jGenerator = jsonFactory
-            .createGenerator(stream, JsonEncoding.UTF8);
-        jGenerator.writeStringField("classpath", serviceInstance.getClasspath());
-        jGenerator.writeStringField("executorId", serviceInstance.getExecutorId());
-        jGenerator.writeStringField("id", serviceInstance.getId());
-        jGenerator.writeFieldName("instance");
-
-        if(serviceInstance.getServiceInstance().isPresent()) {
-            ExtendedByteArrayOutputStream byteOut = new ExtendedByteArrayOutputStream(128);
-            ObjectOutputStream objectOut = new ObjectOutputStream(byteOut);
-            objectOut.writeObject(serviceInstance.getServiceInstance().get());
-            objectOut.flush();
-            objectOut.close();
-            InputStream inputStream = byteOut.toInputStream();
-            jGenerator.writeBinary(Base64Variants.getDefaultVariant(), inputStream, byteOut.size());
-        } else {
-            jGenerator.writeNull();
-        }
-        jGenerator.writeEndObject();
-        jGenerator.close();
-    }
-
-
-    private ServiceInstanceHandle readServiceInstance(InputStream stream) throws IOException, ClassNotFoundException {
-        JsonFactory jsonFactory = new JsonFactory();
-        JsonParser jsonParser = jsonFactory.createParser(stream);
-
-        String classpath = null;
-        String executorId = null;
-        String id = null;
-        Object instance = null;
-        boolean instanceWasRead = false;
-        while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
-            String field = jsonParser.getCurrentName();
-            switch (field) {
-                case "classpath":
-                    classpath = jsonParser.getValueAsString();
-                    break;
-                case "executorId":
-                    executorId = jsonParser.getValueAsString();
-                    break;
-                case "id":
-                    id = jsonParser.getValueAsString();
-                    break;
-                case "instance": {
-                    byte[] binaryValue = jsonParser.getBinaryValue(Base64Variants.getDefaultVariant());
-                    ByteArrayInputStream binInput = new ByteArrayInputStream(binaryValue);
-                    ObjectInputStream objectIn = new ObjectInputStream(binInput);
-                    instance = objectIn.readObject();
-                    instanceWasRead = true;
-                    break;
-                }
-                default:
-                    logger.warn("Unrecognized field in service instance serialization: {}", field);
-            }
-        }
-        jsonParser.close();
-        Objects.requireNonNull(classpath, "Service instance serialisation did not provide the classpath.");
-        Objects.requireNonNull(executorId, "Service instance serialisation did not provide the executorId.");
-        Objects.requireNonNull(id, "Service instance serialisation did not provide the id.");
-        if(!instanceWasRead) {
-            throw new IllegalStateException("Service instance serialisation did not provide the service instance.");
-        }
-        return new ServiceInstance(executorId, classpath, id, instance);
-    }
 
     /**
      * Returns the path of storage for the requested instance.

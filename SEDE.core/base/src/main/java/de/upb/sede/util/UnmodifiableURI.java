@@ -8,8 +8,11 @@ import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ListMultimap;
 import com.google.common.collect.Multimap;
+import com.google.common.collect.MultimapBuilder;
 
+import javax.annotation.Nullable;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -21,27 +24,27 @@ import java.util.stream.Collectors;
 @JsonDeserialize(using = UnmodifiableURI.Deserializer.class)
 public class UnmodifiableURI implements ResourceIdentifier{
 
-    /* Nullable */
-    String scheme;
+    @Nullable
+    protected String scheme;
 
-    /* Nullable */
-    String userInfo;
+    @Nullable
+    protected String userInfo;
 
-    /* Nullable */
-    String host;
+    @Nullable
+    protected String host;
 
-    /* Nullable */
-    Integer port;
+    @Nullable
+    protected Integer port;
 
-    /* Nullable */
-    String path;
+    @Nullable
+    protected String path;
 
-    Multimap<String, String> queryParams;
+    protected Multimap<String, String> queryParams;
 
-    /* Nullable */
-    String fragment;
+    @Nullable
+    protected String fragment;
 
-    public UnmodifiableURI() {
+    protected UnmodifiableURI() {
         this.queryParams = ArrayListMultimap.create();
     }
 
@@ -51,9 +54,14 @@ public class UnmodifiableURI implements ResourceIdentifier{
         this.host = host;
         this.port = port;
         this.path = path;
-        this.queryParams = Objects.requireNonNull(queryParams);
+        if(queryParams == null) {
+            this.queryParams = MultimapBuilder.hashKeys().arrayListValues().build();
+        } else {
+            this.queryParams = MultimapBuilder.hashKeys().arrayListValues().build(queryParams);
+        }
         this.fragment = fragment;
     }
+
 
     public Optional<String> getScheme() {
         return Optional.ofNullable(scheme);
@@ -171,18 +179,18 @@ public class UnmodifiableURI implements ResourceIdentifier{
 
         UnmodifiableURI that = (UnmodifiableURI) o;
 
-        if (scheme != null ? !scheme.equals(that.scheme) : that.scheme != null)
+        if (!Objects.equals(scheme, that.scheme))
             return false;
-        if (userInfo != null ? !userInfo.equals(that.userInfo) : that.userInfo != null)
+        if (!Objects.equals(userInfo, that.userInfo))
             return false;
-        if (host != null ? !host.equals(that.host) : that.host != null)
+        if (!Objects.equals(host, that.host))
             return false;
-        if (port != null ? !port.equals(that.port) : that.port != null)
+        if (!Objects.equals(port, that.port))
             return false;
-        if (path != null ? !path.equals(that.path) : that.path != null)
+        if (!Objects.equals(path, that.path))
             return false;
         if (!queryParams.equals(that.queryParams)) return false;
-        return fragment != null ? fragment.equals(that.fragment) : that.fragment == null;
+        return Objects.equals(fragment, that.fragment);
     }
 
     @Override

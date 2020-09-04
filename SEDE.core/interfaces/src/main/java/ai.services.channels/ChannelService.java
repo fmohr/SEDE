@@ -3,7 +3,7 @@ package ai.services.channels;
 import de.upb.sede.IServiceRef;
 import de.upb.sede.exec.IExecutorContactInfo;
 
-public interface CommService {
+public interface ChannelService {
 
     ExecutorCommChannel interExecutorCommChannel(IExecutorContactInfo contactInfo);
 

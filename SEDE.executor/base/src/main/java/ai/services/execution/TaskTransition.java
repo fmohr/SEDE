@@ -1,5 +1,6 @@
 package ai.services.execution;
 
+import de.upb.sede.composition.graphs.nodes.INotification;
 import de.upb.sede.core.SEDEObject;
 
 /**
@@ -56,6 +57,13 @@ public interface TaskTransition {
             public TaskTransition then(TaskTransition other) {
                 throw new IllegalStateException("Cannot transition after error!");
             }
+        };
+    }
+
+    static TaskTransition waitForNtf(INotification notification) {
+        return task -> {
+            task.addWaitingCondition(t -> !t.getFieldContext().hasNotification(notification));
+            task.set(Task.State.WAITING);
         };
     }
 

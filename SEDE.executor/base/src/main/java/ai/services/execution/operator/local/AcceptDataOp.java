@@ -22,7 +22,7 @@ public class AcceptDataOp extends MainTaskOperator {
         String fieldname = node.getFieldName();
         boolean fieldPresent = t.getFieldContext().hasField(fieldname);
         if(fieldPresent) {
-            return TaskTransition.success();
+            return mainTaskPerformed(t);
         } else {
             return TaskTransition.waitForField(fieldname);
         }

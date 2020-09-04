@@ -273,14 +273,19 @@ public class Orchestration
     // -- orchestration methods
 
     private void orchestrateCast(EmExecutor executor, IFieldCast cast) throws EmulationException {
-        ICastOp castOp = CastOp.builder()
-            .firstCast(cast.getFirstCast())
-            .secondCast(cast.getSecondCast())
-            .addDFields(cast.getFirstCast().getFieldName())
-            .build();
 
-        executor.execute(castOp);
-
+//        TODO no support for casting. Using two marshals instead.
+//        ICastOp castOp = CastOp.builder()
+//            .firstCast(cast.getFirstCast())
+//            .secondCast(cast.getSecondCast())
+//            .addDFields(cast.getFirstCast().getFieldName())
+//            .build();
+//
+//        executor.execute(castOp);
+        orchestrateMarshal(cast.getFirstCast());
+        if(cast.getSecondCast() != null) {
+            orchestrateMarshal(cast.getSecondCast());
+        }
     }
 
     private void orchestrateMarshal(IMarshalNode marshal) throws EmulationException {

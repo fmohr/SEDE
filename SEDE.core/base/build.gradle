@@ -1,5 +1,3 @@
-buildPython.enabled = false
-
 dependencies {
     Map libs = project.ext.libs
 
@@ -16,15 +14,4 @@ dependencies {
         libs.groovy,
         libs.spock
     )
-}
-
-task jarTransformer(type: Jar, dependsOn: assemble) {
-    manifest {
-        attributes 'Main-Class': 'de.upb.sede.config.ServiceSpecTransformer'
-    }
-    destinationDir = file("$rootDir")
-    baseName = 'ServiceSpecTransfomer'
-    from { (configurations.compile)
-        .collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
 }

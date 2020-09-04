@@ -1,6 +1,7 @@
 package ai.services.execution.operator;
 
 import ai.services.execution.Task;
+import ai.services.execution.TaskTransition;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 
 /**
@@ -16,6 +17,11 @@ public abstract class MainTaskOperator extends AbstractOperator {
 
     public MainTaskOperator() {
         this.taskDomain = null;
+    }
+
+    protected TaskTransition mainTaskPerformed(Task t) {
+        t.setMainTaskPerformed();
+        return TaskTransition.pass();
     }
 
     public boolean test(Task task) {

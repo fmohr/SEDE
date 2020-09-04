@@ -139,7 +139,7 @@ public class GraphTaskExecution implements FieldContext, TaskDispatchContainer {
         boolean taskFound = false;
         while (it.hasNext()) {
             Task waitingTask = it.next();
-            boolean hasToWait = waitingTask.getWaitingCondition().test(waitingTask);
+            boolean hasToWait = waitingTask.testWaitingCondition();
             if (!hasToWait) {
                 it.remove();
                 waitingTask.set(Task.State.QUEUED);

@@ -15,6 +15,11 @@ import java.util.function.Predicate;
  */
 public class Task {
 
+    public enum State {
+        DISABLED, WAITING, QUEUED, RUNNING, SUCCESS, FAILURE;
+    }
+
+
     private List<String> workerGroup = Collections.singletonList("HOST");
 
     private BaseNode node;
@@ -77,8 +82,8 @@ public class Task {
         return node.getText();
     }
 
-    Predicate<Task> getWaitingCondition() {
-        return waitingCondition;
+    boolean testWaitingCondition() {
+        return waitingCondition.test(this);
     }
 
     void setWaitingCondition(Predicate<Task> waitingCondition) {
@@ -140,10 +145,8 @@ public class Task {
         return false;
     }
 
-    public enum State {
-
-        DISABLED, WAITING, QUEUED, RUNNING, SUCCESS, FAILURE;
-
+    public String getExecutionId() {
+        return getExecution().getExecutionId();
     }
 
     public List<String> getWorkerGroup() {

@@ -227,8 +227,7 @@ public class ModifiableURI extends UnmodifiableURI implements ResourceIdentifier
     }
 
     public UnmodifiableURI unmodifiableCopy() {
-        ArrayListMultimap<String, String> queryParamsCopy = ArrayListMultimap.create(queryParams);
-        return new UnmodifiableURI(scheme, userInfo, host, port, path, queryParamsCopy, fragment);
+        return new UnmodifiableURI(scheme, userInfo, host, port, path, queryParams, fragment);
     }
 
     public ResourceIdentifier unmodifiableView() {
@@ -413,6 +412,10 @@ public class ModifiableURI extends UnmodifiableURI implements ResourceIdentifier
     }
 
     private void setPath(String path) {
+//        if(path == null || path.isBlank()) {
+//            this.path = null;
+//            return;
+//        }
 //        if(!path.startsWith("/")) {
 //            path = "/" + path;
 //        }

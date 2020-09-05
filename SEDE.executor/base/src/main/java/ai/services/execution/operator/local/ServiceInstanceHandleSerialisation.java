@@ -30,6 +30,7 @@ public class ServiceInstanceHandleSerialisation {
         JsonFactory jsonFactory = new JsonFactory();
         JsonGenerator jGenerator = jsonFactory
             .createGenerator(stream, JsonEncoding.UTF8);
+        jGenerator.writeStartObject();
         jGenerator.writeStringField("classpath", serviceInstance.getClasspath());
         jGenerator.writeStringField("executorId", serviceInstance.getExecutorId());
         jGenerator.writeStringField("id", serviceInstance.getId());

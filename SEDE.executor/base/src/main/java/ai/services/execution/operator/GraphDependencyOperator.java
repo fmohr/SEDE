@@ -2,7 +2,7 @@ package ai.services.execution.operator;
 
 import ai.services.execution.GraphTaskExecution;
 import ai.services.execution.Task;
-import ai.services.execution.local.GraphOperator;
+import ai.services.execution.GraphOperator;
 
 import java.util.Set;
 

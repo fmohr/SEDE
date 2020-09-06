@@ -61,8 +61,12 @@ public class ServiceInstanceHandleSerialisation {
         String id = null;
         Object instance = null;
         boolean instanceWasRead = false;
+        if(jsonParser.nextToken() != JsonToken.START_OBJECT) {
+            throw new IllegalArgumentException("Malformed input data. No start object was recognized.");
+        }
         while (jsonParser.nextToken() != JsonToken.END_OBJECT) {
             String field = jsonParser.getCurrentName();
+            jsonParser.nextToken();
             switch (field) {
                 case "classpath":
                     classpath = jsonParser.getValueAsString();

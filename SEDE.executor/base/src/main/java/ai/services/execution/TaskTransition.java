@@ -69,7 +69,10 @@ public interface TaskTransition {
 
     static TaskTransition waitForField(String fieldname) {
         return task -> {
-            task.addWaitingCondition(t -> !t.getFieldContext().hasField(fieldname));
+            task.addWaitingCondition(t -> {
+                boolean fieldNotPresent = !t.getFieldContext().hasField(fieldname);
+                return fieldNotPresent;
+            });
             task.set(Task.State.WAITING);
         };
     }

@@ -9,6 +9,8 @@ import de.upb.sede.core.SEDEObject;
  */
 public interface FieldContext {
 
+    String contextIdentifier();
+
     boolean hasField(String fieldname);
 
     void setFieldValue(String fieldname, SEDEObject value);

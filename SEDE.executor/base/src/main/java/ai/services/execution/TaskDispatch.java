@@ -1,6 +1,5 @@
 package ai.services.execution;
 
-import ai.services.execution.local.GraphOperator;
 import ai.services.execution.operator.TaskOperator;
 import ai.services.executor.AccessControlQueue;
 import org.slf4j.Logger;

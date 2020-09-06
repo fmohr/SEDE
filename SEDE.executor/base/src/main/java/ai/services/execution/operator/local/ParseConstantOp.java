@@ -43,6 +43,9 @@ public class ParseConstantOp extends MainTaskOperator {
                 }
                 break;
             case String:
+                if(!constantStr.startsWith("\"") || !constantStr.endsWith("\"")) {
+                    throw new IllegalArgumentException("String primitive is malformed. Expected quotes: " + constantStr);
+                }
                 data = constantStr.substring(1, constantStr.length() - 1);
                 break;
             default:

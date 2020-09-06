@@ -1,13 +1,12 @@
 package ai.services.execution;
 
-import ai.services.execution.local.GraphOperator;
+import ai.services.execution.local.LocalFieldContext;
 import ai.services.execution.operator.TaskDispatchContainer;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
 import ai.services.execution.operator.GraphDependencyOperator;
 import de.upb.sede.composition.graphs.nodes.INotification;
 import de.upb.sede.core.SEDEObject;
-import de.upb.sede.exec.IExecutorConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,7 +17,7 @@ import java.util.*;
  * Each execution on each executor has exactly one of these instances.
  *
  */
-public class GraphTaskExecution implements FieldContext, TaskDispatchContainer {
+public class GraphTaskExecution extends LocalFieldContext implements FieldContext, TaskDispatchContainer {
 
     private static final Logger logger = LoggerFactory.getLogger(GraphTaskExecution.class);
 
@@ -41,6 +40,7 @@ public class GraphTaskExecution implements FieldContext, TaskDispatchContainer {
     private final Set<INotification> ntfPool = new HashSet<>();
 
     public GraphTaskExecution(String executionId) {
+        super(executionId);
         this.executionId = executionId;
     }
 
@@ -160,37 +160,6 @@ public class GraphTaskExecution implements FieldContext, TaskDispatchContainer {
         queuedTask.add(task);
     }
 
-    public synchronized boolean hasField(String fieldname) {
-        return context.containsKey(fieldname);
-    }
-
-    public synchronized void setFieldValue(String fieldname, SEDEObject value) {
-        this.context.put(fieldname, value);
-    }
-
-    public synchronized SEDEObject getFieldValue(String fieldname) {
-        if(context.containsKey(fieldname))
-            return context.get(fieldname);
-        else
-            throw new IllegalArgumentException("field is unassigned: " + fieldname);
-    }
-
-    public synchronized void deleteField(String fieldname) {
-        if(context.containsKey(fieldname))
-            context.remove(fieldname);
-        else
-            throw new IllegalArgumentException("field is unassigned: " + fieldname);
-    }
-
-    @Override
-    public synchronized void pushNotification(INotification ntf) {
-        this.ntfPool.add(ntf);
-    }
-
-    @Override
-    public synchronized boolean hasNotification(INotification ntf) {
-        return ntfPool.contains(ntf);
-    }
 
     public synchronized void registerTaskDispatch(TaskDispatch taskDispatch) {
         this.runningTaskDispatches.add(taskDispatch);

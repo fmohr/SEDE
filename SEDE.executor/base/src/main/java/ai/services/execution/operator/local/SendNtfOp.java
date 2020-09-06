@@ -22,7 +22,7 @@ public class SendNtfOp extends MainTaskOperator {
     @Override
     public TaskTransition runTask(Task t) throws PushNotificationException {
         INotifyNode notifyNode = (INotifyNode) t.getNode();
-        String executionId = t.getExecutionId();
+        String executionId = t.getFieldContext().contextIdentifier();
         IExecutorContactInfo contactInfo = notifyNode.getContactInfo();
         INotification notification = notifyNode.getNotification();
 

@@ -32,7 +32,7 @@ public class TransmitDataOp extends MainTaskOperator {
             throw new IllegalStateException(StringUtil.unexpectedTypeMsg("SemanticDataField", fieldValue));
         }
         ExecutorCommChannel executorCommChannel = channelService.interExecutorCommChannel(contactInfo);
-        ExecutionDataChannel executionDataChannel = executorCommChannel.dataChannel(t.getExecutionId());
+        ExecutionDataChannel executionDataChannel = executorCommChannel.dataChannel(t.getFieldContext().contextIdentifier());
         try(UploadLink uploadLink = executionDataChannel.getUploadLink(fieldname, fieldValue.getType())) {
             uploadLink.setPayload(fieldValue.getDataField());
             return mainTaskPerformed(t);

@@ -1,7 +1,6 @@
 package ai.services.execution;
 
 import de.upb.sede.composition.graphs.nodes.BaseNode;
-import ai.services.execution.local.GraphOperator;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -19,12 +18,11 @@ public class Task {
         DISABLED, WAITING, QUEUED, RUNNING, SUCCESS, FAILURE;
     }
 
-
     private List<String> workerGroup = Collections.singletonList("HOST");
 
     private BaseNode node;
 
-    private GraphTaskExecution execution;
+    private final FieldContext fieldContext;
 
     private List<GraphOperator> graphOps = new ArrayList<>();
 
@@ -40,9 +38,9 @@ public class Task {
 
     private Exception error;
 
-    public Task(GraphTaskExecution execution, BaseNode node) {
+    public Task(FieldContext fieldContext, BaseNode node) {
         this.node = node;
-        this.execution = execution;
+        this.fieldContext = fieldContext;
         this.waitingCondition = (task) -> false;
     }
 
@@ -58,12 +56,12 @@ public class Task {
         return baseNodeClass == null || baseNodeClass.isInstance(node);
     }
 
-    private GraphTaskExecution getExecution() {
-        return execution;
-    }
+//    private GraphTaskExecution getExecution() {
+//        return execution;
+//    }
 
     public FieldContext getFieldContext() {
-        return execution;
+        return fieldContext;
     }
     public <V> V getWorkingMemVal(Object key) {
         return (V) workingMem.get(key);
@@ -82,7 +80,7 @@ public class Task {
         return node.getText();
     }
 
-    boolean testWaitingCondition() {
+    public boolean testWaitingCondition() {
         return waitingCondition.test(this);
     }
 
@@ -143,10 +141,6 @@ public class Task {
             }
         }
         return false;
-    }
-
-    public String getExecutionId() {
-        return getExecution().getExecutionId();
     }
 
     public List<String> getWorkerGroup() {

@@ -1,6 +1,6 @@
-package ai.services.execution.operator;
+package ai.services;
 
-public class StaticStringTestfile {
+public class SString {
 	public static String concat(String string_1, String string_2) {
 		return string_1.concat(string_2);
 	}

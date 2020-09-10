@@ -28,25 +28,49 @@ class Defaults {
 
     static final Closure DEFAULT_METHOD = Closure.IDENTITY
 
-
     def constructor = DEFAULT_CONSTRUCTOR
 
     def method = DEFAULT_METHOD
 
+    def methodSignature = Collections.emptyMap()
+
     static def clearMethod() {
         defaults.method = DEFAULT_CONSTRUCTOR
+    }
+
+    static def clearMethodSignature() {
+        defaults.methodSignature = Collections.emptyMap()
     }
 
     static def clearConstructor() {
         defaults.constructor = DEFAULT_CONSTRUCTOR
     }
 
+    static def clearDefaults() {
+        clearConstructor()
+        clearMethod()
+        clearMethodSignature()
+    }
+
     static def setDefaultConstructor(@DelegatesTo(MutableMethodDesc) Closure defaultConstructor) {
         defaults.constructor = defaultConstructor
     }
 
-    static def setDefaultMethod(@DelegatesTo(MutableMethodDesc) Closure defaultMethod) {
+    static def setDefaultMethod(@DelegatesTo(value = MutableMethodDesc, strategy = Closure.DELEGATE_FIRST) Closure defaultMethod) {
         defaults.method = defaultMethod
+    }
+
+    static def setDefaultMethodSignature(Map signatureDefaults) {
+        defaults.methodSignature = signatureDefaults
+    }
+
+    static def withDefaults(@DelegatesTo(value= Defaults) Closure defaultSetter,
+                            Closure runner) {
+        Defaults backup = defaults
+        defaults = new Defaults()
+        defaults.tap(defaultSetter)
+        runner()
+        defaults = backup
     }
 
 }

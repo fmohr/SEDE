@@ -5,7 +5,7 @@ import groovy.transform.BaseScript
 
 @BaseScript SDL description
 
-import static de.upb.sede.Helpers.*;
+
 import static de.upb.sede.StandardDefs.*;
 
 collection("plainlibs") {
@@ -14,7 +14,7 @@ collection("plainlibs") {
 
     type("plainlib.package1.b.Numbers") {
         aux {
-            javaType {
+            javaMarshalling {
                 mappedClassName = 'plainlib.package1.b.NumbersCaster1'
             }
         }

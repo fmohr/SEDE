@@ -5,7 +5,6 @@ import ai.services.execution.Task;
 import ai.services.execution.TaskTransition;
 import ai.services.execution.operator.MainTaskOperator;
 import ai.services.execution.operator.OpException;
-import ai.services.execution.operator.RuntimeAuxiliariesConverter;
 import ai.services.execution.operator.ServiceInstanceFactory;
 import de.upb.sede.composition.graphs.nodes.BaseNode;
 import de.upb.sede.composition.graphs.nodes.IInstructionNode;

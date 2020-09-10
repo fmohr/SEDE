@@ -25,6 +25,10 @@ public class Executor {
         return acq;
     }
 
+    protected IExecutorConfiguration getConfiguration() {
+        return configuration;
+    }
+
     public IExecutorContactInfo contactInfo() {
         return ExecutorContactInfo.builder()
             .qualifier(configuration.getExecutorId())

@@ -1,6 +1,3 @@
-import de.upb.sede.exec.auxiliary.JavaDispatchAux
-import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
-
 import static de.upb.sede.Helpers.*;
 @groovy.transform.BaseScript de.upb.sede.SDL description
 
@@ -36,11 +33,10 @@ collection ("C1") {
 
     type('t2') {
         aux {
-            javaType {
-                mappedClassName = "org.example.T2"
-                dataCastHandler = newJavaDispatchAux {
-                    className = 'org.example.T2Handler'
-                }
+            javaMarshalling {
+                mappedJavaClass = "org.example.T2"
+                useCustomHandler = true
+                handlerClass = 'org.example.T2Handler'
             }
         }
     }

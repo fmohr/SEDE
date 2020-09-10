@@ -16,7 +16,15 @@ import static de.upb.sede.composition.types.IRefType.SEMANTIC_SERVICE_INSTANCE_H
 public interface IMarshalling {
 
     enum Direction {
-        MARSHAL, UNMARSHAL
+        MARSHAL, UNMARSHAL;
+
+        public boolean isMarshal() {
+            return this == MARSHAL;
+        }
+
+        public boolean isUnMarshal() {
+            return this == UNMARSHAL;
+        }
     }
 
     IMarshalling.Direction getDirection();

@@ -18,24 +18,21 @@ import org.slf4j.LoggerFactory;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class MarshalOp extends MainTaskOperator {
+public class DataMarshalOp extends MainTaskOperator {
 
-    private final static Logger logger = LoggerFactory.getLogger(MarshalOp.class);
+    private final static Logger logger = LoggerFactory.getLogger(DataMarshalOp.class);
 
-    private final static IJavaTypeAux EMPTY_TYPE_AUX = JavaTypeAux.builder().build();
+    private final static IStdTypeAux EMPTY_TYPE_AUX = StdTypeAux.builder().build();
 
     private final static IJavaMarshalAux DEFAULT_MARSHAL = JavaMarshalAux.builder().build();
 
     private final static ObjectMapper MAPPER = new ObjectMapper().setBase64Variant(Base64Variants.getDefaultVariant());
 
-    public MarshalOp() {
+    public DataMarshalOp() {
         super(IMarshalNode.class);
     }
 
@@ -57,16 +54,6 @@ public class MarshalOp extends MainTaskOperator {
         return tt;
     }
 
-    private IJavaMarshalAux inferMarshalMethod(IMarshalNode node) {
-        IJavaTypeAux suppliedTypeAux = AuxHelper.convertAuxiliaries(node, IJavaTypeAux.class).orElse(EMPTY_TYPE_AUX);
-
-        IJavaMarshalAux suppliedMarshalAux = suppliedTypeAux.getJavaMarshalAux();
-        if(suppliedMarshalAux == null) {
-            return DEFAULT_MARSHAL;
-        }
-        return suppliedMarshalAux;
-    }
-
     private TaskTransition marshal(IMarshalNode node, SEDEObject fieldValue, IJavaMarshalAux marshalAux) throws IOException, IllegalAccessException, InvocationTargetException, ClassNotFoundException {
         String fieldname = node.getFieldName();
         if((fieldValue instanceof SemanticDataField)) {
@@ -75,7 +62,7 @@ public class MarshalOp extends MainTaskOperator {
         IMarshalling marshalling = node.getMarshalling();
         TypeClass srcType = marshalling.getValueType();
 
-        byte[] serialisation = null;
+        byte[] serialisation;
 
         if(TypeClass.isServiceHandle(srcType) && ! (fieldValue instanceof ServiceInstanceField)) {
                 throw new IllegalArgumentException("Type mismatch. " + StringUtil.unexpectedTypeMsg("ServiceInstanceField", fieldValue));
@@ -83,7 +70,7 @@ public class MarshalOp extends MainTaskOperator {
         if(fieldValue.isServiceInstanceHandle() && !fieldValue.isServiceInstance()) {
             serialisation = ServiceInstanceHandleSerialisation.serialiseServiceInstance(fieldValue.getServiceHandle());
         } else {
-            Object toBeSerialised = null;
+            Object toBeSerialised;
             if(fieldValue.isServiceInstance()) {
                 toBeSerialised = fieldValue.getServiceInstance();
             } else {
@@ -125,7 +112,7 @@ public class MarshalOp extends MainTaskOperator {
             return MAPPER.writeValueAsBytes(o);
         }
         Class<?> inferredClass = inferClass(supplyType, marshalAux);
-        String methodName = inferMethod(marshalAux, supplyType, IMarshalling.Direction.UNMARSHAL);
+        String methodName = inferMethod(marshalAux, supplyType, IMarshalling.Direction.MARSHAL);
         String mappedJavaClass = supplyType.getTypeQualifier();
         if(marshalAux.getMappedJavaClass() != null) {
             mappedJavaClass = marshalAux.getMappedJavaClass();
@@ -193,8 +180,9 @@ public class MarshalOp extends MainTaskOperator {
     }
 
 
-    private byte[] marshalUsingReflection(Class<?> clazz, String methodName, TypeClass srcType, String mappedClass, Object o) throws InvocationTargetException, IllegalAccessException {
-        List<Class<?>[]> signatureOptions = Arrays.asList(
+    private byte[] marshalUsingReflection(Class<?> clazz, String methodName, TypeClass srcType, String mappedClass, Object o)
+            throws InvocationTargetException, IllegalAccessException {
+        final List<Class<?>[]> signatureOptions = Arrays.asList(
             new Class<?>[] {},
             new Class<?>[] {TypeClass.class},
             new Class<?>[] {String.class},
@@ -202,24 +190,19 @@ public class MarshalOp extends MainTaskOperator {
             new Class<?>[] {TypeClass.class, o.getClass()},
             new Class<?>[] {String.class, o.getClass()}
         );
-
-        final List<Supplier<Object[]>> parameters = Arrays.asList(
-            () -> new Object[] {o},
-            () -> new Object[] {o, srcType},
-            () -> new Object[] {o, mappedClass},
-            () -> new Object[] {null, o},
-            () -> new Object[] {null, srcType, o},
-            () -> new Object[] {null, mappedClass, o}
+        final List<Object> callers = Arrays.asList(
+            o,o,o, null, null, null
         );
-        for (int i = 0; i < signatureOptions.size(); i++) {
-            Class<?>[] signatureOpt = signatureOptions.get(i);
-            Method method = MethodUtils.getMatchingAccessibleMethod(clazz, methodName, signatureOpt);
-            if(method != null) {
-                Object serialisedResult = method.invoke(parameters.get(i).get());
-                return toByteArr(serialisedResult);
-            }
-        }
-        throw new IllegalArgumentException("Couldn't find method to marshal object. Inferred class: " + clazz + ", method name: " + methodName);
+        final List<Supplier<Object[]>> parameters = Arrays.asList(
+            () -> new Object[] {},
+            () -> new Object[] {srcType},
+            () -> new Object[] {mappedClass},
+            () -> new Object[] {o},
+            () -> new Object[] {srcType, o},
+            () -> new Object[] {mappedClass, o}
+        );
+        Object serialisedResult = reflect(clazz, methodName, signatureOptions, callers, parameters);
+        return toByteArr(serialisedResult);
     }
 
     private byte[] toByteArr(Object reflectionResult) {
@@ -231,7 +214,8 @@ public class MarshalOp extends MainTaskOperator {
         throw new RuntimeException("Marshal output unrecognized. " + StringUtil.unexpectedTypeMsg("Byte[] or String", reflectionResult));
     }
 
-    private Object unmarshalUsingReflection(Class<?> clazz, String methodName, TypeClass targetType, String targetJavaClass, byte[] data) throws InvocationTargetException, IllegalAccessException {
+    private Object unmarshalUsingReflection(Class<?> clazz, String methodName, TypeClass targetType, String targetJavaClass, byte[] data)
+            throws InvocationTargetException, IllegalAccessException {
         final List<Class<?>[]> marshalSignatureOptions = Arrays.asList(
             new Class<?>[] {byte[].class},
             new Class<?>[] {TypeClass.class, byte[].class},
@@ -240,49 +224,39 @@ public class MarshalOp extends MainTaskOperator {
             new Class<?>[] {TypeClass.class, InputStream.class},
             new Class<?>[] {String.class, InputStream.class}
         );
+        final List<Object> callers = Arrays.asList(null, null, null, null, null, null);
         final List<Supplier<Object[]>> parameters = Arrays.asList(
-            () -> new Object[] {null, data},
-            () -> new Object[] {null, targetType, data},
-            () -> new Object[] {null, targetJavaClass, data},
-            () -> new Object[] {null, new ByteArrayInputStream(data)},
-            () -> new Object[] {null, targetType,  new ByteArrayInputStream(data)},
-            () -> new Object[] {null, targetJavaClass,  new ByteArrayInputStream(data)}
+            () -> new Object[] {data},
+            () -> new Object[] {targetType, data},
+            () -> new Object[] {targetJavaClass, data},
+            () -> new Object[] {new ByteArrayInputStream(data)},
+            () -> new Object[] {targetType,  new ByteArrayInputStream(data)},
+            () -> new Object[] {targetJavaClass,  new ByteArrayInputStream(data)}
         );
-        for (int i = 0; i < marshalSignatureOptions.size(); i++) {
-            Class<?>[] signatureOption = marshalSignatureOptions.get(i);
-            Method accessibleMethod = MethodUtils.getMatchingAccessibleMethod(clazz, methodName, signatureOption);
-            if(accessibleMethod != null) {
+        return reflect(clazz, methodName, marshalSignatureOptions, callers, parameters);
+    }
+
+    private Object reflect(Class<?> clazz, String methodName, List<Class<?>[]> signatureOptions, List<Object> callers, List<Supplier<Object[]>> parameters) throws InvocationTargetException, IllegalAccessException {
+        for (int i = 0; i < signatureOptions.size(); i++) {
+            Class<?>[] signatureOpt = signatureOptions.get(i);
+            Method method = MethodUtils.getMatchingMethod(clazz, methodName, signatureOpt);
+            if(method != null) {
+                Object caller = callers.get(i);
+                if(!method.canAccess(caller)) {
+                    method.setAccessible(true);
+                }
                 Object[] parameterValues = parameters.get(i).get();
-                return accessibleMethod.invoke(parameterValues);
+                return method.invoke(caller, parameterValues);
             }
         }
-        throw new IllegalArgumentException("Couldn't find method to unmarshall data. Inferred class: " + clazz + ", method name: " + methodName);
+        throw new IllegalArgumentException("Couldn't find custom handler for object. Inferred class: " + clazz + ", method name: " + methodName);
     }
 
-    private String inferMethod(IJavaMarshalAux marshalAux, TypeClass targetType, IMarshalling.Direction direction) {
-        if(marshalAux.useCustomHandler()) {
-            if(marshalAux.getHandlerMethod()!=null) {
-                return marshalAux.getHandlerMethod();
-            }
-
-        } else if(marshalAux.useLegacyPattern()) {
-            return legacyMarshalMethodName(targetType, direction);
-        }
-        throw new IllegalArgumentException("Cannot infer the method to unmarshal the data from the supplied marshal aux: " + marshalAux);
+    private IJavaMarshalAux inferMarshalMethod(IMarshalNode node) {
+        IStdTypeAux suppliedTypeAux = AuxHelper.convertAuxiliaries(node, IStdTypeAux.class).orElse(EMPTY_TYPE_AUX);
+        IJavaMarshalAux suppliedMarshalAux = suppliedTypeAux.getJavaMarshalAux();
+        return Objects.requireNonNullElse(suppliedMarshalAux, DEFAULT_MARSHAL);
     }
-
-    private String legacyMarshalMethodName(TypeClass targetType, IMarshalling.Direction direction) {
-        String simpleName = SemanticStreamer.getSimpleNameFromClasspath(targetType.getTypeQualifier());
-        String methodName;
-        if(direction == IMarshalling.Direction.MARSHAL) {
-            methodName = "cts_";
-        } else {
-            methodName = "cfs_";
-        }
-        methodName += simpleName;
-        return methodName;
-    }
-
 
     private Class<?> inferClass(TypeClass supplyType, IJavaMarshalAux marshalAux) throws ClassNotFoundException {
         if(marshalAux.useJacksonSerialisation()) {
@@ -306,6 +280,32 @@ public class MarshalOp extends MainTaskOperator {
             return runtimeInference;
         }
     }
+
+    private String inferMethod(IJavaMarshalAux marshalAux, TypeClass targetType, IMarshalling.Direction direction) {
+        if(marshalAux.useCustomHandler()) {
+            String marshalMethod = null;
+            marshalMethod = direction.isMarshal() ? marshalAux.getHandlerMarshalMethod() : marshalAux.getHandlerUnmarshalMethod();
+            if(marshalMethod != null) {
+                return marshalMethod;
+            }
+        } else if(marshalAux.useLegacyPattern()) {
+            return legacyMarshalMethodName(targetType, direction);
+        }
+        throw new IllegalArgumentException("Cannot infer the method to unmarshal the data from the supplied marshal aux: " + marshalAux);
+    }
+
+    private String legacyMarshalMethodName(TypeClass targetType, IMarshalling.Direction direction) {
+        String simpleName = SemanticStreamer.getSimpleNameFromClasspath(targetType.getTypeQualifier());
+        String methodName;
+        if(direction.isMarshal()) {
+            methodName = "cts_";
+        } else {
+            methodName = "cfs_";
+        }
+        methodName += simpleName;
+        return methodName;
+    }
+
 
     private static final Function<Object, SEDEObject> SERVICE_INSTANCE_HANDLE_WRAPPER = handle -> {
         if(handle instanceof ServiceInstanceHandle) {

@@ -24,7 +24,7 @@ public class OperatorArbiter implements TaskOperator {
     private final TreeMap<Integer, Set<TaskOperator>> operators = new TreeMap<>(Comparator.reverseOrder());
 
     public OperatorArbiter() {
-        addOperator(-100, new FinalOperator());
+        addOperator(-100, new MainTaskFinisherOp());
     }
 
     public void addMainOperator(TaskOperator operator) {
@@ -40,7 +40,7 @@ public class OperatorArbiter implements TaskOperator {
     }
 
     public void addOperator(int priority, TaskOperator operator) {
-        if(!(operator instanceof  FinalOperator) && priority < MIN_PRIO) {
+        if(!(operator instanceof MainTaskFinisherOp) && priority < MIN_PRIO) {
             throw new IllegalArgumentException("Priority of Operator " + operator.getClass().getSimpleName()
                     + " is too small: " + priority+ "\n Min prio is: " + MIN_PRIO);
         } else if(priority > MAX_PRIO) {
@@ -102,32 +102,14 @@ public class OperatorArbiter implements TaskOperator {
                 return matchingOperators.get(0);
             }
         }
-        throw new IllegalStateException("BUG this shouldn't have been reached, No operator found for task " + task);
+        return new MainTaskFinisherOp();
+//        throw new IllegalStateException("BUG this shouldn't have been reached, No operator found for task " + task);
     }
 
 
     @Override
     public boolean test(Task task) {
         return true;
-    }
-
-    private static class FinalOperator implements TaskOperator {
-
-        @Override
-        public boolean test(Task task) {
-            return true; // always matching
-        }
-
-        @Override
-        public TaskTransition apply(Task task) {
-            if(task.isMainTaskPerformed()) {
-                logger.debug("No more operator for completed task `{}`.", task);
-                return TaskTransition.success();
-            } else {
-                logger.error("No operator matched task `{}`", task);
-                return TaskTransition.error(new Exception("No operator carried out main task of: "+ task));
-            }
-        }
     }
 
 }

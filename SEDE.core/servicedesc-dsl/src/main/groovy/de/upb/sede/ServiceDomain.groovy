@@ -47,7 +47,8 @@ class ServiceDomain
     static def method(MutableServiceDesc model, Map methodDef) {
         return method(model, methodDef, Defaults.defaults.method)
     }
-    static def method(MutableServiceDesc model, Map methodDef, @DelegatesTo(MutableMethodDesc) Closure methodDescriber) {
+    static def method(MutableServiceDesc model, Map userMethodDef, @DelegatesTo(MutableMethodDesc) Closure methodDescriber) {
+        def methodDef = Defaults.defaults.methodSignature + userMethodDef
         if(! "name" in methodDef) {
             throw new RuntimeException("Provided method declaration needs to define method name. Provided method definition: " + methodDef.toString())
         }

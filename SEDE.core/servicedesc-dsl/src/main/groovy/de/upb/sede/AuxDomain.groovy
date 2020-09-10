@@ -3,11 +3,12 @@ package de.upb.sede
 import de.upb.sede.exec.auxiliary.IJavaDispatchAux
 import de.upb.sede.exec.auxiliary.IPythonDispatchAux
 import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
+import de.upb.sede.exec.auxiliary.MutableJavaMarshalAux
 import de.upb.sede.exec.auxiliary.MutableJavaParameterizationAux
-import de.upb.sede.exec.auxiliary.MutableJavaTypeAux
+import de.upb.sede.exec.auxiliary.MutableStdTypeAux
 import de.upb.sede.exec.auxiliary.MutablePythonDispatchAux
 import de.upb.sede.exec.auxiliary.IJavaParameterizationAux
-import de.upb.sede.exec.auxiliary.IJavaTypeAux
+import de.upb.sede.exec.auxiliary.IStdTypeAux
 import de.upb.sede.util.DeepImmutableCopier
 import de.upb.sede.util.DeepMutableCopier
 import de.upb.sede.util.DynRecord
@@ -37,8 +38,10 @@ class AuxDomain {
         runDescriberOnValue(model, IJavaParameterizationAux, dispatchDescriber)
     }
 
-    static def javaType(DynRecord model, @DelegatesTo(MutableJavaTypeAux) Closure dispatchDescriber) {
-        runDescriberOnValue(model, IJavaTypeAux, dispatchDescriber)
+    static def javaMarshalling(DynRecord model, @DelegatesTo(MutableJavaMarshalAux) Closure dispatchDescriber) {
+        runDescriberOnValue(model, IStdTypeAux, {
+            javaMarshalAux(dispatchDescriber)
+        })
     }
 
     static def setFields(DynRecord model, @DelegatesTo(Expando) Closure expandoDescriber) {

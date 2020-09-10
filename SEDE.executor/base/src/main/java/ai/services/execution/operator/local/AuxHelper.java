@@ -1,6 +1,5 @@
 package ai.services.execution.operator.local;
 
-import ai.services.execution.operator.RuntimeAuxiliariesConverter;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.upb.sede.composition.graphs.nodes.WithAux;

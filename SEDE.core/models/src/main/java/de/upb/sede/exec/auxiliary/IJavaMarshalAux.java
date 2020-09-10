@@ -24,7 +24,10 @@ public interface IJavaMarshalAux {
     String getHandlerClass();
 
     @Nullable
-    String getHandlerMethod();
+    String getHandlerMarshalMethod();
+
+    @Nullable
+    String getHandlerUnmarshalMethod();
 
     @Value.Default
     default boolean useObjectSerialisation() {
@@ -41,7 +44,7 @@ public interface IJavaMarshalAux {
 
     @Value.Default
     default boolean useLegacyPattern() {
-        return true;
+        return false;
     }
 
 }

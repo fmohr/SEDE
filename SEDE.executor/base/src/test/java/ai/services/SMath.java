@@ -1,6 +1,6 @@
-package ai.services.execution.operator;
+package ai.services;
 
-public class StaticMathTestfile {
+public class SMath {
 	public static int addPrimitive(int a, int b) {
 		return a + b;
 	}

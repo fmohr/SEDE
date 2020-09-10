@@ -2,7 +2,7 @@ package de.upb.sede
 
 import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
 import de.upb.sede.exec.auxiliary.MutableJavaParameterizationAux
-import de.upb.sede.exec.auxiliary.MutableJavaTypeAux
+import de.upb.sede.exec.auxiliary.MutableStdTypeAux
 
 class Helpers {
 
@@ -24,8 +24,8 @@ class Helpers {
         return javaAux
     }
 
-    public static MutableJavaTypeAux newJavaTypeAux(@DelegatesTo(MutableJavaTypeAux) Closure describer) {
-        def javaAux = MutableJavaTypeAux.create()
+    public static MutableStdTypeAux newJavaTypeAux(@DelegatesTo(MutableStdTypeAux) Closure describer) {
+        def javaAux = MutableStdTypeAux.create()
         runDescriber(javaAux, describer)
         return javaAux
     }

@@ -16,7 +16,7 @@ collection ("demolib") {
      */
     def NummerList = type('demo.types.NummerList') {
         aux {
-            javaType {
+            javaMarshalling {
                 mappedClassName = 'demo.types.DemoCaster'
             }
         }
@@ -25,7 +25,7 @@ collection ("demolib") {
 
     def Punkt = type('demo.types.Punkt') {
         aux {
-            javaType {
+            javaMarshalling {
                 mappedClassName = 'demo.types.DemoCaster'
             }
         }

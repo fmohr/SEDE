@@ -1,7 +1,7 @@
 package ai.services.channels;
 
 import de.upb.sede.IServiceRef;
-import de.upb.sede.exec.ExecutorConfiguration;
+import de.upb.sede.exec.IExecutorConfiguration;
 import de.upb.sede.exec.IExecutorContactInfo;
 import de.upb.sede.util.ExpiringCache;
 import de.upb.sede.util.NullableCache;
@@ -23,8 +23,8 @@ public class StdChannelService implements ChannelService {
 
     private final Map<IExecutorContactInfo, ExpiringCache<StdRESTExecutorCommChannel>> eccCache = new ConcurrentHashMap<>();
 
-    public StdChannelService(ExecutorConfiguration execConfig) {
-        this.fsServiceStorageChannel = new StdFSServiceStorageChannel(execConfig.getServiceStoreLocation());
+    public StdChannelService(String serviceStoreLocation) {
+        this.fsServiceStorageChannel = new StdFSServiceStorageChannel(serviceStoreLocation);
     }
 
     @Override

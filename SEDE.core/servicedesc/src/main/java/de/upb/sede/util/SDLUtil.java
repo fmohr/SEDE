@@ -103,13 +103,41 @@ public class SDLUtil {
     }
 
     public static Map gatherAux(List<DynamicAuxAware> auxStack) {
-        Map auxData = new HashMap();
+        Map mergedAuxData = new HashMap();
         for (DynamicAuxAware dynamicAuxAware : auxStack) {
             DynRecord aux = dynamicAuxAware.getDynAux();
-            if(aux!=null)
-                auxData.putAll(aux.getData());
+            if(aux!=null) {
+                mergeInto(mergedAuxData, aux);
+            }
         }
-        return auxData;
+        return mergedAuxData;
+    }
+
+    private static boolean mergeUntypedInto(Object target, Object source) {
+        if(source instanceof Map && target instanceof Map) {
+            mergeInto((Map)target, (Map)source);
+            return true;
+        }
+        if(source instanceof Collection && target instanceof Collection) {
+            ((List<?>) target).addAll((Collection)source);
+            return true;
+        }
+        return false;
+    }
+
+    private static void mergeInto(Map target, DynRecord source) {
+        mergeInto(target, source.getData());
+    }
+
+    private static void mergeInto(Map target, Map source) {
+        for (Object key : target.keySet()) {
+            if(source.containsKey(key)) {
+                boolean merged = mergeUntypedInto(target.get(key), source.get(key));
+                if(!merged) {
+                    target.put(key, source.get(key));
+                }
+            }
+        }
     }
 
     public static Optional<IMethodDesc> matchSignature(List<IMethodDesc> methodList, IInstructionNode inst) {

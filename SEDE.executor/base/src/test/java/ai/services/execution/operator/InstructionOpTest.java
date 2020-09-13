@@ -17,7 +17,7 @@ import org.junit.Test;
 import demo.math.Gerade;
 import demo.types.Punkt;
 
-public class InstructionProcedureTest {
+public class InstructionOpTest {
     private static String executor_id = "Executor_id";
     private static GraphTaskExecution execution = new GraphTaskExecution(executor_id);
     private static TaskOperator op = new InstructionOp(new ServiceInstanceFactory(executor_id));
@@ -149,7 +149,7 @@ public class InstructionProcedureTest {
             .fieldType(PrimitiveValueType.builder()
                 .primitiveType(PrimitiveType.Number)
                 .build())
-            .context("ai.services.execution.operator.StaticMathTestfile")
+            .context(ai.services.SMath.class.getName())
             .contextIsFieldFlag(false)
             .fMInstruction("ai.services.execution.operator.InstructionProcedureTest::" + methodName + "(Number_1,Number_2)")
             .addParameterFields("Number_1", "Number_2")
@@ -162,7 +162,7 @@ public class InstructionProcedureTest {
             .fieldType(PrimitiveValueType.builder()
                 .primitiveType(PrimitiveType.String)
                 .build())
-            .context("ai.services.execution.operator.StaticStringTestfile")
+            .context(ai.services.SString.class.getName())
             .contextIsFieldFlag(false)
             .fMInstruction("ai.services.execution.operator.InstructionProcedureTest::" + methodName + "(" +
                 String.join(", ", parameters) +

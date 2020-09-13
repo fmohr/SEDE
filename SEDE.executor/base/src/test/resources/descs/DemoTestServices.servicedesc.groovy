@@ -1,3 +1,4 @@
+import ai.services.SMath
 import de.upb.sede.Defaults
 import de.upb.sede.SDL
 import groovy.transform.BaseScript
@@ -7,16 +8,18 @@ import static de.upb.sede.StandardDefs.*
 
 collection "StaticServices", {
     service "SMath", {
+        aux {
+            javaDispatch {
+                staticInvocation = true
+                className = SMath.class.name
+            }
+        }
+
         Defaults.withDefaults({
             setDefaultMethodSignature inputs: [ number, number ], output: number
             setDefaultMethod {
                 isPure = true
                 isContextFree = true
-                aux {
-                    javaDispatch {
-                        staticInvocation = true
-                    }
-                }
             }
         }) {
             method(name: "addPrimitive")

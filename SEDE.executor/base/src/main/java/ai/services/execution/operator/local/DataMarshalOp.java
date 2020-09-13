@@ -201,8 +201,15 @@ public class DataMarshalOp extends MainTaskOperator {
             () -> new Object[] {srcType, o},
             () -> new Object[] {mappedClass, o}
         );
-        Object serialisedResult = reflect(clazz, methodName, signatureOptions, callers, parameters);
-        return toByteArr(serialisedResult);
+        Object[] output = new Object[1];
+        boolean invocationSuccess = ReflectiveInvocation.invokeMatch(clazz, methodName, signatureOptions, callers, parameters, output);
+        if(!invocationSuccess) {
+            throw new IllegalArgumentException("Couldn't find custom handler for object unmarshalling. Inferred class: " + clazz + ", method name: " + methodName);
+        } else {
+            return toByteArr(output[0]);
+        }
+
+
     }
 
     private byte[] toByteArr(Object reflectionResult) {
@@ -233,23 +240,13 @@ public class DataMarshalOp extends MainTaskOperator {
             () -> new Object[] {targetType,  new ByteArrayInputStream(data)},
             () -> new Object[] {targetJavaClass,  new ByteArrayInputStream(data)}
         );
-        return reflect(clazz, methodName, marshalSignatureOptions, callers, parameters);
-    }
-
-    private Object reflect(Class<?> clazz, String methodName, List<Class<?>[]> signatureOptions, List<Object> callers, List<Supplier<Object[]>> parameters) throws InvocationTargetException, IllegalAccessException {
-        for (int i = 0; i < signatureOptions.size(); i++) {
-            Class<?>[] signatureOpt = signatureOptions.get(i);
-            Method method = MethodUtils.getMatchingMethod(clazz, methodName, signatureOpt);
-            if(method != null) {
-                Object caller = callers.get(i);
-                if(!method.canAccess(caller)) {
-                    method.setAccessible(true);
-                }
-                Object[] parameterValues = parameters.get(i).get();
-                return method.invoke(caller, parameterValues);
-            }
+        Object[] output = new Object[1];
+        boolean invocationSuccess = ReflectiveInvocation.invokeMatch(clazz, methodName, marshalSignatureOptions, callers, parameters, output);
+        if(!invocationSuccess) {
+            throw new IllegalArgumentException("Couldn't find custom handler for object unmarshalling. Inferred class: " + clazz + ", method name: " + methodName);
+        } else {
+            return output[0];
         }
-        throw new IllegalArgumentException("Couldn't find custom handler for object. Inferred class: " + clazz + ", method name: " + methodName);
     }
 
     private IJavaMarshalAux inferMarshalMethod(IMarshalNode node) {

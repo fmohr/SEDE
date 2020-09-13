@@ -21,9 +21,13 @@ import org.apache.commons.lang3.reflect.MethodUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Executable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * Handles instruction tasks, by finding and invoking java methods.
@@ -64,7 +68,7 @@ public class InstructionOp extends MainTaskOperator {
 
 
         castNumbers(javaDispatch, paramValues);
-        Object returnVal = invoke(javaDispatch, context, paramValues);
+        Object returnVal = invokeQuietly(instNode, javaDispatch, context, paramValues);
 
         TaskTransition taskTransition;
         if (instNode.isAssignment()) {
@@ -75,6 +79,112 @@ public class InstructionOp extends MainTaskOperator {
         }
         task.setMainTaskPerformed();
         return taskTransition;
+    }
+
+    private Optional<Object> fetchContextValue(IInstructionNode inst, FieldContext fieldContext) {
+        if (inst.getContextIsFieldFlag()) {
+            String context = inst.getContext();
+            SEDEObject fieldValue = fieldContext.hasField(context) ? fieldContext.getFieldValue(context) : null;
+            if (fieldValue == null || !fieldValue.isServiceInstance()) {
+                String contextStrMessage;
+                if (!fieldContext.hasField(context)) {
+                    contextStrMessage = "not-present";
+                } else if (fieldValue == null) {
+                    contextStrMessage = "null";
+                } else {
+                    contextStrMessage = fieldValue.toString();
+                }
+                throw new OpException("Instruction node " + inst + " has a service instance context, " +
+                    "but the execution field context maps to: " + contextStrMessage);
+            }
+            return Optional.of(fieldValue.getServiceInstance());
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private Object invokeQuietly(IInstructionNode node, IJavaDispatchAux javaDispatch, Optional<Object> contextValue, Object[] paramValues){
+        try {
+            return invoke(javaDispatch, contextValue, paramValues);
+        } catch(Exception ex) {
+            throw constructErrorMsg(node, javaDispatch, contextValue, paramValues, ex);
+        }
+    }
+
+    private RuntimeException constructErrorMsg(IInstructionNode node, IJavaDispatchAux javaDispatch,
+                                               Optional<Object> contextValue, Object[] paramValues,
+                                               Exception cause) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Error trying to handle instruction: ").append(node.getText()).append("\n");
+        builder.append("\tJava dispatch that was used: ").append(javaDispatch).append("\n");
+        Function<Object, String> typologist =  obj -> {
+          if(obj == null) {
+              return "null";
+          } else {
+              return "class: " + obj.getClass().getSimpleName() + ", toString(): " + obj.toString().subSequence(0, 64);
+          }
+        };
+        builder.append("\tInstance:\n\t\t").append(typologist.apply(contextValue.orElse(null))).append("\n");
+        builder.append("\tParameters:\n");
+        for (Object paramValue : paramValues) {
+            builder.append("\t\t").append(typologist.apply(paramValue)).append("\n");
+        }
+        builder.append("Cause exception message: ").append(cause.getMessage());
+        return new RuntimeException(builder.toString(), cause);
+    }
+
+    private Object invoke(IJavaDispatchAux javaDispatch, Optional<Object> contextValue, Object[] paramValues)
+        throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, InstantiationException {
+        Object outputValue;
+        String methodname = javaDispatch.methodName();
+        final Class<?> contextClass = Class.forName(javaDispatch.className());
+        if (javaDispatch.constructorInvocation()) {
+            /*
+                call constructor and create the service:
+             */
+            outputValue = ConstructorUtils.invokeConstructor(contextClass, paramValues);
+        } else if(javaDispatch.staticInvocation()) {
+            /*
+                call a static method:
+             */
+            outputValue = MethodUtils.invokeStaticMethod(contextClass, methodname, paramValues);
+        } else {
+            /*
+                call object method:
+             */
+            assert contextValue.isPresent();
+            final Object contextInstance = contextValue.get();
+            outputValue = invokeInstanceMethod(javaDispatch, contextInstance, contextClass, methodname, paramValues);
+        }
+        return outputValue;
+    }
+
+    private Object invokeInstanceMethod(IJavaDispatchAux javaDispatch, final Object contextInstance, final Class<?> contextClass, final String methodname, Object[] paramValues) throws InvocationTargetException, IllegalAccessException {
+        final Class<?> [] paramClasses = new Class<?>[paramValues.length];
+        final Class<?> [] paramClassesWithInstance = new Class<?>[1 + paramValues.length];
+        final Object[] paramValuesWithInstance = new Object[1 + paramValues.length];
+        paramClassesWithInstance[0] = contextClass;
+        paramValuesWithInstance[0] = contextInstance;
+        for (int i = 0; i < paramValues.length; i++) {
+            Object param = paramValues[i];
+            Class<?> paramClass = param.getClass();
+            paramClasses[i] = paramClass;
+            paramClassesWithInstance[i+1] = paramClass;
+            paramValuesWithInstance[i+1] = param;
+        }
+        final List<Class<?>[]> signOpts = Arrays.asList(
+            paramClasses, paramClassesWithInstance
+        );
+        final List<Object> callers = Arrays.asList(contextInstance, null);
+        final List<Supplier<Object[]>> parameters = Arrays.asList(
+            () -> paramValues, () -> paramValuesWithInstance
+        );
+        Object[] output = new Object[1];
+        boolean matchFound = ReflectiveInvocation.invokeMatch(contextClass, methodname, signOpts, callers, parameters, output);
+        if(!matchFound) {
+            throw new IllegalStateException("No matching method found for java dispatch: " + javaDispatch);
+        }
+        return output[0];
     }
 
     private SEDEObject createOutputSEDEObject(IInstructionNode instNode, IJavaDispatchAux javaDispatch,
@@ -109,55 +219,6 @@ public class InstructionOp extends MainTaskOperator {
         return returnObject;
     }
 
-    private Object invoke(IJavaDispatchAux javaDispatch, Optional<Object> contextValue, Object[] paramValues)
-        throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, InstantiationException {
-        Object outputValue;
-        String methodname = javaDispatch.methodName();
-        if (javaDispatch.constructorInvocation() || javaDispatch.staticInvocation()) {
-            /*
-                call constructor and create the service:
-             */
-            Class<?> contextCls = Class.forName(javaDispatch.className());
-            if (javaDispatch.constructorInvocation()) {
-                outputValue = ConstructorUtils.invokeConstructor(contextCls, paramValues);
-            } else {
-            /*
-                call a static method:
-             */
-                outputValue = MethodUtils.invokeStaticMethod(contextCls, methodname, paramValues);
-            }
-        } else {
-            /*
-                call object method:
-             */
-            assert contextValue.isPresent();
-            outputValue = MethodUtils.invokeMethod(contextValue.get(), methodname, paramValues);
-        }
-        return outputValue;
-    }
-
-    private Optional<Object> fetchContextValue(IInstructionNode inst, FieldContext fieldContext) {
-        if (inst.getContextIsFieldFlag()) {
-            String context = inst.getContext();
-            SEDEObject fieldValue = fieldContext.hasField(context) ? fieldContext.getFieldValue(context) : null;
-            if (fieldValue == null || !fieldValue.isServiceInstance()) {
-                String contextStrMessage;
-                if (!fieldContext.hasField(context)) {
-                    contextStrMessage = "not-present";
-                } else if (fieldValue == null) {
-                    contextStrMessage = "null";
-                } else {
-                    contextStrMessage = fieldValue.toString();
-                }
-                throw new OpException("Instruction node " + inst + " has a service instance context, " +
-                    "but the execution field context maps to: " + contextStrMessage);
-            }
-            return Optional.of(fieldValue.getServiceInstance());
-        } else {
-            return Optional.empty();
-        }
-    }
-
     private Object[] fetchParamValues(IInstructionNode inst, FieldContext fieldContext) {
         int paramSize = inst.getParameterFields().size();
         Object[] paramValues = new Object[paramSize];
@@ -182,7 +243,7 @@ public class InstructionOp extends MainTaskOperator {
     private IJavaDispatchAux constructDispatchAux(IInstructionNode inst, Optional<Object> serviceContext, Object[] paramValues) {
         IJavaDispatchAux javaDispatch;
         IJavaDispatchAux inferredDispatch = inferDispatchFromNode(inst, serviceContext, paramValues);
-        Optional<IJavaDispatchAux> runtimeAux = AuxHelper.convertAuxiliaries(inst.getRuntimeAuxiliaries(), IJavaDispatchAux.class);
+        Optional<IJavaDispatchAux> runtimeAux = AuxHelper.convertAuxiliaries(inst, IJavaDispatchAux.class);
         javaDispatch = runtimeAux
             .map(aux -> mergeJavaDispatch(inferredDispatch, aux))
             .orElse(inferredDispatch);

@@ -2,15 +2,17 @@ package de.upb.sede.composition.choerography.emulation.executors;
 
 import de.upb.sede.*;
 import de.upb.sede.composition.choerography.emulation.EmulationException;
-import de.upb.sede.composition.choerography.emulation.OrchestrationException;
 import de.upb.sede.composition.graphs.nodes.*;
 import de.upb.sede.composition.orchestration.emulated.*;
 import de.upb.sede.composition.types.IDataValueType;
+import de.upb.sede.composition.types.IServiceInstanceType;
 import de.upb.sede.composition.types.serialization.IMarshalling;
 import de.upb.sede.composition.typing.TypeUtil;
 import de.upb.sede.exec.IMethodDesc;
 import de.upb.sede.exec.IMethodRef;
 import de.upb.sede.exec.IServiceDesc;
+import de.upb.sede.exec.auxiliary.DynamicAuxAware;
+import de.upb.sede.types.DataTypeRef;
 import de.upb.sede.types.IDataTypeDesc;
 import de.upb.sede.types.IDataTypeRef;
 import de.upb.sede.util.SDLUtil;
@@ -58,7 +60,7 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
 
     private EmulatedOp injectServiceSerializationAuxData(IServiceLoadStoreOp loadStoreOp) {
         IServiceInstanceStorageNode node = loadStoreOp.getServiceInstanceStorageNode();
-        Map auxiliaries = getServiceAux(node.getServiceClasspath());
+        Map auxiliaries = getServiceTypeAux(node.getServiceClasspath());
         return ServiceLoadStoreOp.builder()
             .from(loadStoreOp)
             .serviceInstanceStorageNode(ServiceInstanceStorageNode.builder()
@@ -113,9 +115,10 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
             return Collections.emptyMap();
         } else if(marshalling.getValueType() instanceof IDataValueType){
             IDataValueType dataValueType = (IDataValueType) marshalling.getValueType();
-            return getTypeAux(dataValueType.getTypeQualifier());
+            return getDataTypeAux(dataValueType.getTypeQualifier());
         } else if(TypeUtil.isService(marshalling.getValueType())) {
-            return Collections.emptyMap(); // There are no aux from service instance handle marshalling. It is assumed to be a built in functionality.
+            IServiceInstanceType serviceType = TypeUtil.getServiceType(marshalling.getValueType());
+            return getServiceTypeAux(serviceType.getTypeQualifier());
         } else {
             logger.warn("Unrecognized type marshalling: {}", marshalling);
             return Collections.emptyMap();
@@ -133,22 +136,46 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
             .build();
     }
 
-    private Map getServiceAux(String serviceClasspath) {
+    private Map getServiceTypeAux(String serviceClasspath) {
         IServiceRef ref = IServiceRef.of(null, serviceClasspath);
-        return cachedAuxiliaries.computeIfAbsent(ref, this::gatherServiceAux);
+        return getServiceTypeAux(ref);
     }
 
-    private Map gatherServiceAux(ConstructReference ref) {
+    private Map getServiceTypeAux(IServiceRef ref) {
+        return cachedAuxiliaries.computeIfAbsent(ref, this::gatherServiceTypeAux);
+    }
+
+    private Map gatherServiceTypeAux(ConstructReference ref) {
         IServiceRef serviceRef = (IServiceRef) ref;
+        List<DynamicAuxAware> auxAwares = new ArrayList<>();
+
         Optional<IServiceDesc> lookup = lookupService.lookup(serviceRef);
         if(!lookup.isPresent()) {
             logger.warn("No service desc found for service {}.", serviceRef);
+        } else {
+            auxAwares.add(lookup.get());
+        }
+
+
+        IDataTypeRef typeRef = DataTypeRef.builder()
+            .serviceCollectionRef(serviceRef.getServiceCollectionRef())
+            .ref(serviceRef.getRef())
+            .build();
+        Optional<IDataTypeDesc> dtLookup = lookupService.lookup(typeRef);
+        if(!dtLookup.isPresent()) {
+            logger.debug("No data type defined for service {}.", serviceRef);
+        } else {
+            auxAwares.add(dtLookup.get());
+        }
+
+        if(auxAwares.isEmpty()) {
             return Collections.emptyMap();
         }
-        return gatherAux(lookup.get());
+
+        return gatherAux(auxAwares.toArray(new DynamicAuxAware[0]));
     }
 
-    private Map getTypeAux(String typeQualifier) {
+    private Map getDataTypeAux(String typeQualifier) {
         return cachedAuxiliaries.computeIfAbsent(
             IDataTypeRef.of(typeQualifier),
             this::gatherTypeAux);

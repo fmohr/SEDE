@@ -52,7 +52,6 @@ public class AccessControlQueue extends ExecutionRegistry {
         return execution.isFinished() || execution.isInterrupted();
     }
 
-    @Deprecated
     public synchronized boolean computeIfPresent(String execId, Consumer<GraphTaskExecution> execTask) {
         Optional<GraphTaskExecution> first = get(execId);
         if(first.isPresent()) {

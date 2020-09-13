@@ -14,11 +14,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-public class InterProcessExecutorChannel implements ExecutorCommChannel {
+public class InProcessExecutorChannel implements ExecutorCommChannel {
 
-    private static final Logger logger = LoggerFactory.getLogger(InterProcessExecutorChannel.class);
+    private static final Logger logger = LoggerFactory.getLogger(InProcessExecutorChannel.class);
 
     private final IExecutorContactInfo contactInfo;
 
@@ -26,7 +25,7 @@ public class InterProcessExecutorChannel implements ExecutorCommChannel {
 
     private Executor localExecutor;
 
-    public InterProcessExecutorChannel(IExecutorContactInfo contactInfo) {
+    public InProcessExecutorChannel(IExecutorContactInfo contactInfo) {
         this.registry = LocalExecutorRegistry.INSTANCE;
         this.contactInfo = contactInfo;
     }

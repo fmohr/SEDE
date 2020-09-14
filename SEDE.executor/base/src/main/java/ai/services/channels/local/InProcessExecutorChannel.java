@@ -3,11 +3,9 @@ package ai.services.channels.local;
 import ai.services.channels.*;
 import ai.services.execution.GraphTaskExecution;
 import ai.services.executor.Executor;
-import ai.services.executor.local.LocalExecutorRegistry;
 import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
 import de.upb.sede.composition.graphs.nodes.INotification;
 import de.upb.sede.core.SemanticDataField;
-import de.upb.sede.exec.IExecutorContactInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

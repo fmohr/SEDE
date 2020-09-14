@@ -1,28 +1,29 @@
 package ai.services.channels;
 
+import ai.services.channels.local.InProcessExecutorChannel;
 import ai.services.executor.Executor;
-import ai.services.executor.local.LocalExecutorRegistry;
+import ai.services.executor.local.LocalExecutorInstanceRegistry;
 import de.upb.sede.IServiceRef;
 import de.upb.sede.exec.IExecutorContactInfo;
 
 public class StdLocalChannelService implements ChannelService{
 
-    private final LocalExecutorRegistry localExecutorRegistry;
+    private final LocalExecutorInstanceRegistry localExecutorInstanceRegistry;
 
     private final StdFSServiceStorageChannel fsServiceStorageChannel;
 
     public StdLocalChannelService(String serviceStoreLocation) {
-        this(LocalExecutorRegistry.INSTANCE, serviceStoreLocation);
+        this(LocalExecutorInstanceRegistry.INSTANCE, serviceStoreLocation);
     }
 
-    public StdLocalChannelService(LocalExecutorRegistry localExecutorRegistry, String serviceStoreLocation) {
-        this.localExecutorRegistry = localExecutorRegistry;
+    public StdLocalChannelService(LocalExecutorInstanceRegistry localExecutorInstanceRegistry, String serviceStoreLocation) {
+        this.localExecutorInstanceRegistry = localExecutorInstanceRegistry;
         this.fsServiceStorageChannel = new StdFSServiceStorageChannel(serviceStoreLocation);;
     }
 
     @Override
     public ExecutorCommChannel interExecutorCommChannel(IExecutorContactInfo contactInfo) {
-        Executor executor = localExecutorRegistry.get(contactInfo);
+        Executor executor = localExecutorInstanceRegistry.get(contactInfo);
         if(executor != null) {
             return new InProcessExecutorChannel(executor);
         } else {

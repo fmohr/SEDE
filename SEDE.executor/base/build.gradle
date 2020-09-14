@@ -15,6 +15,7 @@ dependencies {
     testCompile project.ext.isyslibs.demolib
     testCompile project(':SEDE.servicedesc')
     testCompile project(':SEDE.sdl')
+    testCompile project(':SEDE.gateway')
 
     testRuntimeOnly libs.log4j
     testCompile (

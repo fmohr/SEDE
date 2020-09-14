@@ -7,29 +7,29 @@ import ai.services.execution.local.LocalWorkers;
 import ai.services.execution.operator.ServiceInstanceFactory;
 import ai.services.execution.operator.TaskOperator;
 import ai.services.execution.operator.local.StdLocalOperations;
-import ai.services.executor.local.LocalExecutorRegistry;
+import ai.services.executor.local.LocalExecutorInstanceRegistrationCtrl;
+import ai.services.executor.local.LocalExecutorInstanceRegistry;
 import de.upb.sede.exec.ExecutorConfiguration;
 import de.upb.sede.exec.IExecutorConfiguration;
-import de.upb.sede.exec.MutableExecutorConfiguration;
-import de.upb.sede.util.DeepImmutableCopier;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import static ai.services.executor.ExecutorInstanceRegistrationController.chain;
+
 public class ExecutorFactory {
 
     private IExecutorConfiguration configuration;
 
-    private ExecutorConfiguration.Builder configBuilder = ExecutorConfiguration.builder();
+    private final ExecutorConfiguration.Builder configBuilder = ExecutorConfiguration.builder();
 
     private ChannelService channelService;
 
     private ExecutorService executorService;
 
-    private LocalExecutorRegistry executorRegistry = LocalExecutorRegistry.INSTANCE;
+    private LocalExecutorInstanceRegistry executorInstanceRegistry = LocalExecutorInstanceRegistry.INSTANCE;
 
     private AccessControlQueue accessControlQueue;
 
@@ -39,7 +39,7 @@ public class ExecutorFactory {
 
     private LocalWorkers localWorkers;
 
-    private ExecutorRegistrationController executorRegistrationController;
+    private ExecutorInstanceRegistrationController executorRegistrationController;
 
     private boolean registerOnBuild = true;
 
@@ -47,6 +47,30 @@ public class ExecutorFactory {
 
     public ExecutorFactory() {
 
+    }
+
+    public void setChannelService(ChannelService channelService) {
+        this.channelService = channelService;
+    }
+
+    public void setExecutorService(ExecutorService executorService) {
+        this.executorService = executorService;
+    }
+
+    public void setExecutorInstanceRegistry(LocalExecutorInstanceRegistry executorInstanceRegistry) {
+        this.executorInstanceRegistry = executorInstanceRegistry;
+    }
+
+    public void setExecutorRegistrationController(ExecutorInstanceRegistrationController executorRegistrationController) {
+        this.executorRegistrationController = executorRegistrationController;
+    }
+
+    public void setRegisterOnBuild(boolean registerOnBuild) {
+        this.registerOnBuild = registerOnBuild;
+    }
+
+    public void setStartWorkersOnBuild(boolean startWorkersOnBuild) {
+        this.startWorkersOnBuild = startWorkersOnBuild;
     }
 
     public ExecutorConfiguration.Builder getConfigBuilder() {
@@ -76,7 +100,7 @@ public class ExecutorFactory {
         if(channelService == null) {
             channelService = new CachingChannelService(
                 new StdLocalChannelService(
-                    executorRegistry, getOrCreateConfiguration().getServiceStoreLocation()));
+                    executorInstanceRegistry, getOrCreateConfiguration().getServiceStoreLocation()));
         }
         return channelService;
     }
@@ -97,11 +121,14 @@ public class ExecutorFactory {
         return accessControlQueue;
     }
 
-    private ExecutorRegistrationController getOrCreateRegistCtrl() {
+    private ExecutorInstanceRegistrationController getOrCreateRegistCtrl() {
         if(executorRegistrationController != null) {
             return executorRegistrationController;
         }
-        executorRegistrationController = new GatewayRESTRegistration(executorRegistry);
+        executorRegistrationController = chain(
+            new GatewayRESTRegistration(),
+            new LocalExecutorInstanceRegistrationCtrl(executorInstanceRegistry));
+
         return executorRegistrationController;
     }
 
@@ -129,15 +156,15 @@ public class ExecutorFactory {
         this.localWorkers = new LocalWorkers(getOrCreateACQ(), taskOperator, getOrCreateExecutorService());
         localWorkers.setDesiredThreadCount(getOrCreateConfiguration().getThreadNumber());
         if(ownedExecutorService) {
-            executor.addShutdownHook(() -> {
-                localWorkers.shutdown();
-            });
+            executor.addShutdownHook(() -> localWorkers.shutdown());
+        } else {
+            executor.addShutdownHook(() -> localWorkers.setDesiredThreadCount(0));
         }
 
     }
 
     private void registerOnBuild() {
-        ExecutorRegistrationController registrationController = getOrCreateRegistCtrl();
+        ExecutorInstanceRegistrationController registrationController = getOrCreateRegistCtrl();
         registrationController.register(executor);
     }
 }

@@ -1,6 +1,5 @@
 package ai.services.executor;
 
-import ai.services.executor.local.LocalExecutorRegistry;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.upb.sede.beta.IExecutorRegistration;
@@ -16,32 +15,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Objects;
 
 import static ai.services.channels.StdRESTPaths.GW_REGISTER;
 
-public class GatewayRESTRegistration implements ExecutorRegistrationController {
+public class GatewayRESTRegistration implements ExecutorInstanceRegistrationController {
 
     private static final Logger logger = LoggerFactory.getLogger(GatewayRESTRegistration.class);
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
 
-    private final LocalExecutorRegistry localRegistry;
-
-    public GatewayRESTRegistration(LocalExecutorRegistry localRegistry) {
-        this.localRegistry = localRegistry;
-    }
-
-    public GatewayRESTRegistration() {
-        localRegistry = LocalExecutorRegistry.INSTANCE;
-    }
-
     @Override
     public void register(Executor executor) {
-        if(localRegistry != null)
-            localRegistry.put(Objects.requireNonNull(executor.getConfiguration().getExecutorId()),
-                executor);
         IExecutorRegistration registration = executor.registration();
         byte[] registrationBytes;
         try {

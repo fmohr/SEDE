@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
  * Collects a group of tasks and delegates invocations to them.
  * Operators can be added with priority.
  */
+@Deprecated
 public class OperatorArbiter implements TaskOperator {
 
     private static final Logger logger = LoggerFactory.getLogger(OperatorArbiter.class);

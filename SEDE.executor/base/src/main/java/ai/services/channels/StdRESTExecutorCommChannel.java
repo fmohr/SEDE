@@ -25,13 +25,15 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.slf4j.Logger;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Optional;
 
+import static ai.services.channels.StdRESTPaths.*;
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class StdRESTExecutorCommChannel implements ExecutorCommChannel {
+public class StdRESTExecutorCommChannel implements ExecutorCommChannel, Closeable {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
@@ -72,7 +74,7 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel {
 
     public Optional<Long> testConnectivity() {
         ModifiableURI pingURL = baseURL.mod();
-        pingURL.path("ping");
+        pingURL.path(EX_PING);
         final HttpGet request = new HttpGet(pingURL.buildURI());
         long timeStarted = System.currentTimeMillis();
         try(CloseableHttpResponse response = httpClient.execute(request)) {
@@ -95,7 +97,7 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel {
     @Override
     public void interrupt(String executionId) {
         ModifiableURI interruptURL = baseURL.mod();
-        interruptURL.path("interrupt");
+        interruptURL.path(EX_INTERRUPT);
         addExecutionIdQueryParam(interruptURL, executionId);
         final HttpPost request = new HttpPost(interruptURL.buildURI());
         try(CloseableHttpResponse response = httpClient.execute(request)) {
@@ -116,7 +118,7 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel {
     @Override
     public void pushNotification(String executionId, INotification notification) throws PushNotificationException {
         ModifiableURI pushNtfUrl = baseURL.mod();
-        pushNtfUrl.path("notification");
+        pushNtfUrl.path(EX_NOTIFICATION);
         addExecutionIdQueryParam(pushNtfUrl, executionId);
         final HttpPost request = new HttpPost(pushNtfUrl.buildURI());
         request.setEntity(serializePayload(notification));
@@ -150,7 +152,7 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel {
                     @Override
                     public void close() {
                         final ModifiableURI dataUploadUrl = baseURL.mod();
-                        dataUploadUrl.path("putObj");
+                        dataUploadUrl.path(EX_SETFIELD);
                         addExecutionIdQueryParam(dataUploadUrl, executionId);
                         dataUploadUrl.queryParam("fieldname", fieldname);
                         dataUploadUrl.queryParam("semantictype", semantictype);
@@ -205,7 +207,7 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel {
     @Override
     public void deployGraph(String executionId, ICompositionGraph toBeDeployed) throws GraphDeploymentException {
         ModifiableURI deployUrl = baseURL.mod();
-        deployUrl.path("deployGraph");
+        deployUrl.path(EX_DEPLOYGRAPH);
         addExecutionIdQueryParam(deployUrl, executionId);
         final HttpPost request = new HttpPost(deployUrl.buildURI());
         request.setEntity(serializePayload(toBeDeployed));
@@ -242,7 +244,7 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel {
     }
 
     private static void addExecutionIdQueryParam(ModifiableURI url, String executionId) {
-        url.queryParam("executionId", executionId);
+        url.queryParam(EX_PARAM_ID, executionId);
     }
 
     private static boolean statusCodeIsAOk(int statusCode) {
@@ -256,5 +258,11 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel {
         } catch (IOException e) {
             logger.warn("Exception while closing excutor comm channel: {} ", this.baseURL.buildString(), e);
         }
+    }
+
+    @Override
+    public void close() throws IOException {
+        connectionManager.close();
+        httpClient.close();
     }
 }

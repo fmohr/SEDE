@@ -6,12 +6,19 @@ import de.upb.sede.exec.IExecutorContactInfo;
 import de.upb.sede.util.ExpiringCache;
 import de.upb.sede.util.NullableCache;
 import de.upb.sede.util.SystemSettingLookup;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-public class StdChannelService implements ChannelService {
+public class CachingChannelService implements ChannelService {
+
+    private static final Logger logger = LoggerFactory.getLogger(CachingChannelService.class);
 
     private static final String EXPIRATION_TIME_STR = new SystemSettingLookup("60",
         "ai.services.channels.StdChannelService.channelExpirationTime",
@@ -19,12 +26,12 @@ public class StdChannelService implements ChannelService {
 
     private static final int EXPIRATION_TIME_SECONDS = Integer.parseInt(EXPIRATION_TIME_STR);
 
-    private final StdFSServiceStorageChannel fsServiceStorageChannel;
+    private final Map<IExecutorContactInfo, ExpiringCache<ExecutorCommChannel>> eccCache = new ConcurrentHashMap<>();
 
-    private final Map<IExecutorContactInfo, ExpiringCache<StdRESTExecutorCommChannel>> eccCache = new ConcurrentHashMap<>();
+    private final ChannelService delegate;
 
-    public StdChannelService(String serviceStoreLocation) {
-        this.fsServiceStorageChannel = new StdFSServiceStorageChannel(serviceStoreLocation);
+    public CachingChannelService(ChannelService delegate) {
+        this.delegate = Objects.requireNonNull(delegate);
     }
 
     @Override
@@ -32,15 +39,21 @@ public class StdChannelService implements ChannelService {
         if(!contactInfo.isReachable()) {
             throw new IllegalArgumentException("The given contact info is marked non reachable: " + contactInfo);
         }
-        ExpiringCache<StdRESTExecutorCommChannel> cache = eccCache.computeIfAbsent(contactInfo,
+        ExpiringCache<ExecutorCommChannel> cache = eccCache.computeIfAbsent(contactInfo,
             ci -> new ExpiringCache<>(EXPIRATION_TIME_SECONDS, TimeUnit.SECONDS,
-                new NullableCache<>(new StdRESTExecutorCommChannel(contactInfo))));
+                new NullableCache<>(delegate.interExecutorCommChannel(contactInfo))));
 
         synchronized (this) {
             if(cache.isExpired()) {
-                StdRESTExecutorCommChannel stdRESTExecutorCommChannel = cache.forceAccess();
-                stdRESTExecutorCommChannel.shutdownQuietly();
-                cache.set(new StdRESTExecutorCommChannel(contactInfo));
+                ExecutorCommChannel channel = cache.forceAccess();
+                if(channel instanceof Closeable) {
+                    try {
+                        ((Closeable) channel).close();
+                    } catch (IOException e) {
+                        logger.warn("Error closing executor channel to executor: {}", contactInfo,  e);
+                    }
+                }
+                cache.set(delegate.interExecutorCommChannel(contactInfo));
             }
             cache.prolong();
             return cache.get();
@@ -49,11 +62,6 @@ public class StdChannelService implements ChannelService {
 
     @Override
     public ServiceStorageChannel serviceStorageChannel(IServiceRef serviceRef) {
-        return fsServiceStorageChannel;
+        return delegate.serviceStorageChannel(serviceRef);
     }
-
-
-
-
-
 }

@@ -5,7 +5,9 @@ import de.upb.sede.beta.ExecutorRegistration;
 import de.upb.sede.beta.IExecutorRegistration;
 import de.upb.sede.exec.*;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Predicate;
 
@@ -14,6 +16,8 @@ public class Executor {
     private final AccessControlQueue acq;
 
     private final IExecutorConfiguration configuration;
+
+    private List<Runnable> closingHooks = new ArrayList<>();
 
     public Executor(AccessControlQueue acq, IExecutorConfiguration configuration) {
         this.acq = Objects.requireNonNull(acq);
@@ -51,6 +55,11 @@ public class Executor {
         return configuration;
     }
 
+    public void addShutdownHook(Runnable hook) {
+        this.closingHooks.add(hook);
+    }
+
+
     public void shutdown() {
         acq.compute(() -> {
             acq.close();
@@ -60,6 +69,7 @@ public class Executor {
                 execution.interruptExecution();
             }
         });
+        closingHooks.forEach(Runnable::run);
     }
 
 }

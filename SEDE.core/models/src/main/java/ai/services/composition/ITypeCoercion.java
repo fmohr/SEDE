@@ -6,6 +6,7 @@ import ai.services.core.PrimitiveType;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
+import java.util.Optional;
 
 @SEDEModelStyle
 @Value.Immutable
@@ -45,6 +46,10 @@ public interface ITypeCoercion {
         return getSourceType().equals(PrimitiveType.NULL.name());
     }
 
+    @Value.Lazy
+    default boolean isPrimitive() {
+        return PrimitiveType.insensitiveValueOf(getSemanticType()).isPresent();
+    }
 }
 
 

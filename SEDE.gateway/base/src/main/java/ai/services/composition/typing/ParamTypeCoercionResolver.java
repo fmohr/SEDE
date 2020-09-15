@@ -82,7 +82,8 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
                 }
                 typeCoercion = castValue(paramType.getTypeQualifier(), expectedInputType);
                 if(typeCoercion.hasTypeConversion()) {
-                    TypeClass resultingTypeClass = TypeUtil.getTypeClassOf(getInput().getLookupService(), typeCoercion.getResultType());
+                    TypeClass resultingTypeClass = TypeUtil.getTypeClassOf(getInput().getLookupService(),
+                        typeCoercion.getResultType());
                     if(!(resultingTypeClass instanceof IDataValueType)) {
                         throw new RuntimeException("BUG: the new type class was not data value");
                     }
@@ -112,6 +113,10 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
     }
 
     private ITypeCoercion castValue(String sourceType, String targetType) {
+        if(PrimitiveType.insensitiveValueOf(sourceType).isPresent()) {
+            return castPrimitive(sourceType, targetType);
+        }
+
         IDataTypeRef sourceTypeRef = IDataTypeRef.of(sourceType);
         Optional<IDataTypeDesc> sourceTypeDescOpt = getInput().getLookupService().lookup(sourceTypeRef);
         if(!sourceTypeDescOpt.isPresent()) {
@@ -134,6 +139,22 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
             throw TypeCheckException.nonMatchingSemanticType(sourceType, sourceSemType, targetType, targetSemType);
         }
         return typeCast(sourceType, targetType, sourceSemType);
+    }
+
+    private ITypeCoercion castPrimitive(String sourceType, String targetType) {
+        Optional<PrimitiveType> sourcePTime = PrimitiveType.insensitiveValueOf(targetType);
+        Optional<PrimitiveType> targetPType = PrimitiveType.insensitiveValueOf(targetType);
+
+        if(sourcePTime.isPresent() && targetPType.isPresent()) {
+            if(sourcePTime.get() != targetPType.get()) {
+                throw new TypeCheckException(String.format("Cannot cast between types: %s -> %s. Primitive types dont match.",
+                    sourceType, targetType));
+            }
+            return sameType(sourceType, sourceType);
+        } else {
+            throw new TypeCheckException(String.format("Cannot cast between types: %s -> %s. Casting between primitive type is not allowed.",
+                sourceType, targetType));
+        }
     }
 
 

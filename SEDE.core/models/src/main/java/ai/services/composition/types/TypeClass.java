@@ -50,4 +50,8 @@ public interface TypeClass {
         return tryDeref(tc) instanceof IServiceInstanceType;
     }
 
+    static boolean isPrimitive(TypeClass tc) {
+        return tc instanceof IPrimitiveValueType;
+    }
+
 }

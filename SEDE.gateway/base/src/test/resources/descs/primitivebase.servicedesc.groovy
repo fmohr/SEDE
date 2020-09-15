@@ -20,6 +20,18 @@ collection "PrimitiveServices", {
 
             method(name: "mNumber_Str_Bool", inputs: [number, str, bool])
 
+            method(name: "produce_Number", output:[number]) {
+                isContextFree = true
+            }
+
+            method(name: "produce_Str", output:[str]) {
+                isContextFree = true
+            }
+
+            method(name: "produce_Bool", output:[bool]) {
+                isContextFree = true
+            }
+
             method(name: "mT0_Str", inputs: ["p.T0", str])
 
         }

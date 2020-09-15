@@ -64,7 +64,6 @@ public class DataMarshalOp extends MainTaskOperator {
         TypeClass srcType = marshalling.getValueType();
 
         byte[] serialisation;
-
         if(TypeClass.isServiceHandle(srcType) && ! (fieldValue instanceof ServiceInstanceField)) {
                 throw new IllegalArgumentException("Type mismatch. " + StringUtil.unexpectedTypeMsg("ServiceInstanceField", fieldValue));
         }
@@ -102,6 +101,10 @@ public class DataMarshalOp extends MainTaskOperator {
     }
 
     private byte[] writeObject(Object o, TypeClass supplyType, IJavaMarshalAux marshalAux) throws IOException, ClassNotFoundException, InvocationTargetException, IllegalAccessException {
+        if(TypeClass.isPrimitive(supplyType)) {
+            return writePrimitiveField(o);
+        }
+
         if(marshalAux.useObjectSerialisation()) {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ObjectOutputStream objectIn  = new ObjectOutputStream(outputStream);
@@ -120,6 +123,10 @@ public class DataMarshalOp extends MainTaskOperator {
         }
 
         return marshalUsingReflection(inferredClass, methodName, supplyType, mappedJavaClass, o);
+    }
+
+    private byte[] writePrimitiveField(Object o) throws JsonProcessingException {
+        return MAPPER.writeValueAsBytes(o);
     }
 
     private TaskTransition unmarshal(IMarshalNode node, SEDEObject fieldValue, IJavaMarshalAux marshalAux) throws IOException, ClassNotFoundException, InvocationTargetException, IllegalAccessException {
@@ -162,6 +169,9 @@ public class DataMarshalOp extends MainTaskOperator {
     }
 
     private Object readObject(byte[] data, TypeClass supplyType, IJavaMarshalAux marshalAux) throws IOException, ClassNotFoundException, InvocationTargetException, IllegalAccessException {
+        if(TypeClass.isPrimitive(supplyType)) {
+            return readPrimitive(data, (IPrimitiveValueType) supplyType);
+        }
         if(marshalAux.useObjectSerialisation()) {
             ObjectInputStream objectIn  = new ObjectInputStream(new ByteArrayInputStream(data));
             return objectIn.readObject();
@@ -178,6 +188,27 @@ public class DataMarshalOp extends MainTaskOperator {
         }
 
         return unmarshalUsingReflection(inferredClass, methodName, supplyType, mappedJavaClass, data);
+    }
+
+    private Object readPrimitive(byte[] data, IPrimitiveValueType primitiveValueType) throws IOException {
+        Class<?> expectedPrimitiveType;
+        switch (primitiveValueType.getPrimitiveType()) {
+            case Number:
+                expectedPrimitiveType = Number.class;
+                break;
+            case String:
+                expectedPrimitiveType = String.class;
+                break;
+            case Bool:
+                expectedPrimitiveType = Boolean.class;
+                break;
+            case NULL:
+                expectedPrimitiveType = Void.class;
+                break;
+            default:
+                throw new IllegalStateException("Unrecognized primitive value type: " + primitiveValueType);
+        }
+        return MAPPER.readValue(data, expectedPrimitiveType);
     }
 
 

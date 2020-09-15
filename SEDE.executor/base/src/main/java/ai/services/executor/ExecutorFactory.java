@@ -11,13 +11,12 @@ import ai.services.executor.local.LocalExecutorInstanceRegistrationCtrl;
 import ai.services.executor.local.LocalExecutorInstanceRegistry;
 import ai.services.exec.ExecutorConfiguration;
 import ai.services.exec.IExecutorConfiguration;
+import ai.services.interfaces.ExecutorRegistrant;
 
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import static ai.services.executor.ExecutorInstanceRegistrationController.chain;
 
 public class ExecutorFactory {
 
@@ -30,6 +29,8 @@ public class ExecutorFactory {
     private ExecutorService executorService;
 
     private LocalExecutorInstanceRegistry executorInstanceRegistry = LocalExecutorInstanceRegistry.INSTANCE;
+
+    private ExecutorRegistrant gatewayExecutorRegistrant = null;
 
     private AccessControlQueue accessControlQueue;
 
@@ -65,8 +66,16 @@ public class ExecutorFactory {
         this.executorRegistrationController = executorRegistrationController;
     }
 
+    public void registerToLocalGateway(ExecutorRegistrant registrant) {
+        this.gatewayExecutorRegistrant = registrant;
+    }
+
     public void setRegisterOnBuild(boolean registerOnBuild) {
         this.registerOnBuild = registerOnBuild;
+    }
+
+    public void noInstanceRegistration() {
+        executorInstanceRegistry = null;
     }
 
     public void setStartWorkersOnBuild(boolean startWorkersOnBuild) {
@@ -82,7 +91,7 @@ public class ExecutorFactory {
     }
 
     private IExecutorConfiguration getOrCreateConfiguration() {
-        configuration = Objects.requireNonNullElseGet(configuration, () -> configBuilder.build());
+        configuration = Objects.requireNonNullElseGet(configuration, configBuilder::build);
         setExecutorIdIfMissing();
         return this.configuration;
     }
@@ -100,7 +109,8 @@ public class ExecutorFactory {
         if(channelService == null) {
             channelService = new CachingChannelService(
                 new StdLocalChannelService(
-                    executorInstanceRegistry, getOrCreateConfiguration().getServiceStoreLocation()));
+                    executorInstanceRegistry,
+                    getOrCreateConfiguration().getServiceStoreLocation()));
         }
         return channelService;
     }
@@ -125,9 +135,11 @@ public class ExecutorFactory {
         if(executorRegistrationController != null) {
             return executorRegistrationController;
         }
-        executorRegistrationController = chain(
+        executorRegistrationController = ExecutorInstanceRegistrationController.chain(
             new GatewayRESTRegistration(),
-            new LocalExecutorInstanceRegistrationCtrl(executorInstanceRegistry));
+            new GatewayLocalRegistration(gatewayExecutorRegistrant),
+            new LocalExecutorInstanceRegistrationCtrl(executorInstanceRegistry)
+        );
 
         return executorRegistrationController;
     }
@@ -136,17 +148,17 @@ public class ExecutorFactory {
         if(executor != null) {
             return executor;
         }
-        setExecutorIdIfMissing();
         executor = new Executor(getOrCreateACQ(),
             getOrCreateConfiguration());
         if(startWorkersOnBuild) {
             startWorkers();
         }
         if(registerOnBuild) {
-            registerOnBuild();
+            registerExecutor();
         }
         return executor;
     }
+
 
     private void startWorkers() {
         ChannelService channelService = getOrCreateChannelService();
@@ -163,8 +175,13 @@ public class ExecutorFactory {
 
     }
 
-    private void registerOnBuild() {
+    private void registerExecutor() {
         ExecutorInstanceRegistrationController registrationController = getOrCreateRegistCtrl();
         registrationController.register(executor);
+    }
+
+    public ChannelService buildChannel() {
+        build();
+        return getOrCreateChannelService();
     }
 }

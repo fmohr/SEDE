@@ -55,6 +55,11 @@ public class TypeUtil {
         return (vtc instanceof IDataValueType);
     }
 
+    public static boolean isPrimitiveValueType(TypeClass tc) {
+        ValueTypeClass vtc = tryDeref(tc);
+        return (vtc instanceof IPrimitiveValueType);
+    }
+
 
     public static String typeToText(TypeClass tc) {
         if(isRefType(tc)) {

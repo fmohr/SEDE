@@ -3,15 +3,17 @@ package ai.services.executor.local;
 import ai.services.executor.Executor;
 import ai.services.executor.ExecutorInstanceRegistrationController;
 
+import java.util.Map;
+
 public class LocalExecutorInstanceRegistrationCtrl implements ExecutorInstanceRegistrationController {
 
-    private final LocalExecutorInstanceRegistry registry;
+    private final Map<String, Executor> registry;
 
     public LocalExecutorInstanceRegistrationCtrl() {
         registry = LocalExecutorInstanceRegistry.INSTANCE;
     }
 
-    public LocalExecutorInstanceRegistrationCtrl(LocalExecutorInstanceRegistry registry) {
+    public LocalExecutorInstanceRegistrationCtrl(Map<String, Executor> registry) {
         this.registry = registry;
     }
 

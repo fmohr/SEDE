@@ -80,6 +80,7 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
         }
         executor.acq().compute(graphTaskExecution, execution -> {
             execution.addGraph(toBeDeployed);
+            execution.startExecution();
         });
     }
 

@@ -26,8 +26,8 @@ public class AccessControlQueue extends ExecutionRegistry {
         }
         Optional<TaskEntry> job = searchNextJob(workerProfile);
         while(!job.isPresent()) {
-            this.wait();
             logger.debug("No job found to take. Waiting until one becomes available.");
+            this.wait();
             job = searchNextJob(workerProfile);
         }
         if(logger.isTraceEnabled())

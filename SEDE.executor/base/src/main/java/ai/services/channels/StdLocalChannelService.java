@@ -6,6 +6,10 @@ import ai.services.executor.local.LocalExecutorInstanceRegistry;
 import ai.services.IServiceRef;
 import ai.services.exec.IExecutorContactInfo;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+
 public class StdLocalChannelService implements ChannelService{
 
     private final LocalExecutorInstanceRegistry localExecutorInstanceRegistry;
@@ -23,7 +27,11 @@ public class StdLocalChannelService implements ChannelService{
 
     @Override
     public ExecutorCommChannel interExecutorCommChannel(IExecutorContactInfo contactInfo) {
-        Executor executor = localExecutorInstanceRegistry.get(contactInfo);
+
+        Executor executor = null;
+        if(localExecutorInstanceRegistry != null)
+            executor = localExecutorInstanceRegistry.get(contactInfo);
+
         if(executor != null) {
             return new InProcessExecutorChannel(executor);
         } else {

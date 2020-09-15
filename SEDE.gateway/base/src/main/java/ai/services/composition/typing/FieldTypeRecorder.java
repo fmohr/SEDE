@@ -57,7 +57,7 @@ public class FieldTypeRecorder extends InstWiseCompileStep<TCInput, TCOutput> {
         String returnType = methodOutput.getType();
         TypeClass fieldType;
         try {
-            fieldType = getTypeClassOf(getInput().getLookupService(), returnType);
+            fieldType = TypeUtil.getTypeClassOf(getInput().getLookupService(), returnType);
         } catch (TypeCheckException e) {
             throw new TypeCheckException(
                 String.format("Error classifying return type of method %s::%s",
@@ -65,52 +65,8 @@ public class FieldTypeRecorder extends InstWiseCompileStep<TCInput, TCOutput> {
                 e);
         }
         getInstOutput().getFieldTC().setFieldType(assignedField, fieldType);
+        getInstOutput().getFieldAssignmentType().setTypeClass(fieldType);
     }
 
-
-    private static TypeClass getTypeClassOf(SDLLookupService lookupService, String returnType) {
-        /*
-         * Assume type is a primitive qualifier, i.e. "Number", "String", "Bool"
-         */
-        Optional<PrimitiveType> primTypeOpt = PrimitiveType.insensitiveValueOf(returnType);
-        if(primTypeOpt.isPresent()) {
-            /*
-             * Method cannot declare the NULL class as its return value.
-             */
-            if(primTypeOpt.get() == PrimitiveType.NULL) {
-                throw TypeCheckException.methodReturnsNullClass();
-            }
-            IPrimitiveValueType primValType = PrimitiveValueType.builder()
-                .primitiveType(primTypeOpt.get()).build();
-            return primValType;
-        }
-        /*
-         * Assume type is a service type qualifier.
-         */
-        IServiceRef serviceRef = IServiceRef.of(null, returnType);
-        Optional<IServiceDesc> serviceDescOpt = lookupService.lookup(serviceRef);
-        if(serviceDescOpt.isPresent()) {
-            IServiceInstanceType serviceInstanceType = ServiceInstanceType.builder()
-                .typeQualifier(returnType)
-                .build();
-            return serviceInstanceType;
-        }
-        /*
-         * The last case remaining is a data value type.
-         */
-        IDataTypeRef dataTypeRef = IDataTypeRef.of(returnType);
-        Optional<IDataTypeDesc> dataTypeOpt = lookupService.lookup(dataTypeRef);
-        if(dataTypeOpt.isPresent()) {
-            IDataValueType dataValueType = DataValueType.builder()
-                .typeQualifier(returnType)
-                .build();
-            return dataValueType;
-        }
-
-        /*
-         * The type qualifier was not recognized..
-         */
-        throw TypeCheckException.unknownType(returnType, "type");
-    }
 
 }

@@ -9,6 +9,8 @@ import ai.services.composition.graphs.nodes.ICompositionGraph
 import ai.services.composition.graphs.nodes.IInstructionNode
 import ai.services.composition.graphs.nodes.IParseConstantNode
 import ai.services.composition.graphs.nodes.IServiceInstanceStorageNode
+import ai.services.composition.types.DataValueType
+import ai.services.composition.types.ServiceInstanceType
 import ai.services.composition.typing.TypeCheckException
 import ai.services.core.PrimitiveType
 import ai.services.core.ServiceInstanceHandle
@@ -47,6 +49,24 @@ class BasicResolveRequestTest extends Specification {
 
         def cc = testRunner.getCc()
         def ch = testRunner.getChoreography()
+
+        def instReturnTypes = cc.getInstructions().collect {
+            it.instruction.fieldType
+        }
+
+        instReturnTypes[0] == ServiceInstanceType.builder().with {
+            typeQualifier("c0.S0")
+            build()
+        }
+
+        instReturnTypes[1] == DataValueType.builder().with {
+            typeQualifier("c0.T0")
+            build()
+        }
+        instReturnTypes[2] == DataValueType.builder().with {
+            typeQualifier("c0.T1")
+            build()
+        }
 
         cc.programOrder == [0L, 1L, 2L]
         cc.fields.every {

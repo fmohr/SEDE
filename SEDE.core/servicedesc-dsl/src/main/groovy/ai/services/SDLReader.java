@@ -77,7 +77,7 @@ public class SDLReader {
     public void readResource(String resourcePath) throws IOException {
         URL resource = Thread.currentThread().getContextClassLoader().getResource(resourcePath);
         if(resource == null) {
-            throw new IllegalArgumentException("Resource not found: " + resourcePath);
+            throw new IOException("Resource not found: " + resourcePath);
         }
         URI uri;
         try {
@@ -107,7 +107,7 @@ public class SDLReader {
     private synchronized void runSDL(SDL sdl) {
         if(database != null)
             sdl.setCols(database);
-
+        sdl.setWriteCollectionAsJson(false);
         sdl.run();
     }
 

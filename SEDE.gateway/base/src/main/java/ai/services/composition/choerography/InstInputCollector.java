@@ -154,10 +154,18 @@ public class InstInputCollector
                 } else {
                     // field is on another executor
                     // create transmission with the correct inplace casts:
-                    IFieldCast serialisation = createDataValueTransmissionSerialisation(sourceLocation, executorH,
-                        fieldname, typeCoercion);
-                    ITransmission dataTransmission = createTransmission(sourceLocation, executorH, fieldname, serialisation);
-                    getOutput().serializeAndTransmit(instIndex, serialisation, dataTransmission);
+                    IFieldCast fieldCast;
+                    if(typeCoercion.isPrimitive()) {
+                        fieldCast = createPrimitiveCast(sourceLocation, executorH,
+                            fieldname, PrimitiveValueType.builder()
+                            .primitiveType(PrimitiveType.insensitiveValueOf(typeCoercion.getSemanticType()).get())
+                            .build());
+                    } else {
+                        fieldCast = createDataValueTransmissionSerialisation(sourceLocation, executorH,
+                            fieldname, typeCoercion);
+                    }
+                    ITransmission dataTransmission = createTransmission(sourceLocation, executorH, fieldname, fieldCast);
+                    getOutput().serializeAndTransmit(instIndex, fieldCast, dataTransmission);
                     getOutput().setFieldLocation(fieldname, executorH);
                 }
             }
@@ -208,7 +216,12 @@ public class InstInputCollector
                 IFieldCast transmissionSerialisation = createDataValueTransmissionSerialisation(sourceH, clientH, fieldname, typeCoercion);
                 ITransmission dataTransmission = createTransmission(sourceH, clientH, fieldname, transmissionSerialisation);
                 getOutput().serializeAndTransmitOutput(transmissionSerialisation, dataTransmission);
-            } else {
+            } else if(TypeUtil.isPrimitiveValueType(outputType) && !TypeUtil.isRefType(outputType)) {
+                IFieldCast primitiveFieldCast = createPrimitiveCast(sourceH, clientH, fieldname, (IPrimitiveValueType) outputType);
+                ITransmission transmittion = createTransmission(sourceH, clientH, fieldname, primitiveFieldCast);
+                getOutput().serializeAndTransmitOutput(primitiveFieldCast, transmittion);
+            }
+            else {
                 throw new IllegalStateException("Field \n" + field + "\n is being returned to client. But its type \n" + outputType + "\n is not data nor service.");
             }
         }
@@ -255,6 +268,11 @@ public class InstInputCollector
             serviceType = RefType.builder().typeOfRef((ValueTypeClass) serviceType).build();
         }
         return createTransmissionSerialisation(src, trg, fieldname, serviceType, serviceType, IRefType.SEMANTIC_SERVICE_INSTANCE_HANDLE_TYPE);
+    }
+
+    private IFieldCast createPrimitiveCast(IExecutorHandle src, IExecutorHandle trg, String fieldname,
+                                           IPrimitiveValueType primitiveValueType) {
+        return createTransmissionSerialisation(src, trg, fieldname, primitiveValueType, primitiveValueType, primitiveValueType.getTypeQualifier());
     }
 
     private IFieldCast createDataValueTransmissionSerialisation(IExecutorHandle src, IExecutorHandle trg, String fieldname,

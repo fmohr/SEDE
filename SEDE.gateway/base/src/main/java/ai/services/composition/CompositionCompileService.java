@@ -8,7 +8,6 @@ import ai.services.util.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class CompositionCompileService implements ICCService {
 
     private final Cache<SDLLookupService> lookupService;
@@ -35,5 +34,4 @@ public class CompositionCompileService implements ICCService {
         }
         return compositionCompilation;
     }
-
 }

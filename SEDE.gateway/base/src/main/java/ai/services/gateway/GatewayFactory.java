@@ -29,17 +29,20 @@ public class GatewayFactory {
         sdlAssembly.addAllCollections(addedAssembly.getCollections());
     }
 
-    public void setLookUpService(SDLLookupService lookUpService) {
+    public GatewayFactory setLookUpService(SDLLookupService lookUpService) {
         this.lookupServiceCache = new StaticCache<>(lookUpService);
+        return this;
     }
 
-    public void setAutoRefreshingLookupService(SDLLookupService lookupService) {
+    public GatewayFactory setAutoRefreshingLookupService(SDLLookupService lookupService) {
         this.lookupServiceCache = new TTLCache<>(10, TimeUnit.SECONDS, () ->
             new SDLCacheLookupService(lookupService));
+        return this;
     }
 
-    public void useInProcessRegistrant() {
-
+    public GatewayFactory useInProcessRegistrant() {
+        arbiter = InProcessExecutorArbiter.EXECUTOR_ARBITER_INSTANCE;
+        return this;
     }
 
     public StdGatewayImpl build() {

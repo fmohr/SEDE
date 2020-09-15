@@ -9,6 +9,11 @@ abstract class SDL extends Script {
 
     Map<String, MutableServiceCollectionDesc> cols = new LinkedHashMap<>()
 
+    boolean writeCollectionAsJson = true
+
+    void setWriteCollectionAsJson(boolean writeCollectionAsJson) {
+        this.writeCollectionAsJson = writeCollectionAsJson;
+    }
 
     def collection(String qualifier, @DelegatesTo(MutableServiceCollectionDesc) Closure describer) {
         /*
@@ -41,6 +46,9 @@ abstract class SDL extends Script {
 
         if(sdlAssembly.collections.isEmpty()) {
             return;
+        }
+        if(!writeCollectionAsJson) {
+            return
         }
         IServiceCollectionDesc serviceCollection  = sdlAssembly.collections.stream()
             .sorted(Comparator.comparingInt({ IServiceCollectionDesc it -> it.getServices().size()}).reversed())

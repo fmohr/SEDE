@@ -18,14 +18,21 @@ public class GatewayExecutorRegistrant implements ExecutorRegistrant {
 
     private final Cache<SDLLookupService> lookupServiceCache;
 
-    private final ExecutorArbiter execCoordinator;
+    private final ExecutorArbiter executorArbiter;
 
-    public GatewayExecutorRegistrant(Cache<SDLLookupService> lookupServiceCache, ExecutorArbiter supplyCoordinator) {
+    public GatewayExecutorRegistrant(Cache<SDLLookupService> lookupServiceCache, ExecutorArbiter executorArbiter) {
         this.lookupServiceCache = lookupServiceCache;
-        this.execCoordinator = supplyCoordinator;
+        this.executorArbiter = executorArbiter;
+        if(lookupServiceCache.access() == null) {
+            logger.warn("An executor registrant was provided no lookup service to check registering services." +
+                " No checking will be performed.");
+        }
     }
 
-    private boolean checkServices(IExecutorRegistration registration){
+    protected boolean checkServices(IExecutorRegistration registration){
+        if(lookupServiceCache.access() == null) {
+            return true;
+        }
         /*
          * Remove all the supported Services from the executor that are not supported by
          * this gateway:
@@ -49,22 +56,25 @@ public class GatewayExecutorRegistrant implements ExecutorRegistrant {
                 "Registration was not denied." +
                 " Executors id: {}", registration.getExecutorHandle().getQualifier());
         }
-
         return true;
+    }
+
+    ExecutorArbiter getExecutorArbiter() {
+        return executorArbiter;
     }
 
     @Override
     public boolean register(IExecutorRegistration registry) {
         String id = registry.getExecutorHandle().getQualifier();
-        if(execCoordinator.hasExecutor(id)) {
+        if(executorArbiter.hasExecutor(id)) {
             /*
              * Update the internal data for the executorId.
-             * An executor may have changed some its informations
+             * An executor may have changed some its information
              * like a new address in contact info map or has dropped support for a service.
              * Delete the internal representation of the executor.
              */
             logger.warn("ExecutorRegistration with an id that has already been registered: {} \nReplacing executor handle.",  id);
-            execCoordinator.removeExecutor(id);
+            executorArbiter.removeExecutor(id);
         }
         IExecutorHandle execHandle = registry.getExecutorHandle();
 
@@ -77,7 +87,7 @@ public class GatewayExecutorRegistrant implements ExecutorRegistrant {
 
         }  else {
             StandaloneExecutor standaloneExecutor = new StandaloneExecutor(execHandle);
-            execCoordinator.addSupplier(standaloneExecutor);
+            executorArbiter.addSupplier(standaloneExecutor);
             logger.info("Executor registered successfully with {} services. Executor's id: {}", execHandle.getCapabilities().getServices().size(), id);
             logger.trace("Supported service of executor with id {} are {}.", id, execHandle.getCapabilities().getServices());
             return true;

@@ -17,6 +17,11 @@ public class BaseExecutor implements GraphCreatingExecutor {
 
     private final Map<String, FieldProducer> fieldProducer = new HashMap<>();
 
+    public BaseExecutor(IExecutorHandle handle) {
+        this.handle = handle;
+        this.executorId = handle.getQualifier();
+    }
+
     public void addNodes(BaseNode... nodes) {
         if(nodes == null || nodes.length == 0) {
             throw new IllegalArgumentException("Empty nodes");
@@ -84,11 +89,6 @@ public class BaseExecutor implements GraphCreatingExecutor {
         }
     }
 
-    public BaseExecutor(IExecutorHandle handle) {
-        this.handle = handle;
-        this.executorId = handle.getQualifier();
-    }
-
     @Override
     public void execute(EmulatedOp emulatedOp) throws EmulationException {
         if(!emulatedOp.wasHandled()) {
@@ -105,7 +105,6 @@ public class BaseExecutor implements GraphCreatingExecutor {
     public ExecutionGraph getGraph() {
         return graph;
     }
-
 
     private static class FieldProducer {
 

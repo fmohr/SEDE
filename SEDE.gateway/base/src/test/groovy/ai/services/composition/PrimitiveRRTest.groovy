@@ -4,6 +4,7 @@ package ai.services.composition
 import ai.services.composition.choerography.emulation.executors.ExecutionGraph
 import ai.services.composition.choerography.emulation.executors.GraphTraversal
 import ai.services.composition.graphs.nodes.IParseConstantNode
+import ai.services.composition.types.PrimitiveValueType
 import ai.services.core.PrimitiveType
 import spock.lang.Specification
 
@@ -150,6 +151,62 @@ class PrimitiveRRTest extends Specification {
         def execGraph1 = testRunner.getExecGraph("executor1")
         def execGraph2 = testRunner.getExecGraph("executor2")
 
+    }
+
+
+    def "primitive fields"() {
+        def description =
+            """Primitive fields (instead of consts) are used to plug into methods""".stripMargin()
+
+        when:
+        def rr = RRGen.fromClosure {
+            composition = """
+            s0 = p.PrimService0::constNumber_Number({nrField1, nrField1});
+            s0::mNumber_Str_Bool({nrField2, stringField1, boolField1});
+            nrField3 = p.PrimService1::produce_Number();
+            stringField2 = p.PrimService1::produce_Str();
+            boolField2 = p.PrimService1::produce_Bool();
+            s0::mNumber_Str_Bool({nrField3, stringField2, boolField2});
+            """
+            resolvePolicy = RRGen.defaultResolvePolicy()
+            initialContext.add(FieldType.builder()
+                .fieldname("nrField1")
+                .type(PrimitiveValueType.builder()
+                    .primitiveType(PrimitiveType.Number)
+                    .build())
+                .build())
+            initialContext.add(FieldType.builder()
+                .fieldname("nrField2")
+                .type(PrimitiveValueType.builder()
+                    .primitiveType(PrimitiveType.Number)
+                    .build())
+                .build())
+            initialContext.add(FieldType.builder()
+                .fieldname("boolField1")
+                .type(PrimitiveValueType.builder()
+                    .primitiveType(PrimitiveType.String)
+                    .build())
+                .build())
+            initialContext.add(FieldType.builder()
+                .fieldname("stringField1")
+                .type(PrimitiveValueType.builder()
+                    .primitiveType(PrimitiveType.Bool)
+                    .build())
+                .build())
+        }
+
+        def testRunner = new ResolutionTestBaseRunner("Primitives", "04_primFields")
+        testRunner.setClientExecutor("client")
+
+        testRunner.testPlainText = description
+        testRunner.addExecutor("executor1", "p.PrimService0")
+        testRunner.addExecutor("executor2", "p.PrimService1")
+
+        then:
+        testRunner.start(rr)
+        testRunner.assertStaticAnalysisExceptionMatches(null)
+        testRunner.assertSimulationExceptionMatches(null)
+        testRunner.writeOutputs()
     }
 
 

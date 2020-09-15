@@ -16,7 +16,10 @@ public interface IExecutorConfiguration {
     @Nullable
     String getExecutorId();
 
-    String getServiceStoreLocation();
+    @Value.Default
+    default String getServiceStoreLocation() {
+        return "sede-service-instances";
+    }
 
     List<String> getCapabilities();
 

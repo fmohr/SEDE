@@ -7,7 +7,7 @@ import static ai.services.StandardDefs.*
 @BaseScript SDL description
 
 collection "StaticServices", {
-    service "SMath", {
+    service "SS.Math", {
         aux {
             javaDispatch {
                 staticInvocation = true
@@ -32,7 +32,7 @@ collection "StaticServices", {
             method(name: "divideObject")
         }
     }
-    service "SString", {
+    service "SS.String", {
 
     }
 }

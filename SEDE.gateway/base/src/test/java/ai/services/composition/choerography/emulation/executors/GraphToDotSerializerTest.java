@@ -1,20 +1,20 @@
-package de.upb.sede.composition.choerography.emulation.executors;
+package ai.services.composition.choerography.emulation.executors;
 
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import de.upb.sede.composition.graphs.nodes.CompositionGraph;
-import de.upb.sede.exec.ExecutorCapabilities;
-import de.upb.sede.exec.ExecutorContactInfo;
-import de.upb.sede.exec.ExecutorHandle;
-import de.upb.sede.util.FileUtil;
-import de.upb.sede.util.GraphToDot;
+import ai.services.exec.ExecutorCapabilities;
+import ai.services.exec.ExecutorContactInfo;
+import ai.services.exec.ExecutorHandle;
+import ai.services.composition.graphs.nodes.CompositionGraph;
+import ai.services.util.FileUtil;
+import ai.services.util.GraphToDot;
 import org.junit.Test;
 
-import de.upb.sede.composition.graphs.DummyNode;
-import de.upb.sede.composition.graphs.nodes.BaseNode;
+import ai.services.composition.graphs.DummyNode;
+import ai.services.composition.graphs.nodes.BaseNode;
 
 public class GraphToDotSerializerTest {
 	@Test

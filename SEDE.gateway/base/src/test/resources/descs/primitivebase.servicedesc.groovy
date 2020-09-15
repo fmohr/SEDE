@@ -1,10 +1,10 @@
-import de.upb.sede.SDL
+import ai.services.SDL
 import groovy.transform.BaseScript
 
 @BaseScript SDL description
 
-import static de.upb.sede.Helpers.*;
-import static de.upb.sede.StandardDefs.*;
+
+import static ai.services.StandardDefs.*;
 
 collection "PrimitiveServices", {
     [0, 1].each {

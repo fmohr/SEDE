@@ -1,6 +1,6 @@
-package de.upb.sede;
+package ai.services;
 
-import de.upb.sede.util.*;
+import ai.services.util.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

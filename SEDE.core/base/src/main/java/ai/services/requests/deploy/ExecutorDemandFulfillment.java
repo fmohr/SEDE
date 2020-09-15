@@ -1,6 +1,6 @@
-package de.upb.sede.requests.deploy;
+package ai.services.requests.deploy;
 
-import de.upb.sede.requests.ExecutorRegistration;
+import ai.services.requests.ExecutorRegistration;
 
 import java.util.ArrayList;
 import java.util.List;

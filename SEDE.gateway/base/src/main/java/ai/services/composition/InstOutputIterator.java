@@ -1,7 +1,6 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.function.Supplier;
 

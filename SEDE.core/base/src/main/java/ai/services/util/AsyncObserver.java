@@ -1,9 +1,7 @@
-package de.upb.sede.util;
+package ai.services.util;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * This utility class warps an observer and executes updates on the given executor.

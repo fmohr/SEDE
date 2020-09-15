@@ -1,12 +1,11 @@
-package de.upb.sede.requests.resolve.beta;
+package ai.services.requests.resolve.beta;
 
+import ai.services.composition.ICompositionCompilation;
+import ai.services.composition.IFieldType;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.beta.IExecutorRegistration;
-import de.upb.sede.composition.ICompositionCompilation;
-import de.upb.sede.composition.IFieldType;
-import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.requests.resolve.InputFields;
+import ai.services.SEDEModelStyle;
+import ai.services.beta.IExecutorRegistration;
+import ai.services.core.ServiceInstanceHandle;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
@@ -21,7 +20,8 @@ public interface IResolveRequest {
 
     String getComposition();
 
-    @Nullable ICompositionCompilation getCC();
+    @Nullable
+    ICompositionCompilation getCC();
 
     IResolvePolicy getResolvePolicy();
 

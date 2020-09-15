@@ -1,10 +1,10 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
-import de.upb.sede.requests.resolve.beta.IResolvePolicy;
-import de.upb.sede.requests.resolve.beta.IResolveRequest;
-import de.upb.sede.requests.resolve.beta.MutableResolveRequest;
-import de.upb.sede.requests.resolve.beta.ResolvePolicy;
-import de.upb.sede.util.FileUtil;
+import ai.services.requests.resolve.beta.MutableResolveRequest;
+import ai.services.requests.resolve.beta.ResolvePolicy;
+import ai.services.requests.resolve.beta.IResolvePolicy;
+import ai.services.requests.resolve.beta.IResolveRequest;
+import ai.services.util.FileUtil;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import groovy.lang.GroovyShell;

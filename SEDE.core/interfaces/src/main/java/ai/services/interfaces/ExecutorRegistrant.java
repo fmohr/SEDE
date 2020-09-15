@@ -1,6 +1,6 @@
-package de.upb.sede.interfaces;
+package ai.services.interfaces;
 
-import de.upb.sede.beta.IExecutorRegistration;
+import ai.services.beta.IExecutorRegistration;
 
 public interface ExecutorRegistrant {
 

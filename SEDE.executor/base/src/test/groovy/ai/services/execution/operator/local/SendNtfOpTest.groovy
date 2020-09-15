@@ -4,11 +4,11 @@ import ai.services.channels.ChannelService
 import ai.services.channels.ExecutorCommChannel
 import ai.services.execution.Task
 import ai.services.execution.local.LocalFieldContext
-import de.upb.sede.composition.graphs.nodes.INotification
-import de.upb.sede.composition.graphs.nodes.Notification
-import de.upb.sede.composition.graphs.nodes.NotifyNode
-import de.upb.sede.exec.ExecutorContactInfo
-import de.upb.sede.exec.IExecutorContactInfo
+import ai.services.composition.graphs.nodes.INotification
+import ai.services.composition.graphs.nodes.Notification
+import ai.services.composition.graphs.nodes.NotifyNode
+import ai.services.exec.ExecutorContactInfo
+import ai.services.exec.IExecutorContactInfo
 import spock.lang.Specification
 
 class SendNtfOpTest extends Specification {

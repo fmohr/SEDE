@@ -1,6 +1,6 @@
-package de.upb.sede.misc
+package ai.services.misc
 
-import de.upb.sede.composition.IFieldType
+import ai.services.composition.IFieldType
 
 class DSLMiscs {
 

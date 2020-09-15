@@ -1,9 +1,9 @@
-package de.upb.sede.composition.typing;
+package ai.services.composition.typing;
 
-import de.upb.sede.composition.IIndexedInstruction;
-import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.composition.types.TypeClass;
-import de.upb.sede.core.PrimitiveType;
+import ai.services.composition.IIndexedInstruction;
+import ai.services.composition.graphs.nodes.IInstructionNode;
+import ai.services.composition.types.TypeClass;
+import ai.services.core.PrimitiveType;
 
 public class TypeCheckException extends RuntimeException {
 

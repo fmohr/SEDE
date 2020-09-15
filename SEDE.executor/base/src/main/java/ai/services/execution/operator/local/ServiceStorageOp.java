@@ -7,10 +7,10 @@ import ai.services.channels.UploadLink;
 import ai.services.execution.Task;
 import ai.services.execution.TaskTransition;
 import ai.services.execution.operator.MainTaskOperator;
-import de.upb.sede.composition.graphs.nodes.IServiceInstanceStorageNode;
-import de.upb.sede.core.SEDEObject;
-import de.upb.sede.core.ServiceInstanceField;
-import de.upb.sede.core.ServiceInstanceHandle;
+import ai.services.composition.graphs.nodes.IServiceInstanceStorageNode;
+import ai.services.core.SEDEObject;
+import ai.services.core.ServiceInstanceField;
+import ai.services.core.ServiceInstanceHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

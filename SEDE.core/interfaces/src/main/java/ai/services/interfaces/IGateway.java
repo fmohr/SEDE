@@ -1,6 +1,4 @@
-package de.upb.sede.interfaces;
-
-import de.upb.sede.beta.IExecutorRegistration;
+package ai.services.interfaces;
 
 /**
  * Interface of Gateway logic.

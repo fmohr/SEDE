@@ -6,9 +6,9 @@ import ai.services.channels.ExecutorCommChannel
 import ai.services.channels.UploadLink
 import ai.services.execution.Task
 import ai.services.execution.local.LocalFieldContext
-import de.upb.sede.composition.graphs.nodes.ITransmitDataNode
-import de.upb.sede.core.SemanticDataField
-import de.upb.sede.exec.ExecutorContactInfo
+import ai.services.composition.graphs.nodes.ITransmitDataNode
+import ai.services.core.SemanticDataField
+import ai.services.exec.ExecutorContactInfo
 import spock.lang.Specification
 
 class TransmitDataOpTest extends Specification {

@@ -1,4 +1,4 @@
-package de.upb.sede.requests.resolve;
+package ai.services.requests.resolve;
 
 import java.util.List;
 import java.util.Map;
@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import org.json.simple.JSONObject;
 
-import de.upb.sede.util.JsonSerializable;
+import ai.services.util.JsonSerializable;
 
 @Deprecated
 public class GatewayResolution implements JsonSerializable {

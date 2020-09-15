@@ -2,9 +2,9 @@ package ai.services.executor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.upb.sede.beta.IExecutorRegistration;
-import de.upb.sede.util.ModifiableURI;
-import de.upb.sede.util.Streams;
+import ai.services.beta.IExecutorRegistration;
+import ai.services.util.ModifiableURI;
+import ai.services.util.Streams;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ByteArrayEntity;

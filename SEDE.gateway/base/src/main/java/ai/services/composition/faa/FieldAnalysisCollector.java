@@ -1,9 +1,9 @@
-package de.upb.sede.composition.faa;
+package ai.services.composition.faa;
 
-import de.upb.sede.composition.*;
-import de.upb.sede.composition.typing.TCOutput;
-import de.upb.sede.util.DeepImmutableCopier;
-import de.upb.sede.util.MappedList;
+import ai.services.composition.*;
+import ai.services.composition.typing.TCOutput;
+import ai.services.util.DeepImmutableCopier;
+import ai.services.util.MappedList;
 
 import java.util.*;
 import java.util.stream.Collectors;

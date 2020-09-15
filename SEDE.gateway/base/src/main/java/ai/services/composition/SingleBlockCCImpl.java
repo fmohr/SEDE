@@ -1,14 +1,16 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
-import de.upb.sede.SDLLookupService;
-import de.upb.sede.composition.faa.IFACInput;
-import de.upb.sede.composition.faa.IFACOutput;
-import de.upb.sede.composition.faa.InstructionFieldAccessCollector;
-import de.upb.sede.composition.faa.FieldAnalysisCollector;
-import de.upb.sede.composition.pio.PIOInput;
-import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.composition.pio.ProgramInstructionOrderer;
-import de.upb.sede.composition.typing.*;
+import ai.services.composition.faa.FieldAnalysisCollector;
+import ai.services.composition.faa.IFACInput;
+import ai.services.composition.faa.IFACOutput;
+import ai.services.composition.faa.InstructionFieldAccessCollector;
+import ai.services.composition.pio.PIOInput;
+import ai.services.composition.pio.ProgramInstructionOrderer;
+import ai.services.composition.typing.TCInput;
+import ai.services.composition.typing.TCOutput;
+import ai.services.composition.typing.TypeChecker;
+import ai.services.SDLLookupService;
+import ai.services.composition.graphs.nodes.IInstructionNode;
 
 import java.util.ArrayList;
 import java.util.List;

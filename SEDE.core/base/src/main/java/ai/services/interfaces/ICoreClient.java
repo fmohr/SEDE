@@ -1,7 +1,7 @@
-package de.upb.sede.interfaces;
+package ai.services.interfaces;
 
-import de.upb.sede.requests.Result;
-import de.upb.sede.requests.RunRequest;
+import ai.services.requests.Result;
+import ai.services.requests.RunRequest;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;

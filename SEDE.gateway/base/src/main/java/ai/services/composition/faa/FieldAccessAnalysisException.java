@@ -1,6 +1,6 @@
-package de.upb.sede.composition.faa;
+package ai.services.composition.faa;
 
-import de.upb.sede.composition.IIndexedInstruction;
+import ai.services.composition.IIndexedInstruction;
 
 public class FieldAccessAnalysisException extends RuntimeException {
 

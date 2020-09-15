@@ -1,10 +1,10 @@
-package de.upb.sede.util;
+package ai.services.util;
 
-import de.upb.sede.IQualifiable;
-import de.upb.sede.SDLLookupService;
-import de.upb.sede.exec.IServiceDesc;
-import de.upb.sede.IServiceRef;
-import de.upb.sede.param.*;
+import ai.services.param.*;
+import ai.services.IQualifiable;
+import ai.services.SDLLookupService;
+import ai.services.exec.IServiceDesc;
+import ai.services.IServiceRef;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

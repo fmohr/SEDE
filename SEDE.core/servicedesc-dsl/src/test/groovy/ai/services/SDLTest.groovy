@@ -1,19 +1,19 @@
-package de.upb.sede
+package ai.services
+
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import de.upb.sede.exec.IServiceDesc
-import de.upb.sede.exec.ServiceDesc
-import de.upb.sede.exec.auxiliary.JavaDispatchAux
-import de.upb.sede.param.IBooleanParameter
-import de.upb.sede.param.ICategoryParameter
-import de.upb.sede.param.IInterfaceParameter
-import de.upb.sede.param.INumericParameter
-import de.upb.sede.param.IParameterDependencyDesc
-import de.upb.sede.param.IServiceParameterizationDesc
-import de.upb.sede.exec.auxiliary.IJavaParameterizationAux
+import ai.services.exec.IServiceDesc
+import ai.services.exec.ServiceDesc
+import ai.services.param.IBooleanParameter
+import ai.services.param.ICategoryParameter
+import ai.services.param.IInterfaceParameter
+import ai.services.param.INumericParameter
+import ai.services.param.IParameterDependencyDesc
+import ai.services.param.IServiceParameterizationDesc
+import ai.services.exec.auxiliary.IJavaParameterizationAux
 import de.upb.sede.param.auxiliary.JavaParameterizationAux
-import de.upb.sede.types.IDataTypeDesc
+import ai.services.types.IDataTypeDesc
 import de.upb.sede.types.auxiliary.JavaTypeAux
 import spock.lang.Specification
 
@@ -168,7 +168,7 @@ class SDLTest extends Specification {
         IServiceDesc s1 = c1.services.find {it.qualifier == 'S1'}
         then:
         s1.dynAux != null
-        s1.dynAux.cast(JavaDispatchAux).staticInvocation() == true
+        s1.dynAux.cast(ai.services.exec.auxiliary.JavaDispatchAux).staticInvocation() == true
 
         when:
         IServiceParameterizationDesc params = s1.serviceParameters

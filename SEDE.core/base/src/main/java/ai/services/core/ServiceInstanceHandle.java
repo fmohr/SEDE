@@ -1,4 +1,4 @@
-package de.upb.sede.core;
+package ai.services.core;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import ai.services.util.JsonSerializable;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,8 +17,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.json.simple.JSONObject;
-
-import de.upb.sede.util.JsonSerializable;
 
 @JsonDeserialize(using = ServiceInstanceHandle.Deserializer.class)
 @JsonSerialize(using = ServiceInstanceHandle.Serializer.class)

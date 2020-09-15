@@ -1,4 +1,4 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
 public interface InstInput {
 

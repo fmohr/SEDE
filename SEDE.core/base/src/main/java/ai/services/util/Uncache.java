@@ -1,4 +1,4 @@
-package de.upb.sede.util;
+package ai.services.util;
 
 import java.util.Objects;
 import java.util.function.Supplier;

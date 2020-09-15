@@ -1,8 +1,8 @@
-package de.upb.sede.composition.choerography;
+package ai.services.composition.choerography;
 
-import de.upb.sede.composition.BlockWiseCompileStep;
-import de.upb.sede.exec.IExecutorHandle;
-import de.upb.sede.util.MappedList;
+import ai.services.composition.BlockWiseCompileStep;
+import ai.services.exec.IExecutorHandle;
+import ai.services.util.MappedList;
 
 import java.util.ArrayList;
 import java.util.List;

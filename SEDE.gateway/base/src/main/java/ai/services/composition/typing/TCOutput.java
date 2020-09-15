@@ -1,11 +1,13 @@
-package de.upb.sede.composition.typing;
+package ai.services.composition.typing;
 
-import de.upb.sede.IServiceRef;
-import de.upb.sede.composition.FieldType;
-import de.upb.sede.composition.IFieldType;
-import de.upb.sede.composition.ITypeCoercion;
-import de.upb.sede.composition.types.TypeClass;
-import de.upb.sede.exec.*;
+import ai.services.composition.FieldType;
+import ai.services.IServiceRef;
+import ai.services.composition.IFieldType;
+import ai.services.composition.ITypeCoercion;
+import ai.services.composition.types.TypeClass;
+import ai.services.exec.IMethodDesc;
+import ai.services.exec.IMethodRef;
+import ai.services.exec.IServiceDesc;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;

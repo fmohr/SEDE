@@ -1,10 +1,10 @@
-package de.upb.sede.exec;
+package ai.services.exec;
 
-import de.upb.sede.IQualifiable;
+import ai.services.IQualifiable;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
+import ai.services.SEDEModelStyle;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;

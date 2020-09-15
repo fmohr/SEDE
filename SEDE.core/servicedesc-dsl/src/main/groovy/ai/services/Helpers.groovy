@@ -1,8 +1,4 @@
-package de.upb.sede
-
-import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
-import de.upb.sede.exec.auxiliary.MutableJavaParameterizationAux
-import de.upb.sede.exec.auxiliary.MutableStdTypeAux
+package ai.services
 
 class Helpers {
 
@@ -12,20 +8,20 @@ class Helpers {
         describer.run()
     }
 
-    public static MutableJavaDispatchAux newJavaDispatchAux(@DelegatesTo(MutableJavaDispatchAux) Closure describer = Closure.IDENTITY) {
-        def javaAux = MutableJavaDispatchAux.create()
+    public static ai.services.exec.auxiliary.MutableJavaDispatchAux newJavaDispatchAux(@DelegatesTo(ai.services.exec.auxiliary.MutableJavaDispatchAux) Closure describer = Closure.IDENTITY) {
+        def javaAux = ai.services.exec.auxiliary.MutableJavaDispatchAux.create()
         runDescriber(javaAux, describer)
         return javaAux
     }
 
-    public static MutableJavaParameterizationAux newJavaParamAux(@DelegatesTo(MutableJavaParameterizationAux) Closure describer) {
-        def javaAux = MutableJavaParameterizationAux.create()
+    public static ai.services.exec.auxiliary.MutableJavaParameterizationAux newJavaParamAux(@DelegatesTo(ai.services.exec.auxiliary.MutableJavaParameterizationAux) Closure describer) {
+        def javaAux = ai.services.exec.auxiliary.MutableJavaParameterizationAux.create()
         runDescriber(javaAux, describer)
         return javaAux
     }
 
-    public static MutableStdTypeAux newJavaTypeAux(@DelegatesTo(MutableStdTypeAux) Closure describer) {
-        def javaAux = MutableStdTypeAux.create()
+    public static ai.services.exec.auxiliary.MutableStdTypeAux newJavaTypeAux(@DelegatesTo(ai.services.exec.auxiliary.MutableStdTypeAux) Closure describer) {
+        def javaAux = ai.services.exec.auxiliary.MutableStdTypeAux.create()
         runDescriber(javaAux, describer)
         return javaAux
     }

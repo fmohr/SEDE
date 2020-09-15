@@ -1,18 +1,20 @@
-package de.upb.sede.composition.typing;
+package ai.services.composition.typing;
 
-import de.upb.sede.IServiceCollectionDesc;
-import de.upb.sede.IServiceRef;
-import de.upb.sede.SDLLookupService;
-import de.upb.sede.composition.InstOutputIterator;
-import de.upb.sede.composition.InstWiseCompileStep;
-import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.exec.*;
-import de.upb.sede.util.SDLUtil;
+import ai.services.IServiceCollectionDesc;
+import ai.services.IServiceRef;
+import ai.services.SDLLookupService;
+import ai.services.composition.InstOutputIterator;
+import ai.services.composition.InstWiseCompileStep;
+import ai.services.composition.graphs.nodes.IInstructionNode;
+import ai.services.exec.IMethodDesc;
+import ai.services.exec.IMethodRef;
+import ai.services.exec.IServiceDesc;
+import ai.services.util.SDLUtil;
 
 import java.util.List;
 import java.util.Optional;
 
-import static de.upb.sede.util.SDLUtil.matchSignature;
+import static ai.services.util.SDLUtil.matchSignature;
 
 public class MethodResolver extends InstWiseCompileStep<TCInput, TCOutput> {
 

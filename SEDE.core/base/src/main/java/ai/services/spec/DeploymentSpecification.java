@@ -1,6 +1,6 @@
-package de.upb.sede.spec;
+package ai.services.spec;
 
-import de.upb.sede.util.Validatable;
+import ai.services.util.Validatable;
 
 import java.util.ArrayList;
 import java.util.List;

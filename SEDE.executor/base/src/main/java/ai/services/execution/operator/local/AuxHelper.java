@@ -2,8 +2,8 @@ package ai.services.execution.operator.local;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.upb.sede.composition.graphs.nodes.WithAux;
-import de.upb.sede.exec.auxiliary.IJavaDispatchAux;
+import ai.services.composition.graphs.nodes.WithAux;
+import ai.services.exec.auxiliary.IJavaDispatchAux;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

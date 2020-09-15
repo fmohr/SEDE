@@ -2,11 +2,11 @@ package ai.services.execution;
 
 import ai.services.execution.local.LocalFieldContext;
 import ai.services.execution.operator.TaskDispatchContainer;
-import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
+import ai.services.composition.graphs.nodes.BaseNode;
+import ai.services.composition.graphs.nodes.ICompositionGraph;
 import ai.services.execution.operator.GraphDependencyOperator;
-import de.upb.sede.composition.graphs.nodes.INotification;
-import de.upb.sede.core.SEDEObject;
+import ai.services.composition.graphs.nodes.INotification;
+import ai.services.core.SEDEObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

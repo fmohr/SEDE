@@ -1,20 +1,20 @@
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.upb.sede.beta.ExecutorRegistration
-import de.upb.sede.composition.FieldType
-import de.upb.sede.composition.IFieldType
-import de.upb.sede.composition.types.DataValueType
-import de.upb.sede.composition.types.PrimitiveValueType
-import de.upb.sede.composition.types.ServiceInstanceType
-import de.upb.sede.core.PrimitiveType
-import de.upb.sede.core.ServiceInstanceHandle
-import de.upb.sede.exec.ExecutorCapabilities
-import de.upb.sede.exec.ExecutorContactInfo
-import de.upb.sede.exec.ExecutorHandle
-import de.upb.sede.exec.IExecutorHandle
-import de.upb.sede.requests.resolve.beta.IResolveRequest
-import de.upb.sede.requests.resolve.beta.ResolvePolicy
-import de.upb.sede.requests.resolve.beta.ResolveRequest
-import de.upb.sede.util.DefaultMap
+import ai.services.beta.ExecutorRegistration
+import ai.services.composition.FieldType
+import ai.services.composition.IFieldType
+import ai.services.composition.types.DataValueType
+import ai.services.composition.types.PrimitiveValueType
+import ai.services.composition.types.ServiceInstanceType
+import ai.services.core.PrimitiveType
+import ai.services.core.ServiceInstanceHandle
+import ai.services.exec.ExecutorCapabilities
+import ai.services.exec.ExecutorContactInfo
+import ai.services.exec.ExecutorHandle
+import ai.services.exec.IExecutorHandle
+import ai.services.requests.resolve.beta.IResolveRequest
+import ai.services.requests.resolve.beta.ResolvePolicy
+import ai.services.requests.resolve.beta.ResolveRequest
+import ai.services.util.DefaultMap
 
 import java.util.concurrent.atomic.AtomicInteger
 

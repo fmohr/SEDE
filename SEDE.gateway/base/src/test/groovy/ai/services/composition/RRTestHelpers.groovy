@@ -1,10 +1,10 @@
-package de.upb.sede.composition
+package ai.services.composition
 
-import de.upb.sede.composition.choerography.emulation.executors.ExecutionGraph
-import de.upb.sede.composition.choerography.emulation.executors.GraphTraversal
-import de.upb.sede.composition.graphs.nodes.BaseNode
-import de.upb.sede.composition.graphs.nodes.ICompositionGraph
-import de.upb.sede.composition.graphs.nodes.IInstructionNode
+import ai.services.composition.choerography.emulation.executors.ExecutionGraph
+import ai.services.composition.choerography.emulation.executors.GraphTraversal
+import ai.services.composition.graphs.nodes.BaseNode
+import ai.services.composition.graphs.nodes.ICompositionGraph
+import ai.services.composition.graphs.nodes.IInstructionNode
 
 class RRTestHelpers {
 

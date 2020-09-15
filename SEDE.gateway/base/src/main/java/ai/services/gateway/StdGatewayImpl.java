@@ -1,23 +1,23 @@
-package de.upb.sede.gateway;
+package ai.services.gateway;
 
-import de.upb.sede.ISDLAssembly;
-import de.upb.sede.SDLBaseLookupService;
-import de.upb.sede.SDLCacheLookupService;
-import de.upb.sede.SDLLookupService;
-import de.upb.sede.composition.CompositionCompileService;
-import de.upb.sede.composition.ICCRequest;
-import de.upb.sede.composition.ICompositionCompilation;
-import de.upb.sede.composition.choerography.ChoreographyService;
-import de.upb.sede.interfaces.ICCService;
-import de.upb.sede.interfaces.IChoreographyService;
-import de.upb.sede.interfaces.IGateway;
-import de.upb.sede.requests.resolve.beta.Choreography;
-import de.upb.sede.requests.resolve.beta.IChoreography;
-import de.upb.sede.requests.resolve.beta.IResolveRequest;
-import de.upb.sede.util.Cache;
-import de.upb.sede.util.GraphToDot;
-import de.upb.sede.util.StaticCache;
-import de.upb.sede.util.TTLCache;
+import ai.services.composition.CompositionCompileService;
+import ai.services.composition.choerography.ChoreographyService;
+import ai.services.requests.resolve.beta.Choreography;
+import ai.services.ISDLAssembly;
+import ai.services.SDLBaseLookupService;
+import ai.services.SDLCacheLookupService;
+import ai.services.SDLLookupService;
+import ai.services.composition.ICCRequest;
+import ai.services.composition.ICompositionCompilation;
+import ai.services.interfaces.ICCService;
+import ai.services.interfaces.IChoreographyService;
+import ai.services.interfaces.IGateway;
+import ai.services.requests.resolve.beta.IChoreography;
+import ai.services.requests.resolve.beta.IResolveRequest;
+import ai.services.util.Cache;
+import ai.services.util.GraphToDot;
+import ai.services.util.StaticCache;
+import ai.services.util.TTLCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +40,6 @@ public class StdGatewayImpl implements IGateway {
         this.executorSupplier = executorSupplier;
         iccService = new CompositionCompileService(lookupServiceCache);
         choreographyService = new ChoreographyService(iccService, lookupServiceCache, this.executorSupplier);
-    }
-
-    public StdGatewayImpl(SDLLookupService baseLookupService,
-                             ExecutorArbiter executorSupplier) {
-        this(new TTLCache<>(10, TimeUnit.SECONDS, () ->
-                new SDLCacheLookupService(baseLookupService)),
-            executorSupplier);
     }
 
     public StdGatewayImpl(ISDLAssembly sdlAssembly,

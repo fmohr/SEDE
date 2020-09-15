@@ -1,6 +1,6 @@
 package ai.services.channels;
 
-import de.upb.sede.core.ServiceInstanceHandle;
+import ai.services.core.ServiceInstanceHandle;
 
 public interface ServiceStorageChannel {
 

@@ -1,9 +1,9 @@
-package de.upb.sede.composition.graphs.nodes;
+package ai.services.composition.graphs.nodes;
 
+import ai.services.SEDEModelStyle;
+import ai.services.WithField;
+import ai.services.composition.types.serialization.IMarshalling;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.WithField;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.composition.types.serialization.IMarshalling;
 import org.immutables.value.Value;
 
 import javax.annotation.Nonnull;

@@ -1,4 +1,4 @@
-package de.upb.sede.exceptions;
+package ai.services.exceptions;
 
 /**
  * TODO do we need this exception type? Exception which is thrown when accessing

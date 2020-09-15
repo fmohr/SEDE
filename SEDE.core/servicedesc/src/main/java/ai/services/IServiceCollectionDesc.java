@@ -1,8 +1,8 @@
-package de.upb.sede;
+package ai.services;
 
+import ai.services.exec.IServiceDesc;
+import ai.services.types.IDataTypeDesc;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.exec.IServiceDesc;
-import de.upb.sede.types.IDataTypeDesc;
 import org.immutables.value.Value;
 
 import java.util.List;

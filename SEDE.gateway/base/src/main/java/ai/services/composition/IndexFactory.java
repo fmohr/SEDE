@@ -1,10 +1,9 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
-import de.upb.sede.composition.graphs.nodes.WithIndex;
+import ai.services.composition.graphs.nodes.WithIndex;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.LongUnaryOperator;
 
 public class IndexFactory {
 

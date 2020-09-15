@@ -1,9 +1,9 @@
-package de.upb.sede.composition.typing;
+package ai.services.composition.typing;
 
-import de.upb.sede.composition.ITypeCoercion;
-import de.upb.sede.exec.IMethodDesc;
-import de.upb.sede.exec.IMethodRef;
-import de.upb.sede.exec.IServiceDesc;
+import ai.services.composition.ITypeCoercion;
+import ai.services.exec.IMethodDesc;
+import ai.services.exec.IMethodRef;
+import ai.services.exec.IServiceDesc;
 
 import java.util.List;
 

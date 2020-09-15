@@ -1,12 +1,9 @@
-package de.upb.sede.misc
+package ai.services.misc
 
-import de.upb.sede.composition.FieldType
-import de.upb.sede.composition.IFieldType
-import de.upb.sede.composition.types.DataValueType
-import de.upb.sede.composition.types.PrimitiveValueType
-import de.upb.sede.composition.types.ServiceInstanceType
-import de.upb.sede.composition.types.TypeClass
-import de.upb.sede.core.PrimitiveType
+
+import ai.services.composition.IFieldType
+import ai.services.composition.types.TypeClass
+import ai.services.core.PrimitiveType
 
 class FieldContextCreator {
 
@@ -24,7 +21,7 @@ class FieldContextCreator {
     }
 
     def addType(String fieldName, TypeClass typeClass) {
-        IFieldType newType = FieldType.builder()
+        IFieldType newType = ai.services.composition.FieldType.builder()
             .fieldname(fieldName)
             .type(typeClass)
             .build()
@@ -32,19 +29,19 @@ class FieldContextCreator {
     }
 
     def data(String fieldName, String dataValueType) {
-        addType(fieldName, DataValueType.builder()
+        addType(fieldName, ai.services.composition.types.DataValueType.builder()
             .typeQualifier(dataValueType)
             .build());
     }
 
     def serviceInstance(String fieldName, String serviceQualifier) {
-        addType(fieldName, ServiceInstanceType.builder()
+        addType(fieldName, ai.services.composition.types.ServiceInstanceType.builder()
             .typeQualifier(serviceQualifier)
             .build());
     }
 
     def prim(String fieldName, PrimitiveType primType) {
-        addType(fieldName, PrimitiveValueType.builder()
+        addType(fieldName, ai.services.composition.types.PrimitiveValueType.builder()
             .primitiveType(primType)
             .build());
     }

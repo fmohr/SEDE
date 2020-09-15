@@ -1,11 +1,11 @@
-package de.upb.sede.composition.choerography;
+package ai.services.composition.choerography;
 
-import de.upb.sede.composition.BlockWiseCompileStep;
-import de.upb.sede.composition.IIndexedInstruction;
-import de.upb.sede.composition.IndexedInstruction;
-import de.upb.sede.composition.InstructionIndexer;
-import de.upb.sede.composition.graphs.nodes.InstructionNode;
-import de.upb.sede.exec.IExecutorHandle;
+import ai.services.composition.IndexedInstruction;
+import ai.services.composition.graphs.nodes.InstructionNode;
+import ai.services.composition.BlockWiseCompileStep;
+import ai.services.composition.IIndexedInstruction;
+import ai.services.composition.InstructionIndexer;
+import ai.services.exec.IExecutorHandle;
 
 import java.util.ArrayList;
 import java.util.List;

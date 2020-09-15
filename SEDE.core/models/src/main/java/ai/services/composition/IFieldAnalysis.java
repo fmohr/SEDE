@@ -1,15 +1,13 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
+import ai.services.composition.types.TypeClass;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.composition.types.TypeClass;
+import ai.services.SEDEModelStyle;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
-import javax.validation.constraints.Null;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 @SEDEModelStyle
 @Value.Immutable

@@ -1,4 +1,4 @@
-package de.upb.sede.util;
+package ai.services.util;
 
 import java.util.ArrayList;
 import java.util.Iterator;

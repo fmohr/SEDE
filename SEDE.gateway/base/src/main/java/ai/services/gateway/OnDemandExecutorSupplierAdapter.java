@@ -1,6 +1,6 @@
-package de.upb.sede.gateway;
+package ai.services.gateway;
 
-import de.upb.sede.exec.IExecutorHandle;
+import ai.services.exec.IExecutorHandle;
 
 import java.util.List;
 import java.util.Optional;

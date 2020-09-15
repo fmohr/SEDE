@@ -1,13 +1,12 @@
-package de.upb.sede.requests;
+package ai.services.requests;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import de.upb.sede.core.SEDEObject;
-import de.upb.sede.util.Maps;
+import ai.services.requests.resolve.ResolvePolicy;
+import ai.services.core.SEDEObject;
+import ai.services.util.Maps;
 import org.json.simple.JSONObject;
-
-import de.upb.sede.requests.resolve.ResolvePolicy;
 
 public class RunRequest extends Request {
 

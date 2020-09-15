@@ -2,8 +2,8 @@ package ai.services.execution.operator.local
 
 import ai.services.execution.Task
 import ai.services.execution.local.LocalFieldContext
-import de.upb.sede.composition.graphs.nodes.IAcceptDataNode
-import de.upb.sede.core.PrimitiveDataField
+import ai.services.composition.graphs.nodes.IAcceptDataNode
+import ai.services.core.PrimitiveDataField
 import spock.lang.Specification
 
 class AcceptDataOpTest extends Specification {

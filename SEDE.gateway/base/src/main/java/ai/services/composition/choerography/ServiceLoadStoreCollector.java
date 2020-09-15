@@ -1,19 +1,19 @@
-package de.upb.sede.composition.choerography;
+package ai.services.composition.choerography;
 
-import de.upb.sede.composition.*;
-import de.upb.sede.composition.choerography.emulation.OpsSchedule;
-import de.upb.sede.composition.choerography.emulation.OrchestrationException;
-import de.upb.sede.composition.faa.FieldAccessUtil;
-import de.upb.sede.composition.graphs.nodes.IServiceInstanceStorageNode;
-import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode;
-import de.upb.sede.composition.orchestration.scheduled.ServiceLoadStore;
-import de.upb.sede.composition.types.TypeClass;
-import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.exec.IExecutorContactInfo;
-import de.upb.sede.exec.IExecutorHandle;
-import de.upb.sede.requests.resolve.beta.IResolvePolicy;
-import de.upb.sede.util.ResolvePolicyUtil;
-import de.upb.sede.composition.typing.TypeUtil;
+import ai.services.composition.*;
+import ai.services.composition.graphs.nodes.ServiceInstanceStorageNode;
+import ai.services.composition.choerography.emulation.OpsSchedule;
+import ai.services.composition.choerography.emulation.OrchestrationException;
+import ai.services.composition.faa.FieldAccessUtil;
+import ai.services.composition.graphs.nodes.IServiceInstanceStorageNode;
+import ai.services.composition.orchestration.scheduled.ServiceLoadStore;
+import ai.services.composition.types.TypeClass;
+import ai.services.core.ServiceInstanceHandle;
+import ai.services.exec.IExecutorContactInfo;
+import ai.services.exec.IExecutorHandle;
+import ai.services.requests.resolve.beta.IResolvePolicy;
+import ai.services.util.ResolvePolicyUtil;
+import ai.services.composition.typing.TypeUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

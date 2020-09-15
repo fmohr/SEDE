@@ -1,6 +1,6 @@
-package de.upb.sede.composition.graphs.nodes;
+package ai.services.composition.graphs.nodes;
 
-import de.upb.sede.composition.types.serialization.IMarshalling;
+import ai.services.composition.types.serialization.IMarshalling;
 
 import javax.annotation.Nullable;
 

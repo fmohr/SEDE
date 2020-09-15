@@ -2,8 +2,8 @@ package ai.services.execution.operator.local
 
 import ai.services.execution.Task
 import ai.services.execution.local.LocalFieldContext
-import de.upb.sede.composition.graphs.nodes.DeleteFieldNode
-import de.upb.sede.core.PrimitiveDataField
+import ai.services.composition.graphs.nodes.DeleteFieldNode
+import ai.services.core.PrimitiveDataField
 import spock.lang.Specification
 
 class DeleteFieldOpTest extends Specification {

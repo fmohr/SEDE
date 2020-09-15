@@ -1,7 +1,7 @@
 package ai.services.execution;
 
-import de.upb.sede.composition.graphs.nodes.INotification;
-import de.upb.sede.core.SEDEObject;
+import ai.services.composition.graphs.nodes.INotification;
+import ai.services.core.SEDEObject;
 
 /**
  * Each execution has a single scope of fields that map fieldnames to service instances and data values.

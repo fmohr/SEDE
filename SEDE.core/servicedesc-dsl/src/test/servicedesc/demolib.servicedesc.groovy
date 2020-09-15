@@ -1,6 +1,8 @@
-import static de.upb.sede.StandardDefs.*;
+import ai.services.SDL
 
-@groovy.transform.BaseScript de.upb.sede.SDL description
+import static ai.services.StandardDefs.*;
+
+@groovy.transform.BaseScript SDL description
 
 
 collection ("demolib") {

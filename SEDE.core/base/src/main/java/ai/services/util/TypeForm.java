@@ -1,4 +1,4 @@
-package de.upb.sede.util;
+package ai.services.util;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.JavaType;

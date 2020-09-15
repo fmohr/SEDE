@@ -3,7 +3,7 @@ package ai.services.execution.operator.local;
 import ai.services.execution.Task;
 import ai.services.execution.TaskTransition;
 import ai.services.execution.operator.MainTaskOperator;
-import de.upb.sede.composition.graphs.nodes.IDeleteFieldNode;
+import ai.services.composition.graphs.nodes.IDeleteFieldNode;
 
 public class DeleteFieldOp extends MainTaskOperator {
     public DeleteFieldOp() {

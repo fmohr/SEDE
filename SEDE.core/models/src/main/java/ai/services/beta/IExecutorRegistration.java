@@ -1,11 +1,9 @@
-package de.upb.sede.beta;
+package ai.services.beta;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.exec.IExecutorHandle;
+import ai.services.SEDEModelStyle;
+import ai.services.exec.IExecutorHandle;
 import org.immutables.value.Value;
-
-import javax.validation.constraints.Null;
 
 @SEDEModelStyle
 @Value.Immutable

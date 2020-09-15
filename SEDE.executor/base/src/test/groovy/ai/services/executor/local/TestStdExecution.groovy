@@ -1,7 +1,7 @@
 package ai.services.executor.local
 
 import ai.services.executor.ExecutorFactory
-import de.upb.sede.gateway.StdGatewayImpl
+import ai.services.gateway.StdGatewayImpl
 import spock.lang.Specification
 
 class TestStdExecution extends Specification {
@@ -10,5 +10,6 @@ class TestStdExecution extends Specification {
         def gateway = new StdGatewayImpl()
         def factory = new ExecutorFactory()
         factory.getConfigBuilder().addServices("")
+
     }
 }

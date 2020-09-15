@@ -1,7 +1,7 @@
-package de.upb.sede.requests.resolve.beta;
+package ai.services.requests.resolve.beta;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
+import ai.services.SEDEModelStyle;
 import org.immutables.value.Value;
 
 import java.util.List;

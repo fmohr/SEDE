@@ -1,4 +1,4 @@
-package de.upb.sede.webinterfaces.server;
+package ai.services.webinterfaces.server;
 
 import java.io.InputStream;
 import java.io.OutputStream;

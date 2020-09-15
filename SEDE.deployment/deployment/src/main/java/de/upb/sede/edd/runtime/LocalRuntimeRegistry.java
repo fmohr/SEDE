@@ -12,8 +12,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static de.upb.sede.requests.deploy.ExecutorDemandRequest.SatMode.*;
-
 public class LocalRuntimeRegistry implements RuntimeRegistry {
 
     private Timer runtimeKiller = new Timer(true);

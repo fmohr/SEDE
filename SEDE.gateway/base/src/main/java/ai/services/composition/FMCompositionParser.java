@@ -1,4 +1,4 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,11 +7,10 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import de.upb.sede.composition.graphs.nodes.InstructionNode;
-import de.upb.sede.composition.graphs.nodes.MutableInstructionNode;
-import de.upb.sede.core.PrimitiveDataField;
-import de.upb.sede.core.PrimitiveType;
-import de.upb.sede.exceptions.FMCompositionSyntaxException;
+import ai.services.composition.graphs.nodes.InstructionNode;
+import ai.services.composition.graphs.nodes.MutableInstructionNode;
+import ai.services.core.PrimitiveType;
+import ai.services.exceptions.FMCompositionSyntaxException;
 
 /**
  *

@@ -1,6 +1,4 @@
-package de.upb.sede.composition.orchestration.scheduled;
-
-import de.upb.sede.exec.IExecutorHandle;
+package ai.services.composition.orchestration.scheduled;
 
 public interface ScheduledOperation {
 

@@ -1,6 +1,6 @@
-package de.upb.sede.composition.graphs.nodes;
+package ai.services.composition.graphs.nodes;
 
-import de.upb.sede.exec.IExecutorContactInfo;
+import ai.services.exec.IExecutorContactInfo;
 
 public interface WithExecutorConnection {
 

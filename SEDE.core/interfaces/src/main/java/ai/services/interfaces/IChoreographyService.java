@@ -1,8 +1,7 @@
-package de.upb.sede.interfaces;
+package ai.services.interfaces;
 
-import de.upb.sede.requests.resolve.GatewayResolution;
-import de.upb.sede.requests.resolve.beta.IChoreography;
-import de.upb.sede.requests.resolve.beta.IResolveRequest;
+import ai.services.requests.resolve.beta.IChoreography;
+import ai.services.requests.resolve.beta.IResolveRequest;
 
 public interface IChoreographyService {
 

@@ -1,7 +1,7 @@
-import de.upb.sede.composition.RRGen
-import de.upb.sede.requests.resolve.beta.IResolvePolicy
-import de.upb.sede.requests.resolve.beta.MutableResolvePolicy
-import de.upb.sede.requests.resolve.beta.MutableResolveRequest
+import ai.services.composition.RRGen
+import ai.services.requests.resolve.beta.IResolvePolicy
+import ai.services.requests.resolve.beta.MutableResolvePolicy
+import ai.services.requests.resolve.beta.MutableResolveRequest
 import groovy.transform.BaseScript
 
 @BaseScript RRGen gen

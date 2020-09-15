@@ -1,11 +1,11 @@
-package de.upb.sede.gateway;
+package ai.services.gateway;
 
-import de.upb.sede.IServiceRef;
-import de.upb.sede.SDLLookupService;
-import de.upb.sede.beta.IExecutorRegistration;
-import de.upb.sede.exec.IExecutorHandle;
-import de.upb.sede.interfaces.ExecutorRegistrant;
-import de.upb.sede.util.Cache;
+import ai.services.IServiceRef;
+import ai.services.SDLLookupService;
+import ai.services.beta.IExecutorRegistration;
+import ai.services.exec.IExecutorHandle;
+import ai.services.interfaces.ExecutorRegistrant;
+import ai.services.util.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +48,6 @@ public class GatewayExecutorRegistrant implements ExecutorRegistrant {
             logger.warn("Executor tried to register with 0 amount of supported services. " +
                 "Registration was not denied." +
                 " Executors id: {}", registration.getExecutorHandle().getQualifier());
-//            return false;
         }
 
         return true;

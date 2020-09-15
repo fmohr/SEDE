@@ -1,4 +1,4 @@
-package de.upb.sede.config;
+package ai.services.config;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +8,8 @@ import java.util.UUID;
 
 import org.json.simple.JSONObject;
 
-import de.upb.sede.util.FileUtil;
-import de.upb.sede.util.JsonSerializable;
+import ai.services.util.FileUtil;
+import ai.services.util.JsonSerializable;
 
 public class ExecutorConfiguration implements JsonSerializable {
 	private static final String UNDEFINED_SERVICE_STORE_LOC = "instances";

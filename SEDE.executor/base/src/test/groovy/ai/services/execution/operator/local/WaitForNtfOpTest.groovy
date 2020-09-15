@@ -2,8 +2,8 @@ package ai.services.execution.operator.local
 
 import ai.services.execution.Task
 import ai.services.execution.local.LocalFieldContext
-import de.upb.sede.composition.graphs.nodes.Notification
-import de.upb.sede.composition.graphs.nodes.WaitForNotificationNode
+import ai.services.composition.graphs.nodes.Notification
+import ai.services.composition.graphs.nodes.WaitForNotificationNode
 import spock.lang.Specification
 
 class WaitForNtfOpTest extends Specification {

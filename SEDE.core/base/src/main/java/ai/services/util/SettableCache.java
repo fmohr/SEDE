@@ -1,4 +1,4 @@
-package de.upb.sede.util;
+package ai.services.util;
 
 public interface SettableCache<T> extends Cache<T> {
 

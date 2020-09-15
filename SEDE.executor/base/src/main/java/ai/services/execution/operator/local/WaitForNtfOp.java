@@ -3,8 +3,8 @@ package ai.services.execution.operator.local;
 import ai.services.execution.Task;
 import ai.services.execution.TaskTransition;
 import ai.services.execution.operator.MainTaskOperator;
-import de.upb.sede.composition.graphs.nodes.INotification;
-import de.upb.sede.composition.graphs.nodes.IWaitForNotificationNode;
+import ai.services.composition.graphs.nodes.INotification;
+import ai.services.composition.graphs.nodes.IWaitForNotificationNode;
 
 public class WaitForNtfOp extends MainTaskOperator {
 

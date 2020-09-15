@@ -1,4 +1,4 @@
-package de.upb.sede.util
+package ai.services.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import spock.lang.Specification

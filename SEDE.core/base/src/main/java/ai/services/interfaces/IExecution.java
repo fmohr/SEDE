@@ -1,4 +1,4 @@
-package de.upb.sede.interfaces;
+package ai.services.interfaces;
 
 public interface IExecution {
 	boolean hasStarted();

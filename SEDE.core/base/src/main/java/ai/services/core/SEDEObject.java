@@ -1,6 +1,6 @@
-package de.upb.sede.core;
+package ai.services.core;
 
-import de.upb.sede.util.JsonSerializable;
+import ai.services.util.JsonSerializable;
 import org.json.simple.JSONObject;
 
 import java.io.Serializable;

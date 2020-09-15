@@ -1,11 +1,9 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
+import ai.services.composition.graphs.nodes.IInstructionNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.composition.graphs.nodes.IInstructionNode;
+import ai.services.SEDEModelStyle;
 import org.immutables.value.Value;
-
-import javax.annotation.Nullable;
 
 @SEDEModelStyle
 @Value.Immutable

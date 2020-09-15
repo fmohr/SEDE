@@ -1,16 +1,16 @@
-package de.upb.sede.composition.choerography;
+package ai.services.composition.choerography;
 
-import de.upb.sede.composition.*;
-import de.upb.sede.composition.faa.FieldAccessUtil;
-import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.exec.IExecutorHandle;
-import de.upb.sede.gateway.OnDemandExecutorSupplier;
+import ai.services.composition.*;
+import ai.services.composition.faa.FieldAccessUtil;
+import ai.services.core.ServiceInstanceHandle;
+import ai.services.exec.IExecutorHandle;
+import ai.services.gateway.OnDemandExecutorSupplier;
 
 import java.util.*;
 
 public class ExecutorCandidatesCollector extends
-    InstWiseCompileStep
-        <ExecutorCandidatesCollector.ECCInput, ExecutorCandidatesCollector.ECCOutput> {
+        InstWiseCompileStep
+                <ExecutorCandidatesCollector.ECCInput, ExecutorCandidatesCollector.ECCOutput> {
 
     public ExecutorCandidatesCollector() {
         super();

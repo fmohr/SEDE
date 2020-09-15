@@ -1,9 +1,8 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.IServiceRef;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.exec.IMethodRef;
+import ai.services.SEDEModelStyle;
+import ai.services.exec.IMethodRef;
 import org.immutables.value.Value;
 
 import java.util.List;

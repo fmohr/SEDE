@@ -1,4 +1,4 @@
-package de.upb.sede.util;
+package ai.services.util;
 
 import java.io.Serializable;
 import java.util.function.Supplier;

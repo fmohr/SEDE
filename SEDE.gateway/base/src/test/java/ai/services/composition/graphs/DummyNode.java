@@ -1,11 +1,10 @@
-package de.upb.sede.composition.graphs;
+package ai.services.composition.graphs;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
 
-import de.upb.sede.composition.IIndexedInstruction;
-import de.upb.sede.composition.graphs.nodes.BaseNode;
+import ai.services.composition.graphs.nodes.BaseNode;
 
 import javax.annotation.Nullable;
 

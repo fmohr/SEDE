@@ -1,4 +1,4 @@
-package de.upb.sede.core;
+package ai.services.core;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,10 +15,9 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import ai.services.util.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.upb.sede.util.Streams;
 
 public final class SemanticStreamer {
 

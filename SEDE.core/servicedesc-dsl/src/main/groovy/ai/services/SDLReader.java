@@ -1,7 +1,8 @@
-package de.upb.sede;
+package ai.services;
 
 
-import de.upb.sede.util.*;
+import ai.services.util.DeepImmutableCopier;
+import ai.services.util.FileUtil;
 import groovy.lang.Closure;
 import groovy.lang.DelegatesTo;
 import groovy.lang.GroovyShell;

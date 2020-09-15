@@ -1,8 +1,8 @@
-package de.upb.sede.webinterfaces.client;
+package ai.services.webinterfaces.client;
 
 import java.io.*;
 
-import de.upb.sede.util.Streams;
+import ai.services.util.Streams;
 
 /**
  *

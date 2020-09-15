@@ -1,4 +1,4 @@
-package de.upb.sede.composition.graphs.nodes;
+package ai.services.composition.graphs.nodes;
 
 import javax.annotation.Nullable;
 import java.util.Optional;

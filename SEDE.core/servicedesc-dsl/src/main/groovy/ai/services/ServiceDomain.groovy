@@ -1,14 +1,11 @@
-package de.upb.sede
+package ai.services
 
-import de.upb.sede.exec.IMethodDesc
-import de.upb.sede.exec.IServiceDesc
-import de.upb.sede.exec.MutableMethodDesc
-import de.upb.sede.exec.MutableMethodParameterDesc
-import de.upb.sede.exec.MutableServiceDesc
-import de.upb.sede.param.MutableParameterDependencyDesc
-import de.upb.sede.param.MutableServiceParameterizationDesc
-import de.upb.sede.types.MutableDataTypeDesc
-import de.upb.sede.util.DynRecord
+import ai.services.exec.IMethodDesc
+import ai.services.exec.IServiceDesc
+import ai.services.exec.MutableMethodDesc
+import ai.services.exec.MutableServiceDesc
+import ai.services.param.MutableServiceParameterizationDesc
+import ai.services.util.DynRecord
 import groovy.transform.PackageScope
 
 class ServiceDomain

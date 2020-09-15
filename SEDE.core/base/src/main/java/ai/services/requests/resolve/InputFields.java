@@ -1,4 +1,4 @@
-package de.upb.sede.requests.resolve;
+package ai.services.requests.resolve;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import de.upb.sede.core.SEDEObject;
+import ai.services.core.SEDEObject;
 import org.json.simple.JSONObject;
 
-import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.util.JsonSerializable;
+import ai.services.core.ServiceInstanceHandle;
+import ai.services.util.JsonSerializable;
 
 /**
  * Sent by the user.

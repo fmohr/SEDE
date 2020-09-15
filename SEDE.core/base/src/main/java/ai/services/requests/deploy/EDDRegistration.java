@@ -1,8 +1,8 @@
-package de.upb.sede.requests.deploy;
+package ai.services.requests.deploy;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.upb.sede.util.ModifiableURI;
-import de.upb.sede.util.UnmodifiableURI;
+import ai.services.util.ModifiableURI;
+import ai.services.util.UnmodifiableURI;
 
 import java.util.ArrayList;
 import java.util.List;

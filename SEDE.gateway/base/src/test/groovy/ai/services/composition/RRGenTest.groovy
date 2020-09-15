@@ -1,11 +1,7 @@
-package de.upb.sede.composition
+package ai.services.composition
 
-import de.upb.sede.beta.MutableExecutorRegistration
-import de.upb.sede.exec.MutableExecutorContactInfo
-import de.upb.sede.exec.MutableExecutorHandle
-import de.upb.sede.requests.resolve.beta.IResolvePolicy
-import de.upb.sede.requests.resolve.beta.MutableResolveRequest
-import de.upb.sede.requests.resolve.beta.ResolveRequest
+
+import ai.services.requests.resolve.beta.IResolvePolicy
 import spock.lang.Specification
 
 class RRGenTest extends Specification {
@@ -16,9 +12,9 @@ class RRGenTest extends Specification {
 
         expect:
         rr1.composition == "a;b;c;"
-        rr1 instanceof ResolveRequest
+        rr1 instanceof ai.services.requests.resolve.beta.ResolveRequest
         rr2.resolvePolicy.returnPolicy == IResolvePolicy.FieldSelection.LISTED
-        rr2 instanceof MutableResolveRequest
+        rr2 instanceof ai.services.requests.resolve.beta.MutableResolveRequest
     }
 
     def "FromClosure"() {
@@ -27,9 +23,9 @@ class RRGenTest extends Specification {
             inst1;
             inst2;
             """
-            clientExecutorRegistration = MutableExecutorRegistration.create().tap {
-                executorHandle = MutableExecutorHandle.create().tap {
-                    contactInfo = MutableExecutorContactInfo.create().tap {
+            clientExecutorRegistration = ai.services.beta.MutableExecutorRegistration.create().tap {
+                executorHandle = ai.services.exec.MutableExecutorHandle.create().tap {
+                    contactInfo = ai.services.exec.MutableExecutorContactInfo.create().tap {
                         qualifier = "client-id"
                     }
                 }

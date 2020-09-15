@@ -1,4 +1,4 @@
-package de.upb.sede.requests;
+package ai.services.requests;
 
 import java.util.Map;
 import java.util.Optional;

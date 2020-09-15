@@ -1,8 +1,8 @@
-package de.upb.sede.composition.choerography.emulation.executors;
+package ai.services.composition.choerography.emulation.executors;
 
-import de.upb.sede.ConstructReference;
-import de.upb.sede.SDLLookupService;
-import de.upb.sede.exec.IExecutorHandle;
+import ai.services.ConstructReference;
+import ai.services.SDLLookupService;
+import ai.services.exec.IExecutorHandle;
 
 import java.util.HashMap;
 import java.util.Map;

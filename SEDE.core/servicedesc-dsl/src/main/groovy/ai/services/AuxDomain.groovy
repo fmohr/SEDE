@@ -1,17 +1,18 @@
-package de.upb.sede
+package ai.services
 
-import de.upb.sede.exec.auxiliary.IJavaDispatchAux
-import de.upb.sede.exec.auxiliary.IPythonDispatchAux
-import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
-import de.upb.sede.exec.auxiliary.MutableJavaMarshalAux
-import de.upb.sede.exec.auxiliary.MutableJavaParameterizationAux
-import de.upb.sede.exec.auxiliary.MutableStdTypeAux
-import de.upb.sede.exec.auxiliary.MutablePythonDispatchAux
-import de.upb.sede.exec.auxiliary.IJavaParameterizationAux
-import de.upb.sede.exec.auxiliary.IStdTypeAux
-import de.upb.sede.util.DeepImmutableCopier
-import de.upb.sede.util.DeepMutableCopier
-import de.upb.sede.util.DynRecord
+
+import ai.services.exec.auxiliary.IJavaDispatchAux
+import ai.services.exec.auxiliary.IPythonDispatchAux
+import ai.services.exec.auxiliary.MutableJavaDispatchAux
+import ai.services.exec.auxiliary.MutableJavaMarshalAux
+import ai.services.exec.auxiliary.IJavaParameterizationAux
+import ai.services.exec.auxiliary.IStdTypeAux
+import ai.services.exec.auxiliary.MutableJavaParameterizationAux
+import ai.services.exec.auxiliary.MutablePythonDispatchAux
+import ai.services.exec.auxiliary.MutableStdTypeAux
+import ai.services.util.DeepImmutableCopier
+import ai.services.util.DeepMutableCopier
+import ai.services.util.DynRecord
 import groovy.transform.PackageScope
 
 class AuxDomain {
@@ -40,8 +41,13 @@ class AuxDomain {
 
     static def javaMarshalling(DynRecord model, @DelegatesTo(MutableJavaMarshalAux) Closure dispatchDescriber) {
         runDescriberOnValue(model, IStdTypeAux, {
-            javaMarshalAux(dispatchDescriber)
+            setJavaMarshalAux(dispatchDescriber)
         })
+    }
+
+    static def setJavaMarshalAux(MutableStdTypeAux aux, Closure auxDescriber) {
+        def javaAux = MutableJavaMarshalAux.create().tap (auxDescriber)
+        aux.setJavaMarshalAux(javaAux)
     }
 
     static def setFields(DynRecord model, @DelegatesTo(Expando) Closure expandoDescriber) {

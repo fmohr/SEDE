@@ -1,10 +1,10 @@
-package de.upb.sede.requests;
+package ai.services.requests;
 
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-import de.upb.sede.core.SEDEObject;
+import ai.services.core.SEDEObject;
 import org.json.simple.JSONObject;
 
 public class ServiceDeployRequest extends Request {

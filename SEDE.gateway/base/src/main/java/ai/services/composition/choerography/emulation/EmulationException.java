@@ -1,4 +1,4 @@
-package de.upb.sede.composition.choerography.emulation;
+package ai.services.composition.choerography.emulation;
 
 public class EmulationException extends Exception {
 

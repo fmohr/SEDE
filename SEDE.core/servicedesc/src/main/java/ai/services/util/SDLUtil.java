@@ -1,13 +1,13 @@
-package de.upb.sede.util;
+package ai.services.util;
 
-import de.upb.sede.ISDLAssembly;
-import de.upb.sede.IServiceCollectionDesc;
-import de.upb.sede.SDLLookupService;
-import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.exec.IMethodDesc;
-import de.upb.sede.exec.IServiceDesc;
-import de.upb.sede.IServiceRef;
-import de.upb.sede.exec.auxiliary.DynamicAuxAware;
+import ai.services.exec.IMethodDesc;
+import ai.services.ISDLAssembly;
+import ai.services.IServiceCollectionDesc;
+import ai.services.SDLLookupService;
+import ai.services.composition.graphs.nodes.IInstructionNode;
+import ai.services.exec.IServiceDesc;
+import ai.services.IServiceRef;
+import ai.services.exec.auxiliary.DynamicAuxAware;
 
 import java.util.*;
 import java.util.stream.Collectors;

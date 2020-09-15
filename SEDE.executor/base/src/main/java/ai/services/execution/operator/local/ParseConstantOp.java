@@ -3,10 +3,10 @@ package ai.services.execution.operator.local;
 import ai.services.execution.Task;
 import ai.services.execution.TaskTransition;
 import ai.services.execution.operator.MainTaskOperator;
-import de.upb.sede.composition.graphs.nodes.IParseConstantNode;
-import de.upb.sede.core.PrimitiveDataField;
-import de.upb.sede.core.PrimitiveType;
-import de.upb.sede.core.SEDEObject;
+import ai.services.composition.graphs.nodes.IParseConstantNode;
+import ai.services.core.PrimitiveDataField;
+import ai.services.core.PrimitiveType;
+import ai.services.core.SEDEObject;
 
 import java.text.NumberFormat;
 import java.text.ParseException;

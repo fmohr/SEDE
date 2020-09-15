@@ -1,4 +1,4 @@
-package de.upb.sede.util;
+package ai.services.util;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

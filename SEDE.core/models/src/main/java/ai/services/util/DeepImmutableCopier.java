@@ -1,8 +1,8 @@
-package de.upb.sede.util;
+package ai.services.util;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.upb.sede.SEDEModelStyle;
+import ai.services.SEDEModelStyle;
 
 import java.util.stream.Stream;
 

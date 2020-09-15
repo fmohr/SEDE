@@ -1,8 +1,8 @@
-package de.upb.sede.requests.resolve.beta;
+package ai.services.requests.resolve.beta;
 
+import ai.services.composition.graphs.nodes.ICompositionGraph;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
+import ai.services.SEDEModelStyle;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;

@@ -1,18 +1,17 @@
-package de.upb.sede.composition
+package ai.services.composition
 
-import de.upb.sede.composition.choerography.ChoreographyException
-import de.upb.sede.composition.choerography.emulation.executors.ExecutionGraph
-import de.upb.sede.composition.choerography.emulation.executors.GraphTraversal
-import de.upb.sede.composition.graphs.nodes.IAcceptDataNode
-import de.upb.sede.composition.graphs.nodes.ICompositionGraph
-import de.upb.sede.composition.graphs.nodes.IInstructionNode
-import de.upb.sede.composition.graphs.nodes.IParseConstantNode
-import de.upb.sede.composition.graphs.nodes.IServiceInstanceStorageNode
-import de.upb.sede.composition.types.DataValueType
-import de.upb.sede.composition.types.ServiceInstanceType
-import de.upb.sede.composition.typing.TypeCheckException
-import de.upb.sede.core.PrimitiveType
-import de.upb.sede.core.ServiceInstanceHandle
+
+import ai.services.composition.choerography.ChoreographyException
+import ai.services.composition.choerography.emulation.executors.ExecutionGraph
+import ai.services.composition.choerography.emulation.executors.GraphTraversal
+import ai.services.composition.graphs.nodes.IAcceptDataNode
+import ai.services.composition.graphs.nodes.ICompositionGraph
+import ai.services.composition.graphs.nodes.IInstructionNode
+import ai.services.composition.graphs.nodes.IParseConstantNode
+import ai.services.composition.graphs.nodes.IServiceInstanceStorageNode
+import ai.services.composition.typing.TypeCheckException
+import ai.services.core.PrimitiveType
+import ai.services.core.ServiceInstanceHandle
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -92,7 +91,7 @@ class BasicResolveRequestTest extends Specification {
                 initialServices["s0"] = new ServiceInstanceHandle("executor1", "c0.S0", "serviceS0Id")
                 initialContext.add FieldType.builder().tap {
                     fieldname "s0"
-                    type ServiceInstanceType.builder().tap {
+                    type ai.services.composition.types.ServiceInstanceType.builder().tap {
                         typeQualifier( "c0.S0")
                     }.build()
                 }.build()
@@ -209,14 +208,14 @@ class BasicResolveRequestTest extends Specification {
             resolvePolicy = RRGen.defaultResolvePolicy()
             initialContext.add FieldType.builder().tap {
                 fieldname "t0"
-                type DataValueType.builder().tap {
+                type ai.services.composition.types.DataValueType.builder().tap {
                     typeQualifier "c0.T0"
                 }.build()
             }.build()
             if(addContext) {
                 initialContext.add FieldType.builder().tap {
                     fieldname "t1"
-                    type DataValueType.builder().tap {
+                    type ai.services.composition.types.DataValueType.builder().tap {
                         typeQualifier "c0.T0"
                     }.build()
                 }.build()
@@ -274,13 +273,13 @@ class BasicResolveRequestTest extends Specification {
                 resolvePolicy = RRGen.defaultResolvePolicy()
                 initialContext.add FieldType.builder().tap {
                     fieldname "t0"
-                    type DataValueType.builder().tap {
+                    type ai.services.composition.types.DataValueType.builder().tap {
                         typeQualifier "c0.T0"
                     }.build()
                 }.build()
                 initialContext.add FieldType.builder().tap {
                     fieldname "t1"
-                    type DataValueType.builder().tap {
+                    type ai.services.composition.types.DataValueType.builder().tap {
                         typeQualifier "c0.T1"
                     }.build()
                 }.build()

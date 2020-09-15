@@ -1,4 +1,4 @@
-package de.upb.sede.util;
+package ai.services.util;
 
 import java.io.File;
 import java.util.Collections;
@@ -6,14 +6,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
-import de.upb.sede.requests.resolve.beta.IChoreography;
+import ai.services.composition.graphs.nodes.ICompositionGraph;
+import ai.services.requests.resolve.beta.IChoreography;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.upb.o4.tinyjavadot.DotGraph;
 import de.upb.o4.tinyjavadot.DotNode;
-import de.upb.sede.composition.graphs.nodes.BaseNode;
+import ai.services.composition.graphs.nodes.BaseNode;
 
 
 public class GraphToDot {

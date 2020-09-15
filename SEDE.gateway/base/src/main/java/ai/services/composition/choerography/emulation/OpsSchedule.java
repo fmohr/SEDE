@@ -1,8 +1,8 @@
-package de.upb.sede.composition.choerography.emulation;
+package ai.services.composition.choerography.emulation;
 
-import de.upb.sede.composition.IIndexedInstruction;
-import de.upb.sede.composition.InstructionIndexer;
-import de.upb.sede.composition.orchestration.scheduled.ScheduledOperation;
+import ai.services.composition.IIndexedInstruction;
+import ai.services.composition.InstructionIndexer;
+import ai.services.composition.orchestration.scheduled.ScheduledOperation;
 
 import java.util.*;
 

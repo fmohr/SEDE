@@ -1,6 +1,5 @@
-package de.upb.sede.util;
+package ai.services.util;
 
-import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 

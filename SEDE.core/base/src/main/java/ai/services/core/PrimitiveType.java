@@ -1,6 +1,5 @@
-package de.upb.sede.core;
+package ai.services.core;
 
-import javax.annotation.Nullable;
 import java.util.Optional;
 
 public enum PrimitiveType {

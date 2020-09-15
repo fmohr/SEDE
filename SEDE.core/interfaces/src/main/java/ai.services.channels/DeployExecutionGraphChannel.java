@@ -1,6 +1,6 @@
 package ai.services.channels;
 
-import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
+import ai.services.composition.graphs.nodes.ICompositionGraph;
 
 public interface DeployExecutionGraphChannel {
 

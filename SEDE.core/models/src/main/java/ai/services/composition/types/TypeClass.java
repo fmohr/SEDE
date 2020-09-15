@@ -1,7 +1,7 @@
-package de.upb.sede.composition.types;
+package ai.services.composition.types;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.util.TypeDeserializationDelegate;
+import ai.services.util.TypeDeserializationDelegate;
 import org.immutables.value.Value;
 
 @JsonDeserialize(using = TypeClass.DeserializeDelegate.class)

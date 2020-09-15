@@ -1,14 +1,14 @@
-package de.upb.sede.requests.resolve;
+package ai.services.requests.resolve;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import de.upb.sede.requests.ExecutorRegistration;
+import ai.services.requests.ExecutorRegistration;
 import org.json.simple.JSONObject;
 
-import de.upb.sede.requests.Request;
+import ai.services.requests.Request;
 
 @Deprecated
 public class ResolveRequest extends Request {

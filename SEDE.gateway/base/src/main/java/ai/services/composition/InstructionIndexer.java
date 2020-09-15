@@ -1,8 +1,8 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
-import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.composition.graphs.nodes.InstructionNode;
-import de.upb.sede.composition.typing.TCOutput;
+import ai.services.composition.graphs.nodes.InstructionNode;
+import ai.services.composition.typing.TCOutput;
+import ai.services.composition.graphs.nodes.IInstructionNode;
 
 import java.util.*;
 

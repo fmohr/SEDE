@@ -1,4 +1,4 @@
-package de.upb.sede;
+package ai.services;
 
 public class StandardDefs {
 

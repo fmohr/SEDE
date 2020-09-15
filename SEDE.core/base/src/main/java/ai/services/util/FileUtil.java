@@ -1,4 +1,4 @@
-package de.upb.sede.util;
+package ai.services.util;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -14,11 +14,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import ai.services.webinterfaces.client.WriteFileRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import de.upb.sede.webinterfaces.client.WriteFileRequest;
 
 /**
  * Defines methods to access files reading and writing their content. Use this

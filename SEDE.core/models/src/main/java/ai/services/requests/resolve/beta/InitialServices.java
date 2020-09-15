@@ -1,6 +1,6 @@
-package de.upb.sede.requests.resolve.beta;
+package ai.services.requests.resolve.beta;
 
-import de.upb.sede.core.ServiceInstanceHandle;
+import ai.services.core.ServiceInstanceHandle;
 import java.util.HashMap;
 import java.util.Map;
 

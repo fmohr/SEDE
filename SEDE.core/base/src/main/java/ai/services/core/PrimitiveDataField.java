@@ -1,9 +1,8 @@
-package de.upb.sede.core;
+package ai.services.core;
 
 import org.json.simple.JSONObject;
 
 import java.util.Map;
-import java.util.Objects;
 
 public class PrimitiveDataField extends SEDEObject {
 

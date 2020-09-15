@@ -1,17 +1,17 @@
-package de.upb.sede.composition.typing;
+package ai.services.composition.typing;
 
-import de.upb.sede.SDLLookupService;
-import de.upb.sede.composition.InstWiseCompileStep;
-import de.upb.sede.composition.InstOutputIterator;
-import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.composition.types.*;
-import de.upb.sede.core.PrimitiveType;
-import de.upb.sede.exec.IMethodDesc;
-import de.upb.sede.exec.IMethodParameterDesc;
-import de.upb.sede.exec.IServiceDesc;
-import de.upb.sede.IServiceRef;
-import de.upb.sede.types.IDataTypeDesc;
-import de.upb.sede.types.IDataTypeRef;
+import ai.services.composition.types.*;
+import ai.services.SDLLookupService;
+import ai.services.composition.InstWiseCompileStep;
+import ai.services.composition.InstOutputIterator;
+import ai.services.composition.graphs.nodes.IInstructionNode;
+import ai.services.core.PrimitiveType;
+import ai.services.exec.IMethodDesc;
+import ai.services.exec.IMethodParameterDesc;
+import ai.services.exec.IServiceDesc;
+import ai.services.IServiceRef;
+import ai.services.types.IDataTypeDesc;
+import ai.services.types.IDataTypeRef;
 
 import java.util.Optional;
 

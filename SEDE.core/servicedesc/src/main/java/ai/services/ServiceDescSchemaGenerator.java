@@ -1,11 +1,11 @@
-package de.upb.sede;
+package ai.services;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator;
-import de.upb.sede.util.FileUtil;
+import ai.services.util.FileUtil;
 
 import java.io.File;
 

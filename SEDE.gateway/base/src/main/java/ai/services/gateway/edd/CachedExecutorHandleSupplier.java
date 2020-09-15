@@ -1,12 +1,12 @@
-package de.upb.sede.gateway.edd;
+package ai.services.gateway.edd;
 
-import de.upb.sede.exec.IExecutorHandle;
-import de.upb.sede.gateway.OnDemandExecutorSupplier;
-import de.upb.sede.requests.deploy.EDDRegistration;
-import de.upb.sede.util.ExpiringCache;
-import de.upb.sede.util.RandomArbiter;
-import de.upb.sede.util.SystemSettingLookup;
-import de.upb.sede.util.TTLCache;
+import ai.services.exec.IExecutorHandle;
+import ai.services.gateway.OnDemandExecutorSupplier;
+import ai.services.requests.deploy.EDDRegistration;
+import ai.services.util.ExpiringCache;
+import ai.services.util.RandomArbiter;
+import ai.services.util.SystemSettingLookup;
+import ai.services.util.TTLCache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

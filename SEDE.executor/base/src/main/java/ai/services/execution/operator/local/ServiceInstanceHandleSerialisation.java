@@ -1,9 +1,9 @@
 package ai.services.execution.operator.local;
 
 import com.fasterxml.jackson.core.*;
-import de.upb.sede.core.ServiceInstance;
-import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.util.ExtendedByteArrayOutputStream;
+import ai.services.core.ServiceInstance;
+import ai.services.core.ServiceInstanceHandle;
+import ai.services.util.ExtendedByteArrayOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

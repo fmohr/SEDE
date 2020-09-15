@@ -1,7 +1,6 @@
-package de.upb.sede.composition.choerography.emulation.executors;
+package ai.services.composition.choerography.emulation.executors;
 
-import de.upb.sede.composition.choerography.emulation.executors.ExecutionGraph;
-import de.upb.sede.composition.graphs.DummyNode;
+import ai.services.composition.graphs.DummyNode;
 import org.junit.Assert;
 import org.junit.Test;
 

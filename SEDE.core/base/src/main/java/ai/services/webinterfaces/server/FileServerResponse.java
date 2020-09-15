@@ -1,4 +1,4 @@
-package de.upb.sede.webinterfaces.server;
+package ai.services.webinterfaces.server;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,7 +7,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import de.upb.sede.util.Streams;
+import ai.services.util.Streams;
 
 public class FileServerResponse implements BasicServerResponse {
 

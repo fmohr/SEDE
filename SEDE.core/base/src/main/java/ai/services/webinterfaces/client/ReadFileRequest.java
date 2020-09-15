@@ -1,4 +1,4 @@
-package de.upb.sede.webinterfaces.client;
+package ai.services.webinterfaces.client;
 
 import java.io.*;
 

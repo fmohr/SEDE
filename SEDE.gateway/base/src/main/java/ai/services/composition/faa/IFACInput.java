@@ -1,9 +1,8 @@
-package de.upb.sede.composition.faa;
+package ai.services.composition.faa;
 
-import de.upb.sede.composition.InstInput;
-import de.upb.sede.composition.InstructionIndexer;
-import de.upb.sede.composition.typing.TCOutput;
-import de.upb.sede.composition.typing.TypeJournal;
+import ai.services.composition.typing.TCOutput;
+import ai.services.composition.InstInput;
+import ai.services.composition.InstructionIndexer;
 
 import java.util.Map;
 

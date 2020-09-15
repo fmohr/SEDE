@@ -1,9 +1,7 @@
-package de.upb.sede.composition.graphs.nodes;
+package ai.services.composition.graphs.nodes;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.WithField;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.exec.IExecutorContactInfo;
+import ai.services.SEDEModelStyle;
 import org.immutables.value.Value;
 
 @SEDEModelStyle

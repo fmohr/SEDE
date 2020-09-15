@@ -4,12 +4,12 @@ import ai.services.DemoDataClass
 import ai.services.execution.Task
 import ai.services.execution.local.LocalFieldContext
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.upb.sede.composition.graphs.nodes.MutableMarshalNode
-import de.upb.sede.composition.types.DataValueType
-import de.upb.sede.composition.types.serialization.IMarshalling
-import de.upb.sede.composition.types.serialization.MutableMarshalling
-import de.upb.sede.core.ObjectDataField
-import de.upb.sede.core.SemanticDataField
+import ai.services.composition.graphs.nodes.MutableMarshalNode
+import ai.services.composition.types.DataValueType
+import ai.services.composition.types.serialization.IMarshalling
+import ai.services.composition.types.serialization.MutableMarshalling
+import ai.services.core.ObjectDataField
+import ai.services.core.SemanticDataField
 import spock.lang.Shared
 import spock.lang.Specification
 

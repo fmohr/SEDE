@@ -1,12 +1,12 @@
-package de.upb.sede.composition
+package ai.services.composition
 
-import de.upb.sede.ISDLAssembly
-import de.upb.sede.SDLReader
-import de.upb.sede.composition.typing.TypeCheckException
-import de.upb.sede.gateway.ExecutorArbiter
-import de.upb.sede.gateway.StdGatewayImpl
-import de.upb.sede.misc.DSLMiscs
-import de.upb.sede.util.MappedList
+import ai.services.ISDLAssembly
+import ai.services.SDLReader
+import ai.services.composition.typing.TypeCheckException
+import ai.services.gateway.ExecutorArbiter
+import ai.services.gateway.StdGatewayImpl
+import ai.services.misc.DSLMiscs
+import ai.services.util.MappedList
 import spock.lang.Specification
 
 class SingleBlockCCImplTest extends Specification {

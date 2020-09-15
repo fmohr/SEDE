@@ -1,6 +1,6 @@
-package de.upb.sede.composition.choerography;
+package ai.services.composition.choerography;
 
-import de.upb.sede.exec.IExecutorHandle;
+import ai.services.exec.IExecutorHandle;
 
 import java.util.List;
 

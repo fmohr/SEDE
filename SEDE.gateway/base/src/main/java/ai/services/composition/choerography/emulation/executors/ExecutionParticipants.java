@@ -1,7 +1,7 @@
-package de.upb.sede.composition.choerography.emulation.executors;
+package ai.services.composition.choerography.emulation.executors;
 
-import de.upb.sede.exec.IExecutorHandle;
-import de.upb.sede.util.MappedList;
+import ai.services.exec.IExecutorHandle;
+import ai.services.util.MappedList;
 
 import java.util.*;
 

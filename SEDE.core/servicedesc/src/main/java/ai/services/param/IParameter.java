@@ -1,9 +1,9 @@
-package de.upb.sede.param;
+package ai.services.param;
 
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.IQualifiable;
-import de.upb.sede.util.TypeDeserializationDelegate;
+import ai.services.IQualifiable;
+import ai.services.util.TypeDeserializationDelegate;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;

@@ -1,7 +1,7 @@
 package ai.services.channels;
 
-import de.upb.sede.IServiceRef;
-import de.upb.sede.exec.IExecutorContactInfo;
+import ai.services.IServiceRef;
+import ai.services.exec.IExecutorContactInfo;
 
 public interface ChannelService {
 

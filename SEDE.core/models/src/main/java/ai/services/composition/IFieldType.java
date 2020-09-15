@@ -1,8 +1,8 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
+import ai.services.composition.types.TypeClass;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.composition.types.TypeClass;
+import ai.services.SEDEModelStyle;
 import org.immutables.value.Value;
 
 @SEDEModelStyle

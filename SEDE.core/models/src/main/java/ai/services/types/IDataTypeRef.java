@@ -1,9 +1,10 @@
-package de.upb.sede.types;
+package ai.services.types;
 
+import ai.services.IQualifiable;
+import ai.services.SEDEModelStyle;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.*;
-import de.upb.sede.ConstructReference;
-import de.upb.sede.IServiceCollectionRef;
+import ai.services.ConstructReference;
+import ai.services.IServiceCollectionRef;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;

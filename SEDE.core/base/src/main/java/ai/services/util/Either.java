@@ -1,6 +1,5 @@
-package de.upb.sede.util;
+package ai.services.util;
 
-import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 

@@ -1,7 +1,6 @@
-package de.upb.sede.composition
+package ai.services.composition
 
 import spock.lang.Ignore
-import spock.lang.Unroll
 
 class RRTestTemplate {
 

@@ -1,4 +1,4 @@
-package de.upb.sede.util
+package ai.services.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import spock.lang.Specification
@@ -276,7 +276,7 @@ class DynTypeObjectTest extends Specification {
         int a
 
         def setA(int a) {
-            super.setField("a", a)
+            Object.setField("a", a)
             this.a = a
         }
     }
@@ -290,11 +290,11 @@ class DynTypeObjectTest extends Specification {
         static final String a_FIELD = "a"
 
         def getA() {
-            return super.number(a_FIELD).intValue()
+            return Object.number(a_FIELD).intValue()
         }
 
         def setA(int a) {
-            return super.setField(a_FIELD, a)
+            return Object.setField(a_FIELD, a)
         }
 
     }

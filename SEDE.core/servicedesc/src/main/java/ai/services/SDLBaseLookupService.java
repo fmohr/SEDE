@@ -1,9 +1,11 @@
-package de.upb.sede;
+package ai.services;
 
-import de.upb.sede.exec.*;
-import de.upb.sede.types.IDataTypeDesc;
-import de.upb.sede.types.IDataTypeRef;
-import de.upb.sede.util.Streams;
+import ai.services.exec.IMethodDesc;
+import ai.services.exec.IMethodRef;
+import ai.services.exec.IServiceDesc;
+import ai.services.types.IDataTypeDesc;
+import ai.services.types.IDataTypeRef;
+import ai.services.util.Streams;
 
 import java.util.Collections;
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import static de.upb.sede.util.Streams.pickOneOrNone;
+import static ai.services.util.Streams.pickOneOrNone;
 
 import static java.util.Objects.requireNonNull;
 

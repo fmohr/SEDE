@@ -1,8 +1,4 @@
-package de.upb.sede.util;
-
-import de.upb.sede.util.Cache;
-import de.upb.sede.util.FileUtil;
-import de.upb.sede.util.SettableCache;
+package ai.services.util;
 
 import java.io.File;
 import java.util.function.Function;

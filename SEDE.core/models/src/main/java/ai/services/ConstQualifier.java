@@ -1,4 +1,4 @@
-package de.upb.sede;
+package ai.services;
 
 import java.util.Collections;
 import java.util.List;

@@ -1,6 +1,4 @@
-package de.upb.sede.util;
-
-import static org.junit.Assert.*;
+package ai.services.util;
 
 import java.util.ArrayList;
 import java.util.Collection;

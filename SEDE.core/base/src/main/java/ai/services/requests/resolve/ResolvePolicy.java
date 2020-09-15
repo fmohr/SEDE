@@ -1,16 +1,16 @@
-package de.upb.sede.requests.resolve;
+package ai.services.requests.resolve;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import ai.services.exceptions.BadResolveRequest;
 import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.upb.sede.exceptions.BadResolveRequest;
-import de.upb.sede.util.JsonSerializable;
+import ai.services.util.JsonSerializable;
 
 /**
  *

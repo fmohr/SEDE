@@ -2,10 +2,9 @@ package ai.services.execution.operator.local
 
 import ai.services.execution.Task
 import ai.services.execution.local.LocalFieldContext
-import de.upb.sede.composition.graphs.nodes.ParseConstantNode
-import de.upb.sede.core.PrimitiveDataField
-import de.upb.sede.core.PrimitiveType
-import de.upb.sede.core.SEDEObject
+import ai.services.composition.graphs.nodes.ParseConstantNode
+import ai.services.core.PrimitiveType
+import ai.services.core.SEDEObject
 import spock.lang.Specification
 
 class ParseConstantOpTest extends Specification {

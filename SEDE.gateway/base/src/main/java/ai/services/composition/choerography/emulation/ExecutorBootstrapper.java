@@ -1,10 +1,10 @@
-package de.upb.sede.composition.choerography.emulation;
+package ai.services.composition.choerography.emulation;
 
-import de.upb.sede.composition.BlockWiseCompileStep;
-import de.upb.sede.composition.choerography.emulation.executors.EmExecutor;
-import de.upb.sede.composition.choerography.emulation.executors.ExecutionParticipants;
-import de.upb.sede.composition.choerography.emulation.executors.ExecutorFactory;
-import de.upb.sede.exec.IExecutorHandle;
+import ai.services.composition.choerography.emulation.executors.EmExecutor;
+import ai.services.composition.choerography.emulation.executors.ExecutionParticipants;
+import ai.services.composition.choerography.emulation.executors.ExecutorFactory;
+import ai.services.composition.BlockWiseCompileStep;
+import ai.services.exec.IExecutorHandle;
 
 import java.util.ArrayList;
 import java.util.List;

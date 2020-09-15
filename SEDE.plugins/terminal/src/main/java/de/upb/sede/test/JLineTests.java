@@ -17,9 +17,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
 
-import static de.upb.sede.webinterfaces.server.CommandTree.*;
-import static de.upb.sede.webinterfaces.server.Command.*;
-
 public class JLineTests {
 
 

@@ -1,13 +1,11 @@
-package de.upb.sede.composition.choerography.emulation.executors;
+package ai.services.composition.choerography.emulation.executors;
 
-import de.upb.sede.composition.BlockWiseCompileStep;
-import de.upb.sede.composition.graphs.nodes.CompositionGraph;
-import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
+import ai.services.composition.graphs.nodes.CompositionGraph;
+import ai.services.composition.BlockWiseCompileStep;
+import ai.services.composition.graphs.nodes.ICompositionGraph;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ChoreographyFinalizer extends  BlockWiseCompileStep<ChoreographyFinalizer.CFInput, ChoreographyFinalizer.CFOutput> {
 

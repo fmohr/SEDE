@@ -9,8 +9,8 @@ import ai.services.execution.operator.TaskOperator;
 import ai.services.execution.operator.local.StdLocalOperations;
 import ai.services.executor.local.LocalExecutorInstanceRegistrationCtrl;
 import ai.services.executor.local.LocalExecutorInstanceRegistry;
-import de.upb.sede.exec.ExecutorConfiguration;
-import de.upb.sede.exec.IExecutorConfiguration;
+import ai.services.exec.ExecutorConfiguration;
+import ai.services.exec.IExecutorConfiguration;
 
 import java.util.Objects;
 import java.util.UUID;

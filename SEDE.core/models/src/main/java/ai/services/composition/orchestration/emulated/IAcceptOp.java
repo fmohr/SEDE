@@ -1,8 +1,10 @@
-package de.upb.sede.composition.orchestration.emulated;
+package ai.services.composition.orchestration.emulated;
 
+import ai.services.SEDEModelStyle;
+import ai.services.composition.graphs.nodes.IAcceptDataNode;
+import ai.services.composition.graphs.nodes.INotifyNode;
+import ai.services.composition.graphs.nodes.IWaitForNotificationNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.composition.graphs.nodes.*;
 import org.immutables.value.Value;
 
 @SEDEModelStyle

@@ -1,4 +1,4 @@
-package de.upb.sede;
+package ai.services;
 
 /**
  * This interface is extended by other model Interfaces that contain or refer to a fieldname.

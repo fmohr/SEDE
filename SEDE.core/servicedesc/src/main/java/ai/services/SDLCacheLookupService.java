@@ -1,8 +1,8 @@
-package de.upb.sede;
+package ai.services;
 
-import de.upb.sede.exec.*;
-import de.upb.sede.types.IDataTypeDesc;
-import de.upb.sede.types.IDataTypeRef;
+import ai.services.exec.IServiceDesc;
+import ai.services.types.IDataTypeDesc;
+import ai.services.types.IDataTypeRef;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,8 +1,7 @@
-package de.upb.sede
+package ai.services
 
-import de.upb.sede.exec.MutableServiceDesc
-import de.upb.sede.types.MutableDataTypeDesc
-import de.upb.sede.util.DynRecord
+
+import ai.services.exec.MutableServiceDesc
 
 class ServiceCollectionDomain
     extends DomainAware<MutableServiceCollectionDesc, MutableSDLAssembly> {
@@ -49,14 +48,14 @@ class ServiceCollectionDomain
      * Redefines the type with the given qualifier by running the given describer against it.
      * A new type will be created if the qualifier is unused in this service collection.
      */
-    static def type(MutableServiceCollectionDesc model, String qualifier, @DelegatesTo(MutableDataTypeDesc) Closure describer) {
+    static def type(MutableServiceCollectionDesc model, String qualifier, @DelegatesTo(ai.services.types.MutableDataTypeDesc) Closure describer) {
         /*
          * Find or create datatype:
          */
         def dataType = model.dataTypes.find{ it.qualifier == qualifier }
 
         if(dataType == null) {
-            dataType = MutableDataTypeDesc.create()
+            dataType = ai.services.types.MutableDataTypeDesc.create()
                 .setQualifier(qualifier)
                 .setSemanticType(qualifier)
             model.dataTypes += dataType

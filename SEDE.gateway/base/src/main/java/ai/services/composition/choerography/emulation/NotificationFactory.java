@@ -1,10 +1,8 @@
-package de.upb.sede.composition.choerography.emulation;
+package ai.services.composition.choerography.emulation;
 
-import de.upb.sede.composition.IndexFactory;
-import de.upb.sede.composition.graphs.nodes.INotification;
-import de.upb.sede.composition.graphs.nodes.Notification;
-
-import java.util.concurrent.atomic.AtomicLong;
+import ai.services.composition.graphs.nodes.Notification;
+import ai.services.composition.IndexFactory;
+import ai.services.composition.graphs.nodes.INotification;
 
 public class NotificationFactory {
 

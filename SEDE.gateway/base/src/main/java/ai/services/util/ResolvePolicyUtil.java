@@ -1,8 +1,8 @@
-package de.upb.sede.util;
+package ai.services.util;
 
-import de.upb.sede.composition.choerography.ChoreographyException;
-import de.upb.sede.requests.resolve.beta.IResolvePolicy;
-import de.upb.sede.requests.resolve.beta.IResolveRequest;
+import ai.services.composition.choerography.ChoreographyException;
+import ai.services.requests.resolve.beta.IResolvePolicy;
+import ai.services.requests.resolve.beta.IResolveRequest;
 
 import java.util.List;
 

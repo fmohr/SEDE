@@ -1,9 +1,9 @@
-package de.upb.sede.composition.faa;
+package ai.services.composition.faa;
 
-import de.upb.sede.composition.*;
-import de.upb.sede.composition.types.TypeClass;
-import de.upb.sede.util.MappedList;
-import de.upb.sede.util.MappedListView;
+import ai.services.composition.*;
+import ai.services.composition.types.TypeClass;
+import ai.services.util.MappedList;
+import ai.services.util.MappedListView;
 
 import java.util.*;
 import java.util.function.Predicate;

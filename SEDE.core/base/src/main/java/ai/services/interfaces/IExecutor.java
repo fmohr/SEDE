@@ -1,8 +1,8 @@
-package de.upb.sede.interfaces;
+package ai.services.interfaces;
 
-import de.upb.sede.requests.DataPutRequest;
-import de.upb.sede.requests.ExecRequest;
-import de.upb.sede.requests.ExecutorRegistration;
+import ai.services.requests.DataPutRequest;
+import ai.services.requests.ExecRequest;
+import ai.services.requests.ExecutorRegistration;
 
 import java.util.Map;
 

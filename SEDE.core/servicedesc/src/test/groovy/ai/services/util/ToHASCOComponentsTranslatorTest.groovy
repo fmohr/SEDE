@@ -1,12 +1,12 @@
-package de.upb.sede.util
+package ai.services.util
+
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import de.upb.sede.SDLBaseLookupService
-import de.upb.sede.SDLReader
+import ai.services.SDLBaseLookupService
 import spock.lang.Specification
 
-import static de.upb.sede.util.ToHASCOComponentsTranslator.*
+import static ToHASCOComponentsTranslator.*
 
 
 class ToHASCOComponentsTranslatorTest extends Specification {
@@ -16,7 +16,7 @@ class ToHASCOComponentsTranslatorTest extends Specification {
 
     def "test basics translation"() {
         when:
-        def sdlBase = SDLReader.assemble {
+        def sdlBase = ai.services.SDLReader.assemble {
             collection 'collection.1', {
                 service 'service.0', {
                     // no params

@@ -1,10 +1,10 @@
-package de.upb.sede.webinterfaces.server;
+package ai.services.webinterfaces.server;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Optional;
 
-import de.upb.sede.util.Streams;
+import ai.services.util.Streams;
 
 public abstract class StringServerResponse implements HTTPServerResponse {
 

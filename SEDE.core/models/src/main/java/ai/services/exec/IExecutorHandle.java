@@ -1,9 +1,9 @@
-package de.upb.sede.exec;
+package ai.services.exec;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.IQualifiable;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.requests.ExecutorRegistration;
+import ai.services.IQualifiable;
+import ai.services.SEDEModelStyle;
+import ai.services.requests.ExecutorRegistration;
 import org.immutables.value.Value;
 
 @SEDEModelStyle

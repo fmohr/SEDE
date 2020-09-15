@@ -1,11 +1,10 @@
 package ai.services.channels;
 
-import de.upb.sede.IServiceRef;
-import de.upb.sede.exec.IExecutorConfiguration;
-import de.upb.sede.exec.IExecutorContactInfo;
-import de.upb.sede.util.ExpiringCache;
-import de.upb.sede.util.NullableCache;
-import de.upb.sede.util.SystemSettingLookup;
+import ai.services.IServiceRef;
+import ai.services.exec.IExecutorContactInfo;
+import ai.services.util.ExpiringCache;
+import ai.services.util.NullableCache;
+import ai.services.util.SystemSettingLookup;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

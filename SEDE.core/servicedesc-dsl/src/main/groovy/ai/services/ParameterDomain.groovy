@@ -1,13 +1,12 @@
-package de.upb.sede
+package ai.services
 
-import de.upb.sede.param.MutableBooleanParameter
-import de.upb.sede.param.MutableCategoryParameter
-import de.upb.sede.param.MutableInterfaceParameter
-import de.upb.sede.param.MutableNumericParameter
-import de.upb.sede.param.MutableParameterDependencyDesc
-import de.upb.sede.param.MutableServiceParameterizationDesc
-import de.upb.sede.types.MutableDataTypeDesc
-import de.upb.sede.util.DynRecord
+import ai.services.param.MutableBooleanParameter
+import ai.services.param.MutableCategoryParameter
+import ai.services.param.MutableInterfaceParameter
+import ai.services.param.MutableNumericParameter
+import ai.services.param.MutableParameterDependencyDesc
+import ai.services.param.MutableServiceParameterizationDesc
+import ai.services.util.DynRecord
 
 class ParameterDomain
     extends DomainAware<MutableServiceParameterizationDesc, ServiceDomain> {

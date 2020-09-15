@@ -1,10 +1,9 @@
-package de.upb.sede.composition.typing;
+package ai.services.composition.typing;
 
-import de.upb.sede.composition.ChainedIWCompileStep;
-import de.upb.sede.composition.InstOutputIterator;
-import de.upb.sede.composition.InstWiseCompileStep;
+import ai.services.composition.ChainedIWCompileStep;
+import ai.services.composition.InstOutputIterator;
+import ai.services.composition.InstWiseCompileStep;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;

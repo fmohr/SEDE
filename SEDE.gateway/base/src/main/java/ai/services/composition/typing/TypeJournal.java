@@ -1,12 +1,9 @@
-package de.upb.sede.composition.typing;
+package ai.services.composition.typing;
 
-import de.upb.sede.composition.IFieldType;
-import de.upb.sede.composition.IInstTCResult;
+import ai.services.composition.IFieldType;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class TypeJournal {
     // TODO fix: use Map<Long, TypeJournalPage> instead

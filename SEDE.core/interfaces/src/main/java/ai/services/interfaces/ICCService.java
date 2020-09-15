@@ -1,7 +1,7 @@
-package de.upb.sede.interfaces;
+package ai.services.interfaces;
 
-import de.upb.sede.composition.ICCRequest;
-import de.upb.sede.composition.ICompositionCompilation;
+import ai.services.composition.ICCRequest;
+import ai.services.composition.ICompositionCompilation;
 
 public interface ICCService {
 

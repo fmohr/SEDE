@@ -1,4 +1,4 @@
-package de.upb.sede.core;
+package ai.services.core;
 
 import java.util.Objects;
 import java.util.Optional;

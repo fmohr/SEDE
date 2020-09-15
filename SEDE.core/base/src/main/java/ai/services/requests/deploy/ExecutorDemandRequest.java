@@ -1,11 +1,11 @@
-package de.upb.sede.requests.deploy;
+package ai.services.requests.deploy;
 
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
-import de.upb.sede.util.OptionalField;
-import de.upb.sede.util.UnmodifiableURI;
+import ai.services.util.OptionalField;
+import ai.services.util.UnmodifiableURI;
 
 import java.util.ArrayList;
 import java.util.Arrays;

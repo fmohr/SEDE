@@ -1,22 +1,22 @@
-package de.upb.sede.composition.typing;
+package ai.services.composition.typing;
 
-import de.upb.sede.IServiceRef;
-import de.upb.sede.SDLLookupService;
-import de.upb.sede.composition.graphs.nodes.MarshalNode;
-import de.upb.sede.composition.graphs.nodes.IMarshalNode;
-import de.upb.sede.composition.types.*;
-import de.upb.sede.composition.types.serialization.IMarshalling;
-import de.upb.sede.composition.types.serialization.Marshalling;
-import de.upb.sede.core.PrimitiveType;
-import de.upb.sede.exec.IServiceDesc;
-import de.upb.sede.types.IDataTypeDesc;
-import de.upb.sede.types.IDataTypeRef;
+import ai.services.composition.graphs.nodes.MarshalNode;
+import ai.services.composition.types.*;
+import ai.services.composition.types.serialization.Marshalling;
+import ai.services.IServiceRef;
+import ai.services.SDLLookupService;
+import ai.services.composition.graphs.nodes.IMarshalNode;
+import ai.services.composition.types.serialization.IMarshalling;
+import ai.services.core.PrimitiveType;
+import ai.services.exec.IServiceDesc;
+import ai.services.types.IDataTypeDesc;
+import ai.services.types.IDataTypeRef;
 
 import java.util.Optional;
 
 public class TypeUtil {
 
-    private static  ValueTypeClass tryDeref(TypeClass tc) {
+    private static ValueTypeClass tryDeref(TypeClass tc) {
         if(isRefType(tc)) {
             IRefType refType = (IRefType) tc;
             return refType.getTypeOfRef();

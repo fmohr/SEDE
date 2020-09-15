@@ -1,8 +1,8 @@
-package de.upb.sede
+package ai.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import de.upb.sede.util.FileUtil
+import ai.services.util.FileUtil
 import groovy.cli.Option
 import groovy.cli.Unparsed
 import groovy.cli.picocli.CliBuilder

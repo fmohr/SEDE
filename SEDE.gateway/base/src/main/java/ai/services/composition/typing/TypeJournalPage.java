@@ -1,8 +1,8 @@
-package de.upb.sede.composition.typing;
+package ai.services.composition.typing;
 
-import de.upb.sede.composition.IFieldType;
-import de.upb.sede.composition.FieldType;
-import de.upb.sede.composition.types.TypeClass;
+import ai.services.composition.FieldType;
+import ai.services.composition.IFieldType;
+import ai.services.composition.types.TypeClass;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;

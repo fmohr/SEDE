@@ -1,8 +1,8 @@
-package de.upb.sede.gateway;
+package ai.services.gateway;
 
-import de.upb.sede.composition.RoundRobinScheduler;
-import de.upb.sede.exec.ExecutorHandle;
-import de.upb.sede.exec.IExecutorHandle;
+import ai.services.composition.RoundRobinScheduler;
+import ai.services.exec.ExecutorHandle;
+import ai.services.exec.IExecutorHandle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

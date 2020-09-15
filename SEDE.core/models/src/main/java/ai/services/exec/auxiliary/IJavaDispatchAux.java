@@ -1,13 +1,12 @@
-package de.upb.sede.exec.auxiliary;
+package ai.services.exec.auxiliary;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
+import ai.services.SEDEModelStyle;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
 import java.util.List;
-import java.util.Objects;
 
 @SEDEModelStyle
 @Value.Immutable

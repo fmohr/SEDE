@@ -1,8 +1,8 @@
-package de.upb.sede.composition.choerography.emulation.executors;
+package ai.services.composition.choerography.emulation.executors;
 
-import de.upb.sede.composition.choerography.emulation.EmulationException;
-import de.upb.sede.composition.orchestration.emulated.EmulatedOp;
-import de.upb.sede.exec.IExecutorHandle;
+import ai.services.composition.choerography.emulation.EmulationException;
+import ai.services.composition.orchestration.emulated.EmulatedOp;
+import ai.services.exec.IExecutorHandle;
 
 public interface EmExecutor {
 

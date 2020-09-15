@@ -1,17 +1,14 @@
-package de.upb.sede.composition.typing;
+package ai.services.composition.typing;
 
-import de.upb.sede.SDLLookupService;
-import de.upb.sede.composition.InstWiseCompileStep;
-import de.upb.sede.composition.InstOutputIterator;
-import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.composition.types.TypeClass;
-import de.upb.sede.exec.IServiceDesc;
-import de.upb.sede.IServiceRef;
+import ai.services.SDLLookupService;
+import ai.services.composition.InstWiseCompileStep;
+import ai.services.composition.InstOutputIterator;
+import ai.services.composition.graphs.nodes.IInstructionNode;
+import ai.services.composition.types.TypeClass;
+import ai.services.exec.IServiceDesc;
+import ai.services.IServiceRef;
 
 import java.util.Optional;
-
-import static de.upb.sede.composition.typing.TypeUtil.getServiceType;
-import static de.upb.sede.composition.typing.TypeUtil.isService;
 
 public class ContextResolver extends InstWiseCompileStep<TCInput, TCOutput> {
 
@@ -33,11 +30,11 @@ public class ContextResolver extends InstWiseCompileStep<TCInput, TCOutput> {
             TypeClass fieldType = fieldTC.getFieldType(contextFieldName);
             if(fieldType == null) {
                 throw TypeCheckException.undefinedField(contextFieldName);
-            } else if(!isService(fieldType)) {
+            } else if(!TypeUtil.isService(fieldType)) {
                 throw TypeCheckException.unexpectedFieldType(contextFieldName, fieldType, "Service Instance", "Service methods can only be invoked with service instances as a context.");
             }
             context.setStatic(false);
-            context.setServiceQualifier(getServiceType(fieldType).getTypeQualifier());
+            context.setServiceQualifier(TypeUtil.getServiceType(fieldType).getTypeQualifier());
         } else {
             context.setStatic(true);
             context.setServiceQualifier(inst.getContext());

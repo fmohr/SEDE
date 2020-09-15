@@ -1,8 +1,8 @@
 package ai.services.execution.local;
 
 import ai.services.execution.FieldContext;
-import de.upb.sede.composition.graphs.nodes.INotification;
-import de.upb.sede.core.SEDEObject;
+import ai.services.composition.graphs.nodes.INotification;
+import ai.services.core.SEDEObject;
 
 import java.util.HashMap;
 import java.util.HashSet;

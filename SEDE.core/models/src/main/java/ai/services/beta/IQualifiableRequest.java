@@ -1,6 +1,6 @@
-package de.upb.sede.beta;
+package ai.services.beta;
 
-import de.upb.sede.IQualifiable;
+import ai.services.IQualifiable;
 
 /**
  * This intermediate interface is inherited by all requests that are qualifiable, ie. requests that have an id.

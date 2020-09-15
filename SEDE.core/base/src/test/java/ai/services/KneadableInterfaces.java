@@ -1,7 +1,7 @@
-package de.upb.sede;
+package ai.services;
 
-import de.upb.sede.util.RecordForm;
-import de.upb.sede.util.TypeForm;
+import ai.services.util.RecordForm;
+import ai.services.util.TypeForm;
 
 import java.util.List;
 

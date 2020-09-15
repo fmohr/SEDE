@@ -1,7 +1,6 @@
-package de.upb.sede
+package ai.services
 
 
-import de.upb.sede.exec.MethodRef
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -105,7 +104,7 @@ class SDLLookupServiceTest extends Specification {
     void "data-driven test method lookup"(SDLLookupService ls,
                                           String collection, String service, String method, boolean result) {
         when:
-        def methodRef = MethodRef.builder()
+        def methodRef = ai.services.exec.MethodRef.builder()
             .serviceRef(IServiceRef.of(collection, service))
             .ref(IQualifiable.of(method))
             .build()
@@ -141,7 +140,7 @@ class SDLLookupServiceTest extends Specification {
     @Unroll
     void "test method lookup"() {
         when:
-        def methodRef = MethodRef.builder()
+        def methodRef = ai.services.exec.MethodRef.builder()
             .serviceRef(IServiceRef.of('col1', 'A'))
             .ref(IQualifiable.of('m1'))
             .build()

@@ -1,4 +1,4 @@
-package de.upb.sede.requests;
+package ai.services.requests;
 
 import java.io.IOException;
 import java.util.*;
@@ -14,7 +14,7 @@ import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import org.json.simple.JSONObject;
 
-import de.upb.sede.util.JsonSerializable;
+import ai.services.util.JsonSerializable;
 
 @JsonSerialize(using = ExecutorRegistration.Serializer.class)
 @JsonDeserialize(using = ExecutorRegistration.Deserializer.class)

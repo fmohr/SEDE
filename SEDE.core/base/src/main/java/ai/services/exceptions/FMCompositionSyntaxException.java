@@ -1,4 +1,4 @@
-package de.upb.sede.exceptions;
+package ai.services.exceptions;
 
 /**
  *

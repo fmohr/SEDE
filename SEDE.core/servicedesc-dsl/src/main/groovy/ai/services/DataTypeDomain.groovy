@@ -1,8 +1,7 @@
-package de.upb.sede
+package ai.services
 
 
-import de.upb.sede.types.MutableDataTypeDesc
-import de.upb.sede.util.DynRecord
+import ai.services.util.DynRecord
 
 class DataTypeDomain {
 
@@ -10,17 +9,17 @@ class DataTypeDomain {
 
     // topDom MutableServiceCollectionDesc
 
-    static MutableDataTypeDesc aux(MutableDataTypeDesc model, @DelegatesTo(DynRecord) Closure desc) {
+    static ai.services.types.MutableDataTypeDesc aux(ai.services.types.MutableDataTypeDesc model, @DelegatesTo(DynRecord) Closure desc) {
         Shared.aux(model, desc)
         return model
     }
 
-    static MutableDataTypeDesc comment(MutableDataTypeDesc model, String ... comments) {
+    static ai.services.types.MutableDataTypeDesc comment(ai.services.types.MutableDataTypeDesc model, String ... comments) {
         Shared.comment(model, comments)
         return model
     }
 
-    static MutableDataTypeDesc setInfo(MutableDataTypeDesc model, String commentBlock) {
+    static ai.services.types.MutableDataTypeDesc setInfo(ai.services.types.MutableDataTypeDesc model, String commentBlock) {
         Shared.setInfo(model, commentBlock)
         return model
     }

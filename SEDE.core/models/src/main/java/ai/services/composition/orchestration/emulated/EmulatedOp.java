@@ -1,7 +1,7 @@
-package de.upb.sede.composition.orchestration.emulated;
+package ai.services.composition.orchestration.emulated;
 
-import de.upb.sede.composition.types.TypeClass;
-import de.upb.sede.util.TypeDeserializationDelegate;
+import ai.services.composition.types.TypeClass;
+import ai.services.util.TypeDeserializationDelegate;
 import org.immutables.value.Value;
 
 import java.util.List;

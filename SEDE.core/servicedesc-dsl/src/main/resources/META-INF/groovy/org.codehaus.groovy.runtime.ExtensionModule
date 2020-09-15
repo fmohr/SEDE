@@ -1,4 +1,4 @@
 moduleName=SDL Modules for Service Specs
 moduleVersion=1.0
-extensionClasses=de.upb.sede.AuxDomain,de.upb.sede.DataTypeDomain,de.upb.sede.MethodDomain,de.upb.sede.ParameterDomain,de.upb.sede.ServiceCollectionDomain,de.upb.sede.ServiceDomain
+extensionClasses=ai.services.AuxDomain,ai.services.DataTypeDomain,ai.services.MethodDomain,ai.services.ParameterDomain,ai.services.ServiceCollectionDomain,ai.services.ServiceDomain
 #staticExtensionClasses=support.StaticStringExtension

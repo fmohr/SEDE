@@ -1,17 +1,13 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import de.upb.sede.util.FileUtil;
+import ai.services.util.FileUtil;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 /*
@@ -19,8 +15,8 @@ import org.junit.BeforeClass;
  */
 import org.junit.Test;
 
-import de.upb.sede.composition.graphs.nodes.InstructionNode;
-import de.upb.sede.exceptions.FMCompositionSyntaxException;
+import ai.services.composition.graphs.nodes.InstructionNode;
+import ai.services.exceptions.FMCompositionSyntaxException;
 
 /**
  *

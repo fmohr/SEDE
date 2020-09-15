@@ -1,6 +1,4 @@
-package de.upb.sede.composition.graphs.nodes;
-
-import de.upb.sede.composition.IIndexedInstruction;
+package ai.services.composition.graphs.nodes;
 
 import javax.annotation.Nullable;
 

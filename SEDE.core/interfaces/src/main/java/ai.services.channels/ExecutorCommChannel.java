@@ -1,7 +1,7 @@
 package ai.services.channels;
 
-import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
-import de.upb.sede.composition.graphs.nodes.INotification;
+import ai.services.composition.graphs.nodes.ICompositionGraph;
+import ai.services.composition.graphs.nodes.INotification;
 
 import java.util.Optional;
 

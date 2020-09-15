@@ -2,7 +2,7 @@ package ai.services.execution.operator;
 
 import ai.services.execution.Task;
 import ai.services.execution.TaskTransition;
-import de.upb.sede.composition.graphs.nodes.BaseNode;
+import ai.services.composition.graphs.nodes.BaseNode;
 
 /**
  * Task operators that handle the main workload of a task.

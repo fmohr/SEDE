@@ -1,7 +1,7 @@
-package de.upb.sede.spec
+package ai.services.spec
 
 
-import de.upb.sede.util.DynTypeObject
+import ai.services.util.DynTypeObject
 import spock.lang.Specification
 
 class DeploymentSpecificationTest extends Specification {

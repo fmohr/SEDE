@@ -1,7 +1,7 @@
-package de.upb.sede.util
+package ai.services.util
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.upb.sede.KneadableInterfaces
+import ai.services.KneadableInterfaces
 import spock.lang.Specification
 
 

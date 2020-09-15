@@ -1,6 +1,6 @@
-package de.upb.sede.exec.auxiliary;
+package ai.services.exec.auxiliary;
 
-import de.upb.sede.util.DynRecord;
+import ai.services.util.DynRecord;
 
 import javax.annotation.Nullable;
 

@@ -1,35 +1,36 @@
-package de.upb.sede.composition.graphs;
+package ai.services.composition.graphs;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import ai.services.beta.ExecutorRegistration;
+import ai.services.composition.FieldType;
+import ai.services.composition.types.ServiceInstanceType;
+import ai.services.exec.ExecutorCapabilities;
+import ai.services.exec.ExecutorContactInfo;
+import ai.services.exec.ExecutorHandle;
+import ai.services.requests.resolve.beta.MutableResolvePolicy;
+import ai.services.requests.resolve.beta.MutableResolveRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import de.upb.sede.IQualifiable;
-import de.upb.sede.ISDLAssembly;
-import de.upb.sede.SDLReader;
-import de.upb.sede.beta.IExecutorRegistration;
-import de.upb.sede.composition.FieldType;
-import de.upb.sede.composition.types.ServiceInstanceType;
-import de.upb.sede.exec.ExecutorCapabilities;
-import de.upb.sede.exec.ExecutorContactInfo;
-import de.upb.sede.exec.ExecutorHandle;
-import de.upb.sede.gateway.ExecutorArbiter;
-import de.upb.sede.gateway.StdGatewayImpl;
-import de.upb.sede.interfaces.IGateway;
-import de.upb.sede.requests.resolve.beta.IChoreography;
-import de.upb.sede.requests.resolve.beta.MutableResolvePolicy;
-import de.upb.sede.requests.resolve.beta.MutableResolveRequest;
-import de.upb.sede.util.SDLUtil;
+import ai.services.IQualifiable;
+import ai.services.ISDLAssembly;
+import ai.services.SDLReader;
+import ai.services.beta.IExecutorRegistration;
+import ai.services.gateway.ExecutorArbiter;
+import ai.services.gateway.StdGatewayImpl;
+import ai.services.interfaces.IGateway;
+import ai.services.requests.resolve.beta.IChoreography;
+import ai.services.util.SDLUtil;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.upb.sede.core.ServiceInstanceHandle;
-import de.upb.sede.util.FileUtil;
+import ai.services.core.ServiceInstanceHandle;
+import ai.services.util.FileUtil;
 
 public class PlainLibGraphs {
 
@@ -110,7 +111,7 @@ public class PlainLibGraphs {
             .stream()
             .map(IQualifiable::getQualifier)
             .collect(Collectors.toList());
-		IExecutorRegistration registration1 = de.upb.sede.beta.ExecutorRegistration.builder()
+		IExecutorRegistration registration1 = ExecutorRegistration.builder()
             .executorHandle(ExecutorHandle.builder()
                 .capabilities(ExecutorCapabilities.builder()
                     .addAllServices(supportedServices)

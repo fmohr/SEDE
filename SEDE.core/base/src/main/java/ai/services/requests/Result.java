@@ -1,14 +1,10 @@
-package de.upb.sede.requests;
+package ai.services.requests;
 
-import de.upb.sede.core.SEDEObject;
-import de.upb.sede.core.SemanticStreamer;
-import de.upb.sede.core.ServiceInstanceHandle;
-import org.json.simple.JSONArray;
+import ai.services.core.SEDEObject;
+import ai.services.core.SemanticStreamer;
+import ai.services.core.ServiceInstanceHandle;
 import org.json.simple.JSONObject;
 
-import javax.swing.text.html.Option;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 

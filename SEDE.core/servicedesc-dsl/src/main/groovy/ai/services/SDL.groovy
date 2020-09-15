@@ -1,10 +1,9 @@
-package de.upb.sede
+package ai.services
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import de.upb.sede.util.DeepImmutableCopier
-import de.upb.sede.util.FileUtil
-import de.upb.sede.util.SDLUtil
+import ai.services.util.DeepImmutableCopier
+import ai.services.util.FileUtil
 
 abstract class SDL extends Script {
 

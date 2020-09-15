@@ -1,13 +1,11 @@
-package de.upb.sede.core;
+package ai.services.core;
 
-import de.upb.sede.util.Streams;
 import org.json.simple.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UncheckedIOException;
-import java.util.List;
 import java.util.Map;
 
 /**

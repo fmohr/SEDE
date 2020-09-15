@@ -1,6 +1,5 @@
-package de.upb.sede.util;
+package ai.services.util;
 
-import java.util.LinkedHashMap;
 import java.util.function.Supplier;
 
 public interface Cache<Content> extends Supplier<Content> {

@@ -1,6 +1,6 @@
 package ai.services.execution;
 
-import de.upb.sede.composition.graphs.nodes.BaseNode;
+import ai.services.composition.graphs.nodes.BaseNode;
 
 import java.util.*;
 import java.util.function.Predicate;

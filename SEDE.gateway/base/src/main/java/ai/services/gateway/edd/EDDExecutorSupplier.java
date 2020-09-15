@@ -1,14 +1,14 @@
-package de.upb.sede.gateway.edd;
+package ai.services.gateway.edd;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.upb.sede.exec.IExecutorHandle;
-import de.upb.sede.gateway.OnDemandExecutorSupplier;
-import de.upb.sede.requests.deploy.EDDRegistration;
-import de.upb.sede.requests.deploy.ExecutorDemandFulfillment;
-import de.upb.sede.requests.deploy.ExecutorDemandRequest;
-import de.upb.sede.util.URIMod;
-import de.upb.sede.util.UnmodifiableURI;
+import ai.services.exec.IExecutorHandle;
+import ai.services.gateway.OnDemandExecutorSupplier;
+import ai.services.requests.deploy.EDDRegistration;
+import ai.services.requests.deploy.ExecutorDemandFulfillment;
+import ai.services.requests.deploy.ExecutorDemandRequest;
+import ai.services.util.URIMod;
+import ai.services.util.UnmodifiableURI;
 import okhttp3.*;
 
 import java.io.IOException;
@@ -18,7 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static de.upb.sede.requests.deploy.ExecutorDemandRequest.SatMode.*;
+import static ai.services.requests.deploy.ExecutorDemandRequest.SatMode.*;
 
 
 public class EDDExecutorSupplier implements OnDemandExecutorSupplier {

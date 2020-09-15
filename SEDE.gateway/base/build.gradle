@@ -8,6 +8,7 @@ dependencies {
     implementation project(':SEDE.core')
     api project(':SEDE.core-models')
     api project(':SEDE.servicedesc')
+    api project(':SEDE.interfaces')
 
     implementation 'com.github.aminfa:TinyJavaDot:v1.3'
 

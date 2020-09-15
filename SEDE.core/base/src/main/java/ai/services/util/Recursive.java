@@ -1,4 +1,4 @@
-package de.upb.sede.util;
+package ai.services.util;
 
 /**
  * Used to implement recursive lambdas.

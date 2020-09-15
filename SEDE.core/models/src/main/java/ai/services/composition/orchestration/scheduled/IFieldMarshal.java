@@ -1,8 +1,8 @@
-package de.upb.sede.composition.orchestration.scheduled;
+package ai.services.composition.orchestration.scheduled;
 
+import ai.services.SEDEModelStyle;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.composition.graphs.nodes.IMarshalNode;
+import ai.services.composition.graphs.nodes.IMarshalNode;
 import org.immutables.value.Value;
 
 @SEDEModelStyle

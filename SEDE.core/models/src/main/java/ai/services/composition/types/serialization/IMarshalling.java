@@ -1,13 +1,12 @@
-package de.upb.sede.composition.types.serialization;
+package ai.services.composition.types.serialization;
 
+import ai.services.SEDEModelStyle;
+import ai.services.composition.types.IRefType;
+import ai.services.composition.types.TypeClass;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.composition.types.TypeClass;
 import org.immutables.value.Value;
 
 import javax.annotation.Nonnull;
-
-import static de.upb.sede.composition.types.IRefType.SEMANTIC_SERVICE_INSTANCE_HANDLE_TYPE;
 
 @SEDEModelStyle
 @Value.Immutable
@@ -36,7 +35,7 @@ public interface IMarshalling {
 
     static Marshalling.Builder buildServiceHandleMarshalling() {
         return Marshalling.builder()
-            .semanticName(SEMANTIC_SERVICE_INSTANCE_HANDLE_TYPE);
+            .semanticName(IRefType.SEMANTIC_SERVICE_INSTANCE_HANDLE_TYPE);
     }
 }
 

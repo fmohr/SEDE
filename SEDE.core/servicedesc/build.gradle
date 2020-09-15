@@ -37,4 +37,4 @@ task genJsonSchema(type: JavaExec) {
     args 'src/main/resources/servicedesc.schema.json'
 }
 
-assemble.dependsOn genJsonSchema
+//assemble.dependsOn genJsonSchema

@@ -1,27 +1,29 @@
-package de.upb.sede.composition.choerography.emulation.executors;
+package ai.services.composition.choerography.emulation.executors;
 
-import de.upb.sede.*;
-import de.upb.sede.composition.choerography.emulation.EmulationException;
-import de.upb.sede.composition.graphs.nodes.*;
-import de.upb.sede.composition.orchestration.emulated.*;
-import de.upb.sede.composition.types.IDataValueType;
-import de.upb.sede.composition.types.IServiceInstanceType;
-import de.upb.sede.composition.types.serialization.IMarshalling;
-import de.upb.sede.composition.typing.TypeUtil;
-import de.upb.sede.exec.IMethodDesc;
-import de.upb.sede.exec.IMethodRef;
-import de.upb.sede.exec.IServiceDesc;
-import de.upb.sede.exec.auxiliary.DynamicAuxAware;
-import de.upb.sede.types.DataTypeRef;
-import de.upb.sede.types.IDataTypeDesc;
-import de.upb.sede.types.IDataTypeRef;
-import de.upb.sede.util.SDLUtil;
+import ai.services.ConstructReference;
+import ai.services.IServiceRef;
+import ai.services.SDLLookupService;
+import ai.services.composition.choerography.emulation.EmulationException;
+import ai.services.composition.graphs.nodes.*;
+import ai.services.composition.orchestration.emulated.*;
+import ai.services.types.DataTypeRef;
+import ai.services.composition.types.IDataValueType;
+import ai.services.composition.types.IServiceInstanceType;
+import ai.services.composition.types.serialization.IMarshalling;
+import ai.services.composition.typing.TypeUtil;
+import ai.services.exec.IMethodDesc;
+import ai.services.exec.IMethodRef;
+import ai.services.exec.IServiceDesc;
+import ai.services.exec.auxiliary.DynamicAuxAware;
+import ai.services.types.IDataTypeDesc;
+import ai.services.types.IDataTypeRef;
+import ai.services.util.SDLUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-import static de.upb.sede.util.SDLUtil.gatherAux;
+import static ai.services.util.SDLUtil.gatherAux;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
 public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {

@@ -1,6 +1,5 @@
-package de.upb.sede.util;
+package ai.services.util;
 
-import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import java.net.URI;
@@ -8,8 +7,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static de.upb.sede.util.StringUtil.hasLength;
-import static de.upb.sede.util.StringUtil.hasText;
+import static ai.services.util.StringUtil.hasLength;
 
 public class ModifiableURI extends UnmodifiableURI implements ResourceIdentifier {
 
@@ -120,13 +118,13 @@ public class ModifiableURI extends UnmodifiableURI implements ResourceIdentifier
             builder.scheme(scheme);
             builder.userInfo(userInfo);
             builder.host(host);
-            if (hasLength(port)) {
+            if (StringUtil.hasLength(port)) {
                 builder.port(port);
             }
             builder.replacePath(path);
             builder.query(query);
 
-            if (hasText(fragment)) {
+            if (StringUtil.hasText(fragment)) {
                 builder.fragment(fragment);
             }
 
@@ -157,12 +155,12 @@ public class ModifiableURI extends UnmodifiableURI implements ResourceIdentifier
             builder.scheme(scheme != null ? scheme.toLowerCase() : null);
             builder.userInfo(matcher.group(4));
             String host = matcher.group(5);
-            if (hasLength(scheme) && !hasLength(host)) {
+            if (StringUtil.hasLength(scheme) && !StringUtil.hasLength(host)) {
                 throw new IllegalArgumentException("[" + httpUrl + "] is not a valid HTTP URL");
             }
             builder.host(host);
             String port = matcher.group(7);
-            if (hasLength(port)) {
+            if (StringUtil.hasLength(port)) {
                 builder.port(port);
             }
             builder.path(matcher.group(8));
@@ -198,10 +196,10 @@ public class ModifiableURI extends UnmodifiableURI implements ResourceIdentifier
             if (uri.getPort() != -1) {
                 this.port = uri.getPort();
             }
-            if (hasLength(uri.getRawPath())) {
+            if (StringUtil.hasLength(uri.getRawPath())) {
                 setPath(uri.getRawPath());
             }
-            if (hasLength(uri.getRawQuery())) {
+            if (StringUtil.hasLength(uri.getRawQuery())) {
                 this.queryParams.clear();
                 query(uri.getRawQuery());
             }
@@ -461,7 +459,7 @@ public class ModifiableURI extends UnmodifiableURI implements ResourceIdentifier
                 String name = matcher.group(1);
                 String eq = matcher.group(2);
                 String value = matcher.group(3);
-                queryParam(name, (value != null ? value : (hasLength(eq) ? "" : null)));
+                queryParam(name, (value != null ? value : (StringUtil.hasLength(eq) ? "" : null)));
             }
         }
         else {
@@ -580,7 +578,7 @@ public class ModifiableURI extends UnmodifiableURI implements ResourceIdentifier
      */
     public ModifiableURI fragment(String fragment) {
         if (fragment != null) {
-            hasLength(fragment, "Fragment must not be empty");
+            StringUtil.hasLength(fragment, "Fragment must not be empty");
             this.fragment = fragment;
         }
         else {
@@ -633,7 +631,7 @@ public class ModifiableURI extends UnmodifiableURI implements ResourceIdentifier
             return false;
         }
         if(getHost()
-            .map(s -> !hasText(s))
+            .map(s -> !StringUtil.hasText(s))
             .orElse(true)) {
             return false;
         }

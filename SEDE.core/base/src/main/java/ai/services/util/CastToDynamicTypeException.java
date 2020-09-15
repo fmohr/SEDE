@@ -1,4 +1,4 @@
-package de.upb.sede.util;
+package ai.services.util;
 
 public class CastToDynamicTypeException extends RuntimeException {
     public CastToDynamicTypeException() {

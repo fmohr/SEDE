@@ -7,10 +7,10 @@ import ai.services.channels.UploadLink;
 import ai.services.execution.Task;
 import ai.services.execution.TaskTransition;
 import ai.services.execution.operator.MainTaskOperator;
-import de.upb.sede.composition.graphs.nodes.ITransmitDataNode;
-import de.upb.sede.core.SEDEObject;
-import de.upb.sede.exec.IExecutorContactInfo;
-import de.upb.sede.util.StringUtil;
+import ai.services.composition.graphs.nodes.ITransmitDataNode;
+import ai.services.core.SEDEObject;
+import ai.services.exec.IExecutorContactInfo;
+import ai.services.util.StringUtil;
 
 
 public class TransmitDataOp extends MainTaskOperator {

@@ -1,9 +1,9 @@
-package de.upb.sede.composition.orchestration.emulated;
+package ai.services.composition.orchestration.emulated;
 
+import ai.services.SEDEModelStyle;
+import ai.services.composition.graphs.nodes.INopNode;
+import ai.services.composition.graphs.nodes.IWaitForNotificationNode;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.composition.graphs.nodes.INopNode;
-import de.upb.sede.composition.graphs.nodes.IWaitForNotificationNode;
 import org.immutables.value.Value;
 
 import java.util.List;

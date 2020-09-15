@@ -1,6 +1,4 @@
-package de.upb.sede;
-
-import de.upb.sede.IQualifiable;
+package ai.services;
 
 /**
  * References a declared construct.

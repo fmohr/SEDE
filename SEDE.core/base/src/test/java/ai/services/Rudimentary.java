@@ -1,16 +1,16 @@
-package de.upb.sede;
+package ai.services;
 
 import static org.junit.Assert.assertTrue;
 
 /*
  * A rudimentary test case.
  */
-import de.upb.sede.util.WebUtil;
+import ai.services.util.WebUtil;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.upb.sede.util.FileUtil;
+import ai.services.util.FileUtil;
 
 public class Rudimentary {
 

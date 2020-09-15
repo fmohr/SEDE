@@ -1,16 +1,11 @@
-package de.upb.sede.composition
+package ai.services.composition
 
-import de.upb.sede.composition.choerography.ChoreographyException
-import de.upb.sede.composition.choerography.emulation.executors.ExecutionGraph
-import de.upb.sede.composition.choerography.emulation.executors.GraphTraversal
-import de.upb.sede.composition.graphs.nodes.*
-import de.upb.sede.composition.types.DataValueType
-import de.upb.sede.composition.types.ServiceInstanceType
-import de.upb.sede.composition.typing.TypeCheckException
-import de.upb.sede.core.PrimitiveType
-import de.upb.sede.core.ServiceInstanceHandle
+
+import ai.services.composition.choerography.emulation.executors.ExecutionGraph
+import ai.services.composition.choerography.emulation.executors.GraphTraversal
+import ai.services.composition.graphs.nodes.IParseConstantNode
+import ai.services.core.PrimitiveType
 import spock.lang.Specification
-import spock.lang.Unroll
 
 class PrimitiveRRTest extends Specification {
 

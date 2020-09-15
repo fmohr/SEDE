@@ -1,9 +1,9 @@
-package de.upb.sede.composition.choerography.emulation.executors;
+package ai.services.composition.choerography.emulation.executors;
 
-import de.upb.sede.composition.graphs.nodes.BaseNode;
-import de.upb.sede.composition.graphs.nodes.CompositionGraph;
-import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
-import de.upb.sede.util.MappedList;
+import ai.services.composition.graphs.nodes.CompositionGraph;
+import ai.services.composition.graphs.nodes.BaseNode;
+import ai.services.composition.graphs.nodes.ICompositionGraph;
+import ai.services.util.MappedList;
 
 import java.util.*;
 

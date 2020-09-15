@@ -1,4 +1,4 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,15 +1,14 @@
 package ai.services.executor;
 
+import ai.services.exec.*;
 import ai.services.execution.GraphTaskExecution;
-import de.upb.sede.beta.ExecutorRegistration;
-import de.upb.sede.beta.IExecutorRegistration;
-import de.upb.sede.exec.*;
+import ai.services.beta.ExecutorRegistration;
+import ai.services.beta.IExecutorRegistration;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Predicate;
 
 public class Executor {
 

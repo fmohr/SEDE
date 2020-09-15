@@ -1,21 +1,21 @@
-package de.upb.sede
+package ai.services
 
-import de.upb.sede.exec.IMethodDesc
-import de.upb.sede.exec.IServiceDesc
-import de.upb.sede.exec.auxiliary.DynamicAuxAware
-import de.upb.sede.exec.auxiliary.MutableJavaDispatchAux
-import de.upb.sede.types.IDataTypeDesc
-import de.upb.sede.util.DynRecord
+
+import ai.services.exec.IMethodDesc
+import ai.services.exec.IServiceDesc
+import ai.services.exec.auxiliary.DynamicAuxAware
+import ai.services.types.IDataTypeDesc
+import ai.services.util.DynRecord
 import groovy.transform.PackageScope
 
 @PackageScope
 class Shared {
 
-    final static MutableJavaDispatchAux createJavaDispatchAux(
-        MutableJavaDispatchAux javaAux,
-        Closure javaAuxDescriber) {
+    final static ai.services.exec.auxiliary.MutableJavaDispatchAux createJavaDispatchAux(
+            ai.services.exec.auxiliary.MutableJavaDispatchAux javaAux,
+            Closure javaAuxDescriber) {
         if(javaAux == null) {
-            javaAux = MutableJavaDispatchAux.create()
+            javaAux = ai.services.exec.auxiliary.MutableJavaDispatchAux.create()
         }
 
         javaAuxDescriber.delegate = javaAux
@@ -96,12 +96,12 @@ class Shared {
         }
     }
 
-    static def comment(de.upb.sede.CommentAware model, String ... comments) {
+    static def comment(ai.services.CommentAware model, String ... comments) {
         for(def comment : comments) {
             model.comments += comment
         }
     }
-    static def setInfo(de.upb.sede.CommentAware model, String commentBlock) {
+    static def setInfo(ai.services.CommentAware model, String commentBlock) {
         commentBlock = commentBlock
             .replaceFirst("\\n","")
             .stripIndent()

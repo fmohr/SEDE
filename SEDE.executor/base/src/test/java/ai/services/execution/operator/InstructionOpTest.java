@@ -1,16 +1,16 @@
 package ai.services.execution.operator;
 
+import ai.services.core.*;
 import ai.services.execution.GraphTaskExecution;
 import ai.services.execution.Task;
 import ai.services.execution.operator.local.InstructionOp;
-import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.composition.graphs.nodes.InstructionNode;
-import de.upb.sede.composition.types.DataValueType;
-import de.upb.sede.composition.types.PrimitiveValueType;
-import de.upb.sede.composition.types.ServiceInstanceType;
-import de.upb.sede.config.ExecutorConfiguration;
-import de.upb.sede.core.*;
-import de.upb.sede.util.ExecutorConfigurationCreator;
+import ai.services.composition.graphs.nodes.IInstructionNode;
+import ai.services.composition.graphs.nodes.InstructionNode;
+import ai.services.composition.types.DataValueType;
+import ai.services.composition.types.PrimitiveValueType;
+import ai.services.composition.types.ServiceInstanceType;
+import ai.services.config.ExecutorConfiguration;
+import ai.services.util.ExecutorConfigurationCreator;
 import org.junit.Assert;
 import org.junit.Test;
 

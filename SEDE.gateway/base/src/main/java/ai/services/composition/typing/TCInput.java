@@ -1,9 +1,9 @@
-package de.upb.sede.composition.typing;
+package ai.services.composition.typing;
 
-import de.upb.sede.SDLLookupService;
-import de.upb.sede.composition.IFieldType;
-import de.upb.sede.composition.InstInput;
-import de.upb.sede.composition.InstructionIndexer;
+import ai.services.SDLLookupService;
+import ai.services.composition.IFieldType;
+import ai.services.composition.InstInput;
+import ai.services.composition.InstructionIndexer;
 
 import java.util.List;
 

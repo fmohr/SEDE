@@ -1,12 +1,10 @@
-package de.upb.sede
+package ai.services
+
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.fasterxml.jackson.module.jsonSchema.JsonSchema
-import com.fasterxml.jackson.module.jsonSchema.JsonSchemaGenerator
-import de.upb.sede.exec.MethodDesc
-import de.upb.sede.exec.MutableServiceDesc
-import de.upb.sede.exec.ServiceDesc
+import ai.services.exec.MutableServiceDesc
+import ai.services.exec.ServiceDesc
 import spock.lang.Specification
 
 class IServiceDescTest extends Specification {
@@ -15,7 +13,7 @@ class IServiceDescTest extends Specification {
         given:
         def serviceDesc = ServiceDesc.builder()
             .qualifier("service.A")
-            .addMethods(MethodDesc.builder()
+            .addMethods(ai.services.exec.MethodDesc.builder()
                 .qualifier("m1")
                 .build())
             .build()

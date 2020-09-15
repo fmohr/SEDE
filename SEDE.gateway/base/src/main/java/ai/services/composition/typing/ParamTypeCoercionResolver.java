@@ -1,13 +1,13 @@
-package de.upb.sede.composition.typing;
+package ai.services.composition.typing;
 
-import de.upb.sede.composition.*;
-import de.upb.sede.composition.graphs.nodes.IInstructionNode;
-import de.upb.sede.composition.types.IDataValueType;
-import de.upb.sede.composition.types.TypeClass;
-import de.upb.sede.core.PrimitiveType;
-import de.upb.sede.exec.IMethodDesc;
-import de.upb.sede.types.IDataTypeDesc;
-import de.upb.sede.types.IDataTypeRef;
+import ai.services.composition.*;
+import ai.services.composition.graphs.nodes.IInstructionNode;
+import ai.services.composition.types.IDataValueType;
+import ai.services.composition.types.TypeClass;
+import ai.services.core.PrimitiveType;
+import ai.services.exec.IMethodDesc;
+import ai.services.types.IDataTypeDesc;
+import ai.services.types.IDataTypeRef;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -138,7 +138,7 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
 
 
     static ITypeCoercion primType(String constant, PrimitiveType primT) {
-        ITypeCoercion tc = de.upb.sede.composition.TypeCoercion.builder()
+        ITypeCoercion tc = TypeCoercion.builder()
             .constant(constant)
             .sourceType(primT.name())
             .resultType(primT.name())
@@ -148,7 +148,7 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
     }
 
     static ITypeCoercion sameType(String sourceType, String semanticType) {
-        ITypeCoercion tc = de.upb.sede.composition.TypeCoercion.builder()
+        ITypeCoercion tc = TypeCoercion.builder()
             .sourceType(sourceType)
             .resultType(sourceType)
             .semanticType(semanticType)
@@ -158,7 +158,7 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
     }
 
     static ITypeCoercion typeCast(String source, String result, String semantic) {
-        ITypeCoercion tc = de.upb.sede.composition.TypeCoercion.builder()
+        ITypeCoercion tc = TypeCoercion.builder()
             .sourceType(source)
             .resultType(result)
             .semanticType(semantic)

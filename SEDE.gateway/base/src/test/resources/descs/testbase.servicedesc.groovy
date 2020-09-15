@@ -1,5 +1,4 @@
-import com.fasterxml.jackson.databind.ObjectMapper
-import de.upb.sede.SDL
+import ai.services.SDL
 import groovy.transform.BaseScript
 import groovy.transform.Field
 
@@ -7,8 +6,8 @@ import java.util.stream.Collectors
 
 @BaseScript SDL description
 
-import static de.upb.sede.Helpers.*;
-import static de.upb.sede.StandardDefs.*;
+
+import static ai.services.StandardDefs.*;
 
 @Field Integer collectionCount  = 1
 @Field Integer serviceCount = 3

@@ -1,10 +1,10 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
-import de.upb.sede.SDLLookupService;
-import de.upb.sede.composition.faa.FieldAccessAnalysisException;
-import de.upb.sede.composition.typing.TypeCheckException;
-import de.upb.sede.interfaces.ICCService;
-import de.upb.sede.util.Cache;
+import ai.services.composition.faa.FieldAccessAnalysisException;
+import ai.services.composition.typing.TypeCheckException;
+import ai.services.SDLLookupService;
+import ai.services.interfaces.ICCService;
+import ai.services.util.Cache;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

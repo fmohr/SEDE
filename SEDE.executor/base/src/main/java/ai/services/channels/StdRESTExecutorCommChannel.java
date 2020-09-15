@@ -1,13 +1,13 @@
 package ai.services.channels;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.upb.sede.composition.graphs.nodes.ICompositionGraph;
-import de.upb.sede.composition.graphs.nodes.INotification;
-import de.upb.sede.exec.IExecutorContactInfo;
-import de.upb.sede.util.ExtendedByteArrayOutputStream;
-import de.upb.sede.util.ModifiableURI;
-import de.upb.sede.util.SystemSettingLookup;
-import de.upb.sede.util.UnmodifiableURI;
+import ai.services.composition.graphs.nodes.ICompositionGraph;
+import ai.services.composition.graphs.nodes.INotification;
+import ai.services.exec.IExecutorContactInfo;
+import ai.services.util.ExtendedByteArrayOutputStream;
+import ai.services.util.ModifiableURI;
+import ai.services.util.SystemSettingLookup;
+import ai.services.util.UnmodifiableURI;
 
 
 import org.apache.http.HttpEntity;

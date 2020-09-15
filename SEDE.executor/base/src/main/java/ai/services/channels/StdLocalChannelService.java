@@ -3,8 +3,8 @@ package ai.services.channels;
 import ai.services.channels.local.InProcessExecutorChannel;
 import ai.services.executor.Executor;
 import ai.services.executor.local.LocalExecutorInstanceRegistry;
-import de.upb.sede.IServiceRef;
-import de.upb.sede.exec.IExecutorContactInfo;
+import ai.services.IServiceRef;
+import ai.services.exec.IExecutorContactInfo;
 
 public class StdLocalChannelService implements ChannelService{
 

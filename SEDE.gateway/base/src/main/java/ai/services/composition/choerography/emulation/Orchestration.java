@@ -1,14 +1,14 @@
-package de.upb.sede.composition.choerography.emulation;
+package ai.services.composition.choerography.emulation;
 
-import de.upb.sede.IQualifiable;
-import de.upb.sede.composition.*;
-import de.upb.sede.composition.choerography.emulation.executors.EmExecutor;
-import de.upb.sede.composition.choerography.emulation.executors.ExecutionParticipants;
-import de.upb.sede.composition.graphs.nodes.*;
-import de.upb.sede.composition.orchestration.emulated.*;
-import de.upb.sede.composition.orchestration.scheduled.*;
-import de.upb.sede.exec.IExecutorHandle;
-import de.upb.sede.util.StringUtil;
+import ai.services.composition.*;
+import ai.services.composition.choerography.emulation.executors.EmExecutor;
+import ai.services.composition.choerography.emulation.executors.ExecutionParticipants;
+import ai.services.composition.graphs.nodes.*;
+import ai.services.composition.orchestration.emulated.*;
+import ai.services.IQualifiable;
+import ai.services.composition.orchestration.scheduled.*;
+import ai.services.exec.IExecutorHandle;
+import ai.services.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

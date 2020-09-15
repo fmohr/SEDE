@@ -1,10 +1,10 @@
-package de.upb.sede.exec;
+package ai.services.exec;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.ConstructReference;
-import de.upb.sede.IQualifiable;
-import de.upb.sede.IServiceRef;
-import de.upb.sede.SEDEModelStyle;
+import ai.services.ConstructReference;
+import ai.services.IQualifiable;
+import ai.services.IServiceRef;
+import ai.services.SEDEModelStyle;
 import org.immutables.value.Value;
 
 @SEDEModelStyle

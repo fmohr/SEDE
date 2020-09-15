@@ -1,8 +1,8 @@
 import ai.services.SMath
-import de.upb.sede.Defaults
-import de.upb.sede.SDL
+import ai.services.Defaults
+import ai.services.SDL
 import groovy.transform.BaseScript
-import static de.upb.sede.StandardDefs.*
+import static ai.services.StandardDefs.*
 
 @BaseScript SDL description
 

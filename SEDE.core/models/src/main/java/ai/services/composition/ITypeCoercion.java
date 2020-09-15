@@ -1,8 +1,8 @@
-package de.upb.sede.composition;
+package ai.services.composition;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import de.upb.sede.SEDEModelStyle;
-import de.upb.sede.core.PrimitiveType;
+import ai.services.SEDEModelStyle;
+import ai.services.core.PrimitiveType;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;

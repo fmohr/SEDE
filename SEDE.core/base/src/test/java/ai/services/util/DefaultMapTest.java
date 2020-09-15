@@ -1,4 +1,4 @@
-package de.upb.sede.util;
+package ai.services.util;
 
 import static org.junit.Assert.*;
 
@@ -27,7 +27,7 @@ public class DefaultMapTest {
 
 		Assert.assertFalse(defaultMap.get(3).equals(someList));
 		defaultMap.put(4, someList);
-		Assert.assertEquals(someList, defaultMap.get(4));
+		assertEquals(someList, defaultMap.get(4));
 		Assert.assertFalse(defaultMap.get(3).equals(defaultMap.get(4)));
 		Assert.assertFalse(defaultMap.get(5).equals(defaultMap.get(4)));
 	}

@@ -1,7 +1,7 @@
 package ai.services.executor.local;
 
 import ai.services.executor.Executor;
-import de.upb.sede.exec.IExecutorContactInfo;
+import ai.services.exec.IExecutorContactInfo;
 
 import java.util.concurrent.ConcurrentHashMap;
 

@@ -1,4 +1,4 @@
-package de.upb.sede.webinterfaces;
+package ai.services.webinterfaces;
 
 import java.io.File;
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.util.stream.Stream;
 import org.junit.Assert;
 import org.junit.Test;
 
-import de.upb.sede.webinterfaces.client.WriteFileRequest;
+import ai.services.webinterfaces.client.WriteFileRequest;
 
 public class WriteFileRequestTest {
 	@Test

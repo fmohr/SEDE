@@ -8,10 +8,10 @@ import ai.services.execution.FieldContext
 import ai.services.execution.Task
 import ai.services.execution.local.LocalFieldContext
 import com.fasterxml.jackson.databind.ObjectMapper
-import de.upb.sede.composition.graphs.nodes.ServiceInstanceStorageNode
-import de.upb.sede.core.ServiceInstance
-import de.upb.sede.core.ServiceInstanceField
-import de.upb.sede.core.ServiceInstanceHandle
+import ai.services.composition.graphs.nodes.ServiceInstanceStorageNode
+import ai.services.core.ServiceInstance
+import ai.services.core.ServiceInstanceField
+import ai.services.core.ServiceInstanceHandle
 import demo.math.Gerade
 import spock.lang.Specification
 

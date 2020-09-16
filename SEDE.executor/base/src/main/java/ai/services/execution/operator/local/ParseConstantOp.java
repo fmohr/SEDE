@@ -5,7 +5,7 @@ import ai.services.execution.TaskTransition;
 import ai.services.execution.operator.MainTaskOperator;
 import ai.services.composition.graphs.nodes.IParseConstantNode;
 import ai.services.core.PrimitiveDataField;
-import ai.services.core.PrimitiveType;
+import ai.services.core.Primitives;
 import ai.services.core.SEDEObject;
 
 import java.text.NumberFormat;
@@ -26,9 +26,9 @@ public class ParseConstantOp extends MainTaskOperator {
         return TaskTransition.fieldAssignment(node.getConstantValue(), parsedVal);
     }
 
-    public static SEDEObject parsePrimitive(String constantStr, PrimitiveType primitiveType) {
+    public static SEDEObject parsePrimitive(String constantStr, Primitives primitives) {
         Object data;
-        switch (Objects.requireNonNull(primitiveType)) {
+        switch (Objects.requireNonNull(primitives)) {
             case NULL:
                 data = null;
                 break;
@@ -49,9 +49,9 @@ public class ParseConstantOp extends MainTaskOperator {
                 data = constantStr.substring(1, constantStr.length() - 1);
                 break;
             default:
-                throw new RuntimeException("Primitive Type is left unhandled: " + primitiveType);
+                throw new RuntimeException("Primitive Type is left unhandled: " + primitives);
         }
-        return new PrimitiveDataField(primitiveType.name(), data);
+        return new PrimitiveDataField(primitives.name(), data);
     }
 
 }

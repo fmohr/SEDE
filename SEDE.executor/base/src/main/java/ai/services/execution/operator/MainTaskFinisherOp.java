@@ -21,7 +21,7 @@ public class MainTaskFinisherOp implements TaskOperator {
     @Override
     public TaskTransition apply(Task task) {
         if (task.isMainTaskPerformed()) {
-            logger.debug("No more operator for completed task `{}`.", task);
+            logger.trace("No more operator for completed task `{}`.", task);
             return TaskTransition.success();
         } else {
             logger.error("No operator matched task `{}`", task);

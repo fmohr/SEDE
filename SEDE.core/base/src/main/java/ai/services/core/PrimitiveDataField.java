@@ -9,29 +9,29 @@ public class PrimitiveDataField extends SEDEObject {
     private Object primitiveObject;
 
 
-	public PrimitiveDataField(PrimitiveType type, Object primitiveObject) {
+	public PrimitiveDataField(Primitives type, Object primitiveObject) {
 		super(type.name());
 		this.primitiveObject = primitiveObject;
 	}
 
 	public PrimitiveDataField(String type, Object primitiveObject) {
-		this(PrimitiveType.insensitiveValueOf(type).orElseThrow(() -> new RuntimeException("Primitive " + type + " not found.")), primitiveObject);
+		this(Primitives.insensitiveValueOf(type).orElseThrow(() -> new RuntimeException("Primitive " + type + " not found.")), primitiveObject);
 	}
 
 	public PrimitiveDataField(Number number) {
-		this(PrimitiveType.Number, number);
+		this(Primitives.Number, number);
 	}
 
 	public PrimitiveDataField(String string) {
-		this(PrimitiveType.String, string);
+		this(Primitives.String, string);
 	}
 
 	public PrimitiveDataField(Boolean bool) {
-		this(PrimitiveType.Bool, bool);
+		this(Primitives.Bool, bool);
 	}
 
 	public PrimitiveDataField() {
-		this(PrimitiveType.NULL, null);
+		this(Primitives.NULL, null);
 	}
 
 	public boolean isPrimitive() {

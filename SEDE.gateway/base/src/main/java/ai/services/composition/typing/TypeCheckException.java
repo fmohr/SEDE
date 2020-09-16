@@ -3,7 +3,7 @@ package ai.services.composition.typing;
 import ai.services.composition.IIndexedInstruction;
 import ai.services.composition.graphs.nodes.IInstructionNode;
 import ai.services.composition.types.TypeClass;
-import ai.services.core.PrimitiveType;
+import ai.services.core.Primitives;
 
 public class TypeCheckException extends RuntimeException {
 
@@ -50,7 +50,7 @@ public class TypeCheckException extends RuntimeException {
         return unexpectedType(typeText, expectedType, message);
     }
 
-    public static TypeCheckException unexpectedConstantTypeDeclaration(PrimitiveType givenConstantType, String expectedType) {
+    public static TypeCheckException unexpectedConstantTypeDeclaration(Primitives givenConstantType, String expectedType) {
         return new TypeCheckException(String.format("Unexpected primitive type `%s` while method expects input type of `%s`.", givenConstantType, expectedType) +
             "\nHint: methods cannot declare NULL as input type. Check if input type declaration matched the enum fields in PrimitiveType.");
     }

@@ -72,16 +72,7 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
     @Override
     public void deployGraph(String executionId, ICompositionGraph toBeDeployed) throws GraphDeploymentException {
         final Executor executor = getExecutor();
-        GraphTaskExecution graphTaskExecution;
-        try {
-            graphTaskExecution = executor.acq().create(executionId);
-        } catch(IllegalStateException ex) {
-            throw new GraphDeploymentException(ex);
-        }
-        executor.acq().compute(graphTaskExecution, execution -> {
-            execution.addGraph(toBeDeployed);
-            execution.startExecution();
-        });
+        executor.deploy(executionId, toBeDeployed);
     }
 
 //    class LocalExecutorNotRegisteredException extends Exception {

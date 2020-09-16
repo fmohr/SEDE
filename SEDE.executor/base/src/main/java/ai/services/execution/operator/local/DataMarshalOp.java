@@ -345,7 +345,7 @@ public class DataMarshalOp extends MainTaskOperator {
     };
 
     private static final Function<Object, SEDEObject> PRIMITIVE_WRAPPER = val -> {
-        Optional<PrimitiveType> primitiveType = PrimitiveType.inferTypeFromValue(val);
+        Optional<Primitives> primitiveType = Primitives.inferTypeFromValue(val);
         if(primitiveType.isPresent()) {
             return new PrimitiveDataField(primitiveType.get(), val);
         } else {

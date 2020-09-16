@@ -206,8 +206,8 @@ public class InstructionOp extends MainTaskOperator {
                 .createServiceInstanceHandle((IServiceInstanceType) fieldType, fieldValue);
             returnObject = new ServiceInstanceField(serviceInstance);
         } else if (fieldType instanceof IPrimitiveValueType) {
-            PrimitiveType primitiveType = ((IPrimitiveValueType) fieldType).getPrimitiveType();
-            returnObject = new PrimitiveDataField(primitiveType, fieldValue);
+            Primitives primitives = ((IPrimitiveValueType) fieldType).getPrimitiveType();
+            returnObject = new PrimitiveDataField(primitives, fieldValue);
         } else if (fieldType instanceof IDataValueType) {
             String typeQualifier = fieldType.getTypeQualifier();
             returnObject = new ObjectDataField(typeQualifier, fieldValue);

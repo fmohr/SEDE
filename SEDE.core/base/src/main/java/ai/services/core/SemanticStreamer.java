@@ -55,7 +55,7 @@ public final class SemanticStreamer {
 	}
 
 	private static SEDEObject castStringToPrimitive(String data, String type){
-		PrimitiveType enumType = PrimitiveType.insensitiveValueOf(type).orElseThrow( () -> new RuntimeException("Primitive " + type + " not found."));
+		Primitives enumType = Primitives.insensitiveValueOf(type).orElseThrow( () -> new RuntimeException("Primitive " + type + " not found."));
 		return parsePrimitive(data, enumType);
 	}
 
@@ -215,9 +215,9 @@ public final class SemanticStreamer {
 		}
 	}
 
-	public static SEDEObject parsePrimitive(final String constantStr, final PrimitiveType primitiveType) {
+	public static SEDEObject parsePrimitive(final String constantStr, final Primitives primitives) {
 		final Object data;
-		switch (Objects.requireNonNull(primitiveType)) {
+		switch (Objects.requireNonNull(primitives)) {
 		case NULL:
 			data = null;
 			break;
@@ -237,6 +237,6 @@ public final class SemanticStreamer {
 		default:
 			throw new RuntimeException("All cases covered. Add default to have 'data' initialized.");
 		}
-		return new PrimitiveDataField(primitiveType.name(), data);
+		return new PrimitiveDataField(primitives.name(), data);
 	}
 }

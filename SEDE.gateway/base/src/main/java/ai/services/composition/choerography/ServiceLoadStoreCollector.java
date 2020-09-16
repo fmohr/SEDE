@@ -49,7 +49,7 @@ public class ServiceLoadStoreCollector
         boolean wasWritten = false;
         //This indicated the last index where there was a write to the field
         // Used to create a store after the last write
-        Long lastWritten = null;
+        Long lastAccess = null;
         // Indicates if the service was loaded and not created
         boolean wasLoaded = false;
 
@@ -64,15 +64,15 @@ public class ServiceLoadStoreCollector
                 if (isService && wasWritten && toBeStored) {
                     if (field.isInjected()) {
                         // store the service instance on this field before replacing its field with a new value.
-                        IExecutorContactInfo host = getInput().getInstExecutorMap().get(lastWritten).getContactInfo();
+                        IExecutorContactInfo host = getInput().getInstExecutorMap().get(lastAccess).getContactInfo();
                         String serviceId = null;
                         if (wasLoaded) {
                             serviceId = getInput().getInitialServices().get(fieldName).getId();
                         }
-                        getOutput().store(lastWritten, getInput().getIndexFactory().create(),
+                        getOutput().store(lastAccess, getInput().getIndexFactory().create(),
                             host.getQualifier(), field.getFieldname(), fieldType.getTypeQualifier(), serviceId);
                         wasWritten = false;
-                        lastWritten = null;
+                        lastAccess = null;
                     } else {
                         // if a service is not injected (isInjected returns false) then it is not stored.
                         // The reason for this is that the client does not have a handle for the service and the stored service couldn't be accessed anyway.
@@ -88,7 +88,7 @@ public class ServiceLoadStoreCollector
                     isService = true;
                     wasWritten = true;
                     isPresent = true;
-                    lastWritten = index;
+                    lastAccess = index;
                 }
             } else if(isService) {
                 if(fieldAccess.getAccessType().isRead() && !isPresent) {
@@ -107,18 +107,18 @@ public class ServiceLoadStoreCollector
                 }
                 if(fieldAccess.getAccessType().isWrite()) {
                     wasWritten = true;
-                    lastWritten = index;
                 }
+                lastAccess = index;
             }
         }
         // Add an additional store at the end all instructions:
         if(isService && wasWritten && toBeStored) {
-            IExecutorContactInfo host = getInput().getInstExecutorMap().get(lastWritten).getContactInfo();
+            IExecutorContactInfo host = getInput().getInstExecutorMap().get(lastAccess).getContactInfo();
             String serviceId = null;
             if(wasLoaded) {
                 serviceId = getInput().getInitialServices().get(fieldName).getId();
             }
-            getOutput().store(lastWritten, getInput().indexFactory.create(),
+            getOutput().store(lastAccess, getInput().indexFactory.create(),
                 host.getQualifier(), field.getFieldname(), fieldType.getTypeQualifier(), serviceId);
         }
     }

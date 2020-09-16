@@ -1,12 +1,11 @@
 package ai.services.composition;
 
+import ai.services.core.Primitives;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import ai.services.SEDEModelStyle;
-import ai.services.core.PrimitiveType;
 import org.immutables.value.Value;
 
 import javax.annotation.Nullable;
-import java.util.Optional;
 
 @SEDEModelStyle
 @Value.Immutable
@@ -43,12 +42,12 @@ public interface ITypeCoercion {
 
     @Value.Lazy
     public default boolean isNullPlug() {
-        return getSourceType().equals(PrimitiveType.NULL.name());
+        return getSourceType().equals(Primitives.NULL.name());
     }
 
     @Value.Lazy
     default boolean isPrimitive() {
-        return PrimitiveType.insensitiveValueOf(getSemanticType()).isPresent();
+        return Primitives.insensitiveValueOf(getSemanticType()).isPresent();
     }
 }
 

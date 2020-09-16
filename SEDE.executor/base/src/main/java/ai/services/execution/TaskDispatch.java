@@ -18,7 +18,7 @@ public abstract class TaskDispatch {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskDispatch.class);
 
-    private final boolean enqueueRunningTasks = true;
+    private final boolean enqueueRunningTasks = false;
 
     private final AccessControlQueue acq;
 
@@ -105,12 +105,15 @@ public abstract class TaskDispatch {
                                         AtomicBoolean toContinue) {
         transition.performTransition(task);
         if(task.is(Task.State.RUNNING)) {
-            logger.debug("Task `{}` is still running after applying operator. " +
+            if(enqueueRunningTasks) {
+                logger.debug("Task `{}` is still running after applying operator. " +
                     "Putting the task back into the queue.", task);
-            if(enqueueRunningTasks)
                 task.set(Task.State.QUEUED);
-            else
+            }
+            else {
+                logger.debug("Task `{}` continuing.", task);
                 toContinue.set(true);
+            }
         }
         if(task.is(Task.State.QUEUED)) {
             getExecution().enqueueTask(task);

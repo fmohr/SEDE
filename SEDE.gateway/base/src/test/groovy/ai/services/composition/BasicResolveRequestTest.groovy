@@ -12,7 +12,7 @@ import ai.services.composition.graphs.nodes.IServiceInstanceStorageNode
 import ai.services.composition.types.DataValueType
 import ai.services.composition.types.ServiceInstanceType
 import ai.services.composition.typing.TypeCheckException
-import ai.services.core.PrimitiveType
+import ai.services.core.Primitives
 import ai.services.core.ServiceInstanceHandle
 import spock.lang.Specification
 import spock.lang.Unroll
@@ -344,7 +344,7 @@ class BasicResolveRequestTest extends Specification {
                 it.constantValue == constant
         } as IParseConstantNode
         assert parseNode != null
-        assert parseNode.constantType == PrimitiveType.Number
+        assert parseNode.constantType == Primitives.Number
     }
 
     void assertAcceptDataBeforeUsage(ICompositionGraph graph, String fieldname) {

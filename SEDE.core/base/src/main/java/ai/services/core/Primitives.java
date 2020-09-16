@@ -2,15 +2,15 @@ package ai.services.core;
 
 import java.util.Optional;
 
-public enum PrimitiveType {
+public enum Primitives {
 
 
     NULL, String, Number, Bool;
 
-    public final static PrimitiveType[] VALUES = PrimitiveType.values(); // cache values result
+    public final static Primitives[] VALUES = Primitives.values(); // cache values result
 
-    public static Optional<PrimitiveType> insensitiveValueOf(String searchName) {
-        for (PrimitiveType type : VALUES) {
+    public static Optional<Primitives> insensitiveValueOf(String searchName) {
+        for (Primitives type : VALUES) {
             if (type.name().equalsIgnoreCase(searchName)) {
                 return Optional.of(type);
             }
@@ -18,7 +18,7 @@ public enum PrimitiveType {
         return Optional.empty();
     }
 
-    public static Optional<PrimitiveType> inferTypeFromValue(Object val) {
+    public static Optional<Primitives> inferTypeFromValue(Object val) {
         if(val instanceof Number) {
             return Optional.of(Number);
         } else if(val instanceof String) {

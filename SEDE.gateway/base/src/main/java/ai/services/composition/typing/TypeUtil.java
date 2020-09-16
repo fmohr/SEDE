@@ -7,7 +7,7 @@ import ai.services.IServiceRef;
 import ai.services.SDLLookupService;
 import ai.services.composition.graphs.nodes.IMarshalNode;
 import ai.services.composition.types.serialization.IMarshalling;
-import ai.services.core.PrimitiveType;
+import ai.services.core.Primitives;
 import ai.services.exec.IServiceDesc;
 import ai.services.types.IDataTypeDesc;
 import ai.services.types.IDataTypeRef;
@@ -88,12 +88,12 @@ public class TypeUtil {
         /*
          * Assume type is a primitive qualifier, i.e. "Number", "String", "Bool"
          */
-        Optional<PrimitiveType> primTypeOpt = PrimitiveType.insensitiveValueOf(returnType);
+        Optional<Primitives> primTypeOpt = Primitives.insensitiveValueOf(returnType);
         if(primTypeOpt.isPresent()) {
             /*
              * Method cannot declare the NULL class as its return value.
              */
-            if(primTypeOpt.get() == PrimitiveType.NULL) {
+            if(primTypeOpt.get() == Primitives.NULL) {
                 throw TypeCheckException.methodReturnsNullClass();
             }
             IPrimitiveValueType primValType = PrimitiveValueType.builder()

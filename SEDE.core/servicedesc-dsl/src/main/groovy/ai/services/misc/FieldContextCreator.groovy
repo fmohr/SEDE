@@ -3,7 +3,7 @@ package ai.services.misc
 
 import ai.services.composition.IFieldType
 import ai.services.composition.types.TypeClass
-import ai.services.core.PrimitiveType
+import ai.services.core.Primitives
 
 class FieldContextCreator {
 
@@ -40,7 +40,7 @@ class FieldContextCreator {
             .build());
     }
 
-    def prim(String fieldName, PrimitiveType primType) {
+    def prim(String fieldName, Primitives primType) {
         addType(fieldName, ai.services.composition.types.PrimitiveValueType.builder()
             .primitiveType(primType)
             .build());

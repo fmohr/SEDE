@@ -130,12 +130,14 @@ public class SDLUtil {
     }
 
     private static void mergeInto(Map target, Map source) {
-        for (Object key : target.keySet()) {
-            if(source.containsKey(key)) {
+        for (Object key : source.keySet()) {
+            if(target.containsKey(key)) {
                 boolean merged = mergeUntypedInto(target.get(key), source.get(key));
                 if(!merged) {
                     target.put(key, source.get(key));
                 }
+            } else {
+                target.put(key, source.get(key));
             }
         }
     }

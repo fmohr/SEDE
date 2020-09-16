@@ -6,9 +6,10 @@ import ai.services.composition.choerography.emulation.executors.GraphTraversal
 import ai.services.composition.graphs.nodes.IInstructionNode
 import ai.services.composition.graphs.nodes.IServiceInstanceStorageNode
 import ai.services.composition.graphs.nodes.ITransmitDataNode
-import de.upb.sede.composition.graphs.nodes.*
+import ai.services.composition.types.ServiceInstanceType
 import ai.services.core.ServiceInstanceHandle
 import ai.services.requests.resolve.beta.IResolvePolicy
+import ai.services.requests.resolve.beta.ResolvePolicy
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -374,6 +375,52 @@ class ServiceLoadStoreRRTest extends Specification {
 
         where:
         storeService << [true, false]
+    }
+
+    def "pure method invoked before store"() {
+        def description =
+            """A pure method is called on a service.
+            |The expected behaviour is that the method is called before the service is stored.""".stripMargin()
+        when:
+        def rr = RRGen.fromClosure {
+            composition = """
+            s0 = ai.service.ServiceWithPureMethods::__construct();
+            s0::impureMethod();
+            s0::pureMethod();
+            """
+            resolvePolicy = ResolvePolicy.builder()
+                .build();
+        }
+
+        def testRunner = new ResolutionTestBaseRunner("ServiceLoadStore",
+            "05_PureMethods")
+        testRunner.setClientExecutor("client")
+        testRunner.testPlainText = description
+        testRunner.addExecutor("executor1", "ai.service.ServiceWithPureMethods")
+
+        then:
+        testRunner.start(rr)
+        testRunner.assertStaticAnalysisExceptionMatches(null)
+        testRunner.assertSimulationExceptionMatches(null)
+        testRunner.writeOutputs()
+
+        def cc = testRunner.getCc()
+        def s0FieldAnalysis = cc.fields.find { it.fieldname == "s0"}
+        s0FieldAnalysis.fieldAccesses.findAll {
+            it.index == 2
+        }.each {
+            assert it.accessType != IFieldAccess.AccessType.WRITE
+        }
+
+        def comp = testRunner.getChoreography().compositionGraph.find {
+            it.getExecutorHandle().qualifier == "executor1"
+        }
+        def execGraph = new ExecutionGraph(comp)
+        def storeNode = execGraph.nodes.find {
+            it instanceof IServiceInstanceStorageNode
+        } as IServiceInstanceStorageNode
+        assert storeNode != null
+        RRTestHelpers.assertExecutedAfter(execGraph, storeNode, 2L)
     }
 
 }

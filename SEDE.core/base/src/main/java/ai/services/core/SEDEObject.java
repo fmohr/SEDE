@@ -35,7 +35,7 @@ public abstract class SEDEObject implements JsonSerializable, Serializable {
 	}
 
 	public static boolean isPrimitive(String type) {
-		for (PrimitiveType primitivType : PrimitiveType.values()) {
+		for (Primitives primitivType : Primitives.values()) {
 			if (type.equalsIgnoreCase(primitivType.toString())) {
 				return true;
 			}

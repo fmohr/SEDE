@@ -1,9 +1,10 @@
 package ai.services.execution.operator.local
 
+
 import ai.services.execution.Task
 import ai.services.execution.local.LocalFieldContext
 import ai.services.composition.graphs.nodes.ParseConstantNode
-import ai.services.core.PrimitiveType
+import ai.services.core.Primitives
 import ai.services.core.SEDEObject
 import spock.lang.Specification
 
@@ -12,7 +13,7 @@ class ParseConstantOpTest extends Specification {
 
     def "RunTask"() {
         def fields = new LocalFieldContext("c")
-        def task = new Task(fields, ParseConstantNode.builder().constantType(PrimitiveType.Number).constantValue("159.2").build())
+        def task = new Task(fields, ParseConstantNode.builder().constantType(Primitives.Number).constantValue("159.2").build())
         task.set(Task.State.RUNNING)
         def op = new ParseConstantOp()
 
@@ -25,41 +26,41 @@ class ParseConstantOpTest extends Specification {
         task.is(Task.State.RUNNING)
         fields.hasField("159.2")
         fields.getFieldValue("159.2").dataField == 159.2
-        fields.getFieldValue("159.2").type == PrimitiveType.Number.name()
+        fields.getFieldValue("159.2").type == Primitives.Number.name()
     }
 
     def "ParsePrimitive"() {
         when:
-        def parsed = ParseConstantOp.parsePrimitive("\"Some Content\"", PrimitiveType.String)
+        def parsed = ParseConstantOp.parsePrimitive("\"Some Content\"", Primitives.String)
         then:
         verifyAll {
             assertPrimitiveFlagsAreSet(parsed)
-            parsed.type == PrimitiveType.String.name()
+            parsed.type == Primitives.String.name()
             parsed.dataField == "Some Content"
         }
 
         when:
-        parsed = ParseConstantOp.parsePrimitive("1.0", PrimitiveType.Number)
+        parsed = ParseConstantOp.parsePrimitive("1.0", Primitives.Number)
         then:
         verifyAll {
             assertPrimitiveFlagsAreSet(parsed)
-            parsed.type == PrimitiveType.Number.name()
+            parsed.type == Primitives.Number.name()
             parsed.dataField == 1.0
         }
         when:
-        parsed = ParseConstantOp.parsePrimitive("true", PrimitiveType.Bool)
+        parsed = ParseConstantOp.parsePrimitive("true", Primitives.Bool)
         then:
         verifyAll {
             assertPrimitiveFlagsAreSet(parsed)
-            parsed.type == PrimitiveType.Bool.name()
+            parsed.type == Primitives.Bool.name()
             parsed.dataField == true
         }
         when:
-        parsed = ParseConstantOp.parsePrimitive("NULL", PrimitiveType.NULL)
+        parsed = ParseConstantOp.parsePrimitive("NULL", Primitives.NULL)
         then:
         verifyAll {
             assertPrimitiveFlagsAreSet(parsed)
-            parsed.type == PrimitiveType.NULL.name()
+            parsed.type == Primitives.NULL.name()
             parsed.dataField == null
         }
 

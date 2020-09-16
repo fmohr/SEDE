@@ -10,7 +10,7 @@ import ai.services.composition.choerography.emulation.OpsSchedule;
 import ai.services.composition.faa.FieldAccessUtil;
 import ai.services.composition.types.serialization.IMarshalling;
 import ai.services.composition.typing.TypeCheckException;
-import ai.services.core.PrimitiveType;
+import ai.services.core.Primitives;
 import ai.services.exec.IExecutorHandle;
 import ai.services.requests.resolve.beta.IResolveRequest;
 import ai.services.types.IDataTypeDesc;
@@ -103,7 +103,7 @@ public class InstInputCollector
             } else if(typeCoercion.hasConstant()) {
                 IParseConstantNode parseC = ParseConstantNode.builder()
                     .constantValue(Objects.requireNonNull(typeCoercion.getConstant()))
-                    .constantType(PrimitiveType.valueOf(typeCoercion.getSourceType()))
+                    .constantType(Primitives.valueOf(typeCoercion.getSourceType()))
                     .hostExecutor(executorH.getQualifier())
                     .index(getInput().getIndexFactory().create())
                     .build();
@@ -158,7 +158,7 @@ public class InstInputCollector
                     if(typeCoercion.isPrimitive()) {
                         fieldCast = createPrimitiveCast(sourceLocation, executorH,
                             fieldname, PrimitiveValueType.builder()
-                            .primitiveType(PrimitiveType.insensitiveValueOf(typeCoercion.getSemanticType()).get())
+                            .primitiveType(Primitives.insensitiveValueOf(typeCoercion.getSemanticType()).get())
                             .build());
                     } else {
                         fieldCast = createDataValueTransmissionSerialisation(sourceLocation, executorH,

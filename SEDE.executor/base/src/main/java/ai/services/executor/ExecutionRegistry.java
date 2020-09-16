@@ -57,7 +57,7 @@ public class ExecutionRegistry {
         }
     }
 
-    public synchronized Optional<GraphTaskExecution> get(String execId) {
+    protected synchronized Optional<GraphTaskExecution> get(String execId) {
         return Optional.ofNullable(execs.getOrDefault(execId, null));
     }
 

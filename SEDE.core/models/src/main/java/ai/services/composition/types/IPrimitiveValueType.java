@@ -1,8 +1,8 @@
 package ai.services.composition.types;
 
+import ai.services.core.Primitives;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import ai.services.SEDEModelStyle;
-import ai.services.core.PrimitiveType;
 import org.immutables.value.Value;
 
 @SEDEModelStyle
@@ -17,6 +17,6 @@ public interface IPrimitiveValueType extends TypeClass, ValueTypeClass {
         return getPrimitiveType().toString();
     }
 
-    PrimitiveType getPrimitiveType();
+    Primitives getPrimitiveType();
 
 }

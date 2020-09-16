@@ -1,19 +1,11 @@
 package ai.services.composition.typing;
 
 import ai.services.composition.types.*;
-import ai.services.SDLLookupService;
 import ai.services.composition.InstWiseCompileStep;
 import ai.services.composition.InstOutputIterator;
 import ai.services.composition.graphs.nodes.IInstructionNode;
-import ai.services.core.PrimitiveType;
 import ai.services.exec.IMethodDesc;
 import ai.services.exec.IMethodParameterDesc;
-import ai.services.exec.IServiceDesc;
-import ai.services.IServiceRef;
-import ai.services.types.IDataTypeDesc;
-import ai.services.types.IDataTypeRef;
-
-import java.util.Optional;
 
 
 /**

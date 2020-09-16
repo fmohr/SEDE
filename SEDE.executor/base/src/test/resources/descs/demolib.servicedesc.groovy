@@ -1,4 +1,7 @@
+package descs
+
 import ai.services.SDL
+import groovy.transform.NamedDelegate
 
 import static ai.services.StandardDefs.*;
 
@@ -16,23 +19,18 @@ collection ("demolib") {
     /*
      * Types:
      */
-    def NummerList = type('demo.types.NummerList') {
+    def typeDef = {
         aux {
-            javaMarshalling {
-                mappedClassName = 'demo.types.DemoCaster'
+            javaMarshalling{
+                useCustomHandler = true
+                handlerClass = 'demo.types.DemoCaster'
+                useLegacyPattern = true
             }
         }
         semanticType = 'Arr'
     }
-
-    def Punkt = type('demo.types.Punkt') {
-        aux {
-            javaMarshalling {
-                mappedClassName = 'demo.types.DemoCaster'
-            }
-        }
-        semanticType = 'Arr'
-    }
+    def NummerList = type('demo.types.NummerList', typeDef)
+    def Punkt = type('demo.types.Punkt', typeDef)
 
     /*
      * Services:

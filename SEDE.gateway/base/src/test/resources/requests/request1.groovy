@@ -6,7 +6,7 @@ import ai.services.composition.RRGen
 import ai.services.composition.types.DataValueType
 import ai.services.composition.types.PrimitiveValueType
 import ai.services.composition.types.ServiceInstanceType
-import ai.services.core.PrimitiveType
+import ai.services.core.Primitives
 import ai.services.core.ServiceInstanceHandle
 import ai.services.exec.ExecutorCapabilities
 import ai.services.exec.ExecutorContactInfo
@@ -52,7 +52,7 @@ ResolveRequest.builder()
         FieldType.builder()
             .fieldname("f3")
             .type(PrimitiveValueType.builder()
-                .primitiveType(PrimitiveType.Number)
+                .primitiveType(Primitives.Number)
                 .build())
             .build(),
         FieldType.builder()

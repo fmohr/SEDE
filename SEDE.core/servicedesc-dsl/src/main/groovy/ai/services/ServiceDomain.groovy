@@ -31,12 +31,12 @@ class ServiceDomain
         return model
     }
 
-    static def setStateful(MutableServiceDesc model, Closure typeDescriber = Closure.IDENTITY) {
-        setStateType(model, model.qualifier, typeDescriber)
+    static def setStateful(MutableServiceDesc model) {
+        setStateType(model, model.qualifier)
     }
 
     @PackageScope
-    static def setStateType(MutableServiceDesc model, String dataTypeQualifier, Closure typeDescriber = Closure.IDENTITY) {
+    static def setStateType(MutableServiceDesc model, String dataTypeQualifier) {
 //        topDomain.type(dataTypeQualifier, typeDescriber)
         model.fieldTypes[IServiceDesc.STATE_FIELD] = dataTypeQualifier
     }
@@ -101,6 +101,10 @@ class ServiceDomain
 
     static def constructor(MutableServiceDesc model, Map methodDef) {
         return constructor(model, methodDef, Defaults.defaults.constructor)
+    }
+
+    static def constructor(MutableServiceDesc model, @DelegatesTo(MutableMethodDesc) Closure signatureDescriber) {
+        return constructor(model, Collections.emptyMap(), signatureDescriber)
     }
 
     static def constructor(MutableServiceDesc model, Map signatureDef, @DelegatesTo(MutableMethodDesc) Closure signatureDescriber) {

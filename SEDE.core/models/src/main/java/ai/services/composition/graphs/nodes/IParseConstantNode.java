@@ -1,8 +1,8 @@
 package ai.services.composition.graphs.nodes;
 
+import ai.services.core.Primitives;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import ai.services.SEDEModelStyle;
-import ai.services.core.PrimitiveType;
 import org.immutables.value.Value;
 
 @SEDEModelStyle
@@ -13,7 +13,7 @@ public interface IParseConstantNode extends BaseNode {
 
     String getConstantValue();
 
-    PrimitiveType getConstantType();
+    Primitives getConstantType();
 
     @Override
     default String getText() {

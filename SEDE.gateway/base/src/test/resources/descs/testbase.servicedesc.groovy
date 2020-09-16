@@ -126,3 +126,21 @@ def permuteTypes(List<String> types, Integer signatureNr) {
     }
 }
 
+
+collection("ServiceLoadStoreTests") {
+
+    service("ai.service.ServiceWithPureMethods") {
+
+        setStateful()
+
+        constructor()
+
+        method(name: "impureMethod") {
+            isPure = false // default
+        }
+
+        method(name: "pureMethod") {
+            isPure = true
+        }
+    }
+}

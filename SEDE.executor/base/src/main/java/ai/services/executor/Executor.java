@@ -1,5 +1,7 @@
 package ai.services.executor;
 
+import ai.services.channels.GraphDeploymentException;
+import ai.services.composition.graphs.nodes.ICompositionGraph;
 import ai.services.exec.*;
 import ai.services.execution.GraphTaskExecution;
 import ai.services.beta.ExecutorRegistration;
@@ -69,6 +71,20 @@ public class Executor {
             }
         });
         closingHooks.forEach(Runnable::run);
+    }
+
+    public GraphTaskExecution deploy(String executionId, ICompositionGraph toBeDeployed) throws GraphDeploymentException {
+        GraphTaskExecution graphTaskExecution;
+        try {
+            graphTaskExecution = this.acq().create(executionId);
+        } catch(IllegalStateException ex) {
+            throw new GraphDeploymentException(ex);
+        }
+        this.acq().compute(graphTaskExecution, execution -> {
+            execution.addGraph(toBeDeployed);
+            execution.startExecution();
+        });
+        return graphTaskExecution;
     }
 
 }

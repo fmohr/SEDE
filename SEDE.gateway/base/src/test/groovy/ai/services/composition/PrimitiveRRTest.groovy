@@ -5,7 +5,7 @@ import ai.services.composition.choerography.emulation.executors.ExecutionGraph
 import ai.services.composition.choerography.emulation.executors.GraphTraversal
 import ai.services.composition.graphs.nodes.IParseConstantNode
 import ai.services.composition.types.PrimitiveValueType
-import ai.services.core.PrimitiveType
+import ai.services.core.Primitives
 import spock.lang.Specification
 
 class PrimitiveRRTest extends Specification {
@@ -43,18 +43,18 @@ class PrimitiveRRTest extends Specification {
 
         def execGraph = testRunner.getExecGraph("executor1")
 
-        def parse5 = assertParseConstantExists(execGraph, "5", PrimitiveType.Number)
-        def parse9p3 = assertParseConstantExists(execGraph, "9.3", PrimitiveType.Number)
+        def parse5 = assertParseConstantExists(execGraph, "5", Primitives.Number)
+        def parse9p3 = assertParseConstantExists(execGraph, "9.3", Primitives.Number)
         RRTestHelpers.assertExecutedBefore(execGraph, parse5, 0L)
         RRTestHelpers.assertExecutedBefore(execGraph, parse9p3, 0L)
 
-        def parseabc = assertParseConstantExists(execGraph, "\"abc\"", PrimitiveType.String)
-        def parsedef = assertParseConstantExists(execGraph, "\"def\"", PrimitiveType.String)
+        def parseabc = assertParseConstantExists(execGraph, "\"abc\"", Primitives.String)
+        def parsedef = assertParseConstantExists(execGraph, "\"def\"", Primitives.String)
         RRTestHelpers.assertExecutedBefore(execGraph, parseabc, 1L)
         RRTestHelpers.assertExecutedBefore(execGraph, parsedef, 1L)
 
-        def parsetrue = assertParseConstantExists(execGraph, "true", PrimitiveType.Bool)
-        def parsefalse = assertParseConstantExists(execGraph, "false", PrimitiveType.Bool)
+        def parsetrue = assertParseConstantExists(execGraph, "true", Primitives.Bool)
+        def parsefalse = assertParseConstantExists(execGraph, "false", Primitives.Bool)
         RRTestHelpers.assertExecutedBefore(execGraph, parsetrue, 2L)
         RRTestHelpers.assertExecutedBefore(execGraph, parsefalse, 2L)
 
@@ -63,7 +63,7 @@ class PrimitiveRRTest extends Specification {
         RRTestHelpers.assertExecutedBefore(execGraph, parsetrue, 3L)
     }
 
-    IParseConstantNode assertParseConstantExists(ExecutionGraph graph, String constant, PrimitiveType expectedType) {
+    IParseConstantNode assertParseConstantExists(ExecutionGraph graph, String constant, Primitives expectedType) {
         def parseNode = GraphTraversal.topologicalSort(graph).find {
             it instanceof  IParseConstantNode &&
                 it.constantValue == constant
@@ -107,11 +107,11 @@ class PrimitiveRRTest extends Specification {
         def execGraph1 = testRunner.getExecGraph("executor1")
         def execGraph2 = testRunner.getExecGraph("executor2")
 
-        assertParseConstantExists(execGraph1, "5", PrimitiveType.Number)
-        assertParseConstantExists(execGraph1, "6", PrimitiveType.Number)
+        assertParseConstantExists(execGraph1, "5", Primitives.Number)
+        assertParseConstantExists(execGraph1, "6", Primitives.Number)
 
-        assertParseConstantExists(execGraph2, "5", PrimitiveType.Number)
-        assertParseConstantExists(execGraph2, "7", PrimitiveType.Number)
+        assertParseConstantExists(execGraph2, "5", Primitives.Number)
+        assertParseConstantExists(execGraph2, "7", Primitives.Number)
     }
 
 
@@ -172,25 +172,25 @@ class PrimitiveRRTest extends Specification {
             initialContext.add(FieldType.builder()
                 .fieldname("nrField1")
                 .type(PrimitiveValueType.builder()
-                    .primitiveType(PrimitiveType.Number)
+                    .primitiveType(Primitives.Number)
                     .build())
                 .build())
             initialContext.add(FieldType.builder()
                 .fieldname("nrField2")
                 .type(PrimitiveValueType.builder()
-                    .primitiveType(PrimitiveType.Number)
+                    .primitiveType(Primitives.Number)
                     .build())
                 .build())
             initialContext.add(FieldType.builder()
                 .fieldname("boolField1")
                 .type(PrimitiveValueType.builder()
-                    .primitiveType(PrimitiveType.String)
+                    .primitiveType(Primitives.String)
                     .build())
                 .build())
             initialContext.add(FieldType.builder()
                 .fieldname("stringField1")
                 .type(PrimitiveValueType.builder()
-                    .primitiveType(PrimitiveType.Bool)
+                    .primitiveType(Primitives.Bool)
                     .build())
                 .build())
         }

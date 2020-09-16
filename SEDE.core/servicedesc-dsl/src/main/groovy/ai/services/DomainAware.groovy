@@ -12,8 +12,6 @@ class DomainAware<M, T> implements GroovyObject{
 
 //    @PackageScope T topDomain
 
-    static def defaults = Defaults.defaults
-
     @PackageScope static void read(model, Closure describer) {
 //        def code = describer.rehydrate(model, this, this)
         def code = describer
@@ -26,7 +24,4 @@ class DomainAware<M, T> implements GroovyObject{
     static void delegateDown(domain, model, Closure describer) {
         read(model, describer)
     }
-
-
-
 }

@@ -4,7 +4,7 @@ import ai.services.composition.*;
 import ai.services.composition.graphs.nodes.IInstructionNode;
 import ai.services.composition.types.IDataValueType;
 import ai.services.composition.types.TypeClass;
-import ai.services.core.PrimitiveType;
+import ai.services.core.Primitives;
 import ai.services.exec.IMethodDesc;
 import ai.services.types.IDataTypeDesc;
 import ai.services.types.IDataTypeRef;
@@ -47,9 +47,9 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
                 /*
                  * The given param is a constant, e.g. a number like `5`
                  */
-                PrimitiveType givenConstantType = FMCompositionParser.primitiveTypeFor(instParam);
+                Primitives givenConstantType = FMCompositionParser.primitiveTypeFor(instParam);
 
-                if(givenConstantType == PrimitiveType.NULL) {
+                if(givenConstantType == Primitives.NULL) {
                     /*
                      * null can be plugged into any expected type.
                      *
@@ -59,10 +59,10 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
                     /*
                      * Typecheck primitive types: check if the given primitive type matches the declared one:
                      */
-                    PrimitiveType expectedConstantType;
-                    expectedConstantType = PrimitiveType.insensitiveValueOf(expectedInputType).orElse(null);
+                    Primitives expectedConstantType;
+                    expectedConstantType = Primitives.insensitiveValueOf(expectedInputType).orElse(null);
 
-                    if (expectedConstantType == null || expectedConstantType == PrimitiveType.NULL) {
+                    if (expectedConstantType == null || expectedConstantType == Primitives.NULL) {
                         throw TypeCheckException.unexpectedConstantTypeDeclaration(givenConstantType, expectedInputType);
                     }
                     if(expectedConstantType != givenConstantType) {
@@ -98,12 +98,12 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
     private ITypeCoercion nullParam(String constant, String expectedType) {
         return TypeCoercion.builder()
             .constant(constant)
-            .sourceType(PrimitiveType.NULL.name())
+            .sourceType(Primitives.NULL.name())
             .resultType(expectedType)
             .build();
     }
 
-    private ITypeCoercion constantParam(String constant, PrimitiveType primType) {
+    private ITypeCoercion constantParam(String constant, Primitives primType) {
         /*
          * The parameter is a constant.
          * Replace the input type by the primitive type:
@@ -113,7 +113,7 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
     }
 
     private ITypeCoercion castValue(String sourceType, String targetType) {
-        if(PrimitiveType.insensitiveValueOf(sourceType).isPresent()) {
+        if(Primitives.insensitiveValueOf(sourceType).isPresent()) {
             return castPrimitive(sourceType, targetType);
         }
 
@@ -142,8 +142,8 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
     }
 
     private ITypeCoercion castPrimitive(String sourceType, String targetType) {
-        Optional<PrimitiveType> sourcePTime = PrimitiveType.insensitiveValueOf(targetType);
-        Optional<PrimitiveType> targetPType = PrimitiveType.insensitiveValueOf(targetType);
+        Optional<Primitives> sourcePTime = Primitives.insensitiveValueOf(targetType);
+        Optional<Primitives> targetPType = Primitives.insensitiveValueOf(targetType);
 
         if(sourcePTime.isPresent() && targetPType.isPresent()) {
             if(sourcePTime.get() != targetPType.get()) {
@@ -158,7 +158,7 @@ public class ParamTypeCoercionResolver extends InstWiseCompileStep<TCInput, TCOu
     }
 
 
-    static ITypeCoercion primType(String constant, PrimitiveType primT) {
+    static ITypeCoercion primType(String constant, Primitives primT) {
         ITypeCoercion tc = TypeCoercion.builder()
             .constant(constant)
             .sourceType(primT.name())

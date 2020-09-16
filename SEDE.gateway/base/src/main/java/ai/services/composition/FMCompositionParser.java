@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 
 import ai.services.composition.graphs.nodes.InstructionNode;
 import ai.services.composition.graphs.nodes.MutableInstructionNode;
-import ai.services.core.PrimitiveType;
+import ai.services.core.Primitives;
 import ai.services.exceptions.FMCompositionSyntaxException;
 
 /**
@@ -326,16 +326,16 @@ public final class FMCompositionParser {
 	}
 
 
-    public static PrimitiveType primitiveTypeFor(String constant) {
+    public static Primitives primitiveTypeFor(String constant) {
         if (FMCompositionParser.isConstant(constant)) {
             if (FMCompositionParser.isConstantString(constant))
-                return PrimitiveType.String;
+                return Primitives.String;
             if (FMCompositionParser.isConstantBool(constant))
-                return PrimitiveType.Bool;
+                return Primitives.Bool;
             if (FMCompositionParser.isConstantNumber(constant))
-                return PrimitiveType.Number;
+                return Primitives.Number;
             if (FMCompositionParser.isConstantNull(constant))
-                return PrimitiveType.NULL;
+                return Primitives.NULL;
         }
 
         /* given constant isn't a constant */

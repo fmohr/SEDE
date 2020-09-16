@@ -26,7 +26,7 @@ public class AccessControlQueue extends ExecutionRegistry {
         }
         Optional<TaskEntry> job = searchNextJob(workerProfile);
         while(!job.isPresent()) {
-            logger.debug("No job found to take. Waiting until one becomes available.");
+            logger.trace("No job found to take. Waiting until one becomes available.");
             this.wait();
             job = searchNextJob(workerProfile);
         }
@@ -88,8 +88,8 @@ public class AccessControlQueue extends ExecutionRegistry {
         return first.orElse(null);
     }
 
-    public synchronized void waitUntilFinished(String execId) throws InterruptedException {
-        waitUntil(execId, exec -> exec.map(e -> e.isFinished() || e.isInterrupted()).orElse(true));
+    public synchronized GraphTaskExecution waitUntilFinished(String execId) throws InterruptedException {
+        return waitUntil(execId, exec -> exec.map(e -> e.isFinished() || e.isInterrupted()).orElse(true));
     }
 
 }

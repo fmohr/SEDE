@@ -38,4 +38,9 @@ public class Maps {
 		intersection.retainAll(b.keySet());
 		return intersection;
 	}
+
+	public static <K, V> Map<K,V> deleteNullValues(Map<K,V> map) {
+        map.entrySet().removeIf(entry -> entry.getValue() == null);
+        return map;
+    }
 }

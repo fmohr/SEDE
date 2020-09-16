@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
+import static ai.services.util.Maps.deleteNullValues;
 import static ai.services.util.SDLUtil.gatherAux;
 
 @SuppressWarnings({"unchecked", "rawtypes"})
@@ -67,7 +68,7 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
             .from(loadStoreOp)
             .serviceInstanceStorageNode(ServiceInstanceStorageNode.builder()
                 .from(node)
-                .putAllRuntimeAuxiliaries(auxiliaries)
+                .putAllRuntimeAuxiliaries(deleteNullValues(auxiliaries))
                 .build())
             .build();
     }
@@ -93,7 +94,7 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
             .from(op)
             .transmitDataNode(TransmitDataNode.builder()
                 .from(op.getTransmitDataNode())
-                .putAllRuntimeAuxiliaries(typeAux)
+                .putAllRuntimeAuxiliaries(deleteNullValues(typeAux))
                 .build())
             .build();
     }
@@ -107,7 +108,7 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
         Map typeAux = getAuxFromMarshalling(marshalling);
         return MarshalNode.builder()
             .from(marshalNode)
-            .putAllRuntimeAuxiliaries(typeAux)
+            .putAllRuntimeAuxiliaries(deleteNullValues(typeAux))
             .build();
     }
 
@@ -133,7 +134,7 @@ public class AuxDecorator extends AbstractExecutorDecorator<EmulatedOp> {
             .from(instOp)
             .instructionNode(InstructionNode.builder()
                 .from(instOp.getInstructionNode())
-                .putAllRuntimeAuxiliaries(methodAux)
+                .putAllRuntimeAuxiliaries(deleteNullValues(methodAux))
                 .build())
             .build();
     }

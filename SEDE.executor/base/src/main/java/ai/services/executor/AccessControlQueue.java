@@ -89,7 +89,9 @@ public class AccessControlQueue extends ExecutionRegistry {
     }
 
     public synchronized GraphTaskExecution waitUntilFinished(String execId) throws InterruptedException {
-        return waitUntil(execId, exec -> exec.map(e -> e.isFinished() || e.isInterrupted()).orElse(true));
+        return waitUntil(execId, exec -> exec
+            .map(e -> e.isFinished() || e.isInterrupted())
+            .orElse(true));
     }
 
 }

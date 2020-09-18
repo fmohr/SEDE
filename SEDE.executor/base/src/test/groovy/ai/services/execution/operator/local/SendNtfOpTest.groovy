@@ -2,6 +2,7 @@ package ai.services.execution.operator.local
 
 import ai.services.channels.ChannelService
 import ai.services.channels.ExecutorCommChannel
+import ai.services.composition.INotifyRequest
 import ai.services.execution.Task
 import ai.services.execution.local.LocalFieldContext
 import ai.services.composition.graphs.nodes.INotification
@@ -30,7 +31,10 @@ class SendNtfOpTest extends Specification {
 
         def channel = Mock(ChannelService) {
             interExecutorCommChannel(contactInfo) >> Mock(ExecutorCommChannel) {
-                1 * pushNotification("c", ntf)
+                1 * pushNotification({
+                    def param = it as INotifyRequest
+                    return ntf == param &&  param.executionId() == "c"
+                })
                 0 * _
             }
         }

@@ -33,7 +33,8 @@ public class StdLocalOperations {
             new SendNtfOp(channelService),
             new ServiceStorageOp(channelService),
             new TransmitDataOp(channelService),
-            new WaitForNtfOp()
+            new WaitForNtfOp(),
+            new NopOp()
         );
         if(logger.isDebugEnabled()) {
             mainTaskOperators = mainTaskOperators.stream().map(op -> new TaskLoggerOperator(op)).collect(Collectors.toList());

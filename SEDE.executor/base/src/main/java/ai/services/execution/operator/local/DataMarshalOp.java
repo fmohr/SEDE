@@ -158,7 +158,7 @@ public class DataMarshalOp extends MainTaskOperator {
         Map<String, Object> map = MAPPER.readValue(data, Map.class);
         ServiceInstanceHandle handle = new ServiceInstanceHandle();
         handle.fromJson(map);
-        if(map.containsKey("instance")) {
+        if(map.containsKey("instance") && map.get("instance") != null) {
             String base64Encoded = (String) map.get("instance");
             byte[] serviceInstanceSerialised = MAPPER.readValue(base64Encoded, byte[].class);
             Object serviceInstance = readObject(serviceInstanceSerialised, supplyType, marshalAux);
@@ -317,7 +317,8 @@ public class DataMarshalOp extends MainTaskOperator {
             if(marshalMethod != null) {
                 return marshalMethod;
             }
-        } else if(marshalAux.useLegacyPattern()) {
+        }
+        if(marshalAux.useLegacyPattern()) {
             return legacyMarshalMethodName(targetType, direction);
         }
         throw new IllegalArgumentException("Cannot infer the method to unmarshal the data from the supplied marshal aux: " + marshalAux);
@@ -355,7 +356,7 @@ public class DataMarshalOp extends MainTaskOperator {
 
     private Function<Object, SEDEObject> getObjectWrapper(final TypeClass valueType) {
         if(TypeClass.isServiceHandle(valueType)) {
-            ValueTypeClass referencedType = ((IRefType) (TypeClass.tryDeref(valueType))).getTypeOfRef();
+            ValueTypeClass referencedType = TypeClass.tryDeref(valueType);
             if(referencedType instanceof IServiceInstanceType) {
                 return SERVICE_INSTANCE_HANDLE_WRAPPER;
             } else {

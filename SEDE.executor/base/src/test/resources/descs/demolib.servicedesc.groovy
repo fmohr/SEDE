@@ -23,7 +23,7 @@ collection ("demolib") {
         aux {
             javaMarshalling{
                 useCustomHandler = true
-                handlerClass = 'demo.types.DemoCaster'
+                handlerClass = 'ai.services.NewDemoCaster'
                 useLegacyPattern = true
             }
         }
@@ -49,9 +49,14 @@ collection ("demolib") {
             isPure = true
         }
 
-        method (name: 'summierListe', inputs: [NummerList, NummerList], output: NummerList) {
+        method (name: 'summier', inputs: [NummerList, NummerList], output: NummerList) {
             isPure = true
             isContextFree = true
+            aux {
+                javaDispatch {
+                    methodName = "summierListe"
+                }
+            }
         }
 
         method (name: 'summier', input: NummerList, output: number) {
@@ -78,8 +83,13 @@ collection ("demolib") {
 
         method (name: 'calc', input: number, output: Punkt)
 
-        method (name: 'liagtAufGerade', input: Punkt, output: bool) {
+        method (name: 'liegtAufGerade', input: Punkt, output: bool) {
             isPure = true
+            aux{
+                javaDispatch {
+                    methodName = 'liagtAufGerade'
+                }
+            }
         }
 
         method (name: 'achsenabschnitt', output: Punkt) {

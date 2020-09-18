@@ -9,14 +9,27 @@ import ai.services.composition.graphs.nodes.BaseNode;
  */
 public abstract class MainTaskOperator extends AbstractOperator {
 
-    private final Class<? extends BaseNode> taskDomain;
+    private final boolean acceptFailedTasks;
+
+    protected final Class<? extends BaseNode> taskDomain;
+
+    public MainTaskOperator(boolean acceptFailedTasks, Class<? extends BaseNode> taskDomain) {
+        this.taskDomain = taskDomain;
+        this.acceptFailedTasks = acceptFailedTasks;
+    }
+
+    public MainTaskOperator(boolean acceptFailedTasks) {
+        this.taskDomain = null;
+        this.acceptFailedTasks = acceptFailedTasks;
+    }
+
 
     public MainTaskOperator(Class<? extends BaseNode> taskDomain) {
-        this.taskDomain = taskDomain;
+        this(false, taskDomain);
     }
 
     public MainTaskOperator() {
-        this.taskDomain = null;
+        this(false, null);
     }
 
     protected TaskTransition mainTaskPerformed(Task t) {
@@ -25,7 +38,10 @@ public abstract class MainTaskOperator extends AbstractOperator {
     }
 
     public boolean test(Task task) {
-        if(task.isDependencyFailed() || task.isFinished() || task.isMainTaskPerformed()) {
+        if(!acceptFailedTasks && task.isDependencyFailed()) {
+            return false;
+        }
+        if(task.isFinished() || task.isMainTaskPerformed()) {
             return false;
         }
         if(task.isOfType(taskDomain)) {

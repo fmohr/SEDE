@@ -33,11 +33,9 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
 
     private final Set<Task> waitingTasks = new HashSet<>();
 
+    private final Set<Task> finishedTasks = new HashSet<>();
+
     private final Set<TaskDispatch> runningTaskDispatches = new HashSet<>();
-
-    private final Map<String, SEDEObject> context = new HashMap<>();
-
-    private final Set<INotification> ntfPool = new HashSet<>();
 
     public GraphTaskExecution(String executionId) {
         super(executionId);
@@ -174,6 +172,7 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
         @Override
         public void perform(GraphTaskExecution ex, Task performer) {
             ex.finalTasks.remove(performer);
+            ex.finishedTasks.add(performer);
         }
     }
 }

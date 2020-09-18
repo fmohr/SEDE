@@ -8,7 +8,6 @@ import ai.services.core.SEDEObject;
  * TaskTransition instances are returned by operators that are applied to task instances.
  * The transition instances are then invoked in a thread safe scope.
  * So it is guaranteed that no two task transition for one execution are performed at the same time.
- *
  */
 public interface TaskTransition {
 
@@ -61,8 +60,6 @@ public interface TaskTransition {
                 return "Success";
             }
         };
-
-
     }
 
     static TaskTransition mainTaskPerformed() {

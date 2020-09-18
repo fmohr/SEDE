@@ -1,5 +1,7 @@
 package ai.services.channels;
 
+import ai.services.composition.IDeployRequest;
+import ai.services.composition.INotifyRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ai.services.composition.graphs.nodes.ICompositionGraph;
 import ai.services.composition.graphs.nodes.INotification;
@@ -116,24 +118,30 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel, Closeabl
 
 
     @Override
-    public void pushNotification(String executionId, INotification notification) throws PushNotificationException {
+    public void pushNotification(INotifyRequest ntfRequest) throws PushNotificationException {
+        String executionId = ntfRequest.executionId();
+        String notification = ntfRequest.getQualifier();
+
         ModifiableURI pushNtfUrl = baseURL.mod();
         pushNtfUrl.path(EX_NOTIFICATION);
         addExecutionIdQueryParam(pushNtfUrl, executionId);
         final HttpPost request = new HttpPost(pushNtfUrl.buildURI());
-        request.setEntity(serializePayload(notification));
+        request.setEntity(serializePayload(ntfRequest));
         try(CloseableHttpResponse response = httpClient.execute(request)) {
             StatusLine statusLine = response.getStatusLine();
             if(statusCodeIsAOk(statusLine.getStatusCode())) {
-                loggerNtf.debug("Notification push was successful, URL: {}", pushNtfUrl.buildString());
+                loggerNtf.debug("Notification push was successful, URL: {}",
+                    pushNtfUrl.buildString());
             } else {
                 throw statusError(statusLine);
             }
         } catch (ClientProtocolException e) {
-            loggerNtf.warn("There was a problem with the request: {}", pushNtfUrl.buildString(), e);
+            loggerNtf.warn("There was a problem with the request: {}",
+                pushNtfUrl.buildString(), e);
             throw new PushNotificationException(e);
         } catch (IOException e) {
-            loggerNtf.warn("Error while pushing notification, url: {}, notification: {}", pushNtfUrl.buildString(), notification, e);
+            loggerNtf.warn("Error while pushing notification, url: {}, notification: {}",
+                pushNtfUrl.buildString(), notification, e);
             throw new PushNotificationException(e);
         }
     }
@@ -205,7 +213,9 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel, Closeabl
     }
 
     @Override
-    public void deployGraph(String executionId, ICompositionGraph toBeDeployed) throws GraphDeploymentException {
+    public void deployGraph(IDeployRequest deployRequest) throws GraphDeploymentException {
+        String executionId = deployRequest.executionId();
+        ICompositionGraph toBeDeployed = deployRequest.getCompGraph();
         ModifiableURI deployUrl = baseURL.mod();
         deployUrl.path(EX_DEPLOYGRAPH);
         addExecutionIdQueryParam(deployUrl, executionId);

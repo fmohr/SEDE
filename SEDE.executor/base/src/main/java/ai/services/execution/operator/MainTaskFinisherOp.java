@@ -11,7 +11,7 @@ public class MainTaskFinisherOp implements TaskOperator {
 
     @Override
     public boolean test(Task task) {
-        if(task.isMainTaskPerformed()) {
+        if(task.isMainTaskPerformed() || task.isDependencyFailed()) {
             return true;
         } else {
             return false; // always matching
@@ -23,6 +23,9 @@ public class MainTaskFinisherOp implements TaskOperator {
         if (task.isMainTaskPerformed()) {
             logger.trace("No more operator for completed task `{}`.", task);
             return TaskTransition.success();
+        } else if(task.isDependencyFailed()){
+            logger.trace("Task '{}' dependency failed.", task);
+            return TaskTransition.error(new Exception("Dependency failed"));
         } else {
             logger.error("No operator matched task `{}`", task);
             return TaskTransition.error(new Exception("No operator carried out main task of: " + task));

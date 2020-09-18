@@ -4,10 +4,7 @@ import ai.services.execution.FieldContext;
 import ai.services.composition.graphs.nodes.INotification;
 import ai.services.core.SEDEObject;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class LocalFieldContext implements FieldContext {
 
@@ -15,7 +12,7 @@ public class LocalFieldContext implements FieldContext {
 
     private final Map<String, SEDEObject> fields = new HashMap<>();
 
-    private final Set<INotification> ntfPool = new HashSet<>();
+    private final Map<String, INotification> ntfPool = new HashMap<>();
 
     public LocalFieldContext(String contextIdentifier) {
         this.contextIdentifier = contextIdentifier;
@@ -50,11 +47,18 @@ public class LocalFieldContext implements FieldContext {
 
     @Override
     public synchronized void pushNotification(INotification ntf) {
-        this.ntfPool.add(ntf);
+        this.ntfPool.put(ntf.getQualifier(), ntf);
     }
 
     @Override
     public synchronized boolean hasNotification(INotification ntf) {
-        return ntfPool.contains(ntf);
+        return ntfPool.containsKey(ntf.getQualifier());
     }
+
+    @Override
+    public synchronized Optional<INotification> getNotification(INotification ntf) {
+        return Optional.ofNullable(ntfPool.get(ntf.getQualifier()));
+    }
+
+
 }

@@ -1,6 +1,8 @@
 package ai.services.channels.local;
 
 import ai.services.channels.*;
+import ai.services.composition.IDeployRequest;
+import ai.services.composition.INotifyRequest;
 import ai.services.execution.GraphTaskExecution;
 import ai.services.executor.Executor;
 import ai.services.composition.graphs.nodes.ICompositionGraph;
@@ -49,17 +51,18 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
     }
 
     @Override
-    public void pushNotification(String executionId, INotification notification) throws PushNotificationException {
+    public void pushNotification(INotifyRequest notifyRequest) throws PushNotificationException {
+        String executionId = notifyRequest.executionId();
         try {
             boolean exFound = getExecutor().acq().computeIfPresent(executionId, execution -> {
-                execution.pushNotification(notification);
+                execution.pushNotification(notifyRequest);
             });
             if(!exFound) {
                 throw new RuntimeException("No such execution");
             }
         } catch (RuntimeException e) {
             throw new PushNotificationException(String.format("Error pushing notification %s to execution %s on executor %s: %s",
-                notification, executionId, getExecutor().contactInfo(), e.getMessage()));
+                notifyRequest, executionId, getExecutor().contactInfo(), e.getMessage()));
         }
     }
 
@@ -70,7 +73,9 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
     }
 
     @Override
-    public void deployGraph(String executionId, ICompositionGraph toBeDeployed) throws GraphDeploymentException {
+    public void deployGraph(IDeployRequest deployRequest) throws GraphDeploymentException {
+        String executionId = deployRequest.executionId();
+        ICompositionGraph toBeDeployed = deployRequest.getCompGraph();
         final Executor executor = getExecutor();
         executor.deploy(executionId, toBeDeployed);
     }

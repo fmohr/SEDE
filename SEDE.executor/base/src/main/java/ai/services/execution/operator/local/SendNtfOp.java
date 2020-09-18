@@ -3,6 +3,8 @@ package ai.services.execution.operator.local;
 import ai.services.channels.ChannelService;
 import ai.services.channels.ExecutorCommChannel;
 import ai.services.channels.PushNotificationException;
+import ai.services.composition.INotifyRequest;
+import ai.services.composition.NotifyRequest;
 import ai.services.execution.Task;
 import ai.services.execution.TaskTransition;
 import ai.services.execution.operator.MainTaskOperator;
@@ -15,7 +17,7 @@ public class SendNtfOp extends MainTaskOperator {
     private final ChannelService channelService;
 
     public SendNtfOp(ChannelService channelService) {
-        super(INotifyNode.class);
+        super(true, INotifyNode.class);
         this.channelService = channelService;
     }
 
@@ -27,8 +29,16 @@ public class SendNtfOp extends MainTaskOperator {
         INotification notification = notifyNode.getNotification();
 
         ExecutorCommChannel executorCommChannel = channelService.interExecutorCommChannel(contactInfo);
-        executorCommChannel.pushNotification(executionId, notification);
-
+        boolean dependencyFailed = t.isDependencyFailed();
+        INotifyRequest notifyRequest = NotifyRequest.builder()
+            .from(notification)
+            .executionId(executionId)
+            .isSuccessfulNotification(!dependencyFailed)
+            .build();
+        executorCommChannel.pushNotification(notifyRequest);
+        if(dependencyFailed) {
+           return TaskTransition.error(new Exception("Dependency failed."));
+        }
         return mainTaskPerformed(t);
     }
 }

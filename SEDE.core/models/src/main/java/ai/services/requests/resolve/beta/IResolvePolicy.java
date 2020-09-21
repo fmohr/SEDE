@@ -28,7 +28,7 @@ public interface IResolvePolicy {
 
     @Value.Default
     default boolean isDotGraphRequested() {
-        return true;
+        return false;
     }
 
     enum FieldSelection {

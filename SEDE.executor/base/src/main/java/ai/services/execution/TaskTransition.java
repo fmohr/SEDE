@@ -129,7 +129,16 @@ public interface TaskTransition {
     }
 
     static TaskTransition pass() {
-        return task -> { };
+        return new TaskTransition() {
+            @Override
+            public void performTransition(Task task) {
+            }
+
+            @Override
+            public String toString() {
+                return "pass";
+            }
+        };
     }
 
 }

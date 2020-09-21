@@ -12,8 +12,14 @@ public class StdRESTPaths {
 
     public static final String EX_SETFIELD = "setfield";
 
+    public static final String EX_GETFIELD = "getfield";
+
     public static final String EX_DEPLOYGRAPH = "deploygraph";
 
     public static final String EX_PARAM_ID = "executionId";
+
+    public static final String EX_PARAM_FIELDNAME = "fieldname";
+
+    public static final String EX_PARAM_SEMANTICTYPE = "semantictype";
 
 }

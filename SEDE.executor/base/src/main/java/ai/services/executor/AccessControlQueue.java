@@ -20,7 +20,6 @@ public class AccessControlQueue extends ExecutionRegistry {
     private static final Logger logger = LoggerFactory.getLogger(AccessControlQueue.class);
 
     public synchronized TaskEntry takeJob(WorkerProfile workerProfile) throws InterruptedException, QueueClosedException {
-        removeIf(this::canBeRemoved);
         if(!iterate().hasNext() && isClosed) {
             throw new QueueClosedException();
         }
@@ -39,6 +38,10 @@ public class AccessControlQueue extends ExecutionRegistry {
         Iterator<GraphTaskExecution> it = iterate();
         while(it.hasNext()) {
             GraphTaskExecution execution = it.next();
+            if(canBeRemoved(execution)) {
+                it.remove();
+                return Optional.empty();
+            }
             Optional<Task> task = execution.takeNextWaitingTask(workerProfile);
             if(task.isPresent()) {
                 TaskEntry job = new TaskEntry(this, execution, task.get());
@@ -49,7 +52,7 @@ public class AccessControlQueue extends ExecutionRegistry {
     }
 
     private boolean canBeRemoved(GraphTaskExecution execution) {
-        return execution.isFinished() || execution.isInterrupted();
+        return execution.isToBeRemoved();
     }
 
     public synchronized boolean computeIfPresent(String execId, Consumer<GraphTaskExecution> execTask) {

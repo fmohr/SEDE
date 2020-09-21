@@ -5,6 +5,7 @@ import ai.services.SDLReader
 import ai.services.channels.StdLocalChannelService
 import ai.services.composition.DeployRequest
 import ai.services.core.Primitives
+import ai.services.executor.Executor
 import ai.services.executor.ExecutorFactory
 import ai.services.gateway.GatewayFactory
 import ai.services.interfaces.ExecutorRegistrant
@@ -46,17 +47,31 @@ class TestStdExecution extends Specification {
     void setup() {
         def gwFactory = new GatewayFactory()
         gwFactory.addServiceAssembly(assembly)
-//        gwFactory.useInProcessRegistrant()
         gateway = gwFactory.build()
         registrant = gwFactory.buildRegistrant()
     }
 
-
-//    def "test null entries in map"(){
-//        when:
-//        NopNode.builder().runtimeAuxiliaries(Collections.singletonMap("a", 1)).build()
-//        then:
-//        thrown(NullPointerException)
+    void cleanup() {
+        def registry = LocalExecutorInstanceRegistry.INSTANCE;
+        for(String key : registry.keys()) {
+            def executor = registry.get(key)
+            executor.shutdown()
+        }
+        registry.clear()
+    }
+//    Executor createExecutor(Map exConfig, String... services) {
+//        def exFactory = new ExecutorFactory()
+//        exFactory.registerToLocalGateway(registrant)
+//        String id
+//        if("id" in exConfig) {
+//
+//        }
+//        exFactory.configBuilder
+//            .threadNumber(24)
+//            .addServices(services)
+//            .serviceStoreLocation(serviceInstanceDir.absolutePath)
+//            .executorId("Executor1")
+//        return exFactory.build()
 //    }
 
     def "static insts"() {
@@ -143,7 +158,7 @@ class TestStdExecution extends Specification {
         new File(serviceInstanceDir, "$Addierer.name/$handle.id").exists()
     }
 
-    def "multiple executors"() {
+    def "multipleexecutors"() {
         def exFactory = new ExecutorFactory()
         exFactory.registerToLocalGateway(registrant)
         exFactory.configBuilder
@@ -151,7 +166,7 @@ class TestStdExecution extends Specification {
             .addServices("demo.math.Addierer")
             .serviceStoreLocation(serviceInstanceDir.absolutePath)
             .executorId("Executor1")
-        exFactory.build()
+        def executor1 = exFactory.build()
 
         exFactory = new ExecutorFactory()
         exFactory.registerToLocalGateway(registrant)
@@ -161,7 +176,7 @@ class TestStdExecution extends Specification {
                 "demo.math.Gerade")
             .serviceStoreLocation(serviceInstanceDir.absolutePath)
             .executorId("Executor2")
-        exFactory.build()
+        def executor2 = exFactory.build()
 
         exFactory = new ExecutorFactory()
         exFactory.configBuilder
@@ -190,12 +205,21 @@ class TestStdExecution extends Specification {
             """)
             build()
         })
-        def graph = resolution.compositionGraph.find {
-            it.executorHandle.qualifier == "Executor1"
-        }
         FileUtil.writeStringToFile("composition.svg", resolution.getDotSVG())
 
         when:
+//        for (i in 0..<100) {
+//            def id = UUID.randomUUID().toString()
+//            resolution.compositionGraph.each { compGraph ->
+//                channel.interExecutorCommChannel(compGraph.executorHandle.contactInfo)
+//                    .deployGraph(DeployRequest.builder().with {
+//                        executionId(id)
+//                        it.compGraph(compGraph)
+//                        build()
+//                    })
+//            }
+//            def graphTaskExecution = clientExecutor.acq().waitUntilFinished(id)
+//        }
         resolution.compositionGraph.each { compGraph ->
             channel.interExecutorCommChannel(compGraph.executorHandle.contactInfo)
                 .deployGraph(DeployRequest.builder().with {
@@ -224,5 +248,66 @@ class TestStdExecution extends Specification {
             def handle = it.serviceHandle
             assert new File(serviceInstanceDir, "$it.serviceHandle.classpath/$handle.id").exists()
         }
+
+        [clientExecutor, executor1, executor2].each {
+            assert !it.acq().get("e1").isPresent()
+        }
     }
+
+    def "test single execution fail"() {
+        def exFactory = new ExecutorFactory()
+        exFactory.registerToLocalGateway(registrant)
+        exFactory.configBuilder
+            .threadNumber(10)
+            .addServices("SS.Math", "demo.math.Addierer")
+            .serviceStoreLocation(serviceInstanceDir.absolutePath)
+            .executorId("Executor1")
+        def executor1 = exFactory.build()
+
+        exFactory = new ExecutorFactory()
+        exFactory.configBuilder
+            .threadNumber(5)
+            .serviceStoreLocation(serviceInstanceDir.absolutePath)
+            .executorId("ClientExecutor")
+        def clientExecutor = exFactory.build()
+
+        def resolution = gateway.resolve(ResolveRequest.builder().with {
+            resolvePolicy(ResolvePolicy.builder()
+                .isDotGraphRequested(true)
+                .build())
+            clientExecutorRegistration(clientExecutor.registration())
+            composition("""
+                a = SS.Math::addPrimitive({0, 1});
+                b = demo.math.Addierer::fail();
+                a = SS.Math::addPrimitive({a, 2});
+                demo.math.Addierer::useNummerList({b});
+            """)
+            build()
+        })
+        FileUtil.writeStringToFile("composition.svg", resolution.getDotSVG())
+
+        when:
+        resolution.compositionGraph.each { compGraph ->
+            channel.interExecutorCommChannel(compGraph.executorHandle.contactInfo)
+                .deployGraph(DeployRequest.builder().with {
+                    executionId("e1")
+                    it.compGraph(compGraph)
+                    build()
+                })
+        }
+
+        def graphTaskExecution = clientExecutor.acq().waitUntilFinished("e1")
+
+        def a = graphTaskExecution.getFieldValue("a")
+        def b = graphTaskExecution.hasField("b")
+
+        then:
+        a.type == Primitives.Number.name()
+        a.dataField == 3
+        !graphTaskExecution.hasField("b")
+
+        !executor1.acq().get("e1").isPresent()
+        !clientExecutor.acq().get("e1").isPresent()
+
+     }
 }

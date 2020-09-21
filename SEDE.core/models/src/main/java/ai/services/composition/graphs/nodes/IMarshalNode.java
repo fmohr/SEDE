@@ -19,8 +19,11 @@ public interface IMarshalNode extends BaseNode, WithField, WithMarshalling {
 
     @Override
     default String getText() {
-        return String.format("marshal %s '%s' %s '%s'", getFieldName(), getMarshalling().getValueType().getTypeQualifier(),
-            getMarshalling().getDirection() == IMarshalling.Direction.MARSHAL? "to":"from",
+        return String.format("%s %s - %s %s %s",
+            getMarshalling().getDirection().isMarshal()? "marshal" : "unmarshal",
+            getFieldName(),
+            getMarshalling().getValueType().getTypeQualifier(),
+            getMarshalling().getDirection().isMarshal() ? "->":"<-",
             getMarshalling().getSemanticName());
     }
 }

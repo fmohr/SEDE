@@ -3,6 +3,7 @@ package ai.services.channels.local;
 import ai.services.channels.*;
 import ai.services.composition.IDeployRequest;
 import ai.services.composition.INotifyRequest;
+import ai.services.core.SEDEObject;
 import ai.services.execution.GraphTaskExecution;
 import ai.services.executor.Executor;
 import ai.services.composition.graphs.nodes.ICompositionGraph;
@@ -11,9 +12,7 @@ import ai.services.core.SemanticDataField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -40,6 +39,15 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
     public void interrupt(String executionId) {
         boolean executionFound = false;
         executionFound = getExecutor().acq().computeIfPresent(executionId, GraphTaskExecution::interruptExecution);
+        if(!executionFound) {
+            logInterruptError(executionId, "No such execution found.");
+        }
+    }
+
+    @Override
+    public void remove(String executionId) {
+        boolean executionFound = false;
+        executionFound = getExecutor().acq().computeIfPresent(executionId, GraphTaskExecution::setToBeRemoved);
         if(!executionFound) {
             logInterruptError(executionId, "No such execution found.");
         }
@@ -142,6 +150,40 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
                     if (!eFound) {
                         throw new Exception("No such execution found: " + executionId);
                     }
+                }
+            };
+        }
+
+        @Override
+        public DownloadLink getDownloadLink(String fieldname) {
+            return new DownloadLink() {
+                @Override
+                public InputStream getStream() throws IOException {
+                    byte[] bytes = getBytes();
+                    return new ByteArrayInputStream(bytes);
+                }
+
+                @Override
+                public byte[] getBytes() throws IOException {
+                    Optional<GraphTaskExecution> graphTaskExecution = getExecutor().acq().get(executionId);
+                    if(!graphTaskExecution.isPresent()) {
+                        throw new IllegalStateException("No such execution found: " + executionId);
+                    }
+                    boolean fieldPresent = graphTaskExecution.get().hasField(fieldname);
+                    if(!fieldPresent) {
+                        throw new IllegalStateException(String.format("Field %s is not present.", fieldname));
+                    }
+                    SEDEObject fieldValue = graphTaskExecution.get().getFieldValue(fieldname);
+                    if(!fieldValue.isSemantic()) {
+                        throw new IllegalStateException(String.format("Field %s is not in semantic form.", fieldname));
+                    }
+                    byte[] data = fieldValue.getDataField();
+                    return data;
+                }
+
+                @Override
+                public void close() throws Exception {
+
                 }
             };
         }

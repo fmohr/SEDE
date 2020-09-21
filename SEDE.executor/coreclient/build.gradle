@@ -8,8 +8,8 @@ dependencies {
     implementation project(':SEDE.core')
     implementation project(':SEDE.core-models')
     implementation project(':SEDE.interfaces')
+//    implementation project(':SEDE.executor')
 
-    implementation libs.commons
     implementation libs.httpcomponents
 
     testCompile project.ext.isyslibs.demolib

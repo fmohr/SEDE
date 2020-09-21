@@ -21,6 +21,8 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
 
     private static final Logger logger = LoggerFactory.getLogger(GraphTaskExecution.class);
 
+    private boolean removalFlag = false;
+
     private boolean isRunning = false;
 
     private boolean isInterrupted = false;
@@ -100,6 +102,14 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
 
     public synchronized boolean isInterrupted() {
         return isInterrupted;
+    }
+
+    public synchronized boolean isToBeRemoved() {
+        return removalFlag;
+    }
+
+    public synchronized void setToBeRemoved() {
+        removalFlag = true;
     }
 
     public synchronized void interruptExecution() {

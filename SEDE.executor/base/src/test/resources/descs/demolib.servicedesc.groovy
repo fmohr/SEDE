@@ -67,6 +67,10 @@ collection ("demolib") {
             isContextFree = true
         }
 
+        method (name: 'useNummerList', input: NummerList) {
+            isContextFree = true
+        }
+
         method (name: 'sleep') {
             isContextFree = true
         }

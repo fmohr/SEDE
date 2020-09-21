@@ -17,5 +17,4 @@ public interface IFinishNode extends BaseNode,
     default String getText() {
         return String.format("finish %s", getFieldName());
     }
-
 }

@@ -19,4 +19,5 @@ public interface ExecutorCommChannel {
 
     void deployGraph(IDeployRequest deployRequest) throws GraphDeploymentException;
 
+    void remove(String executionId);
 }

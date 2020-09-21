@@ -18,7 +18,7 @@ public class Executor {
 
     private final IExecutorConfiguration configuration;
 
-    private List<Runnable> closingHooks = new ArrayList<>();
+    private final List<Runnable> closingHooks = new ArrayList<>();
 
     public Executor(AccessControlQueue acq, IExecutorConfiguration configuration) {
         this.acq = Objects.requireNonNull(acq);

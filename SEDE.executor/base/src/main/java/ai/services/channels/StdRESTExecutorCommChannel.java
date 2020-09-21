@@ -2,14 +2,10 @@ package ai.services.channels;
 
 import ai.services.composition.IDeployRequest;
 import ai.services.composition.INotifyRequest;
+import ai.services.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ai.services.composition.graphs.nodes.ICompositionGraph;
-import ai.services.composition.graphs.nodes.INotification;
 import ai.services.exec.IExecutorContactInfo;
-import ai.services.util.ExtendedByteArrayOutputStream;
-import ai.services.util.ModifiableURI;
-import ai.services.util.SystemSettingLookup;
-import ai.services.util.UnmodifiableURI;
 
 
 import org.apache.http.HttpEntity;
@@ -29,6 +25,7 @@ import org.slf4j.Logger;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Optional;
 
@@ -158,12 +155,12 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel, Closeabl
                     private byte[] payload;
 
                     @Override
-                    public void close() {
+                    public void close() throws Exception {
                         final ModifiableURI dataUploadUrl = baseURL.mod();
                         dataUploadUrl.path(EX_SETFIELD);
                         addExecutionIdQueryParam(dataUploadUrl, executionId);
-                        dataUploadUrl.queryParam("fieldname", fieldname);
-                        dataUploadUrl.queryParam("semantictype", semantictype);
+                        dataUploadUrl.queryParam(EX_PARAM_FIELDNAME, fieldname);
+                        dataUploadUrl.queryParam(EX_PARAM_SEMANTICTYPE, semantictype);
 
                         final HttpPost request = new HttpPost(dataUploadUrl.buildURI());
                         request.setEntity(payload());
@@ -174,13 +171,6 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel, Closeabl
                             } else {
                                 throw statusError(statusLine);
                             }
-                        } catch (ClientProtocolException e) {
-                            loggerData.warn("There was a problem with the request: {}", dataUploadUrl.buildString(), e);
-                            throw new PushNotificationException(e);
-                        } catch (IOException e) {
-                            loggerData.warn("Error while uploading data to field {} with semantic type {}, url: {}",
-                                fieldname, semantictype, dataUploadUrl.buildString(), e);
-                            throw new PushNotificationException(e);
                         }
                     }
 
@@ -209,6 +199,65 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel, Closeabl
                 };
 
             }
+
+            @Override
+            public DownloadLink getDownloadLink(String fieldname) {
+                return new DownloadLink() {
+
+                    boolean requested = false;
+
+                    InputStream downloadStream;
+
+                    private HttpGet createHttpRequest() {
+                        final ModifiableURI dataUploadUrl = baseURL.mod();
+                        dataUploadUrl.path(EX_GETFIELD);
+                        addExecutionIdQueryParam(dataUploadUrl, executionId);
+                        dataUploadUrl.queryParam(EX_PARAM_FIELDNAME, fieldname);
+                        final HttpGet request = new HttpGet(dataUploadUrl.buildURI());
+                        return request;
+                    }
+
+                    private void request() {
+                        if(requested) {
+                            throw new IllegalStateException("Already requested.");
+                        }
+                        requested = true;
+                    }
+
+                    @Override
+                    public InputStream getStream() throws IOException {
+                        request();
+                        HttpGet httpRequest = createHttpRequest();
+                        try(CloseableHttpResponse response = httpClient.execute(httpRequest)) {
+                            StatusLine statusLine = response.getStatusLine();
+                            if(statusCodeIsAOk(statusLine.getStatusCode())) {
+                                HttpEntity entity = response.getEntity();
+                                downloadStream = entity.getContent();
+                                return downloadStream;
+                            } else {
+                                throw statusError(statusLine);
+                            }
+                        }
+                    }
+
+                    @Override
+                    public byte[] getBytes() throws IOException {
+                        InputStream stream = getStream();
+                        downloadStream = null;
+                        return Streams.InReadByteArr(stream);
+                    }
+
+                    @Override
+                    public void close() throws Exception {
+                        if(!requested) {
+                            throw new IllegalStateException("Not requested.");
+                        }
+                        if(downloadStream != null) {
+                            downloadStream.close();
+                        }
+                    }
+                };
+            }
         };
     }
 
@@ -230,10 +279,10 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel, Closeabl
             }
         } catch (ClientProtocolException e) {
             loggerDeploy.warn("There was a problem with the request: {}", deployUrl.buildString(), e);
-            throw new PushNotificationException(e);
+            throw new GraphDeploymentException(e);
         } catch (IOException e) {
             loggerDeploy.warn("Error while deploying graph, url: {}", deployUrl.buildString(), e);
-            throw new PushNotificationException(e);
+            throw new GraphDeploymentException(e);
         }
     }
 

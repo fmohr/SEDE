@@ -363,7 +363,7 @@ public class DataMarshalOp extends MainTaskOperator {
                 throw new IllegalArgumentException("Cannot wrap a ref type of: " + referencedType);
             }
         } else if(valueType instanceof IPrimitiveValueType) {
-            logger.warn("Marshalling primitive values is discouraged: {}", valueType);
+//            logger.warn("Marshalling primitive values is discouraged: {}", valueType);
             return PRIMITIVE_WRAPPER;
         } else if(valueType instanceof IDataValueType) {
             return val -> new ObjectDataField(valueType.getTypeQualifier(), val);

@@ -35,6 +35,7 @@ includeAt documentationProjects, "SEDE.docs", "base"
 //include "SEDE.executor"
 def executorProjects = "SEDE.executor"
 includeAt executorProjects, "SEDE.executor", "base"
+includeAt executorProjects, "SEDE.coreclient", "coreclient"
 
 
 /*

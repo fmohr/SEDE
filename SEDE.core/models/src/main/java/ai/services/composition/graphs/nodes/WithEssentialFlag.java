@@ -5,7 +5,7 @@ import org.immutables.value.Value;
 public interface WithEssentialFlag {
 
     @Value.Default
-    default boolean isEssential() {
+    default boolean isEssential(){
         return false;
     }
 

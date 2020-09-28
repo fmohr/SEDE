@@ -7,7 +7,7 @@ import ai.services.requests.resolve.beta.IResolveRequest;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CoreClient extends ConcurrentHashMap<String, ExecutionFrontEnd> {
+public class CoreClient extends ConcurrentHashMap<String, ExecutionController> {
 
     private final IGateway gateway;
 
@@ -18,11 +18,11 @@ public class CoreClient extends ConcurrentHashMap<String, ExecutionFrontEnd> {
         this.channelService = channelService;
     }
 
-    public ExecutionFrontEnd boot(IResolveRequest resolveRequest) {
+    public ExecutionController boot(IResolveRequest resolveRequest) {
         IChoreography choreography = gateway.resolve(resolveRequest);
-        ExecutionFrontEnd frontEnd = new ExecutionFrontEnd(channelService, resolveRequest, choreography);
+        ExecutionController frontEnd = new ExecutionController(channelService, resolveRequest, choreography);
         String executionId = frontEnd.getExecutionId();
-        ExecutionFrontEnd frontEnd1 = computeIfAbsent(executionId, id -> frontEnd);
+        ExecutionController frontEnd1 = computeIfAbsent(executionId, id -> frontEnd);
         if(frontEnd != frontEnd1) {
             throw new IllegalStateException(String.format("An execution with id '%s' is already defined.", executionId));
         }

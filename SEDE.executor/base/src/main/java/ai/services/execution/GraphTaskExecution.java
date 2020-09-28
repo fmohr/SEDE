@@ -5,8 +5,6 @@ import ai.services.execution.operator.TaskDispatchContainer;
 import ai.services.composition.graphs.nodes.BaseNode;
 import ai.services.composition.graphs.nodes.ICompositionGraph;
 import ai.services.execution.operator.GraphDependencyOperator;
-import ai.services.composition.graphs.nodes.INotification;
-import ai.services.core.SEDEObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +27,7 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
 
     private final String executionId;
 
-    private final Set<Task> finalTasks = new HashSet<>();
+    private final Set<Task> essentialTasks = new HashSet<>();
 
     private final Set<Task> queuedTask = new HashSet<>();
 
@@ -76,15 +74,16 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
             }
         });
 
-        FinalTaskOperation finalTaskOperation = new FinalTaskOperation();
+        EssentialTaskOperation essentialTaskOperation = new EssentialTaskOperation();
         allTasks.forEach((taskIndex, task)-> {
             if(!backwardDependencies.containsKey(taskIndex)) {
                 task.set(Task.State.QUEUED);
                 enqueueTask(task);
             }
-            // TODO only add FinalNodes to this set
-            task.addGraphOperation(finalTaskOperation);
-            finalTasks.add(task);
+            if(task.getNode().isEssential()) {
+                task.addGraphOperation(essentialTaskOperation);
+            }
+            essentialTasks.add(task);
         });
     }
 
@@ -97,7 +96,7 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
     }
 
     public synchronized boolean isFinished() {
-        return finalTasks.isEmpty();
+        return essentialTasks.isEmpty();
     }
 
     public synchronized boolean isInterrupted() {
@@ -177,11 +176,11 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
         this.runningTaskDispatches.remove(taskDispatch);
     }
 
-    static class FinalTaskOperation implements GraphOperator {
+    static class EssentialTaskOperation implements GraphOperator {
 
         @Override
         public void perform(GraphTaskExecution ex, Task performer) {
-            ex.finalTasks.remove(performer);
+            ex.essentialTasks.remove(performer);
             ex.finishedTasks.add(performer);
         }
     }

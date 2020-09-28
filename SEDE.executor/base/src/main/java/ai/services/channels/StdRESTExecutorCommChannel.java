@@ -1,7 +1,7 @@
 package ai.services.channels;
 
 import ai.services.composition.IDeployRequest;
-import ai.services.composition.INotifyRequest;
+import ai.services.composition.INtfInstance;
 import ai.services.util.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ai.services.composition.graphs.nodes.ICompositionGraph;
@@ -95,27 +95,40 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel, Closeabl
 
     @Override
     public void interrupt(String executionId) {
+        post(EX_INTERRUPT, executionId);
+    }
+
+    @Override
+    public void remove(String executionId) {
+        post(EX_REMOVE, executionId);
+    }
+
+    @Override
+    public void startExecution(String executionId) {
+        post(EX_START, executionId);
+    }
+
+    private void post(String path, String executionId) {
         ModifiableURI interruptURL = baseURL.mod();
-        interruptURL.path(EX_INTERRUPT);
+        interruptURL.path(path);
         addExecutionIdQueryParam(interruptURL, executionId);
         final HttpPost request = new HttpPost(interruptURL.buildURI());
         try(CloseableHttpResponse response = httpClient.execute(request)) {
             StatusLine statusLine = response.getStatusLine();
             if(statusCodeIsAOk(statusLine.getStatusCode())) {
-                loggerInterrupt.debug("Interrupt successful, URL: {}", interruptURL.buildString());
+                loggerInterrupt.debug("Request was successful, URL: {}", interruptURL.buildString());
             } else {
                 throw statusError(statusLine);
             }
         } catch (ClientProtocolException e) {
             loggerInterrupt.warn("There was a problem with the request: {}", interruptURL.buildString(), e);
         } catch (IOException e) {
-            loggerInterrupt.warn("Error while interrupting execution, url: {}", interruptURL.buildString(), e);
+            loggerInterrupt.warn("Error while sending request, url: {}", interruptURL.buildString(), e);
         }
     }
 
-
     @Override
-    public void pushNotification(INotifyRequest ntfRequest) throws PushNotificationException {
+    public void pushNotification(INtfInstance ntfRequest) throws PushNotificationException {
         String executionId = ntfRequest.executionId();
         String notification = ntfRequest.getQualifier();
 
@@ -285,6 +298,7 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel, Closeabl
             throw new GraphDeploymentException(e);
         }
     }
+
 
 
     private static IOException statusError(StatusLine statusLine) {

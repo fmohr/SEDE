@@ -8,6 +8,10 @@ public class StdRESTPaths {
 
     public static final String EX_INTERRUPT = "interrupt";
 
+    public static final String EX_START = "start";
+
+    public static final String EX_REMOVE = "remove";
+
     public static final String EX_NOTIFICATION = "notification";
 
     public static final String EX_SETFIELD = "setfield";

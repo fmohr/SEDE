@@ -3,8 +3,8 @@ package ai.services.execution.operator.local;
 import ai.services.channels.ChannelService;
 import ai.services.channels.ExecutorCommChannel;
 import ai.services.channels.PushNotificationException;
-import ai.services.composition.INotifyRequest;
-import ai.services.composition.NotifyRequest;
+import ai.services.composition.INtfInstance;
+import ai.services.composition.NtfInstance;
 import ai.services.execution.Task;
 import ai.services.execution.TaskTransition;
 import ai.services.execution.operator.MainTaskOperator;
@@ -30,7 +30,7 @@ public class SendNtfOp extends MainTaskOperator {
 
         ExecutorCommChannel executorCommChannel = channelService.interExecutorCommChannel(contactInfo);
         boolean dependencyFailed = t.isDependencyFailed();
-        INotifyRequest notifyRequest = NotifyRequest.builder()
+        INtfInstance notifyRequest = NtfInstance.builder()
             .from(notification)
             .executionId(executionId)
             .isSuccessfulNotification(!dependencyFailed)

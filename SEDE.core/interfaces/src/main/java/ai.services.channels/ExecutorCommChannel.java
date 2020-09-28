@@ -1,9 +1,7 @@
 package ai.services.channels;
 
 import ai.services.composition.IDeployRequest;
-import ai.services.composition.INotifyRequest;
-import ai.services.composition.graphs.nodes.ICompositionGraph;
-import ai.services.composition.graphs.nodes.INotification;
+import ai.services.composition.INtfInstance;
 
 import java.util.Optional;
 
@@ -13,11 +11,13 @@ public interface ExecutorCommChannel {
 
     void interrupt(String executionId);
 
-    void pushNotification(INotifyRequest notifyRequest) throws PushNotificationException;
+    void pushNotification(INtfInstance notifyRequest) throws PushNotificationException;
 
     ExecutionDataChannel dataChannel(String executionId);
 
     void deployGraph(IDeployRequest deployRequest) throws GraphDeploymentException;
+
+    void startExecution(String executionId);
 
     void remove(String executionId);
 }

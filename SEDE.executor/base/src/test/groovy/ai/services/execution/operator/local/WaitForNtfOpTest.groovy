@@ -1,6 +1,7 @@
 package ai.services.execution.operator.local
 
-import ai.services.composition.NotifyRequest
+
+import ai.services.composition.NtfInstance
 import ai.services.execution.Task
 import ai.services.execution.local.LocalFieldContext
 import ai.services.composition.graphs.nodes.Notification
@@ -75,7 +76,7 @@ class WaitForNtfOpTest extends Specification {
     def "RunTask - Unsuccessful notification"() {
         def fields = new LocalFieldContext("c")
         def task = new Task(fields, node)
-        def ntf = NotifyRequest.builder()
+        def ntf = NtfInstance.builder()
             .executionId("e")
             .from(ntf)
             .isSuccessfulNotification(false)

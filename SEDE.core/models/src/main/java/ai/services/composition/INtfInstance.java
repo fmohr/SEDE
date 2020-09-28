@@ -8,8 +8,8 @@ import org.immutables.value.Value;
 @SEDEModelStyle
 @Value.Immutable
 @Value.Modifiable
-@JsonDeserialize(builder = NotifyRequest.Builder.class)
-public interface INotifyRequest extends INotification, WithExecutionId {
+@JsonDeserialize(builder = NtfInstance.Builder.class)
+public interface INtfInstance extends INotification, WithExecutionId {
 
     @Value.Default
     default boolean isSuccessfulNotification() {

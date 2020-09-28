@@ -1,5 +1,7 @@
 package ai.services.execution.local;
 
+import ai.services.composition.INtfInstance;
+import ai.services.composition.NtfInstance;
 import ai.services.execution.FieldContext;
 import ai.services.composition.graphs.nodes.INotification;
 import ai.services.core.SEDEObject;
@@ -12,7 +14,7 @@ public class LocalFieldContext implements FieldContext {
 
     private final Map<String, SEDEObject> fields = new HashMap<>();
 
-    private final Map<String, INotification> ntfPool = new HashMap<>();
+    private final Map<String, INtfInstance> ntfPool = new HashMap<>();
 
     public LocalFieldContext(String contextIdentifier) {
         this.contextIdentifier = contextIdentifier;
@@ -47,18 +49,27 @@ public class LocalFieldContext implements FieldContext {
 
     @Override
     public synchronized void pushNotification(INotification ntf) {
-        this.ntfPool.put(ntf.getQualifier(), ntf);
+        final INtfInstance ntfInstance;
+        if(ntf instanceof INtfInstance) {
+            ntfInstance = (INtfInstance) ntf;
+        } else {
+            ntfInstance = NtfInstance.builder()
+                .from(ntf)
+                .isSuccessfulNotification(true)
+                .executionId(contextIdentifier())
+                .build();
+        }
+        this.ntfPool.put(ntf.getQualifier(), ntfInstance);
     }
 
     @Override
-    public synchronized boolean hasNotification(INotification ntf) {
-        return ntfPool.containsKey(ntf.getQualifier());
+    public synchronized boolean hasNotification(INotification notification) {
+        return ntfPool.containsKey(notification.getQualifier());
     }
 
     @Override
-    public synchronized Optional<INotification> getNotification(INotification ntf) {
+    public synchronized Optional<INtfInstance> getNotification(INotification ntf) {
         return Optional.ofNullable(ntfPool.get(ntf.getQualifier()));
     }
-
 
 }

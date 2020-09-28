@@ -2,12 +2,11 @@ package ai.services.channels.local;
 
 import ai.services.channels.*;
 import ai.services.composition.IDeployRequest;
-import ai.services.composition.INotifyRequest;
+import ai.services.composition.INtfInstance;
 import ai.services.core.SEDEObject;
 import ai.services.execution.GraphTaskExecution;
 import ai.services.executor.Executor;
 import ai.services.composition.graphs.nodes.ICompositionGraph;
-import ai.services.composition.graphs.nodes.INotification;
 import ai.services.core.SemanticDataField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +58,7 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
     }
 
     @Override
-    public void pushNotification(INotifyRequest notifyRequest) throws PushNotificationException {
+    public void pushNotification(INtfInstance notifyRequest) throws PushNotificationException {
         String executionId = notifyRequest.executionId();
         try {
             boolean exFound = getExecutor().acq().computeIfPresent(executionId, execution -> {
@@ -88,13 +87,14 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
         executor.deploy(executionId, toBeDeployed);
     }
 
-//    class LocalExecutorNotRegisteredException extends Exception {
-//        LocalExecutorNotRegisteredException() {
-//            super("No local executor is registered with contact info: " + contactInfo
-//                + "\n Set of registered executors: \n\t" +
-//                (registry.isEmpty() ? "None registered" : String.join("\n\t ", registry.keySet())));
-//        }
-//    }
+    @Override
+    public void startExecution(String executionId) {
+        final Executor executor = getExecutor();
+        boolean executionPresent = executor.acq().computeIfPresent(executionId, GraphTaskExecution::startExecution);
+        if(!executionPresent) {
+            throw new IllegalStateException("Execution is not present: " + executionId);
+        }
+    }
 
     private class HandOffDataChannel implements ExecutionDataChannel {
 
@@ -188,4 +188,6 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
             };
         }
     }
+
 }
+

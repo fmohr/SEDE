@@ -31,4 +31,8 @@ public interface IServiceInstanceStorageNode extends BaseNode,
         return String.format("%s service %s", isLoadInstruction()?"load":"store", getServiceInstanceFieldName());
     }
 
+    @Value.Default
+    default boolean isEssential() {
+        return true;
+    }
 }

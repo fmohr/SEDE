@@ -10,7 +10,7 @@ import org.immutables.value.Value;
  * For this reason nodeType ought not to be changed.
  */
 @JsonDeserialize(using = BaseNode.DeserializeDelegate.class)
-public interface BaseNode extends WithExecutorHost, WithAux, WithIndex {
+public interface BaseNode extends WithExecutorHost, WithAux, WithIndex, WithEssentialFlag {
 
     @Value.Auxiliary
     default String getText() {

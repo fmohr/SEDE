@@ -26,4 +26,9 @@ public interface IMarshalNode extends BaseNode, WithField, WithMarshalling {
             getMarshalling().getDirection().isMarshal() ? "->":"<-",
             getMarshalling().getSemanticName());
     }
+
+    @Value.Default
+    default boolean isEssential() {
+        return true;
+    }
 }

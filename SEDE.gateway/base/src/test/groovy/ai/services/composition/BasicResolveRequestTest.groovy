@@ -90,7 +90,7 @@ class BasicResolveRequestTest extends Specification {
         s0.fieldAccesses[3].with{ it.accessType == IFieldAccess.AccessType.READ && it.index == 2L }
         s0.fieldAccesses[4].with{ it.accessType == IFieldAccess.AccessType.WRITE && it.index == 2L }
 
-        [ "t0", "t1", "s0" ].every { ch.returnFields.contains(it) }
+        [ "t0", "t1", "s0" ].every { ch.returnFieldLocation.containsKey(it) && ch.returnFieldLocation.get(it).qualifier == "client" }
 
     }
 
@@ -165,7 +165,9 @@ class BasicResolveRequestTest extends Specification {
         assert s0.fieldAccesses[2].with { it.accessType == IFieldAccess.AccessType.READ && it.index == 1L }
         assert s0.fieldAccesses[3].with { it.accessType == IFieldAccess.AccessType.WRITE && it.index == 1L }
 
-        [ "t0", "t1", "s0" ].every { ch.returnFields.contains(it) }
+        [ "t0", "t1", "s0" ].every { ch.returnFieldLocation.containsKey(it) }
+        ch.initialFieldLocation.get("s0").qualifier == "client"
+
 
         assertServiceLoadStore(ch.compositionGraph.find { !it.client }, "s0")
 

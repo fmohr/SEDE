@@ -70,4 +70,9 @@ public interface IInstructionNode extends BaseNode, WithField {
     default String getText() {
         return String.format("%s", getFMInstruction());
     }
+
+    @Value.Default
+    default boolean isEssential() {
+        return true;
+    }
 }

@@ -8,6 +8,7 @@ import ai.services.composition.choerography.emulation.Orchestration;
 import ai.services.composition.choerography.emulation.executors.ChoreographyFinalizer;
 import ai.services.composition.choerography.emulation.executors.ExecutionParticipants;
 import ai.services.composition.choerography.emulation.executors.ExecutorFactory;
+import ai.services.exec.IExecutorContactInfo;
 import ai.services.requests.resolve.beta.Choreography;
 import ai.services.SDLLookupService;
 import ai.services.composition.faa.FieldAccessUtil;
@@ -114,7 +115,8 @@ public class ChoreographyService implements IChoreographyService {
             candidateSelection, mrMap, clientEH,
             fieldAccessUtil, resolveRequest, operationSchedule));
         iic.run();
-        List<String> returnFields = iic.getOutput().getReturnFields();
+        Map<String, IExecutorContactInfo> initialFields = iic.getOutput().getInitialFields();
+        Map<String, IExecutorContactInfo> returnFields = iic.getOutput().getReturnFields();
 
         ServiceLoadStoreCollector slsc = new ServiceLoadStoreCollector();
         slsc.setInput(new ServiceLoadStoreCollector.SLSCInput(indexFactory, mrMap, fieldAccessUtil, candidateSelection,
@@ -142,7 +144,8 @@ public class ChoreographyService implements IChoreographyService {
         List<ICompositionGraph> graphs = finalizer.getOutput().getGraph();
 
         IChoreography choreography = Choreography.builder()
-            .addAllReturnFields(returnFields)
+            .putAllInitialFieldLocation(initialFields)
+            .putAllReturnFieldLocation(returnFields)
             .compositionGraph(graphs)
             .build();
 

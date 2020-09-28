@@ -1,5 +1,6 @@
 package ai.services.execution;
 
+import ai.services.composition.INtfInstance;
 import ai.services.composition.graphs.nodes.INotification;
 import ai.services.core.SEDEObject;
 
@@ -25,6 +26,6 @@ public interface FieldContext {
 
     boolean hasNotification(INotification ntf);
 
-    Optional<INotification> getNotification(INotification ntf);
+    Optional<INtfInstance> getNotification(INotification ntf);
 
 }

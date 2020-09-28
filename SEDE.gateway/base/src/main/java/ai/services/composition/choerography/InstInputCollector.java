@@ -11,6 +11,7 @@ import ai.services.composition.faa.FieldAccessUtil;
 import ai.services.composition.types.serialization.IMarshalling;
 import ai.services.composition.typing.TypeCheckException;
 import ai.services.core.Primitives;
+import ai.services.exec.IExecutorContactInfo;
 import ai.services.exec.IExecutorHandle;
 import ai.services.requests.resolve.beta.IResolveRequest;
 import ai.services.types.IDataTypeDesc;
@@ -19,7 +20,6 @@ import ai.services.util.ResolvePolicyUtil;
 import ai.services.composition.typing.TypeUtil;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class InstInputCollector
     extends BlockWiseCompileStep<InstInputCollector.DTCInput, InstInputCollector.DTCOutput> {
@@ -42,15 +42,6 @@ public class InstInputCollector
             setOutputFieldLocation(inst);
         }
         transmitOutputs();
-        setReturnFields();
-    }
-
-    private void setReturnFields() {
-        getOutput().returnFields = getInput().operationSchedule.getFinalOps().stream()
-            .filter(op -> op instanceof ITransmission)
-            .map(trans -> ((ITransmission)trans).getAcceptDataNode().getFieldName())
-            .distinct()
-            .collect(Collectors.toList());
     }
 
     private void setOutputFieldLocation(IIndexedInstruction inst) {
@@ -67,6 +58,7 @@ public class InstInputCollector
             .initialFields()
             .forEach(field -> {
                 getOutput().fieldLocation.put(field.getFieldname(), getInput().getClientExecutor());
+                getOutput().initialFields.put(field.getFieldname(), getInput().getClientExecutor().getContactInfo());
             });
     }
 
@@ -193,7 +185,6 @@ public class InstInputCollector
         IExecutorHandle sourceH = fieldLocation.get();
         if(!sourceH.getQualifier().equals(clientH.getQualifier())) {
             // get the semantic type:
-
             TypeClass outputType = getInput().fieldAccessUtil.resultingFieldType(field);
             if(TypeUtil.isService(outputType)) {
                 IFieldCast serviceHandleCast = createServiceInstanceHandleTransmissionSerialisation(sourceH, clientH, fieldname, outputType);
@@ -225,6 +216,7 @@ public class InstInputCollector
                 throw new IllegalStateException("Field \n" + field + "\n is being returned to client. But its type \n" + outputType + "\n is not data nor service.");
             }
         }
+        getOutput().returnFields.put(field.getFieldname(), clientH.getContactInfo());
     }
 
 
@@ -405,7 +397,9 @@ public class InstInputCollector
 
         private final Map<String, IExecutorHandle> fieldLocation = new HashMap<>();
 
-        private List<String> returnFields;
+        private final Map<String, IExecutorContactInfo> initialFields = new HashMap<>();
+
+        private final Map<String, IExecutorContactInfo> returnFields = new HashMap<>();
 
         private void addPreOp(Long index, ScheduledOperation op) {
             getInput().operationSchedule.getInstOps(index).addPreOp(op);
@@ -443,8 +437,12 @@ public class InstInputCollector
             }
         }
 
-        public List<String> getReturnFields() {
+        public Map<String, IExecutorContactInfo> getReturnFields() {
             return returnFields;
+        }
+
+        public Map<String, IExecutorContactInfo> getInitialFields() {
+            return initialFields;
         }
 
         public void setFieldLocation(String fieldname, IExecutorHandle executorH) {

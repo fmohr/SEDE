@@ -1,7 +1,7 @@
 package ai.services.execution.operator.local;
 
 import ai.services.channels.ChannelService;
-import ai.services.channels.ExecutionDataChannel;
+import ai.services.channels.DataChannel;
 import ai.services.channels.ExecutorCommChannel;
 import ai.services.channels.UploadLink;
 import ai.services.execution.Task;
@@ -32,8 +32,8 @@ public class TransmitDataOp extends MainTaskOperator {
             throw new IllegalStateException(StringUtil.unexpectedTypeMsg("SemanticDataField", fieldValue));
         }
         ExecutorCommChannel executorCommChannel = channelService.interExecutorCommChannel(contactInfo);
-        ExecutionDataChannel executionDataChannel = executorCommChannel.dataChannel(t.getFieldContext().contextIdentifier());
-        try(UploadLink uploadLink = executionDataChannel.getUploadLink(fieldname, fieldValue.getType())) {
+        DataChannel dataChannel = executorCommChannel.dataChannel(t.getFieldContext().contextIdentifier());
+        try(UploadLink uploadLink = dataChannel.getUploadLink(fieldname, fieldValue.getType())) {
             uploadLink.setPayload(fieldValue.getDataField());
             return mainTaskPerformed(t);
         }

@@ -98,20 +98,7 @@ public class Streams {
 		}
 	}
 
-	/**
-	 * Returns the stacktrace of the given exception as a String.
-	 * @param ex Exception whose stack trace will be returned.
-	 * @return Stack trace of the given exception.
-	 */
-	public static String ErrToString(Exception ex) {
-		StringWriter sw = new StringWriter();
-		PrintWriter pw = new PrintWriter(sw);
-		ex.printStackTrace(pw);
-		String sStackTrace = sw.toString();
-		return sStackTrace;
-	}
-
-	/**
+    /**
 	 * Returns an inputstream which is empty.
 	 * Using read() will return -1;
 	 * @return empty input stream.

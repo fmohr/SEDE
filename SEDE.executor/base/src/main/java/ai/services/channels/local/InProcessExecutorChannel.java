@@ -3,15 +3,16 @@ package ai.services.channels.local;
 import ai.services.channels.*;
 import ai.services.composition.IDeployRequest;
 import ai.services.composition.INtfInstance;
-import ai.services.core.SEDEObject;
+import ai.services.exec.ExecutionError;
+import ai.services.exec.IExecutionError;
 import ai.services.execution.GraphTaskExecution;
 import ai.services.executor.Executor;
 import ai.services.composition.graphs.nodes.ICompositionGraph;
-import ai.services.core.SemanticDataField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -39,7 +40,7 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
         boolean executionFound = false;
         executionFound = getExecutor().acq().computeIfPresent(executionId, GraphTaskExecution::interruptExecution);
         if(!executionFound) {
-            logInterruptError(executionId, "No such execution found.");
+            logMissingExecutor(executionId, "Interrupting");
         }
     }
 
@@ -48,13 +49,35 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
         boolean executionFound = false;
         executionFound = getExecutor().acq().computeIfPresent(executionId, GraphTaskExecution::setToBeRemoved);
         if(!executionFound) {
-            logInterruptError(executionId, "No such execution found.");
+            logMissingExecutor(executionId, "Removing");
         }
     }
 
-    private void logInterruptError(String executionId, String errorMessage) {
-        logger.warn("Interrupting execution with id '{}', on executor with contact info '{}', was not successful:\n {}",
-            executionId, getExecutor().contactInfo(), errorMessage);
+    @Override
+    public void joinExecution(String executionId) throws InterruptedException {
+        GraphTaskExecution graphTaskExecution = getExecutor().acq().waitUntilFinished(executionId);
+        if(graphTaskExecution == null) {
+            logMissingExecutor(executionId, "Joining");
+        }
+    }
+
+    @Override
+    public List<IExecutionError> getErrors(String executionId) {
+        final List<IExecutionError> errors = new ArrayList<>();
+        boolean executionFound = getExecutor().acq().computeIfPresent(executionId, execution -> {
+            errors.addAll(execution.getErrors());
+        });
+        if(!executionFound) {
+            logMissingExecutor(executionId, "Fetching errors from");
+            errors.add(ExecutionError.builder().message("No such executor found: " + executionId).build());
+        }
+        return errors;
+    }
+
+    private void logMissingExecutor(String executionId, String taskDescription) {
+        logger.error("{} execution with id '{}', on executor with contact info '{}', was not successful:\n No such execution found.",
+            taskDescription,
+            executionId, getExecutor().contactInfo());
     }
 
     @Override
@@ -74,9 +97,8 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
     }
 
     @Override
-    public ExecutionDataChannel dataChannel(String executionId) {
-        final Executor executor = getExecutor();
-        return new HandOffDataChannel(executionId);
+    public DataChannel dataChannel(String executionId) {
+        return new InProcessHandOffDataChannel(getExecutor().acq(), executionId);
     }
 
     @Override
@@ -93,99 +115,6 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
         boolean executionPresent = executor.acq().computeIfPresent(executionId, GraphTaskExecution::startExecution);
         if(!executionPresent) {
             throw new IllegalStateException("Execution is not present: " + executionId);
-        }
-    }
-
-    private class HandOffDataChannel implements ExecutionDataChannel {
-
-        private final String executionId;
-
-        public HandOffDataChannel(String executionId) {
-            this.executionId = executionId;
-        }
-
-        @Override
-        public UploadLink getUploadLink(String fieldname, String semantictype) {
-            return new UploadLink() {
-                byte[] payload = null;
-                ByteArrayOutputStream payloadStream = null;
-
-                @Override
-                public OutputStream getPayloadStream() throws IOException {
-                    if (payloadStream == null) {
-                        payloadStream = new ByteArrayOutputStream();
-                    }
-                    if (payload != null) {
-                        payloadStream.write(payload);
-                        payload = null;
-                    }
-                    return payloadStream;
-                }
-
-                @Override
-                public void setPayload(byte[] payload) {
-                    if (payloadStream != null) {
-                        try {
-                            payloadStream.write(payload);
-                        } catch (IOException e) {
-                            logger.warn("This cannot happen.", e);
-                        }
-                    } else {
-                        this.payload = payload;
-                    }
-                }
-
-                @Override
-                public void close() throws Exception {
-                    if (payloadStream != null) {
-                        payload = payloadStream.toByteArray();
-                    }
-                    if (payload == null) {
-                        throw new Exception("No payload was provided.");
-                    }
-                    SemanticDataField semanticDataField = new SemanticDataField(semantictype, payload);
-                    boolean eFound = getExecutor().acq().computeIfPresent(executionId, execution -> {
-                        execution.setFieldValue(fieldname, semanticDataField);
-                    });
-                    if (!eFound) {
-                        throw new Exception("No such execution found: " + executionId);
-                    }
-                }
-            };
-        }
-
-        @Override
-        public DownloadLink getDownloadLink(String fieldname) {
-            return new DownloadLink() {
-                @Override
-                public InputStream getStream() throws IOException {
-                    byte[] bytes = getBytes();
-                    return new ByteArrayInputStream(bytes);
-                }
-
-                @Override
-                public byte[] getBytes() throws IOException {
-                    Optional<GraphTaskExecution> graphTaskExecution = getExecutor().acq().get(executionId);
-                    if(!graphTaskExecution.isPresent()) {
-                        throw new IllegalStateException("No such execution found: " + executionId);
-                    }
-                    boolean fieldPresent = graphTaskExecution.get().hasField(fieldname);
-                    if(!fieldPresent) {
-                        throw new IllegalStateException(String.format("Field %s is not present.", fieldname));
-                    }
-                    SEDEObject fieldValue = graphTaskExecution.get().getFieldValue(fieldname);
-                    if(!fieldValue.isSemantic()) {
-                        throw new IllegalStateException(String.format("Field %s is not in semantic form.", fieldname));
-                    }
-                    byte[] data = fieldValue.getDataField();
-                    return data;
-                }
-
-                @Override
-                public void close() throws Exception {
-
-                }
-            };
         }
     }
 

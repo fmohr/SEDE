@@ -1,10 +1,13 @@
 package ai.services.execution;
 
+import ai.services.exec.ExecutionError;
+import ai.services.exec.IExecutionError;
 import ai.services.execution.local.LocalFieldContext;
 import ai.services.execution.operator.TaskDispatchContainer;
 import ai.services.composition.graphs.nodes.BaseNode;
 import ai.services.composition.graphs.nodes.ICompositionGraph;
 import ai.services.execution.operator.GraphDependencyOperator;
+import ai.services.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +39,8 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
     private final Set<Task> finishedTasks = new HashSet<>();
 
     private final Set<TaskDispatch> runningTaskDispatches = new HashSet<>();
+
+    private final List<IExecutionError> errors = new ArrayList<>();
 
     public GraphTaskExecution(String executionId) {
         super(executionId);
@@ -73,15 +78,18 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
                 dep.addGraphOperation(op);
             }
         });
-
-        EssentialTaskOperation essentialTaskOperation = new EssentialTaskOperation();
+        ErroredTaskGraphOp erroredTaskGO = new ErroredTaskGraphOp();
+        allTasks.forEach((taskIndex, task)-> {
+            task.addGraphOperation(erroredTaskGO);
+        });
+        EssentialTaskGraphOp essentialTaskGO = new EssentialTaskGraphOp();
         allTasks.forEach((taskIndex, task)-> {
             if(!backwardDependencies.containsKey(taskIndex)) {
                 task.set(Task.State.QUEUED);
                 enqueueTask(task);
             }
             if(task.getNode().isEssential()) {
-                task.addGraphOperation(essentialTaskOperation);
+                task.addGraphOperation(essentialTaskGO);
             }
             essentialTasks.add(task);
         });
@@ -96,7 +104,7 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
     }
 
     public synchronized boolean isFinished() {
-        return essentialTasks.isEmpty();
+        return essentialTasks.isEmpty() || !errors.isEmpty();
     }
 
     public synchronized boolean isInterrupted() {
@@ -176,12 +184,36 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
         this.runningTaskDispatches.remove(taskDispatch);
     }
 
-    static class EssentialTaskOperation implements GraphOperator {
+    void registerError(IExecutionError err) {
+        this.errors.add(err);
+    }
+
+    public List<IExecutionError> getErrors() {
+        return errors;
+    }
+
+    static class EssentialTaskGraphOp implements GraphOperator {
 
         @Override
         public void perform(GraphTaskExecution ex, Task performer) {
             ex.essentialTasks.remove(performer);
             ex.finishedTasks.add(performer);
+        }
+    }
+
+    static class ErroredTaskGraphOp implements GraphOperator {
+
+        @Override
+        public void perform(GraphTaskExecution ex, Task performer) {
+            if(performer.getError().isPresent()) {
+                Exception exception = performer.getError().get();
+                IExecutionError error = ExecutionError.builder()
+                    .erroredNode(performer.getNode())
+                    .stacktrace(StringUtil.ErrToString(exception))
+                    .message(exception.getMessage())
+                    .build();
+                ex.registerError(error);
+            }
         }
     }
 }

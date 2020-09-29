@@ -1,5 +1,8 @@
 package ai.services.util;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 public class StringUtil {
 
     public static boolean hasLength(String s) {
@@ -31,4 +34,16 @@ public class StringUtil {
             expectedType, object.getClass().toString(), object.toString());
     }
 
+    /**
+     * Returns the stacktrace of the given exception as a String.
+     * @param ex Exception whose stack trace will be returned.
+     * @return Stack trace of the given exception.
+     */
+    public static String ErrToString(Exception ex) {
+        StringWriter sw = new StringWriter();
+        PrintWriter pw = new PrintWriter(sw);
+        ex.printStackTrace(pw);
+        String sStackTrace = sw.toString();
+        return sStackTrace;
+    }
 }

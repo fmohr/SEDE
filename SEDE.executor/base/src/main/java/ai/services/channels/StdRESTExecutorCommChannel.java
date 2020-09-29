@@ -2,19 +2,24 @@ package ai.services.channels;
 
 import ai.services.composition.IDeployRequest;
 import ai.services.composition.INtfInstance;
+import ai.services.exec.IExecutionError;
 import ai.services.util.*;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import ai.services.composition.graphs.nodes.ICompositionGraph;
 import ai.services.exec.IExecutorContactInfo;
 
 
+import com.fasterxml.jackson.databind.type.ArrayType;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpUriRequest;
 import org.apache.http.entity.ByteArrayEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.InputStreamEntity;
@@ -27,6 +32,8 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 import static ai.services.channels.StdRESTPaths.*;
@@ -35,6 +42,8 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class StdRESTExecutorCommChannel implements ExecutorCommChannel, Closeable {
 
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    private static final JavaType JAVA_TYPE_ERROR_LIST = OBJECT_MAPPER.getTypeFactory().constructArrayType(IExecutionError.class);
 
     private static final Logger logger = getLogger(StdRESTExecutorCommChannel.class);
 
@@ -95,35 +104,97 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel, Closeabl
 
     @Override
     public void interrupt(String executionId) {
-        post(EX_INTERRUPT, executionId);
+        try {
+            post(EX_INTERRUPT, executionId);
+        } catch (IOException e) {
+            loggerInterrupt.error("Error trying to interrupt execution {}", executionId, e);
+        }
     }
 
     @Override
     public void remove(String executionId) {
-        post(EX_REMOVE, executionId);
+        try {
+            post(EX_REMOVE, executionId);
+        } catch (IOException e) {
+            logger.error("Error trying to remove execution {}", executionId, e);
+        }
     }
 
     @Override
-    public void startExecution(String executionId) {
-        post(EX_START, executionId);
+    public void joinExecution(String executionId) throws InterruptedException {
+        try {
+            get(EX_JOIN, executionId);
+        } catch (IOException e) {
+            // TODO inspect the message and make sure its an interruption problem.
+            throw new InterruptedException(e.getMessage());
+        }
     }
 
-    private void post(String path, String executionId) {
-        ModifiableURI interruptURL = baseURL.mod();
-        interruptURL.path(path);
-        addExecutionIdQueryParam(interruptURL, executionId);
-        final HttpPost request = new HttpPost(interruptURL.buildURI());
+    @Override
+    public List<IExecutionError> getErrors(String executionId) {
+        ModifiableURI url = baseURL.mod();
+        url.path(EX_ERRORS);
+        addExecutionIdQueryParam(url, executionId);
+        final HttpGet request = new HttpGet(url.buildURI());
         try(CloseableHttpResponse response = httpClient.execute(request)) {
             StatusLine statusLine = response.getStatusLine();
             if(statusCodeIsAOk(statusLine.getStatusCode())) {
-                loggerInterrupt.debug("Request was successful, URL: {}", interruptURL.buildString());
+                logger.debug("Fetching errors was successful, URL: {}", url.buildString());
+                return parseErrors(response.getEntity().getContent());
             } else {
                 throw statusError(statusLine);
             }
         } catch (ClientProtocolException e) {
-            loggerInterrupt.warn("There was a problem with the request: {}", interruptURL.buildString(), e);
+            logger.warn("There was a problem with the request: {}", url, e);
         } catch (IOException e) {
-            loggerInterrupt.warn("Error while sending request, url: {}", interruptURL.buildString(), e);
+            logger.error("Error trying to fetch execution errors for execution id: {}", executionId, e);
+        }
+        return Collections.emptyList();
+    }
+
+    private List<IExecutionError> parseErrors(InputStream content) throws IOException {
+        try {
+            return OBJECT_MAPPER.readValue(content, JAVA_TYPE_ERROR_LIST);
+        } catch(ClassCastException ex) {
+            throw new IOException("Couldn't parse response body as an execution error list", ex);
+        }
+    }
+
+    @Override
+    public void startExecution(String executionId) {
+        try {
+            post(EX_START, executionId);
+        } catch (IOException e) {
+            throw new RuntimeException("Error trying to set execution to be started: ", e);
+        }
+    }
+
+    private void post(String path, String executionId) throws IOException {
+        ModifiableURI url = baseURL.mod();
+        url.path(path);
+        addExecutionIdQueryParam(url, executionId);
+        final HttpPost request = new HttpPost(url.buildURI());
+        makeRequest(request, url.toString());
+    }
+
+    private void get(String path, String executionId) throws IOException {
+        ModifiableURI url = baseURL.mod();
+        url.path(path);
+        addExecutionIdQueryParam(url, executionId);
+        final HttpGet request = new HttpGet(url.buildURI());
+        makeRequest(request, url.toString());
+    }
+
+    private void makeRequest(HttpUriRequest request, String url) throws IOException {
+        try(CloseableHttpResponse response = httpClient.execute(request)) {
+            StatusLine statusLine = response.getStatusLine();
+            if(statusCodeIsAOk(statusLine.getStatusCode())) {
+                logger.debug("Request was successful, URL: {}", url);
+            } else {
+                throw statusError(statusLine);
+            }
+        } catch (ClientProtocolException e) {
+            logger.warn("There was a problem with the request: {}", url, e);
         }
     }
 
@@ -156,8 +227,8 @@ public class StdRESTExecutorCommChannel implements ExecutorCommChannel, Closeabl
         }
     }
 
-    public ExecutionDataChannel dataChannel(String executionId) {
-        return new ExecutionDataChannel() {
+    public DataChannel dataChannel(String executionId) {
+        return new DataChannel() {
 
             @Override
             public UploadLink getUploadLink(final String fieldname, final String semantictype) {

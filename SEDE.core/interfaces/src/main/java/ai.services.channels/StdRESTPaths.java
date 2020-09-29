@@ -12,6 +12,10 @@ public class StdRESTPaths {
 
     public static final String EX_REMOVE = "remove";
 
+    public static final String EX_JOIN = "remove";
+
+    public static final String EX_ERRORS = "errors";
+
     public static final String EX_NOTIFICATION = "notification";
 
     public static final String EX_SETFIELD = "setfield";

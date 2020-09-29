@@ -1,4 +1,4 @@
-package ai.services.execution;
+package ai.services.exec;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import ai.services.SEDEModelStyle;
@@ -17,6 +17,11 @@ public interface IExecutionState {
 
     @Value.Default
     default boolean isStarted() {
+        return false;
+    }
+
+    @Value.Default
+    default boolean isFinished() {
         return false;
     }
 

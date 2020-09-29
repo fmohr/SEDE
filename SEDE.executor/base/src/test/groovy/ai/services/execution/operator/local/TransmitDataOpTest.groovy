@@ -1,7 +1,7 @@
 package ai.services.execution.operator.local
 
 import ai.services.channels.ChannelService
-import ai.services.channels.ExecutionDataChannel
+import ai.services.channels.DataChannel
 import ai.services.channels.ExecutorCommChannel
 import ai.services.channels.UploadLink
 import ai.services.execution.Task
@@ -31,7 +31,7 @@ class TransmitDataOpTest extends Specification {
         ByteArrayOutputStream mockCache = new ByteArrayOutputStream()
         def op = new TransmitDataOp(Mock(ChannelService) {
             interExecutorCommChannel(exContactInfo) >> Mock(ExecutorCommChannel) {
-                dataChannel("c") >> Mock(ExecutionDataChannel) {
+                dataChannel("c") >> Mock(DataChannel) {
                     1 * getUploadLink("f1", "sem1") >> Mock(UploadLink.class) {
                         (0..1) * getPayloadStream() >> mockCache
                         (0..1) * setPayload(_) >> {mockCache.write(it[0])}

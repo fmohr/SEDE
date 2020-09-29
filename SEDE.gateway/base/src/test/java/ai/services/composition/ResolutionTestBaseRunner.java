@@ -6,6 +6,7 @@ import ai.services.exec.ExecutorContactInfo;
 import ai.services.exec.ExecutorHandle;
 import ai.services.requests.resolve.beta.Choreography;
 import ai.services.requests.resolve.beta.ResolveRequest;
+import ai.services.util.StringUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import ai.services.ISDLAssembly;
@@ -21,7 +22,6 @@ import ai.services.interfaces.IGateway;
 import ai.services.requests.resolve.beta.IChoreography;
 import ai.services.requests.resolve.beta.IResolveRequest;
 import ai.services.util.FileUtil;
-import ai.services.util.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -215,12 +215,12 @@ public class ResolutionTestBaseRunner {
         }
         // write error messages:
         if(staticAnalysisException != null) {
-            String errorMessage = Streams.ErrToString(staticAnalysisException);
+            String errorMessage = StringUtil.ErrToString(staticAnalysisException);
             File outF = getOutputFile("error_static_analysis.txt");
             FileUtil.writeStringToFile(outF.getAbsolutePath(), errorMessage);
         }
         if(simulationException != null) {
-            String errorMessage = Streams.ErrToString(simulationException);
+            String errorMessage = StringUtil.ErrToString(simulationException);
             File outF = getOutputFile("error_choreography_analysis.txt");
             FileUtil.writeStringToFile(outF.getAbsolutePath(), errorMessage);
         }

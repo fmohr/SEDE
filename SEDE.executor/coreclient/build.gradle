@@ -8,11 +8,9 @@ dependencies {
     implementation project(':SEDE.core')
     implementation project(':SEDE.core-models')
     implementation project(':SEDE.interfaces')
-//    implementation project(':SEDE.executor')
-
-    implementation libs.httpcomponents
 
     testCompile project.ext.isyslibs.demolib
+    testCompile project(':SEDE.executor')
     testCompile project(':SEDE.servicedesc')
     testCompile project(':SEDE.sdl')
     testCompile project(':SEDE.gateway')

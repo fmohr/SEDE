@@ -52,9 +52,10 @@ class DefaultExecutorDecorations {
             produceFields(op.getDFields(), op.getTargetReceivedNtf());
 
 
-            if (op.getDeleteFieldNode() != null) {
+            if (op.getDeleteAfterTransmit() != null) {
                 // Rerun delete field operation:
-                IDeleteFieldOp deleteOp = DeleteFieldOp.builder().addAllDFields(op.getDFields()).deleteFieldNode(op.getDeleteFieldNode()).build();
+                IDeleteFieldOp deleteOp = DeleteFieldOp.builder().addAllDFields(op.getDFields())
+                    .deleteFieldNode(op.getDeleteAfterTransmit()).build();
                 getHead().execute(deleteOp);
             }
 
@@ -87,7 +88,14 @@ class DefaultExecutorDecorations {
         }
 
         @Override
-        public EmulatedOp handleOperation(IAcceptOp op) {
+        public EmulatedOp handleOperation(IAcceptOp op) throws EmulationException {
+            if (op.getDeleteBeforeAccept() != null) {
+                // Rerun delete field operation:
+                IDeleteFieldOp deleteOp = DeleteFieldOp.builder().addAllDFields(op.getDFields())
+                    .deleteFieldNode(op.getDeleteBeforeAccept()).build();
+                getHead().execute(deleteOp);
+            }
+
             addNodes(
                 op.getSourceReadyNtf(),
                 op.getTargetReadyNtf(),

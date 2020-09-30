@@ -5,9 +5,7 @@ import ai.services.interfaces.IGateway;
 import ai.services.requests.resolve.beta.IChoreography;
 import ai.services.requests.resolve.beta.IResolveRequest;
 
-import java.util.concurrent.ConcurrentHashMap;
-
-public class CoreClient extends ConcurrentHashMap<String, ExecutionController> {
+public class CoreClient {
 
     private final IGateway gateway;
 
@@ -20,12 +18,27 @@ public class CoreClient extends ConcurrentHashMap<String, ExecutionController> {
 
     public ExecutionController boot(IResolveRequest resolveRequest) {
         IChoreography choreography = gateway.resolve(resolveRequest);
+        return boot(resolveRequest, choreography);
+    }
+
+    public ExecutionController boot(IResolveRequest resolveRequest, IChoreography choreography) {
         ExecutionController frontEnd = new ExecutionController(channelService, resolveRequest, choreography);
-        String executionId = frontEnd.getExecutionId();
-        ExecutionController frontEnd1 = computeIfAbsent(executionId, id -> frontEnd);
-        if(frontEnd != frontEnd1) {
-            throw new IllegalStateException(String.format("An execution with id '%s' is already defined.", executionId));
+        return frontEnd;
+    }
+
+    public ExecutionController bootAndStart(IResolveRequest resolveRequest, IChoreography choreography) {
+        ExecutionController ctrl= this.boot(resolveRequest, choreography);
+        try {
+            ctrl.startExecution();
+            return ctrl;
+        } catch(Exception ex) {
+            ctrl.close();
+            throw ex;
         }
-        return frontEnd1;
+    }
+
+    public ExecutionController bootAndStart(IResolveRequest resolveRequest) {
+        IChoreography choreography = gateway.resolve(resolveRequest);
+        return bootAndStart(resolveRequest, choreography);
     }
 }

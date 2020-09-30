@@ -204,7 +204,7 @@ public class ServiceLoadStoreCollector
                 .isLoadInstruction(true)
                 .hostExecutor(host)
                 .build();
-            getInput().getOpsSchedule().getInstOps(instIndex).addPreOp(ServiceLoadStore.builder()
+            getInput().getOpsSchedule().getInstSchedule(instIndex).addPreOp(ServiceLoadStore.builder()
                 .serviceInstanceStorageNode(loadField)
                 .build());
         }
@@ -221,7 +221,7 @@ public class ServiceLoadStoreCollector
                 .isLoadInstruction(false)
                 .hostExecutor(host)
                 .build();
-            getInput().getOpsSchedule().getInstOps(instIndex).addPostOp(ServiceLoadStore.builder()
+            getInput().getOpsSchedule().getInstSchedule(instIndex).addPostOp(ServiceLoadStore.builder()
                 .serviceInstanceStorageNode(storeField)
                 .build());
         }

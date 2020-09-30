@@ -12,7 +12,7 @@ public class OpCollection implements TaskOperator {
 
     private static final Logger logger = LoggerFactory.getLogger(OpCollection.class);
 
-    private Collection<TaskOperator> operators;
+    private final Collection<TaskOperator> operators;
 
     public OpCollection(Collection<TaskOperator> operators) {
         this.operators = operators;

@@ -20,7 +20,7 @@ public class LocalExecutorInstanceRegistrationCtrl implements ExecutorInstanceRe
     @Override
     public void register(Executor executor) {
         if(registry != null) {
-            registry.put(executor.registration().getExecutorHandle().getQualifier(), executor);
+            registry.put(executor.getRegistration().getExecutorHandle().getQualifier(), executor);
         }
     }
 }

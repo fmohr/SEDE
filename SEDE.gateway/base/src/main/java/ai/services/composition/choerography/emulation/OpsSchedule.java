@@ -14,7 +14,7 @@ public class OpsSchedule {
             instOps.put(inst.getIndex(), new InstOperations(inst));
         }
     }
-    public InstOperations getInstOps(Long index) {
+    public InstOperations getInstSchedule(Long index) {
         return Objects.requireNonNull(instOps.get(index));
     }
     public List<ScheduledOperation> getFinalOps() {

@@ -24,6 +24,7 @@ public class Executor {
         this.acq = Objects.requireNonNull(acq);
         this.configuration = Objects.requireNonNull(configuration);
         Objects.requireNonNull(configuration.getExecutorId(), "No executor id was specified. Generate executor id.");
+        this.acq.setQualifier(configuration.getExecutorId());
     }
 
     public AccessControlQueue acq() {
@@ -34,16 +35,16 @@ public class Executor {
         return configuration;
     }
 
-    public IExecutorContactInfo contactInfo() {
+    public IExecutorContactInfo getContactInfo() {
         return ExecutorContactInfo.builder()
             .qualifier(configuration.getExecutorId())
             .build();
     }
 
-    public IExecutorRegistration registration() {
+    public IExecutorRegistration getRegistration() {
         return ExecutorRegistration.builder()
             .executorHandle(ExecutorHandle.builder()
-                .contactInfo(contactInfo())
+                .contactInfo(getContactInfo())
                 .capabilities(ExecutorCapabilities.builder()
                     .services(configuration.getServices())
                     .features(configuration.getCapabilities())
@@ -82,7 +83,6 @@ public class Executor {
         }
         this.acq().compute(graphTaskExecution, execution -> {
             execution.addGraph(toBeDeployed);
-            execution.startExecution();
         });
         return graphTaskExecution;
     }

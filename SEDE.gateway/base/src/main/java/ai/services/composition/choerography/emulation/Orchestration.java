@@ -36,9 +36,9 @@ public class Orchestration
             logger.info(instLog(inst, "Starting to orchestrate on executor {}."),
                 inst.getInstruction().getHostExecutor());
             Long index = inst.getIndex();
-            performScheduledOperations(inst, getInput().getOpsSchedule().getInstOps(index).getPreInstOps());
+            performScheduledOperations(inst, getInput().getOpsSchedule().getInstSchedule(index).getPreInstOps());
             executeInstruction(inst);
-            performScheduledOperations(inst, getInput().getOpsSchedule().getInstOps(index).getPostInstOps());
+            performScheduledOperations(inst, getInput().getOpsSchedule().getInstSchedule(index).getPostInstOps());
         }
         transmitOutputs();
         letClientWaitForOthers();
@@ -345,7 +345,7 @@ public class Orchestration
         INotification trgReadyNtf = createNtf("Target executor is ready to accept " + fieldname);
         INotification receivedNtf = createNtf("Target executor received " + fieldname);
 
-        ITransmissionOp transOp = TransmissionOp.builder()
+        TransmissionOp.Builder transOp = TransmissionOp.builder()
             // transmission node with 3 notification for the handshake
             .transmitDataNode(t.getTransmission())
             .sourceReadyNtf(NotifyNode.builder()
@@ -365,16 +365,17 @@ public class Orchestration
                 .hostExecutor(srcQualifier)
                 .build())
             // A transmission produces and consumes the transmitted field:
-            .addDFields(fieldname)
-            .deleteFieldNode(DeleteFieldNode.builder()
+            .addDFields(fieldname);
+        if(t.deleteOnSrc()) {
+            transOp.deleteAfterTransmit(DeleteFieldNode.builder()
                 .fieldName(fieldname)
                 .index(getInput().indexFactory.create())
                 .hostExecutor(srcQualifier)
-                .build())
-            .build();
-        srcEx.execute(transOp);
+                .build());
+        }
+        srcEx.execute(transOp.build());
 
-        IAcceptOp acceptOp = AcceptOp.builder()
+        AcceptOp.Builder acceptOp = AcceptOp.builder()
             .acceptDataNode(t.getAcceptDataNode())
             .sourceReadyNtf(WaitForNotificationNode.builder()
                 .index(getInput().indexFactory.create())
@@ -393,10 +394,17 @@ public class Orchestration
                 .notification(receivedNtf)
                 .hostExecutor(trgQualifier)
                 .build())
-            .addDFields(fieldname)
-            .build();
+            .addDFields(fieldname);
 
-        trgEx.execute(acceptOp);
+        if(t.replacesOnTrg()) {
+            acceptOp.deleteBeforeAccept(DeleteFieldNode.builder()
+                .fieldName(fieldname)
+                .index(getInput().indexFactory.create())
+                .hostExecutor(trgQualifier)
+                .build());
+        }
+
+        trgEx.execute(acceptOp.build());
 
         // delete field on src:
 //        IDeleteFieldOp deleteFieldOp = DeleteFieldOp.builder()

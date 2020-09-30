@@ -26,7 +26,7 @@ public class GatewayRESTRegistration implements ExecutorInstanceRegistrationCont
 
     @Override
     public void register(Executor executor) {
-        IExecutorRegistration registration = executor.registration();
+        IExecutorRegistration registration = executor.getRegistration();
         byte[] registrationBytes;
         try {
             registrationBytes = MAPPER.writeValueAsBytes(registration);

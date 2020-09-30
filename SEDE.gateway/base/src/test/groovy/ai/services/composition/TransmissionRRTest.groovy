@@ -1,7 +1,12 @@
 package ai.services.composition
 
-
+import ai.services.composition.choerography.emulation.executors.ExecutionGraph
+import ai.services.composition.graphs.nodes.BaseNode
+import ai.services.composition.graphs.nodes.CompositionGraph
+import ai.services.composition.graphs.nodes.IAcceptDataNode
+import ai.services.composition.graphs.nodes.IDeleteFieldNode
 import ai.services.composition.graphs.nodes.IMarshalNode
+import ai.services.composition.graphs.nodes.ITransmitDataNode
 import ai.services.core.ServiceInstanceHandle
 import spock.lang.Specification
 
@@ -201,6 +206,139 @@ class TransmissionRRTest extends Specification {
         RRTestHelpers.assertExecutedBefore(clientGraph, s1HandleMarshal, s1HandleT)
         RRTestHelpers.assertExecutedBefore(ex2Graph, s1HandleA, s1HandleUnmarshal)
 
+    }
+
+    def "field repeated transmission"() {
+        def testRunner = new ResolutionTestBaseRunner("Transmissions", "02_FieldReTransmission")
+        testRunner.testPlainText =
+            """
+            |Transmitting the same field t0 multiple times.
+            |Each time the field needs to be deleted before it is accepted.""".stripMargin()
+
+        when:
+        def rr = RRGen.fromClosure {
+            composition = """
+            s0 = c0.S0::__construct();
+            s1 = c0.S1::__construct();
+
+            t0 = s0::m__T0();
+            s1::mT0({t0});
+
+            t0 = s0::m__T0();
+            s1::mT0({t0});
+
+            t0 = s0::m__T0();
+            s1::mT0({t0});
+            """
+            resolvePolicy = RRGen.defaultResolvePolicy()
+        }
+
+        testRunner.setClientExecutor("client")
+        testRunner.addExecutor("executor1", "c0.S0")
+        testRunner.addExecutor("executor2", "c0.S1")
+
+        then:
+        testRunner.start(rr)
+        testRunner.assertStaticAnalysisExceptionMatches(null)
+        testRunner.assertSimulationExceptionMatches(null)
+        testRunner.writeOutputs()
+
+        def cc = testRunner.getCc()
+        def ch = testRunner.getChoreography()
+
+        def clientGraph = ch.compositionGraph.find { it.client }
+        def ex1Graph = ch.compositionGraph.find {it.executorHandle.qualifier == "executor1"}
+        def ex2Graph = ch.compositionGraph.find {it.executorHandle.qualifier == "executor2"}
+        def ex2G = new ExecutionGraph(ex2Graph)
+
+        def acceptNodes = new ArrayList<>(ex2Graph.nodes.findAll {
+            it instanceof IAcceptDataNode && it.fieldName == "t0"
+        })
+        assert acceptNodes.size() == 3
+        RRTestHelpers.sortInFlow(ex2G, acceptNodes)
+        RRTestHelpers.assertExecutedInOrder(ex2G, acceptNodes)
+
+        def deleteNodes = new ArrayList<>(ex2Graph.nodes.findAll {
+            it instanceof IDeleteFieldNode && it.fieldName == "t0"
+        })
+        assert deleteNodes.size() >= acceptNodes.size() - 1
+        RRTestHelpers.sortInFlow(ex2G, deleteNodes)
+        RRTestHelpers.assertExecutedInOrder(ex2G, deleteNodes)
+
+        RRTestHelpers.assertExecutedBefore(ex2G, acceptNodes[0], deleteNodes[0])
+        RRTestHelpers.assertExecutedBefore(ex2G, acceptNodes[1], deleteNodes[1])
+
+        RRTestHelpers.assertExecutedBefore(ex2G, deleteNodes[0], acceptNodes[1])
+        RRTestHelpers.assertExecutedBefore(ex2G, deleteNodes[1], acceptNodes[2])
+    }
+
+    def "field transmission back"() {
+        def testRunner = new ResolutionTestBaseRunner("Transmissions", "03_FieldReturnTransmission")
+        testRunner.testPlainText =
+            """
+            |Transmitting the field t0 from executor1 to executor2 and then immediately back.
+            |There is only a single delete operation needed.""".stripMargin()
+
+        when:
+        def rr = RRGen.fromClosure {
+            composition = """
+            s0 = c0.S0::__construct();
+            s1 = c0.S1::__construct();
+
+            t0 = s0::m__T0();
+
+            t0 = s1::mT0__T0({t0});
+
+            s0::mT0({t0});
+            """
+            resolvePolicy = RRGen.defaultResolvePolicy()
+        }
+
+        testRunner.setClientExecutor("client")
+        testRunner.addExecutor("executor1", "c0.S0")
+        testRunner.addExecutor("executor2", "c0.S1")
+
+        then:
+        testRunner.start(rr)
+        testRunner.assertStaticAnalysisExceptionMatches(null)
+        testRunner.assertSimulationExceptionMatches(null)
+        testRunner.writeOutputs()
+
+        def cc = testRunner.getCc()
+        def ch = testRunner.getChoreography()
+
+        def clientGraph = ch.compositionGraph.find { it.client }
+        def ex1Graph = ch.compositionGraph.find {it.executorHandle.qualifier == "executor1"}
+        def ex2Graph = ch.compositionGraph.find {it.executorHandle.qualifier == "executor2"}
+
+        def ex1G = new ExecutionGraph(ex1Graph)
+
+        def transmitNode = ex1G.nodes.find{it instanceof ITransmitDataNode && it.fieldName == "t0" && it.contactInfo.qualifier == "executor2"} as ITransmitDataNode
+        def acceptNode = ex1G.nodes.find{it instanceof IAcceptDataNode && it.fieldName == "t0"} as IAcceptDataNode
+        transmitNode != null
+        acceptNode != null
+
+
+        RRTestHelpers.assertExecutedBefore(ex1G, transmitNode, acceptNode)
+
+
+
+        def deleteNodes = ex1G.nodes.findAll { it instanceof IDeleteFieldNode && it.fieldName == "t0"} as List<BaseNode>
+
+        def nodes = new ArrayList<BaseNode>()
+        nodes.addAll([transmitNode, acceptNode])
+        nodes.addAll(deleteNodes)
+
+        RRTestHelpers.sortInFlow(ex1G, nodes)
+
+        def deleteNodesBetween = []
+        def indexTransmit = nodes.indexOf(transmitNode)
+        def indexAccept = nodes.indexOf(acceptNode)
+        for (i in indexTransmit+1..<indexAccept) {
+            deleteNodesBetween.add(nodes[i])
+        }
+
+        assert deleteNodesBetween.size() == 1
     }
 
 }

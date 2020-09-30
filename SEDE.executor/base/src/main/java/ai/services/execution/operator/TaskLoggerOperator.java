@@ -29,10 +29,15 @@ public class TaskLoggerOperator implements TaskOperator {
     public TaskTransition apply(Task task) {
         if(logger.isDebugEnabled())
             logger.debug("Applying task-operator '{}' to task '{}'.", getDelegateClassName(), task);
-        TaskTransition taskTransition = delegate.apply(task);
-        if(logger.isDebugEnabled())
-            logger.debug("Finished applying task-operator '{}' to task '{}'.\nReturned transition: {}", getDelegateClassName(), task, taskTransition);
-        return taskTransition;
+        try {
+            TaskTransition taskTransition = delegate.apply(task);
+            if(logger.isDebugEnabled())
+                logger.debug("Finished applying task-operator '{}' to task '{}'.\nReturned transition: {}", getDelegateClassName(), task, taskTransition);
+            return taskTransition;
+        } catch(Exception ex) {
+            logger.error("Error while applying task-operator '{}' to task '{}'.", getDelegateClassName(), task, ex);
+            throw ex;
+        }
     }
 
     private String getDelegateClassName() {

@@ -21,5 +21,12 @@ public interface ITransmission extends ScheduledOperation{
 
     IExecutorHandle getTarget();
 
+    @Value.Default
+    default boolean deleteOnSrc() {
+        return true;
+    }
+
+    boolean replacesOnTrg();
+
 }
 

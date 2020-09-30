@@ -1,5 +1,6 @@
 package ai.services.execution;
 
+import ai.services.core.SEDEObject;
 import ai.services.exec.ExecutionError;
 import ai.services.exec.IExecutionError;
 import ai.services.execution.local.LocalFieldContext;
@@ -28,6 +29,8 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
 
     private boolean isInterrupted = false;
 
+    private final String executorId;
+
     private final String executionId;
 
     private final Set<Task> essentialTasks = new HashSet<>();
@@ -42,8 +45,9 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
 
     private final List<IExecutionError> errors = new ArrayList<>();
 
-    public GraphTaskExecution(String executionId) {
+    public GraphTaskExecution(String executorId, String executionId) {
         super(executionId);
+        this.executorId = executorId;
         this.executionId = executionId;
     }
 
@@ -84,14 +88,16 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
         });
         EssentialTaskGraphOp essentialTaskGO = new EssentialTaskGraphOp();
         allTasks.forEach((taskIndex, task)-> {
-            if(!backwardDependencies.containsKey(taskIndex)) {
+            if(task.getNode().isEssential()) {
+                task.addGraphOperation(essentialTaskGO);
+                essentialTasks.add(task);
+            }
+        });
+        allTasks.forEach((taskIndex, task)-> {
+            if (!backwardDependencies.containsKey(taskIndex)) {
                 task.set(Task.State.QUEUED);
                 enqueueTask(task);
             }
-            if(task.getNode().isEssential()) {
-                task.addGraphOperation(essentialTaskGO);
-            }
-            essentialTasks.add(task);
         });
     }
 
@@ -140,11 +146,13 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
                     logger.debug("Worker profile `{}` didn't match task: {}", workerProfile, queuedTask);
                 }
             }
-            logger.info("No task in queue of `{}`.", executionId);
         }
-        if(requeueWaitingTasks()) {
+        logger.trace("No task in queue of `{}`.", executionId);
+        boolean newTasksEnqueued = requeueWaitingTasks();
+        if(newTasksEnqueued) {
             return takeNextWaitingTask(workerProfile);
         } else {
+            logger.trace("No task were re-queued `{}`.", executionId);
             return Optional.empty();
         }
     }
@@ -163,7 +171,7 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
             }
         }
         if(taskFound)
-            logger.info("{} many tasks were re-queued from park after their.", queuedTask.size());
+            logger.debug("{} many tasks were re-queued from park after their waiting state.", queuedTask.size());
         return taskFound;
     }
 
@@ -192,6 +200,17 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
         return errors;
     }
 
+    @Override
+    public synchronized void setFieldValue(String fieldname, SEDEObject value) {
+        super.setFieldValue(fieldname, value);
+        logger.debug("Setting field {} to {}  in execution {} on executor {}.", fieldname, value, getExecutionId(), executorId);
+    }
+
+    @Override
+    public synchronized void deleteField(String fieldname) {
+        super.deleteField(fieldname);
+    }
+
     static class EssentialTaskGraphOp implements GraphOperator {
 
         @Override
@@ -207,12 +226,15 @@ public class GraphTaskExecution extends LocalFieldContext implements FieldContex
         public void perform(GraphTaskExecution ex, Task performer) {
             if(performer.getError().isPresent()) {
                 Exception exception = performer.getError().get();
-                IExecutionError error = ExecutionError.builder()
-                    .erroredNode(performer.getNode())
-                    .stacktrace(StringUtil.ErrToString(exception))
-                    .message(exception.getMessage())
-                    .build();
-                ex.registerError(error);
+                ExecutionError.Builder builder = ExecutionError.builder()
+                    .erroredNode(performer.getNode());
+                if(exception == null) {
+                    builder.message("null");
+                } else {
+                    builder.stacktrace(StringUtil.ErrToString(exception))
+                        .message(exception.getMessage() != null? exception.getMessage(): "");
+                }
+                ex.registerError(builder.build());
             }
         }
     }

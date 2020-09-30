@@ -140,7 +140,6 @@ public class ExecutorFactory {
             new GatewayLocalRegistration(gatewayExecutorRegistrant),
             new LocalExecutorInstanceRegistrationCtrl(executorInstanceRegistry)
         );
-
         return executorRegistrationController;
     }
 

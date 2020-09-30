@@ -19,7 +19,7 @@ import demo.types.Punkt;
 
 public class InstructionOpTest {
     private static String executor_id = "Executor_id";
-    private static GraphTaskExecution execution = new GraphTaskExecution(executor_id);
+    private static GraphTaskExecution execution = new GraphTaskExecution("executor1", executor_id);
     private static TaskOperator op = new InstructionOp(new ServiceInstanceFactory(executor_id));
 	@Test
 	public void testStaticConstantTypeInvocation() {

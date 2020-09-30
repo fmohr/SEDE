@@ -37,7 +37,7 @@ public class SendNtfOp extends MainTaskOperator {
             .build();
         executorCommChannel.pushNotification(notifyRequest);
         if(dependencyFailed) {
-           return TaskTransition.error(new Exception("Dependency failed."));
+           return TaskTransition.error(new Exception("Dependency failed"));
         }
         return mainTaskPerformed(t);
     }

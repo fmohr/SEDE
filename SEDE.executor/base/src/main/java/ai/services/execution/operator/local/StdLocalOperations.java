@@ -37,7 +37,7 @@ public class StdLocalOperations {
             new NopOp()
         );
         if(logger.isDebugEnabled()) {
-            mainTaskOperators = mainTaskOperators.stream().map(op -> new TaskLoggerOperator(op)).collect(Collectors.toList());
+            mainTaskOperators = mainTaskOperators.stream().map(TaskLoggerOperator::new).collect(Collectors.toList());
         }
         list.addAll(mainTaskOperators);
     }

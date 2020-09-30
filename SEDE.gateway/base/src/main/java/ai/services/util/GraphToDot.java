@@ -21,7 +21,7 @@ public class GraphToDot {
 	private static final Logger logger = LoggerFactory.getLogger(GraphToDot.class);
 
 	private static final String PATH_TO_DOT = new SystemSettingLookup(
-	    "/usr/local/bin/dot",
+	    "/usr/bin/dot",
         "sede.gw.DotPath",
         "DOT_PATH"
     ).lookup();

@@ -27,18 +27,32 @@ public class ExecutionErrorException extends Exception {
 
     private String detailedErrors() {
         StringBuilder sb = new StringBuilder();
-        errors.forEach(err -> appendDetailedError(err, sb));
+        errors.forEach(err -> appendError(err, sb));
         return sb.toString();
     }
 
-    private void appendDetailedError(IExecutionError error, StringBuilder sb) {
+    private void appendError(IExecutionError error, StringBuilder sb) {
         sb.append("Error message: ").append(error.getMessage());
+        if(error.getMessage().equals("Dependency failed")) {
+            appendSimpleLog(error, sb);
+        } else {
+            appendDetailedLog(error, sb);
+        }
+        sb.append("\n----\n");
+    }
+
+    private void appendSimpleLog(IExecutionError error, StringBuilder sb) {
+        if(error.getErroredNode() != null) {
+            sb.append("\nNode kind: ").append(error.getErroredNode().getNodeKind());
+        }
+    }
+
+    private void appendDetailedLog(IExecutionError error, StringBuilder sb) {
         try {
             sb.append("\nNode: ").append(PRETTY_PRINTER.writeValueAsString(error.getErroredNode()));
         } catch (JsonProcessingException ignored) {
         }
         if(error.getStacktrace() != null)
             sb.append("\nStacktrace: \n").append(error.getStacktrace());
-        sb.append("\n----\n");
     }
 }

@@ -220,8 +220,8 @@ public class InstInputCollector
     }
 
 
-    private ITransmission createTransmission(IExecutorHandle src, IExecutorHandle trg, String fieldname,
-                                             IFieldCast serialisation) {
+    private ITransmission createTransmission(IExecutorHandle src, IExecutorHandle trg,
+                                             String fieldname, IFieldCast serialisation) {
         ITransmitDataNode transmitDataNode = TransmitDataNode.builder()
             .fieldName(fieldname)
             .index(getInput().getIndexFactory().create())
@@ -239,13 +239,18 @@ public class InstInputCollector
             .hostExecutor(trg.getQualifier())
             .marshalling(receiverMarshal)
             .build();
-        ITransmission transmission = Transmission.builder()
+
+
+        Transmission.Builder transmission = Transmission.builder()
             .source(src)
             .target(trg)
             .transmission(transmitDataNode)
-            .acceptDataNode(acceptDataNode)
-            .build();
-        return transmission;
+            .acceptDataNode(acceptDataNode);
+
+        boolean fieldDanglingOnTarget = getOutput().danglesOnLocation(fieldname, trg.getQualifier());
+        transmission.replacesOnTrg(fieldDanglingOnTarget);
+
+        return transmission.build();
     }
 
     private IFieldCast createServiceInstanceHandleTransmissionSerialisation(IExecutorHandle src, IExecutorHandle trg, String fieldname,
@@ -395,6 +400,8 @@ public class InstInputCollector
 
     public class DTCOutput {
 
+        private final Map<String, Set<String>> danglingFieldLocations = new HashMap<>();
+
         private final Map<String, IExecutorHandle> fieldLocation = new HashMap<>();
 
         private final Map<String, IExecutorContactInfo> initialFields = new HashMap<>();
@@ -402,7 +409,7 @@ public class InstInputCollector
         private final Map<String, IExecutorContactInfo> returnFields = new HashMap<>();
 
         private void addPreOp(Long index, ScheduledOperation op) {
-            getInput().operationSchedule.getInstOps(index).addPreOp(op);
+            getInput().operationSchedule.getInstSchedule(index).addPreOp(op);
         }
 
         private void addOutputOp(ScheduledOperation op) {
@@ -427,6 +434,12 @@ public class InstInputCollector
             if(fieldCast.getSecondCast() != null) {
                 addPreOp(instIndex, FieldMarshal.builder().marshal(fieldCast.getSecondCast()).build());
             }
+            if(transmission.deleteOnSrc()) {
+                IExecutorHandle prevLocation = fieldLocation.remove(transmission.getTransmission().getFieldName());
+                if(!prevLocation.equals(transmission.getSource())) {
+                    throw new RuntimeException("Bug: sending a field from a missing location.");
+                }
+            }
         }
 
         private void serializeAndTransmitOutput(IFieldCast fieldCast, ITransmission transmission) {
@@ -445,8 +458,30 @@ public class InstInputCollector
             return initialFields;
         }
 
-        public void setFieldLocation(String fieldname, IExecutorHandle executorH) {
+        private boolean danglesOnLocation(String field, String executorId) {
+            Set<String> danglingLocations = danglingFieldLocations.get(field);
+            if(danglingLocations == null || danglingLocations.isEmpty()) {
+                return false;
+            }
+            return danglingLocations.contains(executorId);
+        }
+
+        private void clearDanglingFieldLocation(String field, String executorId) {
+            Set<String> locations = danglingFieldLocations.get(field);
+            if(locations != null) {
+                locations.remove(executorId);
+            }
+        }
+
+        private void setFieldLocation(String fieldname, IExecutorHandle executorH) {
+            if(fieldLocation.containsKey(fieldname)) {
+                IExecutorHandle prevExecutor = fieldLocation.get(fieldname);
+                if(!prevExecutor.getQualifier().equals(executorH.getQualifier())) {
+                    danglingFieldLocations.computeIfAbsent(fieldname, f -> new HashSet<>()).add(prevExecutor.getQualifier());
+                }
+            }
             this.fieldLocation.put(fieldname, executorH);
+            clearDanglingFieldLocation(fieldname, executorH.getQualifier());
         }
     }
 

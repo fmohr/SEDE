@@ -1,18 +1,14 @@
-package ai.services.executor.local
+package ai.services
 
-import ai.services.ISDLAssembly
-import ai.services.SDLReader
 import ai.services.channels.StdLocalChannelService
-import ai.services.composition.DeployRequest
 import ai.services.core.Primitives
-import ai.services.executor.Executor
 import ai.services.executor.ExecutorFactory
+import ai.services.executor.local.LocalExecutorInstanceRegistry
 import ai.services.gateway.GatewayFactory
 import ai.services.interfaces.ExecutorRegistrant
 import ai.services.interfaces.IGateway
 import ai.services.requests.resolve.beta.ResolvePolicy
 import ai.services.requests.resolve.beta.ResolveRequest
-import ai.services.util.FileUtil
 import demo.math.Addierer
 import spock.lang.Shared
 import spock.lang.Specification
@@ -20,7 +16,7 @@ import spock.lang.Specification
 import static spock.util.matcher.HamcrestMatchers.*
 import static spock.util.matcher.HamcrestSupport.expect
 
-class TestStdExecution extends Specification {
+class TestExecution extends Specification {
 
     @Shared ISDLAssembly assembly = null
 
@@ -32,6 +28,9 @@ class TestStdExecution extends Specification {
 
     StdLocalChannelService channel = new StdLocalChannelService(
         serviceInstanceDir.getAbsolutePath())
+
+
+    CoreClient coreClient;
 
     void setupSpec() {
         SDLReader reader = new SDLReader();
@@ -49,6 +48,7 @@ class TestStdExecution extends Specification {
         gwFactory.addServiceAssembly(assembly)
         gateway = gwFactory.build()
         registrant = gwFactory.buildRegistrant()
+        coreClient = new CoreClient(gateway, channel)
     }
 
     void cleanup() {
@@ -59,20 +59,6 @@ class TestStdExecution extends Specification {
         }
         registry.clear()
     }
-//    Executor createExecutor(Map exConfig, String... services) {
-//        def exFactory = new ExecutorFactory()
-//        exFactory.registerToLocalGateway(registrant)
-//        String id
-//        if("id" in exConfig) {
-//
-//        }
-//        exFactory.configBuilder
-//            .threadNumber(24)
-//            .addServices(services)
-//            .serviceStoreLocation(serviceInstanceDir.absolutePath)
-//            .executorId("Executor1")
-//        return exFactory.build()
-//    }
 
     def "static insts"() {
         def exFactory = new ExecutorFactory()
@@ -82,29 +68,25 @@ class TestStdExecution extends Specification {
             .executorId("Executor1")
         def executor1 = exFactory.build()
 
-        def resolution = gateway.resolve(ResolveRequest.builder().with {
+        def rr = ResolveRequest.builder().with {
             resolvePolicy(ResolvePolicy.builder().build())
-            clientExecutorRegistration(executor1.registration())
+            clientExecutorRegistration(executor1.getRegistration())
             composition("""
                 a = SS.Math::addPrimitive({10, 3});
                 b = SS.Math::multiplyObject({a,a});
                 c = SS.Math::dividePrimitive({a, b});
             """)
             build()
-        })
-
-        def graph = resolution.compositionGraph.find {
-            it.executorHandle.qualifier == "Executor1"
         }
 
+        def a,b,c;
         when:
-        def graphTaskExecution = executor1.deploy("e1", graph)
-        executor1.acq().waitUntilFinished("e1")
-
-        def a = graphTaskExecution.getFieldValue("a")
-        def b = graphTaskExecution.getFieldValue("b")
-        def c = graphTaskExecution.getFieldValue("c")
-
+        try(ExecutionController ctrl = coreClient.bootAndStart(rr)) {
+            ctrl.waitUntilFinished()
+            a = ctrl.getReturnValue("a")
+            b = ctrl.getReturnValue("b")
+            c = ctrl.getReturnValue("c")
+        }
 
         then:
         [a, b, c].each {
@@ -126,9 +108,9 @@ class TestStdExecution extends Specification {
             .executorId("Executor1")
         def executor1 = exFactory.build()
 
-        def resolution = gateway.resolve(ResolveRequest.builder().with {
+        def rr = ResolveRequest.builder().with {
             resolvePolicy(ResolvePolicy.builder().build())
-            clientExecutorRegistration(executor1.registration())
+            clientExecutorRegistration(executor1.getRegistration())
             composition("""
                 a = SS.Math::addPrimitive({10, 3});
                 b = SS.Math::multiplyObject({1, 5});
@@ -137,16 +119,15 @@ class TestStdExecution extends Specification {
                 c = addierer::addier({c});
             """)
             build()
-        })
-        def graph = resolution.compositionGraph.find {
-            it.executorHandle.qualifier == "Executor1"
         }
-        when:
-        def graphTaskExecution = executor1.deploy("e1", graph)
-        executor1.acq().waitUntilFinished("e1")
 
-        def c = graphTaskExecution.getFieldValue("c")
-        def addierer = graphTaskExecution.getFieldValue("addierer")
+        def c, addierer
+        when:
+        try(ExecutionController ctrl = coreClient.bootAndStart(rr)) {
+            ctrl.waitUntilFinished()
+            c = ctrl.getReturnValue("c")
+            addierer = ctrl.getReturnValue("addierer")
+        }
 
         then:
         c.type == Primitives.Number.name()
@@ -162,7 +143,7 @@ class TestStdExecution extends Specification {
         def exFactory = new ExecutorFactory()
         exFactory.registerToLocalGateway(registrant)
         exFactory.configBuilder
-            .threadNumber(10)
+            .threadNumber(24)
             .addServices("demo.math.Addierer")
             .serviceStoreLocation(serviceInstanceDir.absolutePath)
             .executorId("Executor1")
@@ -171,7 +152,7 @@ class TestStdExecution extends Specification {
         exFactory = new ExecutorFactory()
         exFactory.registerToLocalGateway(registrant)
         exFactory.configBuilder
-            .threadNumber(10)
+            .threadNumber(24)
             .addServices("SS.Math", "SS.String",
                 "demo.math.Gerade")
             .serviceStoreLocation(serviceInstanceDir.absolutePath)
@@ -180,16 +161,16 @@ class TestStdExecution extends Specification {
 
         exFactory = new ExecutorFactory()
         exFactory.configBuilder
-            .threadNumber(5)
+            .threadNumber(24)
             .serviceStoreLocation(serviceInstanceDir.absolutePath)
             .executorId("ClientExecutor")
         def clientExecutor = exFactory.build()
 
-        def resolution = gateway.resolve(ResolveRequest.builder().with {
+        def rr = ResolveRequest.builder().with {
             resolvePolicy(ResolvePolicy.builder()
                 .isDotGraphRequested(true)
                 .build())
-            clientExecutorRegistration(clientExecutor.registration())
+            clientExecutorRegistration(clientExecutor.getRegistration())
             composition("""
                 a = SS.Math::addPrimitive({10, 3});
                 b = SS.Math::multiplyObject({1, 5});
@@ -204,37 +185,38 @@ class TestStdExecution extends Specification {
                 b2 = gerade::liegtAufGerade({p3});
             """)
             build()
-        })
-        FileUtil.writeStringToFile("composition.svg", resolution.getDotSVG())
+        }
+        def resolution = gateway.resolve(rr)
+//        FileUtil.writeStringToFile("composition.svg", resolution.getDotSVG())
+
+        def b1
+        def b2
+        def gerade
+        def addierer
+
+//        def runs = []
+//
+//        when:
+//        for (i in 0..<2000) {
+//            runs.add(coreClient.boot(rr, resolution))
+//            def ctrl = runs[-1]
+//        }
+//        for(ExecutionController ctrl : runs) {
+//            ctrl.waitUntilFinished()
+//            ctrl.close()
+//        }
+//
+//        then:
+//        true
 
         when:
-//        for (i in 0..<100) {
-//            def id = UUID.randomUUID().toString()
-//            resolution.compositionGraph.each { compGraph ->
-//                channel.interExecutorCommChannel(compGraph.executorHandle.contactInfo)
-//                    .deployGraph(DeployRequest.builder().with {
-//                        executionId(id)
-//                        it.compGraph(compGraph)
-//                        build()
-//                    })
-//            }
-//            def graphTaskExecution = clientExecutor.acq().waitUntilFinished(id)
-//        }
-        resolution.compositionGraph.each { compGraph ->
-            channel.interExecutorCommChannel(compGraph.executorHandle.contactInfo)
-                .deployGraph(DeployRequest.builder().with {
-                    executionId("e1")
-                    it.compGraph(compGraph)
-                    build()
-                })
+        try(ExecutionController ctrl = coreClient.bootAndStart(rr, resolution)) {
+            ctrl.waitUntilFinished()
+            b1 = ctrl.getReturnValue("b1")
+            b2 = ctrl.getReturnValue("b2")
+            gerade = ctrl.getReturnValue("gerade")
+            addierer = ctrl.getReturnValue("addierer")
         }
-
-        def graphTaskExecution = clientExecutor.acq().waitUntilFinished("e1")
-
-        def b1 = graphTaskExecution.getFieldValue("b1")
-        def b2 = graphTaskExecution.getFieldValue("b2")
-        def gerade = graphTaskExecution.getFieldValue("gerade")
-        def addierer = graphTaskExecution.getFieldValue("addierer")
 
         then:
         b1.type == Primitives.Bool.name()
@@ -271,11 +253,11 @@ class TestStdExecution extends Specification {
             .executorId("ClientExecutor")
         def clientExecutor = exFactory.build()
 
-        def resolution = gateway.resolve(ResolveRequest.builder().with {
+        def rr = ResolveRequest.builder().with {
             resolvePolicy(ResolvePolicy.builder()
                 .isDotGraphRequested(true)
                 .build())
-            clientExecutorRegistration(clientExecutor.registration())
+            clientExecutorRegistration(clientExecutor.getRegistration())
             composition("""
                 a = SS.Math::addPrimitive({0, 1});
                 b = demo.math.Addierer::fail();
@@ -283,31 +265,32 @@ class TestStdExecution extends Specification {
                 demo.math.Addierer::useNummerList({b});
             """)
             build()
-        })
-        FileUtil.writeStringToFile("composition.svg", resolution.getDotSVG())
-
-        when:
-        resolution.compositionGraph.each { compGraph ->
-            channel.interExecutorCommChannel(compGraph.executorHandle.contactInfo)
-                .deployGraph(DeployRequest.builder().with {
-                    executionId("e1")
-                    it.compGraph(compGraph)
-                    build()
-                })
         }
 
-        def graphTaskExecution = clientExecutor.acq().waitUntilFinished("e1")
 
-        def a = graphTaskExecution.getFieldValue("a")
-        def b = graphTaskExecution.hasField("b")
+        when:
+        ExecutionController ctrl = coreClient.bootAndStart(rr)
+        ctrl.waitUntilFinished()
 
         then:
-        a.type == Primitives.Number.name()
-        a.dataField == 3
-        !graphTaskExecution.hasField("b")
+        thrown(ExecutionErrorException)
 
-        !executor1.acq().get("e1").isPresent()
-        !clientExecutor.acq().get("e1").isPresent()
+        when:
+        ctrl.getReturnValue("e1")
+        then:
+        thrown(IllegalStateException)
 
+        when:
+        ctrl.getReturnValue("a")
+        then:
+        thrown(IllegalStateException)
+
+        when:
+        ctrl.getReturnValue("b")
+        then:
+        thrown(IllegalStateException)
+
+        cleanup:
+        ctrl.close()
      }
 }

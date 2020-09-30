@@ -19,6 +19,9 @@ public class AccessControlQueue extends ExecutionRegistry {
 
     private static final Logger logger = LoggerFactory.getLogger(AccessControlQueue.class);
 
+    public AccessControlQueue() {
+    }
+
     public synchronized TaskEntry takeJob(WorkerProfile workerProfile) throws InterruptedException, QueueClosedException {
         if(!iterate().hasNext() && isClosed) {
             throw new QueueClosedException();
@@ -40,7 +43,7 @@ public class AccessControlQueue extends ExecutionRegistry {
             GraphTaskExecution execution = it.next();
             if(canBeRemoved(execution)) {
                 it.remove();
-                return Optional.empty();
+                continue;
             }
             Optional<Task> task = execution.takeNextWaitingTask(workerProfile);
             if(task.isPresent()) {

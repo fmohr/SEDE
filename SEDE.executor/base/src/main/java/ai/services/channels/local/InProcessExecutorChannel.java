@@ -77,7 +77,7 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
     private void logMissingExecutor(String executionId, String taskDescription) {
         logger.error("{} execution with id '{}', on executor with contact info '{}', was not successful:\n No such execution found.",
             taskDescription,
-            executionId, getExecutor().contactInfo());
+            executionId, getExecutor().getContactInfo());
     }
 
     @Override
@@ -92,7 +92,7 @@ public class InProcessExecutorChannel implements ExecutorCommChannel {
             }
         } catch (RuntimeException e) {
             throw new PushNotificationException(String.format("Error pushing notification %s to execution %s on executor %s: %s",
-                notifyRequest, executionId, getExecutor().contactInfo(), e.getMessage()));
+                notifyRequest, executionId, getExecutor().getContactInfo(), e.getMessage()));
         }
     }
 

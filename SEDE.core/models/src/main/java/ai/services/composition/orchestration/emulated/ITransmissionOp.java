@@ -25,7 +25,8 @@ public interface ITransmissionOp extends EmulatedOp {
     ITransmitDataNode getTransmitDataNode();
 
     @Nullable
-    IDeleteFieldNode getDeleteFieldNode();
+    IDeleteFieldNode getDeleteAfterTransmit();
+
 
 }
 

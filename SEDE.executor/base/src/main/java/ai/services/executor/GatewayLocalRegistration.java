@@ -13,7 +13,7 @@ public class GatewayLocalRegistration implements ExecutorInstanceRegistrationCon
     @Override
     public void register(Executor executor) {
         if(registrant != null) {
-            registrant.register(executor.registration());
+            registrant.register(executor.getRegistration());
         }
     }
 }

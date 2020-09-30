@@ -20,6 +20,8 @@ public class ExecutionRegistry {
 
     private Map<String, GraphTaskExecution> execs = new HashMap<>();
 
+    private String qualifier = null;
+
     protected boolean isClosed = false;
 
     private void assertNoClosed() {
@@ -75,10 +77,13 @@ public class ExecutionRegistry {
 
     private GraphTaskExecution internalCreate(String execId) {
         assertNoClosed();
-        GraphTaskExecution execution = new GraphTaskExecution(execId);
+        GraphTaskExecution execution = new GraphTaskExecution(qualifier, execId);
         execs.put(execId, execution);
         logger.info("Defined a new execution.");
         return execution;
     }
 
+    public void setQualifier(String qualifier) {
+        this.qualifier = qualifier;
+    }
 }

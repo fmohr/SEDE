@@ -23,7 +23,6 @@ public interface IExecutorHandle extends IQualifiable {
     /**
      * @deprecated
      */
-    @Deprecated(since = "0.1.2", forRemoval = true)
     static ExecutorHandle fromRegistration(ExecutorRegistration registration) {
         return ExecutorHandle.builder()
             .contactInfo(

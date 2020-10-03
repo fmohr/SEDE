@@ -12,9 +12,7 @@ import ai.services.param.INumericParameter
 import ai.services.param.IParameterDependencyDesc
 import ai.services.param.IServiceParameterizationDesc
 import ai.services.exec.auxiliary.IJavaParameterizationAux
-import de.upb.sede.param.auxiliary.JavaParameterizationAux
 import ai.services.types.IDataTypeDesc
-import de.upb.sede.types.auxiliary.JavaTypeAux
 import spock.lang.Specification
 
 class SDLTest extends Specification {

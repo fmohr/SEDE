@@ -1,5 +1,6 @@
 package ai.services.core;
 
+import ai.services.util.Streams;
 import org.json.simple.JSONObject;
 
 import java.io.ByteArrayInputStream;
@@ -33,11 +34,7 @@ public class SemanticDataField extends SEDEObject{
 	@Deprecated
 	public SemanticDataField(String type, InputStream inputStream, boolean persistent) {
 		super(type);
-        try {
-            this.semanticData = inputStream.readAllBytes();
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        this.semanticData = Streams.InReadByteArr(inputStream);
         this.persistent = persistent;
 	}
 

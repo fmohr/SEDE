@@ -13,6 +13,8 @@ import demo.math.Addierer
 import spock.lang.Shared
 import spock.lang.Specification
 
+import java.util.concurrent.atomic.AtomicBoolean
+
 import static spock.util.matcher.HamcrestMatchers.*
 import static spock.util.matcher.HamcrestSupport.expect
 
@@ -292,5 +294,62 @@ class TestExecution extends Specification {
 
         cleanup:
         ctrl.close()
-     }
+    }
+
+    def "test single execution interrupt"() {
+        def exFactory = new ExecutorFactory()
+        exFactory.registerToLocalGateway(registrant)
+        exFactory.configBuilder
+            .threadNumber(10)
+            .addServices("SS.Math", "demo.math.Addierer")
+            .serviceStoreLocation(serviceInstanceDir.absolutePath)
+            .executorId("Executor1")
+        def executor1 = exFactory.build()
+
+        exFactory = new ExecutorFactory()
+        exFactory.configBuilder
+            .threadNumber(5)
+            .serviceStoreLocation(serviceInstanceDir.absolutePath)
+            .executorId("ClientExecutor")
+        def clientExecutor = exFactory.build()
+
+        def rr = ResolveRequest.builder().with {
+            resolvePolicy(ResolvePolicy.builder()
+                .isDotGraphRequested(true)
+                .build())
+            clientExecutorRegistration(clientExecutor.getRegistration())
+            composition("""
+                a = SS.Math::addPrimitive({0, 1});
+                b = demo.math.Addierer::sleep();
+                a = SS.Math::addPrimitive({a, 2});
+                demo.math.Addierer::useNummerList({b});
+            """)
+            build()
+        }
+
+
+        when:
+        AtomicBoolean flag = new AtomicBoolean(false)
+        Thread t = new Thread({
+            try(ExecutionController ctrl = coreClient.bootAndStart(rr)) {
+                ctrl.waitUntilFinished()
+                flag.set(true)
+            }
+        })
+        t.start()
+
+        then:
+        t.isAlive()
+        Thread.sleep(400)
+        t.isAlive()
+
+        when:
+        t.interrupt()
+        t.join()
+
+        then:
+        !flag.get()
+        !executor1.acq().iterate().hasNext()
+
+    }
 }

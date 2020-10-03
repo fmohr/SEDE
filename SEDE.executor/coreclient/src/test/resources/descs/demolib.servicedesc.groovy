@@ -71,7 +71,7 @@ collection ("demolib") {
             isContextFree = true
         }
 
-        method (name: 'sleep') {
+        method (name: 'sleep', output: NummerList) {
             isContextFree = true
         }
 

@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -89,7 +88,7 @@ public class ExecutionController implements AutoCloseable {
     private void testConnectivity() {
         Map<IExecutorContactInfo, Optional<Long>> connectivityMap = new HashMap<>();
         AtomicBoolean connectionFailed = new AtomicBoolean(false);
-        forEachExecutor((comp, channel) -> {
+        callForEachExecutor((comp, channel) -> {
             Optional<Long> rtt = channel.testConnectivity();
             connectivityMap.put(comp.getExecutorHandle().getContactInfo(), rtt);
             if (rtt.isPresent()) {
@@ -109,7 +108,7 @@ public class ExecutionController implements AutoCloseable {
     }
 
     private void deploy() {
-        forEachExecutor((comp, channel) -> {
+        callForEachExecutor((comp, channel) -> {
             try {
                 setExecutionState(comp, this::setDeployed);
                 ExecutorCommChannel executorCommChannel = channelService.interExecutorCommChannel(comp.getExecutorHandle().getContactInfo());
@@ -140,7 +139,7 @@ public class ExecutionController implements AutoCloseable {
     }
 
     private void start() {
-        forEachExecutor((comp, channel) -> {
+        callForEachExecutor((comp, channel) -> {
             try {
                 setExecutionState(comp, this::setStarted);
                 ExecutorCommChannel executorCommChannel = channelService.interExecutorCommChannel(comp.getExecutorHandle().getContactInfo());
@@ -214,7 +213,7 @@ public class ExecutionController implements AutoCloseable {
         assertStarted();
         assertAllInputFieldsProvided();
         try {
-            forEachExecutor((comp, channel) -> {
+            callForEachExecutorWithException((comp, channel) -> {
                 boolean isFinished = checkState(comp, state -> {
                     if (state.isPresent() && state.get().isStarted() && state.get().isDeployed()) {
                         return state.get().isFinished();
@@ -230,9 +229,12 @@ public class ExecutionController implements AutoCloseable {
                 joinExecution(comp, channel);
                 collectErrors(comp, channel);
             });
-        } catch (ExecutionRuntimeException ex) {
-            if(ex.getCause() instanceof  InterruptedException)
-                throw (InterruptedException) ex.getCause();
+        } catch(InterruptedException ex) {
+            logger.info("Interrupted while waiting on execution {}", getExecutionId(), ex);
+            throw new InterruptedException();
+        } catch (Exception ex) {
+            logger.warn("Error while waiting for execution to finish: {}", ex.getMessage());
+            throw new ExecutionRuntimeException(ex);
         }
         finishedFlag.set(true);
         if(!executionErrors.isEmpty()) {
@@ -240,12 +242,8 @@ public class ExecutionController implements AutoCloseable {
         }
     }
 
-    private void joinExecution(ICompositionGraph comp, ExecutorCommChannel channel) {
-        try {
-            channel.joinExecution(getExecutionId());
-        } catch (InterruptedException e) {
-            throw new ExecutionRuntimeException("Interrupted", e);
-        }
+    private void joinExecution(ICompositionGraph comp, ExecutorCommChannel channel) throws InterruptedException {
+        channel.joinExecution(getExecutionId());
         setExecutionState(comp, this::setFinished);
     }
 
@@ -321,7 +319,7 @@ public class ExecutionController implements AutoCloseable {
     public synchronized void interrupt() {
         assertStarted();
         if(!finishedFlag.get()) {
-            forEachExecutor(this::interrupt);
+            callForEachExecutor(this::interrupt);
         }
     }
 
@@ -331,7 +329,8 @@ public class ExecutionController implements AutoCloseable {
             && state.get().isStarted()
             && !state.get().isFinished());
         if(!interruptNeeded) {
-            logger.info("Didn't interrupt execution {} on executor {}: It was not started .", getExecutionId(), qualifier);
+            logger.info("Didn't interrupt execution {} on executor {}: Current state: {}", getExecutionId(), qualifier, executionStates.get(qualifier));
+            return;
         }
         try {
             channel.interrupt(getExecutionId());
@@ -345,7 +344,7 @@ public class ExecutionController implements AutoCloseable {
     }
 
     private void remove() {
-        forEachExecutor(this::remove);
+        callForEachExecutor(this::remove);
     }
 
     private void remove(ICompositionGraph comp, ExecutorCommChannel channel) {
@@ -363,14 +362,6 @@ public class ExecutionController implements AutoCloseable {
                 getExecutionId(),
                 comp.getExecutorHandle().getContactInfo(),
                 ex);
-        }
-    }
-
-    private void forEachExecutor(BiConsumer<ICompositionGraph, ExecutorCommChannel> cb) {
-        List<ICompositionGraph> compositionGraphs = choreography.getCompositionGraph();
-        for (ICompositionGraph comp : compositionGraphs) {
-            ExecutorCommChannel executorCommChannel = channelService.interExecutorCommChannel(comp.getExecutorHandle().getContactInfo());
-            cb.accept(comp, executorCommChannel);
         }
     }
 
@@ -394,4 +385,27 @@ public class ExecutionController implements AutoCloseable {
         IExecutionState state = this.executionStates.get(executorQualifier);
         return stateCheck.apply(Optional.ofNullable(state));
     }
+
+
+    private void callForEachExecutor(ExecutorCallbackQuiet cb) {
+        List<ICompositionGraph> compositionGraphs = choreography.getCompositionGraph();
+        for (ICompositionGraph comp : compositionGraphs) {
+            ExecutorCommChannel executorCommChannel = channelService.interExecutorCommChannel(comp.getExecutorHandle().getContactInfo());
+            cb.runCallback(comp, executorCommChannel);
+        }
+    }
+    private void callForEachExecutorWithException(ExecutorCallbackWithException cb) throws Exception {
+        List<ICompositionGraph> compositionGraphs = choreography.getCompositionGraph();
+        for (ICompositionGraph comp : compositionGraphs) {
+            ExecutorCommChannel executorCommChannel = channelService.interExecutorCommChannel(comp.getExecutorHandle().getContactInfo());
+            cb.runCallback(comp, executorCommChannel);
+        }
+    }
+    private interface ExecutorCallbackQuiet {
+        void runCallback(ICompositionGraph comp, ExecutorCommChannel channel);
+    }
+    private interface ExecutorCallbackWithException {
+        void runCallback(ICompositionGraph comp, ExecutorCommChannel channel) throws Exception;
+    }
+
 }

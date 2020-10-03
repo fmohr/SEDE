@@ -1,16 +1,18 @@
-import de.upb.sede.beta.ExecutorRegistration
-import de.upb.sede.composition.FieldType
-import de.upb.sede.composition.RRGen
-import de.upb.sede.composition.types.DataValueType
-import de.upb.sede.composition.types.PrimitiveValueType
-import de.upb.sede.composition.types.ServiceInstanceType
-import de.upb.sede.core.PrimitiveType
-import de.upb.sede.core.ServiceInstanceHandle
-import de.upb.sede.exec.ExecutorCapabilities
-import de.upb.sede.exec.ExecutorContactInfo
-import de.upb.sede.exec.ExecutorHandle
-import de.upb.sede.requests.resolve.beta.ResolvePolicy
-import de.upb.sede.requests.resolve.beta.ResolveRequest
+package requests
+
+import ai.services.beta.ExecutorRegistration
+import ai.services.composition.FieldType
+import ai.services.composition.RRGen
+import ai.services.composition.types.DataValueType
+import ai.services.composition.types.PrimitiveValueType
+import ai.services.composition.types.ServiceInstanceType
+import ai.services.core.Primitives
+import ai.services.core.ServiceInstanceHandle
+import ai.services.exec.ExecutorCapabilities
+import ai.services.exec.ExecutorContactInfo
+import ai.services.exec.ExecutorHandle
+import ai.services.requests.resolve.beta.ResolvePolicy
+import ai.services.requests.resolve.beta.ResolveRequest
 import groovy.transform.BaseScript
 
 @BaseScript RRGen gen
@@ -25,7 +27,7 @@ ResolveRequest.builder()
             .executorHandle(ExecutorHandle.builder()
                 .contactInfo(ExecutorContactInfo.builder()
                     .qualifier("Cl_Exec")
-                    .hostAddress("localhost:5000")
+                    .uRL("localhost:5000")
                     .isReachable(true)
                     .build())
                 .capabilities(ExecutorCapabilities.builder()
@@ -38,25 +40,25 @@ ResolveRequest.builder()
         FieldType.builder()
             .fieldname("f1")
             .type(DataValueType.builder()
-                .qualifier("T1")
+                .typeQualifier("T1")
                 .build())
             .build(),
         FieldType.builder()
             .fieldname("f2")
             .type(DataValueType.builder()
-                .qualifier("T2")
+                .typeQualifier("T2")
                 .build())
             .build(),
         FieldType.builder()
             .fieldname("f3")
             .type(PrimitiveValueType.builder()
-                .primitiveType(PrimitiveType.Number)
+                .primitiveType(Primitives.Number)
                 .build())
             .build(),
         FieldType.builder()
             .fieldname("f4")
             .type(ServiceInstanceType.builder()
-                .qualifier("S1")
+                .typeQualifier("S1")
                 .build())
             .build())
     .putInitialServices("f4", new ServiceInstanceHandle(

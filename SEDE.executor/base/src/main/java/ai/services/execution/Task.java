@@ -1,7 +1,6 @@
 package ai.services.execution;
 
-import de.upb.sede.composition.graphs.nodes.BaseNode;
-import ai.services.execution.local.GraphOperator;
+import ai.services.composition.graphs.nodes.BaseNode;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -15,11 +14,15 @@ import java.util.function.Predicate;
  */
 public class Task {
 
+    public enum State {
+        DISABLED, WAITING, QUEUED, RUNNING, SUCCESS, FAILURE;
+    }
+
     private List<String> workerGroup = Collections.singletonList("HOST");
 
     private BaseNode node;
 
-    private Execution execution;
+    private final FieldContext fieldContext;
 
     private List<GraphOperator> graphOps = new ArrayList<>();
 
@@ -35,9 +38,9 @@ public class Task {
 
     private Exception error;
 
-    public Task(Execution execution, BaseNode node) {
+    public Task(FieldContext fieldContext, BaseNode node) {
         this.node = node;
-        this.execution = execution;
+        this.fieldContext = fieldContext;
         this.waitingCondition = (task) -> false;
     }
 
@@ -49,12 +52,16 @@ public class Task {
         return node;
     }
 
-    private Execution getExecution() {
-        return execution;
+    public boolean isOfType(Class<? extends BaseNode> baseNodeClass) {
+        return baseNodeClass == null || baseNodeClass.isInstance(node);
     }
 
+//    private GraphTaskExecution getExecution() {
+//        return execution;
+//    }
+
     public FieldContext getFieldContext() {
-        return execution;
+        return fieldContext;
     }
     public <V> V getWorkingMemVal(Object key) {
         return (V) workingMem.get(key);
@@ -73,8 +80,8 @@ public class Task {
         return node.getText();
     }
 
-    Predicate<Task> getWaitingCondition() {
-        return waitingCondition;
+    public boolean testWaitingCondition() {
+        return waitingCondition.test(this);
     }
 
     void setWaitingCondition(Predicate<Task> waitingCondition) {
@@ -134,12 +141,6 @@ public class Task {
             }
         }
         return false;
-    }
-
-    public enum State {
-
-        DISABLED, WAITING, QUEUED, RUNNING, SUCCESS, FAILURE;
-
     }
 
     public List<String> getWorkerGroup() {

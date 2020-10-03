@@ -1,7 +1,7 @@
 package ai.services.execution.operator;
 
-import de.upb.sede.composition.types.IServiceInstanceType;
-import de.upb.sede.core.ServiceInstance;
+import ai.services.composition.types.IServiceInstanceType;
+import ai.services.core.ServiceInstance;
 
 import java.util.UUID;
 

@@ -1,8 +1,8 @@
-import de.upb.sede.Defaults
+import ai.services.SDL
 
-import static de.upb.sede.Defaults.*
+import static ai.services.Defaults.*
 
-@groovy.transform.BaseScript de.upb.sede.SDL sdl
+@groovy.transform.BaseScript SDL sdl
 
 def Instances = 'LabeledInstances'
 def number = 'Number'

@@ -54,6 +54,8 @@ subprojects {
              */
             commons: [group: 'org.apache.commons', name: 'commons-lang3', version: '3.11'],
             commons_io: [group: 'commons-io', name: 'commons-io', version: '2.6'],
+            httpcomponents: [group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.12'],
+
 
             guava: 'com.google.guava:guava:28.0-jre',
 
@@ -129,7 +131,7 @@ subprojects {
 
     // source Jar:
     task sourcesJar(type: Jar) {
-        classifier = 'sources'
+        archiveClassifier.set 'sources'
         from sourceSets.main.allJava
     }
 
@@ -149,13 +151,6 @@ subprojects {
         from sourceSets.main.output
     }
 
-    // copy python source:
-    task buildPython(type: Copy) {
-        from "${projectDir}/src/main/python/"
-        include "**/*.py"
-        into "${rootDir}/deploy/SEDE_python/${project.name}"
-    }
-
     clean.doFirst {
         delete fileTree("$rootDir") {
             include '*.jar'
@@ -165,7 +160,6 @@ subprojects {
         delete "${projectDir}/instances"
         delete "${projectDir}/servicespec"
         delete "${rootDir}/deploy/SEDE"
-        delete "${rootDir}/deploy/SEDE_Python"
     }
 
     apply from: "$rootDir/publish.gradle"

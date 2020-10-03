@@ -7,7 +7,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Ordering;
 import de.upb.sede.edd.deploy.DeploymentException;
 import de.upb.sede.edd.deploy.ServiceDeployment;
-import de.upb.sede.util.*;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,0 +1,23 @@
+package ai.services
+
+class ClosureSDL extends SDL{
+
+    private Closure script;
+
+    public ClosureSDL(Closure script) {
+        this.script = script;
+    }
+
+    @Override
+    def runScript() {
+        return null
+    }
+
+    @Override
+    Object run() {
+        script.delegate = this;
+        script.resolveStrategy = Closure.DELEGATE_FIRST;
+        script.run();
+        return super.cols;
+    }
+}

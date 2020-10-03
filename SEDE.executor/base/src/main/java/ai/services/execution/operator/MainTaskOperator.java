@@ -2,34 +2,55 @@ package ai.services.execution.operator;
 
 import ai.services.execution.Task;
 import ai.services.execution.TaskTransition;
-import ai.services.execution.operator.AbstractOperator;
+import ai.services.composition.graphs.nodes.BaseNode;
 
 /**
  * Task operators that handle the main workload of a task.
  */
 public abstract class MainTaskOperator extends AbstractOperator {
 
-    private final Class<?> domainNode;
+    private final boolean acceptFailedTasks;
 
-    public MainTaskOperator(Class<?> domainNode) {
-        this.domainNode = domainNode;
+    protected final Class<? extends BaseNode> taskDomain;
+
+    public MainTaskOperator(boolean acceptFailedTasks, Class<? extends BaseNode> taskDomain) {
+        this.taskDomain = taskDomain;
+        this.acceptFailedTasks = acceptFailedTasks;
+    }
+
+    public MainTaskOperator(boolean acceptFailedTasks) {
+        this.taskDomain = null;
+        this.acceptFailedTasks = acceptFailedTasks;
+    }
+
+
+    public MainTaskOperator(Class<? extends BaseNode> taskDomain) {
+        this(false, taskDomain);
     }
 
     public MainTaskOperator() {
-        this.domainNode = null;
+        this(false, null);
+    }
+
+    protected TaskTransition mainTaskPerformed(Task t) {
+        t.setMainTaskPerformed();
+        return TaskTransition.pass();
     }
 
     public boolean test(Task task) {
-        if(task.isDependencyFailed() || task.isFinished() || task.isMainTaskPerformed()) {
+        if(!acceptFailedTasks && task.isDependencyFailed()) {
             return false;
         }
-        if(domainNode == null || domainNode.isInstance(task.getNode())) {
-            return operationMatches(task);
+        if(task.isFinished() || task.isMainTaskPerformed()) {
+            return false;
+        }
+        if(task.isOfType(taskDomain)) {
+            return detailedTest(task);
         }
         return false;
     }
 
-    protected boolean operationMatches(Task task) {
+    protected boolean detailedTest(Task task) {
         return true;
     }
 

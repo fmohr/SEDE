@@ -18,6 +18,7 @@ def includeAt(String topProjectDir, String name, String dir = ".") {
 def coreProjects = "SEDE.core"
 includeAt coreProjects, "SEDE.core", "base"
 includeAt coreProjects, "SEDE.core-models", "models"
+includeAt coreProjects, "SEDE.interfaces", "interfaces"
 includeAt coreProjects, "SEDE.servicedesc", "servicedesc"
 includeAt coreProjects, "SEDE.sdl", "servicedesc-dsl"
 
@@ -34,6 +35,7 @@ includeAt documentationProjects, "SEDE.docs", "base"
 //include "SEDE.executor"
 def executorProjects = "SEDE.executor"
 includeAt executorProjects, "SEDE.executor", "base"
+includeAt executorProjects, "SEDE.coreclient", "coreclient"
 
 
 /*

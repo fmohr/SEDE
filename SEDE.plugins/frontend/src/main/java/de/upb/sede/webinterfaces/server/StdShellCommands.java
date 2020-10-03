@@ -8,9 +8,6 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static de.upb.sede.webinterfaces.server.CommandTree.*;
-import static de.upb.sede.webinterfaces.server.Command.*;
-
 public class StdShellCommands {
 	private static final Logger logger = LoggerFactory.getLogger(StdShellCommands.class);
 	public static void enablePlugin(ServerCommandListeners scl) {

@@ -1,4 +1,6 @@
-@groovy.transform.BaseScript de.upb.sede.SDL description
+import ai.services.SDL
+
+@groovy.transform.BaseScript SDL description
 
 collection ("services1") {
 

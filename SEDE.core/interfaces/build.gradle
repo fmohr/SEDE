@@ -1,0 +1,5 @@
+dependencies {
+    compile project(":SEDE.core")
+    compile project(":SEDE.core-models")
+}
+

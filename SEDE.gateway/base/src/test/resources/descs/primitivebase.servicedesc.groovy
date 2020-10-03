@@ -1,10 +1,10 @@
-import de.upb.sede.SDL
+import ai.services.SDL
 import groovy.transform.BaseScript
 
 @BaseScript SDL description
 
-import static de.upb.sede.Helpers.*;
-import static de.upb.sede.StandardDefs.*;
+
+import static ai.services.StandardDefs.*;
 
 collection "PrimitiveServices", {
     [0, 1].each {
@@ -19,6 +19,18 @@ collection "PrimitiveServices", {
             constructor(name: "constBool_Bool", inputs: [bool, bool])
 
             method(name: "mNumber_Str_Bool", inputs: [number, str, bool])
+
+            method(name: "produce_Number", output:[number]) {
+                isContextFree = true
+            }
+
+            method(name: "produce_Str", output:[str]) {
+                isContextFree = true
+            }
+
+            method(name: "produce_Bool", output:[bool]) {
+                isContextFree = true
+            }
 
             method(name: "mT0_Str", inputs: ["p.T0", str])
 

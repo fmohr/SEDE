@@ -6,13 +6,16 @@ dependencies {
     Map libs = project.ext.libs
 
     implementation project(':SEDE.core')
-    implementation libs.commons
+    implementation project(':SEDE.core-models')
+    implementation project(':SEDE.interfaces')
 
-    api project(':SEDE.core-models')
+    implementation libs.commons
+    implementation libs.httpcomponents
 
     testCompile project.ext.isyslibs.demolib
     testCompile project(':SEDE.servicedesc')
     testCompile project(':SEDE.sdl')
+    testCompile project(':SEDE.gateway')
 
     testRuntimeOnly libs.log4j
     testCompile (

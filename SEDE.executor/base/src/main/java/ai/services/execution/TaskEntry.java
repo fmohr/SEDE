@@ -1,5 +1,7 @@
 package ai.services.execution;
 
+import ai.services.executor.AccessControlQueue;
+
 /**
  * Tuple of AccessControlQueue, Execution and Task.
  */
@@ -7,11 +9,11 @@ public class TaskEntry {
 
     private final AccessControlQueue acq;
 
-    private final Execution execution;
+    private final GraphTaskExecution execution;
 
     private final Task task;
 
-    public TaskEntry(AccessControlQueue acq, Execution execution, Task task) {
+    public TaskEntry(AccessControlQueue acq, GraphTaskExecution execution, Task task) {
         this.acq = acq;
         this.execution = execution;
         this.task = task;
@@ -21,7 +23,7 @@ public class TaskEntry {
         return acq;
     }
 
-    public Execution getExecution() {
+    public GraphTaskExecution getExecution() {
         return execution;
     }
 

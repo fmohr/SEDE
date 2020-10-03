@@ -16,3 +16,4 @@ public interface TaskOperator  {
     TaskTransition apply(Task task);
 
 }
+

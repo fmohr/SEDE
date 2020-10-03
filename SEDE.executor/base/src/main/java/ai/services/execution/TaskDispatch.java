@@ -1,7 +1,7 @@
 package ai.services.execution;
 
-import ai.services.execution.local.GraphOperator;
 import ai.services.execution.operator.TaskOperator;
+import ai.services.executor.AccessControlQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,11 +18,11 @@ public abstract class TaskDispatch {
 
     private static final Logger logger = LoggerFactory.getLogger(TaskDispatch.class);
 
-    private final boolean enqueueRunningTasks = true;
+    private final boolean enqueueRunningTasks = false;
 
     private final AccessControlQueue acq;
 
-    private Execution execution;
+    private GraphTaskExecution execution;
 
     private Task task;
 
@@ -34,7 +34,7 @@ public abstract class TaskDispatch {
         this.acq = acq;
     }
 
-    protected Execution getExecution() {
+    protected GraphTaskExecution getExecution() {
         return Objects.requireNonNull(execution);
     }
 
@@ -60,7 +60,8 @@ public abstract class TaskDispatch {
 
         acq.compute(getExecution(), exec -> {
             setRunning();
-            exec.registerJobDispatch(this);
+            exec.registerTaskDispatch(this);
+            logger.trace("Registered job dispatch '{}' for task '{}' to execution '{}'.", this, task, exec);
         });
 
         // Task operator will now try to finish the task:
@@ -83,7 +84,7 @@ public abstract class TaskDispatch {
 
         AtomicBoolean toContinue = new AtomicBoolean(false);
         acq.compute(getExecution(), ex -> {
-            ex.deregisterJobDispatch(this);
+            ex.deregisterTaskDispatch(this);
             if(isInterrupted.get()) {
                 task.setError(new InterruptedException());
                 task.set(Task.State.FAILURE);
@@ -104,12 +105,15 @@ public abstract class TaskDispatch {
                                         AtomicBoolean toContinue) {
         transition.performTransition(task);
         if(task.is(Task.State.RUNNING)) {
-            logger.debug("Task `{}` is still running after applying operator. " +
+            if(enqueueRunningTasks) {
+                logger.debug("Task `{}` is still running after applying operator. " +
                     "Putting the task back into the queue.", task);
-            if(enqueueRunningTasks)
                 task.set(Task.State.QUEUED);
-            else
+            }
+            else {
+                logger.debug("Task `{}` continuing.", task);
                 toContinue.set(true);
+            }
         }
         if(task.is(Task.State.QUEUED)) {
             getExecution().enqueueTask(task);

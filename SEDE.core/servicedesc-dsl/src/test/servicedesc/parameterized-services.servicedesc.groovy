@@ -1,7 +1,7 @@
-import de.upb.sede.Helpers
+import ai.services.SDL
 
-import static de.upb.sede.Helpers.*;
-@groovy.transform.BaseScript de.upb.sede.SDL description
+import static ai.services.Helpers.*;
+@groovy.transform.BaseScript SDL description
 
 collection("service.Collection.1") {
     service("service1") {
